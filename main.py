@@ -42,11 +42,11 @@ class DocumentParser:
 
         self.body = None
         self.in_body = False
-        self.titles = []
-        self.chapters = []
-        self.articles = []
+        self.max_section_level = 4
+        self.body_sections = [[] for _ in range(self.max_section_level)]
         self.paragraphs = []
 
+        self.current_section_level = 0
         self.current_section_type = HeaderSection.NONE
 
     def parse_document(self, content: List[str]) -> Element:
@@ -78,10 +78,10 @@ class DocumentParser:
                 if self._is_entity(line) and self.current_section_type == HeaderSection.NONE:
 
                     # No process required as we start the document
+                    pile.append(line)
 
                     self.current_section_type = HeaderSection.ENTITY
                     self.header_sections.append(SubElement(self.header, "entity"))
-                    pile.append(line)
 
                 # Continue feeding subsection entity
                 elif self._is_entity(line) and self.current_section_type == HeaderSection.ENTITY:
@@ -92,11 +92,10 @@ class DocumentParser:
                 elif self._is_arrete(line) and self.current_section_type == HeaderSection.ENTITY:
 
                     self._process_pile(pile, self.header_sections[-1])
-                    pile = []
+                    pile = [line]
 
                     self.current_section_type = HeaderSection.IDENTIFICATION
                     self.header_sections.append(SubElement(self.header, "identification"))
-                    pile.append(line)
 
                 # Discard entity in subsection identification
                 elif self._is_entity(line) and self.current_section_type == HeaderSection.IDENTIFICATION:
@@ -108,11 +107,10 @@ class DocumentParser:
                 elif self._is_visa(line) and self.current_section_type == HeaderSection.IDENTIFICATION:
 
                     self._process_pile(pile, self.header_sections[-1])
-                    pile = []
+                    pile = [line]
 
                     self.current_section_type = HeaderSection.VISA
                     self.header_sections.append(SubElement(self.header, "visa"))
-                    pile.append(line)
 
                 # Continue feeding subsection visa
                 elif self._is_visa(line) and self.current_section_type == HeaderSection.VISA:
@@ -123,11 +121,10 @@ class DocumentParser:
                 elif self._is_motif(line) and self.current_section_type == HeaderSection.VISA:
 
                     self._process_pile(pile, self.header_sections[-1])
-                    pile = []
+                    pile = [line]
 
                     self.current_section_type = HeaderSection.MOTIFS
                     self.header_sections.append(SubElement(self.header, "motifs"))
-                    pile.append(line)
 
                 # Continue feeding subsection motifs
                 elif self._is_motif(line) and self.current_section_type == HeaderSection.MOTIFS:
@@ -166,44 +163,85 @@ class DocumentParser:
                     print(log_msg)
                     continue
 
-                # Starting subsection title
-                if self._is_titre(line):
+                new_section_info = self.identify_section_type(line)
+                new_section_type = new_section_info["type"]
 
-                    title_info = self._extract_title_info(line)
-                    title_element = SubElement(self.body, "title")
-                    title_element.set("number", title_info['number'])
-                    title_element.set("text", title_info['text'])
-                    self.titles.append(title_element)                    
-                    self.current_section_type = BodySection.TITLE
+                if new_section_type != "none":
 
-                # Starting chapitre
-                elif self._is_chapitre(line):
+                    # if len(self.paragraphs) > 0 and len(pile) > 0:
+                    #     self._process_pile(pile, self.paragraphs[-1])
+                    #     pile = []
 
-                    chapter_info = self._extract_chapter_info(line)
-                    chapter_element = SubElement(self.titles[-1], "chapter")
-                    chapter_element.set("number", chapter_info['number'])
-                    chapter_element.set("text", chapter_info['text'])
-                    self.chapters.append(chapter_element)
-                    self.current_section_type = BodySection.CHAPTER
+                    if len(self.paragraphs) > 0 and len(pile) > 0:
+                        self._process_pile(pile, self.paragraphs[-1])
+                        pile = []
 
-                # Starting article
-                elif self._is_article(line):
+                    new_section_level = new_section_info["level"]
+                    if new_section_level == 0:
+                        new_element = SubElement(self.body, new_section_type)
+                    else:
+                        new_element = SubElement(self.body_sections[new_section_level-1][-1], new_section_type)
+                    new_element.set("number", new_section_info["number"])
+                    new_element.set("text", new_section_info["text"])
+                    self.body_sections[new_section_level].append(new_element)
 
-                    article_info = self._extract_article_info(line)
-                    article_element = SubElement(self.chapters[-1], "article")
-                    article_element.set("number", article_info['number'])
-                    article_element.set("text", article_info['text'])
-                    self.articles.append(article_element)
-                    self.current_section_type = BodySection.ARTICLE
+                    self.current_section_level = new_section_level
+                    self.current_section_type = new_section_type
+
+                    # # Starting subsection title
+                    # if self._is_titre(line):
+
+                    #     if len(self.paragraphs) > 0 and len(pile) > 0:
+                    #         self._process_pile(pile, self.paragraphs[-1])
+                    #         pile = []
+
+                    #     title_info = self._extract_title_info(line)
+                    #     title_element = SubElement(self.body, "title")
+                    #     title_element.set("number", title_info['number'])
+                    #     title_element.set("text", title_info['text'])
+                    #     self.titles.append(title_element)
+                    #     self.current_section_type = BodySection.TITLE
+
+                    # # Starting chapitre
+                    # elif self._is_chapitre(line):
+
+                    #     if len(self.paragraphs) > 0 and len(pile) > 0:
+                    #         self._process_pile(pile, self.paragraphs[-1])
+                    #         pile = []
+
+                    #     chapter_info = self._extract_chapter_info(line)
+                    #     chapter_element = SubElement(self.titles[-1], "chapter")
+                    #     chapter_element.set("number", chapter_info['number'])
+                    #     chapter_element.set("text", chapter_info['text'])
+                    #     self.chapters.append(chapter_element)
+                    #     self.current_section_type = BodySection.CHAPTER
+
+                    # # Starting article
+                    # elif self._is_article(line):
+
+                    #     if len(self.paragraphs) > 0 and len(pile) > 0:
+                    #         self._process_pile(pile, self.paragraphs[-1])
+                    #         pile = []
+
+                    #     article_info = self._extract_article_info(line)
+                    #     article_element = SubElement(self.chapters[-1], "article")
+                    #     article_element.set("number", article_info['number'])
+                    #     article_element.set("text", article_info['text'])
+                    #     self.articles.append(article_element)
+                    #     self.current_section_type = BodySection.ARTICLE
 
                 # Starting table
                 elif self._is_table(line) and self.current_section_type != BodySection.TABLE:
 
+                    if len(self.paragraphs) > 0 and len(pile) > 0:
+                        self._process_pile(pile, self.paragraphs[-1])
+                        pile = []
+
                     # Start a new pile
                     pile = []
+                    pile.append(line)
 
                     self.current_section_type = BodySection.TABLE
-                    pile.append(line)
 
                 # Continue feeding table
                 elif self._is_table(line) and self.current_section_type == BodySection.TABLE:
@@ -213,11 +251,15 @@ class DocumentParser:
                 # Starting list
                 elif self._is_liste(line) and self.current_section_type != BodySection.LIST:
 
+                    if len(self.paragraphs) > 0 and len(pile) > 0:
+                        self._process_pile(pile, self.paragraphs[-1])
+                        pile = []
+
                     # Start a new pile
                     pile = []
+                    pile.append(line)
 
                     self.current_section_type = BodySection.LIST
-                    pile.append(line)
 
                 # Continue feeding list
                 elif self._is_liste(line) and self.current_section_type == BodySection.LIST:
@@ -226,10 +268,20 @@ class DocumentParser:
 
                 else:
 
-                    paragraph = SubElement(self.articles[-1], "paragraph")
-                    paragraph.text = line
-                    self.paragraphs.append(paragraph)
-                    self.current_section_type = BodySection.PARAGRAPH
+                    if len(self.paragraphs) > 0 and len(pile) > 0:
+                        self._process_pile(pile, self.paragraphs[-1])
+                        pile = []
+
+                    new_element = SubElement(self.body_sections[self.current_section_level][-1], "paragraph")
+                    new_element.text = line
+                    self.paragraphs.append(new_element)
+
+                    # Do not change current section level nor type
+
+                    # paragraph = SubElement(self.articles[-1], "paragraph")
+                    # paragraph.text = line
+                    # self.paragraphs.append(paragraph)
+                    # self.current_section_type = BodySection.PARAGRAPH
 
                 log_msg = f"{line} -> {self.current_section_type}"
                 print(log_msg)
@@ -243,7 +295,8 @@ class DocumentParser:
         patterns_to_ignore = [
             r'^\d+/\d+\s*$',           # Format: 3/48
             r'^page\s+\d+/\d+\s*$',    # Format: Page 3/48
-            r'^`',                      # Commence par un backtick
+            r'^```',                      # Commence par un backtick
+            r'^---',                      # Commence par des tirets
             r'^\s*$',                   # Ligne vide ou espaces
             r'^sur\b',                  # Commence par 'sur'
             r'^apr[eè]s\b',           # Commence par 'apres/après'
@@ -277,17 +330,37 @@ class DocumentParser:
         """Détecte si la ligne commence par un visa"""
         return bool(re.match(r"^(arr[eéê]t[eé])\b", line, re.IGNORECASE))
 
-    def _is_titre(self, line: str) -> bool:
-        """Détecte si la ligne commence par un visa"""
-        return bool(re.match(r"^(titre)\b", line, re.IGNORECASE))
+    def identify_section_type(self, line):
+        # Patterns for different section types
+        patterns = {
+            'titre': r'^TITRE\s+([IVX]+)\.?\s*[-–]\s*(.+)$',
+            'chapitre': r'^CHAPITRE\s+(\d+[\.\.]\d+)\.?\s+(.+)$',
+            'article_3': r'^ARTICLE\s+(\d+[\.\.]\d+[\.\.]\d+)\.?\s+(.+)$',
+            'article_4': r'^ARTICLE\s+(\d+[\.\.]\d+[\.\.]\d+[\.\.]\d+)\.?\s+(.+)$',
+        }
+        patterns_levels = {
+            "titre": 0,
+            "chapitre": 1,
+            "article_3": 2,
+            "article_4": 3,
+        }
 
-    def _is_chapitre(self, line: str) -> bool:
-        """Détecte si la ligne commence par un visa"""
-        return bool(re.match(r"^(chapitre)\b", line, re.IGNORECASE))
+        section_info = {
+            "type": "none"
+        }
 
-    def _is_article(self, line: str) -> bool:
-        """Détecte si la ligne commence par un visa"""
-        return bool(re.match(r"^(article)\b", line, re.IGNORECASE))
+        for section_type, pattern in patterns.items():
+            match = re.match(pattern, line, re.IGNORECASE)
+            if match:
+                section_info = {
+                    'type': section_type,
+                    "level": patterns_levels[section_type],
+                    'number': match.group(1),
+                    'text': match.group(2).strip(),
+                    'full_text': match.group(0)
+                }
+
+        return section_info
 
     def _is_table(self, line: str) -> bool:
         """Détecte si la ligne commence par un visa"""
