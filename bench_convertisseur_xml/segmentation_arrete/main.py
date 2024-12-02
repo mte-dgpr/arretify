@@ -434,9 +434,7 @@ def format_xml(element: Element) -> str:
     return dom.toprettyxml(indent="  ")
 
 def main(input_file_path: Path, output_file_path: Path):
-    # Exemple d'utilisation
-    input_txt = TEST_DATA_DIR / "arretes_ocr" / "2020-04-20_AP-auto_initial_pixtral.txt"
-    with open(input_txt, 'r', encoding='utf-8') as f:
+    with open(input_file_path, 'r', encoding='utf-8') as f:
         content = f.readlines()
 
     parser = DocumentParser()
