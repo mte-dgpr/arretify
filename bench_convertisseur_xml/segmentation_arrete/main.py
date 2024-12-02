@@ -1,4 +1,5 @@
 import re
+from pathlib import Path
 from enum import Enum
 from typing import List, Dict, Optional
 from dataclasses import dataclass
@@ -432,7 +433,7 @@ def format_xml(element: Element) -> str:
     dom = xml.dom.minidom.parseString(raw_xml)
     return dom.toprettyxml(indent="  ")
 
-def main():
+def main(input_file_path: Path, output_file_path: Path):
     # Exemple d'utilisation
     input_txt = TEST_DATA_DIR / "arretes_ocr" / "2020-04-20_AP-auto_initial_pixtral.txt"
     with open(input_txt, 'r', encoding='utf-8') as f:
@@ -443,8 +444,24 @@ def main():
 
     formatted_xml = format_xml(xml_root)
 
-    with open('output.xml', 'w', encoding='utf-8') as f:
+    with open(output_file_path, 'w', encoding='utf-8') as f:
         f.write(formatted_xml)
 
 if __name__ == "__main__":
-    main()
+    import sys
+    from optparse import OptionParser
+    
+    parser = OptionParser()
+    parser.add_option(
+        "-i", 
+        "--input", 
+        default=TEST_DATA_DIR / "arretes_ocr" / "2020-04-20_AP-auto_initial_pixtral.txt",
+    )
+    parser.add_option(
+        "-o", 
+        "--output", 
+        default='output.xml',
+    )
+    (options, args) = parser.parse_args()
+
+    main(Path(options.input), Path(options.output))
