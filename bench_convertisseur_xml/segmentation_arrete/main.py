@@ -5,6 +5,9 @@ from dataclasses import dataclass
 from xml.etree.ElementTree import Element, SubElement, tostring
 import xml.dom.minidom
 
+from ..settings import TEST_DATA_DIR
+
+
 @dataclass
 class XMLGroup:
     """Classe représentant une section de document avec son niveau hiérarchique"""
@@ -431,7 +434,7 @@ def format_xml(element: Element) -> str:
 
 def main():
     # Exemple d'utilisation
-    input_txt = "données de test/3013459/2020-04-20_AP-auto_initial_pixtral.txt"
+    input_txt = TEST_DATA_DIR / "arretes_ocr" / "2020-04-20_AP-auto_initial_pixtral.txt"
     with open(input_txt, 'r', encoding='utf-8') as f:
         content = f.readlines()
 
