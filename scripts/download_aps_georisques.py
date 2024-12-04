@@ -27,6 +27,8 @@ def iter_ieds(file_path: Path):
 
 
 def main(ied_file: Path, out_dir: Path):
+    if not out_dir.is_dir():
+        os.mkdir(out_dir)    
     for ied_dict in iter_ieds(ied_file):
         has_all_aps = ied_dict['AP complets ? Oui '].lower().strip() == 'oui'
         if has_all_aps:
@@ -57,7 +59,7 @@ def main(ied_file: Path, out_dir: Path):
                 except KeyError:
                     type_fichier = f"{document_data['typeFichier']}_RENAME_MANUALLY"
                 
-                file_name = f'{document_data['dateFichier']}_{type_fichier}.pdf'
+                file_name = f"{document_data['dateFichier']}_{type_fichier}.pdf"
                 file_path = ied_dir / file_name
                 if file_path.is_file():
                     print(f"file {file_name} already exists, continue ...")

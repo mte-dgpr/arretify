@@ -60,7 +60,7 @@ class DocumentParser:
         self.header = SubElement(self.current_document, "header")
         self.body = SubElement(self.current_document, "body")
 
-        k_max = 50000000
+        k_max = 5000000
 
         pile = []
         self.in_header = True
@@ -107,6 +107,11 @@ class DocumentParser:
                     print(log_msg)
                     continue
 
+                # Multi-line identification
+                elif self._is_continuing_sentence(line) and self.current_section_type == HeaderSection.IDENTIFICATION:
+
+                    pile[-1] = " ".join([pile[-1], line])
+
                 # Starting subsection visa
                 elif self._is_visa(line) and self.current_section_type == HeaderSection.IDENTIFICATION:
 
@@ -115,6 +120,11 @@ class DocumentParser:
 
                     self.current_section_type = HeaderSection.VISA
                     self.header_sections.append(SubElement(self.header, "visa"))
+
+                # Continuing sentence in current visa
+                elif self._is_continuing_sentence(line) and self.current_section_type == HeaderSection.VISA:
+
+                    pile[-1] = " ".join([pile[-1], line])
 
                 # Continue feeding subsection visa
                 elif self._is_visa(line) and self.current_section_type == HeaderSection.VISA:
@@ -309,6 +319,9 @@ class DocumentParser:
         pattern = '|'.join(f'(?:{pattern})' for pattern in patterns_to_ignore)
         return bool(re.match(pattern, line, re.IGNORECASE))
 
+    def _is_continuing_sentence(self, line: str) -> bool:
+        return bool(re.match(r'[a-z]', line))
+
     def _is_entity(self, line: str) -> bool:
         """Détecte si la ligne commence par un nom d'entité"""
         patterns_to_catch = [
@@ -338,6 +351,7 @@ class DocumentParser:
         # Patterns for different section types
         patterns = {
             'titre': r'^TITRE\s+([IVX]+)\.?\s*[-–]\s*(.+)$',
+            # 'titre': r'^TITRE\s+(?:[IVX]+|\d+)\.?\s*[-–]\s*(.+)$',
             'chapitre': r'^CHAPITRE\s+(\d+[\.\.]\d+)\.?\s+(.+)$',
             'article_3': r'^ARTICLE\s+(\d+[\.\.]\d+[\.\.]\d+)\.?\s+(.+)$',
             'article_4': r'^ARTICLE\s+(\d+[\.\.]\d+[\.\.]\d+[\.\.]\d+)\.?\s+(.+)$',
@@ -377,6 +391,7 @@ class DocumentParser:
     def _extract_title_info(self, line: str) -> Dict[str, str]:
         """Extrait le numéro et le texte d'un titre"""
         match = re.match(r'^titre\s+([IVX]+)\s*-\s*(.+)', line, re.IGNORECASE)
+        # match = re.match(r'^titre\s+(?:[IVX]+|\d+)\.?\s*[-–]\s*(.+)$', line, re.IGNORECASE)
         if match:
             return {
                 'number': match.group(1),
@@ -408,7 +423,7 @@ class DocumentParser:
         """Traite la pile de lignes et les ajoute à la section XML"""
         for line in pile:
             if line.strip():  # Si la ligne n'est pas vide
-                line_element = SubElement(section_element, "ligne")
+                line_element = SubElement(section_element, "line")
                 line_element.text = line
 
     def _create_xml_element(self, tag: str, text: str = None,
@@ -448,16 +463,16 @@ def main(input_file_path: Path, output_file_path: Path):
 if __name__ == "__main__":
     import sys
     from optparse import OptionParser
-    
+
     parser = OptionParser()
     parser.add_option(
-        "-i", 
-        "--input", 
+        "-i",
+        "--input",
         default=TEST_DATA_DIR / "arretes_ocr" / "2020-04-20_AP-auto_initial_pixtral.txt",
     )
     parser.add_option(
-        "-o", 
-        "--output", 
+        "-o",
+        "--output",
         default='output.xml',
     )
     (options, args) = parser.parse_args()
