@@ -25,16 +25,20 @@ def is_not_information(line: str) -> bool:
         r'^page\s+\d+/\d+\s*$',
         # Bottom-page with format "Page X sur YY"
         r'^page\s+\d+\s+sur\s+\d+\s*$',
+        # Bottom-page with format "Page X"
+        r'^page\s+\d+$',
 
         # Sentence starting with "sur"
         r'^sur\b',
         # Sentence starting with "apres"
         r'^apr[eè]s\b',
 
+        # French Republic
+        r"r[eé]publique fran[cç]aise",
         # French national motto
         r"(libert[eé]|[eé]galit[eé]|fraternit[eé])",
         # Phone numbers
-        r'\d{2}\s\d{2}\s\d{2}\s\d{2}\s\d{2}'
+        r'\d{2}[\s.]\d{2}[\s.]\d{2}[\s.]\d{2}[\s.]\d{2}'
     ]
     pattern = '|'.join(f'(?:{pattern})' for pattern in patterns_to_ignore)
 
@@ -62,6 +66,7 @@ def is_entity(line: str) -> bool:
         r"pr[ée]f[eè]t",
         r"chevalier",
         r"officier",
+        r"commandeur",
     ]
     pattern = f"^({'|'.join(patterns_to_catch)})\\b"
 
@@ -72,13 +77,13 @@ def is_entity(line: str) -> bool:
 
 def is_visa(line: str) -> bool:
     """Detect if the sentence starts with "vu"."""
-    search_result = bool(re.match(r"^(vu)\b", line, re.IGNORECASE))
+    search_result = bool(re.match(r"^(vu|-\svu)\b", line, re.IGNORECASE))
     return search_result
 
 
 def is_motif(line: str) -> bool:
     """Detect if the sentence starts with "considerant"."""
-    return bool(re.match(r"^(consid[eé]rant)\b", line, re.IGNORECASE))
+    return bool(re.match(r"^(consid[eé]rant|-\sconsid[eé]rant)\b", line, re.IGNORECASE))
 
 
 def is_arrete(line: str) -> bool:
@@ -88,7 +93,7 @@ def is_arrete(line: str) -> bool:
 
 def is_liste(line: str) -> bool:
     """Detect if the line starts with - or a number or letter followed by )."""
-    search_result = bool(re.match(r"^(-\s|[a-zA-Z1-9]\)\s+)", line, re.IGNORECASE))
+    search_result = bool(re.match(r"^(-\s|[a-zA-Z1-9][\)°]\s+)", line, re.IGNORECASE))
     return search_result
 
 

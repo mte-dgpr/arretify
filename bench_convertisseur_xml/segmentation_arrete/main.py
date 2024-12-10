@@ -2,14 +2,14 @@
 
 
 import re
+from optparse import OptionParser
 from pathlib import Path
 
 from typing import List, Dict
-from dataclasses import dataclass
 from xml.etree.ElementTree import Element, SubElement, tostring
 import xml.dom.minidom
 
-from .config import BodySection, HeaderSection
+from .config import BodySection, HeaderSection, section_from_name
 from .section_rules import preprocess_section_types
 from .sentence_rules import (
     is_arrete, is_continuing_sentence, is_entity, is_liste, is_motif, is_not_information, is_table,
@@ -17,15 +17,6 @@ from .sentence_rules import (
 )
 from .utils import clean_markdown
 from ..settings import TEST_DATA_DIR
-
-
-@dataclass
-class XMLGroup:
-    """Classe représentant une section de document avec son niveau hiérarchique"""
-    title: str
-    content: List[str]
-    level: int
-    attributes: Dict[str, str] = None
 
 
 class DocumentParser:
@@ -48,6 +39,7 @@ class DocumentParser:
         self.paragraphs = []
 
         self.current_section_level = -1
+        self.max_section_level = -1
         self.current_section_type = HeaderSection.NONE
 
     def parse_document(self, content: List[str]) -> Element:
@@ -57,7 +49,7 @@ class DocumentParser:
         self.header = SubElement(self.current_document, "header")
         self.body = SubElement(self.current_document, "body")
 
-        k_max = 50000000
+        k_max = 10000000
 
         pile = []
         self.in_header = True
@@ -65,6 +57,7 @@ class DocumentParser:
         patterns, patterns_levels = preprocess_section_types(content)
         self.patterns = patterns
         self.patterns_levels = patterns_levels
+        self.max_section_level = len(self.patterns_levels)
         self.body_sections = [[] for _ in range(len(self.patterns))]
 
         for k, line in enumerate(content):
@@ -73,6 +66,10 @@ class DocumentParser:
 
             # While we are in header
             if self.in_header:
+
+                new_section_info = self.identify_section_type(line)
+                new_section_name = new_section_info["type"]
+                new_section_type = section_from_name(new_section_name)                
 
                 # Discarding all non useful information
                 if is_not_information(line):
@@ -105,10 +102,10 @@ class DocumentParser:
                 elif is_entity(line) and self.current_section_type == HeaderSection.IDENTIFICATION:
                     continue
 
-                # Multi-line identification
-                elif is_continuing_sentence(line) and self.current_section_type == HeaderSection.IDENTIFICATION:
+                # Continue feeding subsection identification
+                elif not (is_visa(line) or is_motif(line)) and self.current_section_type == HeaderSection.IDENTIFICATION:
 
-                    pile[-1] = " ".join([pile[-1], line])
+                    pile.append(line)
 
                 # Starting subsection visa
                 elif is_visa(line) and self.current_section_type == HeaderSection.IDENTIFICATION:
@@ -119,21 +116,10 @@ class DocumentParser:
                     self.current_section_type = HeaderSection.VISA
                     self.header_sections.append(SubElement(self.header, "visa"))
 
-                # Continuing sentence in current visa
-                elif is_continuing_sentence(line) and self.current_section_type == HeaderSection.VISA:
-
-                    pile[-1] = " ".join([pile[-1], line])
-
                 # Continue feeding subsection visa
-                elif is_visa(line) and self.current_section_type == HeaderSection.VISA:
+                elif (is_visa(line) or is_continuing_sentence(line)) and self.current_section_type == HeaderSection.VISA:
 
                     pile.append(line)
-
-                # Multi-line motifs
-                elif is_continuing_sentence(line) or is_liste(line) and self.current_section_type == HeaderSection.VISA:
-
-                    if len(pile) > 0:
-                        pile[-1] = "\n".join([pile[-1], line])
 
                 # Starting subsection motifs
                 elif is_motif(line) and self.current_section_type == HeaderSection.VISA:
@@ -145,18 +131,12 @@ class DocumentParser:
                     self.header_sections.append(SubElement(self.header, "motifs"))
 
                 # Continue feeding subsection motifs
-                elif is_motif(line) and self.current_section_type == HeaderSection.MOTIFS:
+                elif (is_motif(line) or is_continuing_sentence(line)) and self.current_section_type == HeaderSection.MOTIFS:
 
                     pile.append(line)
 
-                # Multi-line motifs
-                elif is_continuing_sentence(line) or is_liste(line) and self.current_section_type == HeaderSection.MOTIFS:
-
-                    if len(pile) > 0:
-                        pile[-1] = "\n".join([pile[-1], line])
-
                 # Stop header
-                elif is_arrete(line) and self.current_section_type == HeaderSection.MOTIFS:
+                elif (is_arrete(line) and self.current_section_type in {HeaderSection.MOTIFS, HeaderSection.VISA}) or new_section_type in {BodySection.TITLE, BodySection.CHAPTER, BodySection.ARTICLE, BodySection.SUB_ARTICLE}:
 
                     self._process_pile(pile, self.header_sections[-1])
                     pile = []
@@ -171,31 +151,43 @@ class DocumentParser:
                 # Continue feeding subsection
                 else:
 
-                    log_msg = f"{line} -> ERROR: uncatched element"
-                    print(log_msg)
-                    break
+                    raise ValueError("Uncatched element")
 
             # While we are in body
-            elif self.in_body:
+            if self.in_body:
 
                 # Discarding all non useful information
                 if is_not_information(line):
                     continue
 
+                # We defined a section and we missed its title
+                if self.current_section_type in {BodySection.TITLE, BodySection.CHAPTER, BodySection.ARTICLE, BodySection.SUB_ARTICLE} and len(self.body_sections[self.current_section_level][-1].get("text")) <= 0:
+                    self.body_sections[self.current_section_level][-1].set("text", line)
+                    continue
+
                 new_section_info = self.identify_section_type(line)
-                new_section_type = new_section_info["type"]
+                new_section_name = new_section_info["type"]
+                new_section_type = section_from_name(new_section_name)
 
-                if new_section_type != "none":
+                if new_section_type != BodySection.NONE:
 
+                    # Process current pile and empty it
                     if len(self.paragraphs) > 0 and len(pile) > 0:
                         self._process_pile(pile, self.paragraphs[-1])
                         pile = []
 
+                    # Find the upper section in body
                     new_section_level = new_section_info["level"]
-                    if new_section_level == 0:
-                        new_element = SubElement(self.body, new_section_type)
+                    upper_level = new_section_level - 1
+                    while upper_level >= 0 and len(self.body_sections[upper_level]) == 0:
+                        upper_level -= 1
+
+                    if upper_level < 0 or len(self.body_sections[upper_level]) == 0:
+                        new_element = SubElement(self.body, new_section_name)
                     else:
-                        new_element = SubElement(self.body_sections[new_section_level-1][-1], new_section_type)
+                        new_element = SubElement(self.body_sections[upper_level][-1], new_section_name)
+
+                    # Add attributes
                     new_element.set("number", new_section_info["number"])
                     new_element.set("text", new_section_info["text"])
                     self.body_sections[new_section_level].append(new_element)
@@ -282,22 +274,9 @@ class DocumentParser:
         return self.root
 
     def identify_section_type(self, line):
-        # Patterns for different section types
-        # patterns = {
-        #     'titre': r'^TITRE\s+([IVX]+|[1-9])(?:\.?\s+(.+))?$',
-        #     'chapitre': r'^CHAPITRE\s+(\d+[\.]\d+)(?:\.?\s+(.+))?$',
-        #     'article_3': r'^ARTICLE\s+(\d+[\.]\d+[\.]\d+)(?:\.?\s+(.+))?$',
-        #     'article_4': r'^ARTICLE\s+(\d+[\.]\d+[\.]\d+[\.]\d+)(?:\.?\s+(.+))?$',
-        # }
-        # patterns_levels = {
-        #     "titre": 0,
-        #     "chapitre": 1,
-        #     "article_3": 2,
-        #     "article_4": 3,
-        # }
 
         section_info = {
-            "type": "none"
+            "type": BodySection.NONE
         }
 
         for section_type, pattern in self.patterns.items():
@@ -318,8 +297,6 @@ class DocumentParser:
                 }
 
         return section_info
-
-
 
     def _process_pile(self, pile: List[str], section_element: Element):
         """Traite la pile de lignes et les ajoute à la section XML"""
@@ -361,23 +338,23 @@ def main(input_file_path: Path, output_file_path: Path):
 
 
 if __name__ == "__main__":
-    import sys
-    from optparse import OptionParser
 
-    parser = OptionParser()
-    parser.add_option(
+    PARSER = OptionParser()
+    PARSER.add_option(
         "-i",
         "--input",
-        # default=TEST_DATA_DIR / "arretes_ocr" / "2020-04-20_AP-auto_initial_pixtral.txt",
+        default=TEST_DATA_DIR / "arretes_ocr" / "2020-04-20_AP-auto_initial_pixtral.txt",
         # default=TEST_DATA_DIR / "arretes_ocr" / "2021-09-24_AP-auto_refonte_pixtral.txt",
         # default=TEST_DATA_DIR / "arretes_ocr" / "2023-02-23_APC-auto_pixtral.txt",
-        default=TEST_DATA_DIR / "arretes_ocr" / "2011-02-24_AP-auto_pixtral.txt",
+        # default=TEST_DATA_DIR / "arretes_ocr" / "2011-02-24_AP-auto_pixtral.txt",
+        # default=TEST_DATA_DIR / "arretes_ocr" / "2002-03-04_AP-auto_refonte_pixtral.txt",
+        # default=TEST_DATA_DIR / "arretes_ocr" / "1978-05-24_AP-auto_pixtral.txt",
     )
-    parser.add_option(
+    PARSER.add_option(
         "-o",
         "--output",
         default='output.xml',
     )
-    (options, args) = parser.parse_args()
+    (options, args) = PARSER.parse_args()
 
     main(Path(options.input), Path(options.output))

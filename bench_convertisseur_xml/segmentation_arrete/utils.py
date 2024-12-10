@@ -12,7 +12,7 @@ def clean_markdown(text: str) -> str:
     # Remove * at the beginning only if not followed by space
     text = re.sub(r"^\*+(?!\s)", "", text)
 
-    # Remove * at the end only if not preceded by space 
+    # Remove * at the end only if not preceded by space
     text = re.sub(r"(?<!\s)\*+$", "", text)
 
     # Remove any number of # or whitespaces at the beginning of the sentence
