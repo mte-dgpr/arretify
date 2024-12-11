@@ -7,7 +7,7 @@ temp
 .vscode
 results
 ground-truth
-output.xml
+output*.xml
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
