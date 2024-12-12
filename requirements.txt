@@ -1,3 +1,5 @@
 python-dotenv==1.0.*
 requests==2.32.*
 types-requests==2.32.*
+beautifulsoup4==4.12.*
+types-beautifulsoup4==4.12.*
