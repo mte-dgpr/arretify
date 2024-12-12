@@ -1,7 +1,6 @@
 """Main file to convert TXT files to XML output."""
 
 
-import re
 from optparse import OptionParser
 from pathlib import Path
 
@@ -10,7 +9,9 @@ from xml.etree.ElementTree import Element, SubElement, tostring
 import xml.dom.minidom
 
 from .config import BodySection, HeaderSection, section_from_name
-from .section_rules import preprocess_section_types
+from .parse_section import (
+    identify_unique_sections, filter_max_level_sections, parse_section
+)
 from .sentence_rules import (
     is_arrete, is_continuing_sentence, is_entity, is_liste, is_motif, is_not_information, is_table,
     is_visa
@@ -49,16 +50,17 @@ class DocumentParser:
         self.header = SubElement(self.current_document, "header")
         self.body = SubElement(self.current_document, "body")
 
-        k_max = 10000000
+        k_max = 1000000
 
         pile = []
         self.in_header = True
 
-        patterns, patterns_levels = preprocess_section_types(content)
-        self.patterns = patterns
-        self.patterns_levels = patterns_levels
-        self.max_section_level = len(self.patterns_levels)
-        self.body_sections = [[] for _ in range(len(self.patterns))]
+        # Define sections that will be parsed and detected in this document
+        unique_sections = identify_unique_sections(content)
+        authorized_sections = filter_max_level_sections(unique_sections)
+
+        self.max_section_level = len(authorized_sections)
+        self.body_sections = [[] for _ in range(self.max_section_level)]
 
         for k, line in enumerate(content):
 
@@ -67,9 +69,9 @@ class DocumentParser:
             # While we are in header
             if self.in_header:
 
-                new_section_info = self.identify_section_type(line)
-                new_section_name = new_section_info["type"]
-                new_section_type = section_from_name(new_section_name)                
+                new_section_info = parse_section(line, authorized_sections=authorized_sections)
+                new_section_name = new_section_info["section_name"]
+                new_section_type = section_from_name(new_section_name)
 
                 # Discarding all non useful information
                 if is_not_information(line):
@@ -85,7 +87,7 @@ class DocumentParser:
                     self.header_sections.append(SubElement(self.header, "entity"))
 
                 # Continue feeding subsection entity
-                elif is_entity(line) and self.current_section_type == HeaderSection.ENTITY:
+                elif not is_arrete(line) and self.current_section_type == HeaderSection.ENTITY:
 
                     pile.append(line)
 
@@ -117,7 +119,7 @@ class DocumentParser:
                     self.header_sections.append(SubElement(self.header, "visa"))
 
                 # Continue feeding subsection visa
-                elif (is_visa(line) or is_continuing_sentence(line)) and self.current_section_type == HeaderSection.VISA:
+                elif not (is_motif(line) or is_arrete(line)) and new_section_type not in {BodySection.TITLE, BodySection.CHAPTER, BodySection.ARTICLE, BodySection.SUB_ARTICLE} and self.current_section_type == HeaderSection.VISA:
 
                     pile.append(line)
 
@@ -131,7 +133,7 @@ class DocumentParser:
                     self.header_sections.append(SubElement(self.header, "motifs"))
 
                 # Continue feeding subsection motifs
-                elif (is_motif(line) or is_continuing_sentence(line)) and self.current_section_type == HeaderSection.MOTIFS:
+                elif not is_arrete(line) and new_section_type not in {BodySection.TITLE, BodySection.CHAPTER, BodySection.ARTICLE, BodySection.SUB_ARTICLE} and self.current_section_type == HeaderSection.MOTIFS:
 
                     pile.append(line)
 
@@ -151,6 +153,7 @@ class DocumentParser:
                 # Continue feeding subsection
                 else:
 
+                    print(line)
                     raise ValueError("Uncatched element")
 
             # While we are in body
@@ -160,13 +163,8 @@ class DocumentParser:
                 if is_not_information(line):
                     continue
 
-                # We defined a section and we missed its title
-                if self.current_section_type in {BodySection.TITLE, BodySection.CHAPTER, BodySection.ARTICLE, BodySection.SUB_ARTICLE} and len(self.body_sections[self.current_section_level][-1].get("text")) <= 0:
-                    self.body_sections[self.current_section_level][-1].set("text", line)
-                    continue
-
-                new_section_info = self.identify_section_type(line)
-                new_section_name = new_section_info["type"]
+                new_section_info = parse_section(line, authorized_sections=authorized_sections)
+                new_section_name = new_section_info["section_name"]
                 new_section_type = section_from_name(new_section_name)
 
                 if new_section_type != BodySection.NONE:
@@ -273,31 +271,6 @@ class DocumentParser:
 
         return self.root
 
-    def identify_section_type(self, line):
-
-        section_info = {
-            "type": BodySection.NONE
-        }
-
-        for section_type, pattern in self.patterns.items():
-
-            match = re.match(pattern, line, re.IGNORECASE)
-
-            if match:
-
-                level = self.patterns_levels[section_type]
-                text = match.group(2)
-
-                section_info = {
-                    'type': section_type,
-                    "level": level,
-                    'number': match.group(1),
-                    'text': text.strip() if text else "",
-                    'full_text': match.group(0),
-                }
-
-        return section_info
-
     def _process_pile(self, pile: List[str], section_element: Element):
         """Traite la pile de lignes et les ajoute à la section XML"""
         for line in pile:
@@ -343,12 +316,13 @@ if __name__ == "__main__":
     PARSER.add_option(
         "-i",
         "--input",
-        default=TEST_DATA_DIR / "arretes_ocr" / "2020-04-20_AP-auto_initial_pixtral.txt",
+        # default=TEST_DATA_DIR / "arretes_ocr" / "2020-04-20_AP-auto_initial_pixtral.txt",
         # default=TEST_DATA_DIR / "arretes_ocr" / "2021-09-24_AP-auto_refonte_pixtral.txt",
         # default=TEST_DATA_DIR / "arretes_ocr" / "2023-02-23_APC-auto_pixtral.txt",
         # default=TEST_DATA_DIR / "arretes_ocr" / "2011-02-24_AP-auto_pixtral.txt",
         # default=TEST_DATA_DIR / "arretes_ocr" / "2002-03-04_AP-auto_refonte_pixtral.txt",
         # default=TEST_DATA_DIR / "arretes_ocr" / "1978-05-24_AP-auto_pixtral.txt",
+        default=TEST_DATA_DIR / "arretes_ocr" / "2017-01-26_APC-garanties-financières_pixtral.txt",
     )
     PARSER.add_option(
         "-o",
