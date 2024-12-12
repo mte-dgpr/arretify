@@ -2,7 +2,7 @@ from .types import ElementSchema
 
 ARRETE_SCHEMA = ElementSchema(
     name="arrete",
-    tag_name="span",
+    tag_name="a",
     classes=["dsr-arrete"],
     data_keys=['code', 'qualifier', 'authority'],
 )

@@ -2,7 +2,7 @@ import re
 from typing import List, Pattern, Tuple
 from dataclasses import dataclass
 
-from .utils.text import remove_accents, normalize_text
+from .utils.text import normalize_text
 
 
 # articles 6.18.1 à 6.18.7 de l'annexe 2 à l'arrêté préfectoral 98/C/014 du 22 janvier 1998

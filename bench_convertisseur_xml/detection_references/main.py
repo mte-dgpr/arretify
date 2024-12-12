@@ -6,6 +6,7 @@ from bs4 import BeautifulSoup
 
 from ..settings import APP_ROOT, LOGGER
 from .arretes import parse_arretes, ARRETE_IGNORE_RE
+from .html_schemas import ARRETE_SCHEMA
 
 
 if __name__ == '__main__':
@@ -32,4 +33,19 @@ if __name__ == '__main__':
     with open(APP_ROOT / 'tmp' / 'arretes_failed.txt', 'w', encoding='utf-8') as fd:
         fd.write('\n\n'.join([str(r) for r in all_arretes_failed]))
 
-    # LOGGER.info(f'found {len(all_arretes_refs)} arretes, failed {len(all_arretes_failed)}')
+    arretes_html = f"""<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    .dsr-arrete {{
+      color: rgb(255, 15, 95);
+    }}
+  </style>
+</head>
+<body>{''.join(paragraphs_html)}"""
+
+    with open(APP_ROOT / 'tmp' / 'arretes_parsed.html', 'w', encoding='utf-8') as fd:
+        fd.write(arretes_html)
+
+    all_arretes_parsed = BeautifulSoup(arretes_html, features='html.parser').select('.' + ARRETE_SCHEMA.classes[0])
+    LOGGER.info(f'found {len(all_arretes_parsed)} arretes, failed {len(all_arretes_failed)}')

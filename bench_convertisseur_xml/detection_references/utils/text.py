@@ -8,4 +8,4 @@ def remove_accents(s: str) -> str:
 
 
 def normalize_text(text: str):
-    return remove_accents(text.replace('’', "'"))
+    return text.replace('’', "'")

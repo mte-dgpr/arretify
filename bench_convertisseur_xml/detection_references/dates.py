@@ -7,12 +7,11 @@ from bs4 import BeautifulSoup
 # Important so that locale is initialized
 from ..settings import *
 from .html_schemas import DATE_SCHEMA
-from .utils.text import remove_accents
 from .utils.html import make_element
 
 DATE_FORMAT = '%Y-%m-%d'
 
-MONTH_NAMES = list([remove_accents(m) for m in calendar.month_name])
+MONTH_NAMES = list(calendar.month_name)
 
 # Check that the date string is followed by a valid separator
 # so that we don't match strings like 54/67/1980/A.
