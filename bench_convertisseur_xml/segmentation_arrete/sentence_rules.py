@@ -97,16 +97,9 @@ def is_liste(line: str) -> bool:
     return search_result
 
 
-def is_table(line: str, pile: List[str], current_section_type: BodySection) -> bool:
-    """Detect if the line is part of a table."""
-    # First possibility: any | or sentence starts with any number of * between parentheses
-    table_from_starting_element = bool(re.search(r"(\|)|^(\(\*+\))|^(\*+)", line, re.IGNORECASE))
-
+def is_table_description(line: str, pile: List[str]) -> bool:
     # Second possibility: this sentence explains the name of one of the columns
-    table_from_description = False
-
-    if len(pile) >= 1 and current_section_type == BodySection.TABLE:
-
+    if len(pile) >= 1:
         column_names = []
         columns_split = pile[0].split("|")
         for column_split in columns_split:
@@ -117,10 +110,14 @@ def is_table(line: str, pile: List[str], current_section_type: BodySection) -> b
 
         # For each column name, check if we have it followed by :
         for column_name in column_names:
-            table_from_description = (
-                table_from_description or bool(re.match(fr".*{column_name} :", line, re.IGNORECASE))
-            )
+            if re.match(fr".*{column_name} :", line, re.IGNORECASE):
+                return True
+    return False
 
-    search_result = table_from_starting_element or table_from_description
 
+def is_table(line: str) -> bool:
+    """Detect if the line is part of a table."""
+    # First possibility: any | or sentence starts with any number of * between parentheses
+    table_from_starting_element = bool(re.search(r"(\|)|^(\(\*+\))|^(\*+)", line, re.IGNORECASE))
+    search_result = table_from_starting_element
     return search_result

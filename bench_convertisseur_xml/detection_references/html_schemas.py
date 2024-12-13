@@ -1,4 +1,4 @@
-from .types import ElementSchema
+from bench_convertisseur_xml.types import ElementSchema
 
 ARRETE_SCHEMA = ElementSchema(
     name="arrete",

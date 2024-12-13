@@ -2,13 +2,13 @@ import re
 from dataclasses import dataclass
 from datetime import date
 from bs4 import Tag, BeautifulSoup, NavigableString
-from typing import Literal, List, get_args, cast, TypedDict, Pattern, Tuple
+from typing import Literal, List, get_args, cast, TypedDict, Pattern, Tuple, Iterator
 
 from ..settings import APP_ROOT, LOGGER
 from .dates import parse_date, DATE1_RES, DATE2_RES, DateMatchDict, handle_date_match_groupdict, make_date_element
-from .utils.text import remove_accents, normalize_text
-from .utils.html import PageElementOrString, make_element
-from .utils.regex import split_string_with_regex, split_string_from_match
+from bench_convertisseur_xml.utils.text import normalize_text
+from bench_convertisseur_xml.utils.html import PageElementOrString, make_element
+from bench_convertisseur_xml.utils.regex import split_string_with_regex, split_string_from_match
 from .html_schemas import ARRETE_SCHEMA
 
 
@@ -63,56 +63,48 @@ ARRETE_IGNORE_RE = re.compile(r'(présent arrêté)|(par arrêté)|(arrêté\S)'
 
 # TODO : also searches for known codes for arretes directly in text.
 def _parse_arretes(
-    soup: BeautifulSoup,
-    arrete_re_list: List[Pattern], 
-    html_string: NavigableString
-) -> List[PageElementOrString]:
+    parent: Tag,
+    arrete_re: Pattern,
+) -> Iterator[PageElementOrString]:
+    for child in parent.children:
+        if not isinstance(child, str):
+            yield child
+            continue
 
-    children = list(BeautifulSoup(html_string, features="html.parser").children)
-    for arrete_re in arrete_re_list:
-        new_children: List[PageElementOrString] = []
-        for child in children:
-            if not isinstance(child, str):
-                new_children.append(child)
+        for str_or_match in split_string_with_regex(arrete_re, child):
+            if isinstance(str_or_match, str):
+                yield str_or_match
                 continue
+            
+            match_dict = str_or_match.groupdict()
+            authority = cast(Authority, match_dict['authority'])
+            if authority:
+                assert authority in get_args(Authority), f'{authority} not in {get_args(Authority)}'
+            code = parse_code(cast(CodeMatchDict, match_dict))
+            qualifier = match_dict['qualifier']
 
-            for str_or_match in split_string_with_regex(arrete_re, child):
-                if isinstance(str_or_match, str):
-                    new_children.append(str_or_match)
-                    continue
-                
-                match_dict = str_or_match.groupdict()
-                authority = cast(Authority, match_dict['authority'])
-                if authority:
-                    assert authority in get_args(Authority), f'{authority} not in {get_args(Authority)}'
-                code = parse_code(cast(CodeMatchDict, match_dict))
-                qualifier = match_dict['qualifier']
+            arrete_container = make_element(
+                parent, ARRETE_SCHEMA, dict(code=code, authority=authority, qualifier=qualifier)
+            )
+            
+            for str_or_group in split_string_from_match(str_or_match):
+                if isinstance(str_or_group, str):
+                    arrete_container.append(str_or_group)
+                elif str_or_group.name == 'date':
+                    date = handle_date_match_groupdict(cast(DateMatchDict, match_dict))
+                    if date is None:
+                        raise RuntimeError(f"expected valid date in this match {str_or_match}")
+                    arrete_container.append(make_date_element(parent, str_or_group.text, date))
+                else:
+                    arrete_container.append(str_or_group.text)
 
-                arrete_container = make_element(
-                    soup, ARRETE_SCHEMA, dict(code=code, authority=authority, qualifier=qualifier)
-                )
-                
-                for str_or_group in split_string_from_match(str_or_match):
-                    if isinstance(str_or_group, str):
-                        arrete_container.append(str_or_group)
-                    elif str_or_group.name == 'date':
-                        date = handle_date_match_groupdict(cast(DateMatchDict, match_dict))
-                        if date is None:
-                            raise RuntimeError(f"expected valid date in this match {str_or_match}")
-                        arrete_container.append(make_date_element(soup, str_or_group.text, date))
-                    else:
-                        arrete_container.append(str_or_group.text)
+            yield arrete_container
 
-                new_children.append(arrete_container)
-
-        children = new_children
-        
-    return children
-    # matches, remainder = normalize_text(ARRETE_IGNORE_RE, remainder, '<ArreteIgnored>')
-    # if 'arrete' in remainder:
-    #     return arretes_refs, remainder
-    # else:
-    #     return arretes_refs, None
 
 def parse_arretes(soup: BeautifulSoup, text: str) -> List[PageElementOrString]:
-    return _parse_arretes(soup, ARRETE_RE_LIST, text)
+    parent = BeautifulSoup(text, features="html.parser")
+    for arrete_re in ARRETE_RE_LIST:
+        new_children = list(_parse_arretes(parent, arrete_re))
+        parent.clear()
+        parent.extend(new_children)
+    return list(parent.children)

@@ -27,8 +27,6 @@ if __name__ == '__main__':
 
         paragraph_html = ''.join([str(e) for e in paragraph_elements])
         paragraphs_html.append(paragraph_html)
-        # import pdb; pdb.set_trace()
-
 
     with open(APP_ROOT / 'tmp' / 'arretes_failed.txt', 'w', encoding='utf-8') as fd:
         fd.write('\n\n'.join([str(r) for r in all_arretes_failed]))

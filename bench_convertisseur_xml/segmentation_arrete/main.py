@@ -20,6 +20,7 @@ from .utils import clean_markdown
 from ..settings import TEST_DATA_DIR
 
 
+# TODO-HTML : REMOVE
 class DocumentParser:
     def __init__(self):
 
@@ -168,7 +169,6 @@ class DocumentParser:
                 new_section_type = section_from_name(new_section_name)
 
                 if new_section_type != BodySection.NONE:
-
                     # Process current pile and empty it
                     if len(self.paragraphs) > 0 and len(pile) > 0:
                         self._process_pile(pile, self.paragraphs[-1])
@@ -290,6 +290,7 @@ class DocumentParser:
         return element
 
 
+# TODO-HTML : REMOVE
 def format_xml(element: Element) -> str:
     """Formate le XML de manière lisible"""
     raw_xml = tostring(element, 'utf-8')

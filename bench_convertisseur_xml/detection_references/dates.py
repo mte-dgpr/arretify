@@ -7,7 +7,7 @@ from bs4 import BeautifulSoup
 # Important so that locale is initialized
 from ..settings import *
 from .html_schemas import DATE_SCHEMA
-from .utils.html import make_element
+from bench_convertisseur_xml.utils.html import make_element
 
 DATE_FORMAT = '%Y-%m-%d'
 
