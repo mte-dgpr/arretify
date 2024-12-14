@@ -2,6 +2,7 @@ from typing import List
 from enum import Enum
 
 from bs4 import Tag, BeautifulSoup
+import markdown
 
 from .sentence_rules import (
     is_arrete, is_continuing_sentence, is_entity, is_liste, is_motif, is_not_information, 
@@ -125,8 +126,14 @@ def parse_main_content(soup: BeautifulSoup, lines: List[str], authorized_section
         if is_table(lines[0]):
             pile = []
             while is_table(lines[0]) or is_table_description(lines[0], pile):
-                pile.append(lines.pop(0))            
-            table_element = make_element(soup, TABLE_SCHEMA, contents=_process_pile(soup, pile))
+                pile.append(lines.pop(0))
+            table_element = make_element(soup, TABLE_SCHEMA, contents=[
+                BeautifulSoup(
+                    markdown.markdown(
+                        '\n'.join(pile), extensions=['tables']
+                    ), features="html.parser"
+                )
+            ])
             body_sections[-1].append(
                 table_element
             )
