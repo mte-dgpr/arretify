@@ -3,7 +3,7 @@ from typing import Dict, List, Optional, Union
 
 from bs4 import BeautifulSoup, PageElement
 
-from ..types import ElementSchema
+from ..types import DataElementSchema, PresentationElementSchema
 
 
 PageElementOrString = Union[PageElement, str]
@@ -11,16 +11,18 @@ PageElementOrString = Union[PageElement, str]
 
 def make_element(
     soup: BeautifulSoup, 
-    schema: ElementSchema, 
+    schema: DataElementSchema | PresentationElementSchema, 
     data: Dict[str, str | None]=dict(), 
     contents: List[PageElementOrString] | None=None,
 ):
     element = soup.new_tag(schema.tag_name)
-    element['class'] = []
-    element['class'].extend(schema.classes)
-    for key in schema.data_keys:
-        if data[key] is not None:
-            element[f'data-{key}'] = data[key]
+    if hasattr(schema, 'name'):
+        element['class'] = [f'dsr-{schema.name}']
+    if hasattr(schema, 'data_keys'):
+        for key in schema.data_keys:
+            data_value = data[key]
+            if data_value is not None:
+                element[f'data-{key}'] = data_value
     if contents:
         element.extend(contents)
     return element

@@ -4,68 +4,17 @@ from enum import Enum
 from bs4 import Tag, BeautifulSoup
 
 from .sentence_rules import (
-    is_arrete, is_continuing_sentence, is_entity, is_liste, is_motif, is_not_information, is_table,
+    is_arrete, is_continuing_sentence, is_entity, is_liste, is_motif, is_not_information,
     is_visa
 )
 from .config import BodySection, HeaderSection, section_from_name
-from .utils import clean_markdown
+from .utils import clean_markdown, wrap_in_paragraphs
 from .parse_section import parse_section
 from bench_convertisseur_xml.utils.html import make_element, PageElementOrString
-from bench_convertisseur_xml.types import ElementSchema
-
-HEADER_SCHEMA = ElementSchema(
-    name="header",
-    tag_name="header",
-    classes=["dsr-header"],
-    data_keys=[],
-)
-
-DIV_SCHEMA = ElementSchema(
-    name="div",
-    tag_name="div",
-    classes=[],
-    data_keys=[],
-)
-
-ENTITY_SCHEMA = ElementSchema(
-    name="entity",
-    tag_name="div",
-    classes=["dsr-entity"],
-    data_keys=[],
-)
-
-IDENTIFICATION_SCHEMA = ElementSchema(
-    name="identification",
-    tag_name="div",
-    classes=["dsr-identification"],
-    data_keys=[],
-)
-
-VISA_SCHEMA = ElementSchema(
-    name="visa",
-    tag_name="div",
-    classes=["dsr-visa"],
-    data_keys=[],
-)
-
-MOTIFS_SCHEMA = ElementSchema(
-    name="motifs",
-    tag_name="div",
-    classes=["dsr-motifs"],
-    data_keys=[],
-)
+from bench_convertisseur_xml.html_schemas import DIV_SCHEMA, ENTITY_SCHEMA, IDENTIFICATION_SCHEMA, VISA_SCHEMA, MOTIFS_SCHEMA, PARAGRAPH_SCHEMA
 
 
-def _process_pile(soup: BeautifulSoup, pile: List[str]):
-    """Traite la pile de lignes et les ajoute à la section XML"""
-    # Si la ligne n'est pas vide
-    return [
-        make_element(soup, DIV_SCHEMA, contents=[line]) if isinstance(line, str) else line
-        for line in pile if (not isinstance(line, str) or line.strip())
-    ]
-
-
-def _ensure_ul_element(soup: BeautifulSoup, container: Tag | str, string: str):
+def _ensure_ul_element(soup: BeautifulSoup, container: PageElementOrString | str, string: str):
     if not isinstance(container, Tag):
         ul = soup.new_tag('ul')
         li = soup.new_tag('li')
@@ -81,9 +30,7 @@ def _ensure_ul_element(soup: BeautifulSoup, container: Tag | str, string: str):
 
 def _is_body_section(line: str, authorized_sections):
     new_section_info = parse_section(line, authorized_sections=authorized_sections)
-    new_section_name = new_section_info["section_name"]
-    new_section_type = section_from_name(new_section_name)
-    new_section_type not in {BodySection.TITLE, BodySection.CHAPTER, BodySection.ARTICLE, BodySection.SUB_ARTICLE}
+    new_section_info['type'] not in {BodySection.TITLE, BodySection.CHAPTER, BodySection.ARTICLE, BodySection.SUB_ARTICLE}
 
 
 def parse_header(soup: BeautifulSoup, header: Tag, lines: List[str], authorized_sections):
@@ -101,7 +48,7 @@ def parse_header(soup: BeautifulSoup, header: Tag, lines: List[str], authorized_
         else:
             pile.append(lines.pop(0))
     header.append(
-        make_element(soup, ENTITY_SCHEMA, contents=_process_pile(soup, pile))
+        make_element(soup, ENTITY_SCHEMA, contents=wrap_in_paragraphs(soup, pile))
     )
     
     # -------- Identification
@@ -119,7 +66,7 @@ def parse_header(soup: BeautifulSoup, header: Tag, lines: List[str], authorized_
             break
         else:
             raise RuntimeError(f'Unexpected line : {lines[0]}')
-    header.append(make_element(soup, IDENTIFICATION_SCHEMA, contents=_process_pile(soup, pile)))
+    header.append(make_element(soup, IDENTIFICATION_SCHEMA, contents=wrap_in_paragraphs(soup, pile)))
 
     # -------- Visas
     pile = []
@@ -134,7 +81,7 @@ def parse_header(soup: BeautifulSoup, header: Tag, lines: List[str], authorized_
             break
         else:
             raise RuntimeError(f'Unexpected line : {lines[0]}')
-    header.append(make_element(soup, VISA_SCHEMA, contents=_process_pile(soup, pile)))
+    header.append(make_element(soup, VISA_SCHEMA, contents=wrap_in_paragraphs(soup, pile)))
         
     # -------- Motifs
     pile = []
@@ -149,6 +96,6 @@ def parse_header(soup: BeautifulSoup, header: Tag, lines: List[str], authorized_
             break
         else:
             raise RuntimeError(f'Unexpected line : {lines[0]}')
-    header.append(make_element(soup, MOTIFS_SCHEMA, contents=_process_pile(soup, pile)))
+    header.append(make_element(soup, MOTIFS_SCHEMA, contents=wrap_in_paragraphs(soup, pile)))
 
     return lines

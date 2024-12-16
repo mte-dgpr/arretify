@@ -2,13 +2,14 @@
 
 
 from .parse_section import parse_section
+from .config import BodySection
 
 
 def test_section_valid_cases():
 
     # Cas titre avec chiffre romain
     assert parse_section("TITRE I - Premier titre") == {
-        'section_name': 'titre',
+        'type': BodySection.TITLE,
         "level": 0,
         "level_name": "titre_0",
         'number': 'I',
@@ -17,7 +18,7 @@ def test_section_valid_cases():
 
     # Cas titre avec chiffre arabe
     assert parse_section("TITRE 1 - Autre titre") == {
-        'section_name': 'titre',
+        'type': BodySection.TITLE,
         "level": 0,
         "level_name": "titre_0",
         'number': '1',
@@ -26,7 +27,7 @@ def test_section_valid_cases():
 
     # Cas chapitre avec lettre sans point
     assert parse_section("CHAPITRE A - Premier chapitre") == {
-        'section_name': 'chapitre',
+        'type': BodySection.CHAPTER,
         "level": 0,
         "level_name": "chapitre_0",
         'number': 'A',
@@ -35,7 +36,7 @@ def test_section_valid_cases():
 
     # Cas chapitre avec lettre avec point
     assert parse_section("CHAPITRE A. - Premier chapitre") == {
-        'section_name': 'chapitre',
+        'type': BodySection.CHAPTER,
         "level": 0,
         "level_name": "chapitre_0",
         'number': 'A',
@@ -44,7 +45,7 @@ def test_section_valid_cases():
 
     # Cas article avec chiffre arabe sans point
     assert parse_section("ARTICLE 1") == {
-        'section_name': 'article',
+        'type': BodySection.ARTICLE,
         "level": 0,
         "level_name": "article_0",
         'number': '1',
@@ -53,7 +54,7 @@ def test_section_valid_cases():
 
     # Cas article avec chiffre arabe avec point
     assert parse_section("ARTICLE 1.") == {
-        'section_name': 'article',
+        'type': BodySection.ARTICLE,
         "level": 0,
         "level_name": "article_0",
         'number': '1',
@@ -62,7 +63,7 @@ def test_section_valid_cases():
 
     # Cas chapitre hiérarchique avec lettre sans point
     assert parse_section("CHAPITRE I.A - Premier chapitre") == {
-        'section_name': 'chapitre',
+        'type': BodySection.CHAPTER,
         "level": 1,
         "level_name": "chapitre_1",
         'number': 'I.A',
@@ -71,7 +72,7 @@ def test_section_valid_cases():
 
     # Cas chapitre hiérarchique avec lettre avec point
     assert parse_section("CHAPITRE I.A. - Premier chapitre") == {
-        'section_name': 'chapitre',
+        'type': BodySection.CHAPTER,
         "level": 1,
         "level_name": "chapitre_1",
         'number': 'I.A',
@@ -80,7 +81,7 @@ def test_section_valid_cases():
 
     # Cas chapitre hiérarchique avec chiffre sans point sans séparateur
     assert parse_section("CHAPITRE 1.1 Premier chapitre") == {
-        'section_name': 'chapitre',
+        'type': BodySection.CHAPTER,
         "level": 1,
         "level_name": "chapitre_1",
         'number': '1.1',
@@ -89,7 +90,7 @@ def test_section_valid_cases():
 
     # Cas article hiérarchique avec chiffre sans point sans séparateur
     assert parse_section("ARTICLE 1.1.1 Premier article") == {
-        'section_name': 'article',
+        'type': BodySection.ARTICLE,
         "level": 2,
         "level_name": "article_2",
         'number': '1.1.1',
@@ -98,7 +99,7 @@ def test_section_valid_cases():
 
     # Cas sous article hiérarchique avec chiffre sans point sans séparateur
     assert parse_section("ARTICLE 1.1.1.1 Premier sous article") == {
-        'section_name': 'sous_article',
+        'type': BodySection.SUB_ARTICLE,
         "level": 3,
         "level_name": "sous_article_3",
         'number': '1.1.1.1',
@@ -107,7 +108,7 @@ def test_section_valid_cases():
 
     # Cas article hiérarchique avec chiffre arabe sans point
     assert parse_section("ARTICLE 1.A.3 - Premier article") == {
-        'section_name': 'article',
+        'type': BodySection.ARTICLE,
         "level": 2,
         "level_name": "article_2",
         'number': '1.A.3',
@@ -115,7 +116,7 @@ def test_section_valid_cases():
     }
     # Cas article hiérarchique avec chiffre arabe avec point
     assert parse_section("ARTICLE 1.A.3. - Premier article") == {
-        'section_name': 'article',
+        'type': BodySection.ARTICLE,
         "level": 2,
         "level_name": "article_2",
         'number': '1.A.3',
@@ -124,7 +125,7 @@ def test_section_valid_cases():
 
     # Cas sous article sans nom avec point
     assert parse_section("1.2. - Sous-article") == {
-        'section_name': 'sous_article',
+        'type': BodySection.SUB_ARTICLE,
         "level": 1,
         "level_name": "sous_article_1",
         'number': '1.2',
@@ -133,7 +134,7 @@ def test_section_valid_cases():
 
     # Cas sous article sans nom sans point
     assert parse_section("1.2 - Sous-article") == {
-        'section_name': 'sous_article',
+        'type': BodySection.SUB_ARTICLE,
         "level": 1,
         "level_name": "sous_article_1",
         'number': '1.2',
@@ -142,7 +143,7 @@ def test_section_valid_cases():
 
     # Cas titre sans nom
     assert parse_section("I - Titre") == {
-        'section_name': 'titre',
+        'type': BodySection.TITLE,
         "level": 0,
         "level_name": "titre_0",
         'number': 'I',
@@ -151,7 +152,7 @@ def test_section_valid_cases():
 
     # Cas article sans nom avec point
     assert parse_section("1. Article directement écrit comme une phrase.") == {
-        'section_name': 'article',
+        'type': BodySection.ARTICLE,
         "level": 0,
         "level_name": "article_0",
         'number': '1',
@@ -160,7 +161,7 @@ def test_section_valid_cases():
 
     # Phrase quelconque
     assert parse_section("Ceci est une phrase.") == {
-        "section_name": "none",
+        "type": BodySection.NONE,
         "level": -1,
         "level_name": "none_-1",
         "number": "",
@@ -169,7 +170,7 @@ def test_section_valid_cases():
 
     # Phrase commençant par une lettre
     assert parse_section("A la bonne journée") == {
-        "section_name": "none",
+        "type": BodySection.NONE,
         "level": -1,
         "level_name": "none_-1",
         "number": "",
@@ -178,7 +179,7 @@ def test_section_valid_cases():
 
     # Phrase commençant par un chiffre arabe
     assert parse_section("1 On écrit directement un exemple") == {
-        "section_name": "none",
+        "type": BodySection.NONE,
         "level": -1,
         "level_name": "none_-1",
         "number": "",
@@ -187,7 +188,7 @@ def test_section_valid_cases():
 
     # Liste (on peut aussi trouver 1°)
     assert parse_section("1) Ceci est une liste") == {
-        "section_name": "none",
+        "type": BodySection.NONE,
         "level": -1,
         "level_name": "none_-1",
         "number": "",
@@ -196,7 +197,7 @@ def test_section_valid_cases():
 
     # Liste
     assert parse_section("- Ceci est une liste") == {
-        "section_name": "none",
+        "type": BodySection.NONE,
         "level": -1,
         "level_name": "none_-1",
         "number": "",
@@ -205,7 +206,7 @@ def test_section_valid_cases():
 
     # Tableau
     assert parse_section("| Ceci est un tableau |") == {
-        "section_name": "none",
+        "type": BodySection.NONE,
         "level": -1,
         "level_name": "none_-1",
         "number": "",
@@ -214,7 +215,7 @@ def test_section_valid_cases():
 
     # Tableau
     assert parse_section("(*) Ceci est une description de tableau") == {
-        "section_name": "none",
+        "type": BodySection.NONE,
         "level": -1,
         "level_name": "none_-1",
         "number": "",

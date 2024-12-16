@@ -4,11 +4,12 @@ from bs4 import BeautifulSoup
 
 from .sentence_rules import is_not_information
 from .utils import clean_markdown
-from .header import parse_header, HEADER_SCHEMA
+from .header import parse_header
 from .main_content import parse_main_content
 from .parse_section import (
     identify_unique_sections, filter_max_level_sections
 )
+from bench_convertisseur_xml.html_schemas import HEADER_SCHEMA, MAIN_SCHEMA
 from bench_convertisseur_xml.utils.html import make_element
 
 TEMPLATE_PATH = Path(__file__).parent / 'template.html'
@@ -16,24 +17,28 @@ TEMPLATE_HTML = open(TEMPLATE_PATH, 'r', encoding='utf-8').read()
 
 def main(input_file_path: Path, output_file_path: Path):
     with open(input_file_path, 'r', encoding='utf-8') as f:
-        content = f.readlines()
+        lines = f.readlines()
 
-    content = [
-        clean_markdown(line) for line in content 
+    lines = [
+        clean_markdown(line) for line in lines 
         if not is_not_information(line)
     ]
 
     # Define sections that will be parsed and detected in this document
-    unique_sections = identify_unique_sections(content)
+    unique_sections = identify_unique_sections(lines)
     authorized_sections = filter_max_level_sections(unique_sections)
 
     soup = BeautifulSoup(TEMPLATE_HTML, features="html.parser")
+    body = soup.body
+    assert body
+
     header = make_element(soup, HEADER_SCHEMA)
-    soup.body.append(header)
+    body.append(header)
+    lines = parse_header(soup, header, lines, authorized_sections)
 
-    content = parse_header(soup, header, content, authorized_sections)
-
-    parse_main_content(soup, content, authorized_sections)
+    main_content = make_element(soup, MAIN_SCHEMA)
+    body.append(main_content)
+    parse_main_content(soup, main_content, lines, authorized_sections)
 
     with open(output_file_path, 'w', encoding='utf-8') as f:
         f.write(soup.prettify())
@@ -58,7 +63,7 @@ if __name__ == "__main__":
     PARSER.add_option(
         "-o",
         "--output",
-        default='output.html',
+        default='./tmp/output.html',
     )
     (options, args) = PARSER.parse_args()
 

@@ -4,3 +4,4 @@ types-requests==2.32.*
 beautifulsoup4==4.12.*
 types-beautifulsoup4==4.12.*
 Markdown==3.7.*
+types-Markdown==3.7.*

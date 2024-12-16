@@ -4,7 +4,7 @@
 import re
 
 from .utils import clean_markdown
-
+from .config import section_from_name
 
 # Numbering patterns
 ROMAN_NUMERALS = r"(?:M{0,4}(?:CM|CD|D?C{0,3})(?:XC|XL|L?X{0,3})(?:IX|IV|V?I{0,3}))"
@@ -110,7 +110,7 @@ def parse_section(line, authorized_sections = None):
     if match_title or match_no_title and (not authorized_sections or level_name in authorized_sections):
 
         section_info = {
-            "section_name": section_name,
+            "type": section_from_name(section_name),
             "level": level,
             "level_name": level_name,
             "number": number,
@@ -120,7 +120,7 @@ def parse_section(line, authorized_sections = None):
     else:
 
         section_info = {
-            "section_name": "none",
+            "type": section_from_name("none"),
             "level": -1,
             "level_name": "none_-1",
             "number": "",

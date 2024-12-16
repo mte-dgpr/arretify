@@ -3,8 +3,13 @@ from typing import List
 from dataclasses import dataclass
 
 @dataclass(frozen=True)
-class ElementSchema:
+class DataElementSchema:
     name: str
     tag_name: str
-    classes: List[str]
     data_keys: List[str]
+
+
+@dataclass(frozen=True)
+class PresentationElementSchema:
+    tag_name: str
+
