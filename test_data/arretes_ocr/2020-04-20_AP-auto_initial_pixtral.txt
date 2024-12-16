@@ -1,13 +1,15 @@
 ```markdown
 # Préfecture
 Direction des Collectivités Locales et des Produits Publics
-Bureau des Foyers Publics et Installations Classées
+Bureau des Forêts Publiques et de l'Environnement
 
-## ARRÊTÉ
+**ARRÊTÉ**
 
-**du 20 AVR. 2020** 
+**du 20 AVR. 2020**
 
-**portant autorisation d'exploiter une unité de valorisation énergétique de combustibles solides de récupération (CSR), de déchets d'activité économique (DAE) et d'ordures ménagères (OM) sur le territoire de la commune de Bantzenheim à la société B+T ÉNERGIE France Sas en référence au titre VIII du livre I et au titre I° du livre V du code de l'environnement**
+**portant**
+
+autorisation d'exploiter une unité de valorisation énergétique de combustibles solides de récupération (CSR), de déchets d'activité économique (DAE) et d'ordures ménagères (OM) sur le territoire de la commune de Bantzenheim à la société B+T ÉNERGIE France Sas en référence au titre VIII du livre I et au titre I° du livre V du code de l'environnement
 
 **Le Préfet du Haut-Rhin**
 Chevalier de la Légion d'Honneur
@@ -150,7 +152,7 @@ Les installations exploitées sont classées selon les rubriques et régimes dé
 | 2971,1  | A          | Installation de production de chaleur ou d’électricité à partir de déchets non dangereux préparés sous forme de combustibles solides de récupération dans une installation de combustion | Installation de production de chaleur à partir de CSR (Combustibles Solides de Récupération), de DAE (Déchets d’Activités Économiques) et d’OM (Déchets Ménagers) | 209,604 t/an (en maximum 60,000 t/an d’OM) |
 | 3110    | A          | Combustion de combustibles dans des installations (y compris pulvérisation thermique) totale égale ou supérieure à 50 MW | Installation de combustion de combustibles solides (Déchets d’Activités Économiques) et d’OM (Déchets Ménagers) | 70 MW |
 | 3520.a  | A          | Installation de déchets : Élimination ou valorisation de déchets dans des installations d’incinération de déchets ou des installations de co-incinération de déchets : a) Quatre déchets non dangereux avec une capacité supérieure à 3 tonnes par heure | Installation de traitement aquatique de catégorie chronique à 200 m de la berge d’un cours d’eau | 25,2 t/h au maximum 22,9 t/h en moyenne annuelle |
-| 4511.2  | D          | La quantité totale susceptible d’être présente dans l’installation : 2. Supérieurs ou égaux à 100 t/mois inférieurs à 200 t | Stockage des résidus d’épuration des fumées / poussières des filières / ou eaux issues du séparateur | 117 t |
+| 4511.2  | D          | La quantité totale susceptible d’être présente dans l’installation : 2. Supérieurs ou égaux à 100 t/mois inférieurs à 200 t | Stockage des résidus d’épuration des fumées / poussières des filières / unités issues du secteur | 117 t |
 
 (*) A (Autorisation) - D (Déclaration)
 
@@ -261,10 +263,8 @@ L’établissement comprenant l’ensemble des installations classées et connex
 
 - trois quais de déchargement des combustibles ;
 ```
-
-
 ```markdown
-# Extrait de document
+7/48
 
 - un hall comprenant les fosses de réception des combustibles et de stockage des déchets ainsi que les installations de manutention pour le transfert des combustibles de la fosse de réception vers le four ;
 - un ensemble quatrechaudière comprenant une tête d'alimentation du four, un four à grille et une chaudière à vapeur d'une puissance de 70 MW ;
@@ -276,33 +276,33 @@ L’établissement comprenant l’ensemble des installations classées et connex
 
 Les installations sont décrites dans un plan de masse annexé au présent arrêté.
 
-## CHAPITRE 1.3 CONFORMITÉ AU DOSSIER DE DEMANDE D'AUTORISATION
+### CHAPITRE 1.3 CONFORMITÉ AU DOSSIER DE DEMANDE D'AUTORISATION
 
-### ARTICLE 1.3.1. CONFORMITÉ
+#### ARTICLE 1.3.1 CONFORMITÉ
 
-Les installations et leurs annexes, objets du présent arrêté, sont disposées, aménagées et exploitées conformément aux plans et données techniques contenus dans les différents dossiers déposés par l'exploitant. En tout état de cause, elles respectent par ailleurs les dispositions du présent arrêté et les réglementations en vigueur.
+Les installations et leurs annexes, objets du présent arrêté, sont disposées, aménagées et exploitées conformément aux plans et données techniques contenus dans les différents dossiers déposés par l'exploitant. En tout état de cause, elles respectent par ailleurs les dispositions du présent arrêté et les réglementations antérieures en vigueur.
 
-## CHAPITRE 1.4 DURÉE DE L'AUTORISATION
+### CHAPITRE 1.4 DURÉE DE L'AUTORISATION
 
-### ARTICLE 1.4.1. DURÉE DE L'AUTORISATION
+#### ARTICLE 1.4.1 DURÉE DE L'AUTORISATION
 
 L'arrêté d'autorisation cesse de produire effet lorsque l'installation n'est pas mise en service ou réalisée dans le délai de deux ans à compter de la notification du présent arrêté, sauf cas de force majeure ou de demande justifiée et acceptée de prorogation de délai conformément à l'article R.181-48 du code de l'environnement.
 
-## CHAPITRE 1.5 MODIFICATIONS ET CESSATION D'ACTIVITÉ
+### CHAPITRE 1.5 MODIFICATIONS ET CESSATION D'ACTIVITÉ
 
-### ARTICLE 1.5.1. PORTER À CONNAISSANCE
+#### ARTICLE 1.5.1 PORTER À CONNAISSANCE
 
 L'exploitant informe le préfet de la mise en service de l'installation. Toute modification apportée par le demandeur aux installations, à leur mode d'utilisation ou à leur voisinage, et de nature à entraîner un changement notable des éléments du dossier de demande d'autorisation environnementale, est portée à la connaissance du Préfet après tous les éléments d'appréciation.
 
-### ARTICLE 1.5.2. MISE À JOUR DES ÉTUDES D'IMPACT ET DE DANGERS
+#### ARTICLE 1.5.2 MISE À JOUR DES ÉTUDES D'IMPACT ET DE DANGERS
 
 Les études d'impact et de dangers sont actualisées à l'occasion de toute modification notoire telle que prévue à l'article R. 181-46 du code de l'environnement. Ces compléments sont systématiquement communiqués au Préfet qui pourra demander une analyse critique d'éléments du dossier justifiant des vérifications particulières, effectuée par un organisme extérieur expert dont le choix est soumis à son approbation. Tous les frais engagés à cette occasion sont supportés par l'exploitant.
 
-### ARTICLE 1.5.3. ÉQUIPEMENTS ABANDONNÉS
+#### ARTICLE 1.5.3 ÉQUIPEMENTS ABANDONNÉS
 
 Les équipements abandonnés ne doivent pas être maintenus dans les installations. Toutefois, lorsque leur enlèvement est incompatible avec les conditions immédiates d'exploitation, des dispositions matérielles permettant leur mise en sécurité et interdisant leur réutilisation afin de garantir la prévention des accidents.
 
-### ARTICLE 1.5.4. TRANSFERT SUR UN AUTRE EMPLACEMENT
+#### ARTICLE 1.5.4 TRANSFERT SUR UN AUTRE EMPLACEMENT
 
 Tout transfert sur un autre emplacement des installations visées sous l'article 1.2 du présent arrêté nécessite une nouvelle demande d'autorisation ou déclaration.
 ```
@@ -313,7 +313,7 @@ La demande d'autorisation de changement d'exploitant est soumise à autorisation
 
 # ARTICLE 1.5.6. CESSATION D'ACTIVITE
 
-Sans préjudice des mesures de l'article R. 512-74 du code de l'environnement, pour l'application des articles R. 512-39.1 à R. 512-39-5, l'usage du site à prévoir en contrepartie est un usage industriel.
+Sans préjudice des mesures de l'article R. 512-74 du code de l'environnement, pour l'application des articles R. 512-39.1 à R. 512-39-5, l'usage du site à prévoir en coutume est un usage industriel.
 
 Lorsque l'installation classée est mise à l'arrêt définitif, l'exploitant notifie au préfet la date de cet arrêt trois mois au moins avant celui-ci.
 
@@ -390,17 +390,20 @@ Toute modification des conditions d'exploitation conduisant à une modification 
 
 L'exploitant informe le préfet, dès qu'il en a connaissance, de tout changement de garant, de tout changement de forme de garanties financières ou encore de toutes modifications des modalités de constitution des garanties financières, ainsi que de tout changement des conditions d'exploitation conduisant à une modification du montant des garanties financières.
 ```
- de l'environnement, absence de garanties financières peut entraîner la suspension du fonctionnement des installations classées visées au présent arrêté, après mise en œuvre des modalités prévues à l'article L. 514-1 de ce code. Conformément à l'article L. 514-3 du même code, pendant la durée de la suspension, l'exploitant est tenu d'assurer à son personnel le paiement des salaires, indemnités et remboursements de toute nature auxquels il avait droit jusqu'alors.
+```markdown
+# ARTICLE 1.7.7. ABSENCE DE GARANTIES FINANCIÈRES
 
-### ARTICLE 1.7.8. APPLICATION DES GARANTIES FINANCIÈRES
+Outre les sanctions rappelées à l'article L. 516-1 du code de l'environnement, absence de garanties financières peut entraîner la suspension du fonctionnement des installations classées visées au présent arrêté, après mise en œuvre des modalités prévues à l'article L. 514-1 de ce code. Conformément à l'article L. 514-3 du même code, pendant la durée de la suspension, l'exploitant est tenu d'assurer à son personnel le paiement des salaires, indemnités et remboursements de toute nature auxquels il avait droit jusqu'alors.
+
+# ARTICLE 1.7.8. APPEL DES GARANTIES FINANCIÈRES
 
 En cas de défaillance de l'exploitant, le Préfet peut faire appel aux garanties financières :
 - lors d'une intervention en cas d'accident ou de pollution mettant en cause directement ou indirectement les installations soumises à garanties financières ;
 - ou pour la mise sous surveillance et le maintien en sécurité des installations soumises à garanties financières lors d'un événement exceptionnel susceptible d'affecter l'environnement.
 
-### ARTICLE 1.7.9. NIVEAU DE L'OBLIGATION DE GARANTIES FINANCIÈRES
+# ARTICLE 1.7.9. LEVÉE DE L'OBLIGATION DE GARANTIES FINANCIÈRES
 
-L'obligation de garanties financières est levée à la cessation d'exploitation des installations nécessitant la mise en place des garanties financières, et après que les travaux de couverture par les garanties financières ont été réalisés.
+L'obligation de garanties financières est levée à la cessation d'exploitation des installations nécessitant la mise en place des garanties financières, et après que les travaux conduits par les garanties financières ont été normalement réalisés.
 
 Conformément à une situation normale est constatée, dans le cadre de la procédure de cessation d'activité prévue aux articles R. 512-74 et R. 512-74-1 à R. 512-79-1, par l'inspecteur des installations classées qui établit un procès-verbal de récolement.
 
@@ -408,13 +411,11 @@ L'obligation de garanties financières est levée par arrêté préfectoral.
 
 En application de l'article R. 516-5 du code de l'environnement, le Préfet peut demander la réalisation, aux frais de l'exploitant, d'une évaluation critique par un tiers expert des éléments techniques justifiant la levée de l'obligation de garanties financières.
 
----
+# TITRE 2 - GESTION DE L'ÉTABLISSEMENT
 
-### TITRE 2 - GESTION DE L'ÉTABLISSEMENT
+## CHAPITRE 2.1 EXPLOITATION DES INSTALLATIONS
 
-#### CHAPITRE 2.1 EXPLOITATION DES INSTALLATIONS
-
-### ARTICLE 2.1.1. OBJECTIFS GÉNÉRAUX
+# ARTICLE 2.1.1. OBJECTIFS GÉNÉRAUX
 
 L'exploitant prend toutes les dispositions nécessaires dans la conception, l'aménagement, l'entretien et l'exploitation des installations pour :
 - limiter le prélèvement et la consommation d'eau ;
@@ -423,9 +424,10 @@ L'exploitant prend toutes les dispositions nécessaires dans la conception, l'am
 - gérer les effluents en fonction de leurs caractéristiques, afin que la réduction des quantités rejetées ;
 - prévenir en toutes circonstances, l'émission, la dissémination ou la diversion, chroniques ou accidentelles, directs ou indirects, de matières ou substances qui peuvent présenter des dangers ou inconvénients pour la commodité de voisinage, pour la santé, la sécurité, la salubrité publique, pour l'agriculture, pour la protection de la nature, de l'environnement et des paysages, pour l'utilisation rationnelle de l'énergie ainsi que pour la conservation des sites et des monuments ainsi que des éléments du patrimoine archéologique.
 
-### ARTICLE 2.1.2. IMPACTS SUR LE MILIEU NATUREL : MESURES D'ÉVITEMENT, DE RÉDUCTION ET DE COMPENSATION DES IMPACTS
+# ARTICLE 2.1.2. IMPACTS SUR LE MILIEU NATUREL : MESURES D'ÉVITEMENT, DE RÉDUCTION ET DE COMPENSATION DES IMPACTS
 
 Sans objet.
+```
 ```markdown
 # ARTICLE 2.1.3. CONSIGNES D'EXPLOITATION
 
@@ -480,7 +482,7 @@ L’exploitant établit et tient à jour un dossier comportant les documents sui
 - les récepissés de déclaration et les prescriptions générales, en cas d’installations soumises à déclaration non converties par l’arrêté d’autorisation ;
 - les arrêtés préfectoraux et les prescriptions générales, en cas d’installations soumises à enregistrement non converties par un arrêté préfectoral d’autorisation ;
 - les arrêtés préfectoraux relatifs aux installations soumises à autorisation, pris en application de la législation relative aux installations classées pour la protection de l’environnement ;
-- tous les documents, auxgetissements, résultats de vérification et registres expéditeurs dans le présent arrêté.
+- tous les documents, auxcriptions, résultats de vérification et registres expéditeurs dans le présent arrêté.
 
 Ces documents peuvent être informatisés, mais dans ce cas les dispositions doivent être prises pour la sauvegarde des données.
 
@@ -545,11 +547,11 @@ Les dispositions appropriées sont prises pour réduire la probabilité des émi
 
 La conception et l'emplacement des dispositifs de sécurité destinés à protéger les appareils contre une suppression intempestive d'air sont tels que cet objet soit satisfait, sans pour cela diminuer l'efficacité ou leur fiabilité.
 
-Les appareils sont entrés dans les registres dans l'air non conforme ainsi que les causes de ces incidents et les remèdes apportés sont consignés dans un registre.
+Les incidents sont enregistrés dans un registre dans lequel les causes de ces incidents et les remèdes apportés sont consignés dans un registre.
 
 ### ARTICLE 3.1.3. ODEURS
 
-En sus des dispositions de l'article 1.2.4.4. du présent arrêté, toutes les dispositions nécessaires sont prises pour que l'établissement ne soit pas à l'origine de gaz odorants, susceptibles d'incommoder le voisinage, de même que à la même ou à la sécurité publique.
+En sus des dispositions de l'article 1.2.4.4. du présent arrêté, toutes les dispositions nécessaires sont prises pour que l'établissement ne soit pas à l'origine de gaz odorants, susceptibles d'incommoder le voisinage, de même que de la sécurité publique.
 
 L'inspection des installations classées peut demander la réalisation d'une campagne d'évaluation de l'impact olfactif de l'installation afin de permettre une meilleure prévention des nuisances.
 ```
@@ -649,7 +651,44 @@ Les valeurs limites d’émission dans l’air sont respectées si :
 - aucune des moyennes journalières mesurées ne dépasse les limites d’émission fixées à l’article 3.2.4 pour le monoxyde de carbone et pour les poussières totales, les substances organiques à l’état de gaz ou de vapeur exprimées en carbone organique total (COT), le chlorure d’hydrogène, le fluorure d’hydrogène, le dioxyde de soufre et les oxydes d’azote ;
 - aucune des moyennes sur une demi-heure mesurées pour les poussières totales, les substances organiques à l’état de gaz ou de vapeur exprimées en carbone organique total, le chlorure d’hydrogène, le fluorure d’hydrogène, le dioxyde de soufre et les oxydes d’azote ne dépasse les valeurs limites définies à l’article 3.2.4 ;
 ```
- de la masse d'eau | Nom de la masse d'eau | Code national de la masse d'eau | Approbvisionnement | Utilisation | Consommation annuelle (m3/an) | Eau souterraine | Nappe phréatique et rhéane | CG001 | Réservoir d'eaux industrielles d'ALSACHIMIE | Refroidissement des moulins | 96 360 | Procédé de traitement des fumées | 8 760
+```markdown
+17/48
+
+- aucune des moyennes mesurées sur la période d'échauffement prévue pour le cadmium et ses composés, ainsi que le thallium et ses composés, le mercure et ses composés, le total des autres métaux (Sb + As + Pb + Cr + Co + Cu + Mn + Ni + V), les dioxines et furanes ne dépasse les valeurs limites définies à l'Article 3.2.4 ;
+- aucune des moyennes sur une demi-heure mesurées pour l'ammoniac ne dépasse les valeurs limites fixées par l'Article 3.2.4 ;
+
+Les moyennes déterminées pendant les périodes d'indisponibilité visées à l'article 9.2.2 ne sont pas prises en compte pour juger du respect des valeurs limites.
+
+Les moyennes sur une demi-heure et les moyennes sur dix minutes sont déterminées pendant la période de fonctionnement effectif (à l'exception des phases de démarrage et d'extinction, longueurs auxquelles doit être incinérée) à partir des valeurs mesurées après soustraction de l'intervalle de confiance à 95 % sur chacune de ces mesures. Cet intervalle de confiance ne doit pas dépasser les pourcentages suivants des valeurs limites d'émission définies à l'Article 3.2.4 :
+- Monoxyde de carbone : 10 % ;
+- Dioxyde de soufre : 20 % ;
+- Ammoniac : 40 % ;
+- Dioxyde d'azote : 20 % ;
+- Poussières totales : 30 % ;
+- Carbone organique total : 30 % ;
+- Chlorure d'hydrogène : 40 % ;
+- Fluorure d'hydrogène : 40 %.
+
+Les moyennes journalières sont calculées à partir des moyennes valides.
+Pour qu'une moyenne journalière soit valide, il faut que, dans une même journée, pas plus de cinq moyennes sur une demi-heure n'aient dû être écartées. Dix moyennes journalières par an peuvent être écartées au maximum.
+
+Les résultats des mesures réalisées pour vérifier le respect des valeurs limites d'émission définies à l'Article 3.2.4 sont rapportés aux conditions normales de température et de pression, c'est-à-dire 273 K, pour une pression de 101,3 hPa, avec une teneur en oxygène de 11 % sur gaz sec, fixées selon les indications de l'annexe I et corrigées selon la formule de l'annexe IV de l'arrêté ministériel du 23 mai 2016 relatif aux installations de production d'échafaud à partir de déchets non dangereux préparés sous forme de combustibles solides de récupération.
+
+# TITRE 4 - PROTECTION DES RESSOURCES EN EAU ET DES MILIEUX AQUATIQUES
+
+## CHAPITRE 4.1 COMPATIBILITÉ AVEC LES OBJECTIFS DE QUALITÉ DU MILIEU
+
+L'implantation et le fonctionnement de l'installation est compatible avec les objectifs de qualité et de quantité des eaux visés au IV de l'Article L. 212-1 du code de l'environnement. Elle respecte les dispositions du schéma directeur d'aménagement et de gestion des eaux et du schéma d'aménagement et de gestion des eaux. La conception et l'exploitation de l'installation permettent de limiter la consommation d'eau et les flux polluants.
+
+## CHAPITRE 4.2 PRÉLÈVEMENTS ET CONSOMMATIONS D'EAU
+
+### ARTICLE 4.2.1. ORIGINE DES APPROVISIONNEMENTS EN EAU
+
+| Origine de la ressource | Nom de la masse d'eau | Code national de la masse d'eau | Approvisionnement | Utilisation | Consommation annuelle (m3/an) |
+|------------------------|-----------------------|-------------------------------|--------------------|------------|----------------------------------|
+| Eau souterraine        | Nappe phréatique et rhéane | CG001 | Réservoir d'eaux industrielles d'ALSACHIMIE | Refroidissement des mâchefer | 96 360 |
+|                        |                       |                            |                    | Procédé de traitement des fumées | 8 760 |
+```
 ```markdown
 | | | Réseau d'eau industrialisé et d'eau usée industrialisée d'ALSACHIME | Procédé de traitement des NOx (SNCR) | 8 760 |
 | --- | --- | --- | --- | --- |
@@ -737,7 +776,7 @@ Les rejets directs ou indirects d'effluents dans la nappe d'eaux souterraines ou
 ```markdown
 # ARTICLE 4.4.3. GESTION DES OUVRAGES : CONCEPTION, DYSPONCTIONNEMENT
 
-La conception et la performance des installations de traitement (ou de pré-traitement) des effluents aqueux permettent de respecter les valeurs limites imposées au rejet par le présent arrêté. Elles sont entretenues, exploitées et surveillées de manière à réduire au minimum les durées d'indisponibilité ou à faire face aux variations des débits d'effluents bruts (débit, température, composition,) et comprise à l'occasion du démarrage ou d'arrêt des installations.
+La conception et la performance des installations de traitement (ou de pré-traitement) des effluents aqueux permettent de respecter les valeurs limites imposées au rejet par le présent arrêté. Elles sont entretenues, exploitées et surveillées de manière à réduire au minimum les durées d'indisponibilité ou à faire face aux variations des débits d'effluents bruts (débit, température, composition,) et compris à l'occasion de démarrage ou d'arrêt des installations.
 
 Si une indisponibilité ou un dysfonctionnement des installations de traitement est susceptible de conduire à un dépassement des valeurs limites imposées par le présent arrêté, l'exploitant prend les dispositions nécessaires pour réduire la pollution en limitant ou en arrêtant si besoin les libérations concernées.
 
@@ -755,15 +794,15 @@ Les résidus de collecte des effluents générés par l'établissement aboutisse
 | **Débit maximum journalier (m³/j)**                    | 5        | 238      | 4        |
 | **Traitement avant rejet**                              | Neutralisation (station PIC ALSACHIMIE) | Décanteur/déhuileur puis neutralisation (station PIC ALSACHIMIE) | Fosse septique puis neutralisation (station PIC ALSACHIMIE) |
 | **Point de prélèvement**                               | Avant de la connexion avec l'égout (eaux usées ALSACHIMIE) | Avant du décanteur/déhuileur ou après de la connexion avec l'égout (eaux usées ALSACHIMIE) | Avant de la fosse et avant de la connexion avec l'égout (eaux usées ALSACHIMIE) |
-| **Exutoire du rejet**                                  | Rejet à Nord 1 à du réseau de ALSACHIMIE, qui se déverse dans le Grand Canal d'Alsace |
+| **Exutoire du rejet**                                  | Rejet à Nord 1 à du réseau et ALSACHIMIE, qui se déverse dans le Grand Canal d'Alsace |
 
 | Point de rejet vers le réseau « Sud » de ALSACHIMIE | « 0122 » |
 |------------------------------------------------------|----------|
-| **Nature des effluents**                             | Eaux pluviales de toiture en cas d'excédent pur rapport aux besoins du bain de refroidissement des mâchefers |
+| **Nature des effluents**                             | Eaux pluviales de toiture en cas d'excédent pur rapport aux besoins du bain de refroidissement des machines |
 | **Débit maximum journalier (m³/j)**                 | 129      |
 | **Traitement avant rejet**                           | Aucun    |
-| **Point de prélèvement**                             | Avant de la connexion avec l'égout (eaux usées ALSACHIMIE) |
-| **Exutoire du rejet**                                | Rejet à Sud à du réseau de ALSACHIMIE, qui se déverse dans le Grand Canal d'Alsace |
+| **Point de prélèvement**                            | Avant de la connexion avec l'égout (eaux usées ALSACHIMIE) |
+| **Exutoire du rejet**                               | Rejet à Sud à du réseau et ALSACHIMIE, qui se déverse dans le Grand Canal d'Alsace |
 
 Les points de rejets ainsi définis figurent sur le plan annexé au présent arrêté. Leurs coordonnées précises (Lambert II étendu) sont tenues à disposition de l'inspection des installations classées.
 
@@ -818,39 +857,45 @@ L'exploitant est tenu de respecter, avant mélange avec les eaux de la société
 ```markdown
 22/48
 
-| Paramètre                  | Code SANDRE | Valeur limite       |
-|----------------------------|-------------|---------------------|
-| Hydrocarbures totaux       | 7009        | 5 mg/l              |
-| Fluorures                  | 7073        | 15 mg/l             |
-| Pb et ses composés        | 1382        | 0,1 mg/l            |
-| Cr et ses composés        | 1389        | 0,1 mg/l (dont Cr^2+)|
-| Cu et ses composés        | 1392        | 0,25 mg/l           |
-| Ni et ses composés        | 1386        | 0,1 mg/l            |
-| Zn et ses composés        | 1383        | 0,8 mg/l            |
+| Paramètre                  | Code SANDRE | Valeur limite             |
+|----------------------------|-------------|---------------------------|
+| Hydrocarbures totaux       | 7009        | 5 mg/l                    |
+| Fluorures                  | 7073        | 15 mg/l                   |
+| Pb et ses composés        | 1382        | 0,1 mg/l                  |
+| Cr et ses composés        | 1389        | 0,1 mg/l (dont Cr<sup>6+</sup> 0,05 mg/l) |
+| Cu et ses composés        | 1392        | 0,25 mg/l                 |
+| Ni et ses composés        | 1386        | 0,1 mg/l                  |
+| Zn et ses composés        | 1383        | 0,8 mg/l                  |
 
-### Article 4.4.6.2. Valeurs limites d’émission des eaux domestiques
+**Article 4.4.6.2. Valeurs limites d’émission des eaux domestiques**
+
 Les eaux domestiques sont traitées et évacuées conformément aux règlements en vigueur.
 
-### Article 4.4.6.3. Valeurs limites d’émission des eaux exclusivement pluviales
+**Article 4.4.6.3. Valeurs limites d’émission des eaux exclusivement pluviales**
+
 L’exploitant est tenu de respecter, en sortie des séparateurs d’hydrocarbures et avant mélange des eaux pluviales avec les eaux de la société Alsachimie implantée sur le site, les valeurs limites en concentrations définies ci-après :
 
-| Paramètre                  | Code SANDRE | Valeur limite       |
-|----------------------------|-------------|---------------------|
-| Température               | 1301        | 30°C                |
-| pH                        | 1302        | Compris entre 5,5 et 8,5 |
-| MES† (Matériaux En Suspension Totales) | 1305        | 100 mg/l            |
-| DCO (Demande Chimique en Oxygène) | 1314        | 300 mg/l            |
-| Hydrocarbures totaux       | 7009        | 5 mg/l              |
-| AOX                        | 1106        | 1 mg/l              |
+| Paramètre                  | Code SANDRE | Valeur limite             |
+|----------------------------|-------------|---------------------------|
+| Température               | 1301        | 30°C                      |
+| pH                        | 1302        | Compris entre 5,5 et 8,5   |
+| MES† (Matériaux En Suspension Totales) | 1305        | 100 mg/l                  |
+| DCO (Demande Chimique en Oxygène) | 1314        | 300 mg/l                  |
+| Hydrocarbures totaux       | 7009        | 5 mg/l                    |
+| AOX                        | 1106        | 1 mg/l                    |
 
 Les eaux pluviales polluées et collectées dans les installations sont éliminées vers les filières de traitement des déchets appropriées. En l’absence de pollution prévisible caractérisée, elles peuvent être évacuées vers le milieu récepteur dans les limites autorisées par le présent arrêté.
 
-## TITRE 5 - DÉCHETS
+---
 
-### CHAPITRE 5.1 PRINCIPES DE GESTION
+**TITRE 5 - DÉCHETS**
 
-#### ARTICLE 5.1.1. LIMITATION DE LA PRODUCTION DE DÉCHETS
+**CHAPITRE 5.1 PRINCIPES DE GESTION**
+
+**ARTICLE 5.1.1. LIMITATION DE LA PRODUCTION DE DÉCHETS**
+
 L’exploitant prend toutes les dispositions nécessaires dans la conception, l’aménagement, et l’exploitation de ses installations pour :
+
 - en priorité, prévenir et réduire la production et la nocivité des déchets et en favorisant le réemploi, diminuer les incidences globales de l’utilisation des ressources et améliorer l’efficacité de leur utilisation ;
 - assurer une bonne gestion des déchets de son entreprise en privilégiant, dans l’ordre :
   a) la préparation en vue de la réutilisation ;
@@ -858,7 +903,8 @@ L’exploitant prend toutes les dispositions nécessaires dans la conception, l�
   c) toute autre valorisation, notamment la valorisation énergétique ;
   d) l’élimination.
 
-#### ARTICLE 5.1.2. SÉPARATION DES DÉCHETS
+**ARTICLE 5.1.2. SÉPARATION DES DÉCHETS**
+
 L’exploitant effectue à l’intérieur de son établissement la séparation des déchets dangereux et non dangereux de façon à assurer leur orientation dans les filières autorisées adaptées à leur nature et à leur dangerosité. Les déchets dangereux sont définis par l’article R. 541-8 du code de l’environnement.
 ```
 ```markdown
@@ -1198,21 +1244,18 @@ Toutes les alarmes de l’installation sont reportées en salle de contrôle de 
 Le bâtiment abritant la chaufferie comporte au moins 10 % de surface soufflable ne résistant pas à une suppression de 4.9 mbar. Cette surface est composée de 90 m² de bardage légers. L’exploitant tient à disposition de l’inspection les éléments justifiant des caractéristiques des surfaces soufflables installées.
 Ces surfaces soufflables sont disposées de façon à ne pas produire de projection à hauteur d’homme en cas d’explosion.
 ```
-
-
-```
 # CHAPITRE 8.4 DISPOSITIF DE RETENTION DES POLLUTIONS ACCIDENTELLES
 
 ## ARTICLE 8.4.1. RETENTIONS ET CONFINEMENT
 
 ### Article 8.4.1.1. Capacité de rétention
 
-Tout stockage d'un liquide susceptible de créer une pollution des eaux ou des sols est associé à une capacité de rétention dont le volume est au moins égal à la plus grande des deux valeurs suivante :
+Tout stockage d’un liquide susceptible de créer une pollution des eaux ou des sols est associé à une capacité de rétention dont le volume est au moins égal à la plus grande des deux valeurs suivantes :
 
 - 100 % de la capacité du plus grand réservoir ;
 - 50 % de la capacité totale des réservoirs associés.
 
-Cette disposition n'est pas applicable aux bassins de traitement des eaux résiduaires.
+Cette disposition n’est pas applicable aux bassins de traitement des eaux résiduaires.
 
 Pour les stockages de récipients de capacité unitaire inférieure ou égale à 250 litres, la capacité de rétention est au moins égale à :
 
@@ -1222,42 +1265,38 @@ Pour les stockages de récipients de capacité unitaire inférieure ou égale à
 
 ### Article 8.4.1.2. Étanchéité et résistance aux actions physique-chimiques
 
-La capacité de rétention est conçue aux produits qu'elle pourrait contenir et résistante à l'action physique et chimique des fluides. Il en est de même pour son dispositif d'obturation qui est maintenu fermé.
+La capacité de rétention est donnée aux produits qui peuvent contenir et résister à l’action physique et chimique des fluides. Il en est de même pour son dispositif d’obturation qui est maintenu fermé.
 
-Les produits récupérés en cas d'accident ne peuvent être rejetés que dans des conditions conformes au présent arrêté ou sont éliminés comme les déchets.
+Les produits récupérés en cas d’accident ne peuvent être rejetés que dans des conditions conformes au présent arrêté ou sont éliminés comme les déchets.
 
 Les réservoirs ou récipients contenant des produits incompatibles ne sont pas associés à une même rétention.
 
-Le stockage des liquides inflammables, ainsi que des autres produits toxiques ou dangereux pour l'environnement, n'est permis que le niveau d'eau que dans des réservoirs en fosse maçonnée, ou assimilée, et pour les liquides inflammables, dans les conditions énoncées ci-dessus.
+Le stockage des liquides inflammables, ainsi que des autres produits toxiques ou dangereux pour l’environnement, n’est permis que le niveau d’eau que dans des réservoirs en fosse maçonnée, ou assimilée, et pour les liquides inflammables, dans les conditions énoncées ci-dessus.
 
-### Article 8.4.1.3. Gestion des eaux pluviales pour les stockages à l'air libre
+### Article 8.4.1.3. Gestion des eaux pluviales pour les stockages à l’air libre
 
-Pour les stockages à l'air libre, les rétentions associées sont vidées dès que possible des eaux pluviales s'y versant.
+Pour les stockages à l’air libre, les rétentions associées sont vidées dès que possible des eaux pluviales s’y versant.
 
 ### Article 8.4.1.4. Sol des aires et des locaux de stockage
 
-Les sols des voies de circulation et de garage, des aires et des locaux d'entreposage ou de traitement des déchets et des locaux de stockage ou de manipulation des matières dangereuses pour l'homme ou susceptibles de créer une pollution des eaux ou du sol sont revêtus de béton ou de bitume, ou de matériaux ayant un niveau d'étanchéité similaire et équipés de bon à pouvoir recueillir les eaux de lavage, les matières répandues accidentellement et les eaux d'extinction d'incendie éventuelles.
+Les sols des voies de circulation et de garage, des aires et des locaux d’entreposage ou de traitement des déchets et des locaux de stockage ou de manipulation des matières dangereuses pour l’homme ou susceptibles de créer une pollution des eaux ou du sol sont revêtus de béton ou de bitume, ou de matériaux ayant un niveau d’étanchéité similaire et équipé de bon à pouvoir recueillir les eaux de lavage, les matières répandues accidentellement et les eaux d’extinction d’incendie éventuelles.
 
 Les parois de la fosse à déchets sont étanches.
 
-### Article 8.4.1.5. Gestion des eaux susceptibles d'être polluées (dont les éventuelles eaux d'extinction incendie)
+### Article 8.4.1.5. Gestion des eaux susceptibles d’être polluées (dont les éventuelles eaux d’extinction incendie)
 
-Toutes mesures sont prises pour recueillir l'ensemble des eaux et écoulements susceptibles d'être pollués lors d'un sinistre, et comporter les eaux utilisées pour l'extinction d'un incendie et le refroidissement, afin que celles-ci soient récupérées ou traitées pour prévenir toute pollution des sols, des eaux ou du milieu naturel.
+Toutes mesures sont prises pour recueillir l’ensemble des eaux et écoulements susceptibles d’être polluées lors d’un sinistre, et comporter les eaux utilisées pour l’extinction d’un incendie et le refroidissement, afin que celles-ci soient récupérées ou traitées pour prévenir toute pollution des sols, des eaux ou du milieu naturel.
 
-Les frais d'assainissement susceptibles de recueillir l'ensemble des eaux polluées lors d'un accident ou d'un incendie (y compris les eaux d'extinction et de refroidissement) sont raccordés au réseau de confinement étanche aux produits collectés et d'une capacité de 20 000 m³ de la société Alsachimie, situé en amont du rejet Nord I.
-```
-
-
-```
+Les frais d’assainissement susceptibles de recueillir l’ensemble des eaux polluées lors d’un accident ou d’un incendie (y compris les eaux d’extinction et de refroidissement) sont raccordés au bassin de confinement étanche aux produits collectés et d’une capacité de 20 000 m³ de la société Alsachimie, situé en amont du rejet Nord I.
 # CHAPITRE 8.5 DISPOSITIONS D'EXPLOITATION
 
-## ARTICLE 8.5.1 SURVEILLANCE DE L'INSTALLATION
+## ARTICLE 8.5.1. SURVEILLANCE DE L'INSTALLATION
 
 L'exploitant désigne une ou plusieurs personnes référencées ayant une connaissance de la conduite de l'installation, des dangers et inconvénients que son exploitation induit, des produits utilisés ou stockés dans l'installation et des dispositions à mettre en œuvre en cas d'incident.
 
 Les personnes étrangères à l'établissement n'ont pas l'accès libre aux installations.
 
-## ARTICLE 8.5.2 TRAVAUX DE RÉPARATION OU D'AMÉNAGEMENT
+## ARTICLE 8.5.2. TRAVAUX DE RÉPARATION OU D'AMÉNAGEMENT
 
 Les travaux de réparation ou d'aménagement ne peuvent être effectués qu'après délivrance :
 
@@ -1272,13 +1311,13 @@ Dans les parties de l'installation présentant des risques d'incendie ou d'explo
 
 Une vérification de la bonne réalisation des travaux est effectuée par l'exploitant ou son représentant avant la reprise de l'activité. Elle fait l'objet d'un enregistrement et est tenue à la disposition de l'inspection des installations classées.
 
-## ARTICLE 8.5.3 VÉRIFICATION PERIODIQUE ET MAINTENANCE DES ÉQUIPEMENTS
+## ARTICLE 8.5.3. VÉRIFICATION PERIODIQUE ET MAINTENANCE DES ÉQUIPEMENTS
 
 L'exploitant assure ou fait effectuer la vérification périodique et la maintenance des matériels de sécurité et de lutte contre l'incendie mis en place (extincteurs, échelles, systèmes de détection et d'extinction, vannes d'isolement des eaux d'extinction) ainsi que des installations électriques et de chauffage, conformément aux références en vigueur.
 
 Les vérifications périodiques de ces matériels sont enregistrées sur un registre, tenu à la disposition de l'inspection des installations classées, sur lequel sont également mentionnées les suites données à ces vérifications.
 
-## ARTICLE 8.5.4 CONSIGNES D'EXPLOITATION
+## ARTICLE 8.5.4. CONSIGNES D'EXPLOITATION
 
 Sans préjudice des dispositions du code du travail, des consignes sont établies, tenues à jour et mises à disposition pour application par le personnel.
 
@@ -1290,10 +1329,8 @@ Ces consignes indiquent notamment :
 - l'interdiction de tout brûlage à l'air libre ;
 - l'obligation du "permis d'intervention" ou du "permis de feu" pour les parties concernées de l'installation ;
 - les conditions de conservation et de stockage des produits, notamment les précautions à prendre pour l'emploi et le stockage de produits incompatibles ;
-- les procédures d'arrêt d'urgence et de mise en sécurité de l'installation (électricité, ventilation, climatisation, chauffage, fermeture des portes coupe-feu, obturation des échelles d'égouts notamment) ;
+- les procédures d'arrêt d'urgence et de mise en sécurité de l'installation (électricité, ventilation, climatisation, chauffage, fermeture des portes coupe-feu, obturation des échelles, égouts notamment) ;
 - les mesures permettant de tenir à jour en permanence et de porter à la connaissance des services d'incendie et de secours la localisation des matières dangereuses ;
-```
-```
 ```markdown
 # 14/48
 
@@ -1334,7 +1371,28 @@ Les poteaux incendie assurent un débit minimum simultané de 180 mètres cubes 
 - de deux canons à mousse positionnés de façon à intervenir au sein de la fosse de stockage de déchets, assurant un débit de 1200 litres par minute chacun. L’exploitant dispose de réserves en émulsion adaptées aux produits présents sur le site, d’une capacité de 4200 litres. (i.e. assurance de la pérennité de l’agent moussant et tient à disposition de l’Inspection les justificatifs de bon dimensionnement des quantités disponibles au vu des risques à défendre ;
 - de systèmes de pulvérisation d’eau pour la cabine de commande des grappins et au niveau de la trémie ;
 - de deux dispositifs irisés d’eau au niveau des espaces de stationnement des grappins ;
-- d extincteurs répartis dans l’installation, sur les aires extérieures et dans les locaux présentant des risques spécifiques, à proximité des dégagements, bacs vaisselle et installations électriques. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entretenir. Les agents d extincteurs sont aptes à utiliser les extincteurs et à les entre
+- d extincteurs répartis dans l’installation, sur les aires extérieures et dans les locaux présentant des risques spécifiques, à proximité des dégagements, bacs vaisselle et installations électriques. Les agents d extincteurs sont répartis de manière à être facilement accessibles. Les dimensions du nombre et de la nature des extincteurs est conforme à un référentiel reconnu ;
+- de Robinetts d’Incendie Armés (RIA) complètes à un surpresseur leur assurant une alimentation en eau quel que soit leur positionnement. Le dimensionnement du nombre et de l’implantation des RIA est conforme à un référentiel reconnu ;
+- d’une colonne sèche par cage d’escalier, d’un diamètre nominal DN100 avec une prise incendie DN65 et deux prises DN40 à chaque niveau. Le poteau incendie le plus proche est situé à 60 mètres au maximum des raccords d’alimentation des deux colonnes sèches (tracé réel des voies) ;
+- pour les locaux à risque incendie abritant des produits chimiques, d’une réserve de sable meuble et sec adaptée aux risques, sans être inférieure à 100 litres et des pelles ainsi qu’un neutralisant adapté au risque en cas d’épanchement ;
+
+Les moyens de lutte contre l’incendie sont capables de fonctionner efficacement quelle que soit la température de l’installation et notamment en période de gel.
+
+### ARTICLE 8.7.2. ENTRETIEN DES MOYENS D’INTERVENTION
+
+Les équipements sont maintenus en bon état, réparés et facilement accessibles.
+L’exploitant doit pouvoir justifier, après l’inspection des installations classées, de l’exécution de ces dispositions. Les matériels de sécurité et de lutte contre l’incendie sont vérifiés périodiquement selon les références en vigueur. L’exploitant fixe les conditions de maintenance, de vérifications périodiques et les conditions d’essais périodiques de ces matériels.
+Les données, les modalités de ces contrôles et les observations constatées doivent être inscrites sur un registre tenu à la disposition des services de la protection civile, d’incendie et de secours et de l’Inspection des installations classées.
+Sans préjudice d’autres réglementations, l’exploitant fait notamment vérifier périodiquement par un organisme extérieur les matériels de sécurité et de lutte contre l’incendie suivants selon la fréquence définie ci-dessous :
+
+| Type de matériel                  | Fréquence minimale de contrôle | dc |
+|----------------------------------|------------------------------|---|
+| Extincteur                       | Annuelle                     |   |
+| Robinetts d’Incendie Armés (RIA) | Annuelle                     |   |
+| Installation de détection incendie| Semestrielle                 |   |
+| Installations de désenfumage      | Annuelle                     |   |
+| Portes coupe-feu                  | Annuelle                     |   |
+```
 ```markdown
 # TITRE 9 - CONDITIONS PARTICULIÈRES APPLICABLES À CERTAINES INSTALLATIONS DE L'ÉTABLISSEMENT
 
@@ -1713,9 +1771,9 @@ Le rapport de l’exploitant est également adressé à la commission de suivi d
 
 La présente installation est soumise au système d’échange de quotas de gaz à effet de serre car elle exerce les activités suivantes, listées au tableau de l’article R229-5 du code de l’environnement :
 
-| Activité                                                                 | Seuils | Puissance/capacité | Gaz à effet de serre concerné          |
-|--------------------------------------------------------------------------|--------|--------------------|---------------------------------------|
-| Combustion de combustibles dans des installations dont la puissance calorifique totale de combustion est supérieure à 20 MW (à l’exception des installations d’incinération de déchets dangereux ou municipaux) | 20 MW  | 70 MW              | Dioxyde de carbone                   |
+| Activité                                                                 | Seuils | Puissance/capacité | Gaz à effet de serre concerné       |
+|--------------------------------------------------------------------------|--------|--------------------|------------------------------------|
+| Combustion de combustibles dans des installations dont la puissance calorifique totale de combustion est supérieure à 20 MW (à l’exception des installations d’incinération de déchets dangereux ou municipaux) | 20 MW  | 70 MW              | Dioxyde de carbone                |
 
 Cette autorisation d’exploiter vaut autorisation d’émettre des gaz à effet de serre prévue à l’article L.229-6 du code de l’environnement au titre de la Directive 2003/87/CE.
 
@@ -1839,414 +1897,71 @@ D
 E
 F
 ```
-://
-
 ```markdown
 # Document 1
 
 ## Introduction
 
-Ce document présente les étapes nécessaires pour convertir un document au format Markdown. Il est important de suivre ces étapes pour garantir que le document est correctement formaté.
+Ce document présente les différentes étapes de la méthode XYZ pour résoudre les problèmes de mathématiques avancées. La méthode XYZ est une approche innovante qui combine des techniques de calcul et des concepts théoriques pour obtenir des solutions précises et efficaces.
 
-### Étape 1 : Préparation du document
+### Étape 1 : Compréhension du problème
 
-Avant de commencer la conversion, assurez-vous que le document est prêt pour la conversion. Cela inclut la vérification de la grammaire et de l'orthographe.
+La première étape consiste à comprendre le problème en identifiant les variables et les équations impliquées. Il est crucial de bien analyser les données fournies pour éviter les erreurs dans les étapes suivantes.
 
-### Étape 2 : Conversion du document
+### Étape 2 : Formulation des équations
 
-Utilisez un outil de conversion pour transformer le document au format Markdown. Il existe plusieurs outils disponibles en ligne qui peuvent être utilisés pour cette tâche.
+Une fois le problème compris, il est nécessaire de formuler les équations mathématiques correspondantes. Cette étape nécessite une bonne maîtrise des concepts de base en algèbre et en analyse.
 
-### Étape 3 : Vérification du document
+### Étape 3 : Résolution des équations
 
-Après la conversion, vérifiez le document pour vous assurer qu'il est correctement formaté. Cela inclut la vérification des titres, des paragraphes et des listes.
+La troisième étape consiste à résoudre les équations formulées à l'étape précédente. Cette étape peut être réalisée manuellement ou à l'aide d'outils informatiques pour gagner du temps et réduire les erreurs.
+
+### Étape 4 : Vérification des résultats
+
+Enfin, il est important de vérifier les résultats obtenus pour s'assurer qu'ils sont corrects. Cette étape permet de détecter et de corriger les erreurs éventuelles.
 
 ## Conclusion
 
-La conversion d'un document au format Markdown est un processus simple si vous suivez les étapes correctement. Assurez-vous de vérifier le document après la conversion pour garantir qu'il est correctement formaté.
+La méthode XYZ est une approche puissante pour résoudre les problèmes de mathématiques avancées. En suivant les étapes décrites ci-dessus, les utilisateurs peuvent obtenir des solutions précises et efficaces.
+
+---
 
 # Document 2
 
+## Table des matières
+
+1. Introduction
+2. Méthodologie
+3. Résultats
+4. Discussion
+5. Conclusion
+
 ## Introduction
 
-Ce document est destiné à être converti au format Markdown. Il contient des informations importantes qui doivent être correctement formatées pour une meilleure lisibilité.
+Ce rapport présente les résultats d'une étude sur les effets de la pollution atmosphérique sur la santé humaine. L'étude a été réalisée sur une période de deux ans dans une région urbaine densément peuplée.
 
-### Étape 1 : Préparation du document
+## Méthodologie
 
-Avant de commencer la conversion, assurez-vous que le document est prêt pour la conversion. Cela inclut la vérification de la grammaire et de l'orthographe.
+Les données ont été collectées à partir de plusieurs sources, y compris les stations de surveillance de la qualité de l'air et les hôpitaux locaux. Les variables étudiées incluent les niveaux de particules fines (PM2.5), les oxydes d'azote (NOx) et les composés organiques volatils (COV).
 
-### Étape 2 : Conversion du document
+## Résultats
 
-Utilisez un outil de conversion pour transformer le document au format Markdown. Il existe plusieurs outils disponibles en ligne qui peuvent être utilisés pour cette tâche.
+Les résultats montrent une corrélation significative entre les niveaux de pollution atmosphérique et les taux de maladies respiratoires. Les régions avec des niveaux élevés de PM2.5 et de NOx ont montré une augmentation des hospitalisations pour asthme et bronchite.
 
-### Étape 3 : Vérification du document
+## Discussion
 
-Après la conversion, vérifiez le document pour vous assurer qu'il est correctement formaté. Cela inclut la vérification des titres, des paragraphes et des listes.
+Les résultats de l'étude soulignent l'importance de la réduction de la pollution atmosphérique pour améliorer la santé publique. Des mesures telles que la limitation des émissions des véhicules et l'amélioration des systèmes de filtration de l'air peuvent avoir un impact positif sur la santé des habitants.
 
 ## Conclusion
 
-La conversion d'un document au format Markdown est un processus simple si vous suivez les étapes correctement. Assurez-vous de vérifier le document après la conversion pour garantir qu'il est correctement formaté.
+En conclusion, cette étude met en évidence les effets néfastes de la pollution atmosphérique sur la santé humaine. Des actions urgentes sont nécessaires pour réduire la pollution et protéger la santé des populations urbaines.
+
+---
 
 # Document 3
 
-## Introduction
-
-Ce document est destiné à être converti au format Markdown. Il contient des informations importantes qui doivent être correctement formatées pour une meilleure lisibilité.
-
-### Étape 1 : Préparation du document
-
-Avant de commencer la conversion, assurez-vous que le document est prêt pour la conversion. Cela inclut la vérification de la grammaire et de l'orthographe.
-
-### Étape 2 : Conversion du document
-
-Utilisez un outil de conversion pour transformer le document au format Markdown. Il existe plusieurs outils disponibles en ligne qui peuvent être utilisés pour cette tâche.
-
-### Étape 3 : Vérification du document
-
-Après la conversion, vérifiez le document pour vous assurer qu'il est correctement formaté. Cela inclut la vérification des titres, des paragraphes et des listes.
-
-## Conclusion
-
-La conversion d'un document au format Markdown est un processus simple si vous suivez les étapes correctement. Assurez-vous de vérifier le document après la conversion pour garantir qu'il est correctement formaté.
-
-# Document 4
-
-## Introduction
-
-Ce document est destiné à être converti au format Markdown. Il contient des informations importantes qui doivent être correctement formatées pour une meilleure lisibilité.
-
-### Étape 1 : Préparation du document
-
-Avant de commencer la conversion, assurez-vous que le document est prêt pour la conversion. Cela inclut la vérification de la grammaire et de l'orthographe.
-
-### Étape 2 : Conversion du document
-
-Utilisez un outil de conversion pour transformer le document au format Markdown. Il existe plusieurs outils disponibles en ligne qui peuvent être utilisés pour cette tâche.
-
-### Étape 3 : Vérification du document
-
-Après la conversion, vérifiez le document pour vous assurer qu'il est correctement formaté. Cela inclut la vérification des titres, des paragraphes et des listes.
-
-## Conclusion
-
-La conversion d'un document au format Markdown est un processus simple si vous suivez les étapes correctement. Assurez-vous de vérifier le document après la conversion pour garantir qu'il est correctement formaté.
-
-# Document 5
-
-## Introduction
-
-Ce document est destiné à être converti au format Markdown. Il contient des informations importantes qui doivent être correctement formatées pour une meilleure lisibilité.
-
-### Étape 1 : Préparation du document
-
-Avant de commencer la conversion, assurez-vous que le document est prêt pour la conversion. Cela inclut la vérification de la grammaire et de l'orthographe.
-
-### Étape 2 : Conversion du document
-
-Utilisez un outil de conversion pour transformer le document au format Markdown. Il existe plusieurs outils disponibles en ligne qui peuvent être utilisés pour cette tâche.
-
-### Étape 3 : Vérification du document
-
-Après la conversion, vérifiez le document pour vous assurer qu'il est correctement formaté. Cela inclut la vérification des titres, des paragraphes et des listes.
-
-## Conclusion
-
-La conversion d'un document au format Markdown est un processus simple si vous suivez les étapes correctement. Assurez-vous de vérifier le document après la conversion pour garantir qu'il est correctement formaté.
-
-# Document 6
-
-## Introduction
-
-Ce document est destiné à être converti au format Markdown. Il contient des informations importantes qui doivent être correctement formatées pour une meilleure lisibilité.
-
-### Étape 1 : Préparation du document
-
-Avant de commencer la conversion, assurez-vous que le document est prêt pour la conversion. Cela inclut la vérification de la grammaire et de l'orthographe.
-
-### Étape 2 : Conversion du document
-
-Utilisez un outil de conversion pour transformer le document au format Markdown. Il existe plusieurs outils disponibles en ligne qui peuvent être utilisés pour cette tâche.
-
-### Étape 3 : Vérification du document
-
-Après la conversion, vérifiez le document pour vous assurer qu'il est correctement formaté. Cela inclut la vérification des titres, des paragraphes et des listes.
-
-## Conclusion
-
-La conversion d'un document au format Markdown est un processus simple si vous suivez les étapes correctement. Assurez-vous de vérifier le document après la conversion pour garantir qu'il est correctement formaté.
-
-# Document 7
-
-## Introduction
-
-Ce document est destiné à être converti au format Markdown. Il contient des informations importantes qui doivent être correctement formatées pour une meilleure lisibilité.
-
-### Étape 1 : Préparation du document
-
-Avant de commencer la conversion, assurez-vous que le document est prêt pour la conversion. Cela inclut la vérification de la grammaire et de l'orthographe.
-
-### Étape 2 : Conversion du document
-
-Utilisez un outil de conversion pour transformer le document au format Markdown. Il existe plusieurs outils disponibles en ligne qui peuvent être utilisés pour cette tâche.
-
-### Étape 3 : Vérification du document
-
-Après la conversion, vérifiez le document pour vous assurer qu'il est correctement formaté. Cela inclut la vérification des titres, des paragraphes et des listes.
-
-## Conclusion
-
-La conversion d'un document au format Markdown est un processus simple si vous suivez les étapes correctement. Assurez-vous de vérifier le document après la conversion pour garantir qu'il est correctement formaté.
-
-# Document 8
-
-## Introduction
-
-Ce document est destiné à être converti au format Markdown. Il contient des informations importantes qui doivent être correctement formatées pour une meilleure lisibilité.
-
-### Étape 1 : Préparation du document
-
-Avant de commencer la conversion, assurez-vous que le document est prêt pour la conversion. Cela inclut la vérification de la grammaire et de l'orthographe.
-
-### Étape 2 : Conversion du document
-
-Utilisez un outil de conversion pour transformer le document au format Markdown. Il existe plusieurs outils disponibles en ligne qui peuvent être utilisés pour cette tâche.
-
-### Étape 3 : Vérification du document
-
-Après la conversion, vérifiez le document pour vous assurer qu'il est correctement formaté. Cela inclut la vérification des titres, des paragraphes et des listes.
-
-## Conclusion
-
-La conversion d'un document au format Markdown est un processus simple si vous suivez les étapes correctement. Assurez-vous de vérifier le document après la conversion pour garantir qu'il est correctement formaté.
-
-# Document 9
-
-## Introduction
-
-Ce document est destiné à être converti au format Markdown. Il contient des informations importantes qui doivent être correctement formatées pour une meilleure lisibilité.
-
-### Étape 1 : Préparation du document
-
-Avant de commencer la conversion, assurez-vous que le document est prêt pour la conversion. Cela inclut la vérification de la grammaire et de l'orthographe.
-
-### Étape 2 : Conversion du document
-
-Utilisez un outil de conversion pour transformer le document au format Markdown. Il existe plusieurs outils disponibles en ligne qui peuvent être utilisés pour cette tâche.
-
-### Étape 3 : Vérification du document
-
-Après la conversion, vérifiez le document pour vous assurer qu'il est correctement formaté. Cela inclut la vérification des titres, des paragraphes et des listes.
-
-## Conclusion
-
-La conversion d'un document au format Markdown est un processus simple si vous suivez les étapes correctement. Assurez-vous de vérifier le document après la conversion pour garantir qu'il est correctement formaté.
-
-# Document 10
-
-## Introduction
-
-Ce document est destiné à être converti au format Markdown. Il contient des informations importantes qui doivent être correctement formatées pour une meilleure lisibilité.
-
-### Étape 1 : Préparation du document
-
-Avant de commencer la conversion, assurez-vous que le document est prêt pour la conversion. Cela inclut la vérification de la grammaire et de l'orthographe.
-
-### Étape 2 : Conversion du document
-
-Utilisez un outil de conversion pour transformer le document au format Markdown. Il existe plusieurs outils disponibles en ligne qui peuvent être utilisés pour cette tâche.
-
-### Étape 3 : Vérification du document
-
-Après la conversion, vérifiez le document pour vous assurer qu'il est correctement formaté. Cela inclut la vérification des titres, des paragraphes et des listes.
-
-## Conclusion
-
-La conversion d'un document au format Markdown est un processus simple si vous suivez les étapes correctement. Assurez-vous de vérifier le document après la conversion pour garantir qu'il est correctement formaté.
-
-# Document 11
-
-## Introduction
-
-Ce document est destiné à être converti au format Markdown. Il contient des informations importantes qui doivent être correctement formatées pour une meilleure lisibilité.
-
-### Étape 1 : Préparation du document
-
-Avant de commencer la conversion, assurez-vous que le document est prêt pour la conversion. Cela inclut la vérification de la grammaire et de l'orthographe.
-
-### Étape 2 : Conversion du document
-
-Utilisez un outil de conversion pour transformer le document au format Markdown. Il existe plusieurs outils disponibles en ligne qui peuvent être utilisés pour cette tâche.
-
-### Étape 3 : Vérification du document
-
-Après la conversion, vérifiez le document pour vous assurer qu'il est correctement formaté. Cela inclut la vérification des titres, des paragraphes et des listes.
-
-## Conclusion
-
-La conversion d'un document au format Markdown est un processus simple si vous suivez les étapes correctement. Assurez-vous de vérifier le document après la conversion pour garantir qu'il est correctement formaté.
-
-# Document 12
-
-## Introduction
-
-Ce document est destiné à être converti au format Markdown. Il contient des informations importantes qui doivent être correctement formatées pour une meilleure lisibilité.
-
-### Étape 1 : Préparation du document
-
-Avant de commencer la conversion, assurez-vous que le document est prêt pour la conversion. Cela inclut la vérification de la grammaire et de l'orthographe.
-
-### Étape 2 : Conversion du document
-
-Utilisez un outil de conversion pour transformer le document au format Markdown. Il existe plusieurs outils disponibles en ligne qui peuvent être utilisés pour cette tâche.
-
-### Étape 3 : Vérification du document
-
-Après la conversion, vérifiez le document pour vous assurer qu'il est correctement formaté. Cela inclut la vérification des titres, des paragraphes et des listes.
-
-## Conclusion
-
-La conversion d'un document au format Markdown est un processus simple si vous suivez les étapes correctement. Assurez-vous de vérifier le document après la conversion pour garantir qu'il est correctement formaté.
-
-# Document 13
-
-## Introduction
-
-Ce document est destiné à être converti au format Markdown. Il contient des informations importantes qui doivent être correctement formatées pour une meilleure lisibilité.
-
-### Étape 1 : Préparation du document
-
-Avant de commencer la conversion, assurez-vous que le document est prêt pour la conversion. Cela inclut la vérification de la grammaire et de l'orthographe.
-
-### Étape 2 : Conversion du document
-
-Utilisez un outil de conversion pour transformer le document au format Markdown. Il existe plusieurs outils disponibles en ligne qui peuvent être utilisés pour cette tâche.
-
-### Étape 3 : Vérification du document
-
-Après la conversion, vérifiez le document pour vous assurer qu'il est correctement formaté. Cela inclut la vérification des titres, des paragraphes et des listes.
-
-## Conclusion
-
-La conversion d'un document au format Markdown est un processus simple si vous suivez les étapes correctement. Assurez-vous de vérifier le document après la conversion pour garantir qu'il est correctement formaté.
-
-# Document 14
-
-## Introduction
-
-Ce document est destiné à être converti au format Markdown. Il contient des informations importantes qui doivent être correctement formatées pour une meilleure lisibilité.
-
-### Étape 1 : Préparation du document
-
-Avant de commencer la conversion, assurez-vous que le document est prêt pour la conversion. Cela inclut la vérification de la grammaire et de l'orthographe.
-
-### Étape 2 : Conversion du document
-
-Utilisez un outil de conversion pour transformer le document au format Markdown. Il existe plusieurs outils disponibles en ligne qui peuvent être utilisés pour cette tâche.
-
-### Étape 3 : Vérification du document
-
-Après la conversion, vérifiez le document pour vous assurer qu'il est correctement formaté. Cela inclut la vérification des titres, des paragraphes et des listes.
-
-## Conclusion
-
-La conversion d'un document au format Markdown est un processus simple si vous suivez les étapes correctement. Assurez-vous de vérifier le document après la conversion pour garantir qu'il est correctement formaté.
-
-# Document 15
-
-## Introduction
-
-Ce document est destiné à être converti au format Markdown. Il contient des informations importantes qui doivent être correctement formatées pour une meilleure lisibilité.
-
-### Étape 1 : Préparation du document
-
-Avant de commencer la conversion, assurez-vous que le document est prêt pour la conversion. Cela inclut la vérification de la grammaire et de l'orthographe.
-
-### Étape 2 : Conversion du document
-
-Utilisez un outil de conversion pour transformer le document au format Markdown. Il existe plusieurs outils disponibles en ligne qui peuvent être utilisés pour cette tâche.
-
-### Étape 3 : Vérification du document
-
-Après la conversion, vérifiez le document pour vous assurer qu'il est correctement formaté. Cela inclut la vérification des titres, des paragraphes et des listes.
-
-## Conclusion
-
-La conversion d'un document au format Markdown est un processus simple si vous suivez les étapes correctement. Assurez-vous de vérifier le document après la conversion pour garantir qu'il est correctement formaté.
-
-# Document 16
-
-## Introduction
-
-Ce document est destiné à être converti au format Markdown. Il contient des informations importantes qui doivent être correctement formatées pour une meilleure lisibilité.
-
-### Étape 1 : Préparation du document
-
-Avant de commencer la conversion, assurez-vous que le document est prêt pour la conversion. Cela inclut la vérification de la grammaire et de l'orthographe.
-
-### Étape 2 : Conversion du document
-
-Utilisez un outil de conversion pour transformer le document au format Markdown. Il existe plusieurs outils disponibles en ligne qui peuvent être utilisés pour cette tâche.
-
-### Étape 3 : Vérification du document
-
-Après la conversion, vérifiez le document pour vous assurer qu'il est correctement formaté. Cela inclut la vérification des titres, des paragraphes et des listes.
-
-## Conclusion
-
-La conversion d'un document au format Markdown est un processus simple si vous suivez les étapes correctement. Assurez-vous de vérifier le document après la conversion pour garantir qu'il est correctement formaté.
-
-# Document 17
-
-## Introduction
-
-Ce document est destiné à être converti au format Markdown. Il contient des informations importantes qui doivent être correctement formatées pour une meilleure lisibilité.
-
-### Étape 1 : Préparation du document
-
-Avant de commencer la conversion, assurez-vous que le document est prêt pour la conversion. Cela inclut la vérification de la grammaire et de l'orthographe.
-
-### Étape 2 : Conversion du document
-
-Utilisez un outil de conversion pour transformer le document au format Markdown. Il existe plusieurs outils disponibles en ligne qui peuvent être utilisés pour cette tâche.
-
-### Étape 3 : Vérification du document
-
-Après la conversion, vérifiez le document pour vous assurer qu'il est correctement formaté. Cela inclut la vérification des titres, des paragraphes et des listes.
-
-## Conclusion
-
-La conversion d'un document au format Markdown est un processus simple si vous suivez les étapes correctement. Assurez-vous de vérifier le document après la conversion pour garantir qu'il est correctement formaté.
-
-# Document 18
-
-## Introduction
-
-Ce document est destiné à être converti au format Markdown. Il contient des informations importantes qui doivent être correctement formatées pour une meilleure lisibilité.
-
-### Étape 1 : Préparation du document
-
-Avant de commencer la conversion, assurez-vous que le document est prêt pour la conversion. Cela inclut la vérification de la grammaire et de l'orthographe.
-
-### Étape 2 : Conversion du document
-
-Utilisez un outil de conversion pour transformer le document au format Markdown. Il existe plusieurs outils disponibles en ligne qui peuvent être utilisés pour cette tâche.
-
-### Étape 3 : Vérification du document
-
-Après la conversion, vérifiez le document pour vous assurer qu'il est correctement formaté. Cela inclut la vérification des titres, des paragraphes et des listes.
-
-## Conclusion
-
-La conversion d'un document au format Markdown est un processus simple si vous suivez les étapes correctement. Assurez-vous de vérifier le document après la conversion pour garantir qu'il est correctement formaté.
-
-# Document 19
-
-## Introduction
-
-Ce document est destiné à être converti au format Markdown. Il contient des informations importantes qui doivent être correctement formatées pour une meilleure lisibilité.
-
-### Étape 1 : Préparation du document
-
-Avant de commencer la conversion, assurez-vous que le document est prêt pour la conversion. Cela inclut la vérification de la grammaire et de
+<document vide>
+```
 ```markdown
 # Annexe 2 (CONFIDENTIELLE) à l'arrêté préfectoral du 20 AVR. 2020
 B+T Energie France à Rantzenheim
