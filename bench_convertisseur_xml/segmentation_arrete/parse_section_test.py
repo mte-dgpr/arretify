@@ -1,8 +1,70 @@
 """Test section parser."""
+import re
+import unittest
 
-
-from .parse_section import parse_section
+from .parse_section import parse_section, NUMBER_GROUP
 from .config import BodySection
+
+
+class TestNumberGroupRegex(unittest.TestCase):
+
+    def setUp(self):
+        self.pattern = re.compile(NUMBER_GROUP)
+
+    def test_simple_number(self):
+        # Arrange
+        text = "123"
+
+        # Act
+        match = self.pattern.fullmatch(text)
+
+        # Assert
+        assert match is not None, "Should match simple number"
+        assert match.group("number") == "123", "Group 'number' should equal '123'"
+
+    def test_hierarchical_number(self):
+        # Arrange
+        text = "1.2.3"
+
+        # Act
+        match = self.pattern.fullmatch(text)
+
+        # Assert
+        assert match is not None, "Should match hierarchical number"
+        assert match.group("number") == "1.2.3", "Group 'number' should equal '1.2.3'"
+
+    def test_roman_numerals(self):
+        # Arrange
+        text = "X.II.IV"
+
+        # Act
+        match = self.pattern.fullmatch(text)
+
+        # Assert
+        assert match is not None, "Should match Roman numeral hierarchical number"
+        assert match.group("number") == "X.II.IV", "Group 'number' should equal 'X.II.IV'"
+
+    def test_letter(self):
+        # Arrange
+        text = "A.B.C"
+
+        # Act
+        match = self.pattern.fullmatch(text)
+
+        # Assert
+        assert match is not None, "Should match letter hierarchical number"
+        assert match.group("number") == "A.B.C", "Group 'number' should equal 'A.B.C'"
+
+    def test_first_number(self):
+        # Arrange
+        text = "1er"
+
+        # Act
+        match = self.pattern.fullmatch(text)
+
+        # Assert
+        assert match is not None, "Should match '1er'"
+        assert match.group("number_first") == "1er", "Group 'number_first' should equal '1er'"
 
 
 def test_section_valid_cases():
@@ -45,6 +107,15 @@ def test_section_valid_cases():
 
     # Cas article avec chiffre arabe sans point
     assert parse_section("ARTICLE 1") == {
+        'type': BodySection.ARTICLE,
+        "level": 0,
+        "level_name": "article_0",
+        'number': '1',
+        'text': ''
+    }
+
+    # Cas article avec 1er
+    assert parse_section("ARTICLE 1er") == {
         'type': BodySection.ARTICLE,
         "level": 0,
         "level_name": "article_0",

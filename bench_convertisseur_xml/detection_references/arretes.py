@@ -9,7 +9,7 @@ from .dates import parse_date, DATE1_RES, DATE2_RES, DateMatchDict, handle_date_
 from bench_convertisseur_xml.utils.text import normalize_text
 from bench_convertisseur_xml.utils.html import PageElementOrString, make_element
 from bench_convertisseur_xml.utils.regex import split_string_with_regex, split_string_from_match
-from .html_schemas import ARRETE_SCHEMA
+from bench_convertisseur_xml.html_schemas import ARRETE_SCHEMA
 
 
 ARRETE_TYPES: List[str] = ['préfectoral', 'ministériel']

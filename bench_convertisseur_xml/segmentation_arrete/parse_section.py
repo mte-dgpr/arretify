@@ -2,8 +2,9 @@
 
 
 import re
+from typing import TypedDict
 
-from .utils import clean_markdown
+from bench_convertisseur_xml.utils.markdown import clean_markdown
 from .config import section_from_name
 
 # Numbering patterns
@@ -19,7 +20,7 @@ SECTION_ELEMENT = '|'.join(SECTION_NAMES)
 
 # Groups
 SECTION_GROUP = fr"^(?P<section_name>{SECTION_ELEMENT})"
-NUMBER_GROUP = fr"(?P<number>{HIERARCHICAL_NUMBER})"
+NUMBER_GROUP = fr"((?P<number>{HIERARCHICAL_NUMBER})|(?P<number_first>1er))"
 OPTIONAL_TEXT_GROUP = r"(?:\s+(?P<text>.+))?$"
 TEXT_GROUP = r"(?P<text>.+)$"
 
@@ -37,6 +38,11 @@ SECTION_NO_TITLE = (
     r"(?:\.\s|\s(-|–|:)\s)"  # mandatory point with whitespace or separator
     f"{TEXT_GROUP}"  # text
 )
+
+
+class NumberGroupMatchDict(TypedDict):
+    number: str
+    number_first: str
 
 
 def section_name_from_number(number):
@@ -66,8 +72,19 @@ def section_name_from_number(number):
     return section_name
 
 
-def parse_section(line, authorized_sections = None):
+def parse_number_group(match_dict: NumberGroupMatchDict):
+    if match_dict.get('number_first'):
+        number = '1'
+    else:
+        number = match_dict['number'].rstrip('.')
 
+    # We might have a sub article with 4 digits
+    number_split = number.split(".")
+    level = len(number_split) - 1
+    return number, level
+
+
+def parse_section(line, authorized_sections = None):
     match_title = re.match(SECTION_TITLE, line, re.IGNORECASE)
     match_no_title = re.match(SECTION_NO_TITLE, line, re.IGNORECASE)
 
@@ -75,33 +92,19 @@ def parse_section(line, authorized_sections = None):
     level = -1
 
     if match_title:
-
         section_name = match_title.group('section_name').lower()
-        number = match_title.group('number').rstrip('.')
         text = match_title.group('text') or ""
-
-        # We might have a sub article with 4 digits
-        number_split = number.split(".")
-        level = len(number_split) - 1
+        number, level = parse_number_group(match_title.groupdict())
         if level >= 3:
             section_name = "sous_article"
-
         # Remove optional separators
         text = re.sub(r"^[-–:\s]*", "", text)
 
-        level_name = f"{section_name}_{level}"
-
     if match_no_title:
-
-        number = match_no_title.group('number').rstrip('.')
         text = match_no_title.group('text') or ""
-
-        # We might have a sub article with 4 digits
-        number_split = number.split(".")
-        level = len(number_split) - 1
+        number, level = parse_number_group(match_no_title.groupdict())
         if level >= 3:
             section_name = "sous_article"
-
         # Guess section_name from number
         section_name = section_name_from_number(number)
 

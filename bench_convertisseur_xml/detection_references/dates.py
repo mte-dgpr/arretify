@@ -5,8 +5,8 @@ from typing import Literal, List, get_args, cast, TypedDict, Pattern
 from bs4 import BeautifulSoup
 
 # Important so that locale is initialized
-from ..settings import *
-from .html_schemas import DATE_SCHEMA
+from bench_convertisseur_xml.settings import *
+from bench_convertisseur_xml.html_schemas import DATE_SCHEMA
 from bench_convertisseur_xml.utils.html import make_element
 
 DATE_FORMAT = '%Y-%m-%d'

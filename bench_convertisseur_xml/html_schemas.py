@@ -63,6 +63,13 @@ DATE_SCHEMA = DataElementSchema(
     data_keys=[]
 )
 
+ERROR_SCHEMA = DataElementSchema(
+    name='error',
+    tag_name='span',
+    data_keys=['error_code'],
+)
+
+
 # -------- Presentational schemas
 DIV_SCHEMA = PresentationElementSchema(
     tag_name="div",

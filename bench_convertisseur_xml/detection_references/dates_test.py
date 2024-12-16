@@ -15,10 +15,10 @@ class TestParseDateFunction(unittest.TestCase):
     def test_date1_valid_cases(self):
         # Test valid "DATE1_RES" cases
         assert handle_date_match_groupdict(_run_search(DATE1_RES, "1er janvier 2023")) == date(2023, 1, 1)
-        assert handle_date_match_groupdict(_run_search(DATE1_RES, "15 fevrier 2020")) == date(2020, 2, 15)
+        assert handle_date_match_groupdict(_run_search(DATE1_RES, "15 février 2020")) == date(2020, 2, 15)
         assert handle_date_match_groupdict(_run_search(DATE1_RES, "3 mars 99")) == date(1999, 3, 3)
         assert handle_date_match_groupdict(_run_search(DATE1_RES, "10 octobre 2000")) == date(2000, 10, 10)
-        assert handle_date_match_groupdict(_run_search(DATE1_RES, "1er decembre 1999")) == date(1999, 12, 1)
+        assert handle_date_match_groupdict(_run_search(DATE1_RES, "1er décembre 1999")) == date(1999, 12, 1)
         assert handle_date_match_groupdict(_run_search(DATE1_RES, "1 janvier 20")) == date(2020, 1, 1)
 
     def test_date2_valid_cases(self):
@@ -57,7 +57,7 @@ class TestParseDateFunction(unittest.TestCase):
     def test_date1_and_date2_end_characters_cases(self):
         # Test valid "DATE1_RES" cases
         assert handle_date_match_groupdict(_run_search(DATE1_RES, "1er janvier 2023. Bla")) == date(2023, 1, 1)
-        assert handle_date_match_groupdict(_run_search(DATE1_RES, "15 fevrier 2020 ")) == date(2020, 2, 15)
+        assert handle_date_match_groupdict(_run_search(DATE1_RES, "15 février 2020 ")) == date(2020, 2, 15)
         # Test valid "DATE2_RES" cases
         assert handle_date_match_groupdict(_run_search(DATE2_RES, "15/02/2023)")) == date(2023, 2, 15)
 

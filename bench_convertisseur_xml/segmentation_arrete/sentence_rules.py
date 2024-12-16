@@ -4,12 +4,14 @@
 import re
 from typing import List
 
+from bench_convertisseur_xml.utils.text import remove_accents
 from .config import BodySection
 
 
 def is_not_information(line: str) -> bool:
 
     patterns_to_ignore = [
+        r'^\W+$',
         # Sentence starting with "```"
         r'^```',
         # Sentence starting with "---"
@@ -49,7 +51,7 @@ def is_not_information(line: str) -> bool:
 
 def is_continuing_sentence(line: str) -> bool:
     """Detect sentence starting wit lowercase character."""
-    search_result = bool(re.match(r"^[a-z]", line))
+    search_result = bool(re.match(r"^[a-z]", remove_accents(line)))
     return search_result
 
 

@@ -3,6 +3,7 @@ from typing import Dict, List, Optional, Union
 
 from bs4 import BeautifulSoup, PageElement
 
+from ..html_schemas import PARAGRAPH_SCHEMA
 from ..types import DataElementSchema, PresentationElementSchema
 
 
@@ -26,3 +27,11 @@ def make_element(
     if contents:
         element.extend(contents)
     return element
+
+
+def wrap_in_paragraphs(soup: BeautifulSoup, elements: List[PageElementOrString]):
+    return [
+        make_element(soup, PARAGRAPH_SCHEMA, contents=[element]) if isinstance(element, str) else element
+        for element in elements if (not isinstance(element, str) or element.strip())
+    ]
+
