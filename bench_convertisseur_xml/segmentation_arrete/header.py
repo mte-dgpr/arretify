@@ -68,41 +68,48 @@ def parse_header(soup: BeautifulSoup, header: Tag, lines: List[str], authorized_
     header.append(make_element(soup, IDENTIFICATION_SCHEMA, contents=wrap_in_paragraphs(soup, pile)))
 
     # -------- Visas
-    pile = []
-    while True:
-        if is_visa(lines[0]):
-            pile.append(lines.pop(0))
-        elif is_continuing_sentence(lines[0]):
-            # TODO : Improve code for lists
-            if isinstance(pile[-1], str):
-                pile[-1] = pile[-1] + ' ' + lines.pop(0)
+    while is_visa(lines[0]):
+        pile = [lines.pop(0)]
+        while True:
+            if is_continuing_sentence(lines[0]):
+                # TODO : Improve code for lists
+                if isinstance(pile[-1], str):
+                    pile[-1] = pile[-1] + ' ' + lines.pop(0)
+                else:
+                    pile[-1].append(lines.pop(0))
+            elif is_liste(lines[0]):
+                pile[-1] = _ensure_ul_element(soup, pile[-1], lines.pop(0))
             else:
-                pile[-1].append(lines.pop(0))
-        elif is_liste(lines[0]):
-            pile[-1] = _ensure_ul_element(soup, pile[-1], lines.pop(0))
-        elif is_motif(lines[0]) or is_arrete(lines[0]) or _is_body_section(lines[0], authorized_sections):
-            break
-        else:
-            raise RuntimeError(f'Unexpected line : {lines[0]}')
-    header.append(make_element(soup, VISA_SCHEMA, contents=wrap_in_paragraphs(soup, pile)))
+                break
+        header.append(make_element(soup, VISA_SCHEMA, contents=pile))
+
+        # Consume lines until we find the next visa, or the beginning of the next section
+        while not is_visa(lines[0]):
+            if is_motif(lines[0]) or is_arrete(lines[0]) or _is_body_section(lines[0], authorized_sections):
+                break
+            else:
+                header.append(make_element(soup, DIV_SCHEMA, contents=[lines.pop(0)]))
         
     # -------- Motifs
-    pile = []
-    while True:
-        if is_motif(lines[0]):
-            pile.append(lines.pop(0))
-        elif is_continuing_sentence(lines[0]):
-            # TODO : Improve code for lists
-            if isinstance(pile[-1], str):
-                pile[-1] = pile[-1] + ' ' + lines.pop(0)
+    while is_motif(lines[0]):
+        pile = [lines.pop(0)]
+        while True:
+            if is_continuing_sentence(lines[0]):
+                # TODO : Improve code for lists
+                if isinstance(pile[-1], str):
+                    pile[-1] = pile[-1] + ' ' + lines.pop(0)
+                else:
+                    pile[-1].append(lines.pop(0))
+            elif is_liste(lines[0]):
+                pile[-1] = _ensure_ul_element(soup, pile[-1], lines.pop(0))
             else:
-                pile[-1].append(lines.pop(0))
-        elif is_liste(lines[0]):
-            pile[-1] = _ensure_ul_element(soup, pile[-1], lines.pop(0))
-        elif is_arrete(lines[0]) or _is_body_section(lines[0], authorized_sections):
-            break
-        else:
-            raise RuntimeError(f'Unexpected line : {lines[0]}')
-    header.append(make_element(soup, MOTIFS_SCHEMA, contents=wrap_in_paragraphs(soup, pile)))
+                break
+        header.append(make_element(soup, MOTIFS_SCHEMA, contents=pile))
+
+        while not is_motif(lines[0]):
+            if is_arrete(lines[0]) or _is_body_section(lines[0], authorized_sections):
+                break
+            else:
+                header.append(make_element(soup, DIV_SCHEMA, contents=[lines.pop(0)]))
 
     return lines

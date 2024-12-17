@@ -34,7 +34,9 @@ VU
 
 Adresse postale : 8 bis, rue Charles Nodier - 25035 BESANÇON CEDEX - STANDARD TEL : 03.81.25.10.00 - Fax : 03.81.83.21.82
 ```
+<!-- START : OCR-BUG-IGNORE -->
  L
+<!-- END : OCR-BUG-IGNORE -->
 
 ```
 - le dossier de l’enquête publique à laquelle cette demande a été soumise du 23 septembre 2000 au 23 octobre 2000 ; et l’avis du commissaire enquêteur du 19 décembre 2000 ;
@@ -65,7 +67,10 @@ Le pétitionnaire entend,
 
 SUR proposition du Secrétaire Général du DOUBS.
 ```
+
+<!-- START : OCR-BUG-IGNORE -->
 ire
+<!-- END : OCR-BUG-IGNORE -->
 
 ```
 # ARRÊTÉ

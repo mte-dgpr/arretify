@@ -9,7 +9,7 @@ ARRETES_HTML_DIR = TEST_DATA_DIR / 'arretes_html'
 
 ARRETES_FILE_NAMES = [
     '1978-05-24_AP-auto_pixtral.txt',
-    # '2002-03-04_AP-auto_refonte_pixtral.txt',
+    '2002-03-04_AP-auto_refonte_pixtral.txt',
     '2004-05-04_APC-auto_pixtral.txt',
     '2011-02-24_AP-auto_pixtral.txt',
     '2017-01-26_APC-garanties-financières_pixtral.txt',
