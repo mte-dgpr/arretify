@@ -35,18 +35,22 @@ ARRETE_BASE_RES = r'arrêté ((?P<authority>préfectoral|ministériel) (modifié
 ARRETE_FILLER_RES = r'(transmis a l\'exploitant par (courrier recommandé|courrier) )?((du|en date du) )?'
 
 ARRETE_DATE1_RE = re.compile(
-    f'{ARRETE_BASE_RES}{ARRETE_FILLER_RES}(?P<date>{DATE1_RES})'
+    f'{ARRETE_BASE_RES}{ARRETE_FILLER_RES}(?P<date>{DATE1_RES})',
+    re.IGNORECASE
 )
 ARRETE_DATE2_RE = re.compile(
-    f'{ARRETE_BASE_RES}{ARRETE_FILLER_RES}(?P<date>{DATE2_RES})'
+    f'{ARRETE_BASE_RES}{ARRETE_FILLER_RES}(?P<date>{DATE2_RES})',
+    re.IGNORECASE
 )
 ARRETE_CODE_AND_DATE1_RE = re.compile(
-    f'{ARRETE_BASE_RES}{CODE_RE}{ARRETE_FILLER_RES}(?P<date>{DATE1_RES})'
+    f'{ARRETE_BASE_RES}{CODE_RE}{ARRETE_FILLER_RES}(?P<date>{DATE1_RES})',
+    re.IGNORECASE
 )
 ARRETE_CODE_AND_DATE2_RE = re.compile(
-    f'{ARRETE_BASE_RES}{CODE_RE}{ARRETE_FILLER_RES}(?P<date>{DATE2_RES})'
+    f'{ARRETE_BASE_RES}{CODE_RE}{ARRETE_FILLER_RES}(?P<date>{DATE2_RES})',
+    re.IGNORECASE
 )
-ARRETE_CODE_RE = re.compile(f'{ARRETE_BASE_RES}{CODE_RE}')
+ARRETE_CODE_RE = re.compile(f'{ARRETE_BASE_RES}{CODE_RE}', re.IGNORECASE)
 
 ARRETE_RE_LIST = [
     # Regex with dates must come before cause the regex for codes

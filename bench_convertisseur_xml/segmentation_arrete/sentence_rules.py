@@ -11,7 +11,7 @@ from .config import BodySection
 def is_not_information(line: str) -> bool:
 
     patterns_to_ignore = [
-        r'^\W+$',
+        r'^\.\.\.',
         # Sentence starting with "```"
         r'^```',
         # Sentence starting with "---"
