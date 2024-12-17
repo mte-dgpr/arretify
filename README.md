@@ -23,6 +23,11 @@ TO-DO:
 - texte du titre/chapitre sur la ligne suivante (sans point, regarder ça ?)
 
 
+### Snapshot testing
+
+Le fichier `bench_convertisseur_xml/segmentation_arrete/main_test.py` permet de détecter les regressions en effectuant le parsing sur tous les documents de notre base de tests de documents dans `arretes_ocr/` et en comparant le résultat obtenu avec des résultats obtenus précédemment et stocké dans `arretes_html/`.
+
+
 TODO 
 -----------
 
