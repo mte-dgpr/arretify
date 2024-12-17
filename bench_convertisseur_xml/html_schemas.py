@@ -51,8 +51,8 @@ SECTION_TITLE_SCHEMA = DataElementSchema(
     data_keys=[],
 )
 
-ARRETE_SCHEMA = DataElementSchema(
-    name="arrete",
+ARRETE_REFERENCE_SCHEMA = DataElementSchema(
+    name="arrete_reference",
     tag_name="a",
     data_keys=['code', 'qualifier', 'authority'],
 )

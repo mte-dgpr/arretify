@@ -10,6 +10,10 @@ from ..types import DataElementSchema, PresentationElementSchema
 PageElementOrString = Union[PageElement, str]
 
 
+def make_css_class(schema: DataElementSchema):
+    return f'dsr-{schema.name}'
+
+
 def make_element(
     soup: BeautifulSoup, 
     schema: DataElementSchema | PresentationElementSchema, 
@@ -17,9 +21,9 @@ def make_element(
     contents: List[PageElementOrString] | None=None,
 ):
     element = soup.new_tag(schema.tag_name)
-    if hasattr(schema, 'name'):
-        element['class'] = [f'dsr-{schema.name}']
-    if hasattr(schema, 'data_keys'):
+    if isinstance(schema, DataElementSchema):
+        element['class'] = [make_css_class(schema)]
+    if isinstance(schema, DataElementSchema):
         for key in schema.data_keys:
             data_value = data[key]
             if data_value is not None:

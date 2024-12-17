@@ -9,7 +9,7 @@ from .dates import parse_date, DATE1_RES, DATE2_RES, DateMatchDict, handle_date_
 from bench_convertisseur_xml.utils.text import normalize_text
 from bench_convertisseur_xml.utils.html import PageElementOrString, make_element
 from bench_convertisseur_xml.utils.regex import split_string_with_regex, split_string_from_match
-from bench_convertisseur_xml.html_schemas import ARRETE_SCHEMA
+from bench_convertisseur_xml.html_schemas import ARRETE_REFERENCE_SCHEMA
 
 
 ARRETE_TYPES: List[str] = ['préfectoral', 'ministériel']
@@ -62,11 +62,12 @@ ARRETE_IGNORE_RE = re.compile(r'(présent arrêté)|(par arrêté)|(arrêté\S)'
 
 
 # TODO : also searches for known codes for arretes directly in text.
-def _parse_arretes(
-    parent: Tag,
+def _parse_arretes_references(
+    soup: BeautifulSoup,
+    children: List[PageElementOrString],
     arrete_re: Pattern,
 ) -> Iterator[PageElementOrString]:
-    for child in parent.children:
+    for child in children:
         if not isinstance(child, str):
             yield child
             continue
@@ -84,7 +85,7 @@ def _parse_arretes(
             qualifier = match_dict['qualifier']
 
             arrete_container = make_element(
-                parent, ARRETE_SCHEMA, dict(code=code, authority=authority, qualifier=qualifier)
+                soup, ARRETE_REFERENCE_SCHEMA, dict(code=code, authority=authority, qualifier=qualifier)
             )
             
             for str_or_group in split_string_from_match(str_or_match):
@@ -94,17 +95,17 @@ def _parse_arretes(
                     date = handle_date_match_groupdict(cast(DateMatchDict, match_dict))
                     if date is None:
                         raise RuntimeError(f"expected valid date in this match {str_or_match}")
-                    arrete_container.append(make_date_element(parent, str_or_group.text, date))
+                    arrete_container.append(make_date_element(soup, str_or_group.text, date))
                 else:
                     arrete_container.append(str_or_group.text)
 
             yield arrete_container
 
 
-def parse_arretes(soup: BeautifulSoup, text: str) -> List[PageElementOrString]:
-    parent = BeautifulSoup(text, features="html.parser")
+def parse_arretes_references(
+    soup: BeautifulSoup,
+    children: List[PageElementOrString],
+) -> List[PageElementOrString]:
     for arrete_re in ARRETE_RE_LIST:
-        new_children = list(_parse_arretes(parent, arrete_re))
-        parent.clear()
-        parent.extend(new_children)
-    return list(parent.children)
+        children = list(_parse_arretes_references(soup, children, arrete_re))
+    return children

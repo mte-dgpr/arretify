@@ -85,7 +85,7 @@ def parse_date_attribute(date_str: str) -> date:
 
 
 def make_date_element(soup: BeautifulSoup, date_str: str, date_object: date):
-    date_container = make_element(soup, DATE_SCHEMA, dict())
+    date_container = make_element(soup, DATE_SCHEMA)
     date_container.string = date_str
     date_container['datetime'] = render_date_attribute(date_object)
     return date_container

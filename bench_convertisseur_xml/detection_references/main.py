@@ -5,8 +5,8 @@ from typing import Literal, List, get_args, cast, TypedDict
 from bs4 import BeautifulSoup
 
 from ..settings import APP_ROOT, LOGGER
-from .arretes import parse_arretes, ARRETE_IGNORE_RE
-from .html_schemas import ARRETE_SCHEMA
+from .arretes_references import parse_arretes_references, ARRETE_IGNORE_RE
+from bench_convertisseur_xml.html_schemas import ARRETE_REFERENCE_SCHEMA
 
 
 if __name__ == '__main__':
@@ -18,7 +18,7 @@ if __name__ == '__main__':
 
     paragraphs_html = []
     for paragraph in paragraphs_mentioning_arrete:
-        paragraph_elements = parse_arretes(soup, paragraph)
+        paragraph_elements = parse_arretes_references(soup, [paragraph])
 
         for element in paragraph_elements:
             if isinstance(element, str) and 'arrêté' in ARRETE_IGNORE_RE.sub('', element):
@@ -45,5 +45,5 @@ if __name__ == '__main__':
     with open(APP_ROOT / 'tmp' / 'arretes_parsed.html', 'w', encoding='utf-8') as fd:
         fd.write(arretes_html)
 
-    all_arretes_parsed = BeautifulSoup(arretes_html, features='html.parser').select('.' + ARRETE_SCHEMA.classes[0])
+    all_arretes_parsed = BeautifulSoup(arretes_html, features='html.parser').select('.dsr-arrete_reference')
     LOGGER.info(f'found {len(all_arretes_parsed)} arretes, failed {len(all_arretes_failed)}')

@@ -13,3 +13,5 @@ class DataElementSchema:
 class PresentationElementSchema:
     tag_name: str
 
+
+ElementSchema = DataElementSchema | PresentationElementSchema

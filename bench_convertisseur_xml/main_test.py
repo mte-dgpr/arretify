@@ -2,7 +2,7 @@ from pathlib import Path
 
 from bench_convertisseur_xml.settings import TEST_DATA_DIR
 from bench_convertisseur_xml.settings import LOGGER
-from .main import parse_arrete
+from .main import main
 
 ARRETES_OCR_DIR = TEST_DATA_DIR / 'arretes_ocr'
 ARRETES_HTML_DIR = TEST_DATA_DIR / 'arretes_html'
@@ -22,7 +22,7 @@ ARRETES_FILE_NAMES = [
 def iter_parsed_arretes_ocr_files():
     for arrete_file_name in ARRETES_FILE_NAMES:
         arrete_contents = open(ARRETES_OCR_DIR / arrete_file_name, 'r', encoding='utf-8').readlines()
-        soup = parse_arrete(arrete_contents)
+        soup = main(arrete_contents)
         yield Path(arrete_file_name), soup.prettify()
 
 
