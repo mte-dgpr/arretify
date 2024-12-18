@@ -26,9 +26,7 @@ VU la directive 2010/75/UE du 24 novembre 2010 relative aux émissions industrie
 
 VU la directive 2003/87/CE du 13 octobre 2003 établissant un système d'échange de quotas d'émission de gaz à effet de serre dans la Communauté et modifiant la directive 96/61/CE du Conseil ;
 ```
-
-
-```
+```markdown
 VU l'arrêté ministériel du 23 mai 2016 relatif aux installations de production de chaleur et/ou d'électricité à partir de déchets non dangereux préparés sous forme de combustibles solides de récupération dans des installations prévues à cet effet associées ou non à un autre combustible et relevant de la rubrique 2971 de la nomenclature des installations classées pour la protection de l'environnement ;
 
 VU l'arrêté ministériel du 20 septembre 2002 relatif aux installations d'incinération et de co-incinération de déchets non dangereux et aux installations incinérant des déchets d'activités de soins à risques infectieux ;
@@ -37,7 +35,7 @@ VU l'arrêté ministériel du 12 janvier 2021 relatif aux meilleures techniques 
 
 VU le plan régional de prévention et de gestion des déchets de la région Grand Est approuvé en octobre 2019 ;
 
-VU l'arrêté préfectoral du 28 février 2017 portant approbation du règlement départemental de défense extérieure contre l'incendie du Haut-Rhin et le règlement annexé ;
+VU l'arrêté préfectoral du 28 février 2017 portant approbation du règlement départemental de défense extérieure contre l'incendie du Haut-Rhin et le règlement annexe ;
 
 VU la demande d'autorisation, déposée en préfecture le 12 octobre 2018 et complétée le 2 avril 2019, par la société B+T ENERGIE France Sas, en vue d'être autorisée à exploiter les installations d'incinération et les activités connexes s'y rapportant situées au sein du site Alsachimie Chalampé, RD 52, 68490 Chalampé ;
 
@@ -102,25 +100,37 @@ Les dispositions de l'article 1.2.1 de l'arrêté préfectoral du 24 septembre 2
 | 2971.1 | A | Installation de production de chaleur ou CSR (Combustibles Solides de Récupération) dans une installation prévue à cet effet, associés ou non à un autre combustible. 1. Installations intégrées dans un procédé industriel de fabrication | 200 604 t/an |
 | 3110 | A | Combustion de combustibles dans des installations d'une puissance thermique nominale totale égale ou supérieure à 50 MW | 80 MW |
 | 3520.a | A | Incinération ou coïncinération de déchets Élimination ou valorisation de déchets dans des installations d'incinération des | 26,2 t/h au maximum 22,9 t/h en moyenne |
+```markdown
+| Rubrique | Régime (*) | Libellé de la rubrique (activité) | Nature de l'installation | Volume autorisé |
+|----------|------------|----------------------------------|-------------------------|-----------------|
+|          |            | déchets ou des installations de |                         |                |
+|          |            | co-incinération des déchets :    |                         |                |
+|          |            | a) Pour les déchets non dangereux avec une capacité supérieure à 3 tonnes par heure | annuelle |                |
+| 4511.2   | D          | Dangerueux aquatique de catégorie chronique 2. La quantité totale susceptible d'être fumée / présente dans l'installation étant : 2. Supérieure ou égale à 100 t mais inférieure à 200 t | Stockage des résidus d'épuration des poussières des poussieres des séparateurs | 117 t |
 
+(*) A (Autorisation) - D (Déclaration)
 
-```
-| Rubrique | Régime (#) | Libellé de la rubrique (activité) | Nature de l'installation | Volume autorisé |
-|----------|-------------|----------------------------------|-------------------------|-----------------|
-| 4511.2   | D          | déchets ou des installations de co-incinération des déchets : a) Pour les déchets non dangereux avec une capacité supérieure à 3 tonnes par heure | Stockage des résidus dangereux pour l'environnement | 117 t |
-|          |            | La quantité totale susceptible d'être fumée / présente dans l'installation étant : 2. Supérieure ou égale à 100 t mais inférieure à 200 t | | |
-|          |            | | | |
-|          | A (Autorisation) - D (Déclaration) | Volume autorisé : éléments caractérisant la consistance, le rythme de fonctionnement, le volume des installations ou les capacités maximales autorisées. | | |
-|          |            | ARTICLE 3 - Limites de l'autorisation - Déchets admissibles | | |
-|          |            | Les dispositions de l'article 1.2.4.1 de l'arrêté préfectoral du 24 septembre 2021 susvisé sont ainsi modifiées : | | |
-|          |            | « Les seuls déchets admissibles dans l'installation d'incinération sont des déchets non dangereux solides de type CSR, DAE et, dans les circonstances exceptionnelles décrites ci-après, OM. Les déchets d'activités de soins à risques infectieux et assimilés (DASRI) ne sont pas admissibles dans l'installation. | | |
-|          |            | L'acceptation des déchets à incinérer répond à l'ordre de priorisation suivant : | | |
-|          |            | 1) CSR provenant d'installation de préparation des CSR visée à l'arrêté du 23 mai 2016 relatif à la préparation des combustibles solides de récupération et préparés tels que prévus par cet arrêté ; | | |
-|          |            | 2) DAE ayant fait l'objet d'un pré-traitement mais ne répondant pas à l'ensemble des critères définis dans l'arrêté du 23 mai 2016 relatif à la préparation des combustibles solides de récupération ; | | |
-|          |            | 3) DAE ne pouvant faire l'objet d'un pré-traitement. A ce titre, les DAE « non triés » acceptés sur le site se limitent à des refus d'installations de valorisation matière des déchets (exemple : déchets de pulpeur issus de l'industrie papetière). | | |
-|          |            | Les OM sont admissibles uniquement sur demande du SIVOM de la région multiusienne pour pallier les incapacités temporaires de l'UIOM de Sausheim. Ces admissions ne pourront excéder le besoin de traitement journalier de l'UIOM de Sausheim sur une durée ne pouvant excéder 91 jours d'incapacité sur 12 mois glissants. L'exploitant s'engage au "premier sa proposition de service en réponse au SIVOM des lors qu'elle dépasse 15 000 tonnes cumulées sur 12 mois glissants. » | | |
-|          |            | ARTICLE 4 - Frais | | |
-|          |            | Les frais inhérents à l'application des prescriptions du présent arrêté sont à la charge de l'exploitant. | | |
+Volume autorisé : éléments caractérisant la consistance, le rythme de fonctionnement, le volume des installations ou les capacités maximales autorisées.
+
+### ARTICLE 3 – Limites de l'autorisation - Déchets admissibles
+
+Les dispositions de l'article 1.2.4.1 de l'arrêté préfectoral du 24 septembre 2021 susvisé sont ainsi modifiées :
+
+a) Les seuls déchets admissibles dans l'installation d'incinération sont des déchets non dangereux solides de type CSR, DAE et, dans les circonstances exceptionnelles décrites ci-après, OM. Les déchets d'activités de soins à risques infectieux et assimilés (DASRI) ne sont pas admissibles dans l'installation.
+
+L'acceptation des déchets à incinérer répond à l'ordre de priorisation suivant :
+
+1) CSR provenant d'installation de préparation des CSR visée à l'arrêté du 23 mai 2016 relatif à la préparation des combustibles solides de récupération et préparés tels que prévus par cet arrêté ;
+
+2) DAE ayant fait l'objet d'un pré-traitement mais ne répondant pas à l'ensemble des critères définis dans l'arrêté du 23 mai 2016 relatif à la préparation des combustibles solides de récupération ;
+
+3) DAE ne pouvant faire l'objet d'un pré-traitement. A ce titre, les DAE « non triés » acceptés sur le site se limitent à des refus d'installations de valorisation matière des déchets (exemple : déchets de pulpeur issus de l'industrie papetière).
+
+Les OM sont admises uniquement sur demande du SIVOM de la région multiusienne pour pallier les incapacités temporaires de l'UIOM de Sausheim. Ces admissions ne pourront excéder le besoin de traitement journalier de l'UIOM de Sausheim sur une durée ne pouvant excéder 91 jours d'incapacité sur 12 mois glissants. L'exploitant s'engage au "premier sa proposition de service en réponse au SIVOM des lors qu'elle dépasse 15 000 tonnes cumulées sur 12 mois glissants."
+
+### ARTICLE 4 – Frais
+
+Les frais inhérents à l'application des prescriptions du présent arrêté sont à la charge de l'exploitant.
 ```
 ```markdown
 # ARTICLE 5 – Sanctions
@@ -142,10 +152,9 @@ Christophe MAIOT
 
 Délais et voie de recours
 Le présent arrêté peut faire l'objet d'un recours devant le Tribunal Administratif de Strasbourg :
-- par les personnes ou exploitants, dans un délai de deux mois à compter de la publication au recueil des actes administratifs ou à compter de la notification de la décision, par les tiers, intéressés en raison des inconvénients qu'ils subissent, des dangers ou des nuisances mentionnés à l'article L. 181-3, dans un délai de quatre mois à compter de :
-  - l'affichage en mairie dans les conditions prévues au 2° de l'article R. 181-44 ;
-  - la publication de la décision sur le site internet de la préfecture prévue au 4° du même article.
+- par les personnes ou exploitants, dans un délai de deux mois à compter de la publication au recueil des actes administratifs ou à compter de la notification de la décision, en cas d'affichage en mairie dans les conditions prévues au 2° de l'article R. 181-44 ;
+- par voie d'affichage de la décision sur le site internet de la préfecture prévue au 4° du même article.
 
 Le délai court à compter de la dernière formalité accomplie. Si l'affichage constitue cette dernière formalité, le délai court à compter du premier jour d'affichage de la décision.
-Les décisions mentionnées au premier alinéa peuvent faire l'objet d'un recours gracieux devant le maire de la commune où est situé l'établissement de moins de deux mois les délais mentionnés aux 1° et 2°.
+Les décisions mentionnées au premier alinéa précédent l'objet d'un affichage dans les conditions prévues au 2° de l'article R. 181-44 pendant une durée de deux mois. Ce recours administratif prolonge de deux mois les délais mentionnés aux 1° et 2°.
 ```

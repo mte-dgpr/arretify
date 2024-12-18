@@ -15,7 +15,7 @@ ARRETES_FILE_NAMES = [
     '2017-01-26_APC-garanties-financières_pixtral.txt',
     '2020-04-20_AP-auto_initial_pixtral.txt',
     '2021-09-24_AP-auto_refonte_pixtral.txt',
-    '2023-02-23_APC-auto_pixtral.txt',
+    '2023-02-23_APC_pixtral.txt',
 ]
 
 
