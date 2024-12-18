@@ -7,7 +7,7 @@ from typing import Literal, List, get_args, cast, TypedDict, Pattern, Tuple, Ite
 from ..settings import APP_ROOT, LOGGER
 from .dates import parse_date, DATE1_RES, DATE2_RES, DateMatchDict, handle_date_match_groupdict, make_date_element
 from bench_convertisseur_xml.utils.text import normalize_text
-from bench_convertisseur_xml.utils.html import PageElementOrString, make_element
+from bench_convertisseur_xml.utils.html import PageElementOrString, make_data_tag
 from bench_convertisseur_xml.utils.regex import split_string_with_regex, split_string_from_match
 from bench_convertisseur_xml.html_schemas import ARRETE_REFERENCE_SCHEMA
 
@@ -88,8 +88,10 @@ def _parse_arretes_references(
             code = parse_code(cast(CodeMatchDict, match_dict))
             qualifier = match_dict['qualifier']
 
-            arrete_container = make_element(
-                soup, ARRETE_REFERENCE_SCHEMA, dict(code=code, authority=authority, qualifier=qualifier)
+            arrete_container = make_data_tag(
+                soup, 
+                ARRETE_REFERENCE_SCHEMA, 
+                data=dict(code=code, authority=authority, qualifier=qualifier)
             )
             
             for str_or_group in split_string_from_match(str_or_match):

@@ -7,7 +7,7 @@ from bs4 import BeautifulSoup
 # Important so that locale is initialized
 from bench_convertisseur_xml.settings import *
 from bench_convertisseur_xml.html_schemas import DATE_SCHEMA
-from bench_convertisseur_xml.utils.html import make_element
+from bench_convertisseur_xml.utils.html import make_data_tag
 
 DATE_FORMAT = '%Y-%m-%d'
 
@@ -85,7 +85,7 @@ def parse_date_attribute(date_str: str) -> date:
 
 
 def make_date_element(soup: BeautifulSoup, date_str: str, date_object: date):
-    date_container = make_element(soup, DATE_SCHEMA)
+    date_container = make_data_tag(soup, DATE_SCHEMA)
     date_container.string = date_str
     date_container['datetime'] = render_date_attribute(date_object)
     return date_container

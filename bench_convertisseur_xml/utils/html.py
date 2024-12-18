@@ -3,7 +3,7 @@ from typing import Dict, List, Optional, Union
 
 from bs4 import BeautifulSoup, PageElement, Tag
 
-from ..types import DataElementSchema, PresentationElementSchema
+from ..types import DataElementSchema
 
 
 PageElementOrString = Union[PageElement, str]
@@ -13,13 +13,13 @@ def make_css_class(schema: DataElementSchema):
     return f'dsr-{schema.name}'
 
 
-def make_element(
+def make_data_tag(
     soup: BeautifulSoup, 
-    schema: DataElementSchema | PresentationElementSchema, 
+    schema: DataElementSchema, 
+    contents: List[PageElementOrString]=[],
     data: Dict[str, str | None]=dict(), 
-    contents: List[PageElementOrString] | None=None,
-):
-    element = soup.new_tag(schema.tag_name)
+) -> Tag:
+    element = make_new_tag(soup, schema.tag_name, contents=contents)
     if isinstance(schema, DataElementSchema):
         element['class'] = [make_css_class(schema)]
     if isinstance(schema, DataElementSchema):
@@ -27,8 +27,6 @@ def make_element(
             data_value = data[key]
             if data_value is not None:
                 element[f'data-{key}'] = data_value
-    if contents:
-        element.extend(contents)
     return element
 
 
@@ -49,3 +47,9 @@ def make_ul(soup: BeautifulSoup, elements: List[PageElementOrString]):
         li.append(element)
         ul.append(li)
     return ul
+
+
+def make_new_tag(soup: BeautifulSoup, tag_name: str, contents: List[PageElementOrString] = []):
+    element = soup.new_tag(tag_name)
+    element.extend(contents)
+    return element

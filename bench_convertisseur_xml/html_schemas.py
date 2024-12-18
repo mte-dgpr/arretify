@@ -1,8 +1,7 @@
-from .types import DataElementSchema, PresentationElementSchema
+from .types import DataElementSchema
 
 # TODO : custom DTD for automatic validation of generated document
 
-# -------- Data element schemas
 HEADER_SCHEMA = DataElementSchema(
     name="header",
     tag_name="header",
@@ -73,10 +72,4 @@ ERROR_SCHEMA = DataElementSchema(
     name='error',
     tag_name='span',
     data_keys=['error_code'],
-)
-
-
-# -------- Presentational schemas
-DIV_SCHEMA = PresentationElementSchema(
-    tag_name="div",
 )

@@ -5,7 +5,7 @@ import markdown
 from bs4 import BeautifulSoup
 
 from bench_convertisseur_xml.errors import ErrorCodes
-from bench_convertisseur_xml.utils.html import PageElementOrString, make_element
+from bench_convertisseur_xml.utils.html import PageElementOrString, make_data_tag
 from bench_convertisseur_xml.html_schemas import ERROR_SCHEMA
 
 
@@ -18,10 +18,10 @@ def parse_markdown_table(elements: List[PageElementOrString]):
     soup = BeautifulSoup(html_str, features="html.parser")
     table_result = soup.select('table')
     if len(table_result) != 1:
-        return make_element(
+        return make_data_tag(
             soup, 
             ERROR_SCHEMA, 
-            dict(error_code=ErrorCodes.markdown_parsing.value), contents=[markdown_str]
+            data=dict(error_code=ErrorCodes.markdown_parsing.value), contents=[markdown_str]
         )
     
     table_element = soup.new_tag('table')

@@ -8,10 +8,10 @@ from .sentence_rules import (
     is_arrete, is_entity, is_liste, is_motif, 
     is_table, is_table_description, is_visa, is_lined_continued
 )
-from bench_convertisseur_xml.utils.html import make_element, PageElementOrString, wrap_in_paragraphs
+from bench_convertisseur_xml.utils.html import make_data_tag, PageElementOrString, wrap_in_paragraphs
 from bench_convertisseur_xml.utils.markdown import parse_markdown_table
 from bench_convertisseur_xml.html_schemas import (
-    DIV_SCHEMA, SECTION_SCHEMA, SECTION_TITLE_SCHEMA, ALINEA_SCHEMA)
+    SECTION_SCHEMA, SECTION_TITLE_SCHEMA, ALINEA_SCHEMA)
 from .config import BodySection
 from .parse_section import parse_section
 from .parse_list import parse_list
@@ -37,7 +37,7 @@ def parse_main_content(soup: BeautifulSoup, main_content: Tag, lines: List[str],
 
     while lines:
         section_info = parse_section(lines[0], authorized_sections=authorized_sections)
-        section_element = make_element(soup, SECTION_SCHEMA, dict(
+        section_element = make_data_tag(soup, SECTION_SCHEMA, data=dict(
             type=section_info['type'],
             number=section_info["number"],
             title=section_info["text"],
@@ -56,7 +56,7 @@ def parse_main_content(soup: BeautifulSoup, main_content: Tag, lines: List[str],
         section_context = _SectionParsingContext(alinea_count=0)
         def _create_alinea_element(contents: List[PageElementOrString]=[]):
             section_context.alinea_count += 1
-            alinea_element = make_element(
+            alinea_element = make_data_tag(
                 soup, 
                 ALINEA_SCHEMA, 
                 contents=contents,
@@ -68,7 +68,7 @@ def parse_main_content(soup: BeautifulSoup, main_content: Tag, lines: List[str],
         body_sections[-1].append(section_element)
         body_sections.append(section_element)
 
-        title_element = make_element(soup, SECTION_TITLE_SCHEMA, contents=[lines.pop(0)])
+        title_element = make_data_tag(soup, SECTION_TITLE_SCHEMA, contents=[lines.pop(0)])
         section_element.append(title_element)
 
         while lines:
