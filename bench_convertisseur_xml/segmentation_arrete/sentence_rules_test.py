@@ -2,7 +2,7 @@ import unittest
 from datetime import date
 from bs4 import BeautifulSoup
 
-from .sentence_rules import is_table, is_table_description
+from .sentence_rules import is_table, is_table_description, is_lined_continued
 
 
 class TestTableDetection(unittest.TestCase):
@@ -46,3 +46,19 @@ Volume autorisé : blablabla.
         assert is_table_description(lines[9], pile)
         assert not is_table_description(lines[10], pile)
         assert is_table_description(lines[11], pile)
+
+
+class TestIsLinedContinued(unittest.TestCase):
+
+    def test_valid_lines_with_continuation(self):
+        assert is_lined_continued("This is a line: ") == True
+        assert is_lined_continued("This is a line:") == True
+        assert is_lined_continued("This is a line :") == True
+        assert is_lined_continued("This is a line : ") == True
+
+    def test_line_without_continuation(self):
+        assert is_lined_continued("This is a complete sentence.") == False
+        assert is_lined_continued("This is a line with: colon in the middle.") == False
+        assert is_lined_continued("") == False
+        assert is_lined_continued(": ") == False
+

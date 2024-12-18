@@ -4,7 +4,6 @@
 import re
 from typing import TypedDict
 
-from bench_convertisseur_xml.utils.markdown import clean_markdown
 from .config import section_from_name
 
 # Numbering patterns
@@ -139,9 +138,6 @@ def identify_unique_sections(content):
 
     # Pass on whole content
     for line in content:
-
-        line = clean_markdown(line)
-
         # Parse any possible section
         section_info = parse_section(line)
 

@@ -1,9 +1,8 @@
 import re
 from typing import Dict, List, Optional, Union
 
-from bs4 import BeautifulSoup, PageElement
+from bs4 import BeautifulSoup, PageElement, Tag
 
-from ..html_schemas import PARAGRAPH_SCHEMA
 from ..types import DataElementSchema, PresentationElementSchema
 
 
@@ -34,8 +33,19 @@ def make_element(
 
 
 def wrap_in_paragraphs(soup: BeautifulSoup, elements: List[PageElementOrString]):
-    return [
-        make_element(soup, PARAGRAPH_SCHEMA, contents=[element]) if isinstance(element, str) else element
-        for element in elements if (not isinstance(element, str) or element.strip())
-    ]
+    wrapped: List[Tag] = []
+    for element in elements:
+        if isinstance(element, str) and element.strip():
+            p = soup.new_tag('p')
+            wrapped.append(p)
+            p.append(element)
+    return wrapped
 
+
+def make_ul(soup: BeautifulSoup, elements: List[PageElementOrString]):
+    ul = soup.new_tag('ul')
+    for element in elements:
+        li = soup.new_tag('li')
+        li.append(element)
+        ul.append(li)
+    return ul

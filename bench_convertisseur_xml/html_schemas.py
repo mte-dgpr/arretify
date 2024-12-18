@@ -80,15 +80,3 @@ ERROR_SCHEMA = DataElementSchema(
 DIV_SCHEMA = PresentationElementSchema(
     tag_name="div",
 )
-
-TABLE_SCHEMA = PresentationElementSchema(
-    tag_name="table",
-)
-
-PARAGRAPH_SCHEMA = PresentationElementSchema(
-    tag_name="p",
-)
-
-LIST_SCHEMA = PresentationElementSchema(
-    tag_name="div",
-)

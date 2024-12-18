@@ -9,51 +9,9 @@ from bench_convertisseur_xml.utils.html import PageElementOrString
 from .config import BodySection
 
 
-def is_not_information(line: str) -> bool:
-
-    patterns_to_ignore = [
-        r'^\.\.\.',
-        # Sentence starting with "```"
-        r'^```',
-        # Sentence starting with "---"
-        r'^---',
-        # Empty sentence or full of whitespaces
-        r'^\s*$',
-        # Sentence starting with "!"
-        r'^!',
-
-        # Bottom-page with format "X/YY"
-        r'^\d+/\d+\s*$',
-        # Bottom-page with format "Page X/YY"
-        r'^page\s+\d+/\d+\s*$',
-        # Bottom-page with format "Page X sur YY"
-        r'^page\s+\d+\s+sur\s+\d+\s*$',
-        # Bottom-page with format "Page X"
-        r'^page\s+\d+$',
-
-        # Sentence starting with "sur"
-        r'^sur\b',
-        # Sentence starting with "apres"
-        r'^apr[eè]s\b',
-
-        # French Republic
-        r"r[eé]publique fran[cç]aise",
-        # French national motto
-        r"(libert[eé]|[eé]galit[eé]|fraternit[eé])",
-        # Phone numbers
-        r'\d{2}[\s.]\d{2}[\s.]\d{2}[\s.]\d{2}[\s.]\d{2}'
-    ]
-    pattern = '|'.join(f'(?:{pattern})' for pattern in patterns_to_ignore)
-
-    search_result = bool(re.search(pattern, line, re.IGNORECASE))
-
-    return search_result
-
-
-def is_continuing_sentence(line: str) -> bool:
-    """Detect sentence starting wit lowercase character."""
-    search_result = bool(re.match(r"^[a-z]", remove_accents(line)))
-    return search_result
+def is_lined_continued(line: str):
+    """Detect that sentence is continuing."""
+    return bool(re.search(r"\S\s*:\s*$", line))
 
 
 def is_entity(line: str) -> bool:

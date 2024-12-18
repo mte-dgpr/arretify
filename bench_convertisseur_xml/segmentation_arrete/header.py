@@ -4,28 +4,14 @@ from enum import Enum
 from bs4 import Tag, BeautifulSoup
 
 from .sentence_rules import (
-    is_arrete, is_continuing_sentence, is_entity, is_liste, is_motif, is_not_information,
+    is_arrete, is_entity, is_liste, is_motif,
     is_visa
 )
 from .config import BodySection, HeaderSection, section_from_name
 from .parse_section import parse_section
-from bench_convertisseur_xml.utils.markdown import clean_markdown
+from .parse_list import parse_list
 from bench_convertisseur_xml.utils.html import make_element, PageElementOrString, wrap_in_paragraphs
 from bench_convertisseur_xml.html_schemas import DIV_SCHEMA, ENTITY_SCHEMA, IDENTIFICATION_SCHEMA, VISA_SCHEMA, MOTIFS_SCHEMA
-
-
-def _ensure_ul_element(soup: BeautifulSoup, container: PageElementOrString | str, string: str):
-    if not isinstance(container, Tag):
-        ul = soup.new_tag('ul')
-        li = soup.new_tag('li')
-        li.append(container)
-        ul.append(li)
-    else:
-        ul = container
-    li = soup.new_tag('li')
-    li.append(string)
-    ul.append(li)
-    return ul
 
 
 def _is_body_section(line: str, authorized_sections) -> bool:
@@ -54,7 +40,7 @@ def parse_header(soup: BeautifulSoup, header: Tag, lines: List[str], authorized_
     # -------- Identification
     pile = []
     while True:
-        if is_arrete(lines[0]) or is_continuing_sentence(lines[0]):
+        if is_arrete(lines[0]):
             pile.append(lines.pop(0))
         # Discard entity in subsection identification
         elif is_entity(lines[0]):
@@ -71,14 +57,9 @@ def parse_header(soup: BeautifulSoup, header: Tag, lines: List[str], authorized_
     while is_visa(lines[0]):
         pile = [lines.pop(0)]
         while True:
-            if is_continuing_sentence(lines[0]):
-                # TODO : Improve code for lists
-                if isinstance(pile[-1], str):
-                    pile[-1] = pile[-1] + ' ' + lines.pop(0)
-                else:
-                    pile[-1].append(lines.pop(0))
-            elif is_liste(lines[0]):
-                pile[-1] = _ensure_ul_element(soup, pile[-1], lines.pop(0))
+            if is_liste(lines[0]):
+                lines, ul_element = parse_list(soup, lines)
+                pile.append(ul_element)
             else:
                 break
         header.append(make_element(soup, VISA_SCHEMA, contents=pile))
@@ -94,14 +75,9 @@ def parse_header(soup: BeautifulSoup, header: Tag, lines: List[str], authorized_
     while is_motif(lines[0]):
         pile = [lines.pop(0)]
         while True:
-            if is_continuing_sentence(lines[0]):
-                # TODO : Improve code for lists
-                if isinstance(pile[-1], str):
-                    pile[-1] = pile[-1] + ' ' + lines.pop(0)
-                else:
-                    pile[-1].append(lines.pop(0))
-            elif is_liste(lines[0]):
-                pile[-1] = _ensure_ul_element(soup, pile[-1], lines.pop(0))
+            if is_liste(lines[0]):
+                lines, ul_element = parse_list(soup, lines)
+                pile.append(ul_element)
             else:
                 break
         header.append(make_element(soup, MOTIFS_SCHEMA, contents=pile))

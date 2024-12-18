@@ -5,9 +5,11 @@ from optparse import OptionParser
 from .settings import TEST_DATA_DIR
 from .segmentation_arrete.parse_arrete import parse_arrete
 from .detection_references.arretes_references import parse_arretes_references
+from .clean_ocrized_file import clean_ocrized_file
 
 
 def main(lines: List[str]):
+    lines = clean_ocrized_file(lines)
     soup = parse_arrete(lines)
     for element in soup.select('*'):
         new_children = parse_arretes_references(soup, element.children)

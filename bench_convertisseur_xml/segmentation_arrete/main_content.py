@@ -5,15 +5,16 @@ from dataclasses import dataclass
 from bs4 import Tag, BeautifulSoup
 
 from .sentence_rules import (
-    is_arrete, is_continuing_sentence, is_entity, is_liste, is_motif, is_not_information, 
-    is_table, is_table_description, is_visa
+    is_arrete, is_entity, is_liste, is_motif, 
+    is_table, is_table_description, is_visa, is_lined_continued
 )
 from bench_convertisseur_xml.utils.html import make_element, PageElementOrString, wrap_in_paragraphs
-from bench_convertisseur_xml.utils.markdown import parse_markdown_table, clean_markdown
+from bench_convertisseur_xml.utils.markdown import parse_markdown_table
 from bench_convertisseur_xml.html_schemas import (
-    DIV_SCHEMA, SECTION_SCHEMA, TABLE_SCHEMA, LIST_SCHEMA, SECTION_TITLE_SCHEMA, ALINEA_SCHEMA)
+    DIV_SCHEMA, SECTION_SCHEMA, SECTION_TITLE_SCHEMA, ALINEA_SCHEMA)
 from .config import BodySection
 from .parse_section import parse_section
+from .parse_list import parse_list
 
 
 @dataclass
@@ -55,13 +56,14 @@ def parse_main_content(soup: BeautifulSoup, main_content: Tag, lines: List[str],
         section_context = _SectionParsingContext(alinea_count=0)
         def _create_alinea_element(contents: List[PageElementOrString]=[]):
             section_context.alinea_count += 1
-            element = make_element(
+            alinea_element = make_element(
                 soup, 
                 ALINEA_SCHEMA, 
                 contents=contents,
                 data=dict(number=str(section_context.alinea_count))
             )
-            return element
+            section_element.append(alinea_element)
+            return alinea_element
 
         body_sections[-1].append(section_element)
         body_sections.append(section_element)
@@ -69,38 +71,34 @@ def parse_main_content(soup: BeautifulSoup, main_content: Tag, lines: List[str],
         title_element = make_element(soup, SECTION_TITLE_SCHEMA, contents=[lines.pop(0)])
         section_element.append(title_element)
 
-        while lines and is_continuing_sentence(lines[0]):
-            section_element.append(lines.pop(0))
-
         while lines:
             section_info = parse_section(lines[0], authorized_sections=authorized_sections)
             if section_info['type'] != BodySection.NONE:
                 break
 
-            if is_table(lines[0]):
-                pile = []
-                while lines and is_table(lines[0]):
-                    pile.append(lines.pop(0))
-                table_element = parse_markdown_table(pile)
-                alinea_element = _create_alinea_element(contents=[table_element])
-                body_sections[-1].append(alinea_element)
-                while is_table_description(lines[0], pile):
-                    alinea_element.append(soup.new_tag('br'))
-                    alinea_element.append(lines.pop(0))
-                
-            elif is_liste(lines[0]):
-                pile = []
-                while lines and is_liste(lines[0]):
-                    pile.append(lines.pop(0))
-                list_element = make_element(soup, LIST_SCHEMA, contents=wrap_in_paragraphs(soup, pile))
-                body_sections[-1].append(list_element)
+            alinea_element = _create_alinea_element()
 
-            # Normal paragraph
-            else:
-                alinea_element = _create_alinea_element()
-                alinea_element.append(lines.pop(0))
-                section_element.append(alinea_element)
-                # If line starts with lowercase, we might have changed page
-                while lines and is_continuing_sentence(lines[0]):
-                    alinea_element.append(lines.pop(0))
-        
+            while lines:
+                if is_table(lines[0]):
+                    pile = []
+
+                    while lines and is_table(lines[0]):
+                        pile.append(lines.pop(0))
+                    alinea_element.append(parse_markdown_table(pile))
+
+                    while is_table_description(lines[0], pile):
+                        alinea_element.append(soup.new_tag('br'))
+                        alinea_element.append(lines.pop(0))
+                    break
+                    
+                elif is_liste(lines[0]):
+                    lines, ul_element = parse_list(soup, lines)
+                    alinea_element.append(ul_element)
+                    break
+
+                # Normal paragraph
+                else:
+                    line = lines.pop(0)
+                    alinea_element.append(line)
+                    if not is_lined_continued(line):
+                        break
