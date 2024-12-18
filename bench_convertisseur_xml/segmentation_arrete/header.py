@@ -11,7 +11,7 @@ from .config import BodySection, HeaderSection, section_from_name
 from .parse_section import parse_section
 from bench_convertisseur_xml.utils.markdown import clean_markdown
 from bench_convertisseur_xml.utils.html import make_element, PageElementOrString, wrap_in_paragraphs
-from bench_convertisseur_xml.html_schemas import DIV_SCHEMA, ENTITY_SCHEMA, IDENTIFICATION_SCHEMA, VISA_SCHEMA, MOTIFS_SCHEMA, PARAGRAPH_SCHEMA
+from bench_convertisseur_xml.html_schemas import DIV_SCHEMA, ENTITY_SCHEMA, IDENTIFICATION_SCHEMA, VISA_SCHEMA, MOTIFS_SCHEMA
 
 
 def _ensure_ul_element(soup: BeautifulSoup, container: PageElementOrString | str, string: str):

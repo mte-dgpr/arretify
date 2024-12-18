@@ -5,6 +5,7 @@ import re
 from typing import List
 
 from bench_convertisseur_xml.utils.text import remove_accents
+from bench_convertisseur_xml.utils.html import PageElementOrString
 from .config import BodySection
 
 
@@ -99,11 +100,17 @@ def is_liste(line: str) -> bool:
     return search_result
 
 
-def is_table_description(line: str, pile: List[str]) -> bool:
-    # Second possibility: this sentence explains the name of one of the columns
-    if len(pile) >= 1:
+def is_table_description(line: str, pile: List[PageElementOrString]) -> bool:
+    # Sentence starts with any number of * between parentheses or without parentheses
+    match = re.search(r"^(\(\*+\))|^(\*+)", line, re.IGNORECASE)
+    if match:
+        return True
+
+    # Sentence that explains the name of one of the columns
+    pile_bottom = pile[0] if len(pile) >= 1 else None
+    if isinstance(pile_bottom, str):
         column_names = []
-        columns_split = pile[0].split("|")
+        columns_split = pile_bottom.split("|")
         for column_split in columns_split:
             column_strip = column_split.strip()
             column_raw = re.sub(r"\([^)]*\)", '', column_strip).strip()
@@ -119,7 +126,5 @@ def is_table_description(line: str, pile: List[str]) -> bool:
 
 def is_table(line: str) -> bool:
     """Detect if the line is part of a table."""
-    # First possibility: any | or sentence starts with any number of * between parentheses
-    table_from_starting_element = bool(re.search(r"(\|)|^(\(\*+\))|^(\*+)", line, re.IGNORECASE))
-    search_result = table_from_starting_element
-    return search_result
+    # Any | character to detect a table
+    return bool(re.search(r"(\|)", line, re.IGNORECASE))

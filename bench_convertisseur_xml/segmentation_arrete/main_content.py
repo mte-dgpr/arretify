@@ -1,5 +1,6 @@
 from typing import List
 from enum import Enum
+from dataclasses import dataclass
 
 from bs4 import Tag, BeautifulSoup
 
@@ -10,9 +11,14 @@ from .sentence_rules import (
 from bench_convertisseur_xml.utils.html import make_element, PageElementOrString, wrap_in_paragraphs
 from bench_convertisseur_xml.utils.markdown import parse_markdown_table, clean_markdown
 from bench_convertisseur_xml.html_schemas import (
-    DIV_SCHEMA, PARAGRAPH_SCHEMA, SECTION_SCHEMA, TABLE_SCHEMA, LIST_SCHEMA, SECTION_TITLE_SCHEMA)
+    DIV_SCHEMA, SECTION_SCHEMA, TABLE_SCHEMA, LIST_SCHEMA, SECTION_TITLE_SCHEMA, ALINEA_SCHEMA)
 from .config import BodySection
 from .parse_section import parse_section
+
+
+@dataclass
+class _SectionParsingContext:
+    alinea_count: int
 
 
 def parse_main_content(soup: BeautifulSoup, main_content: Tag, lines: List[str], authorized_sections):
@@ -46,6 +52,17 @@ def parse_main_content(soup: BeautifulSoup, main_content: Tag, lines: List[str],
         else:
             raise RuntimeError(f'unexpected title {section_info}, current level {len(body_sections)}')
 
+        section_context = _SectionParsingContext(alinea_count=0)
+        def _create_alinea_element(contents: List[PageElementOrString]=[]):
+            section_context.alinea_count += 1
+            element = make_element(
+                soup, 
+                ALINEA_SCHEMA, 
+                contents=contents,
+                data=dict(number=str(section_context.alinea_count))
+            )
+            return element
+
         body_sections[-1].append(section_element)
         body_sections.append(section_element)
 
@@ -62,10 +79,14 @@ def parse_main_content(soup: BeautifulSoup, main_content: Tag, lines: List[str],
 
             if is_table(lines[0]):
                 pile = []
-                while lines and is_table(lines[0]) or is_table_description(lines[0], pile):
+                while lines and is_table(lines[0]):
                     pile.append(lines.pop(0))
                 table_element = parse_markdown_table(pile)
-                body_sections[-1].append(table_element)
+                alinea_element = _create_alinea_element(contents=[table_element])
+                body_sections[-1].append(alinea_element)
+                while is_table_description(lines[0], pile):
+                    alinea_element.append(soup.new_tag('br'))
+                    alinea_element.append(lines.pop(0))
                 
             elif is_liste(lines[0]):
                 pile = []
@@ -76,10 +97,10 @@ def parse_main_content(soup: BeautifulSoup, main_content: Tag, lines: List[str],
 
             # Normal paragraph
             else:
-                paragraph_element = make_element(soup, PARAGRAPH_SCHEMA)
-                paragraph_element.append(lines.pop(0))
-                section_element.append(paragraph_element)
+                alinea_element = _create_alinea_element()
+                alinea_element.append(lines.pop(0))
+                section_element.append(alinea_element)
                 # If line starts with lowercase, we might have changed page
                 while lines and is_continuing_sentence(lines[0]):
-                    paragraph_element.append(lines.pop(0))
+                    alinea_element.append(lines.pop(0))
         

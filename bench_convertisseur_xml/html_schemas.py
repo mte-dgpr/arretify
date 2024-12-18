@@ -51,6 +51,12 @@ SECTION_TITLE_SCHEMA = DataElementSchema(
     data_keys=[],
 )
 
+ALINEA_SCHEMA = DataElementSchema(
+    name="alinea",
+    tag_name="div",
+    data_keys=['number'],
+)
+
 ARRETE_REFERENCE_SCHEMA = DataElementSchema(
     name="arrete_reference",
     tag_name="a",
