@@ -9,7 +9,7 @@ from bench_convertisseur_xml.utils.html import PageElementOrString
 from .config import BodySection
 
 
-def is_lined_continued(line: str):
+def is_line_with_semicolumn(line: str):
     """Detect that sentence is continuing."""
     return bool(re.search(r"\S\s*:\s*$", line))
 

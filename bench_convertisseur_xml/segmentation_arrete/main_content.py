@@ -6,7 +6,7 @@ from bs4 import Tag, BeautifulSoup
 
 from .sentence_rules import (
     is_arrete, is_entity, is_liste, is_motif, 
-    is_table, is_table_description, is_visa, is_lined_continued
+    is_table, is_table_description, is_visa, is_line_with_semicolumn
 )
 from bench_convertisseur_xml.utils.html import make_data_tag, PageElementOrString, wrap_in_paragraphs
 from bench_convertisseur_xml.utils.markdown import parse_markdown_table
@@ -100,5 +100,5 @@ def parse_main_content(soup: BeautifulSoup, main_content: Tag, lines: List[str],
                 else:
                     line = lines.pop(0)
                     alinea_element.append(line)
-                    if not is_lined_continued(line):
+                    if not is_line_with_semicolumn(line):
                         break
