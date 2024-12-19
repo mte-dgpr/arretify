@@ -2,7 +2,7 @@ import unittest
 from datetime import date
 from bs4 import BeautifulSoup
 
-from .sentence_rules import is_table, is_table_description, is_lined_continued
+from .sentence_rules import is_table, is_table_description, is_line_with_semicolumn
 
 
 class TestTableDetection(unittest.TestCase):
@@ -51,14 +51,14 @@ Volume autorisé : blablabla.
 class TestIsLinedContinued(unittest.TestCase):
 
     def test_valid_lines_with_continuation(self):
-        assert is_lined_continued("This is a line: ") == True
-        assert is_lined_continued("This is a line:") == True
-        assert is_lined_continued("This is a line :") == True
-        assert is_lined_continued("This is a line : ") == True
+        assert is_line_with_semicolumn("This is a line: ") == True
+        assert is_line_with_semicolumn("This is a line:") == True
+        assert is_line_with_semicolumn("This is a line :") == True
+        assert is_line_with_semicolumn("This is a line : ") == True
 
     def test_line_without_continuation(self):
-        assert is_lined_continued("This is a complete sentence.") == False
-        assert is_lined_continued("This is a line with: colon in the middle.") == False
-        assert is_lined_continued("") == False
-        assert is_lined_continued(": ") == False
+        assert is_line_with_semicolumn("This is a complete sentence.") == False
+        assert is_line_with_semicolumn("This is a line with: colon in the middle.") == False
+        assert is_line_with_semicolumn("") == False
+        assert is_line_with_semicolumn(": ") == False
 
