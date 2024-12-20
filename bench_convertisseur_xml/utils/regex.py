@@ -49,18 +49,44 @@ def split_string_from_match(
 def split_string_with_regex(
     regex: Pattern, 
     string: str,
+    capture_matches: bool=True,
 ) -> Iterator[str | re.Match]:
-    remainder = str(string)
+    """
+    Splits a string using a regex pattern, optionally yielding regex match objects.
+    The split point is at the beginning of the match.
+
+    Yields substrings and, if capture_matches is True, match objects.
+    """
+    remainder = string
+    previous_match = None
     while True:
         match = regex.search(remainder)
         if not match:
-            yield remainder
+            if capture_matches is False:
+                if previous_match:
+                    yield previous_match.group(0) + remainder
+                elif remainder:
+                    yield remainder
+            else:
+                if previous_match:
+                    yield previous_match
+                if remainder:
+                    yield remainder
             break
         
         match_start = match.start()
         match_end = match.end()
-        
-        if match_start > 0:
-            yield remainder[:match_start]
-        yield match
+
+        if capture_matches is False:
+            if previous_match:
+                yield previous_match.group(0) + remainder[:match_start]
+            elif remainder[:match_start]:
+                yield remainder[:match_start]
+        else:
+            if previous_match:
+                yield previous_match
+            if remainder[:match_start]:
+                yield remainder[:match_start]
+
         remainder = remainder[match_end:]
+        previous_match = match

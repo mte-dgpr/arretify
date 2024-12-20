@@ -1,4 +1,5 @@
-from typing import List
+import re
+from typing import List, cast
 from enum import Enum
 
 from bs4 import Tag, BeautifulSoup
@@ -7,16 +8,27 @@ from .sentence_rules import (
     is_arrete, is_entity, is_liste, is_motif,
     is_visa
 )
-from .config import BodySection, HeaderSection, section_from_name
+from .config import (
+    SERVICE_AND_REFERENCE_PATTERN, BodySection
+)
 from .parse_section import parse_section
 from .parse_list import parse_list
 from bench_convertisseur_xml.utils.html import make_data_tag, PageElementOrString, wrap_in_paragraphs, make_new_tag
+from bench_convertisseur_xml.utils.regex import split_string_with_regex
 from bench_convertisseur_xml.html_schemas import ENTITY_SCHEMA, IDENTIFICATION_SCHEMA, VISA_SCHEMA, MOTIFS_SCHEMA
 
 
 def _is_body_section(line: str, authorized_sections) -> bool:
     new_section_info = parse_section(line, authorized_sections=authorized_sections)
     return new_section_info['type'] in {BodySection.TITLE, BodySection.CHAPTER, BodySection.ARTICLE, BodySection.SUB_ARTICLE}
+
+
+def _process_entity_pile(pile: List[str]) -> List[str]:
+    # Combine all lines of current pile
+    entity_line = " ".join(pile)
+
+    # Split by entity names
+    return cast(List[str], list(split_string_with_regex(SERVICE_AND_REFERENCE_PATTERN, entity_line, capture_matches=False)))
 
 
 def parse_header(soup: BeautifulSoup, header: Tag, lines: List[str], authorized_sections):
@@ -31,8 +43,11 @@ def parse_header(soup: BeautifulSoup, header: Tag, lines: List[str], authorized_
     while True:
         if is_arrete(lines[0]):
             break
-        else:
-            pile.append(lines.pop(0))
+        # Multi-line entity
+        pile.append(lines.pop(0))
+
+    pile = _process_entity_pile(pile)
+
     header.append(
         make_data_tag(soup, ENTITY_SCHEMA, contents=wrap_in_paragraphs(soup, pile))
     )

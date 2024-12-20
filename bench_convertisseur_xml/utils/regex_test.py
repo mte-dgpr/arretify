@@ -28,6 +28,50 @@ class TestSplitStringWithRegex(unittest.TestCase):
         ]
         assert actual_results == expected_results
 
+    def test_split_without_capture_matches(self):
+        # Arrange
+        regex = re.compile(r"\d+")
+        string = "abc123def456ghi"
+
+        # Act
+        result = list(split_string_with_regex(regex, string, capture_matches=False))
+
+        # Assert
+        assert result == ["abc", "123def", "456ghi"], "Should split string and include matches as strings"
+
+    def test_split_with_no_matches(self):
+        # Arrange
+        regex = re.compile(r"\d+")
+        string = "abcdef"
+
+        # Act
+        result = list(split_string_with_regex(regex, string, capture_matches=False))
+
+        # Assert
+        assert result == ["abcdef"], "Should return the original string when no matches are found"
+
+    def test_split_with_match_at_start(self):
+        # Arrange
+        regex = re.compile(r"\d+")
+        string = "123abc456"
+
+        # Act
+        result = list(split_string_with_regex(regex, string, capture_matches=False))
+
+        # Assert
+        assert result == ["123abc", "456"], "Should handle matches at the start of the string"
+
+    def test_split_with_match_at_end(self):
+        # Arrange
+        regex = re.compile(r"\d+")
+        string = "abc123"
+
+        # Act
+        result = list(split_string_with_regex(regex, string, capture_matches=False))
+
+        # Assert
+        assert result == ["abc", "123"], "Should handle matches at the end of the string"
+
 
 class TestSplitStringFromMatch(unittest.TestCase):
     def test_simple(self):
