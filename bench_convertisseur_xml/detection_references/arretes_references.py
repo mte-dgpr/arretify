@@ -175,7 +175,6 @@ def parse_arretes_references(
     new_children: List[PageElementOrString] = []
     for child in children:
         if isinstance(child, str):
-            # import pdb; pdb.set_trace()
             for str_or_match in split_string_with_regex(ARRETE_PLURAL_RE, child):
                 if isinstance(str_or_match, str):
                     new_children.append(str_or_match)
