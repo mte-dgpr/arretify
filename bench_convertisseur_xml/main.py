@@ -1,7 +1,7 @@
 from typing import List
 from pathlib import Path
-
 from optparse import OptionParser
+
 from .settings import TEST_DATA_DIR
 from .segmentation_arrete.parse_arrete import parse_arrete
 from .detection_references.arretes_references import parse_arretes_references

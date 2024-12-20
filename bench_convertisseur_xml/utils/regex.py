@@ -90,3 +90,9 @@ def split_string_with_regex(
 
         remainder = remainder[match_end:]
         previous_match = match
+
+
+NAMED_GROUP_RE = re.compile(r'\?P\<\w+\>')
+
+def without_named_groups(regex_string: str):
+    return NAMED_GROUP_RE.sub('', regex_string)
