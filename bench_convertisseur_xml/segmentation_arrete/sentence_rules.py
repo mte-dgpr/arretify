@@ -66,7 +66,7 @@ def is_table_description(line: str, pile: List[PageElementOrString]) -> bool:
 
         # For each column name, check if we have it followed by :
         for column_name in column_names:
-            if re.match(fr".*{column_name} :", line, re.IGNORECASE):
+            if re.match(fr".*{re.escape(column_name)} :", line, re.IGNORECASE):
                 return True
     return False
 

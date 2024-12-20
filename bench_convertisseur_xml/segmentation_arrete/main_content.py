@@ -86,7 +86,7 @@ def parse_main_content(soup: BeautifulSoup, main_content: Tag, lines: List[str],
                         pile.append(lines.pop(0))
                     alinea_element.append(parse_markdown_table(pile))
 
-                    while is_table_description(lines[0], pile):
+                    while lines and is_table_description(lines[0], pile):
                         alinea_element.append(soup.new_tag('br'))
                         alinea_element.append(lines.pop(0))
                     break

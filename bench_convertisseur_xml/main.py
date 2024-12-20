@@ -1,14 +1,15 @@
-from typing import List
+from typing import List, Iterator, Tuple
 from pathlib import Path
 from optparse import OptionParser
+import traceback
 
-from .settings import TEST_DATA_DIR
+from .settings import TEST_DATA_DIR, LOGGER, OCR_FILE_EXTENSION
 from .segmentation_arrete.parse_arrete import parse_arrete
 from .detection_references.arretes_references import parse_arretes_references
 from .clean_ocrized_file import clean_ocrized_file
 
 
-def main(lines: List[str]):
+def ocrized_arrete_to_html(lines: List[str]):
     lines = clean_ocrized_file(lines)
     soup = parse_arrete(lines)
     for element in soup.select('*'):
@@ -18,23 +19,58 @@ def main(lines: List[str]):
     return soup
 
 
+def main(input_path: Path, output_path: Path):
+    with open(input_path, 'r', encoding='utf-8') as f:
+        lines = f.readlines()
+    soup = ocrized_arrete_to_html(lines)
+    with open(output_path, 'w', encoding='utf-8') as f:
+        f.write(soup.prettify())
+
+
+def _walk_ocrized_files(dir_path: Path) -> Iterator[Tuple[Path, Path]]:
+    for root, _, file_names in input_path.walk():
+        ocrized_file_paths = [
+            root / file_name for file_name in file_names 
+            if file_name.endswith(OCR_FILE_EXTENSION)
+        ]
+        for ocrized_file_path in ocrized_file_paths:
+            yield root.relative_to(dir_path), ocrized_file_path
+
+
 if __name__ == "__main__":
     PARSER = OptionParser()
     PARSER.add_option(
         "-i",
         "--input",
-        default=TEST_DATA_DIR / "arretes_ocr" / "2020-04-20_AP-auto_initial_pixtral.txt",
+        help="Input folder or single file path.",
+        default=TEST_DATA_DIR / "arretes_ocr",
     )
     PARSER.add_option(
         "-o",
         "--output",
-        default='./tmp/output.html',
+        default=TEST_DATA_DIR / "arretes_html",
     )
     (options, args) = PARSER.parse_args()
 
-    with open(Path(options.input), 'r', encoding='utf-8') as f:
-        lines = f.readlines()
-    
-    soup = main(lines)
-    with open(Path(options.output), 'w', encoding='utf-8') as f:
-        f.write(soup.prettify())
+    input_path = Path(options.input)
+    output_path = Path(options.output)
+
+    if input_path.is_dir():
+        if not output_path.is_dir():
+            LOGGER.error(f'Expected output to be a directory, got {output_path}')
+        ocrized_files_walk = list(_walk_ocrized_files(input_path))
+        for i, (relative_root, ocrized_file_path) in enumerate(ocrized_files_walk):
+            output_root = output_path / relative_root
+            # Makes sure output dir exists
+            output_root.mkdir(parents=True, exist_ok=True)
+            html_file_path = output_root / f'{ocrized_file_path.stem}.html'
+            LOGGER.info(f'[{i + 1}/{len(ocrized_files_walk)}] parsing {ocrized_file_path} ...')
+            try:
+                main(ocrized_file_path, html_file_path)
+            except BaseException as err:
+                LOGGER.error(f'[{i + 1}/{len(ocrized_files_walk)}] FAILED : {ocrized_file_path} ...')
+                print(traceback.format_exc())
+
+    else:
+        main(input_path, output_path)
+

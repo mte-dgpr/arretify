@@ -2,7 +2,7 @@ from pathlib import Path
 
 from bench_convertisseur_xml.settings import TEST_DATA_DIR
 from bench_convertisseur_xml.settings import LOGGER
-from .main import main
+from .main import ocrized_arrete_to_html
 
 ARRETES_OCR_DIR = TEST_DATA_DIR / 'arretes_ocr'
 ARRETES_HTML_DIR = TEST_DATA_DIR / 'arretes_html'
@@ -19,21 +19,21 @@ ARRETES_FILE_NAMES = [
 ]
 
 
-def iter_parsed_arretes_ocr_files():
+def _iter_parsed_arretes_ocr_files():
     for arrete_file_name in ARRETES_FILE_NAMES:
         arrete_contents = open(ARRETES_OCR_DIR / arrete_file_name, 'r', encoding='utf-8').readlines()
-        soup = main(arrete_contents)
+        soup = ocrized_arrete_to_html(arrete_contents)
         yield Path(arrete_file_name), soup.prettify()
 
 
 def test_parse_arrete_snapshots():
-    for arrete_file_name, actual_contents in iter_parsed_arretes_ocr_files():
+    for arrete_file_name, actual_contents in _iter_parsed_arretes_ocr_files():
         expected_contents = open(ARRETES_HTML_DIR / f'{arrete_file_name.stem}.html', 'r', encoding='utf-8').read()
         assert actual_contents == expected_contents
 
 
 if __name__ == '__main__':
     LOGGER.info(f'Generating snapshots ...')
-    for arrete_file_name, arrete_html_str in iter_parsed_arretes_ocr_files():
+    for arrete_file_name, arrete_html_str in _iter_parsed_arretes_ocr_files():
         LOGGER.info(f'Input {arrete_file_name.stem} ...')
         open(ARRETES_HTML_DIR / f'{arrete_file_name.stem}.html', 'w', encoding='utf-8').write(arrete_html_str)
