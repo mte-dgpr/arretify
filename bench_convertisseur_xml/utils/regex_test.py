@@ -1,7 +1,7 @@
 import unittest
 import re
 
-from .regex import split_string_with_regex, split_string_from_match, MatchNamedGroup
+from .regex import split_string_with_regex, split_string_from_match, MatchNamedGroup, without_named_groups
 
 
 class TestSplitStringWithRegex(unittest.TestCase):
@@ -128,3 +128,9 @@ class TestSplitStringFromMatch(unittest.TestCase):
             MatchNamedGroup(name='bly', text='BlaBloBla'),
             ' !!!',
         ]
+
+
+class TestWithoutNamedGroups(unittest.TestCase):
+
+    def test_simple(self):
+        assert without_named_groups(r'(([nN]° ?(?P<code1>\S+))|(?P<code2>\S+[/\-]\S+))(?=\s|\.|$|,|\)|;)') == r'(([nN]° ?(\S+))|(\S+[/\-]\S+))(?=\s|\.|$|,|\)|;)'
