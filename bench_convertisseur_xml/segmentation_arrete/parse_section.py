@@ -7,7 +7,7 @@ from typing import TypedDict
 from .config import section_from_name
 
 # Numbering patterns
-ROMAN_NUMERALS = r"(?:M{0,4}(?:CM|CD|D?C{0,3})(?:XC|XL|L?X{0,3})(?:IX|IV|V?I{0,3}))"
+ROMAN_NUMERALS = r"(?:(?:X{0,3})(?:IX|IV|V?I{0,3}))"
 NUMBERS = r"\d+"
 LETTERS = r"[a-zA-Z]"
 NUMBER_ELEMENT = fr"(?:{ROMAN_NUMERALS}|{NUMBERS}|{LETTERS})"
