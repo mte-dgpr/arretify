@@ -43,7 +43,6 @@ class TestParseArreteReferencesAll(unittest.TestCase):
             '<a class="dsr-arrete_reference" data-authority="ministériel">arrêté ministériel du <time class="dsr-date" datetime="2016-05-23">23 mai 2016</time></a>',
             ' relatif aux installations de production de chaleur et ',
             '<a class="dsr-arrete_reference" data-authority="préfectoral" data-code="1234-567/01.">arrêté préfectoral n° 1234-567/01.</a>',
-            ''
         ]
         assert [str(element) for element in arretes] == expected_elements
 
@@ -56,7 +55,6 @@ class TestParseArreteReferencesAll(unittest.TestCase):
             '<a class="dsr-arrete_reference" data-authority="préfectoral" data-code="5213">n° 5213 du <time class="dsr-date" datetime="1988-10-28">28 octobre 1988</time></a>',
             ' et ',
             '<a class="dsr-arrete_reference" data-authority="préfectoral" data-code="1636">n° 1636 du <time class="dsr-date" datetime="1995-03-24">24/03/95</time></a>',
-            '',
             ' blabla.'
         ]
         print([str(element) for element in arretes])

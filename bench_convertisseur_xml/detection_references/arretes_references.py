@@ -42,7 +42,7 @@ AUTHORITY_MAP: Dict[str, Authority] = {
 def _get_authority(match_dict: AuthorityMatchDict) -> Authority | None:
     authority_raw = match_dict.get('authority')
     if authority_raw:
-        return AUTHORITY_MAP[authority_raw]
+        return AUTHORITY_MAP[authority_raw.lower()]
     else:
         return None
 

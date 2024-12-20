@@ -1,8 +1,9 @@
-Convertisseur arrêté prefectoral -> XML
+Convertisseur arrêté prefectoral -> HTML
 ============================================
 
-Tester localement
-------------------------------
+
+Setup
+------
 
 Installer les dépendences :
 
@@ -10,18 +11,31 @@ Installer les dépendences :
 pip install -r requirements.txt
 ```
 
-Lancer un script :
+
+Executer le script de parsing
+-----------------------------------
+
+Pour éxecuter le parsing sur un lot de fichiers OCRisés, copier le dossier de fichiers dans dossier facilement accessible (e.g. `./tmp/arretes_ocr`), et exécuter la commande `main.py`. Par exemple :
 
 ```
-python -m bench_convertisseur_xml.segmentation_arrete.main
+python -m main -i ./tmp/arretes_ocr -o ./tmp/arretes_html
 ```
 
-TO-DO:
-- répétition des titres/chapitres/articles en début de page
-- répétition du nom de la société en début de page
-- nom de l'entité sur plusieurs lignes en début d'arrêté 
-- texte du titre/chapitre sur la ligne suivante (sans point, regarder ça ?)
+Il est aussi possible d'éxecuter le parsing sur un fichier unique en passant en option le chemin complet d'entrée et de sortie, par exemple :
 
+```
+python -m main -i ./tmp/arretes_ocr/bla.txt -o ./tmp/arretes_html/bla.html
+```
+
+
+Testing
+-----------
+
+Pour éxecuter les tests :
+
+```
+pytest
+```
 
 ### Snapshot testing
 
