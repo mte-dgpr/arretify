@@ -6,7 +6,7 @@ from typing import List
 
 from bench_convertisseur_xml.utils.text import remove_accents
 from bench_convertisseur_xml.utils.html import PageElementOrString
-from .config import BodySection
+from .config import HONORARY_PATTERNS, SERVICE_PATTERNS, BodySection
 
 
 def is_line_with_semicolumn(line: str):
@@ -17,18 +17,7 @@ def is_line_with_semicolumn(line: str):
 def is_entity(line: str) -> bool:
     """Detect if the sentence starts with the name of an entity."""
 
-    patterns_to_catch = [
-        r"la pr[ée]fecture",
-        r"pr[eé]fecture",
-        r"direction",
-        r"service",
-        r"bureau",
-        r"l[ea] pr[ée]f[eè]t",
-        r"pr[ée]f[eè]t",
-        r"chevalier",
-        r"officier",
-        r"commandeur",
-    ]
+    patterns_to_catch = SERVICE_PATTERNS + HONORARY_PATTERNS
     pattern = f"^({'|'.join(patterns_to_catch)})\\b"
 
     search_result = bool(re.match(pattern, line, re.IGNORECASE))
