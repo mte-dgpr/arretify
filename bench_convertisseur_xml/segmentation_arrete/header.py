@@ -23,6 +23,10 @@ def _is_body_section(line: str, authorized_sections) -> bool:
     return new_section_info['type'] in {BodySection.TITLE, BodySection.CHAPTER, BodySection.ARTICLE, BodySection.SUB_ARTICLE}
 
 
+def _process_identification_pile(pile: List[str]):
+    return [" ".join(pile)]
+
+
 def _process_entity_pile(pile: List[str]) -> List[str]:
     # Combine all lines of current pile
     entity_line = " ".join(pile)
@@ -60,11 +64,14 @@ def parse_header(soup: BeautifulSoup, header: Tag, lines: List[str], authorized_
         # Discard entity in subsection identification
         elif is_entity(lines[0]):
             lines.pop(0)
-        # Multi-line identification
         elif is_visa(lines[0]) or is_motif(lines[0]) or _is_body_section(lines[0], authorized_sections):
             break
+        # Multi-line identification        
         else:
             pile.append(lines.pop(0))
+
+    # Specific process for the identification
+    pile = _process_identification_pile(pile)
 
     header.append(make_data_tag(soup, IDENTIFICATION_SCHEMA, contents=wrap_in_paragraphs(soup, pile)))
 
