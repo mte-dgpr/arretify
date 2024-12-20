@@ -1,7 +1,6 @@
 Convertisseur arrêté prefectoral -> HTML
 ============================================
 
-
 Setup
 ------
 
@@ -26,6 +25,18 @@ Il est aussi possible d'éxecuter le parsing sur un fichier unique en passant en
 ```
 python -m main -i ./tmp/arretes_ocr/bla.txt -o ./tmp/arretes_html/bla.html
 ```
+
+
+Styling des pages HTML générées
+-----------------------------------
+
+Pour le styling, nous utilisons des fichiers CSS. Il faudra donc préparer un dossier où vos fichiers HTML seront générés (de préférence dans `tmp/` pour éviter d'ajouter des fichiers par erreur au repo git).
+
+Télécharger [une release du DSFR](https://github.com/GouvernementFR/dsfr/releases/download/v1.13.0/dsfr-v1.13.0.zip), extraire le dossier `dist/` et le copier dans votre dossier html. Renommer ce dossier `dist` en `dsfr`.
+
+Copier le fichier `templates/styles.css` dans votre dossier html.
+
+Démarrer un server HTTP à la racine de ce dossier html. Vous pouvez utiliser powershell, naviguer dans votre dossier html, puis executer la commande suivante : `python -m http.server`.
 
 
 Testing

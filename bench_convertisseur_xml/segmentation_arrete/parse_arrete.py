@@ -3,6 +3,7 @@ from typing import List, Iterator
 
 from bs4 import BeautifulSoup
 
+from bench_convertisseur_xml.settings import APP_ROOT
 from .header import parse_header
 from .main_content import parse_main_content
 from .parse_section import (
@@ -11,7 +12,7 @@ from .parse_section import (
 from bench_convertisseur_xml.html_schemas import HEADER_SCHEMA, MAIN_SCHEMA
 from bench_convertisseur_xml.utils.html import make_data_tag
 
-TEMPLATE_PATH = Path(__file__).parent / 'template.html'
+TEMPLATE_PATH = APP_ROOT / 'bench_convertisseur_xml' / 'templates' / 'index.html'
 TEMPLATE_HTML = open(TEMPLATE_PATH, 'r', encoding='utf-8').read()
 
 

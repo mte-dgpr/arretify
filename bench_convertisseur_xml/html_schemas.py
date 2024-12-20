@@ -1,4 +1,5 @@
 from .types import DataElementSchema
+from dataclasses import replace as dataclass_replace
 
 # TODO : custom DTD for automatic validation of generated document
 
@@ -44,11 +45,23 @@ SECTION_SCHEMA = DataElementSchema(
     data_keys=['title', 'number', 'type'],
 )
 
-SECTION_TITLE_SCHEMA = DataElementSchema(
+SECTION_TITLE1_SCHEMA = DataElementSchema(
     name="section_title",
-    tag_name="p",
+    tag_name="h2",
     data_keys=[],
 )
+SECTION_TITLE2_SCHEMA = dataclass_replace(SECTION_TITLE1_SCHEMA, tag_name="h3")
+SECTION_TITLE3_SCHEMA = dataclass_replace(SECTION_TITLE1_SCHEMA, tag_name="h4")
+SECTION_TITLE4_SCHEMA = dataclass_replace(SECTION_TITLE1_SCHEMA, tag_name="h5")
+SECTION_TITLE5_SCHEMA = dataclass_replace(SECTION_TITLE1_SCHEMA, tag_name="h6")
+SECTION_TITLE_SCHEMAS = [
+    SECTION_TITLE1_SCHEMA,
+    SECTION_TITLE2_SCHEMA,
+    SECTION_TITLE3_SCHEMA,
+    SECTION_TITLE4_SCHEMA,
+    SECTION_TITLE5_SCHEMA,
+]
+
 
 ALINEA_SCHEMA = DataElementSchema(
     name="alinea",
