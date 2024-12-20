@@ -13,7 +13,7 @@ from .config import (
 )
 from .parse_section import parse_section
 from .parse_list import parse_list
-from bench_convertisseur_xml.utils.html import make_data_tag, PageElementOrString, wrap_in_paragraphs, make_new_tag
+from bench_convertisseur_xml.utils.html import make_data_tag, PageElementOrString, wrap_in_tag, make_new_tag
 from bench_convertisseur_xml.utils.regex import split_string_with_regex
 from bench_convertisseur_xml.html_schemas import ENTITY_SCHEMA, IDENTIFICATION_SCHEMA, VISA_SCHEMA, MOTIFS_SCHEMA
 
@@ -53,7 +53,7 @@ def parse_header(soup: BeautifulSoup, header: Tag, lines: List[str], authorized_
     pile = _process_entity_pile(pile)
 
     header.append(
-        make_data_tag(soup, ENTITY_SCHEMA, contents=wrap_in_paragraphs(soup, pile))
+        make_data_tag(soup, ENTITY_SCHEMA, contents=wrap_in_tag(soup, pile, 'div'))
     )
     
     # -------- Identification
@@ -73,7 +73,7 @@ def parse_header(soup: BeautifulSoup, header: Tag, lines: List[str], authorized_
     # Specific process for the identification
     pile = _process_identification_pile(pile)
 
-    header.append(make_data_tag(soup, IDENTIFICATION_SCHEMA, contents=wrap_in_paragraphs(soup, pile)))
+    header.append(make_data_tag(soup, IDENTIFICATION_SCHEMA, contents=wrap_in_tag(soup, pile, 'h1')))
 
     # -------- Visas
     while is_visa(lines[0]):

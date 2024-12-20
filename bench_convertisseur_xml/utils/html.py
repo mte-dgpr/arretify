@@ -20,23 +20,21 @@ def make_data_tag(
     data: Dict[str, str | None]=dict(), 
 ) -> Tag:
     element = make_new_tag(soup, schema.tag_name, contents=contents)
-    if isinstance(schema, DataElementSchema):
-        element['class'] = [make_css_class(schema)]
-    if isinstance(schema, DataElementSchema):
-        for key in schema.data_keys:
-            data_value = data[key]
-            if data_value is not None:
-                element[f'data-{key}'] = data_value
+    element['class'] = [make_css_class(schema)]
+    for key in schema.data_keys:
+        data_value = data[key]
+        if data_value is not None:
+            element[f'data-{key}'] = data_value
     return element
 
 
-def wrap_in_paragraphs(soup: BeautifulSoup, elements: List[PageElementOrString]):
+def wrap_in_tag(soup: BeautifulSoup, elements: List[PageElementOrString], tag_name: str):
     wrapped: List[Tag] = []
     for element in elements:
         if isinstance(element, str) and element.strip():
-            p = soup.new_tag('p')
-            wrapped.append(p)
-            p.append(element)
+            container = soup.new_tag(tag_name)
+            wrapped.append(container)
+            container.append(element)
     return wrapped
 
 

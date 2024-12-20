@@ -1,0 +1,92 @@
+:root {
+    --spacing-1: 1rem;
+    --spacing-0p5: 0.5rem;
+}
+
+header, main {
+    max-width: 800px;
+    margin: auto;
+    padding: var(--spacing-1);
+}
+
+th {
+    text-align: left;
+}
+
+a.dsr-arrete_reference {
+    color: var(--text-action-high-blue-france);
+}
+
+.dsr-error {
+    font-family: monospace;
+    background-color: #ffd0d0;
+}
+
+.dsr-error:before {
+    content: '❌';
+}
+
+.dsr-alinea::before, .dsr-visa::before, .dsr-motifs::before {
+    color: var(--text-disabled-grey);
+    position: absolute;
+    top: 0;
+    left: -1rem;
+}
+
+/**************** HEADER ****************/
+header {
+    padding-bottom: var(--spacing-1);
+    margin-bottom: var(--spacing-1);
+}
+
+.dsr-entity, .dsr-identification {
+    padding: var(--spacing-1);
+    background-color: var(--background-alt-grey);
+    text-align: center;
+}
+
+.dsr-identification {
+    color: var(--text-title-grey);
+}
+
+.dsr-entity {
+    color: var(--text-title-blue-france);
+    font-size: 120%;
+}
+
+.dsr-visa, .dsr-motifs {
+    position: relative;
+    margin-top: var(--spacing-1);
+    padding-bottom: 0;
+}
+
+.dsr-visa::before, .dsr-motifs::before {
+    content: '⮞';
+}
+
+header > *:last-child {
+    border-bottom: 1px solid var(--background-action-low-blue-france);
+    padding-bottom: var(--spacing-1);
+}
+
+/**************** HEADER ****************/
+.dsr-table {
+    font-family: monospace;
+}
+
+.dsr-section {
+    padding: var(--spacing-0p5) 0;
+}
+
+.dsr-alinea {
+    position: relative;
+    margin-top: var(--spacing-0p5);
+}
+
+.dsr-alinea::before {
+    content: '¶';
+}
+
+.dsr-section_title {
+    background-color: var(--colors-title-bg);
+}

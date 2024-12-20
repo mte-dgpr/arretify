@@ -8,10 +8,10 @@ from .sentence_rules import (
     is_arrete, is_entity, is_liste, is_motif, 
     is_table, is_table_description, is_visa, is_line_with_semicolumn
 )
-from bench_convertisseur_xml.utils.html import make_data_tag, PageElementOrString, wrap_in_paragraphs
+from bench_convertisseur_xml.utils.html import make_data_tag, PageElementOrString, wrap_in_tag
 from bench_convertisseur_xml.utils.markdown import parse_markdown_table
 from bench_convertisseur_xml.html_schemas import (
-    SECTION_SCHEMA, SECTION_TITLE_SCHEMA, ALINEA_SCHEMA)
+    SECTION_SCHEMA, SECTION_TITLE_SCHEMAS, ALINEA_SCHEMA)
 from .config import BodySection
 from .parse_section import parse_section
 from .parse_list import parse_list
@@ -68,7 +68,7 @@ def parse_main_content(soup: BeautifulSoup, main_content: Tag, lines: List[str],
         body_sections[-1].append(section_element)
         body_sections.append(section_element)
 
-        title_element = make_data_tag(soup, SECTION_TITLE_SCHEMA, contents=[lines.pop(0)])
+        title_element = make_data_tag(soup, SECTION_TITLE_SCHEMAS[new_section_level], contents=[lines.pop(0)])
         section_element.append(title_element)
 
         while lines:
