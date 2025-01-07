@@ -3,10 +3,7 @@ from typing import Dict, List, Optional, Union
 
 from bs4 import BeautifulSoup, PageElement, Tag
 
-from ..types import DataElementSchema
-
-
-PageElementOrString = Union[PageElement, str]
+from ..types import DataElementSchema, PageElementOrString
 
 
 def make_css_class(schema: DataElementSchema):

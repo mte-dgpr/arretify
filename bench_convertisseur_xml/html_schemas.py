@@ -86,3 +86,9 @@ ERROR_SCHEMA = DataElementSchema(
     tag_name='span',
     data_keys=['error_code'],
 )
+
+MODIFICATION_SEGMENT = DataElementSchema(
+    name='modification_segment',
+    tag_name='span',
+    data_keys=['modification_type', 'keyword'],
+)

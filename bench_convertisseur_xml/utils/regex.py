@@ -1,6 +1,14 @@
 import re
-from typing import List, Pattern, cast, List, Callable, Iterator, Union, Dict, Tuple
+from typing import List, Pattern, cast, List, Callable, Iterable, Union, Dict, Tuple, Literal
 from dataclasses import dataclass
+
+from bench_convertisseur_xml.types import PageElementOrString
+from .generators import remove_empty_strings_from_flow
+
+
+StrOrMatch = str | re.Match
+StrSplit = Tuple[str, re.Match, str]
+MatchFlow = Iterable[StrOrMatch]
 
 
 @dataclass
@@ -9,9 +17,9 @@ class MatchNamedGroup:
     text: str
 
 
-def split_string_from_match(
+def split_match_by_named_groups(
     match: re.Match,
-) -> Iterator[str | MatchNamedGroup]:
+) -> Iterable[str | MatchNamedGroup]:
     match_text = match.group(0)
     # Offset in original text
     match_offset = match.start(0)
@@ -46,53 +54,94 @@ def split_string_from_match(
         yield match_text[max_group_end:]
 
 
-def split_string_with_regex(
-    regex: Pattern, 
+@remove_empty_strings_from_flow
+def split_string(
+    pattern: Pattern, 
     string: str,
-    capture_matches: bool=True,
-) -> Iterator[str | re.Match]:
-    """
-    Splits a string using a regex pattern, optionally yielding regex match objects.
-    The split point is at the beginning of the match.
-
-    Yields substrings and, if capture_matches is True, match objects.
-    """
-    remainder = string
-    previous_match = None
-    while True:
-        match = regex.search(remainder)
-        if not match:
-            if capture_matches is False:
-                if previous_match:
-                    yield previous_match.group(0) + remainder
-                elif remainder:
-                    yield remainder
-            else:
-                if previous_match:
-                    yield previous_match
-                if remainder:
-                    yield remainder
-            break
-        
-        match_start = match.start()
-        match_end = match.end()
-
-        if capture_matches is False:
-            if previous_match:
-                yield previous_match.group(0) + remainder[:match_start]
-            elif remainder[:match_start]:
-                yield remainder[:match_start]
+) -> MatchFlow:
+    previous_match: re.Match | None = None
+    for match in pattern.finditer(string):
+        if previous_match:
+            yield string[previous_match.end():match.start()]
         else:
-            if previous_match:
-                yield previous_match
-            if remainder[:match_start]:
-                yield remainder[:match_start]
-
-        remainder = remainder[match_end:]
+            yield string[:match.start()]
+        yield match
         previous_match = match
+    
+    if previous_match:
+        yield string[previous_match.end():]
+    else:
+        yield string
+
+
+def split_string_at_beginning(    
+    pattern: Pattern, 
+    string: str,
+) -> StrSplit | None:
+    match = pattern.search(string)
+    if not match:
+        return None
+    return (string[:match.start()], match, string[match.end():])
+
+
+def split_string_at_end(
+    pattern: Pattern, 
+    string: str,
+) -> StrSplit | None:
+    results = list(split_string(pattern, string))
+
+    # Find the last Match instance
+    match_index = -1
+    while (match_index * -1) <= len(results) and not isinstance(results[match_index], re.Match):
+        match_index -= 1
+    if (match_index * -1) > len(results):
+        return None
+
+    match = cast(re.Match, results[match_index])
+    return (
+        string[:match.start()],
+        match,
+        string[match.end():],
+    )
+
+
+@remove_empty_strings_from_flow
+def merge_match_flow(
+    str_or_match_gen: MatchFlow,
+    after_or_before: Literal[-1, 1] = 1,
+) -> Iterable[str]:
+    accumulator = ''
+    for str_or_match in str_or_match_gen:
+        if isinstance(str_or_match, str):
+            accumulator += str_or_match
+        elif after_or_before == -1:
+            yield accumulator + str_or_match.group(0)
+            accumulator = ''
+        else:
+            yield accumulator
+            accumulator = str_or_match.group(0)
+    yield accumulator
+
+
+# TODO : move somewhere else (maybe in a new file split.py)
+def merge_strings(
+    str_or_element_gen: Iterable[PageElementOrString],
+) -> Iterable[PageElementOrString]:
+    accumulator: str | None = None
+    for str_or_element in str_or_element_gen:
+        if isinstance(str_or_element, str):
+            accumulator = (accumulator or '') + str_or_element
+        else:
+            if not accumulator is None:
+                yield accumulator
+            accumulator = None
+            yield str_or_element
+    if not accumulator is None:
+        yield accumulator
 
 
 NAMED_GROUP_RE = re.compile(r'\?P\<\w+\>')
 
-def without_named_groups(regex_string: str):
-    return NAMED_GROUP_RE.sub('', regex_string)
+
+def without_named_groups(pattern_string: str):
+    return NAMED_GROUP_RE.sub('', pattern_string)
