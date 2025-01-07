@@ -1,20 +1,21 @@
 import unittest
 import re
+from typing import Iterator
 
-from .regex import split_string_with_regex, split_string_from_match, MatchNamedGroup, without_named_groups
+from .regex import (
+    split_string, split_string_at_end, split_string_at_beginning, merge_match_flow, 
+    split_match_by_named_groups, MatchNamedGroup, without_named_groups, StrOrMatch, merge_strings
+)
 
 
-class TestSplitStringWithRegex(unittest.TestCase):
+class TestSplitString(unittest.TestCase):
     def test_simple(self):
         # Arrange
         string = "Hello, this is a ttt. Let's match and replace words like ttt and bbb."
-        regex = re.compile(r'\bttt|bbb\b')
+        pattern = re.compile(r'\bttt|bbb\b')
 
         # Act
-        actual_results = [
-            str_or_match if isinstance(str_or_match, str) else f'MATCH:{str_or_match.group(0)}' 
-            for str_or_match in split_string_with_regex(regex, string)
-        ]
+        actual_results = _convert_str_or_match_flow(split_string(pattern, string))
         
         # Assert
         expected_results = [
@@ -28,60 +29,285 @@ class TestSplitStringWithRegex(unittest.TestCase):
         ]
         assert actual_results == expected_results
 
-    def test_split_without_capture_matches(self):
+    def test_no_match(self):
         # Arrange
-        regex = re.compile(r"\d+")
+        string = "Hello."
+        pattern = re.compile(r'aaa')
+
+        # Act
+        actual_results = _convert_str_or_match_flow(split_string(pattern, string))
+        
+        # Assert
+        expected_results = [
+            "Hello."
+        ]
+        assert actual_results == expected_results
+
+
+class TestSplitStringAtEnd(unittest.TestCase):
+    def test_simple(self):
+        # Arrange
+        string = "Hello, this is a ttt. Let's match and replace words like ttt and bbb."
+        pattern = re.compile(r'\bttt|bbb\b')
+
+        # Act
+        actual_results = _convert_str_or_match_flow(split_string_at_end(pattern, string))
+        
+        # Assert
+        expected_results = [
+            "Hello, this is a ttt. Let's match and replace words like ttt and ",
+            "MATCH:bbb",
+            "."
+        ]
+        assert actual_results == expected_results
+
+    def test_last_is_match(self):
+        # Arrange
+        string = "Hello, this is a ttt. Let's match and replace words like ttt and bbb"
+        pattern = re.compile(r'\bttt|bbb\b')
+
+        # Act
+        actual_results = _convert_str_or_match_flow(split_string_at_end(pattern, string))
+        
+        # Assert
+        expected_results = [
+            "Hello, this is a ttt. Let's match and replace words like ttt and ",
+            "MATCH:bbb",
+            '',
+        ]
+        assert actual_results == expected_results
+
+    def test_whole_is_match(self):
+        # Arrange
+        string = "bbb"
+        pattern = re.compile(r'\bttt|bbb\b')
+
+        # Act
+        actual_results = _convert_str_or_match_flow(split_string_at_end(pattern, string))
+        
+        # Assert
+        expected_results = [
+            '',
+            "MATCH:bbb",
+            '',
+        ]
+        assert actual_results == expected_results
+
+    def test_no_match(self):
+        # Arrange
+        string = "aaa"
+        pattern = re.compile(r'\bttt|bbb\b')
+
+        # Act
+        actual_results = split_string_at_end(pattern, string)
+        
+        # Assert
+        expected_results = None
+        assert actual_results == expected_results
+    
+
+
+class TestSplitStringAtBeginning(unittest.TestCase):
+    def test_simple(self):
+        # Arrange
+        string = "Hello, this is a ttt. Let's match and replace words like ttt and bbb."
+        pattern = re.compile(r'\bttt|bbb\b')
+
+        # Act
+        actual_results = _convert_str_or_match_flow(split_string_at_beginning(pattern, string))
+        
+        # Assert
+        expected_results = [
+            "Hello, this is a ",
+            "MATCH:ttt",
+            ". Let's match and replace words like ttt and bbb.",
+        ]
+        assert actual_results == expected_results
+
+    def test_first_is_match(self):
+        # Arrange
+        string = "ttt. Let's match and replace words like ttt and bbb."
+        pattern = re.compile(r'\bttt|bbb\b')
+
+        # Act
+        actual_results = _convert_str_or_match_flow(split_string_at_beginning(pattern, string))
+        
+        # Assert
+        expected_results = [
+            '',
+            "MATCH:ttt",
+            ". Let's match and replace words like ttt and bbb.",
+        ]
+        assert actual_results == expected_results
+
+    def test_whole_is_match(self):
+        # Arrange
+        string = "bbb"
+        pattern = re.compile(r'\bttt|bbb\b')
+
+        # Act
+        actual_results = _convert_str_or_match_flow(split_string_at_beginning(pattern, string))
+        
+        # Assert
+        expected_results = [
+            '',
+            "MATCH:bbb",
+            '',
+        ]
+        assert actual_results == expected_results
+
+    def test_no_match(self):
+        # Arrange
+        string = "aaa"
+        pattern = re.compile(r'\bttt|bbb\b')
+
+        # Act
+        actual_results = split_string_at_beginning(pattern, string)
+        
+        # Assert
+        expected_results = None
+        assert actual_results == expected_results
+
+
+class TestMergeMatchFlow(unittest.TestCase):
+
+    def test_split_with_matches(self):
+        # Arrange
+        pattern = re.compile(r"\d+")
         string = "abc123def456ghi"
 
         # Act
-        result = list(split_string_with_regex(regex, string, capture_matches=False))
+        result = list(merge_match_flow(split_string(
+            pattern,
+            string,
+        )))
 
         # Assert
-        assert result == ["abc", "123def", "456ghi"], "Should split string and include matches as strings"
+        assert result == ["abc", "123def", "456ghi"]
+
+    def test_split_with_matches_after(self):
+        # Arrange
+        pattern = re.compile(r"\d+")
+        string = "abc123def456ghi"
+
+        # Act
+        result = list(merge_match_flow(split_string(
+            pattern,
+            string,
+        ), after_or_before=-1))
+
+        # Assert
+        assert result == ["abc123", "def456", "ghi"]
 
     def test_split_with_no_matches(self):
         # Arrange
-        regex = re.compile(r"\d+")
+        pattern = re.compile(r"\d+")
         string = "abcdef"
 
         # Act
-        result = list(split_string_with_regex(regex, string, capture_matches=False))
+        result = list(merge_match_flow(split_string(
+            pattern,
+            string,
+        )))
 
         # Assert
-        assert result == ["abcdef"], "Should return the original string when no matches are found"
+        assert result == ['abcdef']
 
     def test_split_with_match_at_start(self):
         # Arrange
-        regex = re.compile(r"\d+")
+        pattern = re.compile(r"\d+")
         string = "123abc456"
 
         # Act
-        result = list(split_string_with_regex(regex, string, capture_matches=False))
+        result = list(merge_match_flow(split_string(
+            pattern,
+            string,
+        )))
 
         # Assert
-        assert result == ["123abc", "456"], "Should handle matches at the start of the string"
+        assert result == ["123abc", "456"]
 
     def test_split_with_match_at_end(self):
         # Arrange
-        regex = re.compile(r"\d+")
+        pattern = re.compile(r"\d+")
         string = "abc123"
 
         # Act
-        result = list(split_string_with_regex(regex, string, capture_matches=False))
+        result = list(merge_match_flow(split_string(
+            pattern,
+            string,
+        )))
 
         # Assert
-        assert result == ["abc", "123"], "Should handle matches at the end of the string"
+        assert result == ["abc", "123"]
+
+
+class TestMergeStrings(unittest.TestCase):
+
+    def test_simple(self):
+        # Arrange
+        match_mock1 = re.match(r"dummy1", "dummy1")
+        match_mock2 = re.match(r"dummy2", "dummy2")
+        input_gen = iter(["abc", match_mock1, "def", "ghi", match_mock2, "jkl", "mno"])
+
+        # Act
+        result = list(merge_strings(input_gen))
+
+        # Assert
+        assert result[0] == "abc"
+        assert result[1] == match_mock1
+        assert result[2] == "defghi"
+        assert result[3] == match_mock2
+        assert result[4] == "jklmno"
+
+    def test_merge_strings_with_matches(self):
+        # Arrange
+        match_mock = re.match(r"dummy", "dummy")
+        input_gen = iter(["abc", match_mock, "def"])
+
+        # Act
+        result = list(merge_strings(input_gen))
+
+        # Assert
+        assert result[0] == "abc"
+        assert result[1] == match_mock
+        assert result[2] == "def"
+
+    def test_with_empty_before_and_after(self):
+        # Arrange
+        match_mock = re.match(r"dummy", "dummy")
+        input_gen = iter(["", match_mock, ""])
+
+        # Act
+        result = list(merge_strings(input_gen))
+
+        # Assert
+        assert result[0] == ""
+        assert result[1] == match_mock
+        assert result[2] == ""
+
+    def test_merge_strings_with_only_matches(self):
+        # Arrange
+        match_mock1 = re.match(r"dummy1", "dummy1")
+        match_mock2 = re.match(r"dummy2", "dummy2")
+        input_gen = iter([match_mock1, match_mock2])
+
+        # Act
+        result = list(merge_strings(input_gen))
+
+        # Assert
+        assert result == [match_mock1, match_mock2]
 
 
 class TestSplitStringFromMatch(unittest.TestCase):
     def test_simple(self):
         # Arrange
         string = "<div>Bla hello 17/12/24 !!!</div>"
-        regex = re.compile(r'(?P<day>\d{2})/(?P<month>\d{2})/(?P<year>\d{2})')
+        pattern = re.compile(r'(?P<day>\d{2})/(?P<month>\d{2})/(?P<year>\d{2})')
 
         # Act
-        match = regex.search(string)
-        actual_results = list(split_string_from_match(match))
+        match = pattern.search(string)
+        actual_results = list(split_match_by_named_groups(match))
 
         # Assert
         expected_results = [
@@ -95,13 +321,13 @@ class TestSplitStringFromMatch(unittest.TestCase):
 
     def test_remove_none_groups(self):
         # Arrange
-        regex = re.compile(r'(?P<bla1>Bla)(?P<bla2>Bla)?(?P<bla3>Blo)')
-        match1 = regex.search("BlaBlaBlo")
-        match2 = regex.search("BlaBlo")
+        pattern = re.compile(r'(?P<bla1>Bla)(?P<bla2>Bla)?(?P<bla3>Blo)')
+        match1 = pattern.search("BlaBlaBlo")
+        match2 = pattern.search("BlaBlo")
 
         # Act
-        actual_results1 = list(split_string_from_match(match1))
-        actual_results2 = list(split_string_from_match(match2))
+        actual_results1 = list(split_match_by_named_groups(match1))
+        actual_results2 = list(split_match_by_named_groups(match2))
 
         # Assert
         assert actual_results1 == [
@@ -116,11 +342,11 @@ class TestSplitStringFromMatch(unittest.TestCase):
 
     def test_ignore_nested_groups(self):
         # Arrange
-        regex = re.compile(r'Hello (?P<bly>Bla(?P<blo_nested>Blo)Bla) !!!')
-        match = regex.search("<span> Hello BlaBloBla !!! </span>")
+        pattern = re.compile(r'Hello (?P<bly>Bla(?P<blo_nested>Blo)Bla) !!!')
+        match = pattern.search("<span> Hello BlaBloBla !!! </span>")
 
         # Act
-        actual_results = list(split_string_from_match(match))
+        actual_results = list(split_match_by_named_groups(match))
 
         # Assert
         assert actual_results == [
@@ -134,3 +360,10 @@ class TestWithoutNamedGroups(unittest.TestCase):
 
     def test_simple(self):
         assert without_named_groups(r'(([nN]° ?(?P<code1>\S+))|(?P<code2>\S+[/\-]\S+))(?=\s|\.|$|,|\)|;)') == r'(([nN]° ?(\S+))|(\S+[/\-]\S+))(?=\s|\.|$|,|\)|;)'
+
+
+def _convert_str_or_match_flow(gen: Iterator[StrOrMatch]):
+    return [
+        str_or_match if isinstance(str_or_match, str) else f'MATCH:{str_or_match.group(0)}' 
+        for str_or_match in gen
+    ]

@@ -14,7 +14,7 @@ from .config import (
 from .parse_section import parse_section
 from .parse_list import parse_list
 from bench_convertisseur_xml.utils.html import make_data_tag, PageElementOrString, wrap_in_tag, make_new_tag
-from bench_convertisseur_xml.utils.regex import split_string_with_regex
+from bench_convertisseur_xml.utils.regex import merge_match_flow, split_string
 from bench_convertisseur_xml.html_schemas import ENTITY_SCHEMA, IDENTIFICATION_SCHEMA, VISA_SCHEMA, MOTIFS_SCHEMA
 
 
@@ -32,7 +32,10 @@ def _process_entity_pile(pile: List[str]) -> List[str]:
     entity_line = " ".join(pile)
 
     # Split by entity names
-    return cast(List[str], list(split_string_with_regex(SERVICE_AND_REFERENCE_PATTERN, entity_line, capture_matches=False)))
+    return cast(List[str], list(merge_match_flow(split_string(
+        SERVICE_AND_REFERENCE_PATTERN,
+        entity_line,
+    ))))
 
 
 def parse_header(soup: BeautifulSoup, header: Tag, lines: List[str], authorized_sections):

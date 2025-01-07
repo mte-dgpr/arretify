@@ -8,7 +8,7 @@ from ..settings import APP_ROOT, LOGGER
 from .dates import parse_date, DATE1_RES, DATE2_RES, DateMatchDict, handle_date_match_groupdict, make_date_element
 from bench_convertisseur_xml.utils.text import normalize_text
 from bench_convertisseur_xml.utils.html import PageElementOrString, make_data_tag
-from bench_convertisseur_xml.utils.regex import split_string_with_regex, split_string_from_match, without_named_groups
+from bench_convertisseur_xml.utils.regex import split_string, split_match_by_named_groups, without_named_groups
 from bench_convertisseur_xml.html_schemas import ARRETE_REFERENCE_SCHEMA
 
 ARRETE_TYPES: List[str] = ['préfectoral', 'ministériel']
@@ -113,7 +113,7 @@ def _parse_arretes_references(
     arrete_re: Pattern,
     default_data: Dict[str, str | None]=dict()
 ) -> Iterator[PageElementOrString]:
-    for str_or_match in split_string_with_regex(arrete_re, string):
+    for str_or_match in split_string(arrete_re, string):
         if isinstance(str_or_match, str):
             yield str_or_match
             continue
@@ -134,7 +134,7 @@ def _parse_arretes_references(
             data=tag_data,
         )
         
-        for str_or_group in split_string_from_match(str_or_match):
+        for str_or_group in split_match_by_named_groups(str_or_match):
             if isinstance(str_or_group, str):
                 arrete_container.append(str_or_group)
             elif str_or_group.name == 'date':
@@ -175,7 +175,7 @@ def parse_arretes_references(
     new_children: List[PageElementOrString] = []
     for child in children:
         if isinstance(child, str):
-            for str_or_match in split_string_with_regex(ARRETE_PLURAL_RE, child):
+            for str_or_match in split_string(ARRETE_PLURAL_RE, child):
                 if isinstance(str_or_match, str):
                     new_children.append(str_or_match)
                 else:
