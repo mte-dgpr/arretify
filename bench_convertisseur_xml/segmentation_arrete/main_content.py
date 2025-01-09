@@ -6,10 +6,10 @@ from bs4 import Tag, BeautifulSoup
 
 from .sentence_rules import (
     is_arrete, is_entity, is_liste, is_motif, 
-    is_table, is_table_description, is_visa, is_line_with_semicolumn
+    is_table_description, is_visa, is_line_with_semicolumn
 )
 from bench_convertisseur_xml.utils.html import make_data_tag, PageElementOrString, wrap_in_tag
-from bench_convertisseur_xml.utils.markdown import parse_markdown_table
+from bench_convertisseur_xml.utils.markdown import parse_markdown_table, is_table_line
 from bench_convertisseur_xml.html_schemas import (
     SECTION_SCHEMA, SECTION_TITLE_SCHEMAS, ALINEA_SCHEMA)
 from .config import BodySection
@@ -79,10 +79,10 @@ def parse_main_content(soup: BeautifulSoup, main_content: Tag, lines: List[str],
             alinea_element = _create_alinea_element()
 
             while lines:
-                if is_table(lines[0]):
+                if is_table_line(lines[0]):
                     pile = []
 
-                    while lines and is_table(lines[0]):
+                    while lines and is_table_line(lines[0]):
                         pile.append(lines.pop(0))
                     alinea_element.append(parse_markdown_table(pile))
 

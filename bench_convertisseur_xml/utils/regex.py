@@ -17,6 +17,10 @@ class MatchNamedGroup:
     text: str
 
 
+def sub_with_match(string: str, match: re.Match, group: int | str=0) -> str:
+    return string[:match.start(group)] + string[match.end(group):]
+
+
 def split_match_by_named_groups(
     match: re.Match,
 ) -> Iterable[str | MatchNamedGroup]:

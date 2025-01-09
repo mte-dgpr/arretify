@@ -2,7 +2,7 @@ import unittest
 from datetime import date
 from bs4 import BeautifulSoup
 
-from .sentence_rules import is_table, is_table_description, is_line_with_semicolumn
+from .sentence_rules import is_table_description, is_line_with_semicolumn
 
 
 class TestTableDetection(unittest.TestCase):
@@ -20,19 +20,6 @@ class TestTableDetection(unittest.TestCase):
 
 Volume autorisé : blablabla.
 '''
-
-    def test_is_table(self):
-        # Arrange
-        lines = self.TABLE_MD_1.split("\n")
-
-        # Assert
-        for line in lines[0:2]:
-            assert not is_table(line)
-        for line in lines[2:6]:
-            assert is_table(line)
-        for line in lines[6:]:
-            assert not is_table(line)
-
     def test_is_table_description(self):
         # Arrange
         lines = self.TABLE_MD_1.split("\n")
@@ -46,7 +33,6 @@ Volume autorisé : blablabla.
         assert is_table_description(lines[9], pile)
         assert not is_table_description(lines[10], pile)
         assert is_table_description(lines[11], pile)
-
 
 class TestIsLinedContinued(unittest.TestCase):
 
