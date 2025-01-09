@@ -8,6 +8,15 @@ from bench_convertisseur_xml.utils.text import remove_accents
 from bench_convertisseur_xml.utils.html import PageElementOrString
 from .config import HONORARY_PATTERNS, SERVICE_PATTERNS, BodySection
 
+VISA_PATTERN = re.compile(r"^(vu|-\s*vu)(\s*:\s*|\b)(?P<contents>.*)", re.IGNORECASE)
+"""Detect if the sentence starts with "vu"."""
+
+MOTIF_PATTERN = re.compile(r"^(consid[eé]rant|-\s*consid[eé]rant)(\s*:\s*|\b)(?P<contents>.*)", re.IGNORECASE)
+"""Detect if the sentence starts with "considerant"."""
+
+LIST_PATTERN = re.compile(r"^(?P<indentation>\s*)(-\s|[a-zA-Z1-9][\)°]\s+)", re.IGNORECASE)
+"""Detect if the line starts with - or a number or letter followed by )."""
+
 
 def is_line_with_semicolumn(line: str):
     """Detect that sentence is continuing."""
@@ -26,14 +35,11 @@ def is_entity(line: str) -> bool:
 
 
 def is_visa(line: str) -> bool:
-    """Detect if the sentence starts with "vu"."""
-    search_result = bool(re.match(r"^(vu|-\svu)\b", line, re.IGNORECASE))
-    return search_result
+    return bool(VISA_PATTERN.match(line))
 
 
 def is_motif(line: str) -> bool:
-    """Detect if the sentence starts with "considerant"."""
-    return bool(re.match(r"^(consid[eé]rant|-\sconsid[eé]rant)\b", line, re.IGNORECASE))
+    return bool(MOTIF_PATTERN.match(line))
 
 
 def is_arrete(line: str) -> bool:
@@ -42,9 +48,7 @@ def is_arrete(line: str) -> bool:
 
 
 def is_liste(line: str) -> bool:
-    """Detect if the line starts with - or a number or letter followed by )."""
-    search_result = bool(re.match(r"^(-\s|[a-zA-Z1-9][\)°]\s+)", line, re.IGNORECASE))
-    return search_result
+    return bool(LIST_PATTERN.match(line))
 
 
 def is_table_description(line: str, pile: List[PageElementOrString]) -> bool:

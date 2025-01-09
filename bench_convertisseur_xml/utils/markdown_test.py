@@ -73,7 +73,7 @@ class TestCleanMarkdown(unittest.TestCase):
         result = clean_markdown(text)
 
         # Assert
-        assert result == "Test without space*", "Should remove trailing asterisks not preceded by space"
+        assert result == "Test without space*", "Should keep trailing asterisks not preceded by space"
 
     def test_remove_hashes_and_whitespace_at_start(self):
         # Arrange

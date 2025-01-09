@@ -5,8 +5,8 @@ from dataclasses import dataclass
 from bs4 import Tag, BeautifulSoup
 
 from .sentence_rules import (
-    is_arrete, is_entity, is_liste, is_motif, 
-    is_table_description, is_visa, is_line_with_semicolumn
+    is_arrete, is_entity, is_liste, 
+    is_table_description, is_line_with_semicolumn
 )
 from bench_convertisseur_xml.utils.html import make_data_tag, PageElementOrString, wrap_in_tag
 from bench_convertisseur_xml.utils.markdown import parse_markdown_table, is_table_line

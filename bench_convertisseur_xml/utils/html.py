@@ -38,10 +38,18 @@ def wrap_in_tag(soup: BeautifulSoup, elements: List[PageElementOrString], tag_na
 def make_ul(soup: BeautifulSoup, elements: List[PageElementOrString]):
     ul = soup.new_tag('ul')
     for element in elements:
-        li = soup.new_tag('li')
-        li.append(element)
+        if isinstance(element, Tag) and element.name == 'li':
+            li = element
+        else:
+            li = make_li(soup, [element])
         ul.append(li)
     return ul
+
+
+def make_li(soup: BeautifulSoup, elements: List[PageElementOrString]):
+    li = soup.new_tag('li')
+    li.extend(elements)
+    return li
 
 
 def make_new_tag(soup: BeautifulSoup, tag_name: str, contents: List[PageElementOrString] = []):

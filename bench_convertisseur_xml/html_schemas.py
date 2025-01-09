@@ -33,7 +33,7 @@ VISA_SCHEMA = DataElementSchema(
     data_keys=[],
 )
 
-MOTIFS_SCHEMA = DataElementSchema(
+MOTIF_SCHEMA = DataElementSchema(
     name="motifs",
     tag_name="div",
     data_keys=[],

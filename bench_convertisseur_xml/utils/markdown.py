@@ -8,6 +8,7 @@ from bench_convertisseur_xml.errors import ErrorCodes
 from bench_convertisseur_xml.utils.html import PageElementOrString, make_data_tag
 from bench_convertisseur_xml.utils.regex import sub_with_match
 from bench_convertisseur_xml.html_schemas import ERROR_SCHEMA
+from bench_convertisseur_xml.segmentation_arrete.sentence_rules import LIST_PATTERN
 
 
 def parse_markdown_table(elements: List[PageElementOrString]):
@@ -49,7 +50,8 @@ def clean_markdown(line: str) -> str:
             line = sub_with_match(line, matched_em_close, 'em_close')
 
     # Remove any number of # or whitespaces at the beginning of the sentence
-    line = re.sub(r"^\s*[#\s]+", "", line)
+    if not LIST_PATTERN.match(line):
+        line = re.sub(r"^\s*[#\s]+", "", line)
 
     return line
 
