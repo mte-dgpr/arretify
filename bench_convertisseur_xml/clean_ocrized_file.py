@@ -5,6 +5,7 @@ from bs4 import BeautifulSoup
 
 from bench_convertisseur_xml.utils.html import PageElementOrString
 from bench_convertisseur_xml.utils.text import remove_accents
+from bench_convertisseur_xml.utils.markdown import clean_markdown
 
 
 START_OCR_BUG_IGNORE = '<!-- START : OCR-BUG-IGNORE -->'
@@ -14,7 +15,7 @@ END_OCR_BUG_IGNORE = '<!-- END : OCR-BUG-IGNORE -->'
 def clean_ocrized_file(lines: List[str]) -> List[str]:
     soup = BeautifulSoup()
     lines = list(_remove_ocr_bug_ignore(lines))
-    lines = [ _clean_markdown(line) for line in lines ]
+    lines = [ clean_markdown(line) for line in lines ]
     lines = [ line for line in lines if not _is_not_information(line) ]
 
     stitched_lines: List[str] = []
@@ -31,22 +32,6 @@ def clean_ocrized_file(lines: List[str]) -> List[str]:
 def _is_continuing_sentence(line: str) -> bool:
     """Detect sentence starting wit lowercase character."""
     return bool(re.match(r"^[a-z]", remove_accents(line)))
-
-
-def _clean_markdown(text: str) -> str:
-    # Remove newline at the end
-    text = re.sub(r'[\n\r]+$', '', text)
-
-    # Remove * at the beginning only if not followed by space
-    text = re.sub(r"^\*+(?!\s)", "", text)
-
-    # Remove * at the end only if not preceded by space
-    text = re.sub(r"(?<!\s)\*+$", "", text)
-
-    # Remove any number of # or whitespaces at the beginning of the sentence
-    text = re.sub(r"^[#\s]+", "", text)
-
-    return text
 
 
 def _is_not_information(line: str) -> bool:

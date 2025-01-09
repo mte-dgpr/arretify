@@ -69,9 +69,3 @@ def is_table_description(line: str, pile: List[PageElementOrString]) -> bool:
             if re.match(fr".*{re.escape(column_name)} :", line, re.IGNORECASE):
                 return True
     return False
-
-
-def is_table(line: str) -> bool:
-    """Detect if the line is part of a table."""
-    # Any | character to detect a table
-    return bool(re.search(r"(\|)", line, re.IGNORECASE))
