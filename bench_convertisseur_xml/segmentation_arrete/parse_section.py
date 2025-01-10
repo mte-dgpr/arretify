@@ -21,7 +21,7 @@ SECTION_ELEMENT = '|'.join(SECTION_NAMES)
 SECTION_GROUP = fr"^(?P<section_name>{SECTION_ELEMENT})"
 NUMBER_GROUP = fr"((?P<number>{HIERARCHICAL_NUMBER})|(?P<number_first>1er))"
 OPTIONAL_TEXT_GROUP = r"(?:\s+(?P<text>.+))?$"
-TEXT_GROUP = r"(?P<text>(?:(?![\.,]$).)+)$"  # no punctuation
+TEXT_GROUP = r"(?P<text>(?:(?![\.,:]$).)+)$"  # no punctuation
 
 # Pattern for sections with title
 SECTION_TITLE = (
