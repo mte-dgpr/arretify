@@ -1,0 +1,183 @@
+```markdown
+# PRÉFET DE L'ORNE
+
+Sous-préfecture d'Argentan
+Pôle actions de l'État
+
+NOR : 1200-12-00136
+
+## ARRÊTÉ DE PRESCRIPTIONS COMPLÉMENTAIRES
+
+### COMMUNE DE TINCHEBRAY
+
+### SOCIÉTÉ MERMIER LEMARCHAND
+
+Le Préfet de l'Orne,
+Chevalier de l'Ordre National du Mérite
+
+Vu le code de l'environnement et notamment ses titres 1er et 4 des parties législatives et réglementaires du Livre V ;
+
+Vu la nomenclature des installations classées codifiée à l'annexe de l'article R.511-9 du code de l'environnement ;
+
+Vu l'arrêté ministériel du 04 octobre 2010 relatif à la prévention des risques accidentels au sein des installations classées pour la protection de l'environnement soumises à autorisation ;
+
+Vu l'arrêté préfectoral du 10 décembre 2008, relatif à l'autorisation accordée à la Société MERMIER LEMARCHAND concernant l'exploitation d'une installation de traitement de surface et de peinture par cataphorèse ;
+
+Vu l'arrêté préfectoral complémentaire du 18 décembre 2009 relatif aux dispositions transitoires applicables ;
+
+Vu l'arrêté préfectoral complémentaire du 24 décembre 2010 relatif aux rejets de substances dangereuses dans le milieu aquatique ;
+
+Vu la demande présentée 28 novembre 2011 par la société MERMIER LEMARCHAND ;
+
+Vu le rapport et les propositions en date du 2 mars 2012 de l'inspection des installations classées ;
+
+Vu l'avis en date du 19 mars 2012 du conseil départemental de l'environnement et des risques sanitaires et technologiques ;
+
+CONSIDÉRANT que la demande de l'exploitant de report de certaines échéances des dispositions transitoires, prévues dans l'arrêté préfectoral du 10 décembre 2008 susvisé, peut être accordée ;
+
+CONSIDÉRANT que la liste des activités de l'établissement de Tinchebray, exploitées par la société MERMIER LEMARCHAND, doit être actualisée compte tenu de l'évolution du transformateur contenant des PCB et de l'évolution de la nomenclature des installations classées ;
+
+CONSIDÉRANT que les dispositions de l'arrêté du 18 décembre 2009 doivent être abrogées ;
+
+CONSIDÉRANT que les dispositions concernant les eaux pluviales susceptibles d'être polluées et celles concernant la protection contre la foudre méritent d'être précisées ;
+
+Page 1 sur 4
+
+ADRESSE POSTALE : 9, ROUTE DE SÈES B.P. 20207 - 61202 ARGENTAN CEDEX ® 02.33.80.61.61 (standard) Télécopie : 02.33.39.54.52 www.orne.gouv.fr
+
+Note : conformément à l'article 13 de la loi n° 2000-321 du 12 avril 2000 relative aux droits des citoyens dans leurs relations avec les administrations, vous pouvez vous opposer à l'utilisation de vos données à des fins de prospection commerciale.
+```
+```markdown
+# CONSIDÉRANT
+
+les termes de l'article R.512-31 du code de l'environnement qui disposent que des arrêts complémentaires peuvent fixer tous les prescriptions additionnelles que la protection des intérêts mentionnés à l'article L.511-1 du code de l'environnement rend nécessaire ;
+
+# SUR PROPOSITION
+
+du secrétaire général de la préfecture de l'Orne ;
+
+# ARRÊTÉ
+
+## Article 1 – Liste des installations classées
+
+Le tableau de l'article 1.2.1 de l'arrêté préfectoral d'autorisation du 10 décembre 2008, relatif à l'autorisation accordée à la Société MÉRIER LÉMARCHAND, concernant l'exploitation d'une installation de traitement de surface et de peinture par cataphorèse sur le site situé rue de Vire à TINCHEBRAY (61800), est mis à jour de la façon suivante :
+
+| Robinet | Alias | Code | Libellé de la rubrique (activité) | Nature de l'installation | Secteur d'activité | Unité d'évaluation | Valeur autorisée |
+|---------|-------|------|----------------------------------|-------------------------|---------------------|----------------------|-------------------|
+| 2565    | 2.a   | A    | Revêtement métallique ou traitement (imprégnation, décapage, conversion, polissage, etc.) | Dégradation : 1600 l/an | > 1500 l/an | 37 434 l/an |
+|         |       |      | Dégradation : 1600 l/an | Déminéralisation : 1500 l/an | > 1500 l/an | 37 434 l/an |
+|         |       |      | Dégradation électrolytique : 1680 l/an | Échange gazeux : 2x1100 l/an | > 1500 l/an | 37 434 l/an |
+|         |       |      | Passivation bleu : 1032 l/an | Dégradation : 1600 l/an | > 1500 l/an | 37 434 l/an |
+|         |       |      | Dégradation, décapage de surfaces vitrées par la nature : 2564 | Déminéralisation : 1500 l/an | > 1500 l/an | 37 434 l/an |
+|         |       |      | Dégradation électrolytique : 1680 l/an | Échange gazeux : 2x1100 l/an | > 1500 l/an | 37 434 l/an |
+|         |       |      | Dégradation : 1600 l/an | Déminéralisation : 1500 l/an | > 1500 l/an | 37 434 l/an |
+|         |       |      | Dégradation : 1600 l/an | Dégradation : 1600 l/an | > 1500 l/an | 37 434 l/an |
+|         |       |      | Dégradation : 1600 l/an | Dégradation : 1600 l/an | > 1500 l/an | 37 434 l/an |
+|         |       |      | Dégradation : 1600 l/an | Dégradation : 1600 l/an | > 1500 l/an | 37 434 l/an |
+|         |       |      | Dégradation : 1600 l/an | Dégradation : 1600 l/an | > 1500 l/an | 37 434 l/an |
+|         |       |      | Dégradation : 1600 l/an | Dégradation : 1600 l/an | > 1500 l/an | 37 434 l/an |
+|         |       |      | Dégradation : 1600 l/an | Dégradation : 1600 l/an | > 1500 l/an | 37 434 l/an |
+|         |       |      | Dégradation : 1600 l/an | Dégradation : 1600 l/an | > 1500 l/an | 37 434 l/an |
+|         |       |      | Dégradation : 1600 l/an | Dégradation : 1600 l/an | > 1500 l/an | 37 434 l/an |
+|         |       |      | Dégradation : 1600 l/an | Dégradation : 1600 l/an | > 1500 l/an | 37 434 l/an |
+|         |       |      | Dégradation : 1600 l/an | Dégradation : 1600 l/an | > 1500 l/an | 37 434 l/an |
+|         |       |      | Dégradation : 1600 l/an | Dégradation : 1600 l/an | > 1500 l/an | 37 434 l/an |
+|         |       |      | Dégradation : 1600 l/an | Dégradation : 1600 l/an | > 1500 l/an | 37 434 l/an |
+|         |       |      | Dégradation : 1600 l/an | Dégradation : 1600 l/an | > 1500 l/an | 37 434 l/an |
+|         |       |      | Dégradation : 1600 l/an | Dégradation : 1600 l/an | > 1500 l/an | 37 434 l/an |
+|         |       |      | Dégradation : 1600 l/an | Dégradation : 1600 l/an | > 1500 l/an | 37 434 l/an |
+|         |       |      | Dégradation : 1600 l/an | Dégradation : 1600 l/an | > 1500 l/an | 37 434 l/an |
+|         |       |      | Dégradation : 1600 l/an | Dégradation : 1600 l/an | > 1500 l/an | 37 434 l/an |
+|         |       |      | Dégradation : 1600 l/an | Dégradation : 1600 l/an | > 1500 l/an | 37 434 l/an |
+|         |       |      | Dégradation : 1600 l/an | Dégradation : 1600 l/an | > 1500 l/an | 37 434 l/an |
+|         |       |      | Dégradation : 1600 l/an | Dégradation : 1600 l/an | > 1500 l/an | 37 434 l/an |
+|         |       |      | Dégradation : 1600 l/an | Dégradation : 1600 l/an | > 1500 l/an | 37 434 l/an |
+|         |       |      | Dégradation : 1600 l/an | Dégradation : 1600 l/an | > 1500 l/an | 37 434 l/an |
+|         |       |      | Dégradation : 1600 l/an | Dégradation : 1600 l/an | > 1500 l/an | 37 434 l/an |
+|         |       |      | Dégradation : 1600 l/an | Dégradation : 1600 l/an | > 1500 l/an | 37 434 l/an |
+|         |       |      | Dégradation : 1600 l/an | Dégradation : 1600 l/an | > 1500 l/an | 37 434 l/an |
+|         |       |      | Dégradation : 1600 l/an | Dégradation : 1600 l/an | > 1500 l/an | 37 434 l/an |
+|         |       |      | Dégradation : 1600 l/an | Dégradation : 1600 l/an | > 1500 l/an | 37 434 l/an |
+|         |       |      | Dégradation : 1600 l/an | Dégradation : 1600 l/an | > 1500 l/an | 37 434 l/an |
+|         |       |      | Dégradation : 1600 l/an | Dégradation : 1600 l/an | > 1500 l/an | 37 434 l/an |
+|         |       |      | Dégradation : 1600 l/an | Dégradation : 1600 l/an | > 1500 l/an | 37 434 l/an |
+|         |       |      | Dégradation : 1600 l/an | Dégradation : 1600 l/an | > 1500 l/an | 37 434 l/an |
+
+# Article 2 – Mise à jour des dispositions transitoires applicables
+
+L'arrêté préfectoral complémentaire du 18 décembre 2009 est abrogé. Les dispositions de l'arrêté préfectoral du 10 décembre 2008 susvisé sont modifiées de la façon suivante :
+
+- L'échéance de réalisation du zonage des dangers internes à l'établissement, selon les dispositions des articles 7.2.2 et 7.3.4 de l'arrêté du 10 décembre 2008, est reportée au 31 décembre 2010 ;
+
+- L'échéance d'aménagement des réseaux permettant le confinement de toutes les eaux d'incendie, selon l'article 7.6.8.2, de l'arrêté du 10 décembre 2008, est reportée au 30 juin 2012 ;
+
+- L'échéance de démantèlement des deux citernes de stockage de fioul domestique, selon l'article 8.5.1.1 de l'arrêté du 10 décembre 2008, est reportée au 31 décembre 2012.
+
+- L'échéance de mise en place des postes coupe-feu entre le magasin 1000 et le magasin 2000, ainsi qu'entre le magasin 2000 et le bâtiment 65, selon l'article 8.5.2 de l'arrêté du 10 décembre 2008, est reportée au 31 décembre 2014.
+
+# Article 3 : Eaux pluviales susceptibles d'être polluées
+
+Les dispositions de l'article 4.3.12 de l'arrêté préfectoral du 10 décembre 2008 susvisé sont remplacées par les dispositions suivantes :
+
+Toutes les eaux pluviales susceptibles d'être polluées doivent être collectées et traitées, avant leur rejet dans le fossé conduisant au cours d'eau Le Trouire. L'exploitant devra rechercher, en liaison avec la collectivité de Tinchebray, une solution de traitement permettant de garantir le respect des normes fixées au présent article. Les conclusions de cette étude ainsi que les éventuelles propositions d'échanges de mise en œuvre devront être transmises, avant le 31 décembre 2012, à l'Inspection des Installations Classées.
+
+Les eaux issues du réseau d'eaux pluviales du site doivent respecter avant rejet les valeurs limites suivantes :
+
+| Polluant | Concentration maximale en mg/l |
+|---------|---------------------------------|
+| MES     | 35                              |
+| DCO     | 125                             |
+| Hydrocarbures totaux | 10 |
+
+Le pH de ces eaux doit être compris entre 5,5 et 8,5 et la température doit être inférieure à 30°C.
+
+Le dispositif de traitement devra être équipé d'une alarme technique hydrocarbures de niveau haut avec report. Ce dispositif devra être dimensionné afin de répondre aux volumes d'eaux collectées de la surface considérée et de l'événement pluvieux dénalysé dans la plus critique de la région. Il devra être équipé d'un système de mesure en permanence en bon état de fonctionnement et délivrant des alarmes visuelles et sonores que nécessaire. Des bouches et des haies retenues, qui doivent être dimensionnées et disposées de manière à garantir le respect des dispositions de l'article 4 du présent arrêté.
+
+# Article 4 : Protection contre la foudre
+
+Les dispositions de l'article 7.3.5 de l'arrêté préfectoral du 10 décembre 2008 susvisé sont remplacées par les dispositions suivantes :
+
+Les installations sur lesquelles une agression par la foudre peut être à l'origine d'événements susceptibles de porter gravement atteinte, directement ou indirectement à la sécurité des installations, à la sécurité des personnes ou à la qualité de l'environnement, sont protégées contre la foudre en application des articles 16 à 23 de l'arrêté ministériel du 04 octobre 2010, relatif à la prévention des risques accidentels au sein des installations classées pour la protection de l'environnement soumises à autorisation.
+
+L'analyse du risque foudre devra être réalisée et transmise à l'Inspection des Installations Classées avant le 31 décembre 2013.
+
+Page 3 sur 4
+```markdown
+# Article 5 : Recours
+
+Le présent arrêté est soumis à un contentieux de pleine juridiction. Il peut être déféré à la juridiction administrative :
+
+1° Par l'exploitant, dans un délai de deux mois qui commence à courir du jour où les actes lui ont été notifiés ;
+
+2° Par les tiers, personnes physiques ou morales, les communes intéressées ou leurs groupements, en raison des inconvénients ou des dangers que le fonctionnement de l'installation présente pour les intérêts visés à l'article L. 511-1 du code de l'environnement, dans un délai d'un an à compter de la publication ou de l'affichage de l'arrêté.
+
+Les tiers qui n'ont acquis ou n'ont élevé des constructions dans le voisinage d'une installation classée que postérieurement à l'affichage ou à la publication de l'arrêté autorisant peuvent demander les prescriptions primitives ne sont pas recevables à déférer ledit arrêté à la juridiction administrative.
+
+# Article 6 : Sanctions
+
+Si les prescriptions fixées dans le présent arrêté ne sont pas respectées, indépendamment des sanctions pénales, les sanctions administratives prévues dans le code de l'environnement pourront être appliquées.
+
+Toute mise en demeure, prise en application du code de l'environnement et des textes en découlant, non suivie d'effet constitue un délit.
+
+# Article 7 : Publication
+
+Un extrait de la présente autorisation comportant notamment les prescriptions auxquelles l'installation est soumise sera affiché pendant un mois à la mairie de Tinchebray avec indication qu'une copie intégrale est déposée à la mairie et mise à la disposition de tout intéressé. Il sera justifié de l'accomplissement de cette formalité par un certificat d'affichage.
+
+Le même extrait sera affiché en permanence, de façon visible, aux lieux de l'installation par les soins de la Société.
+
+Un avis sera inséré, par les soins de la sous-préfecture, dans deux journaux du département, aux frais du pétitionnaire ainsi que sur le site Internet de la préfecture de l'Orne.
+
+# Article 8 : Exécution
+
+Le secrétaire général de la préfecture de l'Orne, le sous-préfet d'Argentan, le colonel commandant le groupement de gendarmerie de l'Orne, le directeur régional de l'environnement, de l'aménagement et du logement de Basse-Normandie, l'inspecteur des installations classées en matière industrielle et le maire de Tinchebray sont chargés, chacun en ce qui le concerne, de l'exécution du présent arrêté qui sera notifié à la Société MERMIER LEMARCHAND.
+
+Fait à Argentan, le 3 avril 2012
+
+Le Préfet
+
+Pour le Préfet et par délégation
+
+Le Sous-Préfet d'Argentan
+
+Jean-Yves FRAQUET
+```

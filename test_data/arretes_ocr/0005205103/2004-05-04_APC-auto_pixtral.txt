@@ -1,0 +1,318 @@
+```
+ICPE
+
+PRÉFECTURE
+DES PYRÉNÉES-ATLANTIQUES
+
+DIRECTION
+DE L'ENVIRONNEMENT
+BUREAU DE
+CERVILLE - SÉCURITÉ
+DES APPAREILS
+CULTURELLES
+
+Réf. D.C.L.E. 3
+
+Affaires suivies par
+Martine VAN DAELE
+Tél. 05.59.98.25.42
+MVD/AL
+
+INSTALLATIONS CLASSEES
+POUR LA PROTECTION DE
+L'ENVIRONNEMENT
+
+ARRETE N° 04/1C/189
+portant prescriptions additionnelles
+pour l'établissement de Lacq
+de la société ATOFINA
+
+LE PREFET DES PYRÉNÉES-ATLANTIQUES,
+Chevalier de la légion d'honneur
+
+VU le code de l'environnement et notamment son livre V, titre 1er ;
+
+VU le décret n° 77-1133 du 21 septembre 1977 modifié relatif aux installations classées pour la protection de l'environnement, et notamment ses articles 3.5°, 3.6° et 18 ;
+
+VU l'arrêté ministériel du 10 mai 2000 relatif à la prévention des accidents majeurs impliquant des substances ou des préparations dangereuses présentes dans certaines catégories d'installations classées pour la protection de l'environnement ;
+
+VU les divers actes administratifs réglementant le fonctionnement des installations de l'usine ATOFINA de Lacq, en particulier l'arrêté préfectoral 01/IC/541 du 23 novembre 2001 ;
+
+VU le rapport de l'inspection des installations classées en date du 13 février 2004 ;
+
+VU l'avis favorable émis par le Conseil Départemental d'Hygiène le 18 mars 2004 ;
+
+CONSIDERANT la nécessité de faire procéder par l'exploitant à un réexamen périodique et planifié des études des dangers couvrant son établissement ;
+
+<!-- START : OCR-BUG-IGNORE -->
+Toute correspondance doit être adressée sous forme impérativement à Monsieur le Préfet des Pyrénées-Atlantiques
+2, RUE MARÉCHAL JOFFRE 64021 PAU CÉDEX - TÉL. 05.59.98.25.42 - TÉLÉCOPIE 05.59.98.24.99
+courrier@pyrenees-atlantiques.pref.gouv.fr - site internet : www.pyrenees-atlantiques.pref.gouv.fr
+<!-- END : OCR-BUG-IGNORE -->
+
+```
+```
+CONSIDÉRANT que les actions de réduction des risques à la source, notamment sur les stockages d'ammoniac et de gaz inflammables liquéfiés, sont de nature à limiter l'occurrence et les conséquences d'un accident technologique majeur ;
+
+CONSIDÉRANT la nécessité pour les autorités administratives de disposer de l'affichage des risques présents par l'établissement ATOFINA de Lacq pour être en mesure de déterminer les zones de concentration en vue de la maîtrise de l'urbanisation et d'application du plan d'urgence externe ;
+
+CONSIDÉRANT que toutes les formalités prescrites par les lois et règlements ont été accomplies ;
+
+SUR proposition du Secrétaire Général de la Préfecture ;
+
+ARRÊTE
+
+Article 1er :
+
+La société ATOFINA est autorisée à poursuivre l'exploitation de son établissement autorisé sur la commune de LACQ sous réserve du respect des prescriptions du présent arrêté.
+
+Les délais prescrits dans les articles suivants s'entendent à compter de la date de notification du présent arrêté.
+
+Article 2 : Élaboration d'études des dangers pour les installations n'en disposant initialement pas
+
+L'exploitant établit, conformément aux dispositions de l'article 3.5° du décret du 21 septembre 1977 modifié, et selon les échéances fixées ci-après, les études des dangers portant sur les installations suivantes situées dans son établissement de Lacq.
+
+- Pour le 1er juillet 2004 :
+  - chargement des produits finis et déchargement des matières premières aux postes "rail-route" ;
+
+- Sous un délai de 6 mois :
+  - stockages généraux ;
+  - hall de stockage et conditionnement des produits thiochimiques ;
+  - réseau torche BP 4/1.
+```
+- Pour fin 2004 :
+  - stockage et dépotage de CDT (cyclododécatriène) ;
+  - purification hydrogène.
+
+L'exploitant remet ces études des dangers au préfet et à l'inspection des installations classées en 2 exemplaires.
+
+**Article 3 : Réduction des potentiels de dangers**
+
+Sous un délai de 6 mois, l'exploitant examine les dispositions permettant une réduction des potentiels de dangers présents dans les stockages journaliers et généraux de méthyl-mercaptan, d'ammoniac et de sulfate acide de nitrosyle en visant à diminuer autant qu'il est possible les quantités mises en œuvre.
+
+L'exploitant remet ces études sous le délai prévu au préfet et à l'inspection des installations classées.
+
+**Article 4 : Estimation des conséquences de la matérialisation des dangers**
+
+Sous un délai de 6 mois, l'exploitant effectue une estimation des conséquences de la libération des potentiels de dangers les plus élevés des installations suivantes :
+
+- stockages généraux de méthyl-mercaptan
+- stockage de sulfate acide de nitrosyle
+- stockage d'oxyde d'éthylène
+- stockage d'ammoniac
+- unité H2S
+
+L'ensemble des événements physiquement envisageables sont envisagés à cette occasion. L'exploitant remet cette estimation sous le même délai au préfet et à l'inspection des installations classées.
+
+**Article 5 : Effets domino**
+
+Sous un délai de 9 mois, à partir de l'ensemble des études des dangers réalisées, l'exploitant recense les potentiels de risques présents par ses installations qui seraient susceptibles d'affecter par effet domino l'intégrité des installations voisines opérées par TOTAL E&P France (canalisation aérienne de propane notamment) et SOBEGAL (réservoirs aériens de stockage de GPL notamment). Il remet cette étude, accompagnée d'éventuelles propositions de réduction du risque à la source, sous le même délai au préfet et à l'inspection des installations classées en 2 exemplaires.
+### Article 6 : Avis d’un tiers-expert
+
+Sous un délai de 3 mois, selon les dispositions de l’article 3.6° du décret du 21 septembre 1977 modifié, l’exploitant propose à l’approbation de l’inspection des installations classées, le choix d’un tiers expert qui, aux frais de l’exploitant, sera amené à donner un avis sur la pertinence de l’estimation des conséquences inhérentes à la libération des potentiels de dangers fournie à l’article 4 ci-avant au regard notamment des études des dangers établies.
+
+Le tiers expert remet son avis au préfet et à l’inspection des installations classées en 2 exemplaires sous un délai de 12 mois.
+
+### Article 7 : Mesures de réduction des risques à la source
+
+L’exploitant met en œuvre les mesures de réduction des risques proposées à l’issue des divers études des dangers. A savoir à minima les propositions d’amélioration listées :
+
+- en pages 52 à 54 de l’étude des dangers des stockages journaliers et généraux de méthyl-mercaptan d’août 2001 ;
+- en pages 52 à 53 de l’étude des dangers du stockage d’oxyde d’éthylène d’août 2001 ;
+- en pages 85, 110, 132, 159, 184 de l’étude des dangers des canalisations de décembre 2001 ;
+- en pages 70 à 72 de l’étude des dangers de l’unité de fabrication d’éthyl-mercaptan de janvier 2003 ;
+- en page 36 de l’étude des dangers du stockage d’ammoniac de mars 2003 ;
+- en pages 31 et 32 de l’étude des dangers du stockage d’isobutène de juin 2003.
+
+Il informe semestriellement au 30 juin et au 31 décembre de l’année, le préfet et l’inspection des installations classées de l’état d’avancement de la définition et de la mise en œuvre des actions de réduction du risque. Les modifications ou suppressions d’actions de réduction du risque font l’objet de justifications appropriées de la part de l’exploitant. Les études menées qui concluent à la faisabilité techno-économique d’une modification sont assorties d’un engagement de l’exploitant quant à l’échéance de concrétisation des améliorations ou modifications, sur les mêmes échelles que celles susvisées de déboucher.
+
+### Article 8 : Stockage d’ammoniac et son poste de dépotage
+
+Sous un délai de 3 ans, l’exploitant remet au préfet et à l’inspection des installations classées une étude de réduction du risque à la source pour le stockage d’ammoniac et son poste de dépotage. Dans cette étude, l’exploitant envisage de recourir aux bonnes technologies mises en œuvre par la profession pour le stockage d’ammoniac : confinement dynamique, rétention haute, …et examine la faisabilité de substituer à l’ammoniac un fluide frigorigène moins dangereux pour la production de froid.
+### Article 9 : Stockage de sulfate acide de nitrosyle et son poste de chargement
+
+Sous un délai de 2 ans, l'exploitant remet au préfet et à l'inspection des installations classées une étude de réduction du risque à la source pour le stockage de sulfate acide de nitrosyle et son poste de chargement. Dans cette étude, l'exploitant envisage de recourir aux bonnes technologies mises en œuvre par la profession pour le stockage de sulfate acide de nitrosyle (confinement notamment).
+
+### Article 10 : Stockage d'isobutène
+
+Le stockage de 59 tonnes de capacité répond aux dispositions fixées par les articles 3 à 11 de l'arrêté ministériel du 10 mai 1993 relatif aux stockages de gaz inflammables liquéfiés. Au regard des dispositions de l'article 8 de ce même arrêté ministériel, le réservoir est muni sur la sortie en phase liquide d'un double isolement, à savoir un clapet et une vanne de sécurité automatique à sécurité positive situés au plus près de la paroi du réservoir. Le taux d'arrosage de la paroi du réservoir délivré par le système fixe prévu à l'article 11 de l'arrêté ministériel est d'au moins de 10 l/m²/minute.
+
+Sous un délai de 6 mois, l'exploitant vérifie la tenue du réservoir sous la sollicitation du même major de sécurité. Les justificatifs, accompagnés le cas échéant d'un programme de renforcement, sont adressés à l'inspection des installations classées sous la même échéance.
+
+Sous un délai de 2 ans, l'exploitant procède à la suppression du piquage utilisé pour la mesure de niveau ou met en œuvre une solution alternative (raject de sectionnement) visant à éviter que la rupture de ce même piquage ne conduise à la vidange complète du réservoir.
+
+### Article 11 : Poste de déchargement wagon d'isobutène
+
+Les opérations de dépotage sont effectuées sur une aire plane et sur une voie protégée par un taguet ; les manœuvres ferroviaires sur cette voie ne peuvent être effectuées qu'avec le wagon d'isobutène déconnecté. Les consignes de sécurité sont affichées au poste de dépotage ; les consignes opératoires sont disponibles au poste de dépotage.
+
+L'exploitant limite par une organisation adaptée les activités exercées au voisinage du poste de transfert durant l'exploitation de ce dernier. Préalablement aux opérations de déchargement, le wagon-citerne est immobilisé par cales. Le début du transfert est asservi à la mise à la terre préalable du wagon.
+L'ouverture du clapet de fond de la citerne est assurée par un ridoir pneumatique dont l'actionnement est à sécurité positive ou sur déplacement du wagon.
+
+Le transfert est réalisé à l'aide d'un flexible. L'exploitant définit les dispositions adaptées à la conservation du flexible entre 2 opérations de dépotage successives.
+
+Un robinet motorisé à sécurité feu et à sécurité positive est situé sur la ligne de déchargement en phase liquide au plus près de la connexion du flexible de dépotage. Sa fermeture est commandée par un système de détection d'absence de contre-pression. Sous un délai de 3 ans, l'exploitant installe un clapet anti-retour au plus près de la connexion du flexible de dépotage.
+
+Un dispositif d'arrêt d'urgence situé sur la zone de dépotage permet la mise en sécurité de l'installation, en commandant l'arrêt de la pompe de transfert, l'actionnement du ridoir pneumatique et la fermeture des robinets motorisés.
+
+Un dispositif de détection de gaz est mis en place sur la zone de dépotage sur un périmètre rapproché. L'activation de la séquence d'arrêt d'urgence est assurée à la détection d'une concentration en gaz supérieure à 50% de la L.I.E.
+
+Un extincteur à poudre de 50 kg est disponible à proximité de la zone de dépotage. Deux lances monitor de débit unitaire de 1500 litres/minute sont présentes à proximité du poste. Sous un délai de 3 mois, l'exploitant vérifie que ces 2 hydrantes permettent d'assurer un arrosage à un taux de 10 litres/m²/minute uniformément réparti sur les parois du wagon citerne. L'exploitant porte à la connaissance de l'inspection des installations classées les résultats enregistrés lors des essais qu'il menera.
+
+Sous un délai de 2 ans, l'exploitant étudie le déplacement du poste de déchargement et intègre dans ce projet l'emploi des bonnes technologies de la profession dont notamment un bras articulé de dépotage muni d'un système de déconnexion automatique (sauf argumentation contraire dûment justifiée), une cuvette de rétention déportée, un système d'arrosage fixe débitant un taux d'arrosage de 10 l/m²/minute réparti uniformément sur la paroi du wagon.
+
+Article 12 : Stockages journaliers de méthyl-mercaptan
+
+En sus des prescriptions imposées par les articles 6.18.1 à 6.18.7 de l'annexe 2 à l'arrêté préfectoral 98/C/014 du 22 janvier 1998, la poursuite de l'exploitation des 4 réservoirs journaliers de méthyl-mercaptan est soumise au respect des dispositions suivantes :
+- le réservoir D 8759, situé perpendiculairement aux 3 autres, est tenu vide sous atmosphère gazeuse. Sous réserve de justification que les 3 autres réservoirs ne peuvent assurer la fonction attendue, le réservoir D 8759 pourra être ouvert en cas de situations particulières liées à l'unité de production de méthyl-mercaptan (démarrage, produit hors spécification...). L'exploitant minimise autant que possible le nombre et la durée de ces situations exceptionnelles. La présente prescription deviendra caduque si l'exploitant met en place une protection physique des parois du réservoir D 8759 au regard des risques de projections présentés par les 3 autres réservoirs ;
+
+- sous un délai d'un an, l'exploitant propose au préfet et à l'inspection des installations classées une solution permettant de créer un réceptacle de rétention déporté. A défaut, l'exploitant propose des dispositions passives (ignifugation) permettant de renforcer la cuvette de rétention et des différentes canalisations situées dans ou au-dessus de la cuvette de rétention.
+
+**Article 13 : Stockages généraux de méthyl-mercaptan**
+
+En sus des prescriptions imposées par les articles 6.18.1 à 6.18.7 de l'annexe 2 à l'arrêté préfectoral 98/IC/014 du 22 janvier 1998, la poursuite de l'exploitation des 2 sphères de 500 m³, dédiées au stockage de méthyl-mercaptan, est soumise au respect des dispositions suivantes :
+
+- sous un délai de 6 mois, l'exploitant procède à la vérification de la tenue sous la sollicitation du séisme majeur de sécurité, de chaque sphere, de leur ligne de soutirage en phase liquide, et en particulier du tronçon compris entre la paroi et la première vanne de sécurité automatique située sur la ligne de soutirage. Les résultats sont transmis sous ce même délai à l'inspection des installations classées ;
+
+- sous un délai d'un an, l'exploitant met en place une protection physique ou thermique, devant permettre d'éviter qu'un feu chaudume initie par une fuite sur la bride de raccordement de la vanne automatique située au plus près sur la ligne de soutirage, n'impacte directement la paroi de la sphère.
+
+**Article 14 : Mesures communes pour les stockages journaliers et généraux de méthyl-mercaptan**
+
+En sus des prescriptions imposées par les articles 6.18.1 à 6.18.7 de l'annexe 2 à l'arrêté préfectoral 98/IC/014 du 22 janvier 1998, la poursuite de l'exploitation de ces réservoirs est soumise au respect des dispositions suivantes :
+sous un délai d’un an, l’exploitant étudie la faisabilité d’assurer la séquence d’arrêt d’urgence au déclenchement d’un ou de deux détecteurs de gaz sur la zone de détection de chaque stockage. Il remet, si l’étude permet de conclure en ce sens, sa proposition de réalisation au préfet et à l’inspection des installations classées sous le même délai. Dans l’attente, la gestion de telles situations fait l’objet d’une consigne d’urgence au titre du système de gestion de la sécurité visant à minimiser les quantités de gaz susceptibles d’être émises à l’atmosphère dès leur détection ;
+
+- à l’occasion de leur inspection réglementaire, l’exploitant procède à un contrôle non destructif intégral, du type émission acoustique, de l’état métallurgique des parois des différents réservoirs de stockage de méthyl-mercaptan. L’exploitant fournit avant fin 2004 à l’inspection des installations classées l’échéancier de réalisation de cette campagne de contrôles non destructifs.
+
+**Article 15 : Poste de chargement wagon de méthyl-mercaptan**
+
+Le poste de chargement wagon de méthyl-mercaptan est exploité conformément aux dispositions de l’arrêté 98/IC/390 du 21 décembre 1998. La poursuite de son exploitation est autorisée au respect des dispositions suivantes :
+
+- sous un an l’exploitant étudie la faisabilité de créer une cuvette de rétention déportée sous les wagons-citernes situés au poste de chargement. Il remet ses propositions au préfet et à l’inspection des installations classées sous la même échéance. Dans le cas où la réalisation d’une cuvette déportée ne lui apparaîtrait pas justifiée, l’exploitant fournira à l’appui de sa justification l’avis du tiers-expert tel que déterminé selon les dispositions de l’article 6 ci-avant ;
+
+- sous un délai de 3 mois, l’exploitant précise explicitement aux opérateurs la conduite à tenir en cas de fuite enflammée au poste de chargement. Cette consigne rentre dans le champ des situations d’urgence gérées par le système de gestion de la sécurité. Sous un délai de 9 mois, l’exploitant fournit au préfet et à l’inspection des installations classées ses propositions quant à la mise en place sur le poste de chargement :
+
+  - d’un système de détection incendie au poste de dépotage (sauf argumentation contraire dûment justifiée),
+  - de l’asservissement de l’arrosage des wagons à la détection gaz ou à la détection feu.
+
+Dans un délai de 18 mois, le tiers-expert, visé à article 6, formalise son avis sur les propositions émanant de l’exploitant et, si nécessaire, sur la pertinence de la consigne d’urgence évoquée ci-avant au regard des efficacité présente par les deux dispositifs de sécurité sus-visés.
+### Article 16 : Stockage d'oxyde d'éthylène
+
+L'exploitation des installations de stockage d'oxyde d'éthylène est autorisée dans le respect des dispositions suivantes, lesquelles complètent ou modifient les prescriptions de l'arrêté préfectoral 90/IC/035 du 22 février 1990 :
+
+- pour l'application du 2ème alinéa de l'article 4.1.b de l'arrêté 90/IC/035, l'exploitant formalise sous 3 mois par une consigne d'urgence, la mise en œuvre des moyens nécessaires à la dilution dans les milieux des fuites d'oxyde d'éthylène et la collecte de ces effluents dans une capacité de confinement d'au moins 1 300 m³. Cette consigne d'urgence fait l'objet de tests périodiques.
+
+- le système de détection de fuite d'oxyde d'éthylène prévu par l'article 4.1.f de l'arrêté 90/IC/035, est composé d'au moins 2 têtes de détection à proximité du réservoir de stockage, permettant une détection au plus tôt de toute fuite. L'atteinte du seuil de sécurité sur l'un de ces deux détecteurs conduit par automatisme à la mise en sécurité immédiate du stockage.
+
+### Article 17 : Poste de dépotage wagon d'oxyde d'éthylène
+
+L'exploitation du poste de déchargement wagon stockage d'oxyde d'éthylène est autorisée dans le respect des dispositions suivantes, lesquelles complètent ou modifient les prescriptions de l'arrêté préfectoral 90/IC/035 du 22 février 1990 :
+
+- le premier alinéa de l'article 4.1. c de l'arrêté 90/IC/035 est modifié par : "l'oxyde d'éthylène est déposé à partir d'un poste spécifique dédié aux wagons-citernes".
+
+- l'exploitant met en place avant fin juin 2004 sur le poste de dépotage, un ridoir pneumatique commandé à la fermeture du clapet de fond du wagon-citerne. L'actionnement de ce ridoir est asservi au déplacement du wagon et à l'activation de la séquence d'arrêt d'urgence.
+
+- l'exploitant remet au préfet et à l'inspection des installations classées avant fin septembre 2004 une étude visant à la création d'une rétention associée au poste de dépotage. Cette étude est accompagnée d'un échéancier de réalisation. De façon alternative, et sans préjuger de l'avis qui sera donné par le tiers expert selon l'article 18 ci-après, l'exploitant pourra mettre en place une consigne d'urgence conduisant à la dilution et la collecte dans les milieux des fuites d'oxyde d'éthylène ainsi que prévue à l'article 16 ci-avant. Cette consigne d'urgence fait l'objet de tests périodiques.
+- les moyens d'arrosage du wagon situé au poste de déchargement doivent permettre un arrosage à un taux d'au moins 10 l/m²/minute réparti uniformément sur la totalité des parois du wagon-citerne. Sous 3 mois, l'exploitant porte à la connaissance de l'Inspection des installations classées les résultats enregistrés lors des essais qu'il mènera.
+
+- l'opération classée OIPs de dépotage d'un wagon d'oxyde d'éthylène est réalisée sous la présence permanente de deux opérateurs et d'un pompier. Dans le cadre de son système de gestion de la sécurité, l'exploitant organise la formation appropriée des personnels concernés et réalise des exercices périodiques de mise en situation d'urgence au titre de l'application du système de gestion de la sécurité.
+
+- le 4ème alinéa de l'article 4.1 c de l'arrêté 90/IC/035 est remplacé par : "un système de détection d'oxyde d'éthylène déclenchera une alarme visuelle et sonore en salle de contrôle".
+
+**Article 18 : Vérifications complémentaires**
+
+Sous un délai d'un an, le tiers-expert, choisi selon les dispositions de l'article 5 ci-avant, remet au préfet et à l'Inspection des installations classées et aux frais de l'exploitant un avis motivé sur :
+
+- l'efficacité de la consigne d'urgence visant à diluer dans les meilleurs délais une fuite d'oxyde d'éthylène et objet de la prescription figurant à l'article 16 ci-avant ;
+
+- la fiabilité que représente la barrière organisationnelle adoptée pour le dépotage d'un wagon d'oxyde d'éthylène, objet de l'article 17 ci-avant, au regard de la qualification et de l'entraînement des personnels concernés ainsi que de la durée de l'opération de dépotage ;
+
+- les justifications avancées par ATOFINA pour ne pas maintenir sur le bras de déchargement le système de déconnexion d'urgence prescrit par l'article 4.1.c de l'arrêté 90/IC/035. L'avis émis par le tiers-expert tiendra compte des bonnes pratiques en vigueur au sein des fabricants et utilisateurs d'oxyde d'éthylène.
+
+**Article 19 : Délai et voie de recours**
+
+La présente décision peut être déférée au tribunal administratif. Le délai de recours est de deux mois pour l'exploitant. Ce délai commence à courir du jour où la présente décision a été notifiée.
+
+Pour les tiers, ce délai est de 4 ans à compter de la notification ou de la publication de la présente décision.
+```markdown
+Article 20 :
+
+Le présent arrêté doit être conservé et présenté par l'exploitant à toute réquisition.
+Les droits des tiers sont et demeurent expressément réservés.
+
+Article 21 :
+
+Une copie du présent arrêté sera déposée à la mairie et pourra y être consultée par les personnes intéressées.
+
+Un extrait du présent arrêté, énumérant les prescriptions auxquelles l'installation est soumise et faisant connaître qu'une copie duudit arrêté est déposée à la mairie ou elle peut verbal de l'accomplissement de cette formalité sera dressée par les soins du maire de LACQ-AUDEJOS.
+
+Le même extrait sera affiché en permanence de façon visible dans l'installation par les soins du bénéficiaire de l'autorisation.
+
+En outre, un avis sera publié par les soins du Préfet et aux frais de l'exploitant, dans deux journaux diffusés dans tout le département.
+
+Article 22 : Ampliations et exécutions
+
+M. Le Secrétaire Général de la Préfecture,
+M. Le Maire de Lacq-Audejos,
+M. Le Directeur Régional de l'Industrie, de la Recherche et de l'Environnement, à Bordeaux,
+M. L'Inspecteur des Installations Classées pour la Protection de l'Environnement,
+sont chargés, chacun en ce qui le concerne, de l'exécution du présent arrêté dont une amplification sera adressée à M. le Directeur de la société ATOFINA établissement de Lacq.
+
+Fait à PAU, le - 4 MAI 2004
+
+LE PREFET
+Fonctionnaire de l'Etat et de l'Administration
+Le Secrétaire Général
+
+Jean-Noël HUMBERT
+```
+```
+# Tableau de bord
+
+## Informations générales
+
+- **Nom** : Jean Dupont
+- **Adresse** : 123 Rue de la Liberté, 75000 Paris, France
+- **Téléphone** : 01 23 45 67 89
+- **Email** : jean.dupont@example.com
+- **Date de naissance** : 01/01/1980
+- **Numéro de sécurité sociale** : 123 45 67 89 01
+
+## Informations de connexion
+
+- **Nom d'utilisateur** : jdupont
+- **Mot de passe** : ******
+- **Date de dernière connexion** : 01/01/2023
+
+## Informations de compte
+
+- **Solde actuel** : 1 234,56 €
+- **Dépenses mensuelles** : 500,00 €
+- **Revenus mensuels** : 2 000,00 €
+
+## Historique des transactions
+
+| Date       | Montant (€) | Description       |
+|------------|-------------|-------------------|
+| 01/01/2023 | -100,00     | Achat de livres   |
+| 02/01/2023 | 500,00      | Salaire mensuel   |
+| 03/01/2023 | -50,00      | Restaurant       |
+| 04/01/2023 | 200,00      | Achat de vêtements|
+| 05/01/2023 | -75,00      | Transport         |
+
+## Paramètres de sécurité
+
+- **Authentification à deux facteurs** : Activée
+- **Notifications par email** : Activées
+- **Notifications SMS** : Désactivées
+
+## Informations de paiement
+
+- **Carte de crédit** : ****** 1234
+- **Date d'expiration** : 12/2025
+- **Code de sécurité** : 123
+
+## Informations supplémentaires
+
+- **Langue préférée** : Français
+- **Fuseau horaire** : Europe/Paris
+- **Theme** : Clair
+```
