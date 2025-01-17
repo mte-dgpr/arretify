@@ -66,7 +66,9 @@ def _is_not_information(line: str) -> bool:
         # French national motto
         r"(libert[eé]|[eé]galit[eé]|fraternit[eé])",
         # Phone numbers
-        r'\d{2}[\s.]\d{2}[\s.]\d{2}[\s.]\d{2}[\s.]\d{2}'
+        r'\d{2}[\s.]\d{2}[\s.]\d{2}[\s.]\d{2}[\s.]\d{2}',
+        # Email address
+        r'\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b',
     ]
     pattern = '|'.join(f'(?:{pattern})' for pattern in patterns_to_ignore)
 

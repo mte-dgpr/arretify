@@ -1,0 +1,2670 @@
+```markdown
+# SOUS-PRÉFECTURE D'ARGENTAN
+
+## ARRÊTÉ PRÉFECTORAL COMPLÉMENTAIRE
+portant sur les rejets de substances dangereuses
+dans le milieu aquatique
+Société MERMIER LE MARCHAND
+Commune de TINCHEBRAY
+
+### Le Préfet de l’Orne
+Chevalier de la légion d’honneur,
+
+Vu la directive européenne 2008/105/EC du 16 décembre 2008 établissant des normes de qualité environnementale dans le domaine de l’eau ;
+
+Vu la directive européenne 2006/11/CE concernant la pollution causée par certaines substances dangereuses déversées dans le milieu aquatique de la Communauté ;
+
+Vu la directive européenne 2000/60/CE du 23 octobre 2000 établissant un cadre pour une politique communautaire dans le domaine de l’eau (DCE) ;
+
+Vu le code de l’environnement, et notamment son titre Ier des parties réglementaires et législatives du Livre V ;
+
+Vu la nomenclature des installations classées codifiée à l’annexe de l’article R.511-9 du code de l’environnement ;
+
+Vu les articles R.211-11-1 à R.211-11-3 du titre Ier du livre II du code de l’environnement relatifs au programme national d’action contre la pollution des milieux aquatiques par certaines substances dangereuses ;
+
+Vu l’arrêté ministériel du 20 avril 2005 modifié pris en application du décret du 20 avril 2005 relatif au programme national d’action contre la pollution des milieux aquatiques par certaines substances dangereuses ;
+
+Vu l’arrêté ministériel du 30 juin 2005 modifié relatif au programme national d’action contre la pollution des milieux aquatiques par certaines substances dangereuses ;
+
+Vu l’arrêté ministériel du 31 janvier 2008 modifié relatif à la déclaration annuelle des émissions polluantes et des déchets ;
+
+Vu l’arrêté ministériel du 25 janvier 2010 relatif aux méthodes et critères d’évaluation de l’état écologique de l’état chimique et du potentiel écologique des eaux de surface pris en application des articles R. 212-10, R.212-11 et R.212-18 du code de l’environnement ;
+
+Vu la circulaire DPPR/DE du 4 février 2002 qui organise une action nationale de recherche et de réduction des rejets de substances dangereuses dans l’eau par les installations classées ;
+
+Vu la circulaire DCE 2005/12 du 28 juillet 2005 relative à la définition du « bon état » ;
+
+Vu la circulaire DE/DPPR du 7 mai 2007 définissant les « normes de qualité environnementale provisoires (NOEP) » et les objectifs nationaux de réduction des émissions de certaines substances ;
+
+Adresse postale : 9, R. OUTE BC SECS B.P. 20007 61200 ARGENTAN CEDEX @ 03.33.80.81.61 (standard) Télécopie : 03.33.39.54.54
+
+Note : tout courrier doit être appelé avant son envoi. Les documents non signés seront retournés à l’expéditeur.
+```
+```markdown
+VU le circulaire DGR/SRT du 5 janvier 2009 relative à la mise en œuvre de la deuxième phase de l’action nationale de recherche et de réduction des substances dangereuses pour le milieu aquatique présentes dans les rejets des installations classées pour la protection de l’environnement I.C.P.E. soumises à autorisation ;
+
+VU la circulaire DGR/SRT du 23 mars 2010 relative à l’adaptation des conditions de mise en œuvre de la circulaire du 5 janvier 2009 relative aux actions de recherche et de réduction des substances dangereuses dans les rejets aqueux des installations classées ;
+
+VU le rapport d’étude de l’INERIS N°DRC-07-82615-13836C du 15 janvier 2008 fabriquant une synthèse des mesures de substances dangereuses dans l’eau réalisées dans certains secteurs industriels ;
+
+VU l’arrêté préfectoral du 10 décembre 2008 autorisant la société MERMIER LEMARCHAND à exercer ses activités relevant de la nomenclature des installations classées Rue de Vire sur le territoire de la commune de TINCHEBRAY, complété par l’arrêté préfectoral complémentaire du 18 décembre 2009 ;
+
+VU le courrier de l’inspection du 9 novembre 2010 qui a proposé un projet d’arrêté préfectoral ;
+
+VU le courrier de l’exploitant du 26 novembre 2010 en réponse ;
+
+VU le rapport de l’inspection des installations classées en date du 29 novembre 2010 ;
+
+VU l’avis du conseil départemental de l’environnement et des risques technologiques du 16 décembre 2010 ;
+
+VU les résultats du rapport établi par le laboratoire départemental Frank Duncombe et daté du 24 octobre 2006 présentant les résultats d’analyse menés dans le cadre de la première phase de recherche de substances dangereuses dans l’eau ;
+
+Considérant l’objectif de respect des normes de qualité environnementale dans le milieu en 2015 fixé par la directive européenne 2000/60/CE ;
+
+Considérant les objectifs de réduction et de suppression de certaines substances dangereuses fixés dans la circulaire DE/DPPR du 7 mai 2007 ;
+
+Considérant la nécessité d’évaluer qualitativement et quantitativement par une surveillance périodique les rejets de substances dangereuses dans l’eau issus du fonctionnement de l’établissement au titre des installations classées pour la protection de l’environnement afin de proposer le cas échéant des mesures de réduction ou de suppression appropriées ;
+
+Considérant les effets toxiques, persistants et bioaccumulables des substances dangereuses visées par le présent arrêté sur le milieu aquatique ;
+
+Sur proposition du secrétaire général de la préfecture de l’Orne,
+
+**ARRÊTE :**
+
+**Article 1 : Objet**
+
+La société MERMIER LEMARCHAND dont le siège social est situé Rue de Vire BP6 à TINCHEBRAY doit respecter, pour ses installations situées Rue de Vire sur le territoire de la commune de TINCHEBRAY, les modalités du présent arrêté préfectoral complémentaire qui vise à fixer les modalités de surveillance prévue aux rejets de substances dangereuses dans l’eau afin d’améliorer la connaissance qualitative et quantitative des rejets de ces substances.
+
+Les prescriptions des actes administratifs antérieurs en date du 10 décembre 2008 et du 18 décembre 2009 sont complétées par celles du présent arrêté.
+```
+```markdown
+## Article 2 : Prescriptions techniques applicables aux opérations de prélèvements et d’analyses
+
+2.1 Les prélèvements et analyses réalisés en application du présent arrêté doivent respecter les dispositions de l’annexe 5 (extraite de l’annexe 5 de la circulaire du 5 janvier 2009) du présent arrêté.
+
+2.2 Pour l’analyse des substances, l’exploitant doit faire appel à un laboratoire d’analyse accrédité selon la norme NF EN ISO/CEI 17025 pour la matrice « Eaux Résiduaires », pour chaque substance à analyser.
+
+2.3 L’exploitant doit être en possession de l’ensemble des pièces justificatives fournies par le laboratoire qu’il aura choisi, avant le début des opérations de prélèvement et de mesures afin de s’assurer que ce prestataire respecte bien les dispositions de l’annexe 5 du présent arrêté :
+
+1. Justificatifs d’accréditation sur les opérations de prélèvements (si disponible) et d’analyse de substances dans la matrice « eaux résiduaires » comprenant à minima :
+   a. Numéro d’accréditation
+   b. Extrait de l’annexe technique sur les substances concernées
+
+2. Liste de références en matière d’opérations de prélèvements de substances dangereuses dans les rejets industriels ;
+
+3. Tableau des performances et d’assurance qualité précisant les limites de quantification pour l’analyse des substances qui doivent être inférieures ou égales à celles de l’annexe 2 du présent arrêté ;
+
+4. Attestation du prestataire s’engageant à respecter les prescriptions figurant à l’annexe 3 du présent arrêté.
+
+2.4 Dans le cas où l’exploitant souhaite réaliser lui-même le prélèvement des échantillons, celui-ci doit fournir à l’inspection avant le début des opérations de prélèvement et de mesures, les procédures qu’il aura établies démontrant la fiabilité et la reproductibilité de ses pratiques de prélèvement et de mesure de débit.
+
+Ces procédures doivent intégrer les points détaillés au paragraphe 3 de l’annexe 5 du présent arrêté et préciser les modalités de traçabilité de ces opérations.
+
+Pour bénéficier de cette disposition, l’exploitant devra transmettre les éléments à l’inspection des installations classées :
+
+- avant le 1er mai 2011 pour la surveillance initiale définie à l’article 3 du présent arrêté ;
+
+Après transmission, l’exploitant ne pourra procéder par lui-même à ces opérations de prélèvement et d’échantillonnage, qu’après avoir reçu l’accord de l’inspection des installations classées.
+
+2.5 Les mesures de surveillance des rejets aqueux déjà imposées à l’industrie par arrêté préfectoral sur les substances mentionnées dans le présent arrêté peuvent se substituer à certaines mesures visées dans le présent arrêté, sous réserve du respect des conditions suivantes :
+
+- la fréquence de mesures imposées dans le présent arrêté est respectée ;
+- les modalités de prélèvement et d’analyses pour les mesures de surveillance répondent aux exigences de l’annexe 5 du présent arrêté, notamment sur les limites de quantification.
+
+## Article 3 : Mise en œuvre de la surveillance initiale
+
+### 3.1. Programme de surveillance initiale
+
+L’exploitant met en œuvre dès le 1er mai 2011, le programme de surveillance au point de rejet des effluents industriels de l’établissement dans les conditions suivantes :
+
+- liste des substances dangereuses : substances dangereuses visées à l’annexe 1 du présent arrêté ;
+```
+```
+- périodicité : 1 mesure par mois pendant 5 mois du fait de la participation à la première phase de recherche des substances dans l'eau (cette périodicité pourra être revue notamment durant la période estivale - moins de juillet et août- si les résultats se sont peu représentatifs de l'échantillonnement normal de l'établissement) ;
+- durée de changement prélevé : 24 heures représentatives du fonctionnement de l'installation.
+
+- Cas spécifiques des abandons de substances : les substances suivantes peuvent être abandonnées à la condition que les trois premières mesures démontrent leur absence (concentration inférieure à la limite de détection) : Tributylétain cation, Dibutylétain cation, Monobutylétain cation (ces substances n'apparaissent pas aux listes en gras des lignes secondaires définies à l'annexe 1 de la circulaire de référence).
+
+Il transmet au plus tard à cette échéance du 1er mai 2011 un courrier à l'inspection des installations classées informant de l'organisation d'une visite sur place pour procéder aux prélèvements et aux analyses ainsi que de la période de démarrage du programme de surveillance initiale.
+
+### 3.2. Rapport de synthèse de la surveillance initiale
+
+L'exploitant doit fournir à l'inspection des installations classées au plus tard le 15 avril 2012 un rapport de synthèse de la surveillance initiale devant comprendre :
+
+- un tableau récapitulatif des mesures sous une forme synthétique selon l'annexe 4 du présent arrêté. Ce tableau comprend, pour chaque substance, sa concentration et son flux, pour chaque mesure réalisée. Le tableau comprend également les concentrations minimale, maximale et moyenne mesurées sur l'ensemble des mesures, ainsi que les concentrations maximales et moyennes calculées à partir de l'ensemble de ces mesures et les limites de quantification pour chaque substance ;
+
+- l'ensemble des rapports d'analyses réalisés en application du présent arrêté ;
+- l'ensemble des éléments permettant d'attester de la traçabilité de ces opérations de prélèvement et de mesure de débit et permettant de vérifier le respect des dispositions de l'article 2 du présent arrêté ;
+- des commentaires et explications sur les résultats obtenus et leurs éventuelles variations, en évaluant les origines possibles des substances rejetées, notamment au regard des activités industrielles exercées et des produits utilisés ;
+- des propositions élémentaires argumentées, le cas échéant, si l'exploitant met en évidence la possibilité d'abandonner la surveillance de certaines substances, en référence aux dispositions de l'article 3.3 du présent arrêté ;
+- le cas échéant, les résultats de mesures de qualité des eaux d'alimentation en précision leur origine (superficielle, souterraine ou adjonction d'eau potable).
+
+### 3.3. Conditions à satisfaire pour abandonner la surveillance d'une substance
+
+La surveillance au rejet d'une substance cesse que celles visées dans le présent arrêté pour être abandonnée à au moins l'une des trois conditions suivantes est vérifiée (la troisième condition n'étant remplie que si les deux critères 3.1 et 3.2 qui la composent sont tous les deux respectées) :
+
+1. Il est clairement établi que ce sont les eaux amenées qui sont responsables de la présence de la substance dans les rejets de l'établissement ;
+2. Toutes les concentrations mesurées pour la substance sont strictement inférieures à la limite de quantification LQ définie dans le tableau de l'annexe 1 du présent arrêté (4e colonne du tableau) ;
+3. 3.1 Toutes les concentrations mesurées pour la substance sont inférieures à 10*NQEp (norme de qualité environnementale fixée dans l'arrêté ministériel du 25 janvier 2010 relatif aux méthodes et critères d'évaluation de l'état écologique, de l'état chimique et du potentiel écologique des eaux de surface pris en application des articles R. 212-10, R.212-11 et R.212-18 du code de l'environnement ou, en l'absence de leur adoption en droit français, 10*NQEp, norme de qualité environnementale provisoire fixée dans la circulaire DE/DPPR du 7 mai 2007), concentrations définies dans le tableau de l'annexe 1 du présent arrêté (4e colonne du tableau) ;
+
+ET 3.2 Tous les flux journaliers calculés pour la substance sont inférieurs à 10% du flux journalier théorique admissible par le milieu récepteur (le flux journalier admissible étant calculé à partir du débit mesuré d'étage de fréquence quinquennale selon QMNA5 (0,065 m3/s) et de la NQE ou NQEp conformément aux explications de l'annexe précédente).
+```
+```markdown
+### Article 4 : Remontée d'informations sur l'état d'avancement de la surveillance des rejets-Déclaration des données relatives à la surveillance des rejets aqueux
+
+Les résultats des mesures du mois N réalisées au titre de la surveillance des rejets aqueux doivent être saisis sur le site de télé-déclaration du ministère prévu à cet effet et transmis mensuellement à l’inspection des installations classées par voie électronique avant la fin du mois N+1, lorsque cette dernière exerce son pouvoir de police en région de Basse Normandie.
+
+Dans l’attente de la possibilité d’utilisation généralisée à l’échelle nationale de l’outil de télé-déclaration du ministère ou si l’exploitant n’utilise pas la transmission électronique via le site de télé-déclaration mentionné à l’alinéa précédent, il est tenu :
+- de transmettre mensuellement par écrit la fin du mois N+1 à l’inspection des installations classées un rapport de synthèse relatif aux résultats obtenus et analyses du mois N imposé à l’article 3 ainsi que les éléments de contexte de la mesure analytique prévue à l’article 2 du présent arrêté.
+- De transmettre mensuellement à l’INERIS par le biais du site : http://risque.ineris.fr les éléments relatifs au contexte de la mesure analytique des substances figurant en annexe 2 du présent arrêté.
+
+### Article 5 : Prescriptions spécifiques concernant les herbicides et pesticides
+
+Le traitement des espaces verts au sein de l’établissement par usage de produits commerciaux contenant les substances herbicides suivantes : alachlore, atrazine, diuron, isoproturon, imazéthapyr et trifluraline est interdit à la date de notification du présent arrêté.
+
+L’usage d’insecticides à base de chlorpyrifos, chlorpyrifos-éthyl, endosulfan, hexachlorocyclohexane et lindane interdit au sein de l’établissement à la date de notification du présent arrêté.
+
+Les stocks de produits contenant ces substances herbicides et insecticides doivent être éliminés dans des installations régulièrement autorisées à cet effet.
+
+### Article 6 : Dispositions applicables en cas d’infraction ou d’inobservations du présent arrêté
+
+Les infractions ou l’inobservation des conditions légales fixes par le présent arrêté entraînent l’application des sanctions pénales et administratives prévues par le titre Ier du livre V du Code de l’Environnement.
+
+### Article 7 : Délais et voies de recours
+
+Le présent arrêté est soumis à un contentieux de pleine juridiction. Il peut être déféré à la juridiction administrative :
+- par les demandeurs ou exploitants, dans un délai de deux mois qui commence à courir du jour où lesdits actes leur sont notifiés ;
+- par les tiers, personnes physiques ou morales, les communes intéressées ou leurs groupements, en raison des inconvénients ou des dangers que le fonctionnement de l’installation présente pour les intérêts visés à l’article L.511-1, dans un délai de quatre ans à compter de la publication ou de l’affichage des actes, ce délai étant, le cas échéant, prolongé jusqu’à la fin d’une période de deux années suivant la mise en activité de l’installation.
+
+Les tiers qui n’ont acquis ou pris à bail des immeubles ou n’ont élevé des constructions dans le voisinage d’une installation classée que postérieurement à l’affichage ou à la publication de l’arrêté autorisant l’ouverture de cette installation ou avant l’expiration des prescriptions prévues ne peuvent pas recourir à déférer les actes à la juridiction administrative.
+
+### Article 8 : Publication
+
+Un extrait du présent arrêté est affiché à la mairie de TINCHEBRAY pendant un mois avec l’indication qu’une copie intégrale est déposée en mairie et mise à la disposition de tout intéressé. Il est justifié de l’accomplissement de cette formalité par un certificat d’affichage. Le même extrait est affiché en permanence, de façon visible, dans l’installation par les soins du bénéficiaire de l’autorisation.
+```
+```markdown
+Un avis est inséré, par les soins de la sous-préfecture, dans deux journaux diffusés dans le département aux frais du pétitionnaire. Ce même avis sera publié sur le site internet de la préfecture de l'Orne.
+
+### Article 9 : Notification
+
+Le secrétaire général de la préfecture de l'Orne, le sous-préfet d'Argentan, le directeur régional de l'environnement, de l'aménagement et du logement de Basse-Normandie et maire de TINCHEBRAY sont chargés, chacun en ce qui le concerne, de l'exécution du présent arrêté qui est notifié à la Société MERMIER LEMARCHAND par lettre recommandée avec accusé de réception.
+
+Fait à Argentan, le 24 décembre 2010
+
+Le Préfet
+
+Pour le Préfet et par délégation,
+
+Le Sous-Préfet d'Argentan
+
+Jean-Yves FRAQUET
+```
+```markdown
+# ANNEXE 1 : LISTE DES SUBSTANCES DANGEREUSES
+FAISANT PARTIE DU PROGRAMME DE SURVEILLANCE
+
+## Établissement : MERMIER LE MARCHAND à TINCHEBRAY (61)
+
+| Substance | Code SANDRE | Catégorie de Substance : | Limite de quantification à atteindre par les laboratoires : LQ en µg/l | Valeurs limites admissibles via l'eau (eaux de surface) : 10*NQE ou 10*NQEp en µg/l (cf. article 3.3 de l'ANP) |
+|-----------|-------------|--------------------------|------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------|
+|-----------|-------------|--------------------------|------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------|
+| Nonylphénols | 1957 | 1 | 0,1 | 3 |
+| Chlorforme | 1135 | 2 | 1 | 25 |
+| Fluoranthène | 1191 | 2 | 0,01 | 1 |
+| Naphtalène | 1517 | 2 | 0,05 | 24 |
+| Cadmium et ses composés | 1388 | 1 | 2 | Suivant les classes de dureté de l'eau (classe 1 : <=0,8 classe 2 : 0,8 classe 3 : 0,9 classe 4 : 1,5 classe 5 : 2,5) |
+| Plomb et ses composés | 1382 | 2 | 5 | 72 |
+| Mercure et ses composés | 1387 | 1 | 0,5 | 0,5 |
+| Nickel et ses composés | 1386 | 2 | 10 | 200 |
+| Zinc et ses composés | 1383 | 4 | 10 | Suivant durées de l'eau en CO3 si <= à 24 µg/l : 31 si > à 24 µg/l : 78 |
+| Cuivre et ses composés | 1392 | 4 | 5 | 14 |
+| Chrome et ses composés | 1389 | 4 | 5 | 34 |
+| Tributylétain cation | 2879 | 1 | 0,02 | 0,002 |
+| Dibutylétain cation | 1771 | 4 | 0,02 | 17 |
+| Monobutylétain cation | 2542 | 4 | 0,02 | ND |
+| Demande Chimique en Oxygène du Carbone | 1314 | Paramètres de suivi | 30000 |  |
+| Dénitrification | 1841 | Paramètres de suivi | 3000 |  |
+| Débit en Suspension | 1305 | Paramètres de suivi | 2000 |  |
+
+Vu pour être annexé à mon arrêté en date de ce jour à Buenos Aires, le 4 de DIC. 2010
+
+Le Préfet,
+Pour le Préfet Adjoint délégué
+Le Sous-Préfet d'Argentine
+
+Jean-Yves VRAQUET
+```
+```
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+|  ____|_____
+| /    \    \
+| \____/____/
+|____________
+
+ ______
+|      |
+
+```markdown
+# ANNEXE 2 - Tableau des performances et assurance qualité à renseigner par le laboratoire et à remettre à l'exploitant
+
+(documents disponibles à l'annexe 5.5 de la circulaire du 5 janvier 2009 et téléchargeables sur le site http://rse.ineris.fr/)
+
+| Famille       | Substances                          | Code SANDRE | Substance Accréditée* en µg/l (obtenue sur une matrice eau résiduaire) | LQ en µg/l (obtenue sur une matrice eau résiduaire) | LQ attendue en µg/l (obtenue sur une matrice eau résiduaire) |
+|--------------|-------------------------------------|-------------|----------------------------------------------------------------------|--------------------------------------------------|------------------------------------------------------------|
+| Alkylphénols | Nonylphénols                        |             |                                                                     | 0,1                                                 | 0,1                                                        |
+|              | 4-n-nonylphénol                     |             |                                                                     | 0,1                                                 | 0,1                                                        |
+|              | 4-tert-octylphénol                  |             |                                                                     | 0,1                                                 | 0,1                                                        |
+|              | Octylphénols                        | 1920        |                                                                     | 0,1                                                 | 0,1                                                        |
+|              | OP1OE                               | 6370        |                                                                     | 0,1*                                                | 0,1                                                        |
+|              | OP2OE                               | 6371        |                                                                     | 0,1*                                                | 0,1                                                        |
+| Anilines    | 2 chloroaniline                     | 1593        |                                                                     | 0,1                                                 | 0,1                                                        |
+|              | 3 chloroaniline                     | 1592        |                                                                     | 0,1                                                 | 0,1                                                        |
+|              | 4 chloroaniline                     | 1591        |                                                                     | 0,1                                                 | 0,1                                                        |
+|              | 4-chloro-2 nitrotoluidine           | 1594        |                                                                     | 0,1                                                 | 0,1                                                        |
+|              | 5,4 dichloraniline                   | 1586        |                                                                     | 0,1                                                 | 0,1                                                        |
+| Autres      | 2,3,4,6,2',3',4',6'-Octachlorodiphényléther (OCDD) | 2958        |                                                                     | 0,05                                                | 0,05                                                       |
+|              | Biphényle                           | 1584        |                                                                     | 0,05                                                | 0,05                                                       |
+|              | Epichlorhydrine                      | 1494        |                                                                     | 0,5                                                 | 0,5                                                        |
+|              | Tributylphosphate                    | 1847        |                                                                     | 0,1                                                 | 0,1                                                        |
+|              | Acide chloracétique                  | 1465        |                                                                     | 25                                                  | 25                                                         |
+| BDE         | Tetrabromodiphényléther BDE 47       | 2919        |                                                                     |                                                      |                                                           |
+|              | Pentabromodiphényléther BDE 99      | 2918        |                                                                     |                                                      |                                                           |
+|              | Pentabromodiphényléther BDE 100     | 2917        |                                                                     |                                                      |                                                           |
+|              | Hexabromodiphényléther BDE 153      | 2911        |                                                                     |                                                      |                                                           |
+|              | Hexabromodiphényléther BDE 154      | 2912        |                                                                     |                                                      |                                                           |
+|              | Hexabromodiphényléther BDE 153      | 2912        |                                                                     |                                                      |                                                           |
+|              | Heptabromodiphényléther BDE 183     | 2910        |                                                                     |                                                      |                                                           |
+|              | Decabromodiphényléther (BDE 209)    | 1815        |                                                                     |                                                      |                                                           |
+| BTEX        | Benzène                             | 1114        |                                                                     | 1                                                   | 1                                                          |
+|              | Ethylbenzène                        | 1497        |                                                                     | 1                                                   | 1                                                          |
+|              | Isopropylbenzène                    | 1533        |                                                                     | 1                                                   | 1                                                          |
+|              | Toluène                             | 1278        |                                                                     | 1                                                   | 1                                                          |
+|              | Xylènes (Somme o.m.p)               | 1780        |                                                                     | 2                                                   | 2                                                          |
+| Chlorobenzènes | 1,2,3 trichlorobenzène              | 1630        |                                                                     | 1                                                   | 1                                                          |
+|              | 1,2,4 trichlorobenzène               | 1283        |                                                                     | 1                                                   | 1                                                          |
+|              | 1,3,5 trichlorobenzène               | 1629        |                                                                     | 1                                                   | 1                                                          |
+|              | Chlorobenzène                        | 1467        |                                                                     | 1                                                   | 1                                                          |
+|              | 1,2 dichlorobenzène                  | 1165        |                                                                     | 1                                                   | 1                                                          |
+```
+```markdown
+| Famille       | Substances                                      | Code SANDRE | Substance Accréditée* ou non sur matrices eaux résiduaires | LO en µg/l (obtenus sur une matrice eau résiduaire) | LQ à atteindre en µg/l (obtenus sur une matrice eau résiduaire) |
+|--------------|-------------------------------------------------|-------------|----------------------------------------------------------------|-----------------------------------------------------|------------------------------------------------------------|
+| Chlorophénols| β,3-dichlorobenzène                              | 1164        |                                                               |                                                      |                                                        |
+|              | β,4-dichlorobenzène                              | 1166        |                                                               |                                                      |                                                        |
+|              | β,2,3,4-tétrachlorobenzène                        | 1631        |                                                               | 0,05                                                 |                                                        |
+|              | β-chloro-2-nitrophénol                           | 1469        |                                                               | 0,1                                                   |                                                        |
+|              | β-chloro-3-nitrophénol                           | 1468        |                                                               | 0,1                                                   |                                                        |
+|              | β-chloro-4-nitrophénol                           | 1470        |                                                               | 0,1                                                   |                                                        |
+|              | β-chlorophénol                                   | 1235        |                                                               | 0,1                                                   |                                                        |
+|              | β-chloro-3-méthylphénol                          | 1636        |                                                               | 0,1                                                   |                                                        |
+|              | β-chlorophénol                                   | 1471        |                                                               | 0,1                                                   |                                                        |
+|              | β-chlorophénol                                   | 1651        |                                                               | 0,1                                                   |                                                        |
+|              | β-chlorophénol                                   | 1650        |                                                               | 0,1                                                   |                                                        |
+|              | 2,4-dichlorophénol                               | 1486        |                                                               | 0,1                                                   |                                                        |
+|              | 2,4,5-trichlorophénol                            | 1548        |                                                               | 0,1                                                   |                                                        |
+|              | 2,4,6-trichlorophénol                            | 1549        |                                                               | 0,1                                                   |                                                        |
+|              | Hexachlorophénétadione                           | 2612        |                                                               | 0,1                                                   |                                                        |
+|              | 1,2-dichloroéthane                               | 1161        |                                                               |                                                      | 2                                                      |
+|              | Chlorure de méthylène                            | 1168        |                                                               |                                                      | 5                                                      |
+|              | 2,3,4,5,6-pentachlorophénol                      | 1552        |                                                               |                                                      |                                                        |
+|              | Chlorforme                                       | 1135        |                                                               |                                                      | 1                                                      |
+|              | Stéaralkonium de carbonate                       | 1176        |                                                               |                                                      | 0,5                                                     |
+|              | Chlorprène                                       | 2611        |                                                               |                                                      | 1                                                      |
+|              | β-chloroprène (chlorure d'allyle)                | 2065        |                                                               |                                                      | 1                                                      |
+| COHV        | 1,1-dichloroéthane                               | 1160        |                                                               |                                                      | 5                                                      |
+|              | 1,1-dichloroéthylène                             | 1162        |                                                               |                                                      | 2,5                                                     |
+|              | 1,2-dichloroéthylène                             | 1163        |                                                               |                                                      | 5                                                      |
+|              | Hexachloroéthane                                 | 1656        |                                                               |                                                      | 1                                                      |
+|              | 1,1,2,2-tétrachloroéthane                         | 1271        |                                                               |                                                      | 1                                                      |
+|              | 1,1,1-trichloroéthane                             | 1283        |                                                               |                                                      | 0,5                                                     |
+|              | 1,1,1-trichloroéthane                             | 1284        |                                                               |                                                      | 1                                                      |
+|              | 1,1,2-trichloroéthane                             | 1285        |                                                               |                                                      | 0,5                                                     |
+|              | Chlorure de vinyl                                | 1753        |                                                               |                                                      | 5                                                      |
+| Chlorotoluène| 2-chlorotoluène                                  | 1602        |                                                               |                                                      | 1                                                      |
+|              | 3-chlorotoluène                                  | 1601        |                                                               |                                                      | 1                                                      |
+|              | 4-chlorotoluène                                  | 1600        |                                                               |                                                      | 1                                                      |
+| HAP         | Naphtalène                                       | 1519        |                                                               |                                                      | 0,01                                                    |
+|              | Fluoranthène                                    | 1191        |                                                               |                                                      | 0,01                                                    |
+|              | Naphtalène                                       | 1517        |                                                               |                                                      | 0,05                                                    |
+|              | Acénaphtène                                      | 1453        |                                                               |                                                      | 0,01                                                    |
+|              | Benz(a)anthracène                                | 1111        |                                                               |                                                      | 0,01                                                    |
+|              | Benz(a)anthracène                                | 1111        |                                                               |                                                      | 0,01                                                    |
+|              | Benz(a)anthracène                                | 1111        |                                                               |                                                      | 0,01                                                    |
+|              | Benz(a)anthracène                                | 1111        |                                                               |                                                      | 0,01                                                    |
+|              | Benz(a)anthracène                                | 1111        |                                                               |                                                      | 0,01                                                    |
+|              | Benz(a)anthracène                                | 1111        |                                                               |                                                      | 0,01                                                    |
+|              | Benz(a)anthracène                                | 1111        |                                                               |                                                      | 0,01                                                    |
+|              | Benz(a)anthracène                                | 1111        |                                                               |                                                      | 0,01                                                    |
+|              | Benz(a)anthracène                                | 1111        |                                                               |                                                      | 0,01                                                    |
+|              | Benz(a)anthracène                                | 1111        |                                                               |                                                      | 0,01                                                    |
+|              | Benz(a)anthracène                                | 1111        |                                                               |                                                      | 0,01                                                    |
+|              | Benz(a)anthracène                                | 1111        |                                                               |                                                      | 0,01                                                    |
+|              | Benz(a)anthracène                                | 1111        |                                                               |                                                      | 0,01                                                    |
+|              | Benz(a)anthracène                                | 1111        |                                                               |                                                      | 0,01                                                    |
+|              | Benz(a)anthracène                                | 1111        |                                                               |                                                      | 0,01                                                    |
+|              | Benz(a)anthracène                                | 1111        |                                                               |                                                      | 0,01                                                    |
+|              | Benz(a)anthracène                                | 1111        |                                                               |                                                      | 0,01                                                    |
+|              | Benz(a)anthracène                                | 1111        |                                                               |                                                      | 0,01                                                    |
+|              | Benz(a)anthracène                                | 1111        |                                                               |                                                      | 0,01                                                    |
+|              | Benz(a)anthracène                                | 1111        |                                                               |                                                      | 0,01                                                    |
+|              | Benz(a)anthracène                                | 1111        |                                                               |                                                      | 0,01                                                    |
+|              | Benz(a)anthracène                                | 1111        |                                                               |                                                      | 0,01                                                    |
+|              | Benz(a)anthracène                                | 1111        |                                                               |                                                      | 0,01                                                    |
+|              | Benz(a)anthracène                                | 1111        |                                                               |                                                      | 0,01                                                    |
+|              | Benz(a)anthracène                                | 1111        |                                                               |                                                      | 0,01                                                    |
+|              | Benz(a)anthracène                                | 1111        |                                                               |                                                      | 0,01                                                    |
+|              | Benz(a)anthracène                                | 1111        |                                                               |                                                      | 0,01                                                    |
+|              | Benz(a)anthracène                                | 1111        |                                                               |                                                      | 0,01                                                    |
+|              | Benz(a)anthracène                                | 1111        |                                                               |                                                      | 0,01                                                    |
+|              | Benz(a)anthracène                                | 1111        |                                                               |                                                      | 0,01                                                    |
+|              | Benz(a)anthracène                                | 1111        |                                                               |                                                      | 0,01                                                    |
+
+```markdown
+| Famille       | Substances                                      | Code SANDRE | Substance Accréditée* ou non sur matière première et/ou sur produit fini | LQ en µg/l (obtenue sur une matière première non résiduelle) | LQ en µg/kg (obtenue sur une matière première résiduelle) |
+|--------------|-------------------------------------------------|-------------|----------------------------------------------------------------------|------------------------------------------------------------|--------------------------------------------------------|
+| Métaux       | Cadmium (Cd) et ses composés                   | 1385        |                                                                                |                                                                   |                                                                   |
+|              | Plomb et ses composés                          | 1382        |                                                                                | 5                                                                   |                                                                   |
+|              | Manganèse (Mn) et ses composés                 | 1387        |                                                                                | 0,5                                                               |                                                                   |
+|              | Nickel et ses composés                         | 1386        |                                                                                | 10                                                               |                                                                   |
+|              | Arsenic et ses composés                        | 1369        |                                                                                | 5                                                                   |                                                                   |
+|              | Zinc et ses composés                           | 1383        |                                                                                | 10                                                               |                                                                   |
+|              | Cuivre et ses composés                         | 1392        |                                                                                | 5                                                                   |                                                                   |
+|              | Chrome et ses composés                         | 1389        |                                                                                | 5                                                                   |                                                                   |
+| Aromatiques  | 2-nitro-toluène                                | 2613        |                                                                                | 0,2                                                                |                                                                   |
+|              | Nitrobenzène                                   | 2614        |                                                                                | 0,2                                                                |                                                                   |
+|              | Triphénylméthane                                | 2679        |                                                                                | 0,02                                                               |                                                                   |
+| Organoétains | Dibutylétain cation                            | 1771        |                                                                                | 0,02                                                               |                                                                   |
+|              | Monobutylétain cation                           | 2542        |                                                                                | 0,02                                                               |                                                                   |
+|              | Triphénylétain cation                           | 6372        |                                                                                | 0,02                                                               |                                                                   |
+| PCB          | PCB 28                                          | 1239        |                                                                                | 0,01                                                               |                                                                   |
+|              | PCB 52                                          | 1241        |                                                                                | 0,01                                                               |                                                                   |
+|              | PCB 101                                         | 1242        |                                                                                | 0,01                                                               |                                                                   |
+|              | PCB 118                                         | 1243        |                                                                                | 0,01                                                               |                                                                   |
+|              | PCB 138                                         | 1244        |                                                                                | 0,01                                                               |                                                                   |
+|              | PCB 153                                         | 1245        |                                                                                | 0,01                                                               |                                                                   |
+|              | PCB 180                                         | 1246        |                                                                                | 0,01                                                               |                                                                   |
+| Pesticides   | Trifluraline                                    | 1289        |                                                                                | 0,05                                                               |                                                                   |
+|              | Alachlore                                      | 1101        |                                                                                | 0,02                                                               |                                                                   |
+|              | Atrazine                                        | 1107        |                                                                                | 0,03                                                               |                                                                   |
+|              | Chlorfenvinphos                                 | 1464        |                                                                                | 0,05                                                               |                                                                   |
+|              | Chlorpyrifos                                    | 1083        |                                                                                | 0,05                                                               |                                                                   |
+|              | Duron                                          | 1177        |                                                                                | 0,05                                                               |                                                                   |
+|              | Alpha-endosulfan                                | 1178        |                                                                                | 0,02                                                               |                                                                   |
+|              | Beta-endosulfan                                 | 1179        |                                                                                | 0,02                                                               |                                                                   |
+|              | Endosulfan sulfate                              | 1180        |                                                                                | 0,02                                                               |                                                                   |
+|              | Hexachlorocyclohexane (Lindane)                | 1181        |                                                                                | 0,05                                                               |                                                                   |
+|              | Isoproturon                                    | 1208        |                                                                                | 0,05                                                               |                                                                   |
+|              | Simazine                                       | 1263        |                                                                                | 0,03                                                               |                                                                   |
+| Paramètres de suivi | Sulfate de Chrome en solution                 | 1314        |                                                                                | 30000                                                              |                                                                   |
+|              | Organique Total                                | 1841        |                                                                                | 300                                                                |                                                                   |
+|              | Matières en Suspension                        | 1305        |                                                                                | 2000                                                               |                                                                   |
+
+* : Une absence d'accréditation pour être acceptée pour certaines substances (substances très rarement accréditées par les laboratoires valeur famille). Il s'agit des substances : < Chloroacétates > Cl1-Cl3, diphényléthers, alkylphénols et hexachlorobenzène.
+
+** : Valeur de LQ dérivée de l'annexe D de la norme ISO/DIS 18857-2
+
+VU pour être annulée mon arrêt en date du 28/09/2013 à l'ARPP. 7013
+
+Argentan, le 28/09/2013
+
+Pour le Préfet et par délégation
+
+Le Préfet
+
+Pour le Préfet et par délégation
+
+Le Préfet
+
+Jean-Yves FRAQUET
+```
+```
+<document vide>
+```
+```markdown
+# ANNEXE 3 - Attestation du Prestataire (ou de l'Exploitant)
+
+Je soussigné(e)
+
+(Nom qualité)
+
+Coordonnées de l'entreprise : ..................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................
+```markdown
+# Document
+
+## Table des matières
+
+1. [Introduction](#introduction)
+2. [Objectifs](#objectifs)
+3. [Méthodologie](#méthodologie)
+4. [Résultats](#résultats)
+5. [Conclusion](#conclusion)
+
+## Introduction
+
+Ce document présente les différentes étapes de notre étude. Il est structuré de manière à fournir une vue d'ensemble claire et concise des objectifs, de la méthodologie utilisée, des résultats obtenus et des conclusions tirées.
+
+## Objectifs
+
+Les objectifs de cette étude sont les suivants :
+- Analyser les tendances actuelles dans le domaine étudié.
+- Identifier les facteurs influençant les résultats.
+- Proposer des recommandations basées sur les données collectées.
+
+## Méthodologie
+
+La méthodologie adoptée pour cette étude comprend les étapes suivantes :
+1. Collecte de données.
+2. Analyse des données.
+3. Interprétation des résultats.
+4. Rédaction du rapport final.
+
+## Résultats
+
+Les résultats de l'étude montrent que :
+- La tendance A est en augmentation.
+- La tendance B est en diminution.
+- La corrélation entre les variables X et Y est significative.
+
+## Conclusion
+
+En conclusion, cette étude démontre que les facteurs identifiés jouent un rôle crucial dans les résultats obtenus. Les recommandations proposées visent à améliorer les performances futures dans le domaine étudié.
+
+---
+
+Document vide
+```
+```markdown
+# ANNEXE 4 - Éléments relatifs aux contextes de mesure analytique des substances
+
+## Conditions de prélèvement et d’analyse
+
+### (Document disponible à l’adresse suivante : http://www.afssaps.fr/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref/Ref
+```markdown
+# Document
+
+## Introduction
+
+Ce document présente les différentes étapes de la réalisation d'un projet. Il est important de suivre chaque étape pour garantir le succès du projet.
+
+### Étape 1: Planification
+
+La première étape consiste à planifier le projet. Il est nécessaire de définir les objectifs, les ressources et le calendrier.
+
+### Étape 2: Développement
+
+La deuxième étape est le développement. Il s'agit de la phase où les idées sont mises en œuvre. Il est crucial de suivre les plans établis lors de la phase de planification.
+
+### Étape 3: Test
+
+La troisième étape est le test. Il est essentiel de vérifier que le projet fonctionne comme prévu. Les tests permettent de détecter et de corriger les éventuelles erreurs.
+
+### Étape 4: Déploiement
+
+La quatrième étape est le déploiement. Le projet est mis en production et devient accessible aux utilisateurs finaux. Il est important de s'assurer que tout fonctionne correctement.
+
+### Étape 5: Maintenance
+
+La dernière étape est la maintenance. Il est nécessaire de surveiller le projet et de corriger les éventuelles anomalies qui pourraient survenir.
+
+## Conclusion
+
+En suivant ces étapes, il est possible de réaliser un projet de manière efficace et de garantir son succès.
+
+---
+
+### Annexe
+
+#### Tableau des ressources
+
+| Ressource | Quantité |
+|-----------|----------|
+| Matériel  | 10       |
+| Logiciel  | 5        |
+| Main-d'œuvre | 20      |
+
+---
+
+#### Diagramme de Gantt
+
+```
+Projet
+├── Planification (1 semaine)
+├── Développement (3 semaines)
+├── Test (1 semaine)
+├── Déploiement (1 semaine)
+└── Maintenance (en cours)
+```
+
+---
+
+#### Liste des tâches
+
+1. Définir les objectifs
+2. Allouer les ressources
+3. Établir le calendrier
+4. Mettre en œuvre les idées
+5. Vérifier le fonctionnement
+6. Mettre en production
+7. Surveiller et corriger
+
+---
+
+#### Glossaire
+
+- **Planification**: Processus de définition des objectifs et des ressources.
+- **Développement**: Phase de mise en œuvre des idées.
+- **Test**: Vérification du fonctionnement du projet.
+- **Déploiement**: Mise en production du projet.
+- **Maintenance**: Surveillance et correction des anomalies.
+
+---
+
+#### Références
+
+- [Document de planification](#)
+- [Guide de développement](#)
+- [Manuel de test](#)
+- [Document de déploiement](#)
+- [Document de maintenance](#)
+
+---
+
+### Signatures
+
+- **Nom**: Jean Dupont
+- **Titre**: Chef de projet
+- **Date**: 01/01/2023
+
+---
+
+### Annexe
+
+#### Tableau des ressources
+
+| Ressource | Quantité |
+|-----------|----------|
+| Matériel  | 10       |
+| Logiciel  | 5        |
+| Main-d'œuvre | 20      |
+
+---
+
+#### Diagramme de Gantt
+
+```
+Projet
+├── Planification (1 semaine)
+├── Développement (3 semaines)
+├── Test (1 semaine)
+├── Déploiement (1 semaine)
+└── Maintenance (en cours)
+```
+
+---
+
+#### Liste des tâches
+
+1. Définir les objectifs
+2. Allouer les ressources
+3. Établir le calendrier
+4. Mettre en œuvre les idées
+5. Vérifier le fonctionnement
+6. Mettre en production
+7. Surveiller et corriger
+
+---
+
+#### Glossaire
+
+- **Planification**: Processus de définition des objectifs et des ressources.
+- **Développement**: Phase de mise en œuvre des idées.
+- **Test**: Vérification du fonctionnement du projet.
+- **Déploiement**: Mise en production du projet.
+- **Maintenance**: Surveillance et correction des anomalies.
+
+---
+
+#### Références
+
+- [Document de planification](#)
+- [Guide de développement](#)
+- [Manuel de test](#)
+- [Document de déploiement](#)
+- [Document de maintenance](#)
+
+---
+
+### Signatures
+
+- **Nom**: Jean Dupont
+- **Titre**: Chef de projet
+- **Date**: 01/01/2023
+```
+```markdown
+DRC-08-94591-06911B
+
+### Annexe 5 :
+### Prescriptions techniques applicables aux opérations de prélèvements et d’analyses
+
+![Image](image_url)
+
+VU pour être annexé à mon arrêté en date du 25 juin 2010
+Argentan, le 25 juin 2010
+
+Pour le Préfet et par délégation
+Le Sous-Préfet d'Argentan
+
+[Signature]
+
+Jean-Yves GUÉT
+
+Page 1 sur 25
+```
+```markdown
+# SOMMAIRE
+
+1. **INTRODUCTION**................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................
+```markdown
+# 1 INTRODUCTION
+
+Cette annexe a pour but de préciser les prescriptions techniques qui doivent être respectées pour la réalisation des opérations de prélèvements et d’analyses de substances dangereuses dans l’eau.
+
+Ce document doit être communiqué à l’exploitant comme cahier des charges à remplir par le laboratoire qu’il choisira. Ce document permet également à l’inspection de vérifier à réception du rapport de synthèse de mesures les bonnes conditions de réalisation de celles-ci.
+
+# 2 PRESCRIPTIONS GÉNÉRALES
+
+Dans l’attente d’une prise en compte plus complète de la mesure des substances dangereuses dans les eaux réductrices par l’arrêté ministériel du 29 novembre 2006 portant modifications d’agrément des laboratoires effectuent des analyses dans le domaine de l’eau et des milieux aquatiques au titre du code de l’environnement, le laboratoire d’analyse choisi devra aquérir au minimum les deux conditions suivantes :
+
+- Être accrédité selon la norme NF EN ISO/CEI 17025 pour la matrice « Eaux Réductrices », pour chaque substance à analyser. Afin de justifier de cette accréditation, le laboratoire devra fournir à l’exploitant l’ensemble des documents listés à l’annexe 5.5 ainsi que des opérations de prélèvement et de mesures afin de justifier qu’il réalise bien les dispositions de la présente annexe. Les documents de l’annexe 5.5 sont téléchargeables sur le site http://rsde.ineris.fr.
+
+- Respecter les limites de quantification listées à l’annexe 5.2 pour chacune des substances.
+
+Le prestataire ou l’exploitant pourra faire appel à de la sous-traitance ou réaliser lui-même les opérations de prélèvements. Dans tous les cas il devra veiller au respect des prescriptions relatives aux opérations de prélèvements telles que décrites ci-après, en concertation étroite avec le laboratoire réalisant les analyses.
+
+La sous-traitance analytique est autorisée. Toutefois, en cas de sous-traitance, le laboratoire désigné pour ces analyses devra respecter les mêmes critères de compétences que le prestataire c’est à dire remplir les deux conditions visées au paragraphe 2 ci-dessus.
+
+Le prestataire restera, en tout état de cause, le seul responsable de l’exécution des prestations et s’engagera à faire respecter par ses sous-traitants toutes les obligations de l’annexe technique.
+
+Lorsque les opérations de prélèvement sont diligentes par le prestataire d’analyse, il est seul responsable de la bonne exécution de l’ensemble de la chaîne.
+
+Lorsque les opérations de prélèvements sont réalisées par l’exploitant lui-même ou son sous-traitant, l’exploitant est le seul responsable de l’exécution des prestations de prélèvements et de ce fait, responsable solidaire de la qualité des résultats d’analyse.
+
+Le respect du présent cahier des charges et des exigences demandées pourront être contrôlés par un organisme mandaté par les services de l’État.
+
+L’ensemble des données brutes devra être conservé par le laboratoire pendant au moins 3 ans.
+```
+```markdown
+DRC-08-94591-06911B
+
+# 3 OPÉRATIONS DE PRÉLÈVEMENT
+
+Les opérations de prélèvement et d’échantillonnage doivent s’appuyer sur les normes ou les guides en vigueur, ce qui implique à ce jour le respect de :
+
+- la norme NF EN ISO 5667-3 “Qualité de l’Eau - Échantillonnage - Partie 3 : Lignes directrices pour la conservation et la manipulation des échantillons d’eau”
+- le guide FD T 90-523-2 - Qualité de l’Eau - Guide de prélèvement pour le suivi de qualité des eaux dans l’environnement - Prélèvement d’eau résiduaire -
+
+Les points essentiels de ces référentiels techniques sont détaillés ci-après en ce qui concerne les conditions générales de prélèvement, la mesure de débit en continu, le prélèvement continu sur 24 heures à température contrôlée, l’échantillonnage et la réalisation de blancs de prélèvements.
+
+## 3.1 OPÉRATEURS DU PRÉLÈVEMENT
+
+Les opérations de prélèvement peuvent être réalisées sur le site par :
+
+- le prestataire d’analyse ;
+- le sous-traitant sélectionné par le prestataire d’analyse ;
+- l’exploitant lui-même ou son sous-traitant.
+
+Dans le cas où c’est l’exploitant ou son sous-traitant qui réalise le prélèvement, il est impératif qu’il dispose de procédures démontrant la fiabilité et la reproductibilité de ses pratiques de prélèvement et de mesure de débit. Ces procédures doivent intégrer les points détaillés aux paragraphes 3.2 à 3.6 ci-après et démontrer que la traçabilité de ces opérations est assurée.
+
+## 3.2 CONDITIONS GÉNÉRALES DU PRÉLÈVEMENT
+
+- Le volume prélevé devra être représentatif des flux de l’établissement et conforme avec les quantités nécessaires pour réaliser les analyses sous accréditation.
+- En cas d’intervention de l’exploitant ou d’un sous-traitant pour le prélèvement, le nombre, le volume unitaire, la flaconnage, la préservation éventuelle et l’identification des échantillons seront obligatoirement définis par le prestataire d’analyse et communiqués au prélèvement. Le laboratoire d’analyse fournira les flacons (préalablement des flacons supplémentaires pour les blancs du système de prélèvement).
+- Les échantillons seront répartis dans les différents flacons fournis par le laboratoire selon les prescriptions des méthodes officielles en vigueur, spécifiques aux substances à analyser et/ou à la norme NF EN ISO 9667-3. Les échantillons acheminés au laboratoire dans un flaconnage ou une autre provenance doivent être refusés par le laboratoire.
+- Le prélèvement doit être adressé afin d’être réceptionné par le laboratoire d’analyse au plus tard 24 heures après la fin du prélèvement, sous peine de refus par le laboratoire.
+
+\* La norme NF ISO 9667-3 est en Guide de Bonne Pratique. Quand des différences existent entre la norme NF EN ISO 9667-3 et la norme analytique spécifique à la substance, c’est toujours les prescriptions de la norme analytique qui prévalent.
+
+Page 4 sur 25
+```
+```markdown
+# 3.3 MESURE DE DÉBIT EN CONTINU
+
+La mesure de débit s'effectuera en continu sur une période horaire de 24 heures, suivant les normes en vigueur figurant dans la FDT-90-523-2 et les prescriptions techniques de construction des systèmes de mesure.
+
+Afin de s'assurer de la qualité de fonctionnement des systèmes de mesure, des contrôles métrologiques périodiques devront être effectués par des organismes accrédités, se traduisant par :
+
+- Pour les systèmes en écoulement à surface libre :
+  - un contrôle de la conformité de l'organe de mesure (seuil, canal jaugeur, venturi, déversoir, ...) vis-à-vis des prescriptions normatives et des constructeurs,
+  - un contrôle de fonctionnement du débitmètre en place par une mesure comparative réalisée à l'aide d'un autre débitmètre.
+
+- Pour les systèmes en écoulement en charge :
+  - un contrôle de la conformité de l'installation vis-à-vis des prescriptions normatives et des constructeurs,
+  - un contrôle de fonctionnement du débitmètre par mesure comparative exercée sur site (autre débitmètre, jaugeage, ...) ou par une vérification effectuée sur un banc de mesure au sein d'un laboratoire accrédité.
+
+Le contrôle métrologique aura lieu avant le démarrage de la première campagne de mesures, ou à l'occasion de la première mesure, avant d'être renouvelé à un rythme annuel.
+
+# 3.4 PRÉLÈVEMENT CONTINU SUR 24 HEURES À TEMPÉRATURE CONTRÔLÉE
+
+Ce type de prélèvement nécessite du matériel spécifique permettant de constituer un échantillon pondéré en fonction du débit.
+
+Les matériels permettant la réalisation d'un prélèvement automatisé en fonction du débit ou du volume écoulé, sont :
+
+- Soit des échantillonneurs monoflacons fixes ou portatifs, constituant un seul échantillon moyen sur toute la période considérée.
+- Soit des échantillonneurs multiflacons fixes ou portatifs, constituant plusieurs échantillons (en général 4, 6, 12 ou 24) pendant la période considérée. Si ce type d'échantillonneurs est mis en œuvre, les échantillons doivent être homogénéisés pour constituer l'échantillon moyen avant transfert dans les flacons destinés à l'analyse.
+
+Les échantillonneurs utilisés doivent réfrigérer les échantillons pendant toute la période considérée.
+
+Dans le cas où il s'avérerait impossible d'effectuer un prélèvement proportionnel au débit de l'effluent, le prélèvement pratiquera un prélèvement asservi au temps, ou des prélèvements ponctuels si la nature des rejets le justifie (par exemple rejets homogènes en batchs). Dans ce cas, le débit et son évolution seront estimés par le prélèvement en fonction des renseignements collectés sur place (comptage d'eau, bilan hydrique, etc). Le prélèvement devra alors se faire en respectant la méthode de prélèvement mise en œuvre.
+
+Un contrôle métrologique de l'appareil de prélèvement doit être réalisé périodiquement sur les points suivants (recommandations du guide FDT 90-523-2) :
+
+- Justesse et répétabilité du volume prélevé (volume minimal : 50 ml, écart toléré entre volume théorique et réel 5%)
+```
+```markdown
+DRC-08-94591-06911B
+
+- Vitesse de circulation de l'effluent dans les tuyaux supérieure ou égale à 0,5 m/s
+
+  - Un contrôle des matériaux et des organes de l'échantillonneur seront à réaliser (voir blanc de système de prélèvement)
+
+  - Le positionnement de la prise d'effluent devra respecter les points suivants :
+    - Dans une zone turbulente ;
+    - À mi-hauteur de la colonne d'eau ;
+    - À une distance suffisante des parois pour éviter une contamination des échantillons par les dépôts ou les biofilms qui s'y développent.
+
+### 3.5 ÉCHANTILLON
+
+  - La représentativité de l'échantillon est difficile à obtenir dans le cas du fractionnement de certaines eaux résiduaires en raison de leur forte hétérogénéité, de leur forte teneur en MES ou en matières flottantes. Un système d'homogénéisation pourra être utilisé dans ces cas. Il ne devra pas modifier l'échantillon.
+
+  - Le conditionnement des échantillons devra être réalisé dans des contenants conformes aux méthodes officielles en vigueur, spécifiques aux substances à analyser et/ou à la norme NF EN ISO 5667-3.
+
+  - Le transport des échantillons vers le laboratoire devra être effectué dans une enceinte maintenue à une température égale à 5 °C ± 3 °C, et être accompli dans les 24 heures qui suivent la fin du prélèvement, afin de garantir l'intégrité des échantillons.
+
+  - La température de l'enceinte ou des échantillons sera contrôlée à l'arrivée au laboratoire et indiquée dans le rapportage relatif aux analyses.
+
+### 3.6 BLANCS DE PRÉLÈVEMENT
+
+**Blanc du système de prélèvement :**
+
+Le blanc du système de prélèvement est destiné à vérifier l'absence de contamination liée aux matériaux (flacons, tuyaux) utilisés ou de contamination croisée entre prélèvements successifs. Il appartient au prélèvement de mettre en œuvre les dispositions permettant de démontrer l'absence de contamination. La transmission des résultats doit être validée et l'exploitation sera donc réputée émettre de toutes les substances retrouvées dans son rejet, aux teneurs correspondantes. Il lui appartiendra donc de contrôler cette absence de contamination avant transmission des résultats.
+
+  - Si un blanc du système de prélèvement est réalisé, il est recommandé de suivre les prescriptions suivantes :
+    - Il devra être fait obligatoirement sur une durée de 3 heures minimum. Il pourra être réalisé en laboratoire en faisant circuler de l'eau exemple de micropolluants dans le système de prélèvement.
+
+  - Les critères d'acceptation et de prise en compte du blanc seront les suivants :
+    - si valeur du blanc < LQ : ne pas soumettre les résultats du blanc du système de prélèvement des résultats de l'effluent
+    - si valeur du blanc ≥ LQ et inférieure à l'incertitude de mesure attachée au résultat : ne pas soumettre les résultats du blanc du système de prélèvement des résultats de l'effluent
+```
+```markdown
+DRC-08-94591-06911B
+
+- si valeur du blanc > l'incertitude de mesure attachée au résultat : la présence d'une contamination est à éviter, le laboratoire devra refaire le prélèvement et l'analyse du rejet considéré.
+
+### Blanc d'atmosphère
+
+- La réalisation d'un blanc d'atmosphère permet au laboratoire d'analyse de s'assurer de la fiabilité des résultats obtenus concernant les composés volatils ou susceptibles d'être dispersés dans l'air et pourra fournir des données explicatives à l'exploitant.
+
+- Le blanc d'atmosphère peut être réalisé à la demande de l'exploitant en cas de suspicion de présence de substances volatiles (BTEX, COV, Chlorobenzène, mercure...) sur le site de prélèvement.
+
+- S'il est réalisé, il doit l'être obligatoirement et systématiquement :
+  - le jour du prélèvement des effluents aqueux,
+  - sur une durée de 24 heures ou en tout état de cause, sur une durée de prélèvement du blanc d'atmosphère identique à la durée du prélèvement de l'effluent aqueux. La méthodologie retenue est de laisser un flacon d'eau distillée et de méthylène expose à l'air ambiant à l'endroit où est réalisé le prélèvement 24h avant au débit,
+  - Les valeurs du blanc d'atmosphère seront mentionnées dans le rapport d'analyse et en aucun cas soustraites des autres.
+
+### ANALYSES
+
+- Toutes les procédures analytiques doivent être démarrées si possible dans les 24h et en tout état de cause 48 heures au plus tard après la fin du prélèvement.
+
+- Toutes les analyses doivent rendre compte de la totalité de l'échantillon (effluent brut, MES compris) en respectant les dispositions relatives au traitement des MES reprises ci-dessous, hormis pour les diphényléthers polybromés.
+
+- Dans le cas des métaux, l'analyse demandée est une détermination de la concentration en métal total contenu dans l'effluent (aucune filtration), obtenue après digestion de l'échantillon selon les normes en vigueur :
+  - Norme ISO 15587-1 "Qualité de l'eau - Digestion pour la détermination de certains éléments dans l'eau Partie 1 : digestion à l'acide régale" ou
+  - Norme ISO 15587-2 "Qualité de l'eau - Digestion pour la détermination de certains éléments dans l'eau Partie 2 : digestion à l'acide nitrique".
+
+Pour la mercure, l'étape de digestion complète sans filtration préalable est décrite dans les normes analytiques spécifiques à cet élément.
+
+- Dans le cas des alkylphénols, il est demandé de rechercher simultanément les nonylphénols, les octylphénols ainsi que les deux premiers homologues d'éthoxylates de nonylphénols (NP10E et NP20E) et les deux premiers homologues d'éthoxylates d'octylphénols (OP10E et OP20E). La recherche des éthoxylates peut être effectuée sans surcoût conjointement à celle des nonylphénols et des octylphénols par l'utilisation du projet de norme ISO/DIS 18857-2.
+
+2 Les éthoxylates de nonylphénols et d'octylphénols constituent à terme une source indirecte de nonylphénols et d'octylphénols dans l'environnement.
+3 ISO/DIS 18857-2 : Qualité de l'eau - Dosage d'alkylphénols sélectionnés- Partie 2 : Détermination des alkylphénols, d'éthoxylates d'alkylphénol et de bisphénol A - Méthode pour échantillons non filtrés en
+
+Page 7 sur 25
+```
+```markdown
+DRC-08-94591-06911B
+
+- Certains paramètres de suivi de l'établissement de l'étalonnage, à savoir la DCO (Demande Chimique en Oxygène) ou COT (Carbone Organique Total) en fonction de l'arrêt préfectoral en vigueur, et les MES (Matières en Suspension) seront analysés systématiquement dans chaque effluent selon les normes en vigueur (cf. notes 1, 2, et 3) afin de vérifier la représentativité de l'activité de l'établissement le jour de la mesure.
+
+- Les performances analytiques à atteindre pour les eaux résiduaires sont indiquées en ANNEXE 5.2. Elles sont issues de l'exploitation des limites de quantification transmises par les prestataires d'analyses dans le cadre de l'action RSDE depuis 2005.
+
+**Prise en compte des MES**
+
+- Le laboratoire doit préciser et décrire de façon détaillée les méthodes mises en œuvre en cas de concentration en MES > 50 mg/L.
+
+- Pour les paramètres visés à l'annexe 5.1 (à l'exception de la DCO, du COT et des MES), il est demandé :
+
+  - Si 50 < MES < 250 mg/l : réaliser 3 extractions liquide/liquide successives au minimum sur l'échantillon brut sans séparation.
+
+  - Si MES ≥ 250 mg/l : analyser séparément la phase aqueuse et la phase particulaire après filtration ou centrifugation de l'échantillon brut, sauf pour les composés volatils pour lesquels le traitement de l'échantillon brut par filtration est à proscrire. Les composés volatils concernés sont : 3,4 dichloroaniline, Epichlorhydrine, Tributylphosphate, Tétrachloroéthylène, Benzène, Toluène, Ethylbenzène, o-Xylène, p-Xylène, Sonde o,p,p',1,2,4 trichlorobenzène, 1,2,4 trichlorobenzène, 1,3,5 trichlorobenzène, Chlorobenzène, 1,2 dichlorobenzène, 1,3 dichlorobenzène, 1,4 dichlorobenzène, 1 chloro 2 nitrobenzène, 1 chloro 3 nitrobenzène, 1 chloro 4 nitrobenzène, 2 chlorotoluène, 3 chlorotoluène, 4 chlorotoluène, Nitrobenzène, 2 nitrotoluène, 1,2 dichlorotoluène, Chlorure de méthylène, Chloroforme, Tétrachlorure de carbone, Chloroforme, 3 chloropropène, 1,1 dichloroéthane, 1,1 dichloroéthylène, 1,2 dichloroéthylène, hexachloroéthane, 1,1,2,2 tétrachloroéthane, Tétrachloroéthylène, 1,1,1 trichloroéthane, 1,1,2 trichloroéthane, trichloroéthylène, Chlorure de vinyl, 2 chloroaniline, 3 chloroaniline, 4 chloroaniline et 4 chloro 2 microaniline.
+
+  - La restitution pour chaque effluent charge (MES ≥ 250 mg/l) sera la suivante pour l'ensemble des substances de l'ANNEXE 5.1 : valeur en µg/l obtenue dans la phase aqueuse, valeur en µg/kg obtenue dans la phase particulaire et valeur totale calculée en µg/l.
+
+  - L'analyse des diphényléthers polybromés (PBDE) n'est pas demandée dans l'eau, et sera réalisée selon la norme ISO 22012 unique sur les MES des eaux dont la concentration est à 50 mg/L. La quantité de MES à prélever pour l'analyse devra permettre d'atteindre une LQ équivalente dans l'eau de 0,05 µg/l pour chaque BDE.
+
+  - Utilisant l'extraction sur phase solide et chromatographie en phase gazeuse avec détection par spectrométrie de masse après dérivation. Disponible auprès de l'AFNOR, commission T 91M et qui sera mise à jour en début 2009.
+
+  1 NF EN 101 : Qualité de l'eau. Détermination de la demande chimique en oxygène (DCO)
+  2 NF EN 872 : Qualité de l'eau. Dosage des matières en suspension Méthode par filtration sur filtre en fibres de verre
+  3 NF EN 1484 : Analyse des eaux. Lignes directrices pour le dosage du Carbone Organique Total et du Carbone Organique Dissous
+  4 NF T 60-105-2 : Qualité de l'eau. Dosage des matières en suspension Méthode par centrifugation
+
+Page 8 sur 25
+```
+```markdown
+DRC-08-94591-06911B
+
+# 5 TRANSMISSION DES RÉSULTATS
+
+L'application informatique GIDAF (Gestion Informatisée des Données d'autosurveillance fréquente) permetra à terme la saisie directe des informations demandées par l'annexe 5.3 et leur télétransmission à l'inspection et à l'INERIS, charge du suivi de la qualité des prestations des laboratoires et du traitement des données issues de cette seconde campagne d'analyse des substances dangereuses. L'extension nationale de cette application informatique actuellement testée par certaines DRIRE est prévue pour le courant de l'année 2009.
+
+Dans l'attente de l'utilisation généralisée de cet outil, c'est par le biais du site http://rsde.ineris.fr que l'annexe 5.4 (qui reprend les éléments demandés dans l'annexe 5.3) doit être transmise à l'INERIS par l'exploitant.
+
+Les résultats d'analyses ainsi que les éléments relatifs au contexte de la mesure analytique des substances décrit à l'annexe 5.4 doivent être adressés mensuellement par l'exploitant à l'inspection par courrier.
+```
+```markdown
+# 6 LISTE DES ANNEXES
+
+| Repère | Désignation | Nombre de pages |
+|--------|-------------|-----------------|
+| ANNEXE 5.1 | SUBSTANCES A SURVEILLER | 3 |
+| ANNEXE 5.2 | LIMITES DE QUANTIFICATION A ATTEINDRE PAR SUBSTANCE | 3 |
+| ANNEXE 5.3 | INFORMATIONS DEMANDEES PAR PRELEVEMENT, PAR PARAMETRE ET PAR FRACTION ANALYSEE RESTITUTION AU FORMAT SANDRE | 3 |
+| ANNEXE 5.4 | TRame DE RESTITUTION DES INFORMATIONS DEMANDEES PAR PRELEVEMENT, PAR PARAMETRE ET PAR FRACTION ANALYSEE FIGURANT A L'ANNEXE 5.3 | 1 |
+| ANNEXE 5.5 | LISTE DES PIECES A FOURNIR PAR LE LABORATOIRE PRESTATAIRE DE L'EXPLOITANT | 5 |
+
+Page 10 sur 25
+```
+```markdown
+# ANNEXE 5.1 : SUBSTANCES A SURVEILLER
+
+| Famille         | Substances^1^                                      | Code SANDRE^2^ | n°DCE^3^ | n°76/464^4^ |
+|-----------------|----------------------------------------------------|----------------|----------|-------------|
+| Alkylphénols    | Nonylphénol                       | 1924           | 242      |            |
+|                | NP1OE                                | 1925           | 243      |            |
+|                | NP2OE                                | 1926           | 244      |            |
+|                | NP3OE                                | 1927           | 245      |            |
+|                | NP4OE                                | 1928           | 246      |            |
+|                | Octylphénol                          | 1920           | 25       |            |
+|                | DP1OE                                | 6370           |          |            |
+|                | DP2OE                                | 6371           |          |            |
+| Anilines       | 2-chloroaniline                      | 1593           | 17       |            |
+|                | 3-chloroaniline                      | 1592           | 18       |            |
+|                | 4-chloroaniline                      | 1591           | 19       |            |
+|                | 4-chloro-2 nitroaniline              | 1594           | 27       |            |
+|                | 3,4 dichloroaniline                   | 1586           | 52       |            |
+| Autres         | Chlorobenzènes (C6H5Cl)               | 1945           | 204      |            |
+|                | Biphényle                            | 1584           | 11       |            |
+|                | Épichlorhydrine                       | 1494           | 78       |            |
+|                | Tributylphosphate                     | 1847           | 114      |            |
+|                | Acide chloroacétique                 | 1465           | 16       |            |
+| BDE            | Tetrabromodiphényléther              | 2919           | 5        |            |
+|                | BDE 47                               |                |          |            |
+|                | Pentabromodiphényléther              | 2916           | 15       |            |
+|                | BDE 99                               |                |          |            |
+|                | Pentabromodiphényléther              | 2915           | 3        |            |
+|                | BDE 100                              |                |          |            |
+|                | Hexabromodiphényléther               | 2911           | 5        |            |
+|                | BDE 154                              |                |          |            |
+|                | Hexabromodiphényléther               | 2912           | 5        |            |
+|                | BDE 153                              |                |          |            |
+|                | Heptabromodiphényléther              | 2910           | 5        |            |
+|                | BDE 181                              |                |          |            |
+|                | Décabromodiphényléther               | 1815           | 5        |            |
+|                | BDE 209                              |                |          |            |
+| BTEX           | Benzène                              | 1114           | 4        | 7          |
+|                | Éthylbenzène                         | 1497           |          | 79         |
+|                | Toluène                              | 1833           |          | 87         |
+|                | Tolua                              | 1278           | 112      |            |
+| Xylènes (Somme o,m,p) | 1780           | 129      |            |
+| Chlorobenzènes | 1,2-dichlorobenzène                  | 1199           | 16       | 81         |
+|                | 1,3-dichlorobenzène                  | 1200           | 26       | 82         |
+|                | 1,4-dichlorobenzène                  | 1201           | 31       | 83         |
+|                | 1,2,4-trichlorobenzène               | 1630           | 31       | 117        |
+|                | 1,1,4-trichlorobenzène               | 1281           | 31       | 118        |
+|                | 1,2,3-trichlorobenzène               | 1629           | 31       | 117        |
+|                | 1,2,4,5-tétrachlorobenzène           | 1467           | 20       |            |
+|                | 1,2,3,4-tétrachlorobenzène           | 1631           | 31       | 109        |
+|                | 1,2,3,5-tétrachlorobenzène           | 1469           | 28       |            |
+|                | 1,2,4,5-tétrachlorobenzène           | 1468           | 29       |            |
+|                | 1,2,3,4,5-pentachlorobenzène         | 1470           | 30       |            |
+| Chlorophénols  | Pentachlorophénol                   | 1235           | 27       | 102        |
+```
+```markdown
+# DRC-08-94591-06911B
+
+| Famille             | Substances¹ | Code SANDRE² | n°DCE³ | n°76/464⁴ |
+|---------------------|-------------|--------------|--------|-----------|
+|                     | 4-chloro-3-méthylphénol | 1636 | 24 |
+|                     | 2 chlorophénol | 1471 | 33 |
+|                     | 3 chlorophénol | 1651 | 34 |
+|                     | 4 chlorophénol | 1650 | 35 |
+|                     | 2,4 dichlorophénol | 1486 | 64 |
+|                     | 2,4,5 trichlorophénol | 1548 | 122 |
+|                     | 2,4,6 trichlorophénol | 1549 | 122 |
+| COHV                | Hexachloropentadiene | 2612 | |
+|                     | 1,2 dichloréthane | 1161 | 10 | 59 |
+|                     | Chlorure de méthylène | 1168 | 11 | 62 |
+|                     | Hexachlorobutadiene | 1652 | 27 | 84 |
+|                     | Chloroforme | 1135 | 32 | 23 |
+|                     | Tétrachlorure de carbone | 1276 | 28 | 33 |
+|                     | Chloroprène | 2611 | 36 |
+|                     | 3-chloroprène (chlorure d'allyle) | 2085 | 37 |
+|                     | 1,1 dichloréthane | 1160 | 58 |
+|                     | 1,1 dichloroéthylène | 1182 | 60 |
+|                     | 1,2 dichloroéthylène | 1183 | 61 |
+|                     | Hexachloroéthane | 1636 | 86 |
+|                     | 1,1,2,2 tétrachloroéthane | 1271 | 110 |
+|                     | Tétrachloroéthylène | 1272 | 111 |
+|                     | 1,1,1 trichloroéthane | 1284 | 119 |
+|                     | 1,1,2 trichloroéthane | 1285 | 120 |
+|                     | Trichloroéthylène | 1286 | 121 |
+| Chlorotoluènes     | Chlorure de vinyle | 1733 | 128 |
+|                     | 2-chlorotoluène | 1602 | 38 |
+|                     | 3-chlorotoluène | 1601 | 39 |
+|                     | 4-chlorotoluène | 1600 | 40 |
+| HAP                 | Anthracène | 1458 | 24 | 3 |
+|                     | Fluoranthène | 1191 | 15 | 96 |
+|                     | Naphtalène | 1517 | 22 | 96 |
+|                     | Acénaphtène | 1453 | |
+|                     | Benz(a)pyrene | 1115 | 24 | 1 |
+|                     | Benz(a)anthracène | 1116 | 24 | 1 |
+|                     | Indène | 1117 | 24 | 1 |
+|                     | Indénopyrène | 1118 | 24 | 1 |
+|                     | Benz(k)fluoranthène | 1119 | 24 | 1 |
+|                     | Benz(b)fluoranthène | 1120 | 24 | 1 |
+|                     | Benz(g,h,i)perylène | 1121 | 24 | 1 |
+| Métaux              | Plomb et ses composés | 1362 | 20 | 92 |
+|                     | Mercure et ses composés | 1367 | 21 | 92 |
+|                     | Nickel et ses composés | 1366 | 23 | 92 |
+|                     | Arsenic et ses composés | 1369 | 4 |
+|                     | Zinc et ses composés | 1383 | 133 |
+|                     | Cuivre et ses composés | 1392 | 134 |
+|                     | Citrine et ses composés | 1399 | 136 |
+| Composés azotés     | 2-nitrotoluène | 2613 | |
+|                     | Nitrobenzène | 2614 | |
+| Drogues            | Triéthylétain cation | 2647 | 30 | 119 |
+|                     | Diéthylétain cation | 1771 | 49, 50, 51 |
+|                     | Monobutylétain cation | 2942 | |
+
+Page 12 sur 25
+```
+```markdown
+# DRC-08-94591-06911B
+
+| Famille                | Substances<sup>1</sup>                          | Code SANDRE<sup>2</sup> | n<sup>3</sup>DCE<sup>3</sup> | n<sup>4</sup>76/464<sup>4</sup> |
+|------------------------|--------------------------------------------------|-------------------------|-----------------------------|-----------------------------|
+|                        | Triphénylétain cation                           | 6372                    | 125,126,127                 |                             |
+| PCB                    | PCB 28                                          | 1239                    |                             |                             |
+|                        | PCB 52                                          | 1241                    |                             |                             |
+|                        | PCB 101                                         | 1242                    |                             |                             |
+|                        | PCB 118                                         | 1243                    |                             | 101                         |
+|                        | PCB 138                                         | 1244                    |                             |                             |
+|                        | PCB 153                                         | 1245                    |                             |                             |
+|                        | PCB 180                                         | 1246                    |                             |                             |
+| Pesticides             | Trifluraline                                     | 1289                    | 33                          |                             |
+|                        | Alachlore                                       | 1101                    | 1                            |                             |
+|                        | Atrazine                                         | 1107                    | 3                            |                             |
+|                        | Chlorfenvinphos                                  | 1464                    | 8                            |                             |
+|                        | Chlorpyrifos                                     | 1083                    | 9                            |                             |
+|                        | Diburon                                          | 1177                    | 13                          |                             |
+|                        | Alpha Endosulfan                                  | 1173                    | 4                            |                             |
+|                        | Beta Endosulfan                                  | 1172                    | 4                            |                             |
+|                        | Heptachlor                                       | 109                     | 1                            |                             |
+|                        | Hexachlorocyclohexane                             | 109                     | 1                            |                             |
+|                        | gamma isomère d'indane                          | 1293                    | 18                          |                             |
+|                        | Isoproturon                                     | 1208                    | 19                          |                             |
+|                        | Simazine                                         | 1263                    | 29                          |                             |
+| Paramètres de survie    | Demande Chimique en Oxygène ou Carbone Organique Total | 1314                    |                             |                             |
+|                        | Matériaux en Suspension                         | 1305                    |                             |                             |
+
+<sup>1</sup> Substances Dangereuses Prioritaires Issues de l'annexe X de la DCE (tableau A de la circulaire du 07/09/07) et de la directive filière de la DCE adoptée le 20 octobre 2008 (entrée en vigueur et endosulfan).
+
+<sup>2</sup> Substances Prioritaires Issues de l'annexe X de la DCE (tableau A de la circulaire du 07/05/07).
+
+<sup>3</sup> Autres substances pertinentes Issues de la liste I de la directive 2006/11/CE (anciennement Directive 76/464/CEI) et le figurant pas à l'annexe X de la DCE (tableau A de la circulaire du 07/09/07).
+
+<sup>4</sup> Autres substances pertinentes Issues de la liste II de la directive 2006/11/CE (anciennement Directive 76/464/CEI) et autres substances, non SDP ni SP (tableaux 0 et E de la circulaire du 07/09/07).
+
+<sup>1</sup> Les groupes de substances sont indiqués en italien.
+
+<sup>2</sup> Code SANDRE de la substance : http://sandre.eaufrance.fr/app/References/client.php
+
+<sup>3</sup> Correspondance avec la numérotation utilisée à l'annexe X de la DCE (Directive 2000/60/CE).
+
+<sup>4</sup> N° UE : le nombre mentionné correspond au classement par ordre alphabétique issu de la communication de la Commission européenne au Conseil du 22 juin 1982.
+
+Page 13 sur 25
+```
+```markdown
+# ANNEXE 5.2 : LIMITES DE QUANTIFICATION A ATTEINDRE
+
+| Famille       | Substances                          | Code SANDRE1 | LQ2 à atteindre par substance par les laboratoires prestataires en µg/l Eaux Résiduaires |
+|--------------|-------------------------------------|--------------|-----------------------------------------------------------------------------------|
+|              | Nonylphénol (C9)                    | 1957         | 0,1                                                                             |
+|              | NP4OE                               | 6166         | 0,1                                                                             |
+|              | NP4OE                               | 6369         | 0,1                                                                             |
+| Alkylphénols | Octylphénol                         | 1920         | 0,1                                                                             |
+|              | OP1OE                               | 6370         | 0,1*                                                                           |
+|              | OP2OE                               | 6371         | 0,1*                                                                           |
+|              | 2 chloraniline                       | 1593         | 0,1                                                                             |
+| Anilines    | 3 chloraniline                       | 1592         | 0,1                                                                             |
+|              | 4 chloraniline                       | 1591         | 0,1                                                                             |
+|              | 4-chloro-2 nitroaniline              | 1594         | 0,1                                                                             |
+|              | 1,4 dichloraniline                   | 1586         | 0,1                                                                             |
+|              | Chloracétaldéhyde                    | 1555         | 10                                                                              |
+| Autres      | Biphényle                            | 1584         | 0,05                                                                           |
+|              | Epichlorhydrine                       | 1494         | 0,5                                                                             |
+|              | Tributylphosphate                    | 1847         | 0,1                                                                             |
+|              | acide chloroacétique                | 1465         | 25                                                                                |
+|              | Tétrabromodiphényléther              | 2919         | -                                                                               |
+|              | BDE 47                               | -            | -                                                                               |
+|              | Pentabromodiphényléther              | 2916         | -                                                                               |
+|              | BDE 99, BDE 49, BDE 100, BDE 153     | 2915         | -                                                                               |
+|              | BDE 154                               | 2911         | -                                                                               |
+|              | Hexabromodiphényléther               | 2912         | -                                                                               |
+|              | Heptabromodiphényléther              | 2910         | -                                                                               |
+|              | BDE 183                               | -            | -                                                                               |
+|              | Décaombodiphényléther                 | 1815         | -                                                                               |
+|              | BDE 153                               | -            | -                                                                               |
+| BTEX        | Benzène                              | 1114         | 1                                                                               |
+|              | Ethylbenzène                         | 1497         | 1                                                                               |
+|              | Isopropylbenzène                     | 1631         | 1                                                                               |
+|              | Toluène                              | 1278         | 1                                                                               |
+|              | Xylènes (Somme o,m,p)                | 1780         | 2                                                                               |
+| Chlorobenzènes #s | Hexachlorobenzène                   | 1199         | 0,012                                                                          |
+|              | Pentachlorobenzène                    | 1888         | 0,025                                                                          |
+|              | 1,2,3 trichlorobenzène                | 1630         | 1                                                                               |
+|              | 1,2,4 trichlorobenzène                | 1283         | 1                                                                               |
+|              | 1,3,5 trichlorobenzène                | 1629         | 1                                                                               |
+|              | Chlorobenzène                         | 1467         | 1                                                                               |
+|              | 1,2 dichlorobenzène                   | 1163         | 1                                                                               |
+|              | 1,3 dichlorobenzène                   | 1164         | 1                                                                               |
+|              | 1,4 dichlorobenzène                   | 1166         | 1                                                                               |
+|              | 1,2,4 tetrachlorobenzène              | 1631         | 0,05                                                                           |
+
+La quantité de MES à prélever pour l'analyse doit être telle que l'eau d'attente atteigne une LQ équivalente dans l'eau de 0,05 µg/l pour chaque BDE.
+```
+```markdown
+# DRC-08-94591-06911B
+
+| Famille       | Substances                                      | Code SANDRE! | LC50 atteinte par substance par les laboratoires prestataires en µg/l Eaux Résiduaires |
+|---------------|-------------------------------------------------|--------------|-----------------------------------------------------------------------------------|
+|              | 1-chloro-2-nitrobenzène                         | 1469         | 0,1                                                                              |
+|              | 1-chloro-3-nitrobenzène                         | 1468         | 0,1                                                                              |
+|              | 1-chloro-4-nitrobenzène                         | 1470         | 0,1                                                                              |
+|              | Pentachlorophénol                               | 1235         | 0,1                                                                              |
+|              | 4-chloro-3-methylphénol                         | 1636         | 0,1                                                                              |
+| Chlorophénol | 2 chlorophénol                                 | 1471         | 0,1                                                                              |
+|              | 3 chlorophénol                                 | 1651         | 0,1                                                                              |
+|              | 4 chlorophénol                                 | 1650         | 0,1                                                                              |
+|              | 2,4 dichlorophénol                              | 1486         | 0,1                                                                              |
+|              | 2,4,5 trichlorophénol                            | 1548         | 0,1                                                                              |
+|              | 2,4,6 trichlorophénol                            | 1549         | 0,1                                                                              |
+|              | Hexachloropentadiène                            | 2612         | 0,1                                                                              |
+|              | 1,2 dichloroéthane                              | 1161         | 2                                                                               |
+|              | Chlorure de méthylène                           | 1168         | 5                                                                               |
+|              | Hexachlorobutadiène                              | 2652         | 0,5                                                                              |
+|              | Chloroforme                                     | 1135         | 1                                                                               |
+|              | Tétrachlorure de carbone                        | 1276         | 0,5                                                                              |
+|              | Chloroprène                                     | 2611         | 1                                                                               |
+|              | 3-chloroprène (chlorure d'allyle)               | 2065         | 1                                                                               |
+| COHV        | 1,1 dichloroéthane                              | 1160         | 5                                                                               |
+|              | 1,1 dichloroéthylène                            | 1162         | 2,5                                                                             |
+|              | 1,2 dichloroéthylène                            | 1163         | 5                                                                               |
+|              | Hexachloroéthane                                | 1656         | 1                                                                               |
+|              | 1,1,2,2 tétrachloroéthane                        | 1271         | 1                                                                               |
+|              | Tétrachloroéthylène                             | 1272         | 0,5                                                                              |
+|              | 1,1,1 trichloroéthane                            | 1284         | 0,5                                                                              |
+|              | 1,1,2 trichloroéthane                            | 1285         | 1                                                                               |
+|              | Trichloroéthylène                               | 1286         | 0,5                                                                              |
+|              | Chlorure de vinyle                               | 1753         | 5                                                                               |
+| Chlorotoluène| 2-chlorotoluène                                 | 1602         | 1                                                                               |
+| s           | 3-chlorotoluène                                 | 1601         | 1                                                                               |
+|              | 4-chlorotoluène                                 | 1600         | 1                                                                               |
+|              | Anthracène                                     | 1458         | 0,01                                                                           |
+|              | Fluoranthène                                   | 1191         | 0,01                                                                           |
+| HAP         | Naphtalène                                     | 1517         | 0,05                                                                           |
+|              | Acénaphtène                                     | 1453         | 0,01                                                                           |
+|              | Benzo (a) pyrene                                | 1113         | 0,01                                                                           |
+|              | Benzo (b) fluoranthène                          | 1117         | 0,01                                                                           |
+|              | Benzo (b) fluoranthène                          | 1117         | 0,01                                                                           |
+|              | Benzo (b) fluoranthène                          | 1117         | 0,01                                                                           |
+|              | Benzo (b) fluoranthène                          | 1117         | 0,01                                                                           |
+|              | Benzo (b) fluoranthène                          | 1117         | 0,01                                                                           |
+|              | Benzo (b) fluoranthène                          | 1117         | 0,01                                                                           |
+|              | Benzo (b) fluoranthène                          | 1117         | 0,01                                                                           |
+|              | Benzo (b) fluoranthène                          | 1117         | 0,01                                                                           |
+|              | Benzo (b) fluoranthène                          | 1117         | 0,01                                                                           |
+|              | Benzo (b) fluoranthène                          | 1117         | 0,01                                                                           |
+|              | Benzo (b) fluoranthène                          | 1117         | 0,01                                                                           |
+|              | Benzo (b) fluoranthène                          | 1117         | 0,01                                                                           |
+|              | Benzo (b) fluoranthène                          | 1117         | 0,01                                                                           |
+|              | Benzo (b) fluoranthène                          | 1117         | 0,01                                                                           |
+|              | Benzo (b) fluoranthène                          | 1117         | 0,01                                                                           |
+|              | Benzo (b) fluoranthène                          | 1117         | 0,01                                                                           |
+|              | Benzo (b) fluoranthène                          | 1117         | 0,01                                                                           |
+|              | Benzo (b) fluoranthène                          | 1117         | 0,01                                                                           |
+|              | Benzo (b) fluoranthène                          | 1117         | 0,01                                                                           |
+|              | Benzo (b) fluoranthène                          | 1117         | 0,01                                                                           |
+|              | Benzo (b) fluoranthène                          | 1117         | 0,01                                                                           |
+|              | Benzo (b) fluoranthène                          | 1117         | 0,01                                                                           |
+|              | Benzo (b) fluoranthène                          | 1117         | 0,01                                                                           |
+|              | Benzo (b) fluoranthène                          | 1117         | 0,01                                                                           |
+|              | Benzo (b) fluoranthène                          | 1117         | 0,01                                                                           |
+|              | Benzo (b) fluoranthène                          | 1117         | 0,01                                                                           |
+|              | Benzo (b) fluoranthène                          | 1117         | 0,01                                                                           |
+|              | Benzo (b) fluoranthène                          | 1117         | 0,01                                                                           |
+|              | Benzo (b) fluoranthène                          | 1117         | 0,01                                                                           |
+|              | Benzo (b) fluoranthène                          | 1117         | 0,01                                                                           |
+|              | Benzo (b) fluoranthène                          | 1117         | 0,01                                                                           |
+
+```markdown
+# DRC-08-94591-06911B
+
+| Famille       | Substances                                      | Code SANDRE¹ | LC⁵₀ atteinte par substance par les laboratoires prestataires en µg/l Eaux Résiduaires |
+|--------------|-------------------------------------------------|--------------|-----------------------------------------------------------------------------------|
+| Nitro aromatiques | Cuivre et ses composés                         | 1392         | 5                                                                               |
+|              | Chrome et ses composés                          | 1389         | 5                                                                               |
+|              | 2-nitrothalène                                   | 2613         | 0,2                                                                             |
+|              | Nitrobenzène                                     | 2614         | 0,2                                                                             |
+|              | Triéthylétain cation                             | 2879         | 0,02                                                                           |
+| Organoétains | Diéthylétain cation                              | 1771         | 0,02                                                                           |
+|              | Monobutylétain cation                            | 2542         | 0,02                                                                           |
+|              | Triphénylétain cation                            | 6372         | 0,02                                                                           |
+| PCB          | PCB 28                                          | 1239         | 0,01                                                                           |
+|              | PCB 52                                          | 1241         | 0,01                                                                           |
+|              | PCB 101                                         | 1242         | 0,01                                                                           |
+|              | PCB 118                                         | 1243         | 0,01                                                                           |
+|              | PCB 138                                         | 1244         | 0,01                                                                           |
+|              | PCB 153                                         | 1245         | 0,01                                                                           |
+|              | PCB 180                                         | 1246         | 0,01                                                                           |
+| Pesticides   | Trifluraline                                     | 1289         | 0,05                                                                           |
+|              | Alachlore                                       | 1101         | 0,02                                                                           |
+|              | Atrazine                                        | 1107         | 0,03                                                                           |
+|              | Chlorfenvinphos                                  | 1464         | 0,05                                                                           |
+|              | Chlorpyrifos                                    | 1083         | 0,05                                                                           |
+|              | Diazinon                                        | 1177         | 0,05                                                                           |
+|              | Alpha Endosulfan                                  | 1174         | 0,05                                                                           |
+|              | Béta Endosulfan                                  | 1179         | 0,02                                                                           |
+|              | Alpha HCH                                        | 1175         | 0,02                                                                           |
+|              | Gamma HCH                                        | 1176         | 0,02                                                                           |
+|              | Hexachlorocyclohexane                             | 1175         | 0,02                                                                           |
+|              | Gamma isomère -Lithidane                         | 1204         | 0,05                                                                           |
+|              | Isoproturon                                     | 1208         | 0,05                                                                           |
+|              | Simazine                                        | 1263         | 0,03                                                                           |
+| Paramètres de suivi | Demande Chimique en Oxygène du Carbone         | 1314         | 30000                                                                          |
+|              | Nitrates                                        | 1841         | 300                                                                           |
+|              | Métaux en Suspension                            | 1305         | 2000                                                                          |
+
+¹ Code SANDRE accessible sur http://sandre.eaufrance.fr/app/References/client.php
+
+² La valeur à atteindre pour la limite de quantification (LQ) correspond à la valeur que 50% des prestataires sont capables d'atteindre. Cette valeur est issue de l'exploitation des LQ transmises par les laboratoires dans le cadre de l'action JRSDE depuis 2005.
+
+³ Valeur de LQ dérivée de l'annexe D de la norme ISO/DIS 18857-2
+```
+```markdown
+# DRC-08-94591-06911A
+
+## ANNEXE 5.3 : INFORMATIONS DEMANDEES PAR PRELEVEMENT, PAR PARAMETRE ET PAR FRACTION ANALYSEE RESTITUTION AU FORMAT SANDRE
+
+### POUR CHAQUE PRELEVEMENT : INFORMATIONS DEMANDEES
+
+| Critere SANDRE | Valeurs possibles | Exemples de restitution |
+|----------------|-------------------|-------------------------|
+| IDENTIFICATION DE L'ORGANISME PRELEVE | DE | Code Sandre du prestataire de prélèvement / Code exploitant |
+| IDENTIFICATION DE L'ECHANTILLON | Texte | Champ libre permettant d'identifier l'échantillon. Référence donnée par le laboratoire |
+| TYPE DE PRELEVEMENT | Liste déroulante | - Asservi au débit - Proportionnel au temps - Prélèvement ponctuel |
+| PERIODE DE PRELEVEMENT_DATE_DEBUT | Date | Date de début Format JJ/MM/AAAA |
+| DUREE DE PRELEVEMENT | Nombre | Durée en Nombre d'heures |
+| REFERENTIEL PRELEVEMENT | DE | Texte | Champ destiné à recevoir la référence à la norme de prélèvement |
+| DATE DERNIER CONTROLE DU METROLOGIE | Date | | Renseigne la date du dernier contrôle métrologique valide du débitmètre |
+| NOMBRE D'ECHANTILLON | Nombre entier | | Nombre de prélèvements pour constituer l'échantillon moyen (valeur par défaut 1) |
+| BLANC PRELEVEMENT | | | Oui, Non |
+| BLANC ATMOSPHERE | | | Oui, Non |
+| DATE DE PRISE EN CHARGE PAR LE LABORATOIRE | Date | | Date d'arrivée au laboratoire Format JJ/MM/AAAA |
+| IDENTIFICATION LABORATOIRE PRINCIPAL ANALYSE | | | Code Sandre Laboratoire |
+| TEMPERATURE DE L'ENCENITE (ARRIVEE AU LABORATOIRE) | Nombre decimal 1 chiffre significatif | | Température (unité °C) |
+
+Page 17 sur 25
+```
+```markdown
+# DRC-08-94591-06911B
+
+## POUR CHAQUE PARAMETRE ET POUR CHAQUE FRACTION ANALYSEE : INFORMATIONS DEMANDEES
+
+| Critère SANDRE | Valeurs possibles | Exemples de restitution |
+|---------------|-------------------|-------------------------|
+| CODE SANDRE PARAMETRE | Imposé | |
+| DATE DE DEBUT D'ANALYSE PAR LE LABORATOIRE | Date | Date de début d'analyse par le laboratoire |
+| | | Format JJMM/AAAA |
+| NOM PARAMETRE | Imposé | Nom sable |
+| REFERENTIEL | Imposé | Analyse réalisée sous accréditation |
+| | | Analyse réalisée hors accréditation |
+| NUMERO DOSSIER ACCREDITATION | | Numéro d'accréditation |
+| | | De type N° X.XXXX |
+| FRACTION ANALYSEE | Imposé | 3 : Phase aqueuse de l'eau |
+| | | 23 : Eau brute |
+| | | 41 : MES brutes |
+| METHODE DE PREPARATION | L / L | |
+| | SPE | |
+| | SBSE | |
+| | SPE disk | |
+| | L / S (MES) | |
+| | ASE (MES) | |
+| | SOXHLET (MES) | |
+| | Minéralisation Eau régale | |
+| | Minéralisation Acide nitrique | |
+| | Minéralisation autre | |
+| TECHNIQUE DE DETECTION | FID | |
+| | TCD | |
+| | ECD | |
+| | GC/MS | |
+| | LC/MS | |
+| | GC/MS/MS | |
+| | GC/LRMS | |
+| | GC/LRMS/MS | |
+| | LC/MS/MS | |
+| | GC/HRMS | |
+| | GC/HRMS/MS | |
+| | FAA | |
+| | ZAAS | |
+| | ICP/OES | |
+| | ICP/MS | |
+| | HPLC-DAD | |
+| | HPLC-FLUO | |
+| | HPLC-UV | |
+| METHODE D'ANALYSE (nom ou à défaut le type de méthode) | texte | |
+
+Page 18 sur 25
+```
+```markdown
+# DRC-08-94591-06911B
+
+## POUR CHAQUE PARAMÈTRE ET POUR CHAQUE FRACTION ANALYSÉE : INFORMATIONS DEMANDÉES
+
+| Critères SANDRÉ | Valeur possible | Exemples de restitution |
+|-----------------|------------------|-------------------------|
+| **LIMITE DE QUANTIFICATION** | | |
+| Valeur | Libre (numérique) | Libre (numérique) |
+| Unité | Imposé | EAU BRUTE : µg/l, PHASE AQUEUSE : µg/l, MES (PHASE PARTICULAIRE) : µg/kg |
+| | | eau MES, DCO ou COT (unité en mg/l) |
+| Incertitude de avec facteur d'élargissement (k=2) | Libre (numérique) | Pour une incertitude de 15%, la valeur échangée sera 15 |
+| **RÉSULTAT** | | |
+| Valeur | Libre (numérique) | Si résultat < limite de détection ou résultat < LQ : saisir dans résultat la valeur LQ ou LQ si résultat < LQ. Sinon saisir le Champ CODE REMARQUE |
+| Unité | Imposé | EAU BRUTE : µg/l, PHASE AQUEUSE : µg/l, MES (PHASE PARTICULAIRE) : µg/kg |
+| Incertitude de avec facteur d'élargissement (k=2) | Libre (numérique) | Pour une incertitude de 15%, la valeur échangée sera 15 |
+| CODE REMARQUE DE L'ANALYSE | Imposé | Code 0 : Analyse non faite |
+| | | Code 1 : Résultat ≥ limite de quantification |
+| | | Code 10 : Résultat < limite de quantification |
+| CONFIRMATION DU RÉSULTAT | Imposé | Code 0 : NON CONFIRME (analyse unique) |
+| | | Code 1 : CONFIRME (analyse dupliquée, confirmation par SM) |
+| COMMENTAIRES | Libre | Liste des paramètres retenus dans le bilan du système de prélèvement ou d'atmosphère + ordre de grandeur. |
+| | | LQ réelle (matrice complexe) |
+| | | Précision d'interférants etc... |
+
+Les critères identifiés en gras sont à renseigner obligatoirement lors de la restitution des données. L'absence de renseignements sur les champs obligatoires sera une entorse à l'engagement du laboratoire pouvant conditionner le cas échéant le paiement de la prestation par l'exploitant.
+```
+```markdown
+# DRC-08-94591-06911A
+
+## ANNEXE 5-1 : FORMAT DE PRÉSENTEMENT DES INFORMATIONS POUR PRÉLEVEMENT, PAR PARAMÈTRE ET PAR FRACTION
+
+### Conditions de présentation des analyses
+
+| Paramètre | Unité | Valeur | Type d'analyse | Résultat d'analyse |
+|----------|-------|--------|----------------|-------------------|
+| pH       | -     | -      | -              | -                 |
+| Conductivité électrique | µS/cm | -      | -              | -                 |
+| SO4      | mg/L  | -      | -              | -                 |
+| Cl      | mg/L  | -      | -              | -                 |
+| NO3     | mg/L  | -      | -              | -                 |
+| NH4     | mg/L  | -      | -              | -                 |
+| K       | mg/L  | -      | -              | -                 |
+| Ca      | mg/L  | -      | -              | -                 |
+| Mg      | mg/L  | -      | -              | -                 |
+| Na      | mg/L  | -      | -              | -                 |
+| Fe      | mg/L  | -      | -              | -                 |
+| Mn      | mg/L  | -      | -              | -                 |
+| Zn      | mg/L  | -      | -              | -                 |
+| Cu      | mg/L  | -      | -              | -                 |
+| Pb      | mg/L  | -      | -              | -                 |
+| Ni      | mg/L  | -      | -              | -                 |
+| Cr      | mg/L  | -      | -              | -                 |
+| Ba      | mg/L  | -      | -              | -                 |
+| Sr      | mg/L  | -      | -              | -                 |
+| Al      | mg/L  | -      | -              | -                 |
+| B       | mg/L  | -      | -              | -                 |
+| Co      | mg/L  | -      | -              | -                 |
+| Cd      | mg/L  | -      | -              | -                 |
+| Hg      | mg/L  | -      | -              | -                 |
+| As      | mg/L  | -      | -              | -                 |
+| Se      | mg/L  | -      | -              | -                 |
+| Mo      | mg/L  | -      | -              | -                 |
+| Sb      | mg/L  | -      | -              | -                 |
+| U       | mg/L  | -      | -              | -                 |
+| F       | mg/L  | -      | -              | -                 |
+| Si      | mg/L  | -      | -              | -                 |
+| Li      | mg/L  | -      | -              | -                 |
+| Sr      | mg/L  | -      | -              | -                 |
+| Sr      | mg/L  | -      | -              | -                 |
+| Sr      | mg/L  | -      | -              | -                 |
+| Sr      | mg/L  | -      | -              | -                 |
+| Sr      | mg/L  | -      | -              | -                 |
+| Sr      | mg/L  | -      | -              | -                 |
+| Sr      | mg/L  | -      | -              | -                 |
+| Sr      | mg/L  | -      | -              | -                 |
+| Sr      | mg/L  | -      | -              | -                 |
+| Sr      | mg/L  | -      | -              | -                 |
+| Sr      | mg/L  | -      | -              | -                 |
+| Sr      | mg/L  | -      | -              | -                 |
+| Sr      | mg/L  | -      | -              | -                 |
+| Sr      | mg/L  | -      | -              | -                 |
+| Sr      | mg/L  | -      | -              | -                 |
+| Sr      | mg/L  | -      | -              | -                 |
+| Sr      | mg/L  | -      | -              | -                 |
+| Sr      | mg/L  | -      | -              | -                 |
+| Sr      | mg/L  | -      | -              | -                 |
+| Sr      | mg/L  | -      | -              | -                 |
+| Sr      | mg/L  | -      | -              | -                 |
+| Sr      | mg/L  | -      | -              | -                 |
+| Sr      | mg/L  | -      | -              | -                 |
+| Sr      | mg/L  | -      | -              | -                 |
+| Sr      | mg/L  | -      | -              | -                 |
+| Sr      | mg/L  | -      | -              | -                 |
+| Sr      | mg/L  | -      | -              | -                 |
+| Sr      | mg/L  | -      | -              | -                 |
+| Sr      | mg/L  | -      | -              | -                 |
+| Sr      | mg/L  | -      | -              | -                 |
+| Sr      | mg/L  | -      | -              | -                 |
+
+```markdown
+DRC-08-94591-06911A
+
+ANNEXE 5.5 : LISTE DES PIECES A FOURNIR PAR LE LABORATOIRE PRESTATAIRE A L'EXPLOITANT
+
+Justificatifs à produire
+
+1. Justificatifs d'accréditations sur les opérations de prélèvements (si disponible) et d'analyse de substances dans la matrice « eaux résiduaires » comprenant à minima :
+   - Numéro d'accréditation
+   - Extrait de l'annexe technique sur les substances concernées
+
+2. Liste de références en matière d'opérations de prélèvements de substances dangereuses dans les rejets industriels
+
+3. Tableau des performances et d'assurance qualité à renseigner obligatoirement : les critères de choix pour l'exploitant pour la sélection d'un laboratoire prestataire sont repris dans ce tableau : substance accréditée ou non, et limite de quantification qui doivent être inférieures ou égales aux LQ de l'annexe 5.2.
+
+4. Attestation du prestataire s'engageant à respecter les prescriptions de l'annexe technique (modèle joint)
+```
+```markdown
+# TABLEAU DES PERFORMANCES ET ASSURANCE QUALITÉ
+## À REENSEIGNER ET À RESTITUER À L'EXPLOITANT
+
+| Famille       | Substances                          | Code SANDRE | Substance Accréditée¹ oui / non sur matrice eaux résiduaires | LQ en µg/l obtenue sur une matrice eau résiduaire |
+|--------------|-------------------------------------|-------------|-------------------------------------------------------------|-------------------------------------------------|
+|              | Nonylphénols                         |             |                                                             |                                             |
+|              | NP (nonylphénol)                     | 5174        |                                                             |                                             |
+|              | NP1 (4-Ethyl)                        | 5160        |                                                             |                                             |
+|              | NP2 (2-Propyl)                       | 5169        |                                                             |                                             |
+| Alkylphénols | Octylphénol                         | 1920        |                                                             |                                             |
+|              | OPTDE                              | 6370        |                                                             |                                             |
+|              | OP2OE                              | 6371        |                                                             |                                             |
+|              | 2 chloroaniline                     | 1592        |                                                             |                                             |
+|              | 3 chloroaniline                     | 1592        |                                                             |                                             |
+|              | 4 chloroaniline                     | 1591        |                                                             |                                             |
+| Anilines    | 4-chloro-2 nitroaniline             | 1594        |                                                             |                                             |
+|              | 3,4 dichloroaniline                  | 1586        |                                                             |                                             |
+|              | 2,3,4,5,6-pentachlorophénol (PCP)    | 1655        |                                                             |                                             |
+|              | Chlorophénols C6-C9                 | 1684        |                                                             |                                             |
+| Autres      | Diphenylether                       | 1494        |                                                             |                                             |
+|              | Epichlorhydrine                      | 1847        |                                                             |                                             |
+|              | Tributylphosphate                    | 1465        |                                                             |                                             |
+|              | Acide chloracétique                  |             |                                                             |                                             |
+|              | Tétrachloroéthylène (PCE)            | 2919        |                                                             |                                             |
+|              | Tétrachloroéthylène (PCE #4)         | 2916        |                                                             |                                             |
+|              | Pentabromodiphényléther (BDE#9)      | 2915        |                                                             |                                             |
+|              | Pentabromodiphényléther (BDE#400)    | 2915        |                                                             |                                             |
+| BDE         | Hexabromodiphényléther (BDE 154)     | 2911        |                                                             |                                             |
+|              | Octabromodiphényléther (BDE 209)     | 2912        |                                                             |                                             |
+|              | Heptabromodiphényléther (BDE 183)    | 2910        |                                                             |                                             |
+|              | Décabromodiphényléther (BDE 209)     | 1815        |                                                             |                                             |
+|              | Benzène                             | 1114        |                                                             |                                             |
+| BTEX        | Éthylbenzène                        | 1497        |                                                             |                                             |
+|              | Isopropylbenzène                    | 1633        |                                                             |                                             |
+|              | Toluène                             | 1278        |                                                             |                                             |
+|              | Xylènes (Somme o,m,p)                | 1780        |                                                             |                                             |
+| Chlorobenzènes | 1,2,3-trichlorobenzène              | 1639        |                                                             |                                             |
+|              | 1,2,4-trichlorobenzène               | 1639        |                                                             |                                             |
+|              | 1,3,5-trichlorobenzène               | 1639        |                                                             |                                             |
+|              | 1,2,4,5-tétrachlorobenzène            | 1637        |                                                             |                                             |
+|              | Chlorobenzène                        | 1165        |                                                             |                                             |
+|              | 1,2-dichlorobenzène                  | 1164        |                                                             |                                             |
+|              | 1,3-dichlorobenzène                  | 1166        |                                                             |                                             |
+|              | 1,4-dichlorobenzène                  | 1166        |                                                             |                                             |
+|              | 1,2,3,4-tétrachlorobenzène            | 1631        |                                                             |                                             |
+
+Page 22 sur 25
+```
+```markdown
+# DRC-08-94591-06911B
+
+| Famille       | Substances                                      | Code SANDRE | Substance Accréditée* ou / non sur matrice eaux résiduaires | LQ en µg/l (obtenue sur une matrice résiduaire) |
+|---------------|-------------------------------------------------|-------------|----------------------------------------------------------------|------------------------------------------------|
+|              | 1-chloro-2-nitrobenzène                         | 1469        |                                                                 |                                             |
+|              | 1-chloro-3-nitrobenzène                         | 1468        |                                                                 |                                             |
+|              | 1-chloro-4-nitrobenzène                         | 1470        |                                                                 |                                             |
+|              | Pentachlorophénol                               | 1235        |                                                                 |                                             |
+|              | 4-chloro-3-méthylphénol                         | 1636        |                                                                 |                                             |
+| Chlorophénols| 2-chlorophénol                                 | 1471        |                                                                 |                                             |
+|              | 3-chlorophénol                                 | 1651        |                                                                 |                                             |
+|              | 4-chlorophénol                                 | 1650        |                                                                 |                                             |
+|              | 2,4 dichlorophénol                              | 1486        |                                                                 |                                             |
+|              | 2,4,5 trichlorophénol                           | 1548        |                                                                 |                                             |
+|              | 2,4,6 trichlorophénol                           | 1549        |                                                                 |                                             |
+|              | Hexachloropentadiene                            | 2612        |                                                                 |                                             |
+|              | 1,2 dichlorométhane                             | 1161        |                                                                 |                                             |
+|              | Chlorure de méthylène                           | 1168        |                                                                 |                                             |
+|              | Hexachlorobutadiene                              | 1637        |                                                                 |                                             |
+|              | Chlorforme                                      | 1135        |                                                                 |                                             |
+|              | Tétrachlorure de carbone                        | 1276        |                                                                 |                                             |
+|              | Chlorprène                                      | 2611        |                                                                 |                                             |
+|              | 1-chloroprène (chlorure d'allyle)               | 2065        |                                                                 |                                             |
+| COHV        | 1,1,1 trichloroéthane                            | 1160        |                                                                 |                                             |
+|              | 1,1,1 dichloroéthylène                           | 1162        |                                                                 |                                             |
+|              | 1,2 dichloroéthylène                             | 1163        |                                                                 |                                             |
+|              | Hexachloroéthane                                | 1656        |                                                                 |                                             |
+|              | 1,1,2,2 tétrachloroéthane                        | 1271        |                                                                 |                                             |
+|              | Tétrachloroéthylène                             | 1272        |                                                                 |                                             |
+|              | 1,1,1 trichloroéthane                            | 1284        |                                                                 |                                             |
+|              | 1,1,2 trichloroéthane                            | 1285        |                                                                 |                                             |
+|              | Trichloroéthylène                               | 1286        |                                                                 |                                             |
+|              | Chlorure de vinyle                              | 1753        |                                                                 |                                             |
+| Chlorotoluènes| 2-chlorotoluène                                | 1602        |                                                                 |                                             |
+|              | 3-chlorotoluène                                | 1601        |                                                                 |                                             |
+|              | 4-chlorotoluène                                | 1600        |                                                                 |                                             |
+|              | Anthracène                                      | 1498        |                                                                 |                                             |
+|              | Fluoranthène                                   | 1191        |                                                                 |                                             |
+|              | Naphtalène                                      | 1517        |                                                                 |                                             |
+|              | Acénaphtène                                     | 1493        |                                                                 |                                             |
+| HAP          | Benzo(a)pyrene                                 | 1115        |                                                                 |                                             |
+|              | Benzo(a)fluoranthène                            | 1117        |                                                                 |                                             |
+|              | Benzo(b)fluoranthène                            | 1116        |                                                                 |                                             |
+|              | Benzo(k)fluoranthène                            | 1115        |                                                                 |                                             |
+|              | Benzo(ghi)perylène                              | 1118        |                                                                 |                                             |
+|              | Indéno(1,2,3-cd)pyrene                         | 1204        |                                                                 |                                             |
+| Métaux      | Cadmium dans les composés                     | 1388        |                                                                 |                                             |
+|              | Plomb et ses composés                          | 1382        |                                                                 |                                             |
+|              | Mercure et ses composés                        | 1387        |                                                                 |                                             |
+|              | Nickel et ses composés                         | 1386        |                                                                 |                                             |
+|              | Arsenic et ses composés                        | 1369        |                                                                 |                                             |
+
+Page 23 sur 25
+```
+```markdown
+# DRC-08-94591-06911B
+
+| Famille                | Substances                                      | Code SANDRE | Substance Accréditée* ou / non sur matrice eaux résiduaires | LQ en µg/l (tolérance sur matrice eaux résiduaires) |
+|------------------------|--------------------------------------------------|-------------|-------------------------------------------------------------|-----------------------------------------------------|
+|                        | Zinc et ses composés                           | 1383        |                                                             |                                                      |
+|                        | Cuivre et ses composés                         | 1392        |                                                             |                                                      |
+|                        | Chrome et ses composés                         | 1389        |                                                             |                                                      |
+| Nitro aromatiques      | 2-nitrotoluaune                                 | 2613        |                                                             |                                                      |
+|                        | Nitrobenzène                                    | 2614        |                                                             |                                                      |
+|                        | Tributyl(éthyl)cation                           | 2879        |                                                             |                                                      |
+| Organoétains           | Dibutylétain cation                             | 1771        |                                                             |                                                      |
+|                        | Monobutylétain cation                           | 2542        |                                                             |                                                      |
+|                        | Triphénylétain cation                           | 6372        |                                                             |                                                      |
+|                        | PCB 28                                          | 1239        |                                                             |                                                      |
+| PCB                    | PCB 52                                          | 1241        |                                                             |                                                      |
+|                        | PCB 101                                         | 1242        |                                                             |                                                      |
+|                        | PCB 118                                         | 1243        |                                                             |                                                      |
+|                        | PCB 138                                         | 1244        |                                                             |                                                      |
+|                        | PCB 153                                         | 1245        |                                                             |                                                      |
+|                        | PCB 180                                         | 1246        |                                                             |                                                      |
+|                        | Trifluraline                                     | 1289        |                                                             |                                                      |
+|                        | Alachlore                                       | 1101        |                                                             |                                                      |
+|                        | Atrazine                                        | 1107        |                                                             |                                                      |
+|                        | Chlorfenvinphos                                 | 1464        |                                                             |                                                      |
+|                        | Chlorpyrifos                                    | 1683        |                                                             |                                                      |
+|                        | Diuron                                          | 1177        |                                                             |                                                      |
+| Pesticides             | Alpha Endosulfan                                | 3178        |                                                             |                                                      |
+|                        | Bêta Endosulfan                                 | 3179        |                                                             |                                                      |
+|                        | Aldrine                                          | 3100        |                                                             |                                                      |
+|                        | Hexachlorobenzène                                | 3100        |                                                             |                                                      |
+|                        | Gamma Isomère 1,2,3,4,5,6-Pentachlorocyclohexane| 3103        |                                                             |                                                      |
+|                        | Isoproturon                                     | 1208        |                                                             |                                                      |
+|                        | Simazine                                        | 1263        |                                                             |                                                      |
+| Paramètres de suivi    | Demande Chimique en Oxygène du Carbone Organique Total| 1314        |                                                             |                                                      |
+|                        | Indices en Absorption                          | 1305        |                                                             |                                                      |
+
+* : Une absence d'accréditation pour être acceptée pour certaines substances (substances très rarement accréditées par les laboratoires voire jamais). Il s'agit des substances : + Chloroacétanés C10-C13, diphénylétherbromés, akylphénols et hexachloropentadiène...
+```
+```markdown
+# ATTESTATION DU PRESTATAIRE
+
+Je soussigné(e)
+
+(Nom, qualité) .............................................................................................
+
+Coordonnées de l'entreprise : .............................................................................
+
+(Nom, forme juridique, capital social, RCS, siège social et adresse si différente du siège)
+
+- reconnais avoir reçu et avoir pris connaissance des prescriptions techniques applicables aux opérations de prélèvements et d’analyses pour la mise en œuvre de la deuxième phase de l’action nationale de recherche et de réduction des rejets de substances dangereuses pour le milieu aquatique et des documents auxquels il fait référence.
+
+- m'engage à restituer les résultats dans un délai de XXX mois après réalisation de chaque prélèvement.
+
+- reconnais les accepter et les appliquer sans réserve.
+
+A : Le :
+
+Pour le soumissionnaire, nom et prénom de la personne habilitée à signer le marché :
+
+Signature :
+
+Cachet de la société :
+
+"Signature et qualité du signataire (qui doit être habilité à engager sa société) précédée de la mention - Bon pour acceptation "
+
+* L’attention est attirée sur l’intérêt de disposer des résultats d’analyses de la première mesure avant d’engager la suivante afin d’évaluer l’adequation du plan de prélèvement, en particulier lors des premières mesures.
+
+Page 25 sur 25
+```
+```markdown
+# Document
+
+Ce document est un exemple de texte en Markdown.
+
+## Section 1
+
+Voici un paragraphe dans une section.
+
+### Sous-section 1
+
+Un sous-titre pour une sous-section.
+
+## Section 2
+
+Une autre section avec du texte.
+
+### Sous-section 2
+
+Un autre sous-titre pour une sous-section.
+
+## Code
+
+Voici un exemple de code :
+
+```python
+def fonction():
+    print("Bonjour, monde!")
+```
+
+## Liste
+
+- Élément 1
+- Élément 2
+- Élément 3
+
+## Liens
+
+Voici un lien vers [Wikipedia](https://fr.wikipedia.org).
+
+## Images
+
+![Exemple d'image](https://example.com/image.jpg)
+
+## Tableau
+
+| Colonne 1 | Colonne 2 |
+|-----------|-----------|
+| Valeur 1  | Valeur 2  |
+| Valeur 3  | Valeur 4  |
+
+## Citation
+
+> Ceci est une citation.
+
+## Code inline
+
+Voici du `code inline`.
+
+## Emphase
+
+*Italique*
+
+**Gras**
+
+***Italique et Gras***
+
+~~Barré~~
+
+## Listes à puces
+
+- Élément 1
+  - Sous-élément 1
+  - Sous-élément 2
+- Élément 2
+  - Sous-élément 1
+  - Sous-élément 2
+
+## Listes numérotées
+
+1. Élément 1
+   1. Sous-élément 1
+   2. Sous-élément 2
+2. Élément 2
+   1. Sous-élément 1
+   2. Sous-élément 2
+
+## Bloc de code
+
+```
+def fonction():
+    print("Bonjour, monde!")
+```
+
+## Horizontale
+
+---
+
+## Horizontale
+
+***
+
+## Horizontale
+
+___
+
+## Document vide
+
+```

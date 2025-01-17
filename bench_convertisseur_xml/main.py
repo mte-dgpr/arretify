@@ -17,7 +17,6 @@ ARRETE_REFERENCE_CSS_CLASS = make_css_class(ARRETE_REFERENCE_SCHEMA)
 
 def ocrized_arrete_to_html(lines: List[str]):
     lines = clean_ocrized_file(lines)
-    print('\n\n'.join(lines))
     soup = parse_arrete(lines)
     for element in soup.select('*'):
         new_children = parse_arretes_references(soup, element.children)

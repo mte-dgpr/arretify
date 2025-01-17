@@ -15,6 +15,8 @@ SERVICE_PATTERNS = [
     r"drire",
     r"dreal",
     r"service",
+    r"section",
+    r"p[oô]le",
     r"bureau",
     r"unit[eé]",
     r"installations class[eé]es pour la protection de l'environnement",  # sometimes independent
