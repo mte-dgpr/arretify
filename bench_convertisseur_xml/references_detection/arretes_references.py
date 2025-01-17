@@ -8,7 +8,8 @@ from ..settings import APP_ROOT, LOGGER
 from .dates import parse_date, DATE1_RES, DATE2_RES, DateMatchDict, handle_date_match_groupdict, make_date_element
 from bench_convertisseur_xml.utils.text import normalize_text
 from bench_convertisseur_xml.utils.html import PageElementOrString, make_data_tag
-from bench_convertisseur_xml.utils.regex import split_string, split_match_by_named_groups, without_named_groups
+from bench_convertisseur_xml.utils.split import split_string, split_match_by_named_groups
+from bench_convertisseur_xml.utils.regex import without_named_groups
 from bench_convertisseur_xml.html_schemas import ARRETE_REFERENCE_SCHEMA
 
 ARRETE_TYPES: List[str] = ['préfectoral', 'ministériel']

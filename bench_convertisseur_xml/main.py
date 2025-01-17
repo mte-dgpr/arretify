@@ -4,9 +4,9 @@ from optparse import OptionParser
 import traceback
 
 from .settings import TEST_DATA_DIR, LOGGER, OCR_FILE_EXTENSION
-from .segmentation_arrete.parse_arrete import parse_arrete
-from .detection_references.arretes_references import parse_arretes_references
-from .modification_detection.modification_segments import tag_modification_segments
+from .arrete_segmentation.parse_arrete import parse_arrete
+from .references_detection.arretes_references import parse_arretes_references
+from .modifications_detection.modification_segments import tag_modification_segments
 from .clean_ocrized_file import clean_ocrized_file
 from .html_schemas import ALINEA_SCHEMA, ARRETE_REFERENCE_SCHEMA
 from .utils.html import make_css_class
