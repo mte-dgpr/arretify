@@ -54,7 +54,7 @@ Le fichier `bench_convertisseur_xml/main_test.py` permet de détecter les regres
 
 Si les tests échouent c'est que la génération d'html a changé. Il convient donc de vérifier que c'est bien une évolution voulue et non une régression. Pour ça voici une proposition de process : 
 
-1. Re-générer les fichiers html de référence en utilisant la commande `python -m bench_convertisseur_xml.segmentation_arrete.main_test`
+1. Re-générer les fichiers html de référence en utilisant la commande `python -m bench_convertisseur_xml.arrete_segmentation.main_test`
 2. Utiliser l'outil de diff de git (ou de vscodium) pour comparer la nouvelle version avec la version de référence
 3. Régler les problèmes éventuels, puis répéter étape 1. 
 

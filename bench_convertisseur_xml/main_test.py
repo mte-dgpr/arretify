@@ -54,4 +54,4 @@ def test_parse_arrete_snapshots():
 
 if __name__ == '__main__':
     write_parse_arrete_snapshots()  # to overwrite snapshots
-    # test_parse_arrete_snapshots()  # to check change in code does not break snapshots
+    test_parse_arrete_snapshots()  # to check change in code does not break snapshots

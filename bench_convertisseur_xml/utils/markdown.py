@@ -8,7 +8,7 @@ from bench_convertisseur_xml.errors import ErrorCodes
 from bench_convertisseur_xml.utils.html import PageElementOrString, make_data_tag
 from bench_convertisseur_xml.utils.regex import sub_with_match
 from bench_convertisseur_xml.html_schemas import ERROR_SCHEMA
-from bench_convertisseur_xml.segmentation_arrete.sentence_rules import LIST_PATTERN
+from bench_convertisseur_xml.arrete_segmentation.sentence_rules import LIST_PATTERN
 
 
 def parse_markdown_table(elements: List[PageElementOrString]):

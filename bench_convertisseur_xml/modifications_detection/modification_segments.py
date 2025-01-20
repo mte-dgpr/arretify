@@ -4,7 +4,7 @@ from dataclasses import dataclass
 
 from bs4 import BeautifulSoup, Tag, PageElement
 
-from bench_convertisseur_xml.utils.regex import split_string_at_beginning, split_string_at_end, merge_strings
+from bench_convertisseur_xml.utils.split import split_string_at_beginning, split_string_at_end, merge_strings
 from bench_convertisseur_xml.utils.html import make_data_tag, make_new_tag, PageElementOrString
 from bench_convertisseur_xml.utils.generators import remove_empty_strings_from_flow
 from bench_convertisseur_xml.html_schemas import MODIFICATION_SEGMENT
