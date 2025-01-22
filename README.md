@@ -1,8 +1,6 @@
-Convertisseur arrêté prefectoral -> HTML
-============================================
+# Convertisseur arrêté prefectoral -> HTML
 
-Setup
-------
+## Setup
 
 Installer les dépendences :
 
@@ -11,8 +9,7 @@ pip install -r requirements.txt
 ```
 
 
-Executer le script de parsing
------------------------------------
+## Executer le script de parsing
 
 Pour éxecuter le parsing sur un lot de fichiers OCRisés, copier le dossier de fichiers dans dossier facilement accessible (e.g. `./tmp/arretes_ocr`), et exécuter la commande `main.py`. Par exemple :
 
@@ -27,8 +24,7 @@ python -m main -i ./tmp/arretes_ocr/bla.txt -o ./tmp/arretes_html/bla.html
 ```
 
 
-Styling des pages HTML générées
------------------------------------
+## Styling des pages HTML générées
 
 Pour le styling, nous utilisons des fichiers CSS. Il faudra donc préparer un dossier où vos fichiers HTML seront générés (de préférence dans `tmp/` pour éviter d'ajouter des fichiers par erreur au repo git).
 
@@ -39,8 +35,28 @@ Copier le fichier `templates/styles.css` dans votre dossier html.
 Démarrer un server HTTP à la racine de ce dossier html. Vous pouvez utiliser powershell, naviguer dans votre dossier html, puis executer la commande suivante : `python -m http.server`.
 
 
-Testing
------------
+## Debugging
+
+Des outils de debugging sont fournis dans le module `debug.py`
+
+### Vérifier l'exhaustivité du parsing 
+
+Pour vérifier que tous les cas liés au parsing d'un type d'éléments ont été traités, on pourra utiliser la function `insert_debug_keywords`. 
+Par exemple :
+
+```
+# Parse toutes les références à des articles
+# e.g. article 1.2.3 du code de l'environnement
+new_children = parse_all_article_references(soup, list(container.children))
+
+# Cherche toutes les chaines de caractères 'articles?' qui n'ont pas été 
+# traitées et insère un tag pour pouvoir les parcourir et les vérifier manuellement.
+# On pourra ainsi détecter des cas non encore traités par la fonction `parse_all_article_references`
+# et tenter de les intégrer.
+new_children = insert_debug_keywords(soup, new_children, 'articles?')
+```
+
+## Testing
 
 Pour éxecuter les tests :
 
@@ -54,12 +70,11 @@ Le fichier `bench_convertisseur_xml/main_test.py` permet de détecter les regres
 
 Si les tests échouent c'est que la génération d'html a changé. Il convient donc de vérifier que c'est bien une évolution voulue et non une régression. Pour ça voici une proposition de process : 
 
-1. Re-générer les fichiers html de référence en utilisant la commande `python -m bench_convertisseur_xml.arrete_segmentation.main_test`
+1. Re-générer les fichiers html de référence en utilisant la commande `python -m bench_convertisseur_xml.main -i test_data/arretes_ocr -o test_data/arretes_html`
 2. Utiliser l'outil de diff de git (ou de vscodium) pour comparer la nouvelle version avec la version de référence
-3. Régler les problèmes éventuels, puis répéter étape 1. 
+3. Régler les problèmes éventuels, puis répéter étape 1.
 
 
-TODO 
------------
+## TODO 
 
 - Dans les fichiers OCRisés, des commentaires `OCR-BUG-IGNORE` ont été placés. Ces derniers permettent de réparer le fichier OCRisé à la main en instruisant notre parser d'ignorer un bloc de texte qui doit être réparé au niveau de l'OCRisation et non du parsing.

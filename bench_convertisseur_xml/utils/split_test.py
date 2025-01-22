@@ -3,19 +3,21 @@ import re
 from typing import Iterator
 
 from .split import (
-    split_string, split_string_at_end, split_string_at_beginning, merge_matches_with_siblings, 
-    split_match_by_named_groups, MatchNamedGroup, StrOrMatch, merge_strings,
+    split_string_with_regex, split_string_with_regex_at_end, split_string_with_regex_at_beginning, merge_matches_with_siblings, 
+    split_match_by_named_groups, MatchNamedGroup, StrOrMatch, merge_strings, map_string_children, reduce_children,
+    map_match_flow,
 )
+from bench_convertisseur_xml.types import PageElementOrString
 
 
-class TestSplitString(unittest.TestCase):
+class TestSplitStringWithRegex(unittest.TestCase):
     def test_simple(self):
         # Arrange
         string = "Hello, this is a ttt. Let's match and replace words like ttt and bbb."
         pattern = re.compile(r'\bttt|bbb\b')
 
         # Act
-        actual_results = _convert_str_or_match_flow(split_string(pattern, string))
+        actual_results = _convert_str_or_match_flow(split_string_with_regex(string, pattern))
         
         # Assert
         expected_results = [
@@ -35,7 +37,7 @@ class TestSplitString(unittest.TestCase):
         pattern = re.compile(r'aaa')
 
         # Act
-        actual_results = _convert_str_or_match_flow(split_string(pattern, string))
+        actual_results = _convert_str_or_match_flow(split_string_with_regex(string, pattern))
         
         # Assert
         expected_results = [
@@ -44,14 +46,14 @@ class TestSplitString(unittest.TestCase):
         assert actual_results == expected_results
 
 
-class TestSplitStringAtEnd(unittest.TestCase):
+class TestSplitStringWithRegexAtEnd(unittest.TestCase):
     def test_simple(self):
         # Arrange
         string = "Hello, this is a ttt. Let's match and replace words like ttt and bbb."
         pattern = re.compile(r'\bttt|bbb\b')
 
         # Act
-        actual_results = _convert_str_or_match_flow(split_string_at_end(pattern, string))
+        actual_results = _convert_str_or_match_flow(split_string_with_regex_at_end(string, pattern))
         
         # Assert
         expected_results = [
@@ -67,7 +69,7 @@ class TestSplitStringAtEnd(unittest.TestCase):
         pattern = re.compile(r'\bttt|bbb\b')
 
         # Act
-        actual_results = _convert_str_or_match_flow(split_string_at_end(pattern, string))
+        actual_results = _convert_str_or_match_flow(split_string_with_regex_at_end(string, pattern))
         
         # Assert
         expected_results = [
@@ -83,7 +85,7 @@ class TestSplitStringAtEnd(unittest.TestCase):
         pattern = re.compile(r'\bttt|bbb\b')
 
         # Act
-        actual_results = _convert_str_or_match_flow(split_string_at_end(pattern, string))
+        actual_results = _convert_str_or_match_flow(split_string_with_regex_at_end(string, pattern))
         
         # Assert
         expected_results = [
@@ -99,21 +101,21 @@ class TestSplitStringAtEnd(unittest.TestCase):
         pattern = re.compile(r'\bttt|bbb\b')
 
         # Act
-        actual_results = split_string_at_end(pattern, string)
+        actual_results = split_string_with_regex_at_end(string, pattern)
         
         # Assert
         expected_results = None
         assert actual_results == expected_results
     
 
-class TestSplitStringAtBeginning(unittest.TestCase):
+class TestSplitStringWithRegexAtBeginning(unittest.TestCase):
     def test_simple(self):
         # Arrange
         string = "Hello, this is a ttt. Let's match and replace words like ttt and bbb."
         pattern = re.compile(r'\bttt|bbb\b')
 
         # Act
-        actual_results = _convert_str_or_match_flow(split_string_at_beginning(pattern, string))
+        actual_results = _convert_str_or_match_flow(split_string_with_regex_at_beginning(string, pattern))
         
         # Assert
         expected_results = [
@@ -129,7 +131,7 @@ class TestSplitStringAtBeginning(unittest.TestCase):
         pattern = re.compile(r'\bttt|bbb\b')
 
         # Act
-        actual_results = _convert_str_or_match_flow(split_string_at_beginning(pattern, string))
+        actual_results = _convert_str_or_match_flow(split_string_with_regex_at_beginning(string, pattern))
         
         # Assert
         expected_results = [
@@ -145,7 +147,7 @@ class TestSplitStringAtBeginning(unittest.TestCase):
         pattern = re.compile(r'\bttt|bbb\b')
 
         # Act
-        actual_results = _convert_str_or_match_flow(split_string_at_beginning(pattern, string))
+        actual_results = _convert_str_or_match_flow(split_string_with_regex_at_beginning(string, pattern))
         
         # Assert
         expected_results = [
@@ -161,7 +163,7 @@ class TestSplitStringAtBeginning(unittest.TestCase):
         pattern = re.compile(r'\bttt|bbb\b')
 
         # Act
-        actual_results = split_string_at_beginning(pattern, string)
+        actual_results = split_string_with_regex_at_beginning(string, pattern)
         
         # Assert
         expected_results = None
@@ -176,9 +178,9 @@ class TestMergeMatchWithSiblingString(unittest.TestCase):
         string = "abc123def456ghi"
 
         # Act
-        result = list(merge_matches_with_siblings(split_string(
-            pattern,
+        result = list(merge_matches_with_siblings(split_string_with_regex(
             string,
+            pattern,
         ), 'following'))
 
         # Assert
@@ -190,9 +192,9 @@ class TestMergeMatchWithSiblingString(unittest.TestCase):
         string = "abc123def456ghi"
 
         # Act
-        result = list(merge_matches_with_siblings(split_string(
-            pattern,
+        result = list(merge_matches_with_siblings(split_string_with_regex(
             string,
+            pattern,
         ), 'previous'))
 
         # Assert
@@ -204,9 +206,9 @@ class TestMergeMatchWithSiblingString(unittest.TestCase):
         string = "abcdef"
 
         # Act
-        result = list(merge_matches_with_siblings(split_string(
-            pattern,
+        result = list(merge_matches_with_siblings(split_string_with_regex(
             string,
+            pattern,
         ), 'following'))
 
         # Assert
@@ -218,9 +220,9 @@ class TestMergeMatchWithSiblingString(unittest.TestCase):
         string = "123abc456"
 
         # Act
-        result = list(merge_matches_with_siblings(split_string(
-            pattern,
+        result = list(merge_matches_with_siblings(split_string_with_regex(
             string,
+            pattern,
         ), 'following'))
 
         # Assert
@@ -232,9 +234,9 @@ class TestMergeMatchWithSiblingString(unittest.TestCase):
         string = "abc123"
 
         # Act
-        result = list(merge_matches_with_siblings(split_string(
-            pattern,
+        result = list(merge_matches_with_siblings(split_string_with_regex(
             string,
+            pattern,
         ), 'following'))
 
         # Assert
@@ -353,6 +355,105 @@ class TestSplitStringFromMatch(unittest.TestCase):
             MatchNamedGroup(name='bly', text='BlaBloBla'),
             ' !!!',
         ]
+
+
+class TestMapStringChildren(unittest.TestCase):
+
+    def test_map_with_split_function(self):
+        # Arrange
+        children = ["Hello World", "!", "Python"]
+
+        def split_words(s):
+            return s.split()
+
+        # Act
+        result = list(map_string_children(children, split_words))
+
+        # Assert
+        assert result == ["Hello", "World", "!", "Python"], "Should split strings into words and keep non-strings unchanged"
+
+    def test_map_with_uppercase_function(self):
+        # Arrange
+        children = ["hello", "world", "!"]
+
+        def to_upper(s):
+            return [s.upper()]
+
+        # Act
+        result = list(map_string_children(children, to_upper))
+
+        # Assert
+        assert result == ["HELLO", "WORLD", "!"], "Should convert strings to uppercase and keep non-strings unchanged"
+
+
+class TestReduceChildren(unittest.TestCase):
+
+    def test_simple_reduction(self):
+        # Arrange
+        children = []
+        elements = ["Item1", "Item2"]
+        def simple_reducer(current_children, element):
+            return list(current_children) + [element]
+
+        # Act
+        result = reduce_children(children, elements, simple_reducer)
+
+        # Assert
+        assert list(result) == ["Item1", "Item2"], "Should combine initial children with elements"
+
+    def test_with_initial_children(self):
+        # Arrange
+        children = ["Child1"]
+        elements = ["Item1", "Item2"]
+        def simple_reducer(current_children, element):
+            return list(current_children) + [element]
+
+        # Act
+        result = reduce_children(children, elements, simple_reducer)
+
+        # Assert
+        assert list(result) == ["Child1", "Item1", "Item2"], "Should include initial children in the result"
+
+
+class TestMapMatchFlow(unittest.TestCase):
+
+    def test_with_simple_match(self):
+        # Arrange
+        children = ["Text before", re.match(r"match", "match"), "Text after"]
+
+        def func(match):
+            return [f"Processed({match.group(0)})"]
+
+        # Act
+        result = list(map_match_flow(children, func))
+
+        # Assert
+        assert result == ["Text before", "Processed(match)", "Text after"], "Should process the match and include other elements unchanged"
+
+    def test_with_multiple_matches(self):
+        # Arrange
+        children = [
+            "Start text", 
+            re.match(r"match1", "match1"), 
+            "Middle text", 
+            re.match(r"match2", "match2"), 
+            "End text"
+        ]
+
+        def func(match):
+            return [f"Processed({match.group(0)})"]
+
+        # Act
+        result = list(map_match_flow(children, func))
+
+        # Assert
+        assert result == [
+            "Start text", 
+            "Processed(match1)", 
+            "Middle text", 
+            "Processed(match2)", 
+            "End text"
+        ], "Should process all matches and include other elements unchanged"
 
 
 def _convert_str_or_match_flow(gen: Iterator[StrOrMatch]):

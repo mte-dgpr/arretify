@@ -6,10 +6,12 @@ import traceback
 from .settings import TEST_DATA_DIR, LOGGER, OCR_FILE_EXTENSION
 from .arrete_segmentation.parse_arrete import parse_arrete
 from .references_detection.arretes_references import parse_arretes_references
+from .references_detection.target_position_references import parse_target_position_references
 from .modifications_detection.modification_segments import tag_modification_segments
 from .clean_ocrized_file import clean_ocrized_file
 from .html_schemas import ALINEA_SCHEMA, ARRETE_REFERENCE_SCHEMA
 from .utils.html import make_css_class
+from .debug import insert_debug_keywords
 
 ALINEA_CSS_CLASS = make_css_class(ALINEA_SCHEMA)
 ARRETE_REFERENCE_CSS_CLASS = make_css_class(ARRETE_REFERENCE_SCHEMA)
@@ -24,10 +26,13 @@ def ocrized_arrete_to_html(lines: List[str]):
         element.extend(new_children)
 
     for container in soup.select(f'.{ALINEA_CSS_CLASS} *, .{ALINEA_CSS_CLASS}'):
+        new_children = list(container.children)
+        new_children = parse_target_position_references(soup, new_children)
+
         arretes_references = container.select(f'.{ARRETE_REFERENCE_CSS_CLASS}')
-        if not arretes_references:
-            continue
-        new_children = tag_modification_segments(soup, list(container.children), arretes_references)
+        if arretes_references:
+            new_children = tag_modification_segments(soup, new_children, arretes_references)
+
         container.clear()
         container.extend(new_children)
     return soup

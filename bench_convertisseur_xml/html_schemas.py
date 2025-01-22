@@ -75,6 +75,12 @@ ARRETE_REFERENCE_SCHEMA = DataElementSchema(
     data_keys=['code', 'qualifier', 'authority'],
 )
 
+TARGET_POSITION_REFERENCE_SCHEMA = DataElementSchema(
+    name="target_position_reference",
+    tag_name="a",
+    data_keys=['article_start', 'article_end', 'alinea_start', 'alinea_end'],
+)
+
 DATE_SCHEMA = DataElementSchema(
     name="date",
     tag_name="time",
@@ -87,8 +93,14 @@ ERROR_SCHEMA = DataElementSchema(
     data_keys=['error_code'],
 )
 
-MODIFICATION_SEGMENT = DataElementSchema(
+MODIFICATION_SEGMENT_SCHEMA = DataElementSchema(
     name='modification_segment',
     tag_name='span',
     data_keys=['modification_type', 'keyword'],
+)
+
+DEBUG_KEYWORD_SCHEMA = DataElementSchema(
+    name="debug_keyword",
+    tag_name="span",
+    data_keys=['query'],
 )

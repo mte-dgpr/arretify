@@ -13,7 +13,7 @@ th {
     text-align: left;
 }
 
-a.dsr-arrete_reference {
+a.dsr-arrete_reference, a.dsr-target_position_reference {
     color: var(--text-action-high-blue-france);
 }
 
@@ -31,6 +31,10 @@ a.dsr-arrete_reference {
     position: absolute;
     top: 0;
     left: -1rem;
+}
+
+.dsr-debug_keyword {
+    color: var(--warning-425-625);
 }
 
 /**************** HEADER ****************/
@@ -69,7 +73,7 @@ header > *:last-child {
     padding-bottom: var(--spacing-1);
 }
 
-/**************** HEADER ****************/
+/**************** MAIN CONTENT ****************/
 .dsr-table {
     font-family: monospace;
 }
@@ -89,4 +93,8 @@ header > *:last-child {
 
 .dsr-section_title {
     background-color: var(--colors-title-bg);
+}
+
+.dsr-modification_segment {
+    background-color: var(--background-action-low-blue-france);
 }

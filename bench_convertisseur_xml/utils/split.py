@@ -1,5 +1,5 @@
 import re
-from typing import List, Pattern, cast, List, Callable, Iterable, Union, Dict, Tuple, Literal
+from typing import List, Pattern, cast, List, Callable, Iterable, Iterator, Union, Dict, Tuple, Literal, TypeVar
 from dataclasses import dataclass
 
 from bench_convertisseur_xml.types import PageElementOrString
@@ -10,6 +10,9 @@ StrSplit = Tuple[str, re.Match, str]
 MatchFlow = Iterable[StrOrMatch]
 
 
+T = TypeVar('T')
+
+
 @dataclass
 class MatchNamedGroup:
     name: str
@@ -18,7 +21,7 @@ class MatchNamedGroup:
 
 def split_match_by_named_groups(
     match: re.Match,
-) -> Iterable[str | MatchNamedGroup]:
+) -> Iterator[str | MatchNamedGroup]:
     '''
     Example:
         >>> pattern = r'(?P<first>\w+)-(?P<second>\w+)'
@@ -65,15 +68,15 @@ def split_match_by_named_groups(
 
 
 @remove_empty_strings_from_flow
-def split_string(
-    pattern: Pattern, 
+def split_string_with_regex(
     string: str,
+    pattern: Pattern, 
 ) -> MatchFlow:
     '''
     Example:
         >>> pattern = re.compile(r'\d+')  # Matches sequences of digits
         >>> string = "abc123def456ghi"
-        >>> result = list(split_string(pattern, string))
+        >>> result = list(split_string_with_regex(string, pattern))
         >>> for item in result:
         ...     if isinstance(item, str):
         ...         print(f"Substring: '{item}'")
@@ -100,12 +103,12 @@ def split_string(
         yield string
 
 
-def split_string_at_beginning(
-    pattern: Pattern, 
+def split_string_with_regex_at_beginning(
     string: str,
+    pattern: Pattern, 
 ) -> StrSplit | None:
     '''
-    Like `split_string`, but splits only once at the first match.
+    Like `split_string_with_regex`, but splits only once at the first match.
     '''
     match = pattern.search(string)
     if not match:
@@ -113,14 +116,14 @@ def split_string_at_beginning(
     return (string[:match.start()], match, string[match.end():])
 
 
-def split_string_at_end(
-    pattern: Pattern, 
+def split_string_with_regex_at_end(
     string: str,
+    pattern: Pattern, 
 ) -> StrSplit | None:
     '''
-    Like `split_string`, but splits only once at the last match.
+    Like `split_string_with_regex`, but splits only once at the last match.
     '''
-    results = list(split_string(pattern, string))
+    results = list(split_string_with_regex(string, pattern))
 
     # Find the last Match instance
     match_index = -1
@@ -137,11 +140,64 @@ def split_string_at_end(
     )
 
 
+def map_string_children(
+    children: Iterable[PageElementOrString],
+    func: Callable[[str], Iterable[PageElementOrString]],
+) -> Iterator[PageElementOrString]:
+    '''
+    Example:
+        >>> list(map_string_children(["Hello World", some_tag, "!"], split_words))
+        ['Hello', 'World', some_tag, '!']
+    '''
+    for child in children:
+        if isinstance(child, str):
+            yield from func(child)
+        else:
+            yield child
+
+
+def map_match_flow(
+    match_flow: MatchFlow,
+    func: Callable[[re.Match], Iterable[PageElementOrString]],
+) -> Iterator[PageElementOrString]:
+    '''
+    Example:
+        >>> match_flow = ["Text before", re.match(r"match", "match"), "Text after"]
+        >>> def func(match):
+        ...     return [f"Processed({match.group(0)})"]
+        >>> list(map_match_flow(match_flow, func))
+        ['Text before', 'Processed(match)', 'Text after']
+    '''
+    for element in match_flow:
+        if isinstance(element, re.Match):
+            yield from func(element)
+        else:
+            yield element
+
+
+def reduce_children(
+    children: Iterable[PageElementOrString],
+    elements: List[T],
+    reducer: Callable[[Iterable[PageElementOrString], T], Iterable[PageElementOrString]]
+) -> List[PageElementOrString]:
+    '''
+        Example:
+        >>> def simple_reducer(children, element):
+        ...     return list(children) + [element]
+        >>> reduce_children([], ["Item1", "Item2"], simple_reducer)
+        ['Item1', 'Item2']
+    '''
+    new_children: List[PageElementOrString] = list(children)
+    for element in elements:
+        new_children = list(reducer(new_children, element))
+    return new_children
+
+
 @remove_empty_strings_from_flow
 def merge_matches_with_siblings(
     str_or_match_gen: MatchFlow,
     which_sibling: Literal['previous', 'following'],
-) -> Iterable[str]:
+) -> Iterator[str]:
     '''
     Example:
         >>> def example_gen():
@@ -169,7 +225,13 @@ def merge_matches_with_siblings(
 
 def merge_strings(
     str_or_element_gen: Iterable[PageElementOrString],
-) -> Iterable[PageElementOrString]:
+) -> Iterator[PageElementOrString]:
+    '''
+    Example:
+        >>> elements = ["Hello-", "world!", Tag(name="p"), "More text"]
+        >>> list(merge_strings(elements))
+        ['Hello-world!', <p></p>, 'More text']
+    '''
     accumulator: str | None = None
     for str_or_element in str_or_element_gen:
         if isinstance(str_or_element, str):

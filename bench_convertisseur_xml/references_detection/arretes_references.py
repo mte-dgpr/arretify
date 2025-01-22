@@ -1,16 +1,16 @@
 import re
 from dataclasses import dataclass
 from datetime import date
-from bs4 import Tag, BeautifulSoup, NavigableString
-from typing import Literal, List, get_args, cast, TypedDict, Pattern, Tuple, Iterator, Dict, Optional
+from bs4 import Tag, BeautifulSoup
+from typing import Literal, List, get_args, cast, TypedDict, Pattern, Tuple, Iterator, Dict, Optional, Iterable
 
 from ..settings import APP_ROOT, LOGGER
-from .dates import parse_date, DATE1_RES, DATE2_RES, DateMatchDict, handle_date_match_groupdict, make_date_element
-from bench_convertisseur_xml.utils.text import normalize_text
 from bench_convertisseur_xml.utils.html import PageElementOrString, make_data_tag
-from bench_convertisseur_xml.utils.split import split_string, split_match_by_named_groups
-from bench_convertisseur_xml.utils.regex import without_named_groups
+from bench_convertisseur_xml.utils.split import split_string_with_regex, split_match_by_named_groups, map_string_children, reduce_children, map_match_flow
+from bench_convertisseur_xml.utils.regex import without_named_groups, join_with_or
 from bench_convertisseur_xml.html_schemas import ARRETE_REFERENCE_SCHEMA
+from bench_convertisseur_xml.parsing_misc.patterns import ET_VIRGULE_PATTERN_S
+from bench_convertisseur_xml.parsing_misc.dates import parse_date, DATE1_RES, DATE2_RES, DateMatchDict, handle_date_match_groupdict, make_date_element
 
 ARRETE_TYPES: List[str] = ['préfectoral', 'ministériel']
 
@@ -53,7 +53,6 @@ def _get_authority(match_dict: AuthorityMatchDict) -> Authority | None:
 # part of the designation of the arrete.
 MODIFIE_MODIFIANT = r'(modifié|modifiant)'
 EN_DATE_DU = r'(du|en date du)'
-ET_VIRGULE = r'(\s*(,|,?et)\s*)'
 
 ARRETE_BASE_RES = r'arrêté ((?P<authority>préfectoral|ministériel) (modifié )?)?((?P<qualifier>complémentaire|d\'autorisation|d\'autorisation initial|de mise en demeure|de mesures d\'urgence) )?'
 ARRETE_FILLER_RES = r'transmis a l\'exploitant par (courrier recommandé|courrier)'
@@ -101,20 +100,18 @@ ARRETE_PLURAL_RES_LIST = [
     ARRETE_PLURAL_DATE2_RES,
     ARRETE_PLURAL_CODE_RES,
 ]
-ARRETE_PLURAL_RE = re.compile(f'{ARRETE_BASE_PLURAL_RES}(({'|'.join([ f'({without_named_groups(arrete_res)})' for arrete_res in ARRETE_PLURAL_RES_LIST ])}){ET_VIRGULE}?){{2,}}')
-ARRETE_PLURAL_RE_LIST = [re.compile(regex) for regex in ARRETE_PLURAL_RES_LIST]
-
-ARRETE_IGNORE_RE = re.compile(r'(présent arrêté)|(par arrêté)|(arrêté\S)')
+ARRETE_PLURAL_RE = re.compile(f'{ARRETE_BASE_PLURAL_RES}(({join_with_or(without_named_groups(ARRETE_PLURAL_RES_LIST))}){ET_VIRGULE_PATTERN_S}?){{2,}}', re.IGNORECASE)
+ARRETE_PLURAL_RE_LIST = [re.compile(regex, re.IGNORECASE) for regex in ARRETE_PLURAL_RES_LIST]
 
 
 # TODO : also searches for known codes for arretes directly in text.
 def _parse_arretes_references(
     soup: BeautifulSoup,
     string: str,
-    arrete_re: Pattern,
+    arrete_pattern: Pattern,
     default_data: Dict[str, str | None]=dict()
 ) -> Iterator[PageElementOrString]:
-    for str_or_match in split_string(arrete_re, string):
+    for str_or_match in split_string_with_regex(string, arrete_pattern):
         if isinstance(str_or_match, str):
             yield str_or_match
             continue
@@ -149,40 +146,44 @@ def _parse_arretes_references(
         yield arrete_container
 
 
-def _parse_arretes_references_re_list(
+def _parse_plural_arretes_references(
     soup: BeautifulSoup,
-    children: List[PageElementOrString],
-    arrete_re_list: List[Pattern],
-    default_data: Dict[str, str | None]=dict()
-):
-    new_children: List[PageElementOrString] = []
-    for arrete_re in arrete_re_list:
-        new_children = []
-        for child in children:
-            if isinstance(child, str):
-                new_children.extend(list(_parse_arretes_references(soup, child, arrete_re, default_data)))
-            else:
-                new_children.append(child)
-        children = new_children
-    return children
+    children: Iterable[PageElementOrString],
+) -> Iterable[PageElementOrString]:
+    def _render_match(match: re.Match):
+        # Parse attributes in common
+        match_dict = match.groupdict()
+        authority = _get_authority(cast(AuthorityMatchDict, match_dict))
+        return reduce_children(
+            [match.group(0)],
+            ARRETE_PLURAL_RE_LIST,
+            lambda children, arrete_pattern: map_string_children(
+                children, 
+                lambda string: _parse_arretes_references(soup, string, arrete_pattern, dict(authority=authority))
+            )
+        )
+
+    # For plural arretes, we need to first parse some of the attributes in common
+    # before parsing each individual arrete reference.
+    return map_string_children(
+        children, 
+        lambda string: map_match_flow(
+            split_string_with_regex(string, ARRETE_PLURAL_RE), 
+            _render_match
+        )
+    )
 
 
 def parse_arretes_references(
     soup: BeautifulSoup,
-    children: List[PageElementOrString],
+    children: Iterable[PageElementOrString],
 ) -> List[PageElementOrString]:
-    children = _parse_arretes_references_re_list(soup, children, ARRETE_RE_LIST)
-
-    new_children: List[PageElementOrString] = []
-    for child in children:
-        if isinstance(child, str):
-            for str_or_match in split_string(ARRETE_PLURAL_RE, child):
-                if isinstance(str_or_match, str):
-                    new_children.append(str_or_match)
-                else:
-                    match_dict = str_or_match.groupdict()
-                    authority = _get_authority(cast(AuthorityMatchDict, match_dict))
-                    new_children.extend(_parse_arretes_references_re_list(soup, [str_or_match.group(0)], ARRETE_PLURAL_RE_LIST, dict(authority=authority)))
-        else:
-            new_children.append(child)
-    return new_children
+    new_children = reduce_children(
+        children,
+        ARRETE_RE_LIST,
+        lambda children, arrete_pattern: map_string_children(
+            children, 
+            lambda string: _parse_arretes_references(soup, string, arrete_pattern)
+        )
+    )
+    return list(_parse_plural_arretes_references(soup, new_children))
