@@ -4,9 +4,8 @@ from bs4 import BeautifulSoup
 
 from .arretes_references import (
     _parse_arretes_references, parse_arretes_references, ARRETE_DATE1_RE,
-    ARRETE_PLURAL_RE, ARRETE_BASE_PLURAL_RES, ARRETE_PLURAL_RES_LIST, ET_VIRGULE
+    ARRETE_PLURAL_RE, ARRETE_BASE_PLURAL_RES, ARRETE_PLURAL_RES_LIST
 )
-from bench_convertisseur_xml.utils.regex import without_named_groups
 
 
 class TestParseArreteReferencesSingleRegex(unittest.TestCase):
@@ -57,7 +56,6 @@ class TestParseArreteReferencesAll(unittest.TestCase):
             '<a class="dsr-arrete_reference" data-authority="préfectoral" data-code="1636">n° 1636 du <time class="dsr-date" datetime="1995-03-24">24/03/95</time></a>',
             ' blabla.'
         ]
-        print([str(element) for element in arretes])
         assert [str(element) for element in arretes] == expected_elements
 
 

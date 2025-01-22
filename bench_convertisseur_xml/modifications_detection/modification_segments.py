@@ -4,10 +4,10 @@ from dataclasses import dataclass
 
 from bs4 import BeautifulSoup, Tag, PageElement
 
-from bench_convertisseur_xml.utils.split import split_string_at_beginning, split_string_at_end, merge_strings
+from bench_convertisseur_xml.utils.split import split_string_with_regex_at_beginning, merge_strings, split_string_with_regex_at_end
 from bench_convertisseur_xml.utils.html import make_data_tag, make_new_tag, PageElementOrString
 from bench_convertisseur_xml.utils.generators import remove_empty_strings_from_flow
-from bench_convertisseur_xml.html_schemas import MODIFICATION_SEGMENT
+from bench_convertisseur_xml.html_schemas import MODIFICATION_SEGMENT_SCHEMA
 from bench_convertisseur_xml.types import ModificationType, PageElementOrString
 
 SENTENCE_SPLIT_PATTERN = re.compile(r'\.')
@@ -26,6 +26,7 @@ ADD_RE_LIST = [
 UPDATE_RE_LIST = [
     re.compile(r'modif\w*', re.IGNORECASE),
     re.compile(r'remplac\w*', re.IGNORECASE),
+    re.compile(r'mise? [aà] jour', re.IGNORECASE),
 ]
 
 PATTERNS_AND_TYPES = (
@@ -61,7 +62,7 @@ def _tag_modification_segments(
                     yield element_or_group.previous[:match.start()]
                     yield make_data_tag(
                         soup, 
-                        MODIFICATION_SEGMENT, 
+                        MODIFICATION_SEGMENT_SCHEMA, 
                         contents=[
                             make_new_tag(soup, 'b', contents=[match.group(0)]),
                             element_or_group.previous[match.end():],
@@ -84,7 +85,7 @@ def _tag_modification_segments(
                 if match:
                     yield make_data_tag(
                         soup, 
-                        MODIFICATION_SEGMENT, 
+                        MODIFICATION_SEGMENT_SCHEMA, 
                         contents=[
                             element_or_group.next[:match.start()],
                             make_new_tag(soup, 'b', contents=[match.group(0)]),
@@ -119,7 +120,7 @@ def _preprocess_children_by_adding_target_groups(
             previous_sibling_remainder: str | None = None
             previous_sibling_str: str | None = None
             if isinstance(previous_sibling, str):
-                split_match = split_string_at_end(SENTENCE_SPLIT_PATTERN, previous_sibling)
+                split_match = split_string_with_regex_at_end(previous_sibling, SENTENCE_SPLIT_PATTERN)
                 if split_match:
                     previous_sibling_remainder, match, previous_sibling_str = split_match
                     previous_sibling_remainder += match.group(0)
@@ -132,7 +133,7 @@ def _preprocess_children_by_adding_target_groups(
             if next_children:
                 next_sibling = next_children.pop(0)
             if isinstance(next_sibling, str):
-                split_match = split_string_at_beginning(SENTENCE_SPLIT_PATTERN, next_sibling)
+                split_match = split_string_with_regex_at_beginning(next_sibling, SENTENCE_SPLIT_PATTERN)
                 if split_match:
                     next_sibling_str, match, next_sibling_remainder = split_match
                     next_sibling_remainder = match.group(0) + next_sibling_remainder 

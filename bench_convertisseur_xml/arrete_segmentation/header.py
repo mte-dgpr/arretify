@@ -13,7 +13,7 @@ from .config import (
 from .parse_section import parse_section
 from .parse_list import parse_list, clean_bullet_list, list_indentation
 from bench_convertisseur_xml.utils.html import make_data_tag, PageElementOrString, wrap_in_tag, make_new_tag
-from bench_convertisseur_xml.utils.split import merge_matches_with_siblings, split_string
+from bench_convertisseur_xml.utils.split import merge_matches_with_siblings, split_string_with_regex
 from bench_convertisseur_xml.html_schemas import ENTITY_SCHEMA, IDENTIFICATION_SCHEMA, VISA_SCHEMA, MOTIF_SCHEMA
 from bench_convertisseur_xml.types import DataElementSchema
 
@@ -32,9 +32,9 @@ def _process_entity_pile(pile: List[str]) -> List[str]:
     entity_line = " ".join(pile)
 
     # Split by entity names
-    return cast(List[str], list(merge_matches_with_siblings(split_string(
-        SERVICE_AND_REFERENCE_PATTERN,
+    return cast(List[str], list(merge_matches_with_siblings(split_string_with_regex(
         entity_line,
+        SERVICE_AND_REFERENCE_PATTERN,
     ), 'following')))
 
 
