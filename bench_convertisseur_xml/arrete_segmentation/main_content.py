@@ -100,5 +100,4 @@ def parse_main_content(soup: BeautifulSoup, main_content: Tag, lines: List[str],
                 else:
                     line = lines.pop(0)
                     alinea_element.append(line)
-                    if not is_line_with_semicolumn(line):
-                        break
+                    break
