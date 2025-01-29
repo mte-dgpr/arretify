@@ -33,8 +33,8 @@ def _process_entity_pile(pile: List[str]) -> List[str]:
 
     # Split by entity names
     return cast(List[str], list(merge_matches_with_siblings(split_string_with_regex(
-        entity_line,
         SERVICE_AND_REFERENCE_PATTERN,
+        entity_line,
     ), 'following')))
 
 

@@ -14,9 +14,9 @@ class TestParseTargetPositionReferences(unittest.TestCase):
         children = insert_debug_keywords(soup, soup.children, 'alinéa')
         expected_children = [
             'Premier ',
-            '<span class="dsr-debug_keyword" data-keyword="alinéa">alinéa</span>',
+            '<span class="dsr-debug_keyword" data-query="alinéa">alinéa</span>',
             ' et 2ème ',
-            '<span class="dsr-debug_keyword" data-keyword="alinéa">alinéa</span>',
+            '<span class="dsr-debug_keyword" data-query="alinéa">alinéa</span>',
             ' du présent article'
         ]
         assert [str(child) for child in children] == expected_children
@@ -26,7 +26,7 @@ class TestParseTargetPositionReferences(unittest.TestCase):
         children = insert_debug_keywords(soup, soup.children, 'alinéa')
         expected_children = [
             'Premier ',
-            '<span class="dsr-debug_keyword" data-keyword="alinéa">alinea</span>',
+            '<span class="dsr-debug_keyword" data-query="alinéa">alinea</span>',
             ' du présent article',
         ]
         assert [str(child) for child in children] == expected_children

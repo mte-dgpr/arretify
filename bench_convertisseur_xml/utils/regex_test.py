@@ -41,7 +41,7 @@ class TestSubWithMatch(unittest.TestCase):
 class TestWithoutNamedGroups(unittest.TestCase):
 
     def test_simple(self):
-        assert without_named_groups([r'(([nN]° ?(?P<code1>\S+))|(?P<code2>\S+[/\-]\S+))(?=\s|\.|$|,|\)|;)']) == [r'(([nN]° ?(\S+))|(\S+[/\-]\S+))(?=\s|\.|$|,|\)|;)']
+        assert without_named_groups(r'(([nN]° ?(?P<code1>\S+))|(?P<code2>\S+[/\-]\S+))(?=\s|\.|$|,|\)|;)') == r'(([nN]° ?(\S+))|(\S+[/\-]\S+))(?=\s|\.|$|,|\)|;)'
 
 
 class TestIncrementNamedGroups(unittest.TestCase):

@@ -1,7 +1,7 @@
 from collections.abc import Callable
 from typing import Any, cast
 
-from .html import PageElementOrString
+from bench_convertisseur_xml.types import PageElementOrString
 
 
 # REF : https://mypy.readthedocs.io/en/stable/generics.html#declaring-decorators

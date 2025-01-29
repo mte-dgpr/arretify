@@ -5,102 +5,126 @@ from bs4 import Tag, BeautifulSoup
 from typing import Iterable, TypedDict, Tuple, cast, Pattern, Dict, Iterable, List
 
 from ..settings import APP_ROOT, LOGGER
-from bench_convertisseur_xml.utils.split import map_string_children, split_string_with_regex, reduce_children, map_match_flow, merge_strings
+from bench_convertisseur_xml.utils.functional import flat_map_non_string, flat_map_string
+from bench_convertisseur_xml.utils.split import split_string_with_regex, reduce_children, merge_strings
 from bench_convertisseur_xml.html_schemas import TARGET_POSITION_REFERENCE_SCHEMA
 from bench_convertisseur_xml.utils.html import make_data_tag, PageElementOrString
-from bench_convertisseur_xml.utils.regex import join_with_or, named_groups_indices, without_named_groups
+from bench_convertisseur_xml.utils.regex import join_with_or, named_groups_indices, without_named_groups_many
 from bench_convertisseur_xml.parsing_misc.patterns import ET_VIRGULE_PATTERN_S, EME_PATTERN_S, ORDINAL_PATTERN_S, APOSTROPHE_PATTERN_S, ordinal_str_to_int
+from bench_convertisseur_xml import regex_engine as ree
 
 # TODO : 
 # - Phrase and word index 
 
-ARTICLE_NUM_PATTERN_S = r'\d+(\.(\d+|[a-zA-Z]+))*\.?'
-# REF : https://reflex.sne.fr/codes-officiels
-CODE_ARTICLE_NUM_PATTERN_S = r'(L|R|D)\.?\s*(\d+\s*-?\s*)*\d+'
 
 # Order of patterns matters, from most specific to less specific.
-ARTICLE_NUM_PATTERN_S_LIST = [
-    f'(?P<code_article1>{CODE_ARTICLE_NUM_PATTERN_S})',
-    f'(?P<article_ordinal1>{ORDINAL_PATTERN_S})',
-    f'(?P<article_num1>{ARTICLE_NUM_PATTERN_S}){EME_PATTERN_S}?',
-]
-
-ARTICLE_RANGE_PATTERN_S = f'({join_with_or(ARTICLE_NUM_PATTERN_S_LIST)}) à (l{APOSTROPHE_PATTERN_S}article )?({join_with_or(named_groups_indices(ARTICLE_NUM_PATTERN_S_LIST, 2))})'
-
-ARTICLE_PATTERN_S = f'articles? ({join_with_or(ARTICLE_NUM_PATTERN_S_LIST)})'
-
-# Order of patterns matters, from most specific to less specific.
-ARTICLE_PLURAL_PATTERN_S_LIST = [ARTICLE_RANGE_PATTERN_S] + ARTICLE_NUM_PATTERN_S_LIST
-ARTICLE_PLURAL_PATTERN_LIST = [re.compile(pattern_s, re.IGNORECASE) for pattern_s in ARTICLE_PLURAL_PATTERN_S_LIST]
-ARTICLE_PLURAL_PATTERN = re.compile(
-    f'articles? (({join_with_or(without_named_groups(ARTICLE_PLURAL_PATTERN_S_LIST))}){ET_VIRGULE_PATTERN_S}?)+{ET_VIRGULE_PATTERN_S}({join_with_or(without_named_groups(ARTICLE_PLURAL_PATTERN_S_LIST))})',
-    re.IGNORECASE
+ARTICLE_ID_NODE = ree.Group(
+    ree.Branching([
+        # REF : https://reflex.sne.fr/codes-officiels
+        r'(?P<code>(L|R|D)\.?\s*(\d+\s*-?\s*)*\d+)',
+        r'(?P<ordinal>' + ORDINAL_PATTERN_S + r')',
+        r'(?P<num>\d+(\.(\d+|[a-zA-Z]+))*\.?)' + EME_PATTERN_S + r'?',
+    ]), 
+    group_name='__article_id'
 )
 
 
-ALINEA_NUM_BEFORE_PATTERN_S = f'((?P<alinea_num>\d+){EME_PATTERN_S}?|(?P<alinea_ordinal>{ORDINAL_PATTERN_S})) alin[ée]a'
-ALINEA_NUM_AFTER_PATTERN_S = f'alin[ée]a ((?P<alinea_num>\d+){EME_PATTERN_S}?|(?P<alinea_ordinal>{ORDINAL_PATTERN_S}))'
-ALINEA_SYMBOL_PATTERN_S = f'(?P<alinea_num>\d+)°'
+ALINEA_NODE = ree.Group(
+    ree.Branching([
+        r'((?P<alinea_num>\d+)' + EME_PATTERN_S + r'?|(?P<alinea_ordinal>' + ORDINAL_PATTERN_S + r')) alin[ée]a',
+        r'alin[ée]a ((?P<alinea_num>\d+)' + EME_PATTERN_S + r'?|(?P<alinea_ordinal>' + ORDINAL_PATTERN_S + r'))',
+        r'(?P<alinea_num>\d+)°',
+    ]), 
+    group_name='__alinea'
+)
 
-TARGET_POSITION_ALINEA_AND_ARTICLE_PATTERN_1 = re.compile(
-    f'{ALINEA_NUM_BEFORE_PATTERN_S} (de l{APOSTROPHE_PATTERN_S})?{ARTICLE_PATTERN_S}', re.IGNORECASE)
-TARGET_POSITION_ALINEA_AND_ARTICLE_PATTERN_2 = re.compile(
-    f'{ALINEA_NUM_AFTER_PATTERN_S} (de l{APOSTROPHE_PATTERN_S})?{ARTICLE_PATTERN_S}', re.IGNORECASE)
-TARGET_POSITION_ALINEA_AND_ARTICLE_PATTERN_3 = re.compile(
-    f'{ALINEA_SYMBOL_PATTERN_S} (de l{APOSTROPHE_PATTERN_S})?{ARTICLE_PATTERN_S}', re.IGNORECASE)
 
-TARGET_POSITION_ARTICLE_PATTERN = re.compile(f'{ARTICLE_PATTERN_S}', re.IGNORECASE)
-TARGET_POSITION_ARTICLE_RANGE_PATTERN = re.compile(f'articles? {ARTICLE_RANGE_PATTERN_S}', re.IGNORECASE)
+ARTICLE_RANGE_NODE = ree.Sequence([
+    ARTICLE_ID_NODE,
+    r' à (l' + APOSTROPHE_PATTERN_S + r'article )?',
+    ARTICLE_ID_NODE,
+])
+
 
 # Order of patterns matters, from most specific to less specific.
-TARGET_POSITION_PATTERN_LIST = [
-    TARGET_POSITION_ALINEA_AND_ARTICLE_PATTERN_1, 
-    TARGET_POSITION_ALINEA_AND_ARTICLE_PATTERN_2,
-    TARGET_POSITION_ALINEA_AND_ARTICLE_PATTERN_3,
-    TARGET_POSITION_ARTICLE_RANGE_PATTERN,
-    TARGET_POSITION_ARTICLE_PATTERN,
-]
+TARGET_POSITION_NODE = ree.Group(
+    ree.Branching([
+        ree.Sequence([
+            ALINEA_NODE,
+            r' (de l' + APOSTROPHE_PATTERN_S + r')?articles? ',
+            ARTICLE_ID_NODE,
+        ]),
+        
+        ree.Sequence([
+            r'articles? ',
+            ARTICLE_RANGE_NODE,
+        ]),
+
+        ree.Sequence([
+            r'articles? ',
+            ARTICLE_ID_NODE,
+        ]),
+    ]), 
+    group_name='__target_position'
+)
 
 
-class ArticleMatchDict(TypedDict):
-    article_num1: str | None
-    article_ordinal1: str | None
-    article_num2: str | None
-    article_ordinal2: str | None
+TARGET_POSITION_PLURAL_NODE = ree.Group(
+    ree.Sequence([
+        ree.Group(
+            ree.Sequence([
+                r'articles? ',
+                # Order of patterns matters, from most specific to less specific.
+                ree.Branching([
+                    ARTICLE_RANGE_NODE, 
+                    ARTICLE_ID_NODE,
+                ]),
+            ]), 
+            group_name='__target_position'
+        ),
+
+        ET_VIRGULE_PATTERN_S,
+        
+        ree.Quantifier(
+            ree.Sequence([
+                ree.Group(
+                    # Order of patterns matters, from most specific to less specific.
+                    ree.Branching([
+                        ARTICLE_RANGE_NODE, 
+                        ARTICLE_ID_NODE,
+                    ]), 
+                    group_name='__target_position'
+                ),
+                ET_VIRGULE_PATTERN_S,
+            ]),
+            '*',
+        ),
+        
+        # Order of patterns matters, from most specific to less specific.
+        ree.Group(
+            ree.Branching([
+                ARTICLE_RANGE_NODE,
+                ARTICLE_ID_NODE,
+            ]),
+            group_name='__target_position'
+        ),
+    ]), 
+    group_name='__target_position_plural'
+)
 
 
-class AlineaMatchDict(TypedDict):
-    alinea_num: str | None
-    alinea_ordinal: str | None
+def _handle_article_match_dict(match_dict: ree.MatchDict) -> Dict:
+    article_num = match_dict.get('num')
+    article_ordinal = match_dict.get('ordinal')
+    article_code = match_dict.get('code')
+
+    article_id = article_num or article_code
+    if article_ordinal:
+        article_id = ordinal_str_to_int(article_ordinal)
+    return dict(article_id=article_id)
 
 
-class TargetPositionMatchDict(ArticleMatchDict, AlineaMatchDict):
-    pass
-
-
-def _handle_article_range_match_groupdict(match_dict: TargetPositionMatchDict) -> Dict:
-    article_num1 = match_dict.get('article_num1')
-    article_ordinal1 = match_dict.get('article_ordinal1')
-    code_article1 = match_dict.get('code_article1')
-
-    article_num2 = match_dict.get('article_num2')
-    article_ordinal2 = match_dict.get('article_ordinal2')
-    code_article2 = match_dict.get('code_article2')
-
-    start = article_num1 or code_article1
-    if article_ordinal1:
-        start = ordinal_str_to_int(article_ordinal1)
-    if not start:
-        raise RuntimeError('No article number found')
-
-    end = article_num2 or code_article2
-    if article_ordinal2:
-        end = ordinal_str_to_int(article_ordinal2)
-    
-    return dict(article_start=start, article_end=end)
-
-
-def _handle_alinea_match_groupdict(match_dict: AlineaMatchDict) -> Dict:
+def _handle_alinea_match_dict(match_dict: ree.MatchDict) -> Dict:
     alinea_num = match_dict.get('alinea_num')
     alinea_ordinal = match_dict.get('alinea_ordinal')
 
@@ -115,63 +139,88 @@ def _handle_alinea_match_groupdict(match_dict: AlineaMatchDict) -> Dict:
     return dict(alinea_start=alinea_start, alinea_end=None)
 
 
+def _render_target_position_group_match(soup, match_group: ree.MatchGroup) -> Tag:
+    contents: List[PageElementOrString] = []
+    alinea_dict: Dict | None = None
+    article_start_dict: Dict | None = None
+    article_end_dict: Dict | None = None
+
+    for str_or_group in match_group.children:
+        if isinstance(str_or_group, str):
+            contents.append(str_or_group)
+        
+        elif str_or_group.group_name == '__article_id':
+            contents.extend(str_or_group.string_children)
+            if not article_start_dict:
+                article_start_dict = _handle_article_match_dict(str_or_group.match_dict)
+            elif not article_end_dict:
+                article_end_dict = _handle_article_match_dict(str_or_group.match_dict)
+            else:
+                raise RuntimeError('Too many article matches')
+        
+        elif str_or_group.group_name == '__alinea':
+            contents.extend(str_or_group.string_children)
+            alinea_dict = _handle_alinea_match_dict(str_or_group.match_dict)
+        
+        else:
+            raise RuntimeError(f'Unknown group {str_or_group.group_name}')
+        
+    if not article_start_dict:
+        raise RuntimeError('No article found')
+    
+    return make_data_tag(
+        soup,
+        TARGET_POSITION_REFERENCE_SCHEMA, 
+        data=dict(
+            article_start=article_start_dict['article_id'],
+            article_end=article_end_dict['article_id'] if article_end_dict else None,
+            alinea_start=alinea_dict['alinea_start'] if alinea_dict else None,
+            alinea_end=None,
+        ),
+        contents=contents,
+    )
+
+
 def _parse_target_position_references(
     soup: BeautifulSoup,
-    string: str,
-    target_position_pattern: Pattern,
+    children: Iterable[PageElementOrString],
 ) -> Iterable[PageElementOrString]:
-    def _render_match(soup, match: re.Match):
-        target_position_data = dict()
-        match_dict = cast(TargetPositionMatchDict, match.groupdict())
-        target_position_data.update(_handle_article_range_match_groupdict(match_dict))
-        target_position_data.update(_handle_alinea_match_groupdict(match_dict))
-        yield make_data_tag(
-            soup,
-            TARGET_POSITION_REFERENCE_SCHEMA, 
-            data=target_position_data,
-            contents=[match.group(0)],
+    return flat_map_string(
+        children,
+        lambda string: ree.flat_map_match_group(
+            ree.split_string(TARGET_POSITION_NODE, string),
+            lambda target_position_group_match: [
+                _render_target_position_group_match(
+                    soup, 
+                    target_position_group_match,
+                ),
+            ],
+            allowed_group_names=['__target_position'],
         )
-
-    return map_match_flow(
-        split_string_with_regex(string, target_position_pattern),
-        lambda match: _render_match(soup, match),
     )
-            
+
 
 def _parse_plural_target_position_references(
     soup: BeautifulSoup,
     children: Iterable[PageElementOrString],
-) -> Iterable[PageElementOrString]:
-    def _render_plural_match(match: re.Match):
-        new_children = reduce_children(
-            [match.group(0)],
-            ARTICLE_PLURAL_PATTERN_LIST,
-            lambda children, pattern: map_string_children(
-                children, 
-                lambda string: _parse_target_position_references(soup, string, pattern)
-            )
-        )
-
-        # If there's a string at the beginning of the match that doesn't correspond
-        # with any reference e.g. "articles 1, 2", then add it to the first tag (<a>articles 1</a>, <a>2</a>), 
-        # so that the matched text (e.g. "articles") is marked as handled and not detected
-        # later by a new parsing operation.
-        new_children = list(merge_strings(new_children))
-        if isinstance(new_children[0], str):
-            first_tag = new_children[1]
-            assert isinstance(first_tag, Tag)
-            first_tag.insert(0, new_children[0])
-            new_children = new_children[1:]
-
-        return new_children
-
-    # For plural target positions, we need to first detect the whole
-    # expression, with a list of articles, then single out each reference with a list of patterns.
-    return map_string_children(
+):
+    # For plural arretes, we need to first parse some of the attributes in common
+    # before parsing each individual arrete reference.
+    return flat_map_string(
         children,
-        lambda string: map_match_flow(
-            split_string_with_regex(string, ARTICLE_PLURAL_PATTERN),
-            _render_plural_match,
+        lambda string: ree.flat_map_match_group(
+            ree.split_string(TARGET_POSITION_PLURAL_NODE, string),
+            lambda target_position_plural_group_match: ree.flat_map_match_group(
+                target_position_plural_group_match.children,
+                lambda target_position_group_match: [
+                    _render_target_position_group_match(
+                        soup, 
+                        target_position_group_match,
+                    ),
+                ],
+                allowed_group_names=['__target_position'],
+            ),
+            allowed_group_names=['__target_position_plural'],
         )
     )
 
@@ -182,11 +231,4 @@ def parse_target_position_references(
 ) -> List[PageElementOrString]:
     # First check for plural, cause it is the most exhaustive pattern
     new_children = list(_parse_plural_target_position_references(soup, children))
-    return reduce_children(
-        new_children,
-        TARGET_POSITION_PATTERN_LIST, 
-        lambda children, pattern: map_string_children(
-            children, 
-            lambda string: _parse_target_position_references(soup, string, pattern)
-        ),
-    )
+    return list(_parse_target_position_references(soup, new_children))

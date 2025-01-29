@@ -120,7 +120,7 @@ def _preprocess_children_by_adding_target_groups(
             previous_sibling_remainder: str | None = None
             previous_sibling_str: str | None = None
             if isinstance(previous_sibling, str):
-                split_match = split_string_with_regex_at_end(previous_sibling, SENTENCE_SPLIT_PATTERN)
+                split_match = split_string_with_regex_at_end(SENTENCE_SPLIT_PATTERN, previous_sibling)
                 if split_match:
                     previous_sibling_remainder, match, previous_sibling_str = split_match
                     previous_sibling_remainder += match.group(0)
@@ -133,7 +133,7 @@ def _preprocess_children_by_adding_target_groups(
             if next_children:
                 next_sibling = next_children.pop(0)
             if isinstance(next_sibling, str):
-                split_match = split_string_with_regex_at_beginning(next_sibling, SENTENCE_SPLIT_PATTERN)
+                split_match = split_string_with_regex_at_beginning(SENTENCE_SPLIT_PATTERN, next_sibling)
                 if split_match:
                     next_sibling_str, match, next_sibling_remainder = split_match
                     next_sibling_remainder = match.group(0) + next_sibling_remainder 
