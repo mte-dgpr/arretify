@@ -11,8 +11,12 @@ def sub_with_match(string: str, match: re.Match, group: int | str=0) -> str:
     return string[:match.start(group)] + string[match.end(group):]
 
 
-def without_named_groups(pattern_strings: List[str]):
-    return [NAMED_GROUP_PATTERN.sub('', pattern_string) for pattern_string in pattern_strings]
+def without_named_groups(pattern_string: str):
+    return NAMED_GROUP_PATTERN.sub('', pattern_string)
+
+
+def without_named_groups_many(pattern_strings: List[str]):
+    return [without_named_groups(pattern_string) for pattern_string in pattern_strings]
 
 
 def join_with_or(pattern_strings: List[str]):

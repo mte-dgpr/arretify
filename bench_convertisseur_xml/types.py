@@ -19,3 +19,6 @@ class ModificationType(Enum):
 
 
 PageElementOrString = Union[PageElement, str]
+
+PatternString = str
+GroupName = str

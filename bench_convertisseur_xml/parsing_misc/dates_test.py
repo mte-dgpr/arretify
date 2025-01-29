@@ -3,60 +3,11 @@ from typing import Dict
 import unittest
 from datetime import date
 
+from bs4 import BeautifulSoup
+
 from bench_convertisseur_xml.utils.regex import search_groupdict
-
-from .dates import handle_date_match_groupdict, DATE1_RES, DATE2_RES, parse_date_attribute, render_date_attribute
-
-
-class TestParseDateFunction(unittest.TestCase):
-    def test_date1_valid_cases(self):
-        # Test valid "DATE1_RES" cases
-        assert handle_date_match_groupdict(search_groupdict(DATE1_RES, "1er janvier 2023")) == date(2023, 1, 1)
-        assert handle_date_match_groupdict(search_groupdict(DATE1_RES, "15 février 2020")) == date(2020, 2, 15)
-        assert handle_date_match_groupdict(search_groupdict(DATE1_RES, "3 mars 99")) == date(1999, 3, 3)
-        assert handle_date_match_groupdict(search_groupdict(DATE1_RES, "10 octobre 2000")) == date(2000, 10, 10)
-        assert handle_date_match_groupdict(search_groupdict(DATE1_RES, "1er décembre 1999")) == date(1999, 12, 1)
-        assert handle_date_match_groupdict(search_groupdict(DATE1_RES, "1 janvier 20")) == date(2020, 1, 1)
-
-    def test_date2_valid_cases(self):
-        # Test valid "DATE2_RES" cases
-        assert handle_date_match_groupdict(search_groupdict(DATE2_RES, "15/02/2023")) == date(2023, 2, 15)
-        assert handle_date_match_groupdict(search_groupdict(DATE2_RES, "03/03/99")) == date(1999, 3, 3)
-        assert handle_date_match_groupdict(search_groupdict(DATE2_RES, "10/10/2000")) == date(2000, 10, 10)
-        assert handle_date_match_groupdict(search_groupdict(DATE2_RES, "01/12/1999")) == date(1999, 12, 1)
-        assert handle_date_match_groupdict(search_groupdict(DATE2_RES, "31/01/1990")) == date(1990, 1, 31)
-
-    def test_date1_invalid_cases(self):
-        # Test invalid "DATE1_RES" cases
-        assert search_groupdict(DATE1_RES, "janvier 2023") is None # Missing day
-        assert search_groupdict(DATE1_RES, "1 janvier") is None # Missing year
-        assert search_groupdict(DATE1_RES, "1er unknownmonth 2023") is None # Invalid month
-        assert search_groupdict(DATE1_RES, "1er janvier 23a") is None # Invalid year format
-
-    def test_date2_invalid_cases(self):
-        # Test invalid "DATE2_RES" cases
-        assert search_groupdict(DATE1_RES, "15/02") is None # Missing year
-        assert search_groupdict(DATE1_RES, "15/02/20a3") is None # Invalid year format
-        assert search_groupdict(DATE1_RES, "15-02-2023") is None # Wrong delimiter
-        assert search_groupdict(DATE1_RES, "15//2023") is None # Missing month
-
-    def test_ambiguous_or_malformed_inputs(self):
-        # Test ambiguous or malformed inputs
-        assert search_groupdict(DATE1_RES, "2023 janvier 1er") is None # Wrong order
-        assert search_groupdict(DATE2_RES, "15/02/99/extra") is None # Extra text
-
-    def test_edge_cases(self):
-        # Test edge cases
-        assert handle_date_match_groupdict(search_groupdict(DATE1_RES, "1er janvier 00")) == date(2000, 1, 1)  # Year 200
-        assert handle_date_match_groupdict(search_groupdict(DATE1_RES, "1 janvier 99")) == date(1999, 1, 1)  # Year 199
-        assert search_groupdict(DATE1_RES, "") is None # Empty string
-
-    def test_date1_and_date2_end_characters_cases(self):
-        # Test valid "DATE1_RES" cases
-        assert handle_date_match_groupdict(search_groupdict(DATE1_RES, "1er janvier 2023. Bla")) == date(2023, 1, 1)
-        assert handle_date_match_groupdict(search_groupdict(DATE1_RES, "15 février 2020 ")) == date(2020, 2, 15)
-        # Test valid "DATE2_RES" cases
-        assert handle_date_match_groupdict(search_groupdict(DATE2_RES, "15/02/2023)")) == date(2023, 2, 15)
+from .dates import _handle_date_match_dict, DATE_NODE, parse_date_attribute, render_date_attribute, render_date_match_group
+from bench_convertisseur_xml import regex_engine as ree
 
 
 class TestStrToDateAndDateToStr(unittest.TestCase):
@@ -65,3 +16,52 @@ class TestStrToDateAndDateToStr(unittest.TestCase):
 
     def test_render_date_attribute(self):
         assert render_date_attribute(date(year=2001, month=1, day=31)) == '2001-01-31'
+
+
+class TestRenderDateMatchGroup(unittest.TestCase):
+
+    def test_with_alinea(self):
+        assert _parsed_elements("24/03/95") == ['<time class="dsr-date" datetime="1995-03-24">24/03/95</time>']
+
+    def test_date1_valid_cases(self):
+        assert _parsed_elements("1er janvier 2023") == ['<time class="dsr-date" datetime="2023-01-01">1er janvier 2023</time>']
+        assert _parsed_elements("15 février 2020") == ['<time class="dsr-date" datetime="2020-02-15">15 février 2020</time>']
+        assert _parsed_elements("3 mars 99") == ['<time class="dsr-date" datetime="1999-03-03">3 mars 99</time>']
+        assert _parsed_elements("10 octobre 2000") == ['<time class="dsr-date" datetime="2000-10-10">10 octobre 2000</time>']
+        assert _parsed_elements("1er décembre 1999") == ['<time class="dsr-date" datetime="1999-12-01">1er décembre 1999</time>']
+        assert _parsed_elements("1 janvier 20") == ['<time class="dsr-date" datetime="2020-01-01">1 janvier 20</time>']
+
+    def test_date2_valid_cases(self):
+        assert _parsed_elements("15/02/2023") == ['<time class="dsr-date" datetime="2023-02-15">15/02/2023</time>']
+        assert _parsed_elements("03/03/99") == ['<time class="dsr-date" datetime="1999-03-03">03/03/99</time>']
+        assert _parsed_elements("10/10/2000") == ['<time class="dsr-date" datetime="2000-10-10">10/10/2000</time>']
+        assert _parsed_elements("01/12/1999") == ['<time class="dsr-date" datetime="1999-12-01">01/12/1999</time>']
+        assert _parsed_elements("31/01/1990") == ['<time class="dsr-date" datetime="1990-01-31">31/01/1990</time>']
+
+    def test_edge_cases(self):
+        assert _parsed_elements("1er janvier 00") == ['<time class="dsr-date" datetime="2000-01-01">1er janvier 00</time>']
+        assert _parsed_elements("1 janvier 99") == ['<time class="dsr-date" datetime="1999-01-01">1 janvier 99</time>']
+
+    def test_date_invalid_cases(self):
+        assert _parsed_elements("janvier 2023") == ['janvier 2023'] # Missing day
+        assert _parsed_elements("1 janvier") == ['1 janvier'] # Missing year
+        assert _parsed_elements("1er unknownmonth 2023") == ['1er unknownmonth 2023'] # Invalid month
+        assert _parsed_elements("15/02/20a3") == ['15/02/20a3'] # Invalid year format
+        assert _parsed_elements("2023 janvier 1er") == ['2023 janvier 1er'] # Wrong order
+
+    def test_date1_and_date2_end_characters_cases(self):
+        assert _parsed_elements("1er janvier 2023. Bla") == ['<time class="dsr-date" datetime="2023-01-01">1er janvier 2023</time>', '. Bla']
+        assert _parsed_elements("15 février 2020 ") == ['<time class="dsr-date" datetime="2020-02-15">15 février 2020</time>', ' ']
+        assert _parsed_elements("15/02/2023)") == ['<time class="dsr-date" datetime="2023-02-15">15/02/2023</time>', ')']
+
+
+def _parsed_elements(string: str) -> list[str]:
+    soup = BeautifulSoup(string, features='html.parser')
+    elements = ree.flat_map_match_group(
+        ree.split_string(DATE_NODE, string),
+        lambda match_group: [
+            render_date_match_group(soup, match_group),
+        ],
+        allowed_group_names=[DATE_NODE.group_name],
+    )
+    return [str(element) for element in elements]

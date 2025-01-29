@@ -69,14 +69,14 @@ def split_match_by_named_groups(
 
 @remove_empty_strings_from_flow
 def split_string_with_regex(
-    string: str,
     pattern: Pattern, 
+    string: str,
 ) -> MatchFlow:
     '''
     Example:
         >>> pattern = re.compile(r'\d+')  # Matches sequences of digits
         >>> string = "abc123def456ghi"
-        >>> result = list(split_string_with_regex(string, pattern))
+        >>> result = list(split_string_with_regex(pattern, string))
         >>> for item in result:
         ...     if isinstance(item, str):
         ...         print(f"Substring: '{item}'")
@@ -104,8 +104,8 @@ def split_string_with_regex(
 
 
 def split_string_with_regex_at_beginning(
-    string: str,
     pattern: Pattern, 
+    string: str,
 ) -> StrSplit | None:
     '''
     Like `split_string_with_regex`, but splits only once at the first match.
@@ -117,13 +117,13 @@ def split_string_with_regex_at_beginning(
 
 
 def split_string_with_regex_at_end(
-    string: str,
     pattern: Pattern, 
+    string: str,
 ) -> StrSplit | None:
     '''
     Like `split_string_with_regex`, but splits only once at the last match.
     '''
-    results = list(split_string_with_regex(string, pattern))
+    results = list(split_string_with_regex(pattern, string))
 
     # Find the last Match instance
     match_index = -1
@@ -138,41 +138,6 @@ def split_string_with_regex_at_end(
         match,
         string[match.end():],
     )
-
-
-def map_string_children(
-    children: Iterable[PageElementOrString],
-    func: Callable[[str], Iterable[PageElementOrString]],
-) -> Iterator[PageElementOrString]:
-    '''
-    Example:
-        >>> list(map_string_children(["Hello World", some_tag, "!"], split_words))
-        ['Hello', 'World', some_tag, '!']
-    '''
-    for child in children:
-        if isinstance(child, str):
-            yield from func(child)
-        else:
-            yield child
-
-
-def map_match_flow(
-    match_flow: MatchFlow,
-    func: Callable[[re.Match], Iterable[PageElementOrString]],
-) -> Iterator[PageElementOrString]:
-    '''
-    Example:
-        >>> match_flow = ["Text before", re.match(r"match", "match"), "Text after"]
-        >>> def func(match):
-        ...     return [f"Processed({match.group(0)})"]
-        >>> list(map_match_flow(match_flow, func))
-        ['Text before', 'Processed(match)', 'Text after']
-    '''
-    for element in match_flow:
-        if isinstance(element, re.Match):
-            yield from func(element)
-        else:
-            yield element
 
 
 def reduce_children(

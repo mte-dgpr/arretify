@@ -3,6 +3,7 @@ from typing import Dict, List, Optional, Union
 
 from bs4 import BeautifulSoup, PageElement, Tag
 
+from .split import merge_strings
 from ..types import DataElementSchema, PageElementOrString
 
 
@@ -54,5 +55,5 @@ def make_li(soup: BeautifulSoup, elements: List[PageElementOrString]):
 
 def make_new_tag(soup: BeautifulSoup, tag_name: str, contents: List[PageElementOrString] = []):
     element = soup.new_tag(tag_name)
-    element.extend(contents)
+    element.extend(merge_strings(contents))
     return element
