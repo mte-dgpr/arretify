@@ -8,17 +8,17 @@ from bs4 import BeautifulSoup, Tag
 from bench_convertisseur_xml.settings import *
 from bench_convertisseur_xml.html_schemas import DATE_SCHEMA
 from bench_convertisseur_xml.utils.html import make_data_tag
-from bench_convertisseur_xml import regex_engine as ree
-from bench_convertisseur_xml.utils.regex import join_with_or
+from bench_convertisseur_xml.regex_utils import regex_tree, RegexTreeMatch, MatchDict, join_with_or
 from bench_convertisseur_xml.types import PageElementOrString
 
 DATE_FORMAT = '%Y-%m-%d'
 
 MONTH_NAMES = list(calendar.month_name)
 
-DATE_NODE = ree.Group(
-    ree.Sequence([
-        ree.Branching([
+
+DATE_NODE = regex_tree.Group(
+    regex_tree.Sequence([
+        regex_tree.Branching([
             r'(((?P<day_first>1er)|(?P<day>\d{1,2})) (?P<month_name>' + join_with_or(MONTH_NAMES[1:]) + r') ((?P<year>\d{4})|(?P<year_2digits>\d{2})))',
             r'((?P<day>\d{2})/(?P<month>\d{2})/((?P<year>\d{4})|(?P<year_2digits>\d{2})))',
         ]),
@@ -30,7 +30,7 @@ DATE_NODE = ree.Group(
 )
 
 
-def _handle_date_match_dict(match_dict: ree.MatchDict) -> date | None:
+def _handle_date_match_dict(match_dict: MatchDict) -> date | None:
     if match_dict.get('month_name'):
         match_month = match_dict['month_name'].lower()
         month = None
@@ -74,15 +74,15 @@ def parse_date_attribute(date_str: str) -> date:
     return datetime.strptime(date_str, DATE_FORMAT).date()
 
 
-def render_date_match_group(soup: BeautifulSoup, match_group: ree.MatchGroup) -> Tag:
-    date_object = _handle_date_match_dict(match_group.match_dict)
+def render_date_regex_tree_match(soup: BeautifulSoup, regex_tree_match: RegexTreeMatch) -> Tag:
+    date_object = _handle_date_match_dict(regex_tree_match.match_dict)
     if date_object is None:
         raise RuntimeError(f"expected valid date")
     
     date_container = make_data_tag(
         soup, 
         DATE_SCHEMA, 
-        contents=cast(List[PageElementOrString], match_group.string_children)
+        contents=cast(List[PageElementOrString], regex_tree_match.string_children)
     )
     date_container['datetime'] = render_date_attribute(date_object)
     return date_container

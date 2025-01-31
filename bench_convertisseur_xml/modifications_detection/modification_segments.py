@@ -4,9 +4,10 @@ from dataclasses import dataclass
 
 from bs4 import BeautifulSoup, Tag, PageElement
 
-from bench_convertisseur_xml.utils.split import split_string_with_regex_at_beginning, merge_strings, split_string_with_regex_at_end
-from bench_convertisseur_xml.utils.html import make_data_tag, make_new_tag, PageElementOrString
+from bench_convertisseur_xml.regex_utils import split_string_at_beginning_with_regex, split_string_at_end_with_regex
 from bench_convertisseur_xml.utils.generators import remove_empty_strings_from_flow
+from bench_convertisseur_xml.utils.merge import merge_strings
+from bench_convertisseur_xml.utils.html import make_data_tag, make_new_tag, PageElementOrString
 from bench_convertisseur_xml.html_schemas import MODIFICATION_SEGMENT_SCHEMA
 from bench_convertisseur_xml.types import ModificationType, PageElementOrString
 
@@ -120,7 +121,7 @@ def _preprocess_children_by_adding_target_groups(
             previous_sibling_remainder: str | None = None
             previous_sibling_str: str | None = None
             if isinstance(previous_sibling, str):
-                split_match = split_string_with_regex_at_end(SENTENCE_SPLIT_PATTERN, previous_sibling)
+                split_match = split_string_at_end_with_regex(SENTENCE_SPLIT_PATTERN, previous_sibling)
                 if split_match:
                     previous_sibling_remainder, match, previous_sibling_str = split_match
                     previous_sibling_remainder += match.group(0)
@@ -133,7 +134,7 @@ def _preprocess_children_by_adding_target_groups(
             if next_children:
                 next_sibling = next_children.pop(0)
             if isinstance(next_sibling, str):
-                split_match = split_string_with_regex_at_beginning(SENTENCE_SPLIT_PATTERN, next_sibling)
+                split_match = split_string_at_beginning_with_regex(SENTENCE_SPLIT_PATTERN, next_sibling)
                 if split_match:
                     next_sibling_str, match, next_sibling_remainder = split_match
                     next_sibling_remainder = match.group(0) + next_sibling_remainder 

@@ -5,7 +5,6 @@ from typing import Dict, List
 from bs4 import BeautifulSoup
 
 from .target_position_references import parse_target_position_references
-from bench_convertisseur_xml.utils.regex import search_groupdict
 
 
 class TestHandleArticleRange(unittest.TestCase):

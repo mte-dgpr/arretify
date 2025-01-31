@@ -5,9 +5,8 @@ from datetime import date
 
 from bs4 import BeautifulSoup
 
-from bench_convertisseur_xml.utils.regex import search_groupdict
-from .dates import _handle_date_match_dict, DATE_NODE, parse_date_attribute, render_date_attribute, render_date_match_group
-from bench_convertisseur_xml import regex_engine as ree
+from .dates import _handle_date_match_dict, DATE_NODE, parse_date_attribute, render_date_attribute, render_date_regex_tree_match
+from bench_convertisseur_xml.regex_utils import flat_map_regex_tree_match, split_string_with_regex_tree
 
 
 class TestStrToDateAndDateToStr(unittest.TestCase):
@@ -18,7 +17,7 @@ class TestStrToDateAndDateToStr(unittest.TestCase):
         assert render_date_attribute(date(year=2001, month=1, day=31)) == '2001-01-31'
 
 
-class TestRenderDateMatchGroup(unittest.TestCase):
+class TestRenderDateRegexTreeMatch(unittest.TestCase):
 
     def test_with_alinea(self):
         assert _parsed_elements("24/03/95") == ['<time class="dsr-date" datetime="1995-03-24">24/03/95</time>']
@@ -57,10 +56,10 @@ class TestRenderDateMatchGroup(unittest.TestCase):
 
 def _parsed_elements(string: str) -> list[str]:
     soup = BeautifulSoup(string, features='html.parser')
-    elements = ree.flat_map_match_group(
-        ree.split_string(DATE_NODE, string),
-        lambda match_group: [
-            render_date_match_group(soup, match_group),
+    elements = flat_map_regex_tree_match(
+        split_string_with_regex_tree(DATE_NODE, string),
+        lambda regex_tree_match: [
+            render_date_regex_tree_match(soup, regex_tree_match),
         ],
         allowed_group_names=[DATE_NODE.group_name],
     )

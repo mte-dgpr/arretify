@@ -6,20 +6,18 @@ from typing import Iterable, TypedDict, Tuple, cast, Pattern, Dict, Iterable, Li
 
 from ..settings import APP_ROOT, LOGGER
 from bench_convertisseur_xml.utils.functional import flat_map_non_string, flat_map_string
-from bench_convertisseur_xml.utils.split import split_string_with_regex, reduce_children, merge_strings
 from bench_convertisseur_xml.html_schemas import TARGET_POSITION_REFERENCE_SCHEMA
 from bench_convertisseur_xml.utils.html import make_data_tag, PageElementOrString
-from bench_convertisseur_xml.utils.regex import join_with_or, named_groups_indices, without_named_groups_many
 from bench_convertisseur_xml.parsing_misc.patterns import ET_VIRGULE_PATTERN_S, EME_PATTERN_S, ORDINAL_PATTERN_S, APOSTROPHE_PATTERN_S, ordinal_str_to_int
-from bench_convertisseur_xml import regex_engine as ree
+from bench_convertisseur_xml.regex_utils import regex_tree, flat_map_regex_tree_match, split_string_with_regex_tree, MatchDict, RegexTreeMatch
 
 # TODO : 
 # - Phrase and word index 
 
 
 # Order of patterns matters, from most specific to less specific.
-ARTICLE_ID_NODE = ree.Group(
-    ree.Branching([
+ARTICLE_ID_NODE = regex_tree.Group(
+    regex_tree.Branching([
         # REF : https://reflex.sne.fr/codes-officiels
         r'(?P<code>(L|R|D)\.?\s*(\d+\s*-?\s*)*\d+)',
         r'(?P<ordinal>' + ORDINAL_PATTERN_S + r')',
@@ -29,8 +27,8 @@ ARTICLE_ID_NODE = ree.Group(
 )
 
 
-ALINEA_NODE = ree.Group(
-    ree.Branching([
+ALINEA_NODE = regex_tree.Group(
+    regex_tree.Branching([
         r'((?P<alinea_num>\d+)' + EME_PATTERN_S + r'?|(?P<alinea_ordinal>' + ORDINAL_PATTERN_S + r')) alin[ée]a',
         r'alin[ée]a ((?P<alinea_num>\d+)' + EME_PATTERN_S + r'?|(?P<alinea_ordinal>' + ORDINAL_PATTERN_S + r'))',
         r'(?P<alinea_num>\d+)°',
@@ -39,7 +37,7 @@ ALINEA_NODE = ree.Group(
 )
 
 
-ARTICLE_RANGE_NODE = ree.Sequence([
+ARTICLE_RANGE_NODE = regex_tree.Sequence([
     ARTICLE_ID_NODE,
     r' à (l' + APOSTROPHE_PATTERN_S + r'article )?',
     ARTICLE_ID_NODE,
@@ -47,20 +45,20 @@ ARTICLE_RANGE_NODE = ree.Sequence([
 
 
 # Order of patterns matters, from most specific to less specific.
-TARGET_POSITION_NODE = ree.Group(
-    ree.Branching([
-        ree.Sequence([
+TARGET_POSITION_NODE = regex_tree.Group(
+    regex_tree.Branching([
+        regex_tree.Sequence([
             ALINEA_NODE,
             r' (de l' + APOSTROPHE_PATTERN_S + r')?articles? ',
             ARTICLE_ID_NODE,
         ]),
         
-        ree.Sequence([
+        regex_tree.Sequence([
             r'articles? ',
             ARTICLE_RANGE_NODE,
         ]),
 
-        ree.Sequence([
+        regex_tree.Sequence([
             r'articles? ',
             ARTICLE_ID_NODE,
         ]),
@@ -69,13 +67,13 @@ TARGET_POSITION_NODE = ree.Group(
 )
 
 
-TARGET_POSITION_PLURAL_NODE = ree.Group(
-    ree.Sequence([
-        ree.Group(
-            ree.Sequence([
+TARGET_POSITION_PLURAL_NODE = regex_tree.Group(
+    regex_tree.Sequence([
+        regex_tree.Group(
+            regex_tree.Sequence([
                 r'articles? ',
                 # Order of patterns matters, from most specific to less specific.
-                ree.Branching([
+                regex_tree.Branching([
                     ARTICLE_RANGE_NODE, 
                     ARTICLE_ID_NODE,
                 ]),
@@ -85,11 +83,11 @@ TARGET_POSITION_PLURAL_NODE = ree.Group(
 
         ET_VIRGULE_PATTERN_S,
         
-        ree.Quantifier(
-            ree.Sequence([
-                ree.Group(
+        regex_tree.Quantifier(
+            regex_tree.Sequence([
+                regex_tree.Group(
                     # Order of patterns matters, from most specific to less specific.
-                    ree.Branching([
+                    regex_tree.Branching([
                         ARTICLE_RANGE_NODE, 
                         ARTICLE_ID_NODE,
                     ]), 
@@ -101,8 +99,8 @@ TARGET_POSITION_PLURAL_NODE = ree.Group(
         ),
         
         # Order of patterns matters, from most specific to less specific.
-        ree.Group(
-            ree.Branching([
+        regex_tree.Group(
+            regex_tree.Branching([
                 ARTICLE_RANGE_NODE,
                 ARTICLE_ID_NODE,
             ]),
@@ -113,7 +111,7 @@ TARGET_POSITION_PLURAL_NODE = ree.Group(
 )
 
 
-def _handle_article_match_dict(match_dict: ree.MatchDict) -> Dict:
+def _handle_article_match_dict(match_dict: MatchDict) -> Dict:
     article_num = match_dict.get('num')
     article_ordinal = match_dict.get('ordinal')
     article_code = match_dict.get('code')
@@ -124,7 +122,7 @@ def _handle_article_match_dict(match_dict: ree.MatchDict) -> Dict:
     return dict(article_id=article_id)
 
 
-def _handle_alinea_match_dict(match_dict: ree.MatchDict) -> Dict:
+def _handle_alinea_match_dict(match_dict: MatchDict) -> Dict:
     alinea_num = match_dict.get('alinea_num')
     alinea_ordinal = match_dict.get('alinea_ordinal')
 
@@ -139,13 +137,13 @@ def _handle_alinea_match_dict(match_dict: ree.MatchDict) -> Dict:
     return dict(alinea_start=alinea_start, alinea_end=None)
 
 
-def _render_target_position_group_match(soup, match_group: ree.MatchGroup) -> Tag:
+def _render_target_position_group_match(soup, regex_tree_match: RegexTreeMatch) -> Tag:
     contents: List[PageElementOrString] = []
     alinea_dict: Dict | None = None
     article_start_dict: Dict | None = None
     article_end_dict: Dict | None = None
 
-    for str_or_group in match_group.children:
+    for str_or_group in regex_tree_match.children:
         if isinstance(str_or_group, str):
             contents.append(str_or_group)
         
@@ -187,8 +185,8 @@ def _parse_target_position_references(
 ) -> Iterable[PageElementOrString]:
     return flat_map_string(
         children,
-        lambda string: ree.flat_map_match_group(
-            ree.split_string(TARGET_POSITION_NODE, string),
+        lambda string: flat_map_regex_tree_match(
+            split_string_with_regex_tree(TARGET_POSITION_NODE, string),
             lambda target_position_group_match: [
                 _render_target_position_group_match(
                     soup, 
@@ -208,9 +206,9 @@ def _parse_plural_target_position_references(
     # before parsing each individual arrete reference.
     return flat_map_string(
         children,
-        lambda string: ree.flat_map_match_group(
-            ree.split_string(TARGET_POSITION_PLURAL_NODE, string),
-            lambda target_position_plural_group_match: ree.flat_map_match_group(
+        lambda string: flat_map_regex_tree_match(
+            split_string_with_regex_tree(TARGET_POSITION_PLURAL_NODE, string),
+            lambda target_position_plural_group_match: flat_map_regex_tree_match(
                 target_position_plural_group_match.children,
                 lambda target_position_group_match: [
                     _render_target_position_group_match(

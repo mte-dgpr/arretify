@@ -8,6 +8,9 @@ Q = TypeVar('Q')
 Ts = TypeVarTuple("Ts")
 
 class Lambda(Generic[*Ts]):
+    """
+    A utility class to allow typing of lambda function parameters.
+    """
     @classmethod
     def cast(cls, f: Callable[[*Ts], P]) -> Callable[[*Ts], P]:
         return f

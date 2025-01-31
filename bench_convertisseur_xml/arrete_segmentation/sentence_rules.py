@@ -4,7 +4,6 @@
 import re
 from typing import List
 
-from bench_convertisseur_xml.utils.text import remove_accents
 from bench_convertisseur_xml.utils.html import PageElementOrString
 from .config import HONORARY_PATTERNS, SERVICE_PATTERNS, BodySection
 
