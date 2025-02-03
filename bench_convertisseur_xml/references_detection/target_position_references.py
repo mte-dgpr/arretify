@@ -29,8 +29,8 @@ ARTICLE_ID_NODE = regex_tree.Group(
 
 ALINEA_NODE = regex_tree.Group(
     regex_tree.Branching([
-        r'((?P<alinea_num>\d+)' + EME_PATTERN_S + r'?|(?P<alinea_ordinal>' + ORDINAL_PATTERN_S + r')) alinéa',
-        r'alinéa ((?P<alinea_num>\d+)' + EME_PATTERN_S + r'?|(?P<alinea_ordinal>' + ORDINAL_PATTERN_S + r'))',
+        r'((?P<alinea_num>\d+)' + EME_PATTERN_S + r'?|(?P<alinea_ordinal>' + ORDINAL_PATTERN_S + r')) (alinéa|paragraphe)',
+        r'(alinéa|paragraphe) ((?P<alinea_num>\d+)' + EME_PATTERN_S + r'?|(?P<alinea_ordinal>' + ORDINAL_PATTERN_S + r'))',
         r'(?P<alinea_num>\d+)°',
     ]), 
     group_name='__alinea'

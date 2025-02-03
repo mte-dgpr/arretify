@@ -104,6 +104,9 @@ class TestParseAlineaRegex(unittest.TestCase):
         assert _parsed_elements("2ème alinéa de l'article 1") == [
             '<a class="dsr-target_position_reference" data-alinea_start="2" data-article_start="1">2ème alinéa de l\'article 1</a>'
         ]
+        assert _parsed_elements("5° de l'article 5") == [
+            '<a class="dsr-target_position_reference" data-alinea_start="5" data-article_start="5">5° de l\'article 5</a>'
+        ]
 
     def test_alinea_num_after(self):
         assert _parsed_elements("alinéa 3 de l'article 2") == [
@@ -116,10 +119,6 @@ class TestParseAlineaRegex(unittest.TestCase):
             '<a class="dsr-target_position_reference" data-alinea_start="9" data-article_start="4">alinéa neuvième de l\'article 4</a>'
         ]
 
-    def test_alinea_symbol(self):
-        assert _parsed_elements("5° de l'article 5") == [
-            '<a class="dsr-target_position_reference" data-alinea_start="5" data-article_start="5">5° de l\'article 5</a>'
-        ]
 
 
 class TestParseTargetPositionReferences(unittest.TestCase):
