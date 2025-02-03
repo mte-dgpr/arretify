@@ -6,13 +6,11 @@ from typing import Literal, List, get_args, cast, TypedDict, Pattern, Tuple, Ite
 
 from ..settings import APP_ROOT, LOGGER
 from bench_convertisseur_xml.utils.html import PageElementOrString, make_data_tag
-from bench_convertisseur_xml.utils.split import split_string_with_regex, split_match_by_named_groups, reduce_children
-from bench_convertisseur_xml.utils.functional import flat_map_non_string, flat_map_string, Lambda
-from bench_convertisseur_xml.utils.regex import without_named_groups_many, join_with_or
+from bench_convertisseur_xml.utils.functional import flat_map_non_string, flat_map_string
 from bench_convertisseur_xml.html_schemas import ARRETE_REFERENCE_SCHEMA
 from bench_convertisseur_xml.parsing_misc.patterns import ET_VIRGULE_PATTERN_S
-from bench_convertisseur_xml.parsing_misc.dates import DATE_NODE, render_date_match_group
-from bench_convertisseur_xml import regex_engine as ree
+from bench_convertisseur_xml.parsing_misc.dates import DATE_NODE, render_date_regex_tree_match
+from bench_convertisseur_xml.regex_utils import regex_tree, flat_map_regex_tree_match, split_string_with_regex_tree, MatchDict, RegexTreeMatch
 
 Authority = Literal['préfectoral', 'ministériel']
 
@@ -24,8 +22,8 @@ AUTHORITY_MAP: Dict[str, Authority] = {
 }
 
 
-CODE_NODE = ree.Sequence([
-    ree.Branching([
+CODE_NODE = regex_tree.Sequence([
+    regex_tree.Branching([
         # Matches all codes starting with n°
         r'[nN]° ?(?P<code>\S+)',
         # Matches all codes of type 12-77LY87-7878 or 1L/77/9998
@@ -35,19 +33,19 @@ CODE_NODE = ree.Sequence([
 ])
 
 
-ARRETE_NODE = ree.Group(ree.Sequence([
+ARRETE_NODE = regex_tree.Group(regex_tree.Sequence([
     r'arrêté ((?P<authority>préfectoral|ministériel) (modifié )?)?((?P<qualifier>complémentaire|d\'autorisation initiale?|d\'autorisation|de mise en demeure|de mesures d\'urgence) )?',
-    ree.Branching([
-        ree.Sequence([
-            ree.Quantifier(
-                ree.Sequence([
+    regex_tree.Branching([
+        regex_tree.Sequence([
+            regex_tree.Quantifier(
+                regex_tree.Sequence([
                     CODE_NODE,
                     '\s',
                 ]), 
                 '?',
             ),
             r'(transmis a l\'exploitant par (courrier recommandé|courrier)\s)?',
-            ree.Sequence([
+            regex_tree.Sequence([
                 r'((du|en date du)\s)?',
                 DATE_NODE,
             ]),
@@ -62,23 +60,23 @@ ARRETE_NODE = ree.Group(ree.Sequence([
 ]), group_name='__arrete')
 
 
-ARRETE_PLURAL_NODE = ree.Group(ree.Sequence([
+ARRETE_PLURAL_NODE = regex_tree.Group(regex_tree.Sequence([
     r'arrêtés ((?P<authority>préfectoraux|ministériels) (modifiés )?)?',
-    ree.Quantifier(
-        ree.Sequence([
-            ree.Group(
-                ree.Branching([
+    regex_tree.Quantifier(
+        regex_tree.Sequence([
+            regex_tree.Group(
+                regex_tree.Branching([
                     # Regex with dates must come before cause the regex for codes
                     # catches also dates.
-                    ree.Sequence([
-                        ree.Quantifier(
-                            ree.Sequence([
+                    regex_tree.Sequence([
+                        regex_tree.Quantifier(
+                            regex_tree.Sequence([
                                 CODE_NODE,
                                 '\s',
                             ]),
                             '?',
                         ),
-                        ree.Sequence([
+                        regex_tree.Sequence([
                             r'((du|en date du)\s)?',
                             DATE_NODE,
                         ]),
@@ -95,7 +93,7 @@ ARRETE_PLURAL_NODE = ree.Group(ree.Sequence([
 ]), group_name='__arrete_plural')
 
 
-def _handle_arrete_base_match_dict(match_dict: ree.MatchDict) -> Dict:
+def _handle_arrete_base_match_dict(match_dict: MatchDict) -> Dict:
     authority_raw = match_dict.get('authority')
     if authority_raw:
         authority = AUTHORITY_MAP[authority_raw.lower()]
@@ -105,25 +103,25 @@ def _handle_arrete_base_match_dict(match_dict: ree.MatchDict) -> Dict:
     return dict(qualifier=qualifier, authority=authority)
 
 
-def _handle_arrete_details_match_dict(match_dict: ree.MatchDict) -> Dict:
+def _handle_arrete_details_match_dict(match_dict: MatchDict) -> Dict:
     return dict(code=match_dict.get('code'))
 
 
-def _render_arrete_container_match_group(
+def _render_arrete_container_regex_tree_match(
     soup: BeautifulSoup, 
-    match_group: ree.MatchGroup, 
-    base_arrete_match_dict: ree.MatchDict
+    regex_tree_match: RegexTreeMatch, 
+    base_arrete_match_dict: MatchDict
 ) -> Tag:
     return make_data_tag(
         soup, 
         ARRETE_REFERENCE_SCHEMA,
         data=dict(
             **base_arrete_match_dict,
-            **_handle_arrete_details_match_dict(match_group.match_dict),
+            **_handle_arrete_details_match_dict(regex_tree_match.match_dict),
         ),
-        contents=list(ree.flat_map_match_group(
-            match_group.children,
-            lambda date_group_match: [render_date_match_group(soup, date_group_match)],
+        contents=list(flat_map_regex_tree_match(
+            regex_tree_match.children,
+            lambda date_group_match: [render_date_regex_tree_match(soup, date_group_match)],
             allowed_group_names=[DATE_NODE.group_name],
         )),
     )
@@ -135,10 +133,10 @@ def _parse_arretes_references(
 ):
     return flat_map_string(
         children,
-        lambda string: ree.flat_map_match_group(
-            ree.split_string(ARRETE_NODE, string),
+        lambda string: flat_map_regex_tree_match(
+            split_string_with_regex_tree(ARRETE_NODE, string),
             lambda arrete_container_group_match: [
-                _render_arrete_container_match_group(
+                _render_arrete_container_regex_tree_match(
                     soup, 
                     arrete_container_group_match, 
                     _handle_arrete_base_match_dict(arrete_container_group_match.match_dict),
@@ -157,12 +155,12 @@ def _parse_plural_arretes_references(
     # before parsing each individual arrete reference.
     return flat_map_string(
         children,
-        lambda string: ree.flat_map_match_group(
-            ree.split_string(ARRETE_PLURAL_NODE, string),
-            lambda arrete_plural_group_match: ree.flat_map_match_group(
+        lambda string: flat_map_regex_tree_match(
+            split_string_with_regex_tree(ARRETE_PLURAL_NODE, string),
+            lambda arrete_plural_group_match: flat_map_regex_tree_match(
                 arrete_plural_group_match.children,
                 lambda arrete_container_group_match: [
-                    _render_arrete_container_match_group(
+                    _render_arrete_container_regex_tree_match(
                         soup, 
                         arrete_container_group_match, 
                         _handle_arrete_base_match_dict(arrete_plural_group_match.match_dict),

@@ -5,7 +5,6 @@ from typing import Pattern, Iterator
 from bs4 import BeautifulSoup, Tag
 
 from bench_convertisseur_xml.types import ModificationType
-from bench_convertisseur_xml.utils.generators import remove_empty_strings_from_flow
 from .modification_segments import _tag_modification_segments, _preprocess_children_by_adding_target_groups, TargetGroup
 
 class TestTagModificationSegments(unittest.TestCase):

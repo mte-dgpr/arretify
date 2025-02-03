@@ -1,22 +1,13 @@
 import re
-from typing import List, Pattern, cast, List, Callable, Iterable, Iterator, Union, Dict, Tuple, Literal, TypeVar
+from typing import List, Pattern, cast, List, Callable, Iterable, Iterator, Union, Dict, Tuple, Literal
 from dataclasses import dataclass
 
 from bench_convertisseur_xml.types import PageElementOrString
-from .generators import remove_empty_strings_from_flow
+from bench_convertisseur_xml.utils.generators import remove_empty_strings_from_flow
+from .types import MatchNamedGroup, MatchFlow
 
-StrOrMatch = str | re.Match
+
 StrSplit = Tuple[str, re.Match, str]
-MatchFlow = Iterable[StrOrMatch]
-
-
-T = TypeVar('T')
-
-
-@dataclass
-class MatchNamedGroup:
-    name: str
-    text: str
 
 
 def split_match_by_named_groups(
@@ -29,9 +20,9 @@ def split_match_by_named_groups(
         >>> match = re.search(pattern, text)
         >>> for segment in split_match_by_named_groups(match):
         ...     print(segment)
-        MatchNamedGroup(text='foo', name='first')
+        MatchNamedGroup(text='foo', group_name='first')
         '-'
-        MatchNamedGroup(text='bar', name='second')    
+        MatchNamedGroup(text='bar', group_name='second')    
     '''
     match_text = match.group(0)
     # Offset in original text
@@ -59,7 +50,10 @@ def split_match_by_named_groups(
         if group_start >= max_group_end:
             if group_start > max_group_end:
                 yield match_text[max_group_end:group_start]
-            yield MatchNamedGroup(text=match.group(group_name), name=group_name)
+            yield MatchNamedGroup(
+                text=match.group(group_name), 
+                group_name=group_name
+            )
         max_group_end = max(group_end, max_group_end)
 
     # Add the remainder of the match_text to the parent.
@@ -103,7 +97,7 @@ def split_string_with_regex(
         yield string
 
 
-def split_string_with_regex_at_beginning(
+def split_string_at_beginning_with_regex(
     pattern: Pattern, 
     string: str,
 ) -> StrSplit | None:
@@ -116,7 +110,7 @@ def split_string_with_regex_at_beginning(
     return (string[:match.start()], match, string[match.end():])
 
 
-def split_string_with_regex_at_end(
+def split_string_at_end_with_regex(
     pattern: Pattern, 
     string: str,
 ) -> StrSplit | None:
@@ -138,73 +132,3 @@ def split_string_with_regex_at_end(
         match,
         string[match.end():],
     )
-
-
-def reduce_children(
-    children: Iterable[PageElementOrString],
-    elements: List[T],
-    reducer: Callable[[Iterable[PageElementOrString], T], Iterable[PageElementOrString]]
-) -> List[PageElementOrString]:
-    '''
-        Example:
-        >>> def simple_reducer(children, element):
-        ...     return list(children) + [element]
-        >>> reduce_children([], ["Item1", "Item2"], simple_reducer)
-        ['Item1', 'Item2']
-    '''
-    new_children: List[PageElementOrString] = list(children)
-    for element in elements:
-        new_children = list(reducer(new_children, element))
-    return new_children
-
-
-@remove_empty_strings_from_flow
-def merge_matches_with_siblings(
-    str_or_match_gen: MatchFlow,
-    which_sibling: Literal['previous', 'following'],
-) -> Iterator[str]:
-    '''
-    Example:
-        >>> def example_gen():
-        ...     yield "Hello, "
-        ...     yield re.match(r"world", "world!")
-        ...     yield " How are you?"
-        ...
-        >>> list(merge_match_flow(example_gen(), which_sibling=1))
-        ['Hello, ', 'world', ' How are you?']
-        >>> list(merge_match_flow(example_gen(), which_sibling=-1))
-        ['Hello, world', ' How are you?']
-    '''
-    accumulator = ''
-    for str_or_match in str_or_match_gen:
-        if isinstance(str_or_match, str):
-            accumulator += str_or_match
-        elif which_sibling == 'previous':
-            yield accumulator + str_or_match.group(0)
-            accumulator = ''
-        else:
-            yield accumulator
-            accumulator = str_or_match.group(0)
-    yield accumulator
-
-
-def merge_strings(
-    str_or_element_gen: Iterable[PageElementOrString],
-) -> Iterator[PageElementOrString]:
-    '''
-    Example:
-        >>> elements = ["Hello-", "world!", Tag(name="p"), "More text"]
-        >>> list(merge_strings(elements))
-        ['Hello-world!', <p></p>, 'More text']
-    '''
-    accumulator: str | None = None
-    for str_or_element in str_or_element_gen:
-        if isinstance(str_or_element, str):
-            accumulator = (accumulator or '') + str_or_element
-        else:
-            if not accumulator is None:
-                yield accumulator
-            accumulator = None
-            yield str_or_element
-    if not accumulator is None:
-        yield accumulator

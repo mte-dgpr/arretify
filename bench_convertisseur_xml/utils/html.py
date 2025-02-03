@@ -3,8 +3,8 @@ from typing import Dict, List, Optional, Union
 
 from bs4 import BeautifulSoup, PageElement, Tag
 
-from .split import merge_strings
-from ..types import DataElementSchema, PageElementOrString
+from bench_convertisseur_xml.utils.merge import merge_strings
+from bench_convertisseur_xml.types import DataElementSchema, PageElementOrString
 
 
 def make_css_class(schema: DataElementSchema):

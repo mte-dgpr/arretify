@@ -1,4 +1,5 @@
-from typing import List, Union
+import re
+from typing import List, Union, Iterable
 from enum import Enum
 from dataclasses import dataclass
 
@@ -19,6 +20,3 @@ class ModificationType(Enum):
 
 
 PageElementOrString = Union[PageElement, str]
-
-PatternString = str
-GroupName = str

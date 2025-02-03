@@ -1,33 +1,18 @@
 import re
-from typing import Iterator, Dict, Callable, List, TypeVar, Iterable, Iterator
+from typing import Iterator, Dict, Callable, List, Iterable
 from dataclasses import dataclass
 
-from .types import Node, MatchGroup, MatchDict, LeafNode, ContainerNode, QuantifierNode, GroupNode, MatchGroupFlow
-from bench_convertisseur_xml.utils.split import split_string_with_regex, split_match_by_named_groups
-from bench_convertisseur_xml.types import GroupName, PageElementOrString
-from bench_convertisseur_xml.utils.functional import flat_map_non_string
+from ..types import Node, RegexTreeMatch, MatchDict, LeafNode, ContainerNode, QuantifierNode, GroupNode, RegexTreeMatchFlow, GroupName
+from ..split import split_string_with_regex, split_match_by_named_groups
+from bench_convertisseur_xml.types import PageElementOrString
 
 
-P = TypeVar('P')
-
-
-def split_string(node: GroupNode, string: str) -> MatchGroupFlow:
-    for str_or_match in split_string_with_regex(node.pattern, string):
-        if isinstance(str_or_match, str):
-            yield str_or_match
-            continue
-        match_group = match(node, str_or_match.group(0))
-        if not match_group:
-            raise RuntimeError(f"expected '{string}' to match {node.pattern}")
-        yield match_group    
-
-
-def match(node: GroupNode, string: str) -> MatchGroup | None:
+def match(node: GroupNode, string: str) -> RegexTreeMatch | None:
     results = list(_match_recursive(node, string, None))
     
     if len(results) == 0:
         return None
-    elif len(results) > 1 or not isinstance(results[0], MatchGroup):
+    elif len(results) > 1 or not isinstance(results[0], RegexTreeMatch):
         raise RuntimeError(f"expected exactly one match group, got {results}")
     else:
         return results[0]
@@ -36,14 +21,14 @@ def match(node: GroupNode, string: str) -> MatchGroup | None:
 def _match_recursive(
     node: Node, 
     string: str,
-    current_group: MatchGroup | None,
-) -> MatchGroupFlow:
+    current_group: RegexTreeMatch | None,
+) -> RegexTreeMatchFlow:
     match = node.pattern.match(string)
     if not match:
         return
 
     if isinstance(node, GroupNode):
-        child_group = MatchGroup(
+        child_group = RegexTreeMatch(
             children=[],
             group_name=node.group_name,
             match_dict=dict(),
@@ -76,5 +61,5 @@ def _match_recursive(
             if isinstance(str_or_group, str):
                 yield str_or_group
                 continue
-            child = node.children[str_or_group.name]
+            child = node.children[str_or_group.group_name]
             yield from _match_recursive(child, str_or_group.text, current_group)

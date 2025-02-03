@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from typing import List, Union
 
 from .execute import match
-from .types import MatchGroup
+from ..types import RegexTreeMatch
 from .compile import Sequence, Branching, Group, Quantifier
 
 
@@ -37,24 +37,24 @@ class TestSearchCompiledPattern(unittest.TestCase):
         result = match(compiled_pattern, string)
 
         # Assert
-        assert result == MatchGroup(
+        assert result == RegexTreeMatch(
             group_name='root',
             match_dict=dict(greetings='Hi'),
             children=[
                 'Hi ',
-                MatchGroup(
+                RegexTreeMatch(
                     group_name='nickname',
                     match_dict=dict(nickname='seb'),
                     children=['hello_seb'],
                 ),
                 ',',
-                MatchGroup(
+                RegexTreeMatch(
                     group_name='nickname',
                     match_dict=dict(),
                     children=['123'],
                 ),
                 ',',
-                MatchGroup(
+                RegexTreeMatch(
                     group_name='nickname',
                     match_dict=dict(nickname='john'),
                     children=['hello_john'],

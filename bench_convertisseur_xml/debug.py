@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 
 from .utils.text import remove_accents
 from .utils.functional import flat_map_non_string, flat_map_string, Lambda
-from .utils.split import split_string_with_regex
+from .regex_utils import split_string_with_regex
 from .utils.html import make_data_tag
 from .html_schemas import DEBUG_KEYWORD_SCHEMA
 from .types import PageElementOrString

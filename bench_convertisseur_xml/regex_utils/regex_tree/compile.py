@@ -3,9 +3,8 @@ import re
 from typing import List, Dict, TypedDict, Union
 from dataclasses import dataclass, replace
 
-from .types import QuantifierNode, GroupNode, ContainerNode, LeafNode, Node, NodeMap, Settings
-from bench_convertisseur_xml.types import GroupName
-from bench_convertisseur_xml.utils.regex import without_named_groups, join_with_or
+from ..types import GroupName, QuantifierNode, GroupNode, ContainerNode, LeafNode, Node, NodeMap, Settings
+from ..helpers import without_named_groups, join_with_or
 
 
 def Leaf(pattern_string: str, settings: Settings | None=None) -> LeafNode:

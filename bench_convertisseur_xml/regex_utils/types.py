@@ -1,19 +1,30 @@
+from dataclasses import dataclass
 import enum
 import re
 from typing import List, Dict, Union, Optional, List, Union, Iterator, Iterable
-from dataclasses import dataclass
 
-from bench_convertisseur_xml.types import PatternString, GroupName
 
 MatchDict = Dict[str, str]
-Node = Union['ContainerNode', 'LeafNode', 'GroupNode', 'QuantifierNode']
-NodeMap = Dict[GroupName, Node]
+PatternString = str
+GroupName = str
+StrOrMatch = str | re.Match
+MatchFlow = Iterable[StrOrMatch]
+
+
+@dataclass(frozen=True)
+class MatchNamedGroup:
+    group_name: str
+    text: str
 
 
 @dataclass(frozen=True)
 class Settings:
     ignore_case: bool = True
 
+
+# -------------------- Regex Tree -------------------- #
+Node = Union['ContainerNode', 'LeafNode', 'GroupNode', 'QuantifierNode']
+NodeMap = Dict[GroupName, Node]
 
 @dataclass(frozen=True)
 class ContainerNode:
@@ -60,10 +71,9 @@ class QuantifierNode:
         return f'QuantifierNode(quantifier={self.quantifier})'
 
 
-
 @dataclass(frozen=True)
-class MatchGroup:
-    children: List[Union[str, 'MatchGroup']]
+class RegexTreeMatch:
+    children: List[Union[str, 'RegexTreeMatch']]
     group_name: Union[GroupName, None]
     match_dict: MatchDict
 
@@ -76,4 +86,4 @@ class MatchGroup:
             string_children.append(string)
         return string_children
 
-MatchGroupFlow = Iterable[MatchGroup | str]
+RegexTreeMatchFlow = Iterable[RegexTreeMatch | str]
