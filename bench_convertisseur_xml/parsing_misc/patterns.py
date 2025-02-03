@@ -1,12 +1,16 @@
 import re
 
-APOSTROPHE_PATTERN_S = r"['’]"
+from bench_convertisseur_xml.regex_utils import PatternProxy
+
 
 ET_VIRGULE_PATTERN_S = r'(\s*(,|,?et)\s*)'
 
 EME_PATTERN_S = r'(er|ème|è)'
 
-ORDINAL_PATTERN_S = r'(premier)|(deuxi[èe]me|second)|(troisi[èe]me)|(quatri[èe]me)|(cinqui[èe]me)|(sixi[èe]me)|(septi[eè]me)|(huiti[èe]me)|(neuvi[èe]me)|(dixi[èe]me)|(onzi[èe]me)|(douzi[èe]me)|(treizi[èe]me)'
+ORDINAL_PATTERN_S = r'(premier)|(deuxième|second)|(troisième)|(quatrième)|(cinquième)|(sixième)|(septi[eè]me)|(huitième)|(neuvième)|(dixième)|(onzième)|(douzième)|(treizième)'
+
+ORDINAL_PATTERN = PatternProxy(ORDINAL_PATTERN_S)
+
 
 def ordinal_str_to_int(ordinal: str) -> str:
     ordinal_match = re.match(ORDINAL_PATTERN_S, ordinal)

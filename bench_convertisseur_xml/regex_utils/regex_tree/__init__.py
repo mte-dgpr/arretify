@@ -7,3 +7,4 @@ Custom regex tree package. It provides the following features:
 
 from .compile import Group, Branching, Sequence, Leaf, Quantifier, Node
 from .execute import match
+from .types import RegexTreeMatch as Match, GroupNode, MatchDict

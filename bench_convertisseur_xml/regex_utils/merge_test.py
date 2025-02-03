@@ -3,13 +3,14 @@ import re
 
 from .merge import merge_matches_with_siblings
 from .split import split_string_with_regex
+from .core import PatternProxy
 
 
 class TestMergeMatchWithSiblingString(unittest.TestCase):
 
     def test_split_with_matches(self):
         # Arrange
-        pattern = re.compile(r"\d+")
+        pattern = PatternProxy(r"\d+")
         string = "abc123def456ghi"
 
         # Act
@@ -23,7 +24,7 @@ class TestMergeMatchWithSiblingString(unittest.TestCase):
 
     def test_split_with_matches_after(self):
         # Arrange
-        pattern = re.compile(r"\d+")
+        pattern = PatternProxy(r"\d+")
         string = "abc123def456ghi"
 
         # Act
@@ -37,7 +38,7 @@ class TestMergeMatchWithSiblingString(unittest.TestCase):
 
     def test_split_with_no_matches(self):
         # Arrange
-        pattern = re.compile(r"\d+")
+        pattern = PatternProxy(r"\d+")
         string = "abcdef"
 
         # Act
@@ -51,7 +52,7 @@ class TestMergeMatchWithSiblingString(unittest.TestCase):
 
     def test_split_with_match_at_start(self):
         # Arrange
-        pattern = re.compile(r"\d+")
+        pattern = PatternProxy(r"\d+")
         string = "123abc456"
 
         # Act
@@ -65,7 +66,7 @@ class TestMergeMatchWithSiblingString(unittest.TestCase):
 
     def test_split_with_match_at_end(self):
         # Arrange
-        pattern = re.compile(r"\d+")
+        pattern = PatternProxy(r"\d+")
         string = "abc123"
 
         # Act

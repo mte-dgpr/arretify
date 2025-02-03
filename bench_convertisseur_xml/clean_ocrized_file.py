@@ -4,39 +4,17 @@ from typing import List, Iterator
 from bs4 import BeautifulSoup
 
 from bench_convertisseur_xml.utils.html import PageElementOrString
-from bench_convertisseur_xml.utils.text import remove_accents
 from bench_convertisseur_xml.utils.markdown import clean_markdown
+from bench_convertisseur_xml.regex_utils import PatternProxy, join_with_or, Settings
 
 
 START_OCR_BUG_IGNORE = '<!-- START : OCR-BUG-IGNORE -->'
 END_OCR_BUG_IGNORE = '<!-- END : OCR-BUG-IGNORE -->'
 
+CONTINUING_SENTENCE_PATTERN = PatternProxy(r"^[a-z]", settings=Settings(ignore_case=False))
 
-def clean_ocrized_file(lines: List[str]) -> List[str]:
-    soup = BeautifulSoup()
-    lines = list(_remove_ocr_bug_ignore(lines))
-    lines = [ clean_markdown(line) for line in lines ]
-    lines = [ line for line in lines if not _is_not_information(line) ]
-
-    stitched_lines: List[str] = []
-    for line in lines:
-        if _is_continuing_sentence(line) and stitched_lines:
-            # TODO-PROCESS-TAG
-            stitched_lines[-1] = stitched_lines[-1] + ' ' + line
-        else:
-            stitched_lines.append(line)
-    
-    return stitched_lines
-
-
-def _is_continuing_sentence(line: str) -> bool:
-    """Detect sentence starting wit lowercase character."""
-    return bool(re.match(r"^[a-z]", remove_accents(line)))
-
-
-def _is_not_information(line: str) -> bool:
-
-    patterns_to_ignore = [
+IS_NOT_INFORMATION_PATTERN = PatternProxy(
+    join_with_or([
         r'^\.\.\.',
         # Sentence starting with "```"
         r'^```',
@@ -59,22 +37,44 @@ def _is_not_information(line: str) -> bool:
         # Sentence starting with "sur"
         r'^sur\b',
         # Sentence starting with "apres"
-        r'^apr[eè]s\b',
+        r'^après\b',
 
         # French Republic
-        r"r[eé]publique fran[cç]aise",
+        r"république fran[cç]aise",
         # French national motto
-        r"(libert[eé]|[eé]galit[eé]|fraternit[eé])",
+        r"(liberté|égalité|fraternité)",
         # Phone numbers
         r'\d{2}[\s.]\d{2}[\s.]\d{2}[\s.]\d{2}[\s.]\d{2}',
         # Email address
         r'\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b',
-    ]
-    pattern = '|'.join(f'(?:{pattern})' for pattern in patterns_to_ignore)
+    ])
+)
 
-    search_result = bool(re.search(pattern, line, re.IGNORECASE))
 
-    return search_result
+def clean_ocrized_file(lines: List[str]) -> List[str]:
+    soup = BeautifulSoup()
+    lines = list(_remove_ocr_bug_ignore(lines))
+    lines = [ clean_markdown(line) for line in lines ]
+    lines = [ line for line in lines if not _is_not_information(line) ]
+
+    stitched_lines: List[str] = []
+    for line in lines:
+        if _is_continuing_sentence(line) and stitched_lines:
+            # TODO-PROCESS-TAG
+            stitched_lines[-1] = stitched_lines[-1] + ' ' + line
+        else:
+            stitched_lines.append(line)
+    
+    return stitched_lines
+
+
+def _is_continuing_sentence(line: str) -> bool:
+    """Detect sentence starting with lowercase character."""
+    return bool(CONTINUING_SENTENCE_PATTERN.match(line))
+
+
+def _is_not_information(line: str) -> bool:
+    return bool(IS_NOT_INFORMATION_PATTERN.search(line))
 
 
 def _remove_ocr_bug_ignore(lines: List[str]) -> Iterator[str]:

@@ -6,7 +6,8 @@ from .split import (
     split_string_with_regex, split_string_at_end_with_regex, split_string_at_beginning_with_regex, 
     split_match_by_named_groups,
 )
-from .types import MatchNamedGroup, StrOrMatch
+from .types import MatchNamedGroup
+from .core import MatchFlow, PatternProxy
 from bench_convertisseur_xml.types import PageElementOrString
 
 
@@ -14,7 +15,7 @@ class TestSplitStringWithRegex(unittest.TestCase):
     def test_simple(self):
         # Arrange
         string = "Hello, this is a ttt. Let's match and replace words like ttt and bbb."
-        pattern = re.compile(r'\bttt|bbb\b')
+        pattern = PatternProxy(r'\bttt|bbb\b')
 
         # Act
         actual_results = _convert_str_or_match_flow(split_string_with_regex(pattern, string))
@@ -34,7 +35,7 @@ class TestSplitStringWithRegex(unittest.TestCase):
     def test_no_match(self):
         # Arrange
         string = "Hello."
-        pattern = re.compile(r'aaa')
+        pattern = PatternProxy(r'aaa')
 
         # Act
         actual_results = _convert_str_or_match_flow(split_string_with_regex(pattern, string))
@@ -50,7 +51,7 @@ class TestSplitStringWithRegexAtEnd(unittest.TestCase):
     def test_simple(self):
         # Arrange
         string = "Hello, this is a ttt. Let's match and replace words like ttt and bbb."
-        pattern = re.compile(r'\bttt|bbb\b')
+        pattern = PatternProxy(r'\bttt|bbb\b')
 
         # Act
         actual_results = _convert_str_or_match_flow(split_string_at_end_with_regex(pattern, string))
@@ -66,7 +67,7 @@ class TestSplitStringWithRegexAtEnd(unittest.TestCase):
     def test_last_is_match(self):
         # Arrange
         string = "Hello, this is a ttt. Let's match and replace words like ttt and bbb"
-        pattern = re.compile(r'\bttt|bbb\b')
+        pattern = PatternProxy(r'\bttt|bbb\b')
 
         # Act
         actual_results = _convert_str_or_match_flow(split_string_at_end_with_regex(pattern, string))
@@ -82,7 +83,7 @@ class TestSplitStringWithRegexAtEnd(unittest.TestCase):
     def test_whole_is_match(self):
         # Arrange
         string = "bbb"
-        pattern = re.compile(r'\bttt|bbb\b')
+        pattern = PatternProxy(r'\bttt|bbb\b')
 
         # Act
         actual_results = _convert_str_or_match_flow(split_string_at_end_with_regex(pattern, string))
@@ -98,7 +99,7 @@ class TestSplitStringWithRegexAtEnd(unittest.TestCase):
     def test_no_match(self):
         # Arrange
         string = "aaa"
-        pattern = re.compile(r'\bttt|bbb\b')
+        pattern = PatternProxy(r'\bttt|bbb\b')
 
         # Act
         actual_results = split_string_at_end_with_regex(pattern, string)
@@ -112,7 +113,7 @@ class TestSplitStringWithRegexAtBeginning(unittest.TestCase):
     def test_simple(self):
         # Arrange
         string = "Hello, this is a ttt. Let's match and replace words like ttt and bbb."
-        pattern = re.compile(r'\bttt|bbb\b')
+        pattern = PatternProxy(r'\bttt|bbb\b')
 
         # Act
         actual_results = _convert_str_or_match_flow(split_string_at_beginning_with_regex(pattern, string))
@@ -128,7 +129,7 @@ class TestSplitStringWithRegexAtBeginning(unittest.TestCase):
     def test_first_is_match(self):
         # Arrange
         string = "ttt. Let's match and replace words like ttt and bbb."
-        pattern = re.compile(r'\bttt|bbb\b')
+        pattern = PatternProxy(r'\bttt|bbb\b')
 
         # Act
         actual_results = _convert_str_or_match_flow(split_string_at_beginning_with_regex(pattern, string))
@@ -144,7 +145,7 @@ class TestSplitStringWithRegexAtBeginning(unittest.TestCase):
     def test_whole_is_match(self):
         # Arrange
         string = "bbb"
-        pattern = re.compile(r'\bttt|bbb\b')
+        pattern = PatternProxy(r'\bttt|bbb\b')
 
         # Act
         actual_results = _convert_str_or_match_flow(split_string_at_beginning_with_regex(pattern, string))
@@ -160,7 +161,7 @@ class TestSplitStringWithRegexAtBeginning(unittest.TestCase):
     def test_no_match(self):
         # Arrange
         string = "aaa"
-        pattern = re.compile(r'\bttt|bbb\b')
+        pattern = PatternProxy(r'\bttt|bbb\b')
 
         # Act
         actual_results = split_string_at_beginning_with_regex(pattern, string)
@@ -174,7 +175,7 @@ class TestSplitStringFromMatch(unittest.TestCase):
     def test_simple(self):
         # Arrange
         string = "<div>Bla hello 17/12/24 !!!</div>"
-        pattern = re.compile(r'(?P<day>\d{2})/(?P<month>\d{2})/(?P<year>\d{2})')
+        pattern = PatternProxy(r'(?P<day>\d{2})/(?P<month>\d{2})/(?P<year>\d{2})')
 
         # Act
         match = pattern.search(string)
@@ -192,7 +193,7 @@ class TestSplitStringFromMatch(unittest.TestCase):
 
     def test_remove_none_groups(self):
         # Arrange
-        pattern = re.compile(r'(?P<bla1>Bla)(?P<bla2>Bla)?(?P<bla3>Blo)')
+        pattern = PatternProxy(r'(?P<bla1>Bla)(?P<bla2>Bla)?(?P<bla3>Blo)')
         match1 = pattern.search("BlaBlaBlo")
         match2 = pattern.search("BlaBlo")
 
@@ -213,7 +214,7 @@ class TestSplitStringFromMatch(unittest.TestCase):
 
     def test_ignore_nested_groups(self):
         # Arrange
-        pattern = re.compile(r'Hello (?P<bly>Bla(?P<blo_nested>Blo)Bla) !!!')
+        pattern = PatternProxy(r'Hello (?P<bly>Bla(?P<blo_nested>Blo)Bla) !!!')
         match = pattern.search("<span> Hello BlaBloBla !!! </span>")
 
         # Act
@@ -227,7 +228,7 @@ class TestSplitStringFromMatch(unittest.TestCase):
         ]
 
 
-def _convert_str_or_match_flow(gen: Iterator[StrOrMatch]):
+def _convert_str_or_match_flow(gen: MatchFlow):
     return [
         str_or_match if isinstance(str_or_match, str) else f'MATCH:{str_or_match.group(0)}' 
         for str_or_match in gen

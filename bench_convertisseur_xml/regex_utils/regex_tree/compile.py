@@ -1,9 +1,10 @@
 import enum
-import re
 from typing import List, Dict, TypedDict, Union
 from dataclasses import dataclass, replace
 
-from ..types import GroupName, QuantifierNode, GroupNode, ContainerNode, LeafNode, Node, NodeMap, Settings
+from .types import GroupName, QuantifierNode, GroupNode, ContainerNode, LeafNode, Node, NodeMap
+from ..types import Settings
+from ..core import PatternProxy
 from ..helpers import without_named_groups, join_with_or
 
 
@@ -11,9 +12,9 @@ def Leaf(pattern_string: str, settings: Settings | None=None) -> LeafNode:
     settings = settings or Settings()
     return LeafNode(
         id=_get_unique_id(),
-        pattern=re.compile(
-            pattern_string, 
-            flags=_settings_to_flags(settings),
+        pattern=PatternProxy(
+            pattern_string,
+            settings=settings,
         ),
         settings=settings,
     )
@@ -27,12 +28,12 @@ def Branching(child_or_str_list: List[Node | str], settings: Settings | None=Non
 
     return ContainerNode(
         id=_get_unique_id(),
-        pattern=re.compile(
+        pattern=PatternProxy(
             join_with_or([
                 f'(?P<{child.id}>{without_named_groups(child.pattern.pattern)})' 
                 for child in children_list
             ]),
-            flags=_settings_to_flags(settings),
+            settings=settings,
         ),
         children={child.id: child for child in children_list},
         settings=settings,
@@ -51,9 +52,9 @@ def Sequence(child_or_str_list: List[Node | str], settings: Settings | None=None
     
     return ContainerNode(
         id=_get_unique_id(),
-        pattern=re.compile(
+        pattern=PatternProxy(
             pattern_string,
-            flags=_settings_to_flags(settings),
+            settings=settings,
         ),
         children=children,
         settings=settings,
@@ -70,9 +71,9 @@ def Group(
     return GroupNode(
         id=_get_unique_id(),
         group_name=group_name,
-        pattern=re.compile(
+        pattern=PatternProxy(
             f'(?P<{child.id}>{without_named_groups(child.pattern.pattern)})',
-            flags=_settings_to_flags(settings),
+            settings=settings,
         ),
         child=child,
         settings=settings,
@@ -89,9 +90,9 @@ def Quantifier(
     return QuantifierNode(
         id=_get_unique_id(),
         quantifier=quantifier,
-        pattern=re.compile(
+        pattern=PatternProxy(
             f'({without_named_groups(child.pattern.pattern)}){quantifier}',
-            flags=_settings_to_flags(settings),
+            settings=settings,
         ),
         child=child,
         settings=settings,
@@ -104,10 +105,6 @@ def _get_unique_id() -> str:
     return f'{_PREFIX}{_COUNTER}'
 _COUNTER = 0
 _PREFIX = '_ID_'
-
-
-def _settings_to_flags(settings: Settings) -> int:
-    return re.IGNORECASE if settings.ignore_case else 0
 
 
 def _initialize_child(node_or_str: Node | str, default_settings: Settings) -> Node:

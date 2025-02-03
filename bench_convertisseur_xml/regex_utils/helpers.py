@@ -1,4 +1,5 @@
 import re
+import unicodedata
 from typing import List, Pattern, cast, List, Callable, Iterable, Union, Dict, Tuple, Literal
 from dataclasses import dataclass
 
@@ -18,3 +19,11 @@ def without_named_groups(pattern_string: str):
 
 def join_with_or(pattern_strings: List[str]):
     return '|'.join(pattern_strings)
+
+
+def remove_accents(s: str) -> str:
+    return ''.join((c for c in unicodedata.normalize('NFD', s) if unicodedata.category(c) != 'Mn'))
+
+
+def normalize_quotes(text: str):
+    return text.replace('’', "'").replace('“', '"').replace('”', '"')

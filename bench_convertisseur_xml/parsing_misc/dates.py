@@ -8,7 +8,7 @@ from bs4 import BeautifulSoup, Tag
 from bench_convertisseur_xml.settings import *
 from bench_convertisseur_xml.html_schemas import DATE_SCHEMA
 from bench_convertisseur_xml.utils.html import make_data_tag
-from bench_convertisseur_xml.regex_utils import regex_tree, RegexTreeMatch, MatchDict, join_with_or
+from bench_convertisseur_xml.regex_utils import regex_tree, join_with_or
 from bench_convertisseur_xml.types import PageElementOrString
 
 DATE_FORMAT = '%Y-%m-%d'
@@ -30,7 +30,7 @@ DATE_NODE = regex_tree.Group(
 )
 
 
-def _handle_date_match_dict(match_dict: MatchDict) -> date | None:
+def _handle_date_match_dict(match_dict: regex_tree.MatchDict) -> date | None:
     if match_dict.get('month_name'):
         match_month = match_dict['month_name'].lower()
         month = None
@@ -74,7 +74,7 @@ def parse_date_attribute(date_str: str) -> date:
     return datetime.strptime(date_str, DATE_FORMAT).date()
 
 
-def render_date_regex_tree_match(soup: BeautifulSoup, regex_tree_match: RegexTreeMatch) -> Tag:
+def render_date_regex_tree_match(soup: BeautifulSoup, regex_tree_match: regex_tree.Match) -> Tag:
     date_object = _handle_date_match_dict(regex_tree_match.match_dict)
     if date_object is None:
         raise RuntimeError(f"expected valid date")

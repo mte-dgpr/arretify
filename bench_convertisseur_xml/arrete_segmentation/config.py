@@ -4,26 +4,28 @@
 import re
 from enum import Enum
 
+from bench_convertisseur_xml.regex_utils import PatternProxy
+
 
 SERVICE_PATTERNS = [
-    r"pr[eé]fecture",
-    r"sous-pr[eé]fecture",
-    r"secr[eé]tariat",
+    r"préfecture",
+    r"sous-préfecture",
+    r"secrétariat",
     r"sg",
-    r"pr[ée]f[eè]te?",
+    r"préfète?",
     r"direction",
     r"drire",
     r"dreal",
     r"service",
     r"section",
-    r"p[oô]le",
+    r"pôle",
     r"bureau",
-    r"unit[eé]",
-    r"installations class[eé]es pour la protection de l'environnement",  # sometimes independent
+    r"unité",
+    r"installations classées pour la protection de l'environnement",  # sometimes independent
 ]
 HONORARY_PATTERNS = [
-    r"la pr[ée]fecture",
-    r"l[ea] pr[ée]f[eè]te?",
+    r"la préfecture",
+    r"l[ea] préfète?",
     r"chevalier",
     r"officier",
     r"commandeur",
@@ -31,18 +33,11 @@ HONORARY_PATTERNS = [
 REFERENCE_PATTERNS = [
     r"affaires? suivies?",
     r"dossiers? suivis?",
-    r"r[eé]f",
+    r"réf",
     r"n°",
     r"n/ref",
     r"nor",
 ]
-
-
-# Convert the patterns to case insensitive
-SERVICE_AND_REFERENCE_PATTERN = re.compile(
-    f"({'|'.join(SERVICE_PATTERNS + REFERENCE_PATTERNS)})",
-    re.IGNORECASE,
-)
 
 
 class HeaderSection(Enum):

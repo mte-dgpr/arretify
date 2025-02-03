@@ -3,9 +3,8 @@ from typing import Iterable, List, cast, Callable
 
 from bs4 import BeautifulSoup
 
-from .utils.text import remove_accents
 from .utils.functional import flat_map_non_string, flat_map_string, Lambda
-from .regex_utils import split_string_with_regex
+from .regex_utils import split_string_with_regex, PatternProxy
 from .utils.html import make_data_tag
 from .html_schemas import DEBUG_KEYWORD_SCHEMA
 from .types import PageElementOrString
@@ -16,8 +15,7 @@ def insert_debug_keywords(
     children: Iterable[PageElementOrString],
     query: str,
 ) -> List[PageElementOrString]:
-    unaccented = remove_accents(query)
-    pattern = re.compile(f'{query}|{unaccented}', re.IGNORECASE)
+    pattern = PatternProxy(query)
     return list(
         flat_map_string(
             children, 

@@ -4,30 +4,30 @@ from dataclasses import dataclass
 
 from bs4 import BeautifulSoup, Tag, PageElement
 
-from bench_convertisseur_xml.regex_utils import split_string_at_beginning_with_regex, split_string_at_end_with_regex
+from bench_convertisseur_xml.regex_utils import split_string_at_beginning_with_regex, split_string_at_end_with_regex, PatternProxy, Settings
 from bench_convertisseur_xml.utils.generators import remove_empty_strings_from_flow
 from bench_convertisseur_xml.utils.merge import merge_strings
 from bench_convertisseur_xml.utils.html import make_data_tag, make_new_tag, PageElementOrString
 from bench_convertisseur_xml.html_schemas import MODIFICATION_SEGMENT_SCHEMA
 from bench_convertisseur_xml.types import ModificationType, PageElementOrString
 
-SENTENCE_SPLIT_PATTERN = re.compile(r'\.')
+SENTENCE_SPLIT_PATTERN = PatternProxy(r'\.')
 
 DELETE_RE_LIST = [
-    re.compile(r'abrog\w*', re.IGNORECASE),
-    re.compile(r'suppr\w*', re.IGNORECASE),
+    PatternProxy(r'abrog\w*'),
+    PatternProxy(r'suppr\w*'),
 ]
 
 ADD_RE_LIST = [
-    re.compile(r'ins(e|é|è)r\w*', re.IGNORECASE),
-    re.compile(r'ajout\w*', re.IGNORECASE),
-    re.compile(r'complét\w*', re.IGNORECASE),
+    PatternProxy(r'insér\w*', settings=Settings(ignore_accents=False)),
+    PatternProxy(r'ajout\w*'),
+    PatternProxy(r'complét\w*', settings=Settings(ignore_accents=False)),
 ]
 
 UPDATE_RE_LIST = [
-    re.compile(r'modif\w*', re.IGNORECASE),
-    re.compile(r'remplac\w*', re.IGNORECASE),
-    re.compile(r'mise? [aà] jour', re.IGNORECASE),
+    PatternProxy(r'modif\w*'),
+    PatternProxy(r'remplac\w*'),
+    PatternProxy(r'mise? à jour'),
 ]
 
 PATTERNS_AND_TYPES = (

@@ -2,7 +2,8 @@ import re
 from typing import Iterator, Dict, Callable, List, Iterable
 from dataclasses import dataclass
 
-from ..types import Node, RegexTreeMatch, MatchDict, LeafNode, ContainerNode, QuantifierNode, GroupNode, RegexTreeMatchFlow, GroupName
+from .types import Node, RegexTreeMatch, MatchDict, LeafNode, ContainerNode, QuantifierNode, GroupNode, RegexTreeMatchFlow
+from ..types import GroupName
 from ..split import split_string_with_regex, split_match_by_named_groups
 from bench_convertisseur_xml.types import PageElementOrString
 

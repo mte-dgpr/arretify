@@ -8,8 +8,8 @@ from ..settings import APP_ROOT, LOGGER
 from bench_convertisseur_xml.utils.functional import flat_map_non_string, flat_map_string
 from bench_convertisseur_xml.html_schemas import TARGET_POSITION_REFERENCE_SCHEMA
 from bench_convertisseur_xml.utils.html import make_data_tag, PageElementOrString
-from bench_convertisseur_xml.parsing_misc.patterns import ET_VIRGULE_PATTERN_S, EME_PATTERN_S, ORDINAL_PATTERN_S, APOSTROPHE_PATTERN_S, ordinal_str_to_int
-from bench_convertisseur_xml.regex_utils import regex_tree, flat_map_regex_tree_match, split_string_with_regex_tree, MatchDict, RegexTreeMatch
+from bench_convertisseur_xml.parsing_misc.patterns import ET_VIRGULE_PATTERN_S, EME_PATTERN_S, ORDINAL_PATTERN_S, ordinal_str_to_int
+from bench_convertisseur_xml.regex_utils import regex_tree, flat_map_regex_tree_match, split_string_with_regex_tree
 
 # TODO : 
 # - Phrase and word index 
@@ -29,8 +29,8 @@ ARTICLE_ID_NODE = regex_tree.Group(
 
 ALINEA_NODE = regex_tree.Group(
     regex_tree.Branching([
-        r'((?P<alinea_num>\d+)' + EME_PATTERN_S + r'?|(?P<alinea_ordinal>' + ORDINAL_PATTERN_S + r')) alin[ée]a',
-        r'alin[ée]a ((?P<alinea_num>\d+)' + EME_PATTERN_S + r'?|(?P<alinea_ordinal>' + ORDINAL_PATTERN_S + r'))',
+        r'((?P<alinea_num>\d+)' + EME_PATTERN_S + r'?|(?P<alinea_ordinal>' + ORDINAL_PATTERN_S + r')) alinéa',
+        r'alinéa ((?P<alinea_num>\d+)' + EME_PATTERN_S + r'?|(?P<alinea_ordinal>' + ORDINAL_PATTERN_S + r'))',
         r'(?P<alinea_num>\d+)°',
     ]), 
     group_name='__alinea'
@@ -39,7 +39,7 @@ ALINEA_NODE = regex_tree.Group(
 
 ARTICLE_RANGE_NODE = regex_tree.Sequence([
     ARTICLE_ID_NODE,
-    r' à (l' + APOSTROPHE_PATTERN_S + r'article )?',
+    r' à (l\'article )?',
     ARTICLE_ID_NODE,
 ])
 
@@ -49,7 +49,7 @@ TARGET_POSITION_NODE = regex_tree.Group(
     regex_tree.Branching([
         regex_tree.Sequence([
             ALINEA_NODE,
-            r' (de l' + APOSTROPHE_PATTERN_S + r')?articles? ',
+            r' (de l\')?articles? ',
             ARTICLE_ID_NODE,
         ]),
         
@@ -111,7 +111,7 @@ TARGET_POSITION_PLURAL_NODE = regex_tree.Group(
 )
 
 
-def _handle_article_match_dict(match_dict: MatchDict) -> Dict:
+def _handle_article_match_dict(match_dict: regex_tree.MatchDict) -> Dict:
     article_num = match_dict.get('num')
     article_ordinal = match_dict.get('ordinal')
     article_code = match_dict.get('code')
@@ -122,7 +122,7 @@ def _handle_article_match_dict(match_dict: MatchDict) -> Dict:
     return dict(article_id=article_id)
 
 
-def _handle_alinea_match_dict(match_dict: MatchDict) -> Dict:
+def _handle_alinea_match_dict(match_dict: regex_tree.MatchDict) -> Dict:
     alinea_num = match_dict.get('alinea_num')
     alinea_ordinal = match_dict.get('alinea_ordinal')
 
@@ -137,7 +137,7 @@ def _handle_alinea_match_dict(match_dict: MatchDict) -> Dict:
     return dict(alinea_start=alinea_start, alinea_end=None)
 
 
-def _render_target_position_group_match(soup, regex_tree_match: RegexTreeMatch) -> Tag:
+def _render_target_position_group_match(soup, regex_tree_match: regex_tree.Match) -> Tag:
     contents: List[PageElementOrString] = []
     alinea_dict: Dict | None = None
     article_start_dict: Dict | None = None

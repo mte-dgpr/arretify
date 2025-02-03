@@ -1,6 +1,7 @@
 from typing import Callable, Iterable, Iterator, List
 
-from .types import RegexTreeMatch, RegexTreeMatchFlow, GroupName
+from .types import GroupName
+from .regex_tree.types import RegexTreeMatch, RegexTreeMatchFlow
 from bench_convertisseur_xml.types import PageElementOrString
 
 
