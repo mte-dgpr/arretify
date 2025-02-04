@@ -2,7 +2,7 @@ import re
 from dataclasses import dataclass
 from datetime import date
 from bs4 import Tag, BeautifulSoup
-from typing import Literal, List, get_args, cast, TypedDict, Pattern, Tuple, Iterator, Dict, Optional, Iterable
+from typing import Literal, List, Tuple, Iterator, Dict, Optional, Iterable, Union
 
 from ..settings import APP_ROOT, LOGGER
 from bench_convertisseur_xml.utils.html import PageElementOrString, make_data_tag
@@ -13,6 +13,8 @@ from bench_convertisseur_xml.parsing_misc.dates import DATE_NODE, render_date_re
 from bench_convertisseur_xml.regex_utils import regex_tree, flat_map_regex_tree_match, split_string_with_regex_tree
 
 Authority = Literal['préfectoral', 'ministériel']
+
+Code = str
 
 AUTHORITY_MAP: Dict[str, Authority] = {
     'ministériel': 'ministériel',
@@ -60,7 +62,7 @@ ARRETE_NODE = regex_tree.Group(regex_tree.Sequence([
 ]), group_name='__arrete')
 
 
-ARRETE_PLURAL_NODE = regex_tree.Group(regex_tree.Sequence([
+ARRETE_MULTIPLE_NODE = regex_tree.Group(regex_tree.Sequence([
     r'arrêtés ((?P<authority>préfectoraux|ministériels) (modifiés )?)?',
     regex_tree.Quantifier(
         regex_tree.Sequence([
@@ -90,10 +92,11 @@ ARRETE_PLURAL_NODE = regex_tree.Group(regex_tree.Sequence([
         ]), 
         '{2,}',
     )
-]), group_name='__arrete_plural')
+]), group_name='__arrete_multiple')
 
 
-def _handle_arrete_base_match_dict(match_dict: regex_tree.MatchDict) -> Dict:
+def _extract_arrete_base_infos(arrete_base_match: regex_tree.Match) -> Dict:
+    match_dict = arrete_base_match.match_dict
     authority_raw = match_dict.get('authority')
     if authority_raw:
         authority = AUTHORITY_MAP[authority_raw.lower()]
@@ -103,27 +106,27 @@ def _handle_arrete_base_match_dict(match_dict: regex_tree.MatchDict) -> Dict:
     return dict(qualifier=qualifier, authority=authority)
 
 
-def _handle_arrete_details_match_dict(match_dict: regex_tree.MatchDict) -> Dict:
-    return dict(code=match_dict.get('code'))
+def _extract_code(arrete_match: regex_tree.Match) -> Union[Code, None]:
+    return arrete_match.match_dict.get('code', None)
 
 
 def _render_arrete_container_regex_tree_match(
     soup: BeautifulSoup, 
-    regex_tree_match: regex_tree.Match, 
+    arrete_match: regex_tree.Match, 
     base_arrete_match_dict: regex_tree.MatchDict
 ) -> Tag:
     return make_data_tag(
         soup, 
         ARRETE_REFERENCE_SCHEMA,
         data=dict(
+            code=_extract_code(arrete_match),
             **base_arrete_match_dict,
-            **_handle_arrete_details_match_dict(regex_tree_match.match_dict),
         ),
-        contents=list(flat_map_regex_tree_match(
-            regex_tree_match.children,
+        contents=flat_map_regex_tree_match(
+            arrete_match.children,
             lambda date_group_match: [render_date_regex_tree_match(soup, date_group_match)],
             allowed_group_names=[DATE_NODE.group_name],
-        )),
+        ),
     )
 
 
@@ -139,7 +142,7 @@ def _parse_arretes_references(
                 _render_arrete_container_regex_tree_match(
                     soup, 
                     arrete_container_group_match, 
-                    _handle_arrete_base_match_dict(arrete_container_group_match.match_dict),
+                    _extract_arrete_base_infos(arrete_container_group_match),
                 ),
             ],
             allowed_group_names=['__arrete'],
@@ -147,28 +150,28 @@ def _parse_arretes_references(
     )
 
 
-def _parse_plural_arretes_references(
+def _parse_multiple_arretes_references(
     soup: BeautifulSoup,
     children: Iterable[PageElementOrString],
 ):
-    # For plural arretes, we need to first parse some of the attributes in common
+    # For multiple arretes, we need to first parse some of the attributes in common
     # before parsing each individual arrete reference.
     return flat_map_string(
         children,
         lambda string: flat_map_regex_tree_match(
-            split_string_with_regex_tree(ARRETE_PLURAL_NODE, string),
-            lambda arrete_plural_group_match: flat_map_regex_tree_match(
-                arrete_plural_group_match.children,
+            split_string_with_regex_tree(ARRETE_MULTIPLE_NODE, string),
+            lambda arrete_multiple_group_match: flat_map_regex_tree_match(
+                arrete_multiple_group_match.children,
                 lambda arrete_container_group_match: [
                     _render_arrete_container_regex_tree_match(
                         soup, 
                         arrete_container_group_match, 
-                        _handle_arrete_base_match_dict(arrete_plural_group_match.match_dict),
+                        _extract_arrete_base_infos(arrete_multiple_group_match),
                     )
                 ],
                 allowed_group_names=['__arrete'],
             ),
-            allowed_group_names=['__arrete_plural'],
+            allowed_group_names=['__arrete_multiple'],
         )
     )
 
@@ -177,6 +180,6 @@ def parse_arretes_references(
     soup: BeautifulSoup,
     children: Iterable[PageElementOrString],
 ) -> List[PageElementOrString]:
-    # First check for plural, cause it is the most exhaustive pattern
-    new_children = list(_parse_plural_arretes_references(soup, children))
+    # First check for multiple, cause it is the most exhaustive pattern
+    new_children = list(_parse_multiple_arretes_references(soup, children))
     return list(_parse_arretes_references(soup, new_children))

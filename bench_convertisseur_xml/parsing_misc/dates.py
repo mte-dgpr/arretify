@@ -8,7 +8,7 @@ from bs4 import BeautifulSoup, Tag
 from bench_convertisseur_xml.settings import *
 from bench_convertisseur_xml.html_schemas import DATE_SCHEMA
 from bench_convertisseur_xml.utils.html import make_data_tag
-from bench_convertisseur_xml.regex_utils import regex_tree, join_with_or
+from bench_convertisseur_xml.regex_utils import regex_tree, join_with_or, iter_regex_tree_match_strings
 from bench_convertisseur_xml.types import PageElementOrString
 
 DATE_FORMAT = '%Y-%m-%d'
@@ -82,7 +82,7 @@ def render_date_regex_tree_match(soup: BeautifulSoup, regex_tree_match: regex_tr
     date_container = make_data_tag(
         soup, 
         DATE_SCHEMA, 
-        contents=cast(List[PageElementOrString], regex_tree_match.string_children)
+        contents=iter_regex_tree_match_strings(regex_tree_match),
     )
     date_container['datetime'] = render_date_attribute(date_object)
     return date_container

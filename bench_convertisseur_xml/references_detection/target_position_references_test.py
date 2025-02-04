@@ -119,6 +119,13 @@ class TestParseAlineaRegex(unittest.TestCase):
             '<a class="dsr-target_position_reference" data-alinea_start="9" data-article_start="4">alinéa neuvième de l\'article 4</a>'
         ]
 
+    def test_alinea_list(self):
+        assert _parsed_elements("Les paragraphes 3 et 4 de l'article 8.5.1.1") == [
+            'Les ',
+            '<a class="dsr-target_position_reference" data-alinea_start="3" data-article_start="8.5.1.1">paragraphes 3</a>',
+            ' et ',
+            '<a class="dsr-target_position_reference" data-alinea_start="4" data-article_start="8.5.1.1">4 de l\'article 8.5.1.1</a>',
+        ]
 
 
 class TestParseTargetPositionReferences(unittest.TestCase):

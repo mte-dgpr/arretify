@@ -17,3 +17,46 @@ def flat_map_regex_tree_match(
             if allowed_group_names is not None and str_or_group.group_name not in allowed_group_names:
                 raise ValueError(f"received unexpected group named {str_or_group.group_name}. Allowed : {allowed_group_names}")
             yield from map_func(str_or_group)
+
+
+def iter_regex_tree_match_strings(match: RegexTreeMatch) -> Iterator[str]:
+    """
+    Iterates over the strings in a regex tree match.
+
+    >>> match = RegexTreeMatch(
+    ...     children=["hello", RegexTreeMatch(children=["world", "!"], group_name=None, match_dict={}), "python"],
+    ...     group_name=None,
+    ...     match_dict={}
+    ... )
+    >>> list(iter_regex_tree_match_strings(match))
+    ['hello', 'world', '!', 'python']
+    """
+    for child in match.children:
+        if isinstance(child, str):
+            yield child
+        else:
+            yield from iter_regex_tree_match_strings(child)
+
+
+def filter_regex_tree_match_children(
+    match: RegexTreeMatch,
+    group_names: List[GroupName],
+) -> List[RegexTreeMatch]:
+    """
+    Filters the children of a regex tree match by group names.
+
+    >>> match = RegexTreeMatch(
+    ...     children=[
+    ...         RegexTreeMatch(children=[], group_name="g1", match_dict={}),
+    ...         RegexTreeMatch(children=[], group_name="g2", match_dict={}),
+    ...     ],
+    ...     group_name=None,
+    ...     match_dict={}
+    ... )
+    >>> filter_regex_tree_match_children(match, ["g1"])
+    [RegexTreeMatch(children=[], group_name='g1', match_dict={})]
+    """
+    return [
+        child for child in match.children 
+        if isinstance(child, RegexTreeMatch) and child.group_name in group_names
+    ]

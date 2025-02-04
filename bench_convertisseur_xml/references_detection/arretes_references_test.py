@@ -2,7 +2,7 @@ import unittest
 from datetime import date
 from bs4 import BeautifulSoup
 
-from .arretes_references import parse_arretes_references, _parse_arretes_references, _parse_plural_arretes_references
+from .arretes_references import parse_arretes_references, _parse_arretes_references, _parse_multiple_arretes_references
 
 
 class TestParseArreteReferences(unittest.TestCase):
@@ -23,7 +23,7 @@ class TestParseArreteReferences(unittest.TestCase):
 
 class TestParseArretePluralReferences(unittest.TestCase):
 
-    def test_references_plural(self):
+    def test_references_multiple(self):
         assert _parsed_elements('Les arrêtés préfectoraux n° 5213 du 28 octobre 1988 et n° 1636 du 24/03/95 blabla.') == [
             'Les ', 
             'arrêtés préfectoraux ',
