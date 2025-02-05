@@ -4,14 +4,15 @@ from dataclasses import dataclass
 
 from bench_convertisseur_xml.types import PageElementOrString
 from bench_convertisseur_xml.utils.generators import remove_empty_strings_from_flow
-from .types import MatchNamedGroup, MatchFlow
+from .types import MatchNamedGroup
+from .core import MatchProxy, PatternProxy, MatchFlow
 
 
-StrSplit = Tuple[str, re.Match, str]
+StrSplit = Tuple[str, MatchProxy, str]
 
 
 def split_match_by_named_groups(
-    match: re.Match,
+    match: MatchProxy,
 ) -> Iterator[str | MatchNamedGroup]:
     '''
     Example:
@@ -63,12 +64,12 @@ def split_match_by_named_groups(
 
 @remove_empty_strings_from_flow
 def split_string_with_regex(
-    pattern: Pattern, 
+    pattern: PatternProxy,
     string: str,
 ) -> MatchFlow:
     '''
     Example:
-        >>> pattern = re.compile(r'\d+')  # Matches sequences of digits
+        >>> pattern = PatternProxy(r'\d+')  # Matches sequences of digits
         >>> string = "abc123def456ghi"
         >>> result = list(split_string_with_regex(pattern, string))
         >>> for item in result:
@@ -82,7 +83,7 @@ def split_string_with_regex(
         Match: '456'
         Substring: 'ghi'
     '''
-    previous_match: re.Match | None = None
+    previous_match: MatchProxy | None = None
     for match in pattern.finditer(string):
         if previous_match:
             yield string[previous_match.end():match.start()]
@@ -98,7 +99,7 @@ def split_string_with_regex(
 
 
 def split_string_at_beginning_with_regex(
-    pattern: Pattern, 
+    pattern: PatternProxy, 
     string: str,
 ) -> StrSplit | None:
     '''
@@ -111,7 +112,7 @@ def split_string_at_beginning_with_regex(
 
 
 def split_string_at_end_with_regex(
-    pattern: Pattern, 
+    pattern: PatternProxy, 
     string: str,
 ) -> StrSplit | None:
     '''
@@ -121,12 +122,12 @@ def split_string_at_end_with_regex(
 
     # Find the last Match instance
     match_index = -1
-    while (match_index * -1) <= len(results) and not isinstance(results[match_index], re.Match):
+    while (match_index * -1) <= len(results) and not isinstance(results[match_index], MatchProxy):
         match_index -= 1
     if (match_index * -1) > len(results):
         return None
 
-    match = cast(re.Match, results[match_index])
+    match = cast(MatchProxy, results[match_index])
     return (
         string[:match.start()],
         match,

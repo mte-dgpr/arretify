@@ -1,0 +1,84 @@
+import re
+from typing import Pattern, Match, Iterator, Union, Iterable, Dict
+
+from .types import PatternString, Settings
+from .helpers import remove_accents, normalize_quotes
+
+
+MatchFlow = Iterable[Union[str, 'MatchProxy']]
+
+
+class PatternProxy:
+    """
+    A proxy class for regex patterns with additional settings.
+
+    >>> pattern_proxy = PatternProxy(r'cafe', Settings(ignore_accents=True))
+    >>> match = pattern_proxy.match("café")
+    >>> if match:
+    ...     print(match.group(0))
+    ... else:
+    ...     print("No match")
+    café
+    """
+
+    def __init__(self, pattern_string: PatternString, settings: Settings | None = None):
+        self.pattern_string = pattern_string
+        self.settings = settings or Settings()
+
+        pattern_string_for_compilation = _preprocess_string(pattern_string, self.settings)
+        compile_flags = 0
+        if self.settings.ignore_case:
+            compile_flags |= re.IGNORECASE
+
+        self._pattern = re.compile(pattern_string_for_compilation, compile_flags)
+
+    def __getattr__(self, attr):
+        return getattr(self._pattern, attr)
+
+    def match(self, string: str) -> Union['MatchProxy', None]:
+        match = self._pattern.match(_preprocess_string(string, self.settings))
+        if match:
+            return MatchProxy(string, match)
+        else:
+            return None
+
+    def search(self, string: str) -> Union['MatchProxy', None]:
+        match = self._pattern.search(_preprocess_string(string, self.settings))
+        if match:
+            return MatchProxy(string, match)
+        else:
+            return None
+
+    def finditer(self, string: str) -> Iterator['MatchProxy']:
+        for match in self._pattern.finditer(_preprocess_string(string, self.settings)):
+            yield MatchProxy(string, match)
+            
+
+class MatchProxy:
+    def __init__(self, string: str, match: re.Match):
+        self.string = string
+        self.match = match
+
+    def group(self, group: int | str) -> Union[str, None]:
+        group_start = self.match.start(group)
+        if group_start == -1:
+            return None
+        return self.string[group_start:self.match.end(group)]
+
+    def groupdict(self) -> Dict[str, Union[str, None]]:
+        raw_groupdict = self.match.groupdict()
+        return {
+            key: self.group(key)
+            for key in raw_groupdict.keys()
+        }
+
+    def __getattr__(self, attr):
+        return getattr(self.match, attr)
+
+
+def _preprocess_string(string: str, settings: Settings) -> str:
+    if settings.ignore_accents:
+        string = remove_accents(string)
+    if settings.normalize_quotes:
+        string = normalize_quotes(string)
+    return string

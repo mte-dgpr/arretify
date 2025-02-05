@@ -292,8 +292,3 @@ def test_section_valid_cases():
         "number": "",
         "text": "",
     }
-
-
-if __name__ == "__main__":
-
-    test_section_valid_cases()

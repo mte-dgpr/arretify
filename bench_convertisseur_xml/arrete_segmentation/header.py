@@ -8,15 +8,19 @@ from .sentence_rules import (
     is_arrete, is_entity, is_liste, is_motif, is_visa, VISA_PATTERN, MOTIF_PATTERN, LIST_PATTERN
 )
 from .config import (
-    SERVICE_AND_REFERENCE_PATTERN, BodySection
+    SERVICE_PATTERNS, REFERENCE_PATTERNS, BodySection
 )
 from .parse_section import parse_section
 from .parse_list import parse_list, clean_bullet_list, list_indentation
 from bench_convertisseur_xml.utils.html import make_data_tag, PageElementOrString, wrap_in_tag, make_new_tag
-from bench_convertisseur_xml.regex_utils import split_string_with_regex, merge_matches_with_siblings
+from bench_convertisseur_xml.regex_utils import split_string_with_regex, merge_matches_with_siblings, join_with_or, PatternProxy
 from bench_convertisseur_xml.html_schemas import ENTITY_SCHEMA, IDENTIFICATION_SCHEMA, VISA_SCHEMA, MOTIF_SCHEMA
 from bench_convertisseur_xml.types import DataElementSchema
 
+
+SERVICE_AND_REFERENCE_PATTERN = PatternProxy(
+    join_with_or(SERVICE_PATTERNS + REFERENCE_PATTERNS),
+)
 
 def _is_body_section(line: str, authorized_sections) -> bool:
     new_section_info = parse_section(line, authorized_sections=authorized_sections)
@@ -122,7 +126,7 @@ def _parse_visas_or_motifs(
     soup: BeautifulSoup, 
     header: Tag, 
     lines: List[str],
-    section_pattern: re.Pattern,
+    section_pattern: PatternProxy,
     section_schema: DataElementSchema,
     is_next_section: Callable[[str], bool],
 ):

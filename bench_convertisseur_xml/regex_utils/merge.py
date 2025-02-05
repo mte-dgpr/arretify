@@ -2,7 +2,7 @@ from typing import Iterator, Literal, Iterable
 
 from bench_convertisseur_xml.types import PageElementOrString
 from bench_convertisseur_xml.utils.generators import remove_empty_strings_from_flow
-from .types import MatchFlow
+from .core import MatchFlow
 
 
 @remove_empty_strings_from_flow

@@ -10,7 +10,7 @@ from bench_convertisseur_xml.utils.functional import flat_map_non_string, flat_m
 from bench_convertisseur_xml.html_schemas import ARRETE_REFERENCE_SCHEMA
 from bench_convertisseur_xml.parsing_misc.patterns import ET_VIRGULE_PATTERN_S
 from bench_convertisseur_xml.parsing_misc.dates import DATE_NODE, render_date_regex_tree_match
-from bench_convertisseur_xml.regex_utils import regex_tree, flat_map_regex_tree_match, split_string_with_regex_tree, MatchDict, RegexTreeMatch
+from bench_convertisseur_xml.regex_utils import regex_tree, flat_map_regex_tree_match, split_string_with_regex_tree
 
 Authority = Literal['préfectoral', 'ministériel']
 
@@ -52,7 +52,7 @@ ARRETE_NODE = regex_tree.Group(regex_tree.Sequence([
             # It's important to capture this in the arrete reference regex, 
             # so that we now it is not an action of modification, but rather
             # part of the designation of the arrete.
-            r'(\s(modifié|modifiant))?',
+            r'(\s(modifié|modifiant)(?=\b))?',
         ]),
 
         CODE_NODE,
@@ -93,7 +93,7 @@ ARRETE_PLURAL_NODE = regex_tree.Group(regex_tree.Sequence([
 ]), group_name='__arrete_plural')
 
 
-def _handle_arrete_base_match_dict(match_dict: MatchDict) -> Dict:
+def _handle_arrete_base_match_dict(match_dict: regex_tree.MatchDict) -> Dict:
     authority_raw = match_dict.get('authority')
     if authority_raw:
         authority = AUTHORITY_MAP[authority_raw.lower()]
@@ -103,14 +103,14 @@ def _handle_arrete_base_match_dict(match_dict: MatchDict) -> Dict:
     return dict(qualifier=qualifier, authority=authority)
 
 
-def _handle_arrete_details_match_dict(match_dict: MatchDict) -> Dict:
+def _handle_arrete_details_match_dict(match_dict: regex_tree.MatchDict) -> Dict:
     return dict(code=match_dict.get('code'))
 
 
 def _render_arrete_container_regex_tree_match(
     soup: BeautifulSoup, 
-    regex_tree_match: RegexTreeMatch, 
-    base_arrete_match_dict: MatchDict
+    regex_tree_match: regex_tree.Match, 
+    base_arrete_match_dict: regex_tree.MatchDict
 ) -> Tag:
     return make_data_tag(
         soup, 

@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from typing import List, Union
 
 from .execute import match
-from ..types import RegexTreeMatch
+from .types import RegexTreeMatch
 from .compile import Sequence, Branching, Group, Quantifier
 
 
