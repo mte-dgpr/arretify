@@ -20,6 +20,7 @@ class TestHandleArticleRange(unittest.TestCase):
         assert _parsed_elements("article R. 511-9") == ['<a class="dsr-target_position_reference" data-article_start="R. 511-9">article R. 511-9</a>']
         assert _parsed_elements("article D.12") == ['<a class="dsr-target_position_reference" data-article_start="D.12">article D.12</a>']
         assert _parsed_elements("article L181-3") == ['<a class="dsr-target_position_reference" data-article_start="L181-3">article L181-3</a>']
+        assert _parsed_elements("aux articles R. 516-1") == ['aux ', '<a class="dsr-target_position_reference" data-article_start="R. 516-1">articles R. 516-1</a>']
 
     def test_ordinal(self):
         assert _parsed_elements("article premier") == ['<a class="dsr-target_position_reference" data-article_start="1">article premier</a>']
@@ -102,29 +103,43 @@ class TestParseAlineaRegex(unittest.TestCase):
 
     def test_alinea_num_before(self):
         assert _parsed_elements("2ème alinéa de l'article 1") == [
-            '<a class="dsr-target_position_reference" data-alinea_start="2" data-article_start="1">2ème alinéa de l\'article 1</a>'
+            '<a class="dsr-target_position_reference" data-article_start="1" data-section_start="alinea:2">2ème alinéa de l\'article 1</a>'
         ]
         assert _parsed_elements("5° de l'article 5") == [
-            '<a class="dsr-target_position_reference" data-alinea_start="5" data-article_start="5">5° de l\'article 5</a>'
+            '<a class="dsr-target_position_reference" data-article_start="5" data-section_start="alinea:5">5° de l\'article 5</a>'
         ]
 
     def test_alinea_num_after(self):
         assert _parsed_elements("alinéa 3 de l'article 2") == [
-            '<a class="dsr-target_position_reference" data-alinea_start="3" data-article_start="2">alinéa 3 de l\'article 2</a>'
+            '<a class="dsr-target_position_reference" data-article_start="2" data-section_start="alinea:3">alinéa 3 de l\'article 2</a>'
         ]
         assert _parsed_elements("alinéa second de l'article 3") == [
-            '<a class="dsr-target_position_reference" data-alinea_start="2" data-article_start="3">alinéa second de l\'article 3</a>'
+            '<a class="dsr-target_position_reference" data-article_start="3" data-section_start="alinea:2">alinéa second de l\'article 3</a>'
         ]
         assert _parsed_elements("alinéa neuvième de l'article 4") == [
-            '<a class="dsr-target_position_reference" data-alinea_start="9" data-article_start="4">alinéa neuvième de l\'article 4</a>'
+            '<a class="dsr-target_position_reference" data-article_start="4" data-section_start="alinea:9">alinéa neuvième de l\'article 4</a>'
         ]
 
     def test_alinea_list(self):
         assert _parsed_elements("Les paragraphes 3 et 4 de l'article 8.5.1.1") == [
             'Les ',
-            '<a class="dsr-target_position_reference" data-alinea_start="3" data-article_start="8.5.1.1">paragraphes 3</a>',
+            '<a class="dsr-target_position_reference" data-article_start="8.5.1.1" data-section_start="alinea:3">paragraphes 3</a>',
             ' et ',
-            '<a class="dsr-target_position_reference" data-alinea_start="4" data-article_start="8.5.1.1">4 de l\'article 8.5.1.1</a>',
+            '<a class="dsr-target_position_reference" data-article_start="8.5.1.1" data-section_start="alinea:4">4 de l\'article 8.5.1.1</a>',
+        ]
+
+
+class TestParseSectionRegex(unittest.TestCase):
+
+    def test_section_roman_number(self):
+        assert _parsed_elements("au IV de l'Article L. 212-1") == [
+            'au ',
+            '<a class="dsr-target_position_reference" data-article_start="L. 212-1" data-section_start="sub_section:IV">IV de l\'Article L. 212-1</a>'
+        ]
+
+    def test_section_annexe_number(self):
+        assert _parsed_elements("Annexe IV de l'Article L. 212-1") == [
+            '<a class="dsr-target_position_reference" data-article_start="L. 212-1" data-section_start="sub_section:Annexe IV">Annexe IV de l\'Article L. 212-1</a>'
         ]
 
 
@@ -134,7 +149,7 @@ class TestParseTargetPositionReferences(unittest.TestCase):
         assert _parsed_elements(
             "2ème alinéa de l'article 4.1.b de l'arrêté 90/IC/035"
         ) == [
-            '<a class="dsr-target_position_reference" data-alinea_start="2" data-article_start="4.1.b">2ème alinéa de l\'article 4.1.b</a>',
+            '<a class="dsr-target_position_reference" data-article_start="4.1.b" data-section_start="alinea:2">2ème alinéa de l\'article 4.1.b</a>',
             ' de l\'arrêté 90/IC/035'
         ]
 
@@ -183,7 +198,7 @@ class TestParseTargetPositionReferences(unittest.TestCase):
             "du 5° de l'article 4.1.b de l'arrêté 90/IC/035"
         ) == [
             'du ',
-            '<a class="dsr-target_position_reference" data-alinea_start="5" data-article_start="4.1.b">5° de l\'article 4.1.b</a>',
+            '<a class="dsr-target_position_reference" data-article_start="4.1.b" data-section_start="alinea:5">5° de l\'article 4.1.b</a>',
             ' de l\'arrêté 90/IC/035'
         ]
 

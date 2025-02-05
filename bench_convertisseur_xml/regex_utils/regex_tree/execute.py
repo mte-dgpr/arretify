@@ -1,5 +1,5 @@
 import re
-from typing import Iterator, Dict, Callable, List, Iterable
+from typing import Iterator, Dict, Callable, List, Iterable, cast
 from dataclasses import dataclass
 
 from .types import Node, RegexTreeMatch, MatchDict, LeafNode, ContainerNode, QuantifierNode, GroupNode, RegexTreeMatchFlow
@@ -9,7 +9,12 @@ from bench_convertisseur_xml.types import PageElementOrString
 
 
 def match(node: GroupNode, string: str) -> RegexTreeMatch | None:
-    results = list(_match_recursive(node, string, None))
+    if not isinstance(node, GroupNode):
+        raise RuntimeError(f"expected a GroupNode, got {node}")
+    try:
+        results = list(_match_recursive(node, string, None))
+    except _NotMatching:
+        return None
     
     if len(results) == 0:
         return None
@@ -26,7 +31,7 @@ def _match_recursive(
 ) -> RegexTreeMatchFlow:
     match = node.pattern.match(string)
     if not match:
-        return
+        raise _NotMatching()
 
     if isinstance(node, GroupNode):
         child_group = RegexTreeMatch(
@@ -44,9 +49,10 @@ def _match_recursive(
         raise RuntimeError("current_group should not be None")
 
     if isinstance(node, LeafNode):
-        current_group.match_dict.update(match.groupdict())
-        yield match.group(0)
-        return
+        for key, value in match.groupdict().items():
+            if value is not None:
+                current_group.match_dict[key] = value
+        yield cast(str, match.group(0))
 
     elif isinstance(node, QuantifierNode):
         for str_or_match in split_string_with_regex(node.child.pattern, match.group(0)):
@@ -64,3 +70,7 @@ def _match_recursive(
                 continue
             child = node.children[str_or_group.group_name]
             yield from _match_recursive(child, str_or_group.text, current_group)
+
+
+class _NotMatching(BaseException):
+    pass

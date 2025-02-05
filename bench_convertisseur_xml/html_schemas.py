@@ -78,7 +78,7 @@ ARRETE_REFERENCE_SCHEMA = DataElementSchema(
 TARGET_POSITION_REFERENCE_SCHEMA = DataElementSchema(
     name="target_position_reference",
     tag_name="a",
-    data_keys=['article_start', 'article_end', 'alinea_start', 'alinea_end'],
+    data_keys=['article_start', 'article_end', 'section_start', 'section_end'],
 )
 
 DATE_SCHEMA = DataElementSchema(

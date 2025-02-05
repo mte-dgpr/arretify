@@ -4,15 +4,15 @@ from dataclasses import dataclass
 from typing import List, Union
 
 from .execute import match
-from .types import RegexTreeMatch
-from .compile import Sequence, Branching, Group, Quantifier
+from .types import RegexTreeMatch, Settings
+from .compile import Sequence, Branching, Group, Quantifier, Leaf
 
 
 class TestSearchCompiledPattern(unittest.TestCase):
 
     def test_complex_match(self):
         # Arrange
-        compiled_pattern = Group(
+        group_node = Group(
             Sequence([
                 r'(?P<greetings>Hello|Hi) ',
                 Quantifier(
@@ -34,7 +34,7 @@ class TestSearchCompiledPattern(unittest.TestCase):
         string = 'Hi hello_seb,123,hello_john'
 
         # Act
-        result = match(compiled_pattern, string)
+        result = match(group_node, string)
 
         # Assert
         assert result == RegexTreeMatch(
@@ -61,3 +61,56 @@ class TestSearchCompiledPattern(unittest.TestCase):
                 ),
             ]
         )
+
+    def test_nested_match_with_ignorecase(self):
+        # Arrange
+        group_node = Group(
+            Sequence(
+                [
+                    r'poi',
+                    Leaf(
+                        'POI', 
+                        settings=Settings(ignore_case=False)
+                    ),
+                ], 
+                settings=Settings(ignore_case=True)
+            ),
+            group_name='root',
+        )
+
+        # Act
+        result = match(group_node, 'PoiPOI')
+
+        # Assert
+        assert result == RegexTreeMatch(
+            group_name='root',
+            match_dict=dict(),
+            children=[
+                'Poi',
+                'POI',
+            ]
+        )
+
+
+    def test_nested_no_match_with_ignorecase(self):
+        # Arrange
+        group_node = Group(
+            Sequence(
+                [
+                    r'poi',
+                    Leaf(
+                        'POI', 
+                        settings=Settings(ignore_case=False)
+                    ),
+                ], 
+                settings=Settings(ignore_case=True)
+            ),
+            group_name='root',
+        )
+
+        # Act
+        # Should not match because of ignore_case=False
+        result = match(group_node, 'poipoi')
+
+        # Assert
+        assert result == None

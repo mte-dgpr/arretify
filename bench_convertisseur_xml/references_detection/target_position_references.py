@@ -8,14 +8,17 @@ from ..settings import APP_ROOT, LOGGER
 from bench_convertisseur_xml.utils.functional import flat_map_non_string, flat_map_string
 from bench_convertisseur_xml.html_schemas import TARGET_POSITION_REFERENCE_SCHEMA
 from bench_convertisseur_xml.utils.html import make_data_tag, PageElementOrString
-from bench_convertisseur_xml.parsing_misc.patterns import ET_VIRGULE_PATTERN_S, EME_PATTERN_S, ORDINAL_PATTERN_S, ordinal_str_to_int
-from bench_convertisseur_xml.regex_utils import regex_tree, flat_map_regex_tree_match, split_string_with_regex_tree, iter_regex_tree_match_strings, filter_regex_tree_match_children
+from bench_convertisseur_xml.parsing_misc.patterns import ET_VIRGULE_PATTERN_S, ROMAN_NUMERALS_S, EME_PATTERN_S, ORDINAL_PATTERN_S, ordinal_str_to_int
+from bench_convertisseur_xml.regex_utils import (
+    regex_tree, flat_map_regex_tree_match, split_string_with_regex_tree, 
+    iter_regex_tree_match_strings, filter_regex_tree_match_children, Settings
+)
+from bench_convertisseur_xml.utils.merge import merge_strings
+from .types import SectionId, SectionType, ArticleId
+from .sections import generate_namespaced_section_id
 
 # TODO : 
 # - Phrase and word index 
-
-ArticleId = str
-Alinea = str
 
 
 def parse_target_position_references(
@@ -50,6 +53,20 @@ ALINEA_NODE = regex_tree.Group(
 )
 
 
+SUB_SECTION_NODE = regex_tree.Group(
+    regex_tree.Sequence([
+        r'(?P<annexe>annexe )?',
+        regex_tree.Branching([
+            regex_tree.Leaf(
+                r'(?P<roman>' + ROMAN_NUMERALS_S + r')', 
+                settings=Settings(ignore_case=False),
+            ),
+        ]),
+    ]),
+    group_name='__sub_section'
+)
+
+
 ARTICLE_RANGE_NODE = regex_tree.Sequence([
     ARTICLE_ID_NODE,
     r' à (l\'article )?',
@@ -73,7 +90,7 @@ def _extract_article_id(match: regex_tree.Match) -> ArticleId:
     return article_id
 
 
-def _extract_alinea(match: regex_tree.Match) -> Alinea:
+def _extract_alinea(match: regex_tree.Match) -> str:
     match_dict = match.match_dict
     alinea_num = match_dict.get('alinea_num')
     alinea_ordinal = match_dict.get('alinea_ordinal')
@@ -93,6 +110,11 @@ def _extract_alinea(match: regex_tree.Match) -> Alinea:
     return alinea
 
 
+def _extract_sub_section(match: regex_tree.Match) -> str:
+    # Put the whole match as subsection id
+    return ''.join(iter_regex_tree_match_strings(match))
+
+
 # -------------------- Single article (or range), single alinea -------------------- #
 # Order of patterns matters, from most specific to less specific.
 TARGET_POSITION_NODE = regex_tree.Group(
@@ -107,6 +129,14 @@ TARGET_POSITION_NODE = regex_tree.Group(
             ARTICLE_ID_NODE,
         ]),
         
+        regex_tree.Sequence([
+            regex_tree.Sequence([
+                SUB_SECTION_NODE,
+            ]),
+            r' de l\'articles? ',
+            ARTICLE_ID_NODE,
+        ]),
+
         regex_tree.Sequence([
             r'articles? ',
             ARTICLE_RANGE_NODE,
@@ -139,6 +169,40 @@ def _parse_target_position_references(
             ],
             allowed_group_names=['__target_position'],
         )
+    )
+
+
+def _extract_data_multiple_article_single_alinea(target_position_match: regex_tree.Match) -> Dict:
+    alinea_matches = filter_regex_tree_match_children(target_position_match, ['__alinea'])
+    sub_section_matches = filter_regex_tree_match_children(target_position_match, ['__sub_section'])
+    article_matches = filter_regex_tree_match_children(target_position_match, ['__article_id'])
+    if len(alinea_matches) + len(sub_section_matches) > 1 :
+        raise RuntimeError('Too many alinea or section matches')
+    if len(article_matches) not in [1, 2]:
+        raise RuntimeError('Expected exactly one or two article matches')
+
+    section_start: SectionId | None = None
+    if alinea_matches:
+        section_start = generate_namespaced_section_id(
+            SectionType.ALINEA, 
+            _extract_alinea(alinea_matches[0]),
+        )
+    elif sub_section_matches:
+        section_start = generate_namespaced_section_id(
+            SectionType.SUB_SECTION, 
+            _extract_sub_section(sub_section_matches[0]),
+        )
+
+    article_start: ArticleId = _extract_article_id(article_matches[0])
+    article_end: ArticleId | None = None
+    if len(article_matches) == 2:
+        article_end = _extract_article_id(article_matches[1])
+
+    return dict(
+        article_start=article_start,
+        article_end=article_end,
+        section_start=section_start,
+        section_end=None,
     )
 
 
@@ -186,30 +250,6 @@ TARGET_POSITION_MULTIPLE_ARTICLES_NODE = regex_tree.Group(
     ]), 
     group_name='__target_position_multiple'
 )
-
-
-def _extract_data_multiple_article_single_alinea(regex_tree_match: regex_tree.Match) -> Dict:
-    alinea_matches = filter_regex_tree_match_children(regex_tree_match, ['__alinea'])
-    article_matches = filter_regex_tree_match_children(regex_tree_match, ['__article_id'])
-    if len(alinea_matches) > 1:
-        raise RuntimeError('Too many alinea matches')
-    if len(article_matches) not in [1, 2]:
-        raise RuntimeError('Expected exactly one or two article matches')
-
-    alinea: Alinea | None = None
-    if alinea_matches:
-        alinea = _extract_alinea(alinea_matches[0])
-    article_start: ArticleId = _extract_article_id(article_matches[0])
-    article_end: ArticleId | None = None
-    if len(article_matches) == 2:
-        article_end = _extract_article_id(article_matches[1])
-
-    return dict(
-        article_start=article_start,
-        article_end=article_end,
-        alinea_start=alinea,
-        alinea_end=None,
-    )
 
 
 def _parse_target_position_multiple_articles_references(
@@ -296,8 +336,11 @@ def _extract_data_single_alinea(regex_tree_match: regex_tree.Match) -> Dict:
     if len(alinea_matches) != 1:
         raise RuntimeError('Expected exactly one alinea match')
     return dict(
-        alinea_start=_extract_alinea(alinea_matches[0]),
-        alinea_end=None,
+        section_start=generate_namespaced_section_id(
+            SectionType.ALINEA, 
+            _extract_alinea(alinea_matches[0])
+        ),
+        section_end=None,
     )
 
 

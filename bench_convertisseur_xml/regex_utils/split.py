@@ -25,7 +25,7 @@ def split_match_by_named_groups(
         '-'
         MatchNamedGroup(text='bar', group_name='second')    
     '''
-    match_text = match.group(0)
+    match_text = cast(str, match.group(0))
     # Offset in original text
     match_offset = match.start(0)
     match_dict = match.groupdict()
@@ -38,7 +38,8 @@ def split_match_by_named_groups(
     group_names.sort(key=lambda n: match.start(n))
     max_group_end = 0
     for group_name in group_names:
-        if not match.group(group_name):
+        group_text = match.group(group_name)
+        if not group_text:
             continue
 
         # Adjust named group start & end indices 
@@ -52,7 +53,7 @@ def split_match_by_named_groups(
             if group_start > max_group_end:
                 yield match_text[max_group_end:group_start]
             yield MatchNamedGroup(
-                text=match.group(group_name), 
+                text=group_text,
                 group_name=group_name
             )
         max_group_end = max(group_end, max_group_end)

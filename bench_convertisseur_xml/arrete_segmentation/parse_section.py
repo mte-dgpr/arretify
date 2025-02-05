@@ -5,6 +5,8 @@ import re
 from typing import TypedDict
 
 from .config import section_from_name
+from bench_convertisseur_xml.parsing_misc.patterns import ROMAN_NUMERALS_S
+
 
 # Numbering patterns
 ROMAN_NUMERALS = r"(?:(?:X{0,3})(?:IX|IV|V?I{0,3}))"
@@ -59,7 +61,7 @@ def section_name_from_number(number):
     if level > 0:
         section_name = "sous_article"
     # If first numerotation is roman numeral, we assume it is a title
-    elif re.match(ROMAN_NUMERALS + "$", last_char, re.IGNORECASE):
+    elif re.match(ROMAN_NUMERALS_S + "$", last_char, re.IGNORECASE):
         section_name = 'titre'
     # If first numerotation is letter, we assume it is a chapter
     elif re.match(LETTERS + "$", last_char, re.IGNORECASE):
