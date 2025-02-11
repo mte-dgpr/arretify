@@ -5,7 +5,9 @@ from bench_convertisseur_xml.regex_utils import PatternProxy
 
 ET_VIRGULE_PATTERN_S = r'(\s*(,|,?et)\s*)'
 
-EME_PATTERN_S = r'(er|ème|è)'
+# "°" is a common OCR error for superscript "è"
+# as in "4ᵉ" for "4ème".
+EME_PATTERN_S = r'(er|ème|è|°|ᵉ)'
 
 ORDINAL_PATTERN_S = r'(premier)|(deuxième|second)|(troisième)|(quatrième)|(cinquième)|(sixième)|(septi[eè]me)|(huitième)|(neuvième)|(dixième)|(onzième)|(douzième)|(treizième)'
 

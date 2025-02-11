@@ -61,13 +61,5 @@ class RegexTreeMatch:
     group_name: Union[GroupName, None]
     match_dict: MatchDict
 
-    @property
-    def string_children(self) -> List[str]:
-        string_children: List[str] = []
-        for string in self.children:
-            if not isinstance(string, str):
-                raise ValueError(f"expected string, got {string}")
-            string_children.append(string)
-        return string_children
 
 RegexTreeMatchFlow = Iterable[RegexTreeMatch | str]

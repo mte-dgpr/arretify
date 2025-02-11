@@ -1,5 +1,5 @@
 import re
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, Union, Iterable
 
 from bs4 import BeautifulSoup, PageElement, Tag
 
@@ -14,7 +14,7 @@ def make_css_class(schema: DataElementSchema):
 def make_data_tag(
     soup: BeautifulSoup, 
     schema: DataElementSchema, 
-    contents: List[PageElementOrString]=[],
+    contents: Iterable[PageElementOrString]=[],
     data: Dict[str, str | None]=dict(), 
 ) -> Tag:
     element = make_new_tag(soup, schema.tag_name, contents=contents)
@@ -53,7 +53,11 @@ def make_li(soup: BeautifulSoup, elements: List[PageElementOrString]):
     return li
 
 
-def make_new_tag(soup: BeautifulSoup, tag_name: str, contents: List[PageElementOrString] = []):
+def make_new_tag(
+    soup: BeautifulSoup, 
+    tag_name: str, 
+    contents: Iterable[PageElementOrString] = []
+):
     element = soup.new_tag(tag_name)
     element.extend(merge_strings(contents))
     return element
