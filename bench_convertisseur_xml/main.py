@@ -9,25 +9,30 @@ from .references_detection.arretes_references import parse_arretes_references
 from .references_detection.target_position_references import parse_target_position_references
 from .modifications_detection.modification_segments import tag_modification_segments
 from .clean_ocrized_file import clean_ocrized_file
-from .html_schemas import ALINEA_SCHEMA, ARRETE_REFERENCE_SCHEMA
+from .html_schemas import ALINEA_SCHEMA, ARRETE_REFERENCE_SCHEMA, VISA_SCHEMA, MOTIF_SCHEMA
 from .utils.html import make_css_class
 from .debug import insert_debug_keywords
 
 ALINEA_CSS_CLASS = make_css_class(ALINEA_SCHEMA)
 ARRETE_REFERENCE_CSS_CLASS = make_css_class(ARRETE_REFERENCE_SCHEMA)
 
+MOTIF_CSS_CLASS = make_css_class(MOTIF_SCHEMA)
+VISA_CSS_CLASS = make_css_class(VISA_SCHEMA)
+
 
 def ocrized_arrete_to_html(lines: List[str]):
     lines = clean_ocrized_file(lines)
     soup = parse_arrete(lines)
-    for element in soup.select('*'):
-        new_children = parse_arretes_references(soup, element.children)
+
+    for element in soup.select(f'.{ALINEA_CSS_CLASS}, .{ALINEA_CSS_CLASS} *, .{MOTIF_CSS_CLASS}, .{VISA_CSS_CLASS}'):
+        new_children = list(element.children)
+        new_children = parse_arretes_references(soup, new_children)
+        new_children = parse_target_position_references(soup, new_children)
         element.clear()
         element.extend(new_children)
 
-    for container in soup.select(f'.{ALINEA_CSS_CLASS} *, .{ALINEA_CSS_CLASS}'):
+    for container in soup.select(f'.{ALINEA_CSS_CLASS}, .{ALINEA_CSS_CLASS} *'):
         new_children = list(container.children)
-        new_children = parse_target_position_references(soup, new_children)
 
         arretes_references = container.select(f'.{ARRETE_REFERENCE_CSS_CLASS}')
         if arretes_references:
