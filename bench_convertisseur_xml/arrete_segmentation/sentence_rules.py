@@ -76,3 +76,11 @@ def is_table_description(line: str, pile: List[PageElementOrString]) -> bool:
             if re.match(fr".*{re.escape(column_name)} :", line, re.IGNORECASE):
                 return True
     return False
+
+
+def is_blockquote_start(line: str) -> bool:
+    return bool(re.match(r"^\"", line, re.IGNORECASE))
+
+
+def is_blockquote_end(line: str) -> bool:
+    return bool(re.match(r".*\"\.?$", line, re.IGNORECASE))

@@ -6,9 +6,7 @@ from bs4 import BeautifulSoup
 from bench_convertisseur_xml.settings import APP_ROOT
 from .header import parse_header
 from .main_content import parse_main_content
-from .parse_section import (
-    identify_unique_sections, filter_max_level_sections
-)
+from .parse_section_title import identify_unique_sections, filter_max_level_sections
 from bench_convertisseur_xml.html_schemas import HEADER_SCHEMA, MAIN_SCHEMA
 from bench_convertisseur_xml.utils.html import make_data_tag
 

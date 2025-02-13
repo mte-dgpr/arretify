@@ -10,8 +10,8 @@ from .sentence_rules import (
 from .config import (
     SERVICE_PATTERNS, REFERENCE_PATTERNS, BodySection
 )
-from .parse_section import parse_section
-from .parse_list import parse_list, clean_bullet_list, list_indentation
+from .parse_section_title import parse_section_title
+from .parse_basic_elements import parse_list, list_indentation
 from bench_convertisseur_xml.utils.html import make_data_tag, PageElementOrString, wrap_in_tag, make_new_tag
 from bench_convertisseur_xml.regex_utils import split_string_with_regex, merge_matches_with_siblings, join_with_or, PatternProxy
 from bench_convertisseur_xml.html_schemas import ENTITY_SCHEMA, IDENTIFICATION_SCHEMA, VISA_SCHEMA, MOTIF_SCHEMA
@@ -23,7 +23,7 @@ SERVICE_AND_REFERENCE_PATTERN = PatternProxy(
 )
 
 def _is_body_section(line: str, authorized_sections) -> bool:
-    new_section_info = parse_section(line, authorized_sections=authorized_sections)
+    new_section_info = parse_section_title(line, authorized_sections=authorized_sections)
     return new_section_info['type'] in {BodySection.TITLE, BodySection.CHAPTER, BodySection.ARTICLE, BodySection.SUB_ARTICLE}
 
 
