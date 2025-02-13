@@ -2,9 +2,26 @@
 
 
 import re
-from typing import TypedDict
+from typing import TypedDict, Dict, Union, Tuple, List
 
-from .config import section_from_name
+from .config import section_from_name, BodySection
+from bench_convertisseur_xml.parsing_utils.source_mapping import TextSegments, TextSegment
+
+
+class _CountTextDict(TypedDict):
+    count: int
+    text: list[str]
+
+AuthorizedSections = Dict[str, _CountTextDict]
+
+
+class SectionInfo(TypedDict):
+    type: BodySection
+    level: int
+    level_name: str
+    number: str
+    text: str
+
 
 # Numbering patterns
 ROMAN_NUMERALS = r"(?:(?:X{0,3})(?:IX|IV|V?I{0,3}))"
@@ -39,16 +56,7 @@ SECTION_NO_TITLE = (
 )
 
 
-class NumberGroupMatchDict(TypedDict):
-    number: str
-    number_first: str
-
-
-def section_name_from_number(number):
-
-    if not number:  # empty numbering
-        return None
-
+def section_name_from_number(number: str) -> str:
     number_split = number.split('.')
     last_char = number_split[-1]
     level = len(number_split) - 1
@@ -71,7 +79,7 @@ def section_name_from_number(number):
     return section_name
 
 
-def parse_number_group(match_dict: NumberGroupMatchDict):
+def parse_number_group(match_dict: Dict) -> Tuple[str, int]:
     if match_dict.get('number_first'):
         number = '1'
     else:
@@ -83,9 +91,12 @@ def parse_number_group(match_dict: NumberGroupMatchDict):
     return number, level
 
 
-def parse_section_title(line, authorized_sections = None):
-    match_title = re.match(SECTION_TITLE, line, re.IGNORECASE)
-    match_no_title = re.match(SECTION_NO_TITLE, line, re.IGNORECASE)
+def parse_section_info(
+    line: TextSegment, 
+    authorized_sections: Union[None, AuthorizedSections] = None
+) -> SectionInfo:
+    match_title = re.match(SECTION_TITLE, line.contents, re.IGNORECASE)
+    match_no_title = re.match(SECTION_NO_TITLE, line.contents, re.IGNORECASE)
 
     section_name = "none"
     level = -1
@@ -109,6 +120,7 @@ def parse_section_title(line, authorized_sections = None):
 
     level_name = f"{section_name}_{level}"
 
+    section_info: SectionInfo
     if match_title or match_no_title and (not authorized_sections or level_name in authorized_sections):
         section_info = {
             "type": section_from_name(section_name),
@@ -117,7 +129,6 @@ def parse_section_title(line, authorized_sections = None):
             "number": number,
             "text": text,
         }
-
     else:
         section_info = {
             "type": section_from_name("none"),
@@ -126,18 +137,16 @@ def parse_section_title(line, authorized_sections = None):
             "number": "",
             "text": "",
         }
-
     return section_info
 
 
-def identify_unique_sections(content):
-
-    unique_sections = {}
+def identify_unique_sections(lines: TextSegments) -> AuthorizedSections:
+    unique_sections: AuthorizedSections = {}
 
     # Pass on whole content
-    for line in content:
+    for line in lines:
         # Parse any possible section
-        section_info = parse_section_title(line)
+        section_info = parse_section_info(line)
 
         level_name = section_info["level_name"]
 
@@ -153,13 +162,12 @@ def identify_unique_sections(content):
             else:
                 unique_sections[level_name] = {"count": 1, "text": [section_info["text"]]}
 
-    return unique_sections
+    return _filter_max_level_sections(unique_sections)
 
 
-def filter_max_level_sections(unique_sections):
-
+def _filter_max_level_sections(unique_sections: AuthorizedSections) -> AuthorizedSections:
     # Group sections by their base type (without _number suffix)
-    grouped_sections = {}
+    grouped_sections: Dict[str, List[str]] = {}
 
     for level_name in unique_sections:
 
@@ -176,7 +184,7 @@ def filter_max_level_sections(unique_sections):
         grouped_sections[section_name].append(level)
 
     # Initialize output dictionaries
-    authorized_sections = {}
+    authorized_sections: AuthorizedSections = {}
 
     # For each group, keep only the highest level section
     for section_name, levels in grouped_sections.items():
@@ -191,48 +199,3 @@ def filter_max_level_sections(unique_sections):
         authorized_sections[authorized_section] = unique_sections[authorized_section]
 
     return authorized_sections
-
-
-def reorder_section_levels(authorized_sections):
-    """Unused for now. Maybe later..."""
-
-    sections_order = ["titre", "chapitre", "article", "sous_article"]
-
-    # Create mapping of section prefixes to their presence
-    present_sections = {
-        prefix: any(name.startswith(prefix) for name in authorized_sections)
-        for prefix in sections_order
-    }
-
-    # Count missing sections before each position
-    missing_before = {}
-    missing_count = 0
-    for prefix in sections_order:
-        missing_before[prefix] = missing_count
-        if not present_sections[prefix]:
-            missing_count += 1
-
-    # Map previous level names to new ones, reordered from zero to max level
-    section_mapping = {}
-
-    # Assign new levels
-    for level_name in authorized_sections:
-
-        # Find which section type this is
-        section_type = next(
-            prefix for prefix in sections_order if level_name.startswith(prefix)
-        )
-
-        # Get original position and subtract missing sections before it
-        original_position = sections_order.index(section_type)
-        new_level = original_position - missing_before[section_type]
-
-        # Get original level name and new one
-        level_name_split = level_name.split("_")
-        new_section_name = "_".join(level_name_split[:-1])
-        new_level_name = f"{new_section_name}_{new_level}"
-
-        # Update the patterns_levels dictionary
-        section_mapping[level_name] = new_level_name
-
-    return section_mapping

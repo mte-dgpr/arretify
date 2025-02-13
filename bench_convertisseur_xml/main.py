@@ -3,6 +3,8 @@ from pathlib import Path
 from optparse import OptionParser
 import traceback
 
+from bs4 import BeautifulSoup
+
 from .settings import TEST_DATA_DIR, LOGGER, OCR_FILE_EXTENSION
 from .arrete_segmentation.parse_arrete import parse_arrete
 from .references_detection.arretes_references import parse_arretes_references
@@ -12,6 +14,8 @@ from .clean_ocrized_file import clean_ocrized_file
 from .html_schemas import ALINEA_SCHEMA, ARRETE_REFERENCE_SCHEMA, VISA_SCHEMA, MOTIF_SCHEMA
 from .utils.html import make_css_class
 from .debug import insert_debug_keywords
+from .parsing_utils.source_mapping import initialize_lines, TextSegments
+from .types import PageElementOrString
 
 ALINEA_CSS_CLASS = make_css_class(ALINEA_SCHEMA)
 ARRETE_REFERENCE_CSS_CLASS = make_css_class(ARRETE_REFERENCE_SCHEMA)
@@ -20,10 +24,11 @@ MOTIF_CSS_CLASS = make_css_class(MOTIF_SCHEMA)
 VISA_CSS_CLASS = make_css_class(VISA_SCHEMA)
 
 
-def ocrized_arrete_to_html(lines: List[str]):
+def ocrized_arrete_to_html(lines: TextSegments) -> BeautifulSoup:
     lines = clean_ocrized_file(lines)
     soup = parse_arrete(lines)
 
+    new_children: List[PageElementOrString]
     for element in soup.select(f'.{ALINEA_CSS_CLASS}, .{ALINEA_CSS_CLASS} *, .{MOTIF_CSS_CLASS}, .{VISA_CSS_CLASS}'):
         new_children = list(element.children)
         new_children = parse_arretes_references(soup, new_children)
@@ -45,7 +50,8 @@ def ocrized_arrete_to_html(lines: List[str]):
 
 def main(input_path: Path, output_path: Path):
     with open(input_path, 'r', encoding='utf-8') as f:
-        lines = f.readlines()
+        raw_lines = f.readlines()
+    lines = initialize_lines(raw_lines)
     soup = ocrized_arrete_to_html(lines)
     with open(output_path, 'w', encoding='utf-8') as f:
         f.write(soup.prettify())

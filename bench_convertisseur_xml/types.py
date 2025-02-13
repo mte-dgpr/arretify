@@ -1,5 +1,5 @@
 import re
-from typing import List, Union, Iterable
+from typing import List, Union, Iterable, Tuple
 from enum import Enum
 from dataclasses import dataclass
 
@@ -20,3 +20,4 @@ class ModificationType(Enum):
 
 
 PageElementOrString = Union[PageElement, str]
+LineColumn = Tuple[int, int]

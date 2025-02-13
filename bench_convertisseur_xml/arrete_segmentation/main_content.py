@@ -11,9 +11,11 @@ from .sentence_rules import (
 from bench_convertisseur_xml.utils.html import make_data_tag, PageElementOrString, wrap_in_tag
 from bench_convertisseur_xml.utils.markdown import parse_markdown_table, is_table_line
 from bench_convertisseur_xml.html_schemas import (
-    SECTION_SCHEMA, SECTION_TITLE_SCHEMAS, ALINEA_SCHEMA)
+    SECTION_SCHEMA, SECTION_TITLE_SCHEMAS, ALINEA_SCHEMA
+)
+from bench_convertisseur_xml.parsing_utils.source_mapping import TextSegments
 from .config import BodySection
-from .parse_section_title import parse_section_title
+from .parse_section_info import parse_section_info
 from .parse_basic_elements import parse_basic_elements
 from .sentence_rules import is_blockquote_start
 
@@ -23,13 +25,13 @@ class _SectionParsingContext:
     alinea_count: int
 
 
-def parse_main_content(soup: BeautifulSoup, main_content: Tag, lines: List[str], authorized_sections):
+def parse_main_content(soup: BeautifulSoup, main_content: Tag, lines: TextSegments, authorized_sections):
     pile: List[PageElementOrString] = []
     body_sections: List[Tag] = [main_content]
 
     # Consume lines until we detect the first section
     while lines:
-        section_info = parse_section_title(lines[0], authorized_sections=authorized_sections)
+        section_info = parse_section_info(lines[0], authorized_sections=authorized_sections)
         if section_info['type'] == BodySection.NONE:
             lines.pop(0)
             continue
@@ -37,9 +39,9 @@ def parse_main_content(soup: BeautifulSoup, main_content: Tag, lines: List[str],
             break
 
     while lines:
-        section_info = parse_section_title(lines[0], authorized_sections=authorized_sections)
+        section_info = parse_section_info(lines[0], authorized_sections=authorized_sections)
         section_element = make_data_tag(soup, SECTION_SCHEMA, data=dict(
-            type=section_info['type'],
+            type=section_info['type'].value,
             number=section_info["number"],
             title=section_info["text"],
         ))
@@ -59,7 +61,11 @@ def parse_main_content(soup: BeautifulSoup, main_content: Tag, lines: List[str],
         body_sections[-1].append(section_element)
         body_sections.append(section_element)
 
-        title_element = make_data_tag(soup, SECTION_TITLE_SCHEMAS[new_section_level], contents=[lines.pop(0)])
+        title_element = make_data_tag(
+            soup, 
+            SECTION_TITLE_SCHEMAS[new_section_level], 
+            contents=[lines.pop(0).contents]
+        )
         section_element.append(title_element)
 
         # Parse alineas until a new section is detected.
@@ -70,7 +76,7 @@ def parse_main_content(soup: BeautifulSoup, main_content: Tag, lines: List[str],
         # Un tableau constitue un seul alinéa (définition complète dans le guide de légistique)."
         # REF : https://www.legifrance.gouv.fr/contenu/Media/files/lexique-api-lgf.docx
         while lines:
-            section_info = parse_section_title(lines[0], authorized_sections=authorized_sections)
+            section_info = parse_section_info(lines[0], authorized_sections=authorized_sections)
             if section_info['type'] != BodySection.NONE:
                 break
 

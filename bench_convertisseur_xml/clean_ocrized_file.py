@@ -3,13 +3,11 @@ from typing import List, Iterator
 
 from bs4 import BeautifulSoup
 
-from bench_convertisseur_xml.utils.html import PageElementOrString
+from bench_convertisseur_xml.types import PageElementOrString
 from bench_convertisseur_xml.utils.markdown import clean_markdown
 from bench_convertisseur_xml.regex_utils import PatternProxy, join_with_or, Settings
+from bench_convertisseur_xml.parsing_utils.source_mapping import TextSegments, combine_text_segments
 
-
-START_OCR_BUG_IGNORE = '<!-- START : OCR-BUG-IGNORE -->'
-END_OCR_BUG_IGNORE = '<!-- END : OCR-BUG-IGNORE -->'
 
 CONTINUING_SENTENCE_PATTERN = PatternProxy(r"^[a-z]", settings=Settings(ignore_case=False))
 
@@ -51,17 +49,19 @@ IS_NOT_INFORMATION_PATTERN = PatternProxy(
 )
 
 
-def clean_ocrized_file(lines: List[str]) -> List[str]:
+def clean_ocrized_file(lines: TextSegments) -> TextSegments:
     soup = BeautifulSoup()
-    lines = list(_remove_ocr_bug_ignore(lines))
     lines = [ clean_markdown(line) for line in lines ]
-    lines = [ line for line in lines if not _is_not_information(line) ]
+    lines = [ line for line in lines if not _is_not_information(line.contents) ]
 
-    stitched_lines: List[str] = []
+    stitched_lines: TextSegments = []
     for line in lines:
-        if _is_continuing_sentence(line) and stitched_lines:
+        if _is_continuing_sentence(line.contents) and stitched_lines:
             # TODO-PROCESS-TAG
-            stitched_lines[-1] = stitched_lines[-1] + ' ' + line
+            stitched_lines[-1] = combine_text_segments(
+                stitched_lines[-1].contents + ' ' + line.contents, 
+                [stitched_lines[-1], line],
+            )
         else:
             stitched_lines.append(line)
     
@@ -75,17 +75,3 @@ def _is_continuing_sentence(line: str) -> bool:
 
 def _is_not_information(line: str) -> bool:
     return bool(IS_NOT_INFORMATION_PATTERN.search(line))
-
-
-def _remove_ocr_bug_ignore(lines: List[str]) -> Iterator[str]:
-    is_inside_ignore_section = False
-    for line in lines:
-        if END_OCR_BUG_IGNORE in line:    
-            is_inside_ignore_section = False
-            continue
-        elif START_OCR_BUG_IGNORE in line:
-            is_inside_ignore_section = True
-            continue
-
-        if not is_inside_ignore_section:
-            yield line

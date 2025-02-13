@@ -8,8 +8,8 @@ from ..settings import APP_ROOT, LOGGER
 from bench_convertisseur_xml.utils.html import PageElementOrString, make_data_tag
 from bench_convertisseur_xml.utils.functional import flat_map_non_string, flat_map_string
 from bench_convertisseur_xml.html_schemas import ARRETE_REFERENCE_SCHEMA
-from bench_convertisseur_xml.parsing_misc.patterns import ET_VIRGULE_PATTERN_S
-from bench_convertisseur_xml.parsing_misc.dates import DATE_NODE, render_date_regex_tree_match
+from bench_convertisseur_xml.parsing_utils.patterns import ET_VIRGULE_PATTERN_S
+from bench_convertisseur_xml.parsing_utils.dates import DATE_NODE, render_date_regex_tree_match
 from bench_convertisseur_xml.regex_utils import regex_tree, flat_map_regex_tree_match, split_string_with_regex_tree
 
 Authority = Literal['préfectoral', 'ministériel']

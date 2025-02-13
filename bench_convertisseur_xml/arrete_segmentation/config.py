@@ -58,8 +58,7 @@ class BodySection(Enum):
     NONE = "none"
 
 
-def section_from_name(section_name):
-
+def section_from_name(section_name) -> BodySection:
     if section_name in {"title", "titre"}:
         section_type = BodySection.TITLE
     elif section_name in {"chapter", "chapitre"}:
@@ -70,5 +69,4 @@ def section_from_name(section_name):
         section_type = BodySection.SUB_ARTICLE
     else:
         section_type = BodySection.NONE
-
     return section_type
