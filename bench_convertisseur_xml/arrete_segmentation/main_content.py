@@ -13,8 +13,9 @@ from bench_convertisseur_xml.utils.markdown import parse_markdown_table, is_tabl
 from bench_convertisseur_xml.html_schemas import (
     SECTION_SCHEMA, SECTION_TITLE_SCHEMAS, ALINEA_SCHEMA)
 from .config import BodySection
-from .parse_section import parse_section
-from .parse_list import parse_list
+from .parse_section_title import parse_section_title
+from .parse_basic_elements import parse_basic_elements
+from .sentence_rules import is_blockquote_start
 
 
 @dataclass
@@ -28,7 +29,7 @@ def parse_main_content(soup: BeautifulSoup, main_content: Tag, lines: List[str],
 
     # Consume lines until we detect the first section
     while lines:
-        section_info = parse_section(lines[0], authorized_sections=authorized_sections)
+        section_info = parse_section_title(lines[0], authorized_sections=authorized_sections)
         if section_info['type'] == BodySection.NONE:
             lines.pop(0)
             continue
@@ -36,7 +37,7 @@ def parse_main_content(soup: BeautifulSoup, main_content: Tag, lines: List[str],
             break
 
     while lines:
-        section_info = parse_section(lines[0], authorized_sections=authorized_sections)
+        section_info = parse_section_title(lines[0], authorized_sections=authorized_sections)
         section_element = make_data_tag(soup, SECTION_SCHEMA, data=dict(
             type=section_info['type'],
             number=section_info["number"],
@@ -54,16 +55,6 @@ def parse_main_content(soup: BeautifulSoup, main_content: Tag, lines: List[str],
             raise RuntimeError(f'unexpected title {section_info}, current level {len(body_sections)}')
 
         section_context = _SectionParsingContext(alinea_count=0)
-        def _create_alinea_element(contents: List[PageElementOrString]=[]):
-            section_context.alinea_count += 1
-            alinea_element = make_data_tag(
-                soup, 
-                ALINEA_SCHEMA, 
-                contents=contents,
-                data=dict(number=str(section_context.alinea_count))
-            )
-            section_element.append(alinea_element)
-            return alinea_element
 
         body_sections[-1].append(section_element)
         body_sections.append(section_element)
@@ -71,33 +62,23 @@ def parse_main_content(soup: BeautifulSoup, main_content: Tag, lines: List[str],
         title_element = make_data_tag(soup, SECTION_TITLE_SCHEMAS[new_section_level], contents=[lines.pop(0)])
         section_element.append(title_element)
 
+        # Parse alineas until a new section is detected.
+        # ALINEA : "Constitue un alinéa toute phrase, tout mot, tout ensemble de phrases 
+        # ou de mots commençant à la ligne, précédés ou non d’un tiret, d’un point, 
+        # d’une numérotation ou de guillemets, sans qu’il y ait lieu d’établir des distinctions 
+        # selon la nature du signe placé à la fin de la ligne précédente (point, deux-points ou point-virgule). 
+        # Un tableau constitue un seul alinéa (définition complète dans le guide de légistique)."
+        # REF : https://www.legifrance.gouv.fr/contenu/Media/files/lexique-api-lgf.docx
         while lines:
-            section_info = parse_section(lines[0], authorized_sections=authorized_sections)
+            section_info = parse_section_title(lines[0], authorized_sections=authorized_sections)
             if section_info['type'] != BodySection.NONE:
                 break
 
-            alinea_element = _create_alinea_element()
-
-            while lines:
-                if is_table_line(lines[0]):
-                    pile = []
-
-                    while lines and is_table_line(lines[0]):
-                        pile.append(lines.pop(0))
-                    alinea_element.append(parse_markdown_table(pile))
-
-                    while lines and is_table_description(lines[0], pile):
-                        alinea_element.append(soup.new_tag('br'))
-                        alinea_element.append(lines.pop(0))
-                    break
-                    
-                elif is_liste(lines[0]):
-                    lines, ul_element = parse_list(soup, lines)
-                    alinea_element.append(ul_element)
-                    break
-
-                # Normal paragraph
-                else:
-                    line = lines.pop(0)
-                    alinea_element.append(line)
-                    break
+            section_context.alinea_count += 1
+            alinea_element = make_data_tag(
+                soup, 
+                ALINEA_SCHEMA, 
+                data=dict(number=str(section_context.alinea_count))
+            )
+            section_element.append(alinea_element)
+            parse_basic_elements(soup, alinea_element, lines)

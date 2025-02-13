@@ -180,7 +180,7 @@ Les eaux issues du réseau d'eaux pluviales du site respectent avant rejet les v
 
 Le pH de ces eaux doit être compris entre 5,5 et 8,5 et la température doit être inférieure à 30°C.
 
-Le dispositif de traitement est équipé d'une alarme technique hydrocarbures de niveau haut avec alarme sonore et visuelle. Ce dispositif est dimensionné afin de répondre aux volumes d'eaux collectées de la surface considérée et de l'événement pluvieux décennal le plus critique de la région. Il est fréquemment visité, maintenu en permanence en bon état de fonctionnement et débarrassé aussi souvent que nécessaire des boues et des huiles retenues, qui doivent être éliminées conformément aux dispositions du chapitre 5 du présent arrêté.
+Le dispositif de traitement est équipé d'une alarme technique hydrocarbures de niveau haut avec alarme sonore et visuelle. Ce dispositif est dimensionné afin de répondre aux volumes d'eaux collectées de la surface considérée et de l'événement pluvieux décennal le plus critique de la région. Il est fréquemment visité, maintenu en permanence en bon état de fonctionnement et débarrassé aussi souvent que nécessaire des boues et des huiles retenues, qui doivent être éliminées conformément aux dispositions du chapitre 5 du présent arrêté. "
 
 # ARTICLE 5 :
 

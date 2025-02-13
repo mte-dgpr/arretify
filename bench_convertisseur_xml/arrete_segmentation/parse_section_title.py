@@ -83,7 +83,7 @@ def parse_number_group(match_dict: NumberGroupMatchDict):
     return number, level
 
 
-def parse_section(line, authorized_sections = None):
+def parse_section_title(line, authorized_sections = None):
     match_title = re.match(SECTION_TITLE, line, re.IGNORECASE)
     match_no_title = re.match(SECTION_NO_TITLE, line, re.IGNORECASE)
 
@@ -110,7 +110,6 @@ def parse_section(line, authorized_sections = None):
     level_name = f"{section_name}_{level}"
 
     if match_title or match_no_title and (not authorized_sections or level_name in authorized_sections):
-
         section_info = {
             "type": section_from_name(section_name),
             "level": level,
@@ -120,7 +119,6 @@ def parse_section(line, authorized_sections = None):
         }
 
     else:
-
         section_info = {
             "type": section_from_name("none"),
             "level": -1,
@@ -139,7 +137,7 @@ def identify_unique_sections(content):
     # Pass on whole content
     for line in content:
         # Parse any possible section
-        section_info = parse_section(line)
+        section_info = parse_section_title(line)
 
         level_name = section_info["level_name"]
 

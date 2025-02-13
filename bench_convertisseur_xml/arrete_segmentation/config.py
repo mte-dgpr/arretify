@@ -53,7 +53,6 @@ class BodySection(Enum):
     CHAPTER = "chapter"
     ARTICLE = "article"
     SUB_ARTICLE = "sub_article"
-    PARAGRAPH = "paragraph"
     TABLE = "table"
     LIST = "list"
     NONE = "none"
@@ -69,8 +68,6 @@ def section_from_name(section_name):
         section_type = BodySection.ARTICLE
     elif section_name in {"sub_article", "sous_article"}:
         section_type = BodySection.SUB_ARTICLE
-    elif section_name in {"paragraph", "alinea"}:
-        section_type = BodySection.PARAGRAPH
     else:
         section_type = BodySection.NONE
 
