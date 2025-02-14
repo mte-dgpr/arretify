@@ -12,5 +12,5 @@ class ErrorCodes(Enum):
 class ParsingError(BaseException):
     
     def __init__(self, code: ErrorCodes, line_col: LineColumn, msg: Union[str, None]=None):
-        complete_msg = f'[line: {line_col[0]}, col: {line_col[1]}] {msg or code.value}'
+        complete_msg = f'[line: {line_col[0] + 1}, col: {line_col[1] + 1}] {msg or code.value}'
         super(ParsingError, self).__init__(complete_msg)

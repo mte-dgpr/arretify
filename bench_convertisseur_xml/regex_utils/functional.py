@@ -1,8 +1,20 @@
 from typing import Callable, Iterable, Iterator, List
 
 from .types import GroupName
+from .core import MatchFlow, MatchProxy
 from .regex_tree.types import RegexTreeMatch, RegexTreeMatchFlow
 from bench_convertisseur_xml.types import PageElementOrString
+
+
+def map_matches(
+    elements: MatchFlow,
+    map_func: Callable[[MatchProxy], PageElementOrString]
+) -> Iterator[PageElementOrString]:
+    for element in elements:
+        if isinstance(element, str):
+            yield element
+        else:
+            yield map_func(element)
 
 
 def flat_map_regex_tree_match(

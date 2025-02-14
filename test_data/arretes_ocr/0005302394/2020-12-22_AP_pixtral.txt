@@ -143,7 +143,7 @@ Le tableau de classement du site, précisé à l'article 1.2.1 de l'arrêté du 
 
 # ARTICLE 2
 
-L'article 3.2.1 de l'arrêté du 10 décembre 2008 est modifié dans les conditions suivantes : la paragraphe écrit en ces termes "l'aménagement de ces points doit être effectué selon l'échéancier suivant" installations de traitement de surfaces (n° de conduit : 1.4.5) avant le 31 décembre 2009 installations de cataphorèse (n° de conduit 6 et 7) avant le 31 décembre 2008" est supprimé.
+L'article 3.2.1 de l'arrêté du 10 décembre 2008 est modifié dans les conditions suivantes : la paragraphe écrit en ces termes "l'aménagement de ces points doit être effectué selon l'échéancier suivant: installations de traitement de surfaces (n° de conduit : 1.4.5) avant le 31 décembre 2009 installations de cataphorèse (n° de conduit 6 et 7) avant le 31 décembre 2008" est supprimé.
 ```
 ```markdown
 # ARTICLE 3
@@ -239,7 +239,7 @@ L'exploitant peut être amené à réaliser au milieu receveur qu'il apprécie, 
 # ARTICLE 12
 Il est créé un article 7.6.9 à l'arrêté préfectoral du 10 décembre 2008 rédigé comme suit :
 " ARTICLE 7.6.9 : FORMATION DU PERSONNEL
-Une formation à la manipulation des extincteurs est dispensée à l'ensemble du personnel du site dès 2021. Un recyclage à cette formation est organisé au moins tous les 3 ans, toujours pour l'ensemble du personnel. L'exploitant établit un programme annuel de formation de son personnel et conserve le dernier exemplaire en vigueur de l'ensemble des attestations de ces formations, éventuellement au format dématérialisé.
+Une formation à la manipulation des extincteurs est dispensée à l'ensemble du personnel du site dès 2021. Un recyclage à cette formation est organisé au moins tous les 3 ans, toujours pour l'ensemble du personnel. L'exploitant établit un programme annuel de formation de son personnel et conserve le dernier exemplaire en vigueur de l'ensemble des attestations de ces formations, éventuellement au format dématérialisé."
 
 # ARTICLE 13
 Les dispositions de l'article 8.1.1.1 de l'arrêté préfectoral du 10 décembre 2008 sont complétées par les dispositions suivantes :

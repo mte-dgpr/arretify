@@ -2,8 +2,9 @@
 import os
 from pathlib import Path
 
-from bench_convertisseur_xml.settings import TEST_DATA_DIR
-from bench_convertisseur_xml.settings import LOGGER
+from bench_convertisseur_xml.settings import TEST_DATA_DIR, LOGGER
+from bench_convertisseur_xml.parsing_utils.source_mapping import initialize_lines
+
 from .main import ocrized_arrete_to_html
 
 ARRETES_OCR_DIR = TEST_DATA_DIR / 'arretes_ocr'
@@ -14,7 +15,7 @@ def _iter_parsed_arretes_ocr_files():
     arretes_ocr_file_paths = Path(ARRETES_OCR_DIR).rglob("*.txt")
     for arrete_ocr_file_path in arretes_ocr_file_paths:
         arrete_contents = open(arrete_ocr_file_path, 'r', encoding='utf-8').readlines()
-        soup = ocrized_arrete_to_html(arrete_contents)
+        soup = ocrized_arrete_to_html(initialize_lines(arrete_contents))
         yield arrete_ocr_file_path, soup.prettify()
 
 

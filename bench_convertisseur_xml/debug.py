@@ -3,8 +3,8 @@ from typing import Iterable, List, cast, Callable
 
 from bs4 import BeautifulSoup
 
-from .utils.functional import flat_map_non_string, flat_map_string, Lambda
-from .regex_utils import split_string_with_regex, PatternProxy, MatchProxy
+from .utils.functional import flat_map_string
+from .regex_utils import split_string_with_regex, map_matches, PatternProxy, MatchProxy
 from .utils.html import make_data_tag
 from .html_schemas import DEBUG_KEYWORD_SCHEMA
 from .types import PageElementOrString
@@ -19,14 +19,14 @@ def insert_debug_keywords(
     return list(
         flat_map_string(
             children, 
-            lambda string: flat_map_non_string(
+            lambda string: map_matches(
                 split_string_with_regex(pattern, string),
-                Lambda[MatchProxy].cast(lambda match: [make_data_tag(
+                lambda match: make_data_tag(
                     soup, 
                     DEBUG_KEYWORD_SCHEMA, 
                     contents=[str(match.group(0))],
                     data=dict(query=query)
-                )])
+                )
             )
         )
     )
