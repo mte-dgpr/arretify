@@ -73,8 +73,3 @@ Si les tests échouent c'est que la génération d'html a changé. Il convient d
 1. Re-générer les fichiers html de référence en utilisant la commande `python -m bench_convertisseur_xml.main -i test_data/arretes_ocr -o test_data/arretes_html`
 2. Utiliser l'outil de diff de git (ou de vscodium) pour comparer la nouvelle version avec la version de référence
 3. Régler les problèmes éventuels, puis répéter étape 1.
-
-
-## TODO 
-
-- Dans les fichiers OCRisés, des commentaires `OCR-BUG-IGNORE` ont été placés. Ces derniers permettent de réparer le fichier OCRisé à la main en instruisant notre parser d'ignorer un bloc de texte qui doit être réparé au niveau de l'OCRisation et non du parsing.

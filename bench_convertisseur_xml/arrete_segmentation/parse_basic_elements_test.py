@@ -4,7 +4,7 @@ import unittest
 from bs4 import BeautifulSoup
 
 from .parse_basic_elements import list_indentation, parse_list, parse_table, parse_blockquote
-
+from bench_convertisseur_xml.parsing_utils.source_mapping import initialize_lines
 
 class TestParseTable(unittest.TestCase):
 
@@ -13,20 +13,20 @@ class TestParseTable(unittest.TestCase):
 
     def test_simple_table(self):
         # Arrange
-        lines = [
+        lines = initialize_lines([
             '| Polluant | Concentration maximale en mg/l |',
             '|---------|---------------------------------|',
             '| MES     | 35                               |',
             '| DCO     | 125                              |',
             '| Hydrocarbures totaux | 10                             |',
             "END",
-        ]
+        ])
 
         # Act
         remaining_lines, elements = parse_table(self.soup, lines)
 
         # Assert
-        assert remaining_lines == ["END"]
+        assert [line.contents for line in remaining_lines] == ["END"]
         assert [str(element) for element in elements] == [(
             '<table>\n'
             '<thead>\n'
@@ -60,18 +60,18 @@ class TestParseList(unittest.TestCase):
 
     def test_simple_list(self):
         # Arrange
-        lines = ["- Item 1", "- Item 2", "- Item 3", "END"]
+        lines = initialize_lines(["- Item 1", "- Item 2", "- Item 3", "END"])
 
         # Act
         remaining_lines, ul = parse_list(self.soup, lines)
 
         # Assert
-        assert remaining_lines == ["END"]
+        assert [line.contents for line in remaining_lines] == ["END"]
         assert str(ul) == "<ul><li>Item 1</li><li>Item 2</li><li>Item 3</li></ul>"
 
     def test_nested_list(self):
         # Arrange
-        lines = ["- Item 1", "  - Subitem 1.1", "  - Subitem 1.2", "- Item 2"]
+        lines = initialize_lines(["- Item 1", "  - Subitem 1.1", "  - Subitem 1.2", "- Item 2"])
 
         # Act
         remaining_lines, ul = parse_list(self.soup, lines)
@@ -127,20 +127,20 @@ class TestParseBlockQuote(unittest.TestCase):
 
     def test_blockquote_nested(self):
         # Arrange
-        lines = [
+        lines = initialize_lines([
             '"bla bla',
             'blo blo :',
             '- Item 1',
             '- Item 2',
             'bli bli"',
             "END",
-        ]
+        ])
 
         # Act
         remaining_lines, blockquote = parse_blockquote(self.soup, lines)
 
         # Assert
-        assert remaining_lines == ["END"]
+        assert [line.contents for line in remaining_lines] == ["END"]
         assert str(blockquote) == (
             '<blockquote>'
             '<p>bla bla</p>'

@@ -6,6 +6,7 @@ from bs4 import BeautifulSoup
 from .header import _process_entity_pile, parse_header, _parse_visas_or_motifs
 from .sentence_rules import VISA_PATTERN, MOTIF_PATTERN
 from bench_convertisseur_xml.html_schemas import VISA_SCHEMA, MOTIF_SCHEMA
+from bench_convertisseur_xml.parsing_utils.source_mapping import initialize_lines, TextSegment
 
 
 class TestProcessEntityPile(unittest.TestCase):
@@ -23,14 +24,14 @@ class TestParseMotifsOrVisas(unittest.TestCase):
 
     def test_simple(self):
         # Arrange
-        lines = [
+        lines = initialize_lines([
             "Vu le code de l'environnement, et notamment ses titres 1er et 4 des parties réglementaires et législatives du livre V ;",
             "Vu la nomenclature des installations classées codifiée à l'annexe de l'article R511-9 du code de l'environnement ;",
             "END",
-        ]
+        ])
 
-        def _is_next_section(line: str) -> bool:
-            return line == "END"
+        def _is_next_section(line: TextSegment) -> bool:
+            return line.contents == "END"
 
         # Act
         soup = BeautifulSoup()
@@ -44,19 +45,19 @@ class TestParseMotifsOrVisas(unittest.TestCase):
             "<div class=\"dsr-visa\">Vu la nomenclature des installations classées codifiée à l'annexe de l'article R511-9 du code de l'environnement ;</div>"
             "</header>"
         )
-        assert lines == ["END"]
+        assert _text_segments_to_str(lines) == ["END"]
 
     def test_lists_with_keyword_first(self):
         # Arrange
-        lines = [
+        lines = initialize_lines([
             "VU",
             "- le titre premier du livre V du code de l'environnement ;",
             "- le décret n° 77-1133 du 21 septembre 1977 et notamment ses articles 17 et 20 ;",
             "END",
-        ]
+        ])
 
-        def _is_next_section(line: str) -> bool:
-            return line == "END"
+        def _is_next_section(line: TextSegment) -> bool:
+            return line.contents == "END"
 
         # Act
         soup = BeautifulSoup()
@@ -71,18 +72,18 @@ class TestParseMotifsOrVisas(unittest.TestCase):
             "<div class=\"dsr-visa\">- le décret n° 77-1133 du 21 septembre 1977 et notamment ses articles 17 et 20 ;</div>"
             "</header>"
         )
-        assert lines == ["END"]
+        assert _text_segments_to_str(lines) == ["END"]
 
     def test_lists_with_keyword_in_bullet(self):
         # Arrange
-        lines = [
+        lines = initialize_lines([
             "- Considérant qu’aux termes de l’article L. 512-1 du code de l’environnement relatif aux installations classées pour la protection de l’environnement, l’autorisation ne peut être accordée que si les dangers ou inconvénients de l’installation peuvent être prévenus par des mesures que spécifie l’arrêté préfectoral ;",
             "- Considérant que les conditions d’aménagement et d’exploitation, telles qu’elles sont définies par le présent arrêté, permettent de prévenir les dangers et inconvénients de l’installation pour les intérêts mentionnés à l’article L. 512-1 du code de l’environnement, notamment pour la commodité du voisinage, pour la santé, la sécurité, la salubrité publiques et pour la protection de la nature et de l’environnement ;",
             "END",
-        ]
+        ])
 
-        def _is_next_section(line: str) -> bool:
-            return line == "END"
+        def _is_next_section(line: TextSegment) -> bool:
+            return line.contents == "END"
 
         # Act
         soup = BeautifulSoup()
@@ -96,19 +97,19 @@ class TestParseMotifsOrVisas(unittest.TestCase):
             "<div class=\"dsr-motifs\">- Considérant que les conditions d’aménagement et d’exploitation, telles qu’elles sont définies par le présent arrêté, permettent de prévenir les dangers et inconvénients de l’installation pour les intérêts mentionnés à l’article L. 512-1 du code de l’environnement, notamment pour la commodité du voisinage, pour la santé, la sécurité, la salubrité publiques et pour la protection de la nature et de l’environnement ;</div>"
             "</header>"
         )
-        assert lines == ["END"]
+        assert _text_segments_to_str(lines) == ["END"]
 
     def test_lists_with_keyword_in_bullet_next_is_list_too(self):
         # Arrange
-        lines = [
+        lines = initialize_lines([
             "CONSIDÉRANT :",
             "- qu’aux termes de l’article L. 512-1 du code de l’environnement relatif aux installations classées pour la protection de l’environnement, l’autorisation ne peut être accordée que si les dangers ou inconvénients de l’installation peuvent être prévenus par des mesures que spécifie l’arrêté préfectoral ;",
             "- que les conditions d’aménagement et d’exploitation, telles qu’elles sont définies par le présent arrêté, permettent de prévenir les dangers et inconvénients de l’installation pour les intérêts mentionnés à l’article L. 512-1 du code de l’environnement, notamment pour la commodité du voisinage, pour la santé, la sécurité, la salubrité publiques et pour la protection de la nature et de l’environnement ;",
-            "- END",
-        ]
+            "END",
+        ])
 
-        def _is_next_section(line: str) -> bool:
-            return line == "- END"
+        def _is_next_section(line: TextSegment) -> bool:
+            return line.contents == "END"
 
         # Act
         soup = BeautifulSoup()
@@ -123,20 +124,20 @@ class TestParseMotifsOrVisas(unittest.TestCase):
             "<div class=\"dsr-motifs\">- que les conditions d’aménagement et d’exploitation, telles qu’elles sont définies par le présent arrêté, permettent de prévenir les dangers et inconvénients de l’installation pour les intérêts mentionnés à l’article L. 512-1 du code de l’environnement, notamment pour la commodité du voisinage, pour la santé, la sécurité, la salubrité publiques et pour la protection de la nature et de l’environnement ;</div>"
             "</header>"
         )
-        assert lines == ["- END"]
+        assert _text_segments_to_str(lines) == ["END"]
 
     def test_without_keyword_nor_bullet(self):
         # Arrange
-        lines = [
+        lines = initialize_lines([
             "VU",
             "le Code de l'Environnement,",
             "la nomenclature des installations classées,",
             "le dossier déposé à l'appui de sa demande,",
             "END",
-        ]
+        ])
 
-        def _is_next_section(line: str) -> bool:
-            return line == "END"
+        def _is_next_section(line: TextSegment) -> bool:
+            return line.contents == "END"
 
         # Act
         soup = BeautifulSoup()
@@ -152,11 +153,11 @@ class TestParseMotifsOrVisas(unittest.TestCase):
             "<div class=\"dsr-visa\">le dossier déposé à l'appui de sa demande,</div>"
             "</header>"
         )
-        assert lines == ["END"]
+        assert _text_segments_to_str(lines) == ["END"]
 
     def test_with_nested_list(self):
         # Arrange
-        lines = [
+        lines = initialize_lines([
             "VU",
             "l'avis des directeurs départementaux des services consultés :",
             "- territoires et de la mer,",
@@ -164,10 +165,10 @@ class TestParseMotifsOrVisas(unittest.TestCase):
             "- incendie et secours,",
             "la nomenclature des installations classées,",
             "END",
-        ]
+        ])
 
-        def _is_next_section(line: str) -> bool:
-            return line == "END"
+        def _is_next_section(line: TextSegment) -> bool:
+            return line.contents == "END"
 
         # Act
         soup = BeautifulSoup()
@@ -188,21 +189,21 @@ class TestParseMotifsOrVisas(unittest.TestCase):
             "<div class=\"dsr-visa\">la nomenclature des installations classées,</div>"
             "</header>"
         )
-        assert lines == ["END"]
+        assert _text_segments_to_str(lines) == ["END"]
 
     def test_with_nested_list_bullet(self):
         # Arrange
-        lines = [
+        lines = initialize_lines([
             "VU",
             "- les avis :",
             "  - de la Direction Départementale de l’Equipement en date du 3 octobre 2000,",
             "  - de la Direction Départementale de l’Agriculture et de la Forêt en date du 6 octobre 2000,",
             "- la nomenclature des installations classées,",
             "END",
-        ]
+        ])
 
-        def _is_next_section(line: str) -> bool:
-            return line == "END"
+        def _is_next_section(line: TextSegment) -> bool:
+            return line.contents == "END"
 
         # Act
         soup = BeautifulSoup()
@@ -222,4 +223,8 @@ class TestParseMotifsOrVisas(unittest.TestCase):
             "<div class=\"dsr-visa\">- la nomenclature des installations classées,</div>"
             "</header>"
         )
-        assert lines == ["END"]
+        assert _text_segments_to_str(lines) == ["END"]
+
+
+def _text_segments_to_str(segments):
+    return [segment.contents for segment in segments]

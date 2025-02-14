@@ -6,18 +6,18 @@ from bs4 import BeautifulSoup
 from bench_convertisseur_xml.settings import APP_ROOT
 from .header import parse_header
 from .main_content import parse_main_content
-from .parse_section_title import identify_unique_sections, filter_max_level_sections
+from .parse_section_info import identify_unique_sections
 from bench_convertisseur_xml.html_schemas import HEADER_SCHEMA, MAIN_SCHEMA
 from bench_convertisseur_xml.utils.html import make_data_tag
+from bench_convertisseur_xml.parsing_utils.source_mapping import TextSegments
 
 TEMPLATE_PATH = APP_ROOT / 'bench_convertisseur_xml' / 'templates' / 'index.html'
 TEMPLATE_HTML = open(TEMPLATE_PATH, 'r', encoding='utf-8').read()
 
 
-def parse_arrete(lines: List[str]):
+def parse_arrete(lines: TextSegments) -> BeautifulSoup:
     # Define sections that will be parsed and detected in this document
-    unique_sections = identify_unique_sections(lines)
-    authorized_sections = filter_max_level_sections(unique_sections)
+    authorized_sections = identify_unique_sections(lines)
 
     soup = BeautifulSoup(TEMPLATE_HTML, features="html.parser")
     body = soup.body

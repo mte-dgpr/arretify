@@ -9,6 +9,7 @@ from bench_convertisseur_xml.utils.html import PageElementOrString, make_data_ta
 from bench_convertisseur_xml.regex_utils import sub_with_match
 from bench_convertisseur_xml.html_schemas import ERROR_SCHEMA
 from bench_convertisseur_xml.arrete_segmentation.sentence_rules import LIST_PATTERN
+from bench_convertisseur_xml.parsing_utils.source_mapping import TextSegment, apply_to_segment
 
 
 def parse_markdown_table(elements: List[PageElementOrString]):
@@ -32,26 +33,27 @@ def parse_markdown_table(elements: List[PageElementOrString]):
 
 
 # TODO-PROCESS-TAG
-def clean_markdown(line: str) -> str:
+def clean_markdown(line: TextSegment) -> TextSegment:
     # Remove newline at the end
-    line = re.sub(r'[\n\r]+$', '', line)
+    line = apply_to_segment(line, lambda contents: re.sub(r'[\n\r]+$', '', contents))
+    line_mem: TextSegment
 
     # Remove * at the beginning only if matching closing * found
-    matched_em_open = re.search(r"^\s*(?P<em_open>\*+)(?!\s)", line)
+    matched_em_open = re.search(r"^\s*(?P<em_open>\*+)(?!\s)", line.contents)
     if matched_em_open:
         asterisk_count = len(matched_em_open.group('em_open'))
         line_mem = line
-        line = sub_with_match(line, matched_em_open, 'em_open')
-        matched_em_close = re.search(r"\s*(?P<em_close>\*" + f"{{{asterisk_count}}})\b*", line)
+        line = apply_to_segment(line, lambda contents: sub_with_match(contents, matched_em_open, 'em_open'))
+        matched_em_close = re.search(r"\s*(?P<em_close>\*" + f"{{{asterisk_count}}})\b*", line.contents)
         # If there's no matching closing asterisks, we restore the line
         if not matched_em_close or matched_em_close.start() == 0:
             line = line_mem
         else:
-            line = sub_with_match(line, matched_em_close, 'em_close')
+            line = apply_to_segment(line, lambda contents: sub_with_match(contents, matched_em_close, 'em_close'))
 
     # Remove any number of # or whitespaces at the beginning of the sentence
-    if not LIST_PATTERN.match(line):
-        line = re.sub(r"^\s*[#\s]+", "", line)
+    if not LIST_PATTERN.match(line.contents):
+        line = apply_to_segment(line, lambda contents: re.sub(r"^\s*[#\s]+", "", contents))
 
     return line
 

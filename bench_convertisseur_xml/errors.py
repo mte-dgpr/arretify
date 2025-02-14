@@ -1,6 +1,9 @@
 from typing import Union
 from enum import Enum
 
+from .types import LineColumn
+
+
 class ErrorCodes(Enum):
     markdown_parsing='markdown_parsing'
     unbalanced_quote='unbalanced_quote'
@@ -8,5 +11,6 @@ class ErrorCodes(Enum):
 
 class ParsingError(BaseException):
     
-    def __init__(self, code: ErrorCodes, msg: Union[str, None]=None):
-        super(ParsingError, self).__init__(msg or code.value)
+    def __init__(self, code: ErrorCodes, line_col: LineColumn, msg: Union[str, None]=None):
+        complete_msg = f'[line: {line_col[0]}, col: {line_col[1]}] {msg or code.value}'
+        super(ParsingError, self).__init__(complete_msg)

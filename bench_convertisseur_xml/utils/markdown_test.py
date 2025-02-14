@@ -2,6 +2,7 @@ import re
 import unittest
 
 from .markdown import clean_markdown, is_table_line
+from bench_convertisseur_xml.parsing_utils.source_mapping import TextSegment
 
 
 class TestTableDetection(unittest.TestCase):
@@ -37,60 +38,64 @@ class TestCleanMarkdown(unittest.TestCase):
 
     def test_remove_newline_at_end(self):
         # Arrange
-        text = "This is a test\n\n"
+        text = _make_text_segment("This is a test\n\n")
 
         # Act
         result = clean_markdown(text)
 
         # Assert
-        assert result == "This is a test", "Should remove trailing newlines"
+        assert result.contents == "This is a test", "Should remove trailing newlines"
 
     def test_remove_asterisk_at_start(self):
         # Arrange
-        text = "**Test without space** bla"
+        text = _make_text_segment("**Test without space** bla")
 
         # Act
         result = clean_markdown(text)
 
         # Assert
-        assert result == "Test without space bla", "Should remove leading asterisks not followed by space"
+        assert result.contents == "Test without space bla", "Should remove leading asterisks not followed by space"
 
     def test_keep_asterisk_with_space_at_start(self):
         # Arrange
-        text = "* Test with space* bla"
+        text = _make_text_segment("* Test with space* bla")
 
         # Act
         result = clean_markdown(text)
 
         # Assert
-        assert result == "* Test with space* bla", "Should retain leading asterisks followed by space"
+        assert result.contents == "* Test with space* bla", "Should retain leading asterisks followed by space"
 
     def test_remove_asterisk_at_end(self):
         # Arrange
-        text = "Test without space*"
+        text = _make_text_segment("Test without space*")
 
         # Act
         result = clean_markdown(text)
 
         # Assert
-        assert result == "Test without space*", "Should keep trailing asterisks not preceded by space"
+        assert result.contents == "Test without space*", "Should keep trailing asterisks not preceded by space"
 
     def test_remove_hashes_and_whitespace_at_start(self):
         # Arrange
-        text = "   ##   Heading"
+        text = _make_text_segment("   ##   Heading")
 
         # Act
         result = clean_markdown(text)
 
         # Assert
-        assert result == "Heading", "Should remove leading hashes and whitespace"
+        assert result.contents == "Heading", "Should remove leading hashes and whitespace"
 
     def test_remove_mixed_hashes_and_spaces(self):
         # Arrange
-        text = "   # # Heading"
+        text = _make_text_segment("   # # Heading")
 
         # Act
         result = clean_markdown(text)
 
         # Assert
-        assert result == "Heading", "Should remove mixed hashes and whitespace at start"
+        assert result.contents == "Heading", "Should remove mixed hashes and whitespace at start"
+
+
+def _make_text_segment(string: str) -> TextSegment:
+    return TextSegment(contents=string, start=(0, 0), end=(0, 0))
