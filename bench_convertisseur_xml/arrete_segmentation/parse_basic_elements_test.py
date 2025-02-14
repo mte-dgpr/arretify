@@ -3,7 +3,7 @@ import unittest
 
 from bs4 import BeautifulSoup
 
-from .parse_basic_elements import list_indentation, parse_list, parse_table, parse_blockquote
+from .parse_basic_elements import list_indentation, parse_list, parse_table, parse_blockquote, _parse_inline_quotes
 from bench_convertisseur_xml.parsing_utils.source_mapping import initialize_lines
 
 class TestParseTable(unittest.TestCase):
@@ -125,14 +125,13 @@ class TestParseBlockQuote(unittest.TestCase):
     def setUp(self):
         self.soup = BeautifulSoup("", "html.parser")
 
-    def test_blockquote_nested(self):
+    def test_blockquote_nested_list(self):
         # Arrange
         lines = initialize_lines([
             '"bla bla',
             'blo blo :',
             '- Item 1',
-            '- Item 2',
-            'bli bli"',
+            '- Item 2"',
             "END",
         ])
 
@@ -146,6 +145,85 @@ class TestParseBlockQuote(unittest.TestCase):
             '<p>bla bla</p>'
             '<p>blo blo :</p>'
             "<ul><li>Item 1</li><li>Item 2</li></ul>"
+            '</blockquote>'
+        )
+
+    def test_blockquote_one_liner_nested_blockquote(self):
+        # Arrange
+        lines = initialize_lines([
+            '"bla bla',
+            '"blo blo"',
+            'bli bli"',
+            "END",
+        ])
+
+        # Act
+        remaining_lines, blockquote = parse_blockquote(self.soup, lines)
+
+        # Assert
+        assert [line.contents for line in remaining_lines] == ["END"]
+        assert str(blockquote) == (
+            '<blockquote>'
+            '<p>bla bla</p>'
+            '<blockquote>'
+            '<p>blo blo</p>'
+            '</blockquote>'
             '<p>bli bli</p>'
             '</blockquote>'
         )
+
+    def test_blockquote_nested_inline_quote(self):
+        # Arrange
+        lines = initialize_lines([
+            '"bla bla',
+            'blo blo "haha"',
+            'bli bli"',
+            "END",
+        ])
+
+        # Act
+        remaining_lines, blockquote = parse_blockquote(self.soup, lines)
+
+        # Assert
+        assert [line.contents for line in remaining_lines] == ["END"]
+        assert str(blockquote) == (
+            '<blockquote>'
+            '<p>bla bla</p>'
+            '<p>blo blo <q>"haha"</q></p>'
+            '<p>bli bli</p>'
+            '</blockquote>'
+        )
+
+    def test_blockquote_one_line(self):
+        # Arrange
+        lines = initialize_lines([
+            '"bla bla"',
+            "END",
+        ])
+
+        # Act
+        remaining_lines, blockquote = parse_blockquote(self.soup, lines)
+
+        # Assert
+        assert [line.contents for line in remaining_lines] == ["END"]
+        assert str(blockquote) == (
+            '<blockquote>'
+            '<p>bla bla</p>'
+            '</blockquote>'
+        )
+
+
+class TestParseInlineQuotes(unittest.TestCase):
+
+    def setUp(self):
+        self.soup = BeautifulSoup("", "html.parser")
+
+    def test_inline_quote(self):
+        # Arrange
+        line = 'bla bla "haha" bli bli'
+
+        # Act
+        result = _parse_inline_quotes(self.soup, line)
+
+        # Assert
+        assert [str(element) for element in result] == ['bla bla ', '<q>"haha"</q>', ' bli bli']

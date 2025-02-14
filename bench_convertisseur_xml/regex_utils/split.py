@@ -69,6 +69,7 @@ def split_string_with_regex(
 ) -> MatchFlow:
     '''
     Example:
+    
         >>> pattern = PatternProxy(r'\d+')  # Matches sequences of digits
         >>> string = "abc123def456ghi"
         >>> result = list(split_string_with_regex(pattern, string))

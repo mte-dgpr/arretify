@@ -1,8 +1,27 @@
 import unittest
 from typing import List, Union
 
-from .functional import iter_regex_tree_match_strings
+from .functional import iter_regex_tree_match_strings, map_matches
 from .regex_tree.types import RegexTreeMatch
+from .core import PatternProxy
+
+
+class TestFlatMapNonString(unittest.TestCase):
+
+    def setUp(self):
+        self.pattern_proxy = PatternProxy("bla|blo")
+
+    def test_map_matches(self):
+        # Arrange
+        elements = ["hello", self.pattern_proxy.match('bla'), "world", self.pattern_proxy.match('blo')]
+        def map_func(m):
+            return 'MATCHED:' + m.group(0)
+
+        # Act
+        result = list(map_matches(elements, map_func))
+
+        # Assert
+        assert result == ["hello", 'MATCHED:bla', "world", 'MATCHED:blo']
 
 
 class TestIterRegexTreeMatchStrings(unittest.TestCase):

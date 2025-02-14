@@ -5,7 +5,7 @@ from bs4 import Tag, BeautifulSoup
 from typing import Iterable, TypedDict, Tuple, cast, Pattern, Dict, Iterable, List, Union
 
 from ..settings import APP_ROOT, LOGGER
-from bench_convertisseur_xml.utils.functional import flat_map_non_string, flat_map_string
+from bench_convertisseur_xml.utils.functional import flat_map_string
 from bench_convertisseur_xml.html_schemas import TARGET_POSITION_REFERENCE_SCHEMA
 from bench_convertisseur_xml.utils.html import make_data_tag, PageElementOrString
 from bench_convertisseur_xml.parsing_utils.patterns import ET_VIRGULE_PATTERN_S, EME_PATTERN_S, ORDINAL_PATTERN_S, ordinal_str_to_int

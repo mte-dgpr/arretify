@@ -57,7 +57,7 @@ def make_new_tag(
     soup: BeautifulSoup, 
     tag_name: str, 
     contents: Iterable[PageElementOrString] = []
-):
+) -> Tag:
     element = soup.new_tag(tag_name)
     element.extend(merge_strings(contents))
     return element

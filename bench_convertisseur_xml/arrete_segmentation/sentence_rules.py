@@ -27,6 +27,10 @@ ARRETE_PATTERN = PatternProxy(r"^(arrêté)\b")
 
 TABLE_DESCRIPTION_PATTERN = PatternProxy(r"^(\(\*+\))|^(\*+)")
 
+BLOCKQUOTE_START_PATTERN = PatternProxy(r"^\s*\"")
+
+BLOCKQUOTE_END_PATTERN = PatternProxy(r"\"[\s\.]*$")
+
 def is_line_with_semicolumn(line: str):
     """Detect that sentence is continuing."""
     return bool(SENTENCE_WITH_SEMICOLUMN_PATTERN.search(line))
@@ -79,8 +83,8 @@ def is_table_description(line: str, pile: List[PageElementOrString]) -> bool:
 
 
 def is_blockquote_start(line: str) -> bool:
-    return bool(re.match(r"^\"", line, re.IGNORECASE))
+    return bool(BLOCKQUOTE_START_PATTERN.search(line))
 
 
 def is_blockquote_end(line: str) -> bool:
-    return bool(re.match(r".*\"\.?$", line, re.IGNORECASE))
+    return bool(BLOCKQUOTE_END_PATTERN.search(line))
