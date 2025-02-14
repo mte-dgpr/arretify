@@ -26,4 +26,9 @@ def remove_accents(s: str) -> str:
 
 
 def normalize_quotes(text: str):
-    return text.replace('’', "'").replace('“', '"').replace('”', '"')
+    return (text
+        .replace('’', "'")
+        .replace('“', '"')
+        .replace('”', '"')
+        .replace('«', '"')
+        .replace('»', '"'))

@@ -17,7 +17,9 @@ from bench_convertisseur_xml.parsing_utils.source_mapping import TextSegments, a
 
 BULLET_LIST_RE = re.compile(r'^\s*-\s*')
 
-INLINE_QUOTE_PATTERN = PatternProxy(r'"[^"]+"')
+INLINE_QUOTE_PATTERN = PatternProxy(r'"(?P<quoted>[^"]+)"')
+
+DOUBLE_QUOTE_PATTERN = PatternProxy(r'"')
 
 
 def parse_basic_elements(
@@ -127,7 +129,8 @@ def parse_blockquote(
         # Ignore case when the line contains a balanced number of quotes.
         # In that case, no need to increment or decrement as this will
         # be handled recursively.
-        if lines[0].contents.count('"') % 2 == 0:
+        double_quotes_matches = list(DOUBLE_QUOTE_PATTERN.finditer(lines[0].contents))
+        if len(double_quotes_matches) % 2 == 0:
             pass
         else:
             if is_blockquote_start(lines[0].contents):
@@ -161,7 +164,7 @@ def _parse_inline_quotes(soup: BeautifulSoup, string: str) -> Iterable[PageEleme
         lambda inline_quote_match: make_new_tag(
             soup, 
             'q', 
-            contents=[str(inline_quote_match.group(0))]
+            contents=[str(inline_quote_match.group('quoted'))]
         ),
     )
 
