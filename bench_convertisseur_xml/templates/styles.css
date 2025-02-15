@@ -95,6 +95,6 @@ header > *:last-child {
     background-color: var(--colors-title-bg);
 }
 
-.dsr-modification_segment {
+.dsr-operation {
     background-color: var(--background-action-low-blue-france);
 }

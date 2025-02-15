@@ -9,7 +9,7 @@ from .settings import TEST_DATA_DIR, LOGGER, OCR_FILE_EXTENSION
 from .arrete_segmentation.parse_arrete import parse_arrete
 from .references_detection.arretes_references import parse_arretes_references
 from .references_detection.target_position_references import parse_target_position_references
-from .modifications_detection.modification_segments import tag_modification_segments
+from .operations_detection.operations import parse_operations
 from .clean_ocrized_file import clean_ocrized_file
 from .html_schemas import ALINEA_SCHEMA, ARRETE_REFERENCE_SCHEMA, VISA_SCHEMA, MOTIF_SCHEMA
 from .utils.html import make_css_class
@@ -41,7 +41,7 @@ def ocrized_arrete_to_html(lines: TextSegments) -> BeautifulSoup:
 
         arretes_references = container.select(f'.{ARRETE_REFERENCE_CSS_CLASS}')
         if arretes_references:
-            new_children = tag_modification_segments(soup, new_children, arretes_references)
+            new_children = parse_operations(soup, new_children)
 
         container.clear()
         container.extend(new_children)

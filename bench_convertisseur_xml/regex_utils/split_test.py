@@ -3,7 +3,7 @@ import re
 from typing import Iterator
 
 from .split import (
-    split_string_with_regex, split_string_at_end_with_regex, split_string_at_beginning_with_regex, 
+    split_string_with_regex, 
     split_match_by_named_groups,
 )
 from .types import MatchNamedGroup
@@ -44,130 +44,6 @@ class TestSplitStringWithRegex(unittest.TestCase):
         expected_results = [
             "Hello."
         ]
-        assert actual_results == expected_results
-
-
-class TestSplitStringWithRegexAtEnd(unittest.TestCase):
-    def test_simple(self):
-        # Arrange
-        string = "Hello, this is a ttt. Let's match and replace words like ttt and bbb."
-        pattern = PatternProxy(r'\bttt|bbb\b')
-
-        # Act
-        actual_results = _convert_str_or_match_flow(split_string_at_end_with_regex(pattern, string))
-        
-        # Assert
-        expected_results = [
-            "Hello, this is a ttt. Let's match and replace words like ttt and ",
-            "MATCH:bbb",
-            "."
-        ]
-        assert actual_results == expected_results
-
-    def test_last_is_match(self):
-        # Arrange
-        string = "Hello, this is a ttt. Let's match and replace words like ttt and bbb"
-        pattern = PatternProxy(r'\bttt|bbb\b')
-
-        # Act
-        actual_results = _convert_str_or_match_flow(split_string_at_end_with_regex(pattern, string))
-        
-        # Assert
-        expected_results = [
-            "Hello, this is a ttt. Let's match and replace words like ttt and ",
-            "MATCH:bbb",
-            '',
-        ]
-        assert actual_results == expected_results
-
-    def test_whole_is_match(self):
-        # Arrange
-        string = "bbb"
-        pattern = PatternProxy(r'\bttt|bbb\b')
-
-        # Act
-        actual_results = _convert_str_or_match_flow(split_string_at_end_with_regex(pattern, string))
-        
-        # Assert
-        expected_results = [
-            '',
-            "MATCH:bbb",
-            '',
-        ]
-        assert actual_results == expected_results
-
-    def test_no_match(self):
-        # Arrange
-        string = "aaa"
-        pattern = PatternProxy(r'\bttt|bbb\b')
-
-        # Act
-        actual_results = split_string_at_end_with_regex(pattern, string)
-        
-        # Assert
-        expected_results = None
-        assert actual_results == expected_results
-    
-
-class TestSplitStringWithRegexAtBeginning(unittest.TestCase):
-    def test_simple(self):
-        # Arrange
-        string = "Hello, this is a ttt. Let's match and replace words like ttt and bbb."
-        pattern = PatternProxy(r'\bttt|bbb\b')
-
-        # Act
-        actual_results = _convert_str_or_match_flow(split_string_at_beginning_with_regex(pattern, string))
-        
-        # Assert
-        expected_results = [
-            "Hello, this is a ",
-            "MATCH:ttt",
-            ". Let's match and replace words like ttt and bbb.",
-        ]
-        assert actual_results == expected_results
-
-    def test_first_is_match(self):
-        # Arrange
-        string = "ttt. Let's match and replace words like ttt and bbb."
-        pattern = PatternProxy(r'\bttt|bbb\b')
-
-        # Act
-        actual_results = _convert_str_or_match_flow(split_string_at_beginning_with_regex(pattern, string))
-        
-        # Assert
-        expected_results = [
-            '',
-            "MATCH:ttt",
-            ". Let's match and replace words like ttt and bbb.",
-        ]
-        assert actual_results == expected_results
-
-    def test_whole_is_match(self):
-        # Arrange
-        string = "bbb"
-        pattern = PatternProxy(r'\bttt|bbb\b')
-
-        # Act
-        actual_results = _convert_str_or_match_flow(split_string_at_beginning_with_regex(pattern, string))
-        
-        # Assert
-        expected_results = [
-            '',
-            "MATCH:bbb",
-            '',
-        ]
-        assert actual_results == expected_results
-
-    def test_no_match(self):
-        # Arrange
-        string = "aaa"
-        pattern = PatternProxy(r'\bttt|bbb\b')
-
-        # Act
-        actual_results = split_string_at_beginning_with_regex(pattern, string)
-        
-        # Assert
-        expected_results = None
         assert actual_results == expected_results
 
 
