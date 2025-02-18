@@ -93,10 +93,10 @@ ERROR_SCHEMA = DataElementSchema(
     data_keys=['error_code'],
 )
 
-MODIFICATION_SEGMENT_SCHEMA = DataElementSchema(
-    name='modification_segment',
+OPERATION_SCHEMA = DataElementSchema(
+    name='operation',
     tag_name='span',
-    data_keys=['modification_type', 'keyword'],
+    data_keys=['operation_type', 'keyword', 'has_right_operand'],
 )
 
 DEBUG_KEYWORD_SCHEMA = DataElementSchema(

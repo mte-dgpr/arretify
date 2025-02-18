@@ -13,10 +13,10 @@ class DataElementSchema:
     data_keys: List[str]
 
 
-class ModificationType(Enum):
+class OperationType(Enum):
     ADD = 'add'
     DELETE = 'delete'
-    UPDATE = 'update'
+    REPLACE = 'replace'
 
 
 PageElementOrString = Union[PageElement, str]

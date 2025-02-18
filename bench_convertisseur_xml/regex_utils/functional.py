@@ -33,7 +33,7 @@ def flat_map_regex_tree_match(
 
 def iter_regex_tree_match_strings(match: RegexTreeMatch) -> Iterator[str]:
     """
-    Iterates over the strings in a regex tree match.
+    Iterates over the strings in a regex tree match by traversing the whole tree.
 
     >>> match = RegexTreeMatch(
     ...     children=["hello", RegexTreeMatch(children=["world", "!"], group_name=None, match_dict={}), "python"],
