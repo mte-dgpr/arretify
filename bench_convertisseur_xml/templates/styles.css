@@ -9,6 +9,11 @@ header, main {
     padding: var(--spacing-1);
 }
 
+blockquote {
+    border-left: 1px solid var(--border-plain-grey);
+    padding-left: var(--spacing-1);
+}
+
 th {
     text-align: left;
 }

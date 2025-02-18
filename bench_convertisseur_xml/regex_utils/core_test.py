@@ -66,6 +66,30 @@ class TestPatternProxy(unittest.TestCase):
         assert result[0].group(0) == "123"
         assert result[1].group(0) == "456"
 
+    def test_sub(self):
+        # Arrange
+        test_string = "abc123déf456"
+        repl = "REPL"
+        expected = "abcREPLdéfREPL"
+
+        # Act
+        result = self.pattern_proxy.sub(repl, test_string)
+
+        # Assert
+        assert result == expected
+
+    def test_sub_no_match(self):
+        # Arrange
+        test_string = "abc”déf"
+        repl = "REPL"
+        expected = "abc”déf"
+
+        # Act
+        result = self.pattern_proxy.sub(repl, test_string)
+
+        # Assert
+        assert result == expected
+
     def test_ignore_case(self):
         # Arrange
         pattern_string = r'hello'
@@ -107,6 +131,14 @@ class TestPatternProxy(unittest.TestCase):
         # Assert
         assert isinstance(result, MatchProxy)
         assert result.group(0) == '"double"single\''
+
+    def test_unimplemented_method(self):
+        # Arrange
+        method = 'findall'
+
+        # Act
+        with self.assertRaises(NotImplementedError):
+            getattr(self.pattern_proxy, method)
 
 
 class TestMatchProxy(unittest.TestCase):

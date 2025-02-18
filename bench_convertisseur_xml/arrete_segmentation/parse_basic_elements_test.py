@@ -189,7 +189,7 @@ class TestParseBlockQuote(unittest.TestCase):
         assert str(blockquote) == (
             '<blockquote>'
             '<p>bla bla</p>'
-            '<p>blo blo <q>"haha"</q></p>'
+            '<p>blo blo <q>haha</q></p>'
             '<p>bli bli</p>'
             '</blockquote>'
         )
@@ -226,4 +226,4 @@ class TestParseInlineQuotes(unittest.TestCase):
         result = _parse_inline_quotes(self.soup, line)
 
         # Assert
-        assert [str(element) for element in result] == ['bla bla ', '<q>"haha"</q>', ' bli bli']
+        assert [str(element) for element in result] == ['bla bla ', '<q>haha</q>', ' bli bli']

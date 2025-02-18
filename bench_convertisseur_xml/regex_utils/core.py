@@ -33,7 +33,10 @@ class PatternProxy:
         self._pattern = re.compile(pattern_string_for_compilation, compile_flags)
 
     def __getattr__(self, attr):
-        return getattr(self._pattern, attr)
+        value = getattr(self._pattern, attr)
+        if callable(value):
+            raise NotImplementedError(f"Function {attr} of re.Pattern is not implemented in PatternProxy")
+        return value
 
     def match(self, string: str) -> Union['MatchProxy', None]:
         match = self._pattern.match(_preprocess_string(string, self.settings))
@@ -52,6 +55,14 @@ class PatternProxy:
     def finditer(self, string: str) -> Iterator['MatchProxy']:
         for match in self._pattern.finditer(_preprocess_string(string, self.settings)):
             yield MatchProxy(string, match)
+
+    def sub(self, repl: str, string: str) -> str:
+        while True:
+            match = self._pattern.search(_preprocess_string(string, self.settings))
+            if match:
+                string = string[:match.start()] + repl + string[match.end():]
+            else:
+                return string
             
 
 class MatchProxy:
