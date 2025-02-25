@@ -119,7 +119,7 @@ L'arrêté préfectoral complémentaire du 18 décembre 2009 est abrogé. Les di
 
 Les dispositions de l'article 4.3.12 de l'arrêté préfectoral du 10 décembre 2008 susvisé sont remplacées par les dispositions suivantes :
 
-Toutes les eaux pluviales susceptibles d'être polluées doivent être collectées et traitées, avant leur rejet dans le fossé conduisant au cours d'eau Le Trouire. L'exploitant devra rechercher, en liaison avec la collectivité de Tinchebray, une solution de traitement permettant de garantir le respect des normes fixées au présent article. Les conclusions de cette étude ainsi que les éventuelles propositions d'échanges de mise en œuvre devront être transmises, avant le 31 décembre 2012, à l'Inspection des Installations Classées.
+"Toutes les eaux pluviales susceptibles d'être polluées doivent être collectées et traitées, avant leur rejet dans le fossé conduisant au cours d'eau Le Trouire. L'exploitant devra rechercher, en liaison avec la collectivité de Tinchebray, une solution de traitement permettant de garantir le respect des normes fixées au présent article. Les conclusions de cette étude ainsi que les éventuelles propositions d'échanges de mise en œuvre devront être transmises, avant le 31 décembre 2012, à l'Inspection des Installations Classées.
 
 Les eaux issues du réseau d'eaux pluviales du site doivent respecter avant rejet les valeurs limites suivantes :
 
@@ -131,15 +131,15 @@ Les eaux issues du réseau d'eaux pluviales du site doivent respecter avant reje
 
 Le pH de ces eaux doit être compris entre 5,5 et 8,5 et la température doit être inférieure à 30°C.
 
-Le dispositif de traitement devra être équipé d'une alarme technique hydrocarbures de niveau haut avec report. Ce dispositif devra être dimensionné afin de répondre aux volumes d'eaux collectées de la surface considérée et de l'événement pluvieux dénalysé dans la plus critique de la région. Il devra être équipé d'un système de mesure en permanence en bon état de fonctionnement et délivrant des alarmes visuelles et sonores que nécessaire. Des bouches et des haies retenues, qui doivent être dimensionnées et disposées de manière à garantir le respect des dispositions de l'article 4 du présent arrêté.
+Le dispositif de traitement devra être équipé d'une alarme technique hydrocarbures de niveau haut avec report. Ce dispositif devra être dimensionné afin de répondre aux volumes d'eaux collectées de la surface considérée et de l'événement pluvieux dénalysé dans la plus critique de la région. Il devra être équipé d'un système de mesure en permanence en bon état de fonctionnement et délivrant des alarmes visuelles et sonores que nécessaire. Des bouches et des haies retenues, qui doivent être dimensionnées et disposées de manière à garantir le respect des dispositions de l'article 4 du présent arrêté."
 
 # Article 4 : Protection contre la foudre
 
 Les dispositions de l'article 7.3.5 de l'arrêté préfectoral du 10 décembre 2008 susvisé sont remplacées par les dispositions suivantes :
 
-Les installations sur lesquelles une agression par la foudre peut être à l'origine d'événements susceptibles de porter gravement atteinte, directement ou indirectement à la sécurité des installations, à la sécurité des personnes ou à la qualité de l'environnement, sont protégées contre la foudre en application des articles 16 à 23 de l'arrêté ministériel du 04 octobre 2010, relatif à la prévention des risques accidentels au sein des installations classées pour la protection de l'environnement soumises à autorisation.
+"Les installations sur lesquelles une agression par la foudre peut être à l'origine d'événements susceptibles de porter gravement atteinte, directement ou indirectement à la sécurité des installations, à la sécurité des personnes ou à la qualité de l'environnement, sont protégées contre la foudre en application des articles 16 à 23 de l'arrêté ministériel du 04 octobre 2010, relatif à la prévention des risques accidentels au sein des installations classées pour la protection de l'environnement soumises à autorisation.
 
-L'analyse du risque foudre devra être réalisée et transmise à l'Inspection des Installations Classées avant le 31 décembre 2013.
+L'analyse du risque foudre devra être réalisée et transmise à l'Inspection des Installations Classées avant le 31 décembre 2013."
 
 Page 3 sur 4
 ```markdown

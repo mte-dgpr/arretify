@@ -256,11 +256,11 @@ Les paragraphes 3 et 4 de l'article 8.5.1.1 de l'arrêté préfectoral du 10 dé
 
 # ARTICLE 17
 Les dispositions de l'article 8.5.2 de l'arrêté préfectoral du 10 décembre 2008 sont remplacées par les dispositions suivantes :
-Les magasins de stockage des matières et des produits finis sont équipés de trappes de désenfumage faisant l'objet d'un entretien régulier.
+"Les magasins de stockage des matières et des produits finis sont équipés de trappes de désenfumage faisant l'objet d'un entretien régulier.
 L'exploitant met en place une porte coupe-feu de degré 1 heure entre le bâtiment 65 et le magasin 2000, avant le 31 décembre 2021.
 Lors de la réalisation de travaux avec point chaud dans l'un des bâtiments de stockage, l'exploitant met en place des rondes de sécurité après la fin des travaux, afin de s'assurer qu'il n'y a pas de départ de feu. L'organisation et la fréquence de ces rondes sont précisées par l'exploitant, mais ne peuvent être inférieures à 2 rondes distances d'au moins 1 heure.
 
-Conformément à l'article 7.6.9, l'ensemble du personnel doit bénéficier de façon régulière d'une formation à la manipulation des extincteurs.
+Conformément à l'article 7.6.9, l'ensemble du personnel doit bénéficier de façon régulière d'une formation à la manipulation des extincteurs."
 
 # ARTICLE 18
 L'article 8.5.3 de l'arrêté préfectoral du 10 décembre 2008 est abrogé.

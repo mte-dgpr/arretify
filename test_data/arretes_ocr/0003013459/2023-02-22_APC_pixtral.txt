@@ -119,7 +119,7 @@ Volume autorisé : éléments caractérisant la consistance, le rythme de foncti
 
 Les dispositions de l'article 1.2.4.1 de l'arrêté préfectoral du 24 septembre 2021 susvisé sont ainsi modifiées :
 
-a) Les seuls déchets admissibles dans l'installation d'incinération sont des déchets non dangereux solides de type CSR, DAE et, dans les circonstances exceptionnelles décrites ci-après, OM. Les déchets d'activités de soins à risques infectieux et assimilés (DASRI) ne sont pas admissibles dans l'installation.
+"Les seuls déchets admissibles dans l'installation d'incinération sont des déchets non dangereux solides de type CSR, DAE et, dans les circonstances exceptionnelles décrites ci-après, OM. Les déchets d'activités de soins à risques infectieux et assimilés (DASRI) ne sont pas admissibles dans l'installation.
 
 L'acceptation des déchets à incinérer répond à l'ordre de priorisation suivant :
 
@@ -129,7 +129,7 @@ L'acceptation des déchets à incinérer répond à l'ordre de priorisation suiv
 
 3) DAE ne pouvant faire l'objet d'un pré-traitement. A ce titre, les DAE « non triés » acceptés sur le site se limitent à des refus d'installations de valorisation matière des déchets (exemple : déchets de pulpeur issus de l'industrie papetière).
 
-Les OM sont admises uniquement sur demande du SIVOM de la région multiusienne pour pallier les incapacités temporaires de l'UIOM de Sausheim. Ces admissions ne pourront excéder le besoin de traitement journalier de l'UIOM de Sausheim sur une durée ne pouvant excéder 91 jours d'incapacité sur 12 mois glissants. L'exploitant s'engage au "premier sa proposition de service en réponse au SIVOM des lors qu'elle dépasse 15 000 tonnes cumulées sur 12 mois glissants."
+Les OM sont admises uniquement sur demande du SIVOM de la région multiusienne pour pallier les incapacités temporaires de l'UIOM de Sausheim. Ces admissions ne pourront excéder le besoin de traitement journalier de l'UIOM de Sausheim sur une durée ne pouvant excéder 91 jours d'incapacité sur 12 mois glissants. L'exploitant soumet au préfet sa proposition de service en réponse au SIVOM des lors qu'elle dépasse 15 000 tonnes cumulées sur 12 mois glissants."
 
 ### ARTICLE 4 – Frais
 
