@@ -11,11 +11,12 @@ from .sentence_rules import (
 from bench_convertisseur_xml.utils.html import make_data_tag, PageElementOrString, wrap_in_tag
 from bench_convertisseur_xml.utils.markdown import parse_markdown_table, is_table_line
 from bench_convertisseur_xml.html_schemas import (
-    SECTION_SCHEMA, SECTION_TITLE_SCHEMAS, ALINEA_SCHEMA
+    SECTION_SCHEMA, SECTION_TITLE_SCHEMAS, ALINEA_SCHEMA, ERROR_SCHEMA
 )
+from bench_convertisseur_xml.errors import ErrorCodes
 from bench_convertisseur_xml.parsing_utils.source_mapping import TextSegments
 from .config import BodySection
-from .parse_section_info import parse_section_info
+from .parse_section_info import parse_section_info, are_sections_contiguous
 from .parse_basic_elements import parse_basic_elements
 from .sentence_rules import is_blockquote_start
 
@@ -38,6 +39,7 @@ def parse_main_content(soup: BeautifulSoup, main_content: Tag, lines: TextSegmen
         else:
             break
 
+    cur_section_levels = None
     while lines:
         section_info = parse_section_info(lines[0], authorized_sections=authorized_sections)
         section_element = make_data_tag(soup, SECTION_SCHEMA, data=dict(
@@ -61,12 +63,24 @@ def parse_main_content(soup: BeautifulSoup, main_content: Tag, lines: TextSegmen
         body_sections[-1].append(section_element)
         body_sections.append(section_element)
 
-        title_element = make_data_tag(
-            soup, 
-            SECTION_TITLE_SCHEMAS[new_section_level], 
-            contents=[lines.pop(0).contents]
-        )
-        section_element.append(title_element)
+        # Add a tag if the sections are not contiguous
+        title_contents = lines.pop(0).contents
+        new_section_levels = section_info['levels']
+        if not are_sections_contiguous(cur_section_levels, new_section_levels):
+            error_element = make_data_tag(
+                soup,
+                ERROR_SCHEMA,
+                data=dict(error_code=ErrorCodes.non_contiguous_sections.value),
+                contents=[title_contents])
+            section_element.append(error_element)
+        else:
+            title_element = make_data_tag(
+                soup,
+                SECTION_TITLE_SCHEMAS[new_section_level],
+                contents=[title_contents]
+            )
+            section_element.append(title_element)
+        cur_section_levels = new_section_levels
 
         # Parse alineas until a new section is detected.
         # ALINEA : "Constitue un alinéa toute phrase, tout mot, tout ensemble de phrases 
