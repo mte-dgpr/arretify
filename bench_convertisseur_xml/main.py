@@ -10,6 +10,7 @@ from .arrete_segmentation.parse_arrete import parse_arrete
 from .references_detection.arretes_references import parse_arretes_references
 from .references_detection.section_references import parse_section_references
 from .references_detection.codes_references import parse_codes_references
+from .references_detection.self_references import parse_self_references
 from .references_detection.eu_acts_references import parse_eu_acts_references
 from .operations_detection.operations import parse_operations
 from .clean_ocrized_file import clean_ocrized_file
@@ -36,6 +37,7 @@ def ocrized_arrete_to_html(lines: TextSegments) -> BeautifulSoup:
         new_children = parse_arretes_references(soup, new_children)
         new_children = parse_section_references(soup, new_children)
         new_children = parse_codes_references(soup, new_children)
+        new_children = parse_self_references(soup, new_children)
         new_children = parse_eu_acts_references(soup, new_children)
         element.clear()
         element.extend(new_children)

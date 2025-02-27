@@ -10,7 +10,6 @@ from bench_convertisseur_xml.utils.functional import flat_map_string
 from bench_convertisseur_xml.html_schemas import DOCUMENT_REFERENCE_SCHEMA
 from bench_convertisseur_xml.utils.html import make_data_tag
 from bench_convertisseur_xml.uri import render_uri, Code
-from bench_convertisseur_xml.law_data.legifrance import get_code_titles
 
 
 # TODO: Makes parsing very slow, because compiles into a big OR regex.

@@ -1,6 +1,6 @@
 import unittest
 
-from .uri import render_uri, parse_uri, ArretePrefectoral, ArreteMinisteriel, ArreteUnknown, Code, EuAct, SectionType, Section, _validate_sections
+from .uri import render_uri, parse_uri, ArretePrefectoral, ArreteMinisteriel, ArreteUnknown, Code, Self, EuAct, SectionType, Section, _validate_sections
 
 
 class TestRenderUri(unittest.TestCase):
@@ -83,6 +83,9 @@ class TestRenderUri(unittest.TestCase):
         )
         assert uri == 'code://Code%20de%20la%20route'
 
+    def test_self(self):
+        uri = render_uri(Self())
+        assert uri == 'self://self'
     def test_eu_act(self):
         uri = render_uri(
             EuAct(act_type='règlement', number='1013/2006', domain='CE')
@@ -150,6 +153,14 @@ class TestParseUriArretePrefectoral(unittest.TestCase):
         assert document == ArreteUnknown(date='2022-01-01')
         assert sections == []
 
+    def test_code(self):
+        document, sections = parse_uri('code://Code%20de%20la%20route')
+        assert document == Code(title='Code de la route')
+        assert sections == []
+
+    def test_self(self):
+        document, sections = parse_uri('self://self')
+        assert document == Self()
     def test_eu_act(self):
         document, sections = parse_uri('eu://r%C3%A8glement_1013%2F2006_CE')
         assert document == EuAct(act_type='règlement', number='1013/2006', domain='CE')
