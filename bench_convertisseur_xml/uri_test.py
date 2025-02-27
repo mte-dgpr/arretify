@@ -1,6 +1,6 @@
 import unittest
 
-from .uri import render_uri, parse_uri, ArretePrefectoral, ArreteMinisteriel, ArreteUnknown, SectionType, Section, _validate_sections
+from .uri import render_uri, parse_uri, ArretePrefectoral, ArreteMinisteriel, ArreteUnknown, Code, SectionType, Section, _validate_sections
 
 
 class TestRenderUri(unittest.TestCase):
@@ -76,6 +76,12 @@ class TestRenderUri(unittest.TestCase):
             ArreteUnknown(date='2022-01-01')
         )
         assert uri == 'unknown://arrete_2022-01-01'
+
+    def test_code(self):
+        uri = render_uri(
+            Code(title='Code de la route')
+        )
+        assert uri == 'code://Code%20de%20la%20route'
 
     def test_unknown_document_with_sections(self):
         uri = render_uri(None, Section.alinea(1, 2))
