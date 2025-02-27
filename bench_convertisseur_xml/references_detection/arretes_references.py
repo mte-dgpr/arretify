@@ -2,15 +2,16 @@ import re
 from dataclasses import dataclass
 from datetime import date
 from bs4 import Tag, BeautifulSoup
-from typing import Literal, List, Tuple, Iterator, Dict, Optional, Iterable, Union
+from typing import Literal, List, Tuple, Iterator, Dict, Optional, Iterable, Union, cast
 
 from ..settings import APP_ROOT, LOGGER
 from bench_convertisseur_xml.utils.html import PageElementOrString, make_data_tag
 from bench_convertisseur_xml.utils.functional import flat_map_string
-from bench_convertisseur_xml.html_schemas import ARRETE_REFERENCE_SCHEMA
+from bench_convertisseur_xml.html_schemas import DOCUMENT_REFERENCE_SCHEMA
 from bench_convertisseur_xml.parsing_utils.patterns import ET_VIRGULE_PATTERN_S
 from bench_convertisseur_xml.parsing_utils.dates import DATE_NODE, render_date_regex_tree_match
 from bench_convertisseur_xml.regex_utils import regex_tree, flat_map_regex_tree_match, split_string_with_regex_tree
+from bench_convertisseur_xml.uri import ArretePrefectoral, ArreteMinisteriel, ArreteUnknown, render_uri, Document
 
 Authority = Literal['préfectoral', 'ministériel']
 
@@ -95,38 +96,55 @@ ARRETE_MULTIPLE_NODE = regex_tree.Group(regex_tree.Sequence([
 ]), group_name='__arrete_multiple')
 
 
-def _extract_arrete_base_infos(arrete_base_match: regex_tree.Match) -> Dict:
-    match_dict = arrete_base_match.match_dict
-    authority_raw = match_dict.get('authority')
-    if authority_raw:
-        authority = AUTHORITY_MAP[authority_raw.lower()]
-    else:
-        authority = None
-    qualifier = match_dict.get('qualifier')
-    return dict(qualifier=qualifier, authority=authority)
-
-
 def _extract_code(arrete_match: regex_tree.Match) -> Union[Code, None]:
     return arrete_match.match_dict.get('code', None)
 
 
-def _render_arrete_container_regex_tree_match(
+def _render_arrete_container(
     soup: BeautifulSoup, 
     arrete_match: regex_tree.Match, 
-    base_arrete_match_dict: regex_tree.MatchDict
+    base_arrete_match: regex_tree.Match
 ) -> Tag:
+    # Parse date tag and extract date value
+    arrete_tag_contents = list(flat_map_regex_tree_match(
+        arrete_match.children,
+        lambda date_group_match: [
+            render_date_regex_tree_match(soup, date_group_match)
+        ],
+        allowed_group_names=[DATE_NODE.group_name],
+    ))
+
+    arrete_date: Optional[str] = None
+    for tag_or_str in arrete_tag_contents:
+        if isinstance(tag_or_str, Tag) and tag_or_str.name == 'time':
+            arrete_date = cast(str, tag_or_str['datetime'])
+            break
+
+    # Build the arrete document object
+    authority_raw = base_arrete_match.match_dict.get('authority')
+    document: Document
+    if authority_raw in ['ministériels', 'ministériel']:
+        document = ArreteMinisteriel(
+            date=arrete_date,
+        )
+    elif authority_raw in ['préfectoraux', 'préfectoral']:
+        document = ArretePrefectoral(
+            date=arrete_date,
+            code=_extract_code(arrete_match),
+        )
+    elif arrete_date:
+        document = ArreteUnknown(
+            date=arrete_date,
+        )
+    else:
+        raise ValueError('Could not determine the type of arrete')
+
+    # Render the arrete tag
     return make_data_tag(
         soup, 
-        ARRETE_REFERENCE_SCHEMA,
-        data=dict(
-            code=_extract_code(arrete_match),
-            **base_arrete_match_dict,
-        ),
-        contents=flat_map_regex_tree_match(
-            arrete_match.children,
-            lambda date_group_match: [render_date_regex_tree_match(soup, date_group_match)],
-            allowed_group_names=[DATE_NODE.group_name],
-        ),
+        DOCUMENT_REFERENCE_SCHEMA,
+        data=dict(uri=render_uri(document)),
+        contents=arrete_tag_contents,
     )
 
 
@@ -139,10 +157,10 @@ def _parse_arretes_references(
         lambda string: flat_map_regex_tree_match(
             split_string_with_regex_tree(ARRETE_NODE, string),
             lambda arrete_container_group_match: [
-                _render_arrete_container_regex_tree_match(
+                _render_arrete_container(
                     soup, 
                     arrete_container_group_match, 
-                    _extract_arrete_base_infos(arrete_container_group_match),
+                    arrete_container_group_match,
                 ),
             ],
             allowed_group_names=['__arrete'],
@@ -163,10 +181,10 @@ def _parse_multiple_arretes_references(
             lambda arrete_multiple_group_match: flat_map_regex_tree_match(
                 arrete_multiple_group_match.children,
                 lambda arrete_container_group_match: [
-                    _render_arrete_container_regex_tree_match(
+                    _render_arrete_container(
                         soup, 
                         arrete_container_group_match, 
-                        _extract_arrete_base_infos(arrete_multiple_group_match),
+                        arrete_multiple_group_match,
                     )
                 ],
                 allowed_group_names=['__arrete'],
