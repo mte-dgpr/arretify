@@ -86,6 +86,14 @@ class Code(_DocumentBase):
 
 
 @dataclass(frozen=True)
+class Self(_DocumentBase):
+    """
+    Self reference.
+    """
+    scheme: ClassVar[str] = 'self'
+
+
+@dataclass(frozen=True)
 class EuAct(_DocumentBase):
     """
     EU act. Reference : https://style-guide.europa.eu
@@ -122,7 +130,7 @@ class Section:
         return cls(SectionType.article, start, end)
 
 
-Document = Union[ArretePrefectoral, ArreteMinisteriel, ArreteUnknown, Code, EuAct]
+Document = Union[ArretePrefectoral, ArreteMinisteriel, ArreteUnknown, Code, EuAct, Self]
 
 
 def render_uri(
@@ -150,6 +158,10 @@ def render_uri(
     # Format for EU act : eu://<act_type>_<number>_<domain>
     elif isinstance(document, EuAct):
         document_part = _join_tokens(document.act_type, document.number, document.domain)
+
+    # Format for self reference : self://self
+    elif isinstance(document, Self):
+        document_part = 'self'
 
     # Format for unknown document : unknown://unknown
     elif document is None:
@@ -202,6 +214,10 @@ def parse_uri(uri: URI) -> tuple[Union[Document, None], List[Section]]:
         if len(document_tokens) != 3 or document_tokens[0] is None or document_tokens[1] is None:
             raise ValueError(f'Unexpected tokens in "{document_part}"')
         document = EuAct(act_type=document_tokens[0], number=document_tokens[1], domain=document_tokens[2])
+
+    # Format for self reference : self://self
+    elif scheme_part == Self.scheme:
+        document = Self()
 
     # Format for unknown, or not completely defined document
     elif scheme_part == _DocumentBase.scheme:
