@@ -28,9 +28,12 @@ OPERATION_TYPES_GROUP_NAMES = [
 # This regex detects the part (2) of the operation.
 RTL_OPERATION_NODE = regex_tree.Group(
     regex_tree.Sequence([
+        # If there is a sentence end left of the operation, 
+        # it means there is no (1), therefore we reject the match.
+        r'^[^.]*',
         regex_tree.Branching([
-            r'[^.]*est( \w+)? ',
-            r'[^.]*sont( \w+)? ',
+            r'est( \w+)? ',
+            r'sont( \w+)? ',
         ]),
         regex_tree.Branching([
             regex_tree.Group(

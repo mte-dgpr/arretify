@@ -25,6 +25,13 @@ class TestParseOperations(unittest.TestCase):
             '<span class="dsr-operation" data-has_right_operand="true" data-keyword="remplacées" data-operation_type="replace">sont <b>remplacées</b> comme suit :</span>',
         ]
 
+    def test_reject_match_when_dot_on_left(self):
+        assert _parsed_elements(
+            "BlaBla. Elle sont remplacées par autre chose."
+        ) == [
+            "BlaBla. Elle sont remplacées par autre chose."
+        ]
+
 
 def _parsed_elements(string: str):
     soup = BeautifulSoup(string, features='html.parser')
