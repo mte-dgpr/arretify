@@ -2,7 +2,9 @@
 import re
 import unittest
 
-from .parse_section_info import parse_section_info, NUMBER_GROUP
+from .parse_section_info import (
+    are_sections_contiguous, parse_section_info, _section_to_levels, NUMBER_GROUP
+)
 from .config import BodySection
 from bench_convertisseur_xml.parsing_utils.source_mapping import TextSegment
 
@@ -68,231 +70,582 @@ class TestNumberGroupRegex(unittest.TestCase):
         assert match.group("number_first") == "1er", "Group 'number_first' should equal '1er'"
 
 
-def test_section_valid_cases():
+class TestSectionValidCases(unittest.TestCase):
 
-    # Cas titre avec chiffre romain
-    assert parse_section_info(_make_text_segment("TITRE I - Premier titre")) == {
-        'type': BodySection.TITLE,
-        "level": 0,
-        "level_name": "titre_0",
-        'number': 'I',
-        'text': 'Premier titre'
-    }
+    def test_title_with_roman_number(self):
+        # Arrange
+        text_segment = _make_text_segment("TITRE I - Premier titre")
 
-    # Cas titre avec chiffre arabe
-    assert parse_section_info(_make_text_segment("TITRE 1 - Autre titre")) == {
-        'type': BodySection.TITLE,
-        "level": 0,
-        "level_name": "titre_0",
-        'number': '1',
-        'text': 'Autre titre'
-    }
+        # Act
+        result = parse_section_info(text_segment)
 
-    # Cas chapitre avec lettre sans point
-    assert parse_section_info(_make_text_segment("CHAPITRE A - Premier chapitre")) == {
-        'type': BodySection.CHAPTER,
-        "level": 0,
-        "level_name": "chapitre_0",
-        'number': 'A',
-        'text': 'Premier chapitre'
-    }
+        # Assert
+        assert result == {
+            'type': BodySection.TITLE,
+            "level": 0,
+            "level_name": "titre_0",
+            'number': 'I',
+            'text': 'Premier titre',
+            'levels': [1]
+        }
 
-    # Cas chapitre avec lettre avec point
-    assert parse_section_info(_make_text_segment("CHAPITRE A. - Premier chapitre")) == {
-        'type': BodySection.CHAPTER,
-        "level": 0,
-        "level_name": "chapitre_0",
-        'number': 'A',
-        'text': 'Premier chapitre'
-    }
+    def test_title_with_arabic_number(self):
+        # Arrange
+        text_segment = _make_text_segment("TITRE 1 - Autre titre")
 
-    # Cas article avec chiffre arabe sans point
-    assert parse_section_info(_make_text_segment("ARTICLE 1")) == {
-        'type': BodySection.ARTICLE,
-        "level": 0,
-        "level_name": "article_0",
-        'number': '1',
-        'text': ''
-    }
+        # Act
+        result = parse_section_info(text_segment)
 
-    # Cas article avec 1er
-    assert parse_section_info(_make_text_segment("ARTICLE 1er")) == {
-        'type': BodySection.ARTICLE,
-        "level": 0,
-        "level_name": "article_0",
-        'number': '1',
-        'text': ''
-    }
+        # Assert
+        assert result == {
+            'type': BodySection.TITLE,
+            "level": 0,
+            "level_name": "titre_0",
+            'number': '1',
+            'text': 'Autre titre',
+            'levels': [1]
+        }
 
-    # Cas article avec chiffre arabe avec point
-    assert parse_section_info(_make_text_segment("ARTICLE 1.")) == {
-        'type': BodySection.ARTICLE,
-        "level": 0,
-        "level_name": "article_0",
-        'number': '1',
-        'text': ''
-    }
+    def test_chapter_with_letter_without_dot(self):
+        # Arrange
+        text_segment = _make_text_segment("CHAPITRE A - Premier chapitre")
 
-    # Cas chapitre hiérarchique avec lettre sans point
-    assert parse_section_info(_make_text_segment("CHAPITRE I.A - Premier chapitre")) == {
-        'type': BodySection.CHAPTER,
-        "level": 1,
-        "level_name": "chapitre_1",
-        'number': 'I.A',
-        'text': 'Premier chapitre'
-    }
+        # Act
+        result = parse_section_info(text_segment)
 
-    # Cas chapitre hiérarchique avec lettre avec point
-    assert parse_section_info(_make_text_segment("CHAPITRE I.A. - Premier chapitre")) == {
-        'type': BodySection.CHAPTER,
-        "level": 1,
-        "level_name": "chapitre_1",
-        'number': 'I.A',
-        'text': 'Premier chapitre'
-    }
+        # Assert
+        assert result == {
+            'type': BodySection.CHAPTER,
+            "level": 0,
+            "level_name": "chapitre_0",
+            'number': 'A',
+            'text': 'Premier chapitre',
+            'levels': [1]
+        }
 
-    # Cas chapitre hiérarchique avec chiffre sans point sans séparateur
-    assert parse_section_info(_make_text_segment("CHAPITRE 1.1 Premier chapitre")) == {
-        'type': BodySection.CHAPTER,
-        "level": 1,
-        "level_name": "chapitre_1",
-        'number': '1.1',
-        'text': 'Premier chapitre'
-    }
+    def test_chapter_with_letter_with_dot(self):
+        # Arrange
+        text_segment = _make_text_segment("CHAPITRE A. - Premier chapitre")
 
-    # Cas article hiérarchique avec chiffre sans point sans séparateur
-    assert parse_section_info(_make_text_segment("ARTICLE 1.1.1 Premier article")) == {
-        'type': BodySection.ARTICLE,
-        "level": 2,
-        "level_name": "article_2",
-        'number': '1.1.1',
-        'text': 'Premier article'
-    }
+        # Act
+        result = parse_section_info(text_segment)
 
-    # Cas sous article hiérarchique avec chiffre sans point sans séparateur
-    assert parse_section_info(_make_text_segment("ARTICLE 1.1.1.1 Premier sous article")) == {
-        'type': BodySection.SUB_ARTICLE,
-        "level": 3,
-        "level_name": "sous_article_3",
-        'number': '1.1.1.1',
-        'text': 'Premier sous article'
-    }
+        # Assert
+        assert result == {
+            'type': BodySection.CHAPTER,
+            "level": 0,
+            "level_name": "chapitre_0",
+            'number': 'A',
+            'text': 'Premier chapitre',
+            'levels': [1]
+        }
 
-    # Cas article hiérarchique avec chiffre arabe sans point
-    assert parse_section_info(_make_text_segment("ARTICLE 1.A.3 - Premier article")) == {
-        'type': BodySection.ARTICLE,
-        "level": 2,
-        "level_name": "article_2",
-        'number': '1.A.3',
-        'text': 'Premier article'
-    }
-    # Cas article hiérarchique avec chiffre arabe avec point
-    assert parse_section_info(_make_text_segment("ARTICLE 1.A.3. - Premier article")) == {
-        'type': BodySection.ARTICLE,
-        "level": 2,
-        "level_name": "article_2",
-        'number': '1.A.3',
-        'text': 'Premier article'
-    }
+    def test_article_with_arabic_number_without_dot(self):
+        # Arrange
+        text_segment = _make_text_segment("ARTICLE 1")
 
-    # Cas sous article sans nom avec point
-    assert parse_section_info(_make_text_segment("1.2. - Sous-article")) == {
-        'type': BodySection.SUB_ARTICLE,
-        "level": 1,
-        "level_name": "sous_article_1",
-        'number': '1.2',
-        'text': 'Sous-article'
-    }
+        # Act
+        result = parse_section_info(text_segment)
 
-    # Cas sous article sans nom sans point
-    assert parse_section_info(_make_text_segment("1.2 - Sous-article")) == {
-        'type': BodySection.SUB_ARTICLE,
-        "level": 1,
-        "level_name": "sous_article_1",
-        'number': '1.2',
-        'text': 'Sous-article'
-    }
+        # Assert
+        assert result == {
+            'type': BodySection.ARTICLE,
+            "level": 0,
+            "level_name": "article_0",
+            'number': '1',
+            'text': '',
+            'levels': [1]
+        }
 
-    # Cas titre sans nom
-    assert parse_section_info(_make_text_segment("I - Titre")) == {
-        'type': BodySection.TITLE,
-        "level": 0,
-        "level_name": "titre_0",
-        'number': 'I',
-        'text': 'Titre'
-    }
+    def test_article_with_first_number(self):
+        # Arrange
+        text_segment = _make_text_segment("ARTICLE 1er")
 
-    # Cas article sans nom avec point
-    assert parse_section_info(_make_text_segment("1. Article directement écrit comme une phrase.")) == {
-        'type': BodySection.ARTICLE,
-        "level": 0,
-        "level_name": "article_0",
-        'number': '1',
-        'text': 'Article directement écrit comme une phrase.'
-    }
+        # Act
+        result = parse_section_info(text_segment)
 
-    # Phrase quelconque
-    assert parse_section_info(_make_text_segment("Ceci est une phrase.")) == {
-        "type": BodySection.NONE,
-        "level": -1,
-        "level_name": "none_-1",
-        "number": "",
-        "text": "",
-    }
+        # Assert
+        assert result == {
+            'type': BodySection.ARTICLE,
+            "level": 0,
+            "level_name": "article_0",
+            'number': '1',
+            'text': '',
+            'levels': [1]
+        }
 
-    # Phrase commençant par une lettre
-    assert parse_section_info(_make_text_segment("A la bonne journée")) == {
-        "type": BodySection.NONE,
-        "level": -1,
-        "level_name": "none_-1",
-        "number": "",
-        "text": "",
-    }
+    def test_article_with_arabic_number_with_dot(self):
+        # Arrange
+        text_segment = _make_text_segment("ARTICLE 1.")
 
-    # Phrase commençant par un chiffre arabe
-    assert parse_section_info(_make_text_segment("1 On écrit directement un exemple")) == {
-        "type": BodySection.NONE,
-        "level": -1,
-        "level_name": "none_-1",
-        "number": "",
-        "text": "",
-    }
+        # Act
+        result = parse_section_info(text_segment)
 
-    # Liste (on peut aussi trouver 1°)
-    assert parse_section_info(_make_text_segment("1) Ceci est une liste")) == {
-        "type": BodySection.NONE,
-        "level": -1,
-        "level_name": "none_-1",
-        "number": "",
-        "text": "",
-    }
+        # Assert
+        assert result == {
+            'type': BodySection.ARTICLE,
+            "level": 0,
+            "level_name": "article_0",
+            'number': '1',
+            'text': '',
+            'levels': [1]
+        }
 
-    # Liste
-    assert parse_section_info(_make_text_segment("- Ceci est une liste")) == {
-        "type": BodySection.NONE,
-        "level": -1,
-        "level_name": "none_-1",
-        "number": "",
-        "text": "",
-    }
+    def test_hierarchical_chapter_with_letter_without_dot(self):
+        # Arrange
+        text_segment = _make_text_segment("CHAPITRE I.A - Premier chapitre")
 
-    # Tableau
-    assert parse_section_info(_make_text_segment("| Ceci est un tableau |")) == {
-        "type": BodySection.NONE,
-        "level": -1,
-        "level_name": "none_-1",
-        "number": "",
-        "text": "",
-    }
+        # Act
+        result = parse_section_info(text_segment)
 
-    # Tableau
-    assert parse_section_info(_make_text_segment("(*) Ceci est une description de tableau")) == {
-        "type": BodySection.NONE,
-        "level": -1,
-        "level_name": "none_-1",
-        "number": "",
-        "text": "",
-    }
+        # Assert
+        assert result == {
+            'type': BodySection.CHAPTER,
+            "level": 1,
+            "level_name": "chapitre_1",
+            'number': 'I.A',
+            'text': 'Premier chapitre',
+            'levels': [1, 1]
+        }
+
+    def test_hierarchical_chapter_with_letter_with_dot(self):
+        # Arrange
+        text_segment = _make_text_segment("CHAPITRE I.A. - Premier chapitre")
+
+        # Act
+        result = parse_section_info(text_segment)
+
+        # Assert
+        assert result == {
+            'type': BodySection.CHAPTER,
+            "level": 1,
+            "level_name": "chapitre_1",
+            'number': 'I.A',
+            'text': 'Premier chapitre',
+            'levels': [1, 1]
+        }
+
+    def test_hierarchical_chapter_with_arabic_number_without_dot(self):
+        # Arrange
+        text_segment = _make_text_segment("CHAPITRE 1.1 Premier chapitre")
+
+        # Act
+        result = parse_section_info(text_segment)
+
+        # Assert
+        assert result == {
+            'type': BodySection.CHAPTER,
+            "level": 1,
+            "level_name": "chapitre_1",
+            'number': '1.1',
+            'text': 'Premier chapitre',
+            'levels': [1, 1]
+        }
+
+    def test_hierarchical_article_with_arabic_number_without_dot(self):
+        # Arrange
+        text_segment = _make_text_segment("ARTICLE 1.1.1 Premier article")
+
+        # Act
+        result = parse_section_info(text_segment)
+
+        # Assert
+        assert result == {
+            'type': BodySection.ARTICLE,
+            "level": 2,
+            "level_name": "article_2",
+            'number': '1.1.1',
+            'text': 'Premier article',
+            'levels': [1, 1, 1]
+        }
+
+    def test_hierarchical_sub_article_with_arabic_number_without_dot(self):
+        # Arrange
+        text_segment = _make_text_segment("ARTICLE 1.1.1.1 Premier sous article")
+
+        # Act
+        result = parse_section_info(text_segment)
+
+        # Assert
+        assert result == {
+            'type': BodySection.SUB_ARTICLE,
+            "level": 3,
+            "level_name": "sous_article_3",
+            'number': '1.1.1.1',
+            'text': 'Premier sous article',
+            'levels': [1, 1, 1, 1]
+        }
+
+    def test_hierarchical_article_with_arabic_number_with_letter(self):
+        # Arrange
+        text_segment = _make_text_segment("ARTICLE 1.A.3 - Premier article")
+
+        # Act
+        result = parse_section_info(text_segment)
+
+        # Assert
+        assert result == {
+            'type': BodySection.ARTICLE,
+            "level": 2,
+            "level_name": "article_2",
+            'number': '1.A.3',
+            'text': 'Premier article',
+            'levels': [1, 1, 3]
+        }
+
+    def test_hierarchical_article_with_arabic_number_with_letter_and_dot(self):
+        # Arrange
+        text_segment = _make_text_segment("ARTICLE 1.A.3. - Premier article")
+
+        # Act
+        result = parse_section_info(text_segment)
+
+        # Assert
+        assert result == {
+            'type': BodySection.ARTICLE,
+            "level": 2,
+            "level_name": "article_2",
+            'number': '1.A.3',
+            'text': 'Premier article',
+            'levels': [1, 1, 3]
+        }
+
+    def test_sub_article_without_name_with_dot(self):
+        # Arrange
+        text_segment = _make_text_segment("1.2. - Sous-article")
+
+        # Act
+        result = parse_section_info(text_segment)
+
+        # Assert
+        assert result == {
+            'type': BodySection.SUB_ARTICLE,
+            "level": 1,
+            "level_name": "sous_article_1",
+            'number': '1.2',
+            'text': 'Sous-article',
+            'levels': [1, 2]
+        }
+
+    def test_sub_article_without_name_without_dot(self):
+        # Arrange
+        text_segment = _make_text_segment("1.2 - Sous-article")
+
+        # Act
+        result = parse_section_info(text_segment)
+
+        # Assert
+        assert result == {
+            'type': BodySection.SUB_ARTICLE,
+            "level": 1,
+            "level_name": "sous_article_1",
+            'number': '1.2',
+            'text': 'Sous-article',
+            'levels': [1, 2]
+        }
+
+    def test_title_without_name(self):
+        # Arrange
+        text_segment = _make_text_segment("I - Titre")
+
+        # Act
+        result = parse_section_info(text_segment)
+
+        # Assert
+        assert result == {
+            'type': BodySection.TITLE,
+            "level": 0,
+            "level_name": "titre_0",
+            'number': 'I',
+            'text': 'Titre',
+            'levels': [1]
+        }
+
+    # We decided to stop detecting these as section titles for now
+    def test_article_without_name_with_dot(self):
+        # Arrange
+        text_segment = _make_text_segment("1. Article directement écrit comme une phrase.")
+
+        # Act
+        result = parse_section_info(text_segment)
+
+        # Assert
+        assert result == {
+            'type': BodySection.NONE,
+            "level": -1,
+            "level_name": "none_-1",
+            'number': "",
+            'text': "",
+            'levels': None
+        }
+
+    def test_random_sentence(self):
+        # Arrange
+        text_segment = _make_text_segment("Ceci est une phrase.")
+
+        # Act
+        result = parse_section_info(text_segment)
+
+        # Assert
+        assert result == {
+            "type": BodySection.NONE,
+            "level": -1,
+            "level_name": "none_-1",
+            "number": "",
+            "text": "",
+            "levels": None
+        }
+
+    def test_sentence_starting_with_letter(self):
+        # Arrange
+        text_segment = _make_text_segment("A la bonne journée")
+
+        # Act
+        result = parse_section_info(text_segment)
+
+        # Assert
+        assert result == {
+            "type": BodySection.NONE,
+            "level": -1,
+            "level_name": "none_-1",
+            "number": "",
+            "text": "",
+            "levels": None
+        }
+
+    def test_sentence_starting_with_arabic_number(self):
+        # Arrange
+        text_segment = _make_text_segment("1 On écrit directement un exemple")
+
+        # Act
+        result = parse_section_info(text_segment)
+
+        # Assert
+        assert result == {
+            "type": BodySection.NONE,
+            "level": -1,
+            "level_name": "none_-1",
+            "number": "",
+            "text": "",
+            "levels": None
+        }
+
+    def test_list_with_parenthesis(self):
+        # Arrange
+        text_segment = _make_text_segment("1) Ceci est une liste")
+
+        # Act
+        result = parse_section_info(text_segment)
+
+        # Assert
+        assert result == {
+            "type": BodySection.NONE,
+            "level": -1,
+            "level_name": "none_-1",
+            "number": "",
+            "text": "",
+            "levels": None
+        }
+
+    def test_list_with_dash(self):
+        # Arrange
+        text_segment = _make_text_segment("- Ceci est une liste")
+
+        # Act
+        result = parse_section_info(text_segment)
+
+        # Assert
+        assert result == {
+            "type": BodySection.NONE,
+            "level": -1,
+            "level_name": "none_-1",
+            "number": "",
+            "text": "",
+            "levels": None
+        }
+
+    def test_table(self):
+        # Arrange
+        text_segment = _make_text_segment("| Ceci est un tableau |")
+
+        # Act
+        result = parse_section_info(text_segment)
+
+        # Assert
+        assert result == {
+            "type": BodySection.NONE,
+            "level": -1,
+            "level_name": "none_-1",
+            "number": "",
+            "text": "",
+            "levels": None
+        }
+
+    def test_table_description(self):
+        # Arrange
+        text_segment = _make_text_segment("(*) Ceci est une description de tableau")
+
+        # Act
+        result = parse_section_info(text_segment)
+
+        # Assert
+        assert result == {
+            "type": BodySection.NONE,
+            "level": -1,
+            "level_name": "none_-1",
+            "number": "",
+            "text": "",
+            "levels": None
+        }
+
+
+class TestLevelList(unittest.TestCase):
+
+    def test_title(self):
+        # Arrange
+        text = "I"
+        level = 0
+
+        # Act
+        result = _section_to_levels(text, level)
+
+        # Assert
+        assert result == [1]
+
+    def test_simple_number(self):
+        # Arrange
+        text = "123"
+        level = 0
+
+        # Act
+        result = _section_to_levels(text, level)
+
+        # Assert
+        assert result == [123]
+
+    def test_hierarchical_number(self):
+        # Arrange
+        text = "1.2.3"
+        level = 2
+
+        # Act
+        result = _section_to_levels(text, level)
+
+        # Assert
+        result == [1, 2, 3]
+
+    def test_roman_numerals(self):
+        # Arrange
+        text = "X.II.IV"
+        level = 2
+
+        # Act
+        result = _section_to_levels(text, level)
+
+        # Assert
+        assert result == [10, 2, 4]
+
+    def test_letter(self):
+        # Arrange
+        text = "A.B.C"
+        level = 2
+
+        # Act
+        result = _section_to_levels(text, level)
+
+        # Assert
+        assert result == [1, 2, 3]
+
+    def test_first_number(self):
+        # Arrange
+        text = "1er"
+        level = 0
+
+        # Act
+        result = _section_to_levels(text, level)
+
+        # Assert
+        assert result == [1]
+
+    def test_sub_article(self):
+        # Arrange
+        text = "1.4"
+        level = 1
+
+        # Act
+        result = _section_to_levels(text, level)
+
+        # Assert
+        assert result == [1, 4]
+
+
+class TestCompareLevelList(unittest.TestCase):
+
+    def test_hierarchical_title_chapter(self):
+        # Arrange
+        cur_levels = [1]
+        new_levels = [1, 1]
+
+        # Act
+        result = are_sections_contiguous(cur_levels, new_levels)
+        
+        # Assert
+        assert result == True
+
+    def test_hierarchical_chapter_article(self):
+        # Arrange
+        cur_levels = [1, 1]
+        new_levels = [1, 1, 1]
+
+        # Act
+        result = are_sections_contiguous(cur_levels, new_levels)
+
+        # Assert
+        assert result == True
+
+    def test_new_article(self):
+        # Arrange
+        cur_levels = [1, 1, 1]
+        new_levels = [1, 1, 2]
+
+        # Act
+        result = are_sections_contiguous(cur_levels, new_levels)
+
+        # Assert
+        assert result == True
+
+    def test_new_title_from_article(self):
+        # Arrange
+        cur_levels = [1, 8, 1]
+        new_levels = [2]
+
+        # Act
+        result = are_sections_contiguous(cur_levels, new_levels)
+
+        # Assert
+        assert result == True
+
+    def test_quoted_article(self):
+        # Arrange
+        cur_levels = [6]
+        new_levels = [4, 3, 14]
+
+        # Act
+        result = are_sections_contiguous(cur_levels, new_levels)
+
+        # Assert
+        assert result == False
+
+    def test_ocr_dot_not_detected(self):
+        # Arrange
+        cur_levels = [3, 1, 1]
+        new_levels = [31, 2]
+
+        # Act
+        result = are_sections_contiguous(cur_levels, new_levels)
+
+        # Assert
+        assert result == False
 
 
 def _make_text_segment(string: str) -> TextSegment:

@@ -7,6 +7,7 @@ from .types import LineColumn
 class ErrorCodes(Enum):
     markdown_parsing='markdown_parsing'
     unbalanced_quote='unbalanced_quote'
+    non_contiguous_sections='non_contiguous_sections'
 
 
 class ParsingError(BaseException):

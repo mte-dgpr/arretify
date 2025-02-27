@@ -4,8 +4,11 @@
 import re
 from typing import TypedDict, Dict, Union, Tuple, List
 
+import roman
+
 from .config import section_from_name, BodySection
 from bench_convertisseur_xml.parsing_utils.source_mapping import TextSegments, TextSegment
+from bench_convertisseur_xml.regex_utils import PatternProxy
 
 
 class _CountTextDict(TypedDict):
@@ -93,13 +96,16 @@ def parse_number_group(match_dict: Dict) -> Tuple[str, int]:
 
 def parse_section_info(
     line: TextSegment, 
-    authorized_sections: Union[None, AuthorizedSections] = None
+    authorized_sections: Union[None, AuthorizedSections] = None,
 ) -> SectionInfo:
     match_title = re.match(SECTION_TITLE, line.contents, re.IGNORECASE)
     match_no_title = re.match(SECTION_NO_TITLE, line.contents, re.IGNORECASE)
 
+    # Default section info for non sections
     section_name = "none"
     level = -1
+    number = ""
+    text = ""
 
     if match_title:
         section_name = match_title.group('section_name').lower()
@@ -118,25 +124,27 @@ def parse_section_info(
         # Guess section_name from number
         section_name = section_name_from_number(number)
 
+    # Check if the section is part of pre-filtered sections
     level_name = f"{section_name}_{level}"
+    section_levels = _section_to_levels(number, level)
+    if not (match_title or match_no_title and (not authorized_sections or level_name in authorized_sections)):
+        section_name = "none"
+        level = -1
+        level_name = "none_-1"
+        number = ""
+        section_levels = None
 
     section_info: SectionInfo
-    if match_title or match_no_title and (not authorized_sections or level_name in authorized_sections):
-        section_info = {
-            "type": section_from_name(section_name),
-            "level": level,
-            "level_name": level_name,
-            "number": number,
-            "text": text,
-        }
-    else:
-        section_info = {
-            "type": section_from_name("none"),
-            "level": -1,
-            "level_name": "none_-1",
-            "number": "",
-            "text": "",
-        }
+    section_type = section_from_name(section_name)
+    section_info = {
+        "type": section_type,
+        "level": level,
+        "level_name": level_name,
+        "number": number,
+        "text": text,
+        "levels": section_levels,
+    }
+
     return section_info
 
 
@@ -199,3 +207,83 @@ def _filter_max_level_sections(unique_sections: AuthorizedSections) -> Authorize
         authorized_sections[authorized_section] = unique_sections[authorized_section]
 
     return authorized_sections
+
+
+def _letter_to_int(letter: str) -> int:
+    if not PatternProxy(LETTERS).match(letter):
+        raise ValueError(f"Expected single letter, got {letter}")
+    return ord(letter.lower()) - 96
+
+
+def _section_to_levels(number: str, level: int) -> List[int]:
+
+    if level < 0:
+        return None
+
+    section_levels = [0] * (level+1)
+
+    number_split = number.split(".")
+    number_length = len(number_split)
+
+    for i in range(number_length):
+
+        cur_char = number_split[number_length-1-i]
+
+        if cur_char == "1er":
+            cur_number = 1
+        elif re.match(ROMAN_NUMERALS + "$", cur_char, re.IGNORECASE):
+            cur_number = roman.fromRoman(cur_char)
+        elif re.match(LETTERS + "$", cur_char, re.IGNORECASE):
+            cur_number = _letter_to_int(cur_char)
+        elif re.match(NUMBERS + "$", cur_char, re.IGNORECASE):
+            cur_number = int(cur_char)
+        else:
+            err_msg = f"Unsupported level conversion for {cur_char}"
+            raise ValueError(err_msg)
+
+        section_levels[level-i] = cur_number
+
+    return section_levels
+
+
+def are_sections_contiguous(cur_section_levels: Union[None, List[int]], new_section_levels: Union[None, List[int]]) -> bool:
+
+    if not new_section_levels:
+        return False
+
+    if not cur_section_levels:
+        return True
+
+    cur_section_level = len(cur_section_levels)
+    new_section_level = len(new_section_levels)
+
+    is_continuing_section = False
+
+    # First the new section should be increasing
+    if new_section_level > cur_section_level:
+
+        if new_section_levels[-1] == 1:
+            is_continuing_section = True        
+
+        common_level = cur_section_level
+
+    elif new_section_level == cur_section_level:
+
+        if new_section_levels[-1] == cur_section_levels[-1] + 1:
+            is_continuing_section = True
+
+        common_level = new_section_level - 1
+
+    else:
+
+        if new_section_levels[-1] == cur_section_levels[new_section_level-1] + 1:
+            is_continuing_section = True
+
+        common_level = new_section_level - 1
+
+    # The lists might have a common part which should be the same
+    for i in range(common_level):
+        if new_section_levels[i] != cur_section_levels[i]:
+            is_continuing_section = False
+
+    return is_continuing_section
