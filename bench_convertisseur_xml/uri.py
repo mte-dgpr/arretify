@@ -1,10 +1,11 @@
-from typing import Union, Literal, List, ClassVar
+from typing import Union, Literal, List, ClassVar, Optional
 from dataclasses import dataclass
 import urllib.parse
 from enum import Enum
 
 from bench_convertisseur_xml.types import URI
 from bench_convertisseur_xml.law_data.legifrance import get_code_titles
+from bench_convertisseur_xml.law_data.eurlex import EU_ACT_DOMAINS, EU_ACT_TYPES
 
 
 _SEPARATOR = '_'
@@ -85,6 +86,28 @@ class Code(_DocumentBase):
 
 
 @dataclass(frozen=True)
+class EuAct(_DocumentBase):
+    """
+    EU act. Reference : https://style-guide.europa.eu
+    """
+    act_type: str
+    number: str
+    domain: Optional[str]
+
+    scheme: ClassVar[str] = 'eu'
+    allowed_section_types: ClassVar[List[SectionType]] = [
+        SectionType.article,
+        SectionType.alinea,
+    ]
+
+    def __post_init__(self):
+        if self.domain and not self.domain in EU_ACT_DOMAINS:
+            raise ValueError(f'Domain "{self.domain}" is not in the list of EU act domains')
+        if not self.act_type in EU_ACT_TYPES:
+            raise ValueError(f'Act type "{self.act_type}" is not in the list of EU act types')
+
+
+@dataclass(frozen=True)
 class Section:
     type: SectionType
     start: str
@@ -99,7 +122,7 @@ class Section:
         return cls(SectionType.article, start, end)
 
 
-Document = Union[ArretePrefectoral, ArreteMinisteriel, ArreteUnknown, Code]
+Document = Union[ArretePrefectoral, ArreteMinisteriel, ArreteUnknown, Code, EuAct]
 
 
 def render_uri(
@@ -123,6 +146,10 @@ def render_uri(
     # Format for code : code://<title>
     elif isinstance(document, Code):
         document_part = _join_tokens(document.title)
+
+    # Format for EU act : eu://<act_type>_<number>_<domain>
+    elif isinstance(document, EuAct):
+        document_part = _join_tokens(document.act_type, document.number, document.domain)
 
     # Format for unknown document : unknown://unknown
     elif document is None:
@@ -168,6 +195,13 @@ def parse_uri(uri: URI) -> tuple[Union[Document, None], List[Section]]:
         if len(document_tokens) != 1 or document_tokens[0] is None:
             raise ValueError(f'Unexpected tokens in "{document_part}"')
         document = Code(title=document_tokens[0])
+
+    # Format for EU act : eu://<act_type>_<number>_<domain>
+    elif scheme_part == EuAct.scheme:
+        document_tokens = _split_tokens(document_part)
+        if len(document_tokens) != 3 or document_tokens[0] is None or document_tokens[1] is None:
+            raise ValueError(f'Unexpected tokens in "{document_part}"')
+        document = EuAct(act_type=document_tokens[0], number=document_tokens[1], domain=document_tokens[2])
 
     # Format for unknown, or not completely defined document
     elif scheme_part == _DocumentBase.scheme:

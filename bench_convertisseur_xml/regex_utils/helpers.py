@@ -4,6 +4,7 @@ from typing import List, Pattern, cast, List, Callable, Iterable, Union, Dict, T
 from dataclasses import dataclass
 
 from bench_convertisseur_xml.types import PageElementOrString
+from .types import Settings
 
 NAMED_GROUP_PATTERN = re.compile(r'\?P\<(?P<name>\w+)\>')
 NAME_WITH_INDEX_PATTERN = re.compile(r'(\w+?)(?P<index>\d+)')
@@ -32,3 +33,33 @@ def normalize_quotes(text: str):
         .replace('”', '"')
         .replace('«', '"')
         .replace('»', '"'))
+
+
+def lookup_normalized_version(
+    choices: List[str],
+    text: str,
+    settings: Settings=Settings(),
+):
+    matches: List[str] = []
+    for choice in choices:
+        if (
+            normalize_string(choice, settings, ignore_case_settings=False) 
+            == normalize_string(text, settings, ignore_case_settings=False)
+        ):
+            matches.append(choice)
+            break
+
+    if not matches:
+        raise ValueError(f'No match found for {text}')
+
+    return matches[0]
+
+
+def normalize_string(string: str, settings: Settings, ignore_case_settings=True) -> str:
+    if settings.ignore_case and ignore_case_settings is False:
+        string = string.lower()
+    if settings.ignore_accents:
+        string = remove_accents(string)
+    if settings.normalize_quotes:
+        string = normalize_quotes(string)
+    return string
