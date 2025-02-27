@@ -1,6 +1,6 @@
 import unittest
 
-from .uri import render_uri, parse_uri, ArretePrefectoral, ArreteMinisteriel, ArreteUnknown, Code, SectionType, Section, _validate_sections
+from .uri import render_uri, parse_uri, ArretePrefectoral, ArreteMinisteriel, ArreteUnknown, Code, EuAct, SectionType, Section, _validate_sections
 
 
 class TestRenderUri(unittest.TestCase):
@@ -83,6 +83,18 @@ class TestRenderUri(unittest.TestCase):
         )
         assert uri == 'code://Code%20de%20la%20route'
 
+    def test_eu_act(self):
+        uri = render_uri(
+            EuAct(act_type='règlement', number='1013/2006', domain='CE')
+        )
+        assert uri == 'eu://r%C3%A8glement_1013%2F2006_CE'
+
+    def test_eu_act_no_domain(self):
+        uri = render_uri(
+            EuAct(act_type='règlement', number='1013/2006', domain=None)
+        )
+        assert uri == 'eu://r%C3%A8glement_1013%2F2006_'
+
     def test_unknown_document_with_sections(self):
         uri = render_uri(None, Section.alinea(1, 2))
         assert uri == 'unknown://unknown/alinea_1_2'
@@ -136,6 +148,16 @@ class TestParseUriArretePrefectoral(unittest.TestCase):
     def test_arrete_unknown(self):
         document, sections = parse_uri('unknown://arrete_2022-01-01')
         assert document == ArreteUnknown(date='2022-01-01')
+        assert sections == []
+
+    def test_eu_act(self):
+        document, sections = parse_uri('eu://r%C3%A8glement_1013%2F2006_CE')
+        assert document == EuAct(act_type='règlement', number='1013/2006', domain='CE')
+        assert sections == []
+
+    def test_eu_act_no_domain(self):
+        document, sections = parse_uri('eu://r%C3%A8glement_1013%2F2006_')
+        assert document == EuAct(act_type='règlement', number='1013/2006', domain=None)
         assert sections == []
 
     def test_unknown_document_with_sections(self):

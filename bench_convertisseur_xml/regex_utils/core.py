@@ -2,7 +2,7 @@ import re
 from typing import Pattern, Match, Iterator, Union, Iterable, Dict
 
 from .types import PatternString, Settings
-from .helpers import remove_accents, normalize_quotes
+from .helpers import remove_accents, normalize_quotes, normalize_string
 
 
 MatchFlow = Iterable[Union[str, 'MatchProxy']]
@@ -25,7 +25,7 @@ class PatternProxy:
         self.pattern_string = pattern_string
         self.settings = settings or Settings()
 
-        pattern_string_for_compilation = _preprocess_string(pattern_string, self.settings)
+        pattern_string_for_compilation = normalize_string(pattern_string, self.settings)
         compile_flags = 0
         if self.settings.ignore_case:
             compile_flags |= re.IGNORECASE
@@ -39,26 +39,26 @@ class PatternProxy:
         return value
 
     def match(self, string: str) -> Union['MatchProxy', None]:
-        match = self._pattern.match(_preprocess_string(string, self.settings))
+        match = self._pattern.match(normalize_string(string, self.settings))
         if match:
             return MatchProxy(string, match)
         else:
             return None
 
     def search(self, string: str) -> Union['MatchProxy', None]:
-        match = self._pattern.search(_preprocess_string(string, self.settings))
+        match = self._pattern.search(normalize_string(string, self.settings))
         if match:
             return MatchProxy(string, match)
         else:
             return None
 
     def finditer(self, string: str) -> Iterator['MatchProxy']:
-        for match in self._pattern.finditer(_preprocess_string(string, self.settings)):
+        for match in self._pattern.finditer(normalize_string(string, self.settings)):
             yield MatchProxy(string, match)
 
     def sub(self, repl: str, string: str) -> str:
         while True:
-            match = self._pattern.search(_preprocess_string(string, self.settings))
+            match = self._pattern.search(normalize_string(string, self.settings))
             if match:
                 string = string[:match.start()] + repl + string[match.end():]
             else:
@@ -85,11 +85,3 @@ class MatchProxy:
 
     def __getattr__(self, attr):
         return getattr(self.match, attr)
-
-
-def _preprocess_string(string: str, settings: Settings) -> str:
-    if settings.ignore_accents:
-        string = remove_accents(string)
-    if settings.normalize_quotes:
-        string = normalize_quotes(string)
-    return string
