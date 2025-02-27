@@ -73,3 +73,16 @@ Si les tests échouent c'est que la génération d'html a changé. Il convient d
 1. Re-générer les fichiers html de référence en utilisant la commande `python -m bench_convertisseur_xml.main -i test_data/arretes_ocr -o test_data/arretes_html`
 2. Utiliser l'outil de diff de git (ou de vscodium) pour comparer la nouvelle version avec la version de référence
 3. Régler les problèmes éventuels, puis répéter étape 1.
+
+
+## Téléchargement des données de bases de droit
+
+Afin de parser et résoudre les références citées dans les AP à des textes du droit français ou européen, nous téléchargeons grâce à divers scripts des fichiers contenant des listes de références à vérifier. Les fonctionalités pour accéder à ces références se trouvent dans le dossier `bench_convertisseur_xml/law_data`, les scripts se trouvent dans le dossier `scripts`.
+
+Pour utiliser ces scripts, il faut installer et configurer la librairie du Data Studio Risques `py-clients-api-droit`.
+
+### Légifrance
+
+Télécharger la liste des codes : 
+
+```python .\scripts\download_data_legifrance.py -o .\bench_convertisseur_xml\law_data\legifrance```

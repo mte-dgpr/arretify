@@ -4,15 +4,10 @@ import urllib.parse
 from enum import Enum
 
 from bench_convertisseur_xml.types import URI
+from bench_convertisseur_xml.law_data.legifrance import get_code_titles
 
 
 _SEPARATOR = '_'
-
-
-class Scheme(Enum):
-    arrete_prefectoral = 'ap'
-    arrete_ministeriel = 'am'
-    unknown = 'unknown'
 
 
 class SectionType(Enum):
@@ -27,11 +22,14 @@ class UnknownDocumentTypes(Enum):
 
 class _DocumentBase:
     allowed_section_types: ClassVar[List[SectionType]] = []
+    scheme: ClassVar[str] = 'unknown'
 
 
 @dataclass(frozen=True)
 class ArreteMinisteriel(_DocumentBase):
     date: Union[str, None]
+
+    scheme: ClassVar[str] = 'am'
     allowed_section_types: ClassVar[List[SectionType]] = [
         SectionType.article,
         SectionType.alinea,
@@ -42,6 +40,8 @@ class ArreteMinisteriel(_DocumentBase):
 class ArretePrefectoral(_DocumentBase):
     date: Union[str, None]
     code: Union[str, None]
+
+    scheme: ClassVar[str] = 'ap'
     allowed_section_types: ClassVar[List[SectionType]] = [
         SectionType.article,
         SectionType.alinea,
@@ -58,10 +58,30 @@ class ArreteUnknown(_DocumentBase):
     Arrete from undefined authority.
     """
     date: str
+
+    scheme: ClassVar[str] = 'unknown'
     allowed_section_types: ClassVar[List[SectionType]] = [
         SectionType.article,
         SectionType.alinea,
     ]
+
+
+@dataclass(frozen=True)
+class Code(_DocumentBase):
+    """
+    Code juridique (https://www.legifrance.gouv.fr/liste/code)
+    """
+    title: str
+
+    scheme: ClassVar[str] = 'code'
+    allowed_section_types: ClassVar[List[SectionType]] = [
+        SectionType.article,
+        SectionType.alinea,
+    ]
+
+    def __post_init__(self):
+        if not self.title in get_code_titles():
+            raise ValueError(f'Code "{self.title}" is not in the list of codes')
 
 
 @dataclass(frozen=True)
@@ -79,7 +99,7 @@ class Section:
         return cls(SectionType.article, start, end)
 
 
-Document = Union[ArretePrefectoral, ArreteMinisteriel, ArreteUnknown]
+Document = Union[ArretePrefectoral, ArreteMinisteriel, ArreteUnknown, Code]
 
 
 def render_uri(
@@ -87,22 +107,22 @@ def render_uri(
     *sections: Section,
 ) -> URI:
     _validate_sections(document, list(sections))
-    scheme_part = Scheme.unknown.value
 
     # Format for AP URI base : ap://<date>_<code>
     if isinstance(document, ArretePrefectoral):
-        scheme_part = Scheme.arrete_prefectoral.value
         document_part = _join_tokens(document.date, document.code)
     
     # Format for AM URI base : am://<date>
     elif isinstance(document, ArreteMinisteriel):
-        scheme_part = Scheme.arrete_ministeriel.value
         document_part = _join_tokens(document.date)
 
     # Format for unknown arrete : unknown://arrete_<date>
     elif isinstance(document, ArreteUnknown):
-        scheme_part = Scheme.unknown.value
         document_part = _join_tokens(UnknownDocumentTypes.arrete.value, document.date)
+
+    # Format for code : code://<title>
+    elif isinstance(document, Code):
+        document_part = _join_tokens(document.title)
 
     # Format for unknown document : unknown://unknown
     elif document is None:
@@ -117,32 +137,40 @@ def render_uri(
         else:
             raise ValueError(f'Unsupported section type "{section.type}"')
 
+    scheme_part = document.scheme if document else _DocumentBase.scheme
+
     return f'{scheme_part}://{document_part}{path}'
 
 
 def parse_uri(uri: URI) -> tuple[Union[Document, None], List[Section]]:
     scheme_part, rest = uri.split('://', 1)
-    scheme = Scheme(scheme_part)
     
     document: Union[Document, None] = None
     document_part, *section_parts = rest.split('/')
 
     # Format for AP URI base : ap://<date>_<code>
-    if scheme == Scheme.arrete_prefectoral:
+    if scheme_part == ArretePrefectoral.scheme:
         document_tokens = _split_tokens(document_part)
         if len(document_tokens) != 2:
             raise ValueError(f'Unexpected number of tokens in "{document_part}"')
         document = ArretePrefectoral(date=document_tokens[0], code=document_tokens[1])
 
     # Format for AM URI base : am://<date>
-    elif scheme == Scheme.arrete_ministeriel:
+    elif scheme_part == ArreteMinisteriel.scheme:
         document_tokens = _split_tokens(document_part)
         if len(document_tokens) != 1:
             raise ValueError(f'Unexpected number of tokens in "{document_part}"')
         document = ArreteMinisteriel(date=document_tokens[0])
 
+    # Format for code : code://<title>
+    elif scheme_part == Code.scheme:
+        document_tokens = _split_tokens(document_part)
+        if len(document_tokens) != 1 or document_tokens[0] is None:
+            raise ValueError(f'Unexpected tokens in "{document_part}"')
+        document = Code(title=document_tokens[0])
+
     # Format for unknown, or not completely defined document
-    elif scheme == Scheme.unknown:
+    elif scheme_part == _DocumentBase.scheme:
         document_tokens = _split_tokens(document_part)
         if len(document_tokens) < 1:
             raise ValueError(f'Unexpected at least one token in "{document_part}"')
