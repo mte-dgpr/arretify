@@ -69,16 +69,16 @@ ALINEA_SCHEMA = DataElementSchema(
     data_keys=['number'],
 )
 
-ARRETE_REFERENCE_SCHEMA = DataElementSchema(
-    name="arrete_reference",
+DOCUMENT_REFERENCE_SCHEMA = DataElementSchema(
+    name="document_reference",
     tag_name="a",
-    data_keys=['code', 'qualifier', 'authority'],
+    data_keys=['uri'],
 )
 
-TARGET_POSITION_REFERENCE_SCHEMA = DataElementSchema(
-    name="target_position_reference",
+SECTION_REFERENCE_SCHEMA = DataElementSchema(
+    name="section_reference",
     tag_name="a",
-    data_keys=['article_start', 'article_end', 'alinea_start', 'alinea_end'],
+    data_keys=['uri'],
 )
 
 DATE_SCHEMA = DataElementSchema(

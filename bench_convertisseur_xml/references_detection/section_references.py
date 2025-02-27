@@ -6,26 +6,28 @@ from typing import Iterable, TypedDict, Tuple, cast, Pattern, Dict, Iterable, Li
 
 from ..settings import APP_ROOT, LOGGER
 from bench_convertisseur_xml.utils.functional import flat_map_string
-from bench_convertisseur_xml.html_schemas import TARGET_POSITION_REFERENCE_SCHEMA
+from bench_convertisseur_xml.html_schemas import SECTION_REFERENCE_SCHEMA
 from bench_convertisseur_xml.utils.html import make_data_tag, PageElementOrString
 from bench_convertisseur_xml.parsing_utils.patterns import ET_VIRGULE_PATTERN_S, EME_PATTERN_S, ORDINAL_PATTERN_S, ordinal_str_to_int
 from bench_convertisseur_xml.regex_utils import regex_tree, flat_map_regex_tree_match, split_string_with_regex_tree, iter_regex_tree_match_strings, filter_regex_tree_match_children
+from bench_convertisseur_xml.uri import render_uri, Section
+from bench_convertisseur_xml.types import URI
 
 # TODO : 
 # - Phrase and word index 
 
 ArticleId = str
-Alinea = str
+Alinea = int
 
 
-def parse_target_position_references(
+def parse_section_references(
     soup: BeautifulSoup,
     children: Iterable[PageElementOrString],
 ) -> List[PageElementOrString]:
     # First check for multiple, cause it is the most exhaustive pattern
-    new_children = list(_parse_target_position_multiple_articles_references(soup, children))
-    new_children = list(_parse_target_position_multiple_alineas_references(soup, new_children))
-    return list(_parse_target_position_references(soup, new_children))
+    new_children = list(_parse_section_reference_multiple_articles(soup, children))
+    new_children = list(_parse_section_reference_multiple_alineas(soup, new_children))
+    return list(_parse_section_references(soup, new_children))
 
 
 # -------------------- Shared -------------------- #
@@ -65,7 +67,7 @@ def _extract_article_id(match: regex_tree.Match) -> ArticleId:
 
     article_id = article_num or article_code
     if article_ordinal:
-        article_id = ordinal_str_to_int(article_ordinal)
+        article_id = str(ordinal_str_to_int(article_ordinal))
 
     if not article_id:
         raise RuntimeError('No article found')
@@ -81,9 +83,9 @@ def _extract_alinea(match: regex_tree.Match) -> Alinea:
     if alinea_num and alinea_ordinal:
         raise RuntimeError('Both alinea_num and alinea_ordinal found')
 
-    alinea = None
+    alinea: Union[Alinea, None] = None
     if alinea_num:
-        alinea = alinea_num
+        alinea = int(alinea_num)
     elif alinea_ordinal:
         alinea = ordinal_str_to_int(alinea_ordinal)
 
@@ -93,9 +95,57 @@ def _extract_alinea(match: regex_tree.Match) -> Alinea:
     return alinea
 
 
+def _extract_uri(
+    article_tree_match: regex_tree.Match, 
+    alinea_tree_match: regex_tree.Match | None = None,
+) -> URI:
+    article_matches = filter_regex_tree_match_children(article_tree_match, ['__article_id'])
+    if alinea_tree_match:
+        alinea_matches = filter_regex_tree_match_children(alinea_tree_match, ['__alinea'])
+    else:
+        alinea_matches = []
+    
+    if len(article_matches) not in [1, 2]:
+        raise RuntimeError('Expected exactly one or two article matches')
+    if len(alinea_matches) not in [0, 1, 2]:
+        raise RuntimeError('Expected exactly zero, one or two alinea matches')
+
+    alinea_start: Alinea | None = None
+    alinea_end: Alinea | None = None
+    if alinea_matches:
+        alinea_start = _extract_alinea(alinea_matches[0])
+    if len(alinea_matches) == 2:
+        alinea_end = _extract_alinea(alinea_matches[1])
+
+    article_start: ArticleId = _extract_article_id(article_matches[0])
+    article_end: ArticleId | None = None
+    if len(article_matches) == 2:
+        article_end = _extract_article_id(article_matches[1])
+
+    sections = [
+        Section.article(
+            article_start, 
+            article_end,
+        )
+    ]
+
+    if alinea_start:
+        sections.append(
+            Section.alinea(
+                alinea_start,
+                alinea_end,
+            )
+        )
+
+    return render_uri(
+        None,
+        *sections,
+    )
+
+
 # -------------------- Single article (or range), single alinea -------------------- #
 # Order of patterns matters, from most specific to less specific.
-TARGET_POSITION_NODE = regex_tree.Group(
+SECTION_REFERENCE_NODE = regex_tree.Group(
     regex_tree.Branching([
         regex_tree.Sequence([
             regex_tree.Branching([
@@ -117,34 +167,37 @@ TARGET_POSITION_NODE = regex_tree.Group(
             ARTICLE_ID_NODE,
         ]),
     ]), 
-    group_name='__target_position'
+    group_name='__section_reference'
 )
 
 
-def _parse_target_position_references(
+def _parse_section_references(
     soup: BeautifulSoup,
     children: Iterable[PageElementOrString],
 ) -> Iterable[PageElementOrString]:
     return flat_map_string(
         children,
         lambda string: flat_map_regex_tree_match(
-            split_string_with_regex_tree(TARGET_POSITION_NODE, string),
-            lambda target_position_match: [
+            split_string_with_regex_tree(SECTION_REFERENCE_NODE, string),
+            lambda section_reference_match: [
                 make_data_tag(
                     soup,
-                    TARGET_POSITION_REFERENCE_SCHEMA, 
-                    data=_extract_data_multiple_article_single_alinea(target_position_match),
-                    contents=iter_regex_tree_match_strings(target_position_match),
+                    SECTION_REFERENCE_SCHEMA, 
+                    data=dict(uri=_extract_uri(
+                        section_reference_match, 
+                        section_reference_match
+                    )),
+                    contents=iter_regex_tree_match_strings(section_reference_match),
                 ),
             ],
-            allowed_group_names=['__target_position'],
+            allowed_group_names=['__section_reference'],
         )
     )
 
 
 # -------------------- Multiple articles -------------------- #
 # Example : "Les articles 3 et 4"
-TARGET_POSITION_MULTIPLE_ARTICLES_NODE = regex_tree.Group(
+SECTION_REFERENCE_MULTIPLE_ARTICLES_NODE = regex_tree.Group(
     regex_tree.Sequence([
         regex_tree.Group(
             regex_tree.Sequence([
@@ -155,7 +208,7 @@ TARGET_POSITION_MULTIPLE_ARTICLES_NODE = regex_tree.Group(
                     ARTICLE_ID_NODE,
                 ]),
             ]), 
-            group_name='__target_position'
+            group_name='__section_reference'
         ),
 
         ET_VIRGULE_PATTERN_S,
@@ -168,7 +221,7 @@ TARGET_POSITION_MULTIPLE_ARTICLES_NODE = regex_tree.Group(
                         ARTICLE_RANGE_NODE, 
                         ARTICLE_ID_NODE,
                     ]), 
-                    group_name='__target_position'
+                    group_name='__section_reference'
                 ),
                 ET_VIRGULE_PATTERN_S,
             ]),
@@ -181,38 +234,14 @@ TARGET_POSITION_MULTIPLE_ARTICLES_NODE = regex_tree.Group(
                 ARTICLE_RANGE_NODE,
                 ARTICLE_ID_NODE,
             ]),
-            group_name='__target_position'
+            group_name='__section_reference'
         ),
     ]), 
-    group_name='__target_position_multiple'
+    group_name='__section_reference_multiple'
 )
 
 
-def _extract_data_multiple_article_single_alinea(regex_tree_match: regex_tree.Match) -> Dict:
-    alinea_matches = filter_regex_tree_match_children(regex_tree_match, ['__alinea'])
-    article_matches = filter_regex_tree_match_children(regex_tree_match, ['__article_id'])
-    if len(alinea_matches) > 1:
-        raise RuntimeError('Too many alinea matches')
-    if len(article_matches) not in [1, 2]:
-        raise RuntimeError('Expected exactly one or two article matches')
-
-    alinea: Alinea | None = None
-    if alinea_matches:
-        alinea = _extract_alinea(alinea_matches[0])
-    article_start: ArticleId = _extract_article_id(article_matches[0])
-    article_end: ArticleId | None = None
-    if len(article_matches) == 2:
-        article_end = _extract_article_id(article_matches[1])
-
-    return dict(
-        article_start=article_start,
-        article_end=article_end,
-        alinea_start=alinea,
-        alinea_end=None,
-    )
-
-
-def _parse_target_position_multiple_articles_references(
+def _parse_section_reference_multiple_articles(
     soup: BeautifulSoup,
     children: Iterable[PageElementOrString],
 ):
@@ -221,34 +250,34 @@ def _parse_target_position_multiple_articles_references(
     return flat_map_string(
         children,
         lambda string: flat_map_regex_tree_match(
-            split_string_with_regex_tree(TARGET_POSITION_MULTIPLE_ARTICLES_NODE, string),
-            lambda target_position_multiple_match: flat_map_regex_tree_match(
-                target_position_multiple_match.children,
-                lambda target_position_match: [
+            split_string_with_regex_tree(SECTION_REFERENCE_MULTIPLE_ARTICLES_NODE, string),
+            lambda section_reference_multiple_match: flat_map_regex_tree_match(
+                section_reference_multiple_match.children,
+                lambda section_reference_match: [
                     make_data_tag(
                         soup,
-                        TARGET_POSITION_REFERENCE_SCHEMA, 
-                        data=_extract_data_multiple_article_single_alinea(target_position_match),
-                        contents=iter_regex_tree_match_strings(target_position_match),
+                        SECTION_REFERENCE_SCHEMA, 
+                        data=dict(uri=_extract_uri(section_reference_match)),
+                        contents=iter_regex_tree_match_strings(section_reference_match),
                     ),
                 ],
-                allowed_group_names=['__target_position'],
+                allowed_group_names=['__section_reference'],
             ),
-            allowed_group_names=['__target_position_multiple'],
+            allowed_group_names=['__section_reference_multiple'],
         )
     )
 
 
 # -------------------- Multiple alineas -------------------- #
 # Example "Les paragraphes 3 et 4 de l'article 8.5.1.1"
-TARGET_POSITION_MULTIPLE_ALINEA_NODE = regex_tree.Group(
+SECTION_REFERENCE_MULTIPLE_ALINEA_NODE = regex_tree.Group(
     regex_tree.Sequence([
         regex_tree.Group(
             regex_tree.Sequence([
                 r'(alinéas|paragraphes) ',
                 ALINEA_NODE,
             ]),
-            group_name='__target_position',
+            group_name='__section_reference',
         ),
         
         ET_VIRGULE_PATTERN_S,
@@ -257,7 +286,7 @@ TARGET_POSITION_MULTIPLE_ALINEA_NODE = regex_tree.Group(
             regex_tree.Sequence([
                 regex_tree.Group(
                     ALINEA_NODE,
-                    group_name='__target_position',
+                    group_name='__section_reference',
                 ),
                 ET_VIRGULE_PATTERN_S,
             ]),
@@ -270,38 +299,14 @@ TARGET_POSITION_MULTIPLE_ALINEA_NODE = regex_tree.Group(
                 r' (de l\')?articles? ',
                 ARTICLE_ID_NODE,
             ]),
-            group_name='__target_position'
+            group_name='__section_reference_with_article'
         ),
     ]),
-    group_name='__target_position_multiple'
+    group_name='__section_reference_multiple'
 )
 
 
-def _extract_data_single_article(multiple_target_position_match: regex_tree.Match) -> Dict:
-    article_matches = [
-        article_match
-        for target_position_match in filter_regex_tree_match_children(multiple_target_position_match, ['__target_position'])
-        for article_match in filter_regex_tree_match_children(target_position_match, ['__article_id'])
-    ]
-    if len(article_matches) != 1:
-        raise RuntimeError('Expected exactly one article match')
-    return dict(
-        article_start=_extract_article_id(article_matches[0]),
-        article_end=None,
-    )
-
-
-def _extract_data_single_alinea(regex_tree_match: regex_tree.Match) -> Dict:
-    alinea_matches = filter_regex_tree_match_children(regex_tree_match, ['__alinea'])
-    if len(alinea_matches) != 1:
-        raise RuntimeError('Expected exactly one alinea match')
-    return dict(
-        alinea_start=_extract_alinea(alinea_matches[0]),
-        alinea_end=None,
-    )
-
-
-def _parse_target_position_multiple_alineas_references(
+def _parse_section_reference_multiple_alineas(
     soup: BeautifulSoup,
     children: Iterable[PageElementOrString],
 ):
@@ -310,22 +315,29 @@ def _parse_target_position_multiple_alineas_references(
     return flat_map_string(
         children,
         lambda string: flat_map_regex_tree_match(
-            split_string_with_regex_tree(TARGET_POSITION_MULTIPLE_ALINEA_NODE, string),
-            lambda target_position_multiple_match: flat_map_regex_tree_match(
-                target_position_multiple_match.children,
-                lambda target_position_match: [
+            split_string_with_regex_tree(SECTION_REFERENCE_MULTIPLE_ALINEA_NODE, string),
+            lambda section_reference_multiple_match: flat_map_regex_tree_match(
+                section_reference_multiple_match.children,
+                lambda section_reference_match: [
                     make_data_tag(
                         soup,
-                        TARGET_POSITION_REFERENCE_SCHEMA, 
+                        SECTION_REFERENCE_SCHEMA, 
                         data=dict(
-                            **_extract_data_single_article(target_position_multiple_match),
-                            **_extract_data_single_alinea(target_position_match),
+                            uri=_extract_uri(
+                                # Find the tree match that contains the article id
+                                # and pass it to the uri extraction function
+                                filter_regex_tree_match_children(
+                                    section_reference_multiple_match, 
+                                    group_names=['__section_reference_with_article']
+                                )[0],
+                                section_reference_match,
+                            )
                         ),
-                        contents=iter_regex_tree_match_strings(target_position_match),
+                        contents=iter_regex_tree_match_strings(section_reference_match),
                     ),
                 ],
-                allowed_group_names=['__target_position'],
+                allowed_group_names=['__section_reference', '__section_reference_with_article'],
             ),
-            allowed_group_names=['__target_position_multiple'],
+            allowed_group_names=['__section_reference_multiple'],
         )
     )

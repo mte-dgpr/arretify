@@ -8,17 +8,17 @@ from bs4 import BeautifulSoup
 from .settings import TEST_DATA_DIR, LOGGER, OCR_FILE_EXTENSION
 from .arrete_segmentation.parse_arrete import parse_arrete
 from .references_detection.arretes_references import parse_arretes_references
-from .references_detection.target_position_references import parse_target_position_references
+from .references_detection.section_references import parse_section_references
 from .operations_detection.operations import parse_operations
 from .clean_ocrized_file import clean_ocrized_file
-from .html_schemas import ALINEA_SCHEMA, ARRETE_REFERENCE_SCHEMA, VISA_SCHEMA, MOTIF_SCHEMA
+from .html_schemas import ALINEA_SCHEMA, DOCUMENT_REFERENCE_SCHEMA, VISA_SCHEMA, MOTIF_SCHEMA
 from .utils.html import make_css_class
 from .debug import insert_debug_keywords
 from .parsing_utils.source_mapping import initialize_lines, TextSegments
 from .types import PageElementOrString
 
 ALINEA_CSS_CLASS = make_css_class(ALINEA_SCHEMA)
-ARRETE_REFERENCE_CSS_CLASS = make_css_class(ARRETE_REFERENCE_SCHEMA)
+DOCUMENT_REFERENCE_CSS_CLASS = make_css_class(DOCUMENT_REFERENCE_SCHEMA)
 
 MOTIF_CSS_CLASS = make_css_class(MOTIF_SCHEMA)
 VISA_CSS_CLASS = make_css_class(VISA_SCHEMA)
@@ -32,14 +32,14 @@ def ocrized_arrete_to_html(lines: TextSegments) -> BeautifulSoup:
     for element in soup.select(f'.{ALINEA_CSS_CLASS}, .{ALINEA_CSS_CLASS} *, .{MOTIF_CSS_CLASS}, .{VISA_CSS_CLASS}'):
         new_children = list(element.children)
         new_children = parse_arretes_references(soup, new_children)
-        new_children = parse_target_position_references(soup, new_children)
+        new_children = parse_section_references(soup, new_children)
         element.clear()
         element.extend(new_children)
 
     for container in soup.select(f'.{ALINEA_CSS_CLASS}, .{ALINEA_CSS_CLASS} *'):
         new_children = list(container.children)
 
-        arretes_references = container.select(f'.{ARRETE_REFERENCE_CSS_CLASS}')
+        arretes_references = container.select(f'.{DOCUMENT_REFERENCE_CSS_CLASS}')
         if arretes_references:
             new_children = parse_operations(soup, new_children)
 

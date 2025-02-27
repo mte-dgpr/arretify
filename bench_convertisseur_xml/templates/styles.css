@@ -18,7 +18,7 @@ th {
     text-align: left;
 }
 
-a.dsr-arrete_reference, a.dsr-target_position_reference {
+a.dsr-document_reference, a.dsr-section_reference {
     color: var(--text-action-high-blue-france);
 }
 
