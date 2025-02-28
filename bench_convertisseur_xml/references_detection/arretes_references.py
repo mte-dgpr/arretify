@@ -25,12 +25,12 @@ AUTHORITY_MAP: Dict[str, Authority] = {
 }
 
 
-CODE_NODE = regex_tree.Sequence([
+IDENTIFIER_NODE = regex_tree.Sequence([
     regex_tree.Branching([
         # Matches all codes starting with n°
-        r'[nN]° ?(?P<code>\S+)',
+        r'[nN]° ?(?P<identifier>\S+)',
         # Matches all codes of type 12-77LY87-7878 or 1L/77/9998
-        r'(?P<code>\S+[/\-]\S+)',
+        r'(?P<identifier>\S+[/\-]\S+)',
     ]),
     r'(?=\s|\.|$|,|\)|;)',
 ])
@@ -42,7 +42,7 @@ ARRETE_NODE = regex_tree.Group(regex_tree.Sequence([
         regex_tree.Sequence([
             regex_tree.Quantifier(
                 regex_tree.Sequence([
-                    CODE_NODE,
+                    IDENTIFIER_NODE,
                     '\s',
                 ]), 
                 '?',
@@ -58,7 +58,7 @@ ARRETE_NODE = regex_tree.Group(regex_tree.Sequence([
             r'(\s(modifié|modifiant)(?=\b))?',
         ]),
 
-        CODE_NODE,
+        IDENTIFIER_NODE,
     ]),
 ]), group_name='__arrete')
 
@@ -74,7 +74,7 @@ ARRETE_MULTIPLE_NODE = regex_tree.Group(regex_tree.Sequence([
                     regex_tree.Sequence([
                         regex_tree.Quantifier(
                             regex_tree.Sequence([
-                                CODE_NODE,
+                                IDENTIFIER_NODE,
                                 '\s',
                             ]),
                             '?',
@@ -86,7 +86,7 @@ ARRETE_MULTIPLE_NODE = regex_tree.Group(regex_tree.Sequence([
                         r'(\s(modifié|modifiant))?',
                     ]),
 
-                    CODE_NODE,
+                    IDENTIFIER_NODE,
                 ]), group_name='__arrete'
             ),
             f'{ET_VIRGULE_PATTERN_S}?',
@@ -96,8 +96,8 @@ ARRETE_MULTIPLE_NODE = regex_tree.Group(regex_tree.Sequence([
 ]), group_name='__arrete_multiple')
 
 
-def _extract_code(arrete_match: regex_tree.Match) -> Union[Code, None]:
-    return arrete_match.match_dict.get('code', None)
+def _extract_identifier(arrete_match: regex_tree.Match) -> Union[Code, None]:
+    return arrete_match.match_dict.get('identifier', None)
 
 
 def _render_arrete_container(
@@ -124,15 +124,19 @@ def _render_arrete_container(
     authority_raw = base_arrete_match.match_dict.get('authority')
     document: Document
     if authority_raw in ['ministériels', 'ministériel']:
+        if not arrete_date:
+            raise RuntimeError('Date is required')
         document = ArreteMinisteriel(
             date=arrete_date,
         )
     elif authority_raw in ['préfectoraux', 'préfectoral']:
         document = ArretePrefectoral(
             date=arrete_date,
-            code=_extract_code(arrete_match),
+            identifier=_extract_identifier(arrete_match),
         )
     elif arrete_date:
+        if not arrete_date:
+            raise RuntimeError('Date is required')
         document = ArreteUnknown(
             date=arrete_date,
         )

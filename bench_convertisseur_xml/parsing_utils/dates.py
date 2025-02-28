@@ -30,7 +30,7 @@ DATE_NODE = regex_tree.Group(
 )
 
 
-def _handle_date_match_dict(match_dict: regex_tree.MatchDict) -> date | None:
+def _handle_date_match_dict(match_dict: regex_tree.MatchDict) -> date:
     if match_dict.get('month_name'):
         match_month = match_dict['month_name'].lower()
         month = None
@@ -42,14 +42,14 @@ def _handle_date_match_dict(match_dict: regex_tree.MatchDict) -> date | None:
     elif match_dict.get('month'):
         month = int(match_dict['month'])
     else:
-        return None
+        raise RuntimeError(f'expected month')
     
     if match_dict.get('day_first'):
         day = 1
     elif match_dict.get('day'):
         day = int(match_dict['day'])
     else:
-        return None
+        raise RuntimeError(f'expected day')
 
     if match_dict.get('year_2digits'):
         year_2digits = int(match_dict['year_2digits'])
@@ -57,7 +57,7 @@ def _handle_date_match_dict(match_dict: regex_tree.MatchDict) -> date | None:
     elif match_dict.get('year'):
         year = int(match_dict['year'])
     else:
-        return None
+        raise RuntimeError(f'expected year')
 
     return date(
         day=day,
@@ -66,23 +66,20 @@ def _handle_date_match_dict(match_dict: regex_tree.MatchDict) -> date | None:
     )
 
 
-def render_date_attribute(date_object: date) -> str:
+def render_date_str(date_object: date) -> str:
     return date_object.strftime(DATE_FORMAT)
 
 
-def parse_date_attribute(date_str: str) -> date:
+def parse_date_str(date_str: str) -> date:
     return datetime.strptime(date_str, DATE_FORMAT).date()
 
 
 def render_date_regex_tree_match(soup: BeautifulSoup, regex_tree_match: regex_tree.Match) -> Tag:
     date_object = _handle_date_match_dict(regex_tree_match.match_dict)
-    if date_object is None:
-        raise RuntimeError(f"expected valid date")
-    
     date_container = make_data_tag(
         soup, 
         DATE_SCHEMA, 
         contents=iter_regex_tree_match_strings(regex_tree_match),
     )
-    date_container['datetime'] = render_date_attribute(date_object)
+    date_container['datetime'] = render_date_str(date_object)
     return date_container

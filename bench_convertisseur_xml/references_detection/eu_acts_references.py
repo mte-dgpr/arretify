@@ -19,8 +19,8 @@ DOMAIN_NODE = regex_tree.Leaf(
 
 # REF : https://style-guide.europa.eu/fr/content/-/isg/topic?identifier=1.2.2-numbering-of-acts
 # We are more lenient than the official style guide, as many references do not follow it.
-NUMBER_NODE = regex_tree.Leaf(
-    r'(?P<number>[0-9]+/[0-9]+)',
+IDENTIFIER_NODE = regex_tree.Leaf(
+    r'(?P<identifier>[0-9]+/[0-9]+)',
 )
 
 
@@ -37,7 +37,7 @@ EU_ACT_NODE = regex_tree.Group(
             # 2010/75/UE
             regex_tree.Sequence([
                 r'([nN]°\s*)?',
-                NUMBER_NODE,
+                IDENTIFIER_NODE,
                 r'/', 
                 DOMAIN_NODE,
             ]),
@@ -53,7 +53,7 @@ EU_ACT_NODE = regex_tree.Group(
                     quantifier='?',
                 ), 
                 r'([nN]°\s*)?',
-                NUMBER_NODE
+                IDENTIFIER_NODE
             ]),
         ])
     ]),
@@ -87,7 +87,7 @@ def _render_eu_act_container(
     match_dict = eu_act_group_match.match_dict
     document = EuAct(
         act_type=lookup_normalized_version(EU_ACT_TYPES, match_dict['act_type']),
-        number=match_dict['number'],
+        identifier=match_dict['identifier'],
         domain=match_dict.get('domain', None),
     )
     return make_data_tag(

@@ -1,4 +1,4 @@
-from typing import Union, Literal, List, ClassVar, Optional
+from typing import Union, Literal, List, ClassVar, Optional, Tuple, cast
 from dataclasses import dataclass
 import urllib.parse
 from enum import Enum
@@ -28,7 +28,7 @@ class _DocumentBase:
 
 @dataclass(frozen=True)
 class ArreteMinisteriel(_DocumentBase):
-    date: Union[str, None]
+    date: str
 
     scheme: ClassVar[str] = 'am'
     allowed_section_types: ClassVar[List[SectionType]] = [
@@ -40,7 +40,7 @@ class ArreteMinisteriel(_DocumentBase):
 @dataclass(frozen=True)
 class ArretePrefectoral(_DocumentBase):
     date: Union[str, None]
-    code: Union[str, None]
+    identifier: Union[str, None]
 
     scheme: ClassVar[str] = 'ap'
     allowed_section_types: ClassVar[List[SectionType]] = [
@@ -49,8 +49,8 @@ class ArretePrefectoral(_DocumentBase):
     ]
 
     def __post_init__(self):
-        if self.date is None and self.code is None:
-            raise ValueError('Both date and code cannot be None')
+        if self.date is None and self.identifier is None:
+            raise ValueError('Both date and identifier cannot be None')
 
 
 @dataclass(frozen=True)
@@ -61,6 +61,30 @@ class ArreteUnknown(_DocumentBase):
     date: str
 
     scheme: ClassVar[str] = 'unknown'
+    allowed_section_types: ClassVar[List[SectionType]] = [
+        SectionType.article,
+        SectionType.alinea,
+    ]
+
+
+@dataclass(frozen=True)
+class Decret(_DocumentBase):
+    date: str
+    identifier: Optional[str]
+
+    scheme: ClassVar[str] = 'decret'
+    allowed_section_types: ClassVar[List[SectionType]] = [
+        SectionType.article,
+        SectionType.alinea,
+    ]
+
+
+@dataclass(frozen=True)
+class Circulaire(_DocumentBase):
+    date: str
+    identifier: Optional[str]
+
+    scheme: ClassVar[str] = 'circulaire'
     allowed_section_types: ClassVar[List[SectionType]] = [
         SectionType.article,
         SectionType.alinea,
@@ -99,7 +123,7 @@ class EuAct(_DocumentBase):
     EU act. Reference : https://style-guide.europa.eu
     """
     act_type: str
-    number: str
+    identifier: str
     domain: Optional[str]
 
     scheme: ClassVar[str] = 'eu'
@@ -130,7 +154,7 @@ class Section:
         return cls(SectionType.article, start, end)
 
 
-Document = Union[ArretePrefectoral, ArreteMinisteriel, ArreteUnknown, Code, EuAct, Self]
+Document = Union[ArretePrefectoral, ArreteMinisteriel, ArreteUnknown, Decret, Circulaire, Code, EuAct, Self]
 
 
 def render_uri(
@@ -139,9 +163,9 @@ def render_uri(
 ) -> URI:
     _validate_sections(document, list(sections))
 
-    # Format for AP URI base : ap://<date>_<code>
+    # Format for AP URI base : ap://<date>_<identifier>
     if isinstance(document, ArretePrefectoral):
-        document_part = _join_tokens(document.date, document.code)
+        document_part = _join_tokens(document.date, document.identifier)
     
     # Format for AM URI base : am://<date>
     elif isinstance(document, ArreteMinisteriel):
@@ -151,13 +175,21 @@ def render_uri(
     elif isinstance(document, ArreteUnknown):
         document_part = _join_tokens(UnknownDocumentTypes.arrete.value, document.date)
 
+    # Format for decret : decret://<date>_<identifier>
+    elif isinstance(document, Decret):
+        document_part = _join_tokens(document.date, document.identifier)
+
+    # Format for circulaire : circulaire://<date>_<identifier>
+    elif isinstance(document, Circulaire):
+        document_part = _join_tokens(document.date, document.identifier)
+
     # Format for code : code://<title>
     elif isinstance(document, Code):
         document_part = _join_tokens(document.title)
 
-    # Format for EU act : eu://<act_type>_<number>_<domain>
+    # Format for EU act : eu://<act_type>_<identifier>_<domain>
     elif isinstance(document, EuAct):
-        document_part = _join_tokens(document.act_type, document.number, document.domain)
+        document_part = _join_tokens(document.act_type, document.identifier, document.domain)
 
     # Format for self reference : self://self
     elif isinstance(document, Self):
@@ -187,33 +219,35 @@ def parse_uri(uri: URI) -> tuple[Union[Document, None], List[Section]]:
     document: Union[Document, None] = None
     document_part, *section_parts = rest.split('/')
 
-    # Format for AP URI base : ap://<date>_<code>
+    # Format for AP URI base : ap://<date>_<identifier>
     if scheme_part == ArretePrefectoral.scheme:
-        document_tokens = _split_tokens(document_part)
-        if len(document_tokens) != 2:
-            raise ValueError(f'Unexpected number of tokens in "{document_part}"')
-        document = ArretePrefectoral(date=document_tokens[0], code=document_tokens[1])
+        _, (date, identifier) = _load_tokens(document_part, optional=[0, 1])
+        document = ArretePrefectoral(date=date, identifier=identifier)
 
     # Format for AM URI base : am://<date>
     elif scheme_part == ArreteMinisteriel.scheme:
-        document_tokens = _split_tokens(document_part)
-        if len(document_tokens) != 1:
-            raise ValueError(f'Unexpected number of tokens in "{document_part}"')
-        document = ArreteMinisteriel(date=document_tokens[0])
+        (date,), _ = _load_tokens(document_part, required=[0])
+        document = ArreteMinisteriel(date=date)
+
+    # Format for decret : decret://<date>_<identifier>
+    elif scheme_part == Decret.scheme:
+        (date,), (identifier,) = _load_tokens(document_part, required=[0], optional=[1])
+        document = Decret(date=date, identifier=identifier)
+
+    # Format for circulaire : circulaire://<date>_<identifier>
+    elif scheme_part == Circulaire.scheme:
+        (date,), (identifier,) = _load_tokens(document_part, required=[0], optional=[1])
+        document = Circulaire(date=date, identifier=identifier)
 
     # Format for code : code://<title>
     elif scheme_part == Code.scheme:
-        document_tokens = _split_tokens(document_part)
-        if len(document_tokens) != 1 or document_tokens[0] is None:
-            raise ValueError(f'Unexpected tokens in "{document_part}"')
-        document = Code(title=document_tokens[0])
+        (title,), _ = _load_tokens(document_part, required=[0])
+        document = Code(title=title)
 
-    # Format for EU act : eu://<act_type>_<number>_<domain>
+    # Format for EU act : eu://<act_type>_<identifier>_<domain>
     elif scheme_part == EuAct.scheme:
-        document_tokens = _split_tokens(document_part)
-        if len(document_tokens) != 3 or document_tokens[0] is None or document_tokens[1] is None:
-            raise ValueError(f'Unexpected tokens in "{document_part}"')
-        document = EuAct(act_type=document_tokens[0], number=document_tokens[1], domain=document_tokens[2])
+        (act_type, identifier), (domain,) = _load_tokens(document_part, required=[0, 1], optional=[2])
+        document = EuAct(act_type=act_type, identifier=identifier, domain=domain)
 
     # Format for self reference : self://self
     elif scheme_part == Self.scheme:
@@ -221,33 +255,26 @@ def parse_uri(uri: URI) -> tuple[Union[Document, None], List[Section]]:
 
     # Format for unknown, or not completely defined document
     elif scheme_part == _DocumentBase.scheme:
-        document_tokens = _split_tokens(document_part)
-        if len(document_tokens) < 1:
-            raise ValueError(f'Unexpected at least one token in "{document_part}"')
+        (document_type,), _ = _load_tokens(document_part, required=[0])
 
         # unknown://arrete_<date>
-        if document_tokens[0] == UnknownDocumentTypes.arrete.value:
-            if len(document_tokens) != 2 or document_tokens[1] is None:
-                raise ValueError(f'Unexpected tokens in "{document_part}"')
-            document = ArreteUnknown(date=document_tokens[1])
+        if document_type == UnknownDocumentTypes.arrete.value:
+            (date,), _ = _load_tokens(document_part, required=[1])
+            document = ArreteUnknown(date=date)
 
         # unknown://unknown 
-        elif document_tokens[0] == UnknownDocumentTypes.unknown.value:
+        elif document_type == UnknownDocumentTypes.unknown.value:
             document = None
 
     # Format for articles and alineas part : /<type>_<start>_<end>
     sections: List[Section] = []
     for section_part in section_parts:
-        section_tokens = _split_tokens(section_part)
-        if len(section_tokens) != 3:
-            raise ValueError(f'Unexpected number of tokens in "{section_part}"')
-        if section_tokens[1] is None:
-            raise ValueError(f'Start is required for section')
+        (section_type, start), (end,) = _load_tokens(section_part, required=[0, 1], optional=[2])
         sections.append(
             Section(
-                type=SectionType(section_tokens[0]),
-                start=section_tokens[1],
-                end=section_tokens[2],
+                type=SectionType(section_type),
+                start=start,
+                end=end,
             )
         )
 
@@ -280,6 +307,19 @@ def _join_tokens(*tokens: Union[str, None]) -> str:
 
 def _split_tokens(part: str) -> List[Union[str, None]]:
     return [_decode(token) or None for token in part.split(_SEPARATOR)]
+
+
+def _load_tokens(part: str, required: List[int]=[], optional: List[int]=[]) -> Tuple[List[str], List[Union[str, None]]]:
+    tokens = _split_tokens(part)
+    try:
+        required_tokens = [tokens[i] for i in required]
+        optional_tokens = [tokens[i] for i in optional]
+    except IndexError:
+        raise ValueError(f'Unexpected token format in "{part}"')
+    if None in required_tokens:
+        raise ValueError(f'Required token is missing in "{part}"')
+
+    return cast(List[str], required_tokens), optional_tokens
 
 
 def _decode(part: str) -> str:

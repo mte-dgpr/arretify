@@ -7,8 +7,10 @@ from bs4 import BeautifulSoup
 
 from .settings import TEST_DATA_DIR, LOGGER, OCR_FILE_EXTENSION
 from .arrete_segmentation.parse_arrete import parse_arrete
-from .references_detection.arretes_references import parse_arretes_references
 from .references_detection.section_references import parse_section_references
+from .references_detection.arretes_references import parse_arretes_references
+from .references_detection.decrets_references import parse_decrets_references
+from .references_detection.circulaires_references import parse_circulaires_references
 from .references_detection.codes_references import parse_codes_references
 from .references_detection.self_references import parse_self_references
 from .references_detection.eu_acts_references import parse_eu_acts_references
@@ -35,10 +37,12 @@ def ocrized_arrete_to_html(lines: TextSegments) -> BeautifulSoup:
     for element in soup.select(f'.{ALINEA_CSS_CLASS}, .{ALINEA_CSS_CLASS} *, .{MOTIF_CSS_CLASS}, .{VISA_CSS_CLASS}'):
         new_children = list(element.children)
         new_children = parse_arretes_references(soup, new_children)
-        new_children = parse_section_references(soup, new_children)
+        new_children = parse_decrets_references(soup, new_children)
+        new_children = parse_circulaires_references(soup, new_children)
         new_children = parse_codes_references(soup, new_children)
         new_children = parse_self_references(soup, new_children)
         new_children = parse_eu_acts_references(soup, new_children)
+        new_children = parse_section_references(soup, new_children)
         element.clear()
         element.extend(new_children)
 
