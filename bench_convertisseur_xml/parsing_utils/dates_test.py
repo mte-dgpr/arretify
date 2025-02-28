@@ -5,16 +5,16 @@ from datetime import date
 
 from bs4 import BeautifulSoup
 
-from .dates import _handle_date_match_dict, DATE_NODE, parse_date_attribute, render_date_attribute, render_date_regex_tree_match
+from .dates import DATE_NODE, parse_date_str, render_date_str, render_date_regex_tree_match
 from bench_convertisseur_xml.regex_utils import flat_map_regex_tree_match, split_string_with_regex_tree
 
 
 class TestStrToDateAndDateToStr(unittest.TestCase):
-    def test_parse_date_attribute(self):
-        assert parse_date_attribute('1997-09-12') == date(year=1997, month=9, day=12)
+    def test_parse_date_str(self):
+        assert parse_date_str('1997-09-12') == date(year=1997, month=9, day=12)
 
-    def test_render_date_attribute(self):
-        assert render_date_attribute(date(year=2001, month=1, day=31)) == '2001-01-31'
+    def test_render_date_str(self):
+        assert render_date_str(date(year=2001, month=1, day=31)) == '2001-01-31'
 
 
 class TestRenderDateRegexTreeMatch(unittest.TestCase):
