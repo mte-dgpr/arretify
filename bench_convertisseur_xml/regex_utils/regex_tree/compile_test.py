@@ -100,5 +100,5 @@ class TestCompilePattern(unittest.TestCase):
         node2 = Literal(r"bla|blo|bli|blu")
 
         # Assert
-        assert repr(node1) == '<_ID_1, LiteralNode, "bla">'
-        assert repr(node2) == '<_ID_2, LiteralNode, "bla|blo|bl...">'
+        assert repr(node1) == f'<{node1.id}, LiteralNode, "bla">'
+        assert repr(node2) == f'<{node2.id}, LiteralNode, "bla|blo|bl...">'
