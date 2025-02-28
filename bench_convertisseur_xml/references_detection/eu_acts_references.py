@@ -12,14 +12,14 @@ from bench_convertisseur_xml.uri import render_uri, EuAct
 from bench_convertisseur_xml.law_data.eurlex import EU_ACT_DOMAINS, EU_ACT_TYPES
 
 # Examples : CE, UE, ...
-DOMAIN_NODE = regex_tree.Leaf(
+DOMAIN_NODE = regex_tree.Literal(
     r'(?P<domain>' + join_with_or(EU_ACT_DOMAINS) + ')',
 )
 
 
 # REF : https://style-guide.europa.eu/fr/content/-/isg/topic?identifier=1.2.2-numbering-of-acts
 # We are more lenient than the official style guide, as many references do not follow it.
-IDENTIFIER_NODE = regex_tree.Leaf(
+IDENTIFIER_NODE = regex_tree.Literal(
     r'(?P<identifier>[0-9]+/[0-9]+)',
 )
 

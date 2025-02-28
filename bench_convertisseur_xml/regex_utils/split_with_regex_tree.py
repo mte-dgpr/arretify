@@ -1,6 +1,9 @@
+from typing import cast
+
 from .regex_tree.types import GroupNode, RegexTreeMatchFlow
 from .regex_tree.execute import match
 from .split import split_string_with_regex
+from .core import safe_group
 
 
 def split_string_with_regex_tree(node: GroupNode, string: str) -> RegexTreeMatchFlow:
@@ -8,7 +11,7 @@ def split_string_with_regex_tree(node: GroupNode, string: str) -> RegexTreeMatch
         if isinstance(str_or_match, str):
             yield str_or_match
             continue
-        regex_tree_match = match(node, str_or_match.group(0))
+        regex_tree_match = match(node, safe_group(str_or_match, 0))
         if not regex_tree_match:
             raise RuntimeError(f"expected '{string}' to match {node.pattern}")
         yield regex_tree_match

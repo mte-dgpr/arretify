@@ -85,3 +85,10 @@ class MatchProxy:
 
     def __getattr__(self, attr):
         return getattr(self.match, attr)
+
+
+def safe_group(match: re.Match | MatchProxy, index: int | str) -> str:
+    group_text = match.group(index)
+    if group_text is None:
+        raise RuntimeError(f"Group {index} not found in match")
+    return group_text

@@ -4,8 +4,8 @@ from dataclasses import dataclass
 from typing import List, Union
 
 from .execute import match
-from .types import RegexTreeMatch
-from .compile import Sequence, Branching, Group, Quantifier
+from .types import RegexTreeMatch, Settings
+from .compile import Sequence, Branching, Group, Quantifier, Literal
 
 
 class TestSearchCompiledPattern(unittest.TestCase):
@@ -60,4 +60,44 @@ class TestSearchCompiledPattern(unittest.TestCase):
                     children=['hello_john'],
                 ),
             ]
+        )
+
+    def test_no_match_simple(self):
+        # Arrange
+        compiled_pattern = Group(
+            Sequence([
+                r'bla',
+                r'blo',
+            ]),
+            group_name='root',
+        )
+
+        # Act
+        result = match(compiled_pattern, 'hello')
+
+        # Assert
+        assert result == None
+
+    def test_match_second_branch_when_first_nested_fails(self):
+        # When a first branch succeeds, but then a nested node fails
+        # because it has different settings than the Branch node, 
+        # then the second branch should be tried.
+
+        # Arrange
+        compiled_pattern = Group(
+            Branching([
+                Literal(r'(?P<branch1>héllo)', settings=Settings(ignore_accents=False)),
+                r'(?P<branch2>hello)',
+            ], settings=Settings(ignore_accents=True)),
+            group_name='root',
+        )
+
+        # Act
+        result = match(compiled_pattern, 'hello')
+
+        # Assert
+        assert result == RegexTreeMatch(
+            group_name='root',
+            match_dict=dict(branch2='hello'),
+            children=['hello'],
         )

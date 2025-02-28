@@ -5,54 +5,47 @@ from ..core import PatternProxy
 from ..types import GroupName, Settings
 
 
-Node = Union['ContainerNode', 'LeafNode', 'GroupNode', 'QuantifierNode']
-NodeMap = Dict[GroupName, Node]
+NodeMap = Dict[GroupName, 'Node']
+Node = Union['SequenceNode', 'BranchingNode', 'LiteralNode', 'GroupNode', 'QuantifierNode']
 MatchDict = Dict[str, str]
 
 
 @dataclass(frozen=True)
-class ContainerNode:
+class BaseNode:
     id: GroupName
+    settings: Settings
     pattern: PatternProxy
+
+    def __repr__(self):
+        pattern_repr = self.pattern.pattern[:10] + '...' if len(self.pattern.pattern) > 10 else self.pattern.pattern
+        return f'<{self.id}, {self.__class__.__name__}, "{pattern_repr}">'
+
+
+@dataclass(frozen=True, repr=False)
+class SequenceNode(BaseNode):
     children: NodeMap
-    settings: Settings
-
-    def __repr__(self):
-        return f'ContainerNode(id={self.id}, pattern={self.pattern.pattern})'
 
 
-@dataclass(frozen=True)
-class LeafNode:
-    id: GroupName
-    pattern: PatternProxy
-    settings: Settings
-
-    def __repr__(self):
-        return f'LeafNode(id={self.id}, pattern={self.pattern.pattern})'
+@dataclass(frozen=True, repr=False)
+class BranchingNode(BaseNode):
+    children: NodeMap
 
 
-@dataclass(frozen=True)
-class GroupNode:
-    id: GroupName
+@dataclass(frozen=True, repr=False)
+class LiteralNode(BaseNode):
+    pass
+
+
+@dataclass(frozen=True, repr=False)
+class GroupNode(BaseNode):
     group_name: GroupName
-    pattern: PatternProxy
     child: Node
-    settings: Settings
-
-    def __repr__(self):
-        return f'GroupNode(name={self.group_name})'
 
 
-@dataclass(frozen=True)
-class QuantifierNode:
-    id: GroupName
+@dataclass(frozen=True, repr=False)
+class QuantifierNode(BaseNode):
     quantifier: str
-    pattern: PatternProxy
     child: Node
-    settings: Settings
-
-    def __repr__(self):
-        return f'QuantifierNode(quantifier={self.quantifier})'
 
 
 @dataclass(frozen=True)
