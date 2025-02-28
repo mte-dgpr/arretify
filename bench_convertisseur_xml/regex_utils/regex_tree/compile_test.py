@@ -1,13 +1,13 @@
 import unittest
 
-from .compile import Leaf, Group, Quantifier, Branching, Sequence
+from .compile import Literal, Group, Quantifier, Branching, Sequence
 
 
 class TestCompilePattern(unittest.TestCase):
 
     def test_compile_simple_pattern(self):
         # Arrange
-        node = Leaf(r"\d+")
+        node = Literal(r"\d+")
 
         # Assert
         assert node.id
@@ -16,7 +16,7 @@ class TestCompilePattern(unittest.TestCase):
     def test_compile_or_pattern(self):
         # Arrange
         node = Branching([
-            Leaf(pattern_string=r"bla(?P<index>\d+)"),
+            Literal(pattern_string=r"bla(?P<index>\d+)"),
             r"\w+"
         ])
         assert len(node.children) == 2
@@ -30,7 +30,7 @@ class TestCompilePattern(unittest.TestCase):
     def test_compile_sequence_pattern(self):
         # Arrange
         node = Sequence([
-            Leaf(r"bla(?P<index>\d+)"),
+            Literal(r"bla(?P<index>\d+)"),
             r"\w+"
         ])
         assert len(node.children) == 2
@@ -43,7 +43,7 @@ class TestCompilePattern(unittest.TestCase):
     def test_compile_repeat_pattern(self):
         # Arrange
         node = Quantifier(
-            Leaf(pattern_string=r"\w+"), 
+            Literal(pattern_string=r"\w+"), 
             r"+"
         )
 
@@ -62,8 +62,8 @@ class TestCompilePattern(unittest.TestCase):
 
     def test_children_nodes_have_unique_ids(self):
         # Arrange
-        child1 = Leaf(r"bla")
-        child2 = Leaf(r"blo")
+        child1 = Literal(r"bla")
+        child2 = Literal(r"blo")
         sequence_node = Sequence([
             child1,
             child2,
@@ -93,3 +93,12 @@ class TestCompilePattern(unittest.TestCase):
         for node in [quantifier_node, group_node]:
             assert node.child.pattern is child1.pattern
             assert node.child.id != child1.id
+
+    def test_node_repr(self):
+        # Arrange
+        node1 = Literal(r"bla")
+        node2 = Literal(r"bla|blo|bli|blu")
+
+        # Assert
+        assert repr(node1) == '<_ID_1, LiteralNode, "bla">'
+        assert repr(node2) == '<_ID_2, LiteralNode, "bla|blo|bl...">'

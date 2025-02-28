@@ -1,8 +1,8 @@
-from typing import Iterator, Literal, Iterable
+from typing import Iterator, Literal, Iterable, cast
 
 from bench_convertisseur_xml.types import PageElementOrString
 from bench_convertisseur_xml.utils.generators import remove_empty_strings_from_flow
-from .core import MatchFlow
+from .core import MatchFlow, safe_group
 
 
 @remove_empty_strings_from_flow
@@ -27,9 +27,9 @@ def merge_matches_with_siblings(
         if isinstance(str_or_match, str):
             accumulator += str_or_match
         elif which_sibling == 'previous':
-            yield accumulator + str_or_match.group(0)
+            yield accumulator + safe_group(str_or_match, 0)
             accumulator = ''
         else:
             yield accumulator
-            accumulator = str_or_match.group(0)
+            accumulator = safe_group(str_or_match, 0)
     yield accumulator

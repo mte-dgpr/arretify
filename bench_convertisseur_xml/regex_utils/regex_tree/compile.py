@@ -2,15 +2,15 @@ import enum
 from typing import List, Dict, TypedDict, Union
 from dataclasses import dataclass, replace
 
-from .types import GroupName, QuantifierNode, GroupNode, ContainerNode, LeafNode, Node, NodeMap
+from .types import GroupName, QuantifierNode, GroupNode, SequenceNode, BranchingNode, LiteralNode, Node, NodeMap
 from ..types import Settings
 from ..core import PatternProxy
 from ..helpers import without_named_groups, join_with_or
 
 
-def Leaf(pattern_string: str, settings: Settings | None=None) -> LeafNode:
+def Literal(pattern_string: str, settings: Settings | None=None) -> LiteralNode:
     settings = settings or Settings()
-    return LeafNode(
+    return LiteralNode(
         id=_get_unique_id(),
         pattern=PatternProxy(
             pattern_string,
@@ -20,13 +20,13 @@ def Leaf(pattern_string: str, settings: Settings | None=None) -> LeafNode:
     )
 
 
-def Branching(child_or_str_list: List[Node | str], settings: Settings | None=None) -> ContainerNode:
+def Branching(child_or_str_list: List[Node | str], settings: Settings | None=None) -> BranchingNode:
     settings = settings or Settings()
     children_list: List[Node] = []
     for child_or_str in child_or_str_list:
         children_list.append(_initialize_child(child_or_str, settings))
 
-    return ContainerNode(
+    return BranchingNode(
         id=_get_unique_id(),
         pattern=PatternProxy(
             join_with_or([
@@ -40,7 +40,7 @@ def Branching(child_or_str_list: List[Node | str], settings: Settings | None=Non
     )
 
 
-def Sequence(child_or_str_list: List[Node | str], settings: Settings | None=None) -> ContainerNode:
+def Sequence(child_or_str_list: List[Node | str], settings: Settings | None=None) -> SequenceNode:
     settings = settings or Settings()
     pattern_string = ''
     children: NodeMap = {}
@@ -50,7 +50,7 @@ def Sequence(child_or_str_list: List[Node | str], settings: Settings | None=None
         pattern_string += f'(?P<{child.id}>{without_named_groups(child.pattern.pattern)})'
         children[child.id] = child
     
-    return ContainerNode(
+    return SequenceNode(
         id=_get_unique_id(),
         pattern=PatternProxy(
             pattern_string,
@@ -108,9 +108,9 @@ _PREFIX = '_ID_'
 
 
 def _initialize_child(node_or_str: Node | str, default_settings: Settings) -> Node:
-    # If child is a string, we create a leaf node from it.
+    # If child is a string, we create a LiteralNode from it.
     if isinstance(node_or_str, str):
-        return Leaf(node_or_str, settings=default_settings)
+        return Literal(node_or_str, settings=default_settings)
     # If the child is already a node, we ensures that it has a unique id.
     # This allows using the same node in multiple places in the tree.
     else:

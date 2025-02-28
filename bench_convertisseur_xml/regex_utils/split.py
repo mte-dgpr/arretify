@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from bench_convertisseur_xml.types import PageElementOrString
 from bench_convertisseur_xml.utils.generators import remove_empty_strings_from_flow
 from .types import MatchNamedGroup
-from .core import MatchProxy, PatternProxy, MatchFlow
+from .core import MatchProxy, PatternProxy, MatchFlow, safe_group
 
 
 StrSplit = Tuple[str, MatchProxy, str]
@@ -25,7 +25,7 @@ def split_match_by_named_groups(
         '-'
         MatchNamedGroup(text='bar', group_name='second')    
     '''
-    match_text = match.group(0)
+    match_text = safe_group(match, 0)
     # Offset in original text
     match_offset = match.start(0)
     match_dict = match.groupdict()
@@ -52,7 +52,7 @@ def split_match_by_named_groups(
             if group_start > max_group_end:
                 yield match_text[max_group_end:group_start]
             yield MatchNamedGroup(
-                text=match.group(group_name), 
+                text=safe_group(match, group_name), 
                 group_name=group_name
             )
         max_group_end = max(group_end, max_group_end)
