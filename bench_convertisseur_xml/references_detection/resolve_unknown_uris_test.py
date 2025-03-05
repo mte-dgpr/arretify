@@ -2,7 +2,7 @@ import unittest
 
 from bs4 import BeautifulSoup
 
-from .resolve_sections_documents import resolve_sections_documents
+from .resolve_unknown_uris import resolve_sections_unknown_uris
 
 
 class TestResolveSectionsDocuments(unittest.TestCase):
@@ -21,7 +21,7 @@ class TestResolveSectionsDocuments(unittest.TestCase):
         children = list(soup.children)
 
         # Act
-        result = resolve_sections_documents(soup, children)
+        result = resolve_sections_unknown_uris(soup, children)
 
         # Assert
         assert str(result[0]) == '<a class="dsr-section_reference" data-uri="unknown://arrete_2016-05-23/article_5_">article 5</a>'
@@ -32,7 +32,7 @@ class TestResolveSectionsDocuments(unittest.TestCase):
             '<a class="dsr-section_reference" data-uri="unknown://unknown/article_R.181-48_">'
             'article R.181-48'
             '</a>'
-            'du'
+            'et suivants du'
             '<a class="dsr-document_reference" data-uri="code://Code%20de%20l%27environnement">'
             'code de l\'environnement'
             '</a>', features='html.parser'
@@ -40,7 +40,26 @@ class TestResolveSectionsDocuments(unittest.TestCase):
         children = list(soup.children)
 
         # Act
-        result = resolve_sections_documents(soup, children)
+        result = resolve_sections_unknown_uris(soup, children)
 
         # Assert
         assert str(result[0]) == '<a class="dsr-section_reference" data-uri="code://Code%20de%20l%27environnement/article_R.181-48_">article R.181-48</a>'
+
+    def test_too_many_words_connector(self):
+        # Arrange
+        soup = BeautifulSoup(
+            '<a class="dsr-section_reference" data-uri="unknown://unknown/article_R.181-48_">'
+            'article R.181-48'
+            '</a>'
+            'et suivants, parce que bla bla bla du'
+            '<a class="dsr-document_reference" data-uri="code://Code%20de%20l%27environnement">'
+            'code de l\'environnement'
+            '</a>', features='html.parser'
+        )
+        children = list(soup.children)
+
+        # Act
+        result = resolve_sections_unknown_uris(soup, children)
+
+        # Assert
+        assert str(result[0]) == '<a class="dsr-section_reference" data-uri="unknown://unknown/article_R.181-48_">article R.181-48</a>'

@@ -1,12 +1,14 @@
 import unittest
+from typing import List
 
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, Tag
 
-from .html_ranges import find_element_range, _find_next_after, _is_descendant, _is_parent, _collapse_element_range
+from .element_ranges import iter_collapsed_range_right, iter_collapsed_range_left, _find_next_after, _is_descendant, _is_parent, _collapse_element_range, ElementRange
 
 
-class TestFindElementRange(unittest.TestCase):
-    def test_find_element_range_across_container_tags(self):
+class TestIterCollapsedRange(unittest.TestCase):
+
+    def test_right(self):
         # Arrange
         html = '''
             <div>
@@ -29,111 +31,122 @@ class TestFindElementRange(unittest.TestCase):
         assert start_tag is not None
 
         # Act
-        element_range = find_element_range(start_tag, lambda element, _: element.name == 'blockquote')
+        results = []
+        for element_range in iter_collapsed_range_right(start_tag):
+            results.append(_range_to_str(element_range))
+            if (
+                element_range 
+                and isinstance(element_range[-1], Tag) 
+                and element_range[-1].name == 'blockquote'
+            ):
+                break
 
         # Assert
-        assert [str(element) for element in element_range] == [
-            '<span class="start">blo <b>bold blo</b></span>',
-            '<div>bli <i>italic bli</i></div>',
-            '<blockquote>blu <u>underline blu</u></blockquote>',
-        ]
-
-    def test_find_element_range_interupt(self):
-        # Arrange
-        html = '''
-            <div>
-                bla <a>link</a>
-                <span class="start">
-                    blo <b>bold blo</b>
-                </span>
-            </div>
-        '''
-        soup = BeautifulSoup(_clean_html(html), features='html.parser')
-        start_tag = soup.find(class_='start')
-        assert start_tag is not None
-
-        # Act
-        def is_end_element(element, _):
-            if element.name == 'a':
-                return None
-        element_range = find_element_range(start_tag, is_end_element)
-
-        # Assert
-        assert element_range is None
-
-    def test_find_element_range_passed_callback(self):
-        # Arrange
-        html = '''
-            <div>
-                bla <a>link</a>
-                <span class="start">
-                    blo <b>bold blo</b>
-                </span>
-            </div>
-            <div>
-                <div>
-                    bli <i>italic bli</i>
-                </div>
-                <blockquote>
-                    blu <u>underline blu</u>
-                </blockquote>
-            </div>
-        '''
-        soup = BeautifulSoup(_clean_html(html), features='html.parser')
-        start_tag = soup.find(class_='start')
-        assert start_tag is not None
-
-        # Act
-        call_params = []
-        def is_end_element(element, tmp):
-            call_params.append((element, tmp[:]))
-            if element.name == 'blockquote':
-                return True
-            return False
-        find_element_range(start_tag, is_end_element)
-
-        # Assert
-        assert [(str(element), [str(e) for e in element_range]) for element, element_range in call_params] == [
-            (
+        assert results == [
+            [
+                '<span class="start">blo <b>bold blo</b></span>',
                 '<div><div>bli <i>italic bli</i></div><blockquote>blu <u>underline blu</u></blockquote></div>', 
-                [
-                    '<span class="start">blo <b>bold blo</b></span>',
-                ]
-            ),
-            (
+            ],
+            [
+                '<span class="start">blo <b>bold blo</b></span>',
                 '<div>bli <i>italic bli</i></div>', 
-                [
-                    '<span class="start">blo <b>bold blo</b></span>',
-                ]
-            ),
-            (
+            ],
+            [
+                '<span class="start">blo <b>bold blo</b></span>',
                 'bli ',
-                [
-                    '<span class="start">blo <b>bold blo</b></span>',
-                ]
-            ),
-            (
+            ],
+            [
+                '<span class="start">blo <b>bold blo</b></span>',
+                'bli ',
                 '<i>italic bli</i>',
-                [
-                    '<span class="start">blo <b>bold blo</b></span>',
-                    'bli '
-                ]
-            ),
-                        (
+            ],
+            [
+                '<span class="start">blo <b>bold blo</b></span>',
+                'bli ',
                 'italic bli',
-                [
-                    '<span class="start">blo <b>bold blo</b></span>',
-                    'bli '
-                ]
-            ),
-            (
+            ],
+            [
+                '<span class="start">blo <b>bold blo</b></span>',
+                '<div>bli <i>italic bli</i></div>',
                 '<blockquote>blu <u>underline blu</u></blockquote>',
-                [
-                    '<span class="start">blo <b>bold blo</b></span>',
-                    '<div>bli <i>italic bli</i></div>',
-                ]
-            ),
+            ],
         ]
+
+    def test_left(self):
+        # Arrange
+        html = '''
+            <div>
+                bla <a>link</a>
+                <span>
+                    blo <b>bold blo</b>
+                </span>
+            </div>
+            <div>
+                <div>
+                    bli <i>italic bli</i>
+                </div>
+                <blockquote class="start">
+                    blu <u>underline blu</u>
+                </blockquote>
+            </div>
+        '''
+        soup = BeautifulSoup(_clean_html(html), features='html.parser')
+        start_tag = soup.find(class_='start')
+        assert start_tag is not None
+
+        # Act
+        results = []
+        for element_range in iter_collapsed_range_left(start_tag):
+            results.append(_range_to_str(element_range))
+            if (
+                element_range 
+                and isinstance(element_range[0], Tag) 
+                and element_range[0].name == 'span'
+            ):
+                break
+
+        # Assert
+        assert results == [
+            [
+                'italic bli',
+                '<blockquote class="start">blu <u>underline blu</u></blockquote>',
+            ],
+            [
+                '<i>italic bli</i>',
+                '<blockquote class="start">blu <u>underline blu</u></blockquote>',
+            ],
+            [
+                'bli ',
+                '<i>italic bli</i>',
+                '<blockquote class="start">blu <u>underline blu</u></blockquote>',
+            ],
+            [
+                '<div>bli <i>italic bli</i></div>',
+                '<blockquote class="start">blu <u>underline blu</u></blockquote>',
+            ],
+            [
+                'bold blo',
+                '<div>bli <i>italic bli</i></div>',
+                '<blockquote class="start">blu <u>underline blu</u></blockquote>',
+            ],
+            [
+                '<b>bold blo</b>',
+                '<div>bli <i>italic bli</i></div>',
+                '<blockquote class="start">blu <u>underline blu</u></blockquote>',
+            ],
+            [
+                'blo ',
+                '<b>bold blo</b>',
+                '<div>bli <i>italic bli</i></div>',
+                '<blockquote class="start">blu <u>underline blu</u></blockquote>',
+            ],
+            [
+                '<span>blo <b>bold blo</b></span>',
+                '<div>bli <i>italic bli</i></div>',
+                '<blockquote class="start">blu <u>underline blu</u></blockquote>',
+            ]
+        ]
+                
 
 
 class TestIsDescendant(unittest.TestCase):
@@ -400,3 +413,7 @@ class TestCollapseElementRange(unittest.TestCase):
 
 def _clean_html(html: str) -> str:
     return html.replace('\n', '').replace('    ', '')
+
+
+def _range_to_str(element_range: ElementRange) -> List[str]:
+    return [str(element) for element in element_range]

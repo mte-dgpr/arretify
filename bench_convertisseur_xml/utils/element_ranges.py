@@ -1,4 +1,4 @@
-from typing import Callable, List, Tuple
+from typing import Callable, List, Tuple, Iterator
 
 from bs4 import BeautifulSoup, Tag, PageElement
 
@@ -19,36 +19,40 @@ A range of elements which follow each other in parsing order. e.g. :
 """
 
 
-def find_element_range(
-    tag: Tag, 
-    check_range_end: Callable[[PageElement, ElementRange], bool | None]
-) -> ElementRange | None:
-    end_element: PageElement | None = None
-    all_elements: ElementRange = [tag]
-    current = _find_next_after(tag)
-
+def iter_collapsed_range_right(
+    start_tag: Tag, 
+) -> Iterator[ElementRange]:
+    all_elements: ElementRange = [start_tag]
+    current = _find_next_after(start_tag)
     while current:
-        if current is None:
-            return None
-
         collapsed = _collapse_element_range(all_elements)
+        # If the last element is parent of `current`, 
+        # it means we are going down in the tree, so `current`
+        # is a leaf and we don't want to collapse it, even if it
+        # is the only node of its parent.
         if _is_parent(collapsed[-1], current):
             collapsed.pop()
+        yield collapsed + [current]
+        all_elements.append(current)
+        current = current.next_element
 
-        end_was_found = check_range_end(current, collapsed)
-        if end_was_found is True:
-            end_element = current
-            break
-        elif end_was_found is None:
-            return None
-        else:
-            all_elements.append(current)
-            current = current.next_element
-    
-    if not end_element:
-        return None
-    
-    return _collapse_element_range(all_elements) + [end_element]
+
+def iter_collapsed_range_left(
+    start_tag: Tag,
+) -> Iterator[ElementRange]:
+    all_elements: ElementRange = [start_tag]
+    current = start_tag.previous_element
+    current_range: ElementRange
+    previous_range: None | ElementRange = None
+    while current:
+        current_range = _collapse_element_range([current] + all_elements)
+        if previous_range is None:
+            yield current_range
+        elif current_range != previous_range:
+            yield current_range
+        previous_range = current_range
+        all_elements.insert(0, current)
+        current = current.previous_element
 
 
 def _is_descendant(child: PageElement, parent: PageElement) -> bool:

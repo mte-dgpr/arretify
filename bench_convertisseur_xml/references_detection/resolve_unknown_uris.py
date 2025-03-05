@@ -3,7 +3,7 @@ from typing import List, Iterable, cast
 from bs4 import BeautifulSoup, Tag, PageElement
 
 from bench_convertisseur_xml.types import PageElementOrString
-from bench_convertisseur_xml.utils.element_ranges import find_element_range
+from bench_convertisseur_xml.utils.element_ranges import iter_collapsed_range_right, iter_collapsed_range_left, ElementRange
 from bench_convertisseur_xml.utils.html import make_css_class
 from bench_convertisseur_xml.html_schemas import SECTION_REFERENCE_SCHEMA, DOCUMENT_REFERENCE_SCHEMA
 from bench_convertisseur_xml.uri import UnknownDocument, parse_uri, render_uri
@@ -14,17 +14,22 @@ SECTION_REFERENCE_CSS_CLASS = make_css_class(SECTION_REFERENCE_SCHEMA)
 
 
 CONNECTOR_SECTION_DOCUMENT_NODE = regex_tree.Group(
-    regex_tree.Branching([
-        r'^\s*du\s*$',
-        r'^\s*de\s+l\'\s*$',
-        r'^\s*de\s+la\s*$',
-        r'^\s*des\s*$',
+    regex_tree.Sequence([
+        # Allows a maximum of 3 random words before the connector
+        r'^(\s*[^\.\s]+){0,3}\s*',
+        regex_tree.Branching([
+            r'du',
+            r'de\s+l\'',
+            r'de\s+la',
+            r'des',
+        ]),
+        r'\s*$',
     ]),
     group_name='__connector_section_document',
 )
 
 
-def resolve_sections_documents(
+def resolve_sections_unknown_uris(
     soup: BeautifulSoup,
     children: Iterable[PageElementOrString],
 ) -> List[PageElementOrString]:
@@ -39,10 +44,7 @@ def resolve_sections_documents(
     ]
 
     for section_reference_tag in section_references:
-        element_range = find_element_range(
-            section_reference_tag,
-            _is_matching_document,
-        )
+        element_range = _find_section_document_range(section_reference_tag)
         if element_range is None:
             continue
         document_reference_tag = element_range[-1]
@@ -59,21 +61,27 @@ def resolve_sections_documents(
     return children
 
 
-def _is_matching_document(current: PageElement, element_range: List[PageElement]) -> bool | None:
-    if (len(element_range) > 2):
-        return None
+def _find_section_document_range(section_reference_tag: Tag) -> ElementRange | None:
+    for element_range in iter_collapsed_range_right(section_reference_tag):
+        if (len(element_range) > 3):
+            return None
 
-    if (
-        len(element_range) == 2
-        and isinstance(current, Tag)
-        and DOCUMENT_REFERENCE_CSS_CLASS in current.get('class', [])
-        and isinstance(element_range[1], str)
-    ):
-        return bool(
-            regex_tree.match(
-                CONNECTOR_SECTION_DOCUMENT_NODE, 
-                element_range[1]
-            )
-        )
+        elif (
+            len(element_range) == 3
+            and isinstance(element_range[2], Tag)
+            and DOCUMENT_REFERENCE_CSS_CLASS in element_range[2].get('class', [])
+            and isinstance(element_range[1], str)
+        ):
+            if bool(
+                regex_tree.match(
+                    CONNECTOR_SECTION_DOCUMENT_NODE, 
+                    element_range[1]
+                )
+            ):
+                return element_range
+            else:
+                return None
 
-    return False
+        else:
+            continue
+    return None
