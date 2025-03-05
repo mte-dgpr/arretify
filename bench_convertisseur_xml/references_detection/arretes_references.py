@@ -11,7 +11,8 @@ from bench_convertisseur_xml.html_schemas import DOCUMENT_REFERENCE_SCHEMA
 from bench_convertisseur_xml.parsing_utils.patterns import ET_VIRGULE_PATTERN_S
 from bench_convertisseur_xml.parsing_utils.dates import DATE_NODE, render_date_regex_tree_match
 from bench_convertisseur_xml.regex_utils import regex_tree, flat_map_regex_tree_match, split_string_with_regex_tree
-from bench_convertisseur_xml.uri import ArretePrefectoral, ArreteMinisteriel, ArreteUnknown, render_uri, Document
+from bench_convertisseur_xml.law_data.types import ArretePrefectoralDocument, ArreteMinisterielDocument, ArreteUnknownDocument, Document
+from bench_convertisseur_xml.law_data.uri import render_uri
 
 Authority = Literal['préfectoral', 'ministériel']
 
@@ -126,18 +127,18 @@ def _render_arrete_container(
     if authority_raw in ['ministériels', 'ministériel']:
         if not arrete_date:
             raise RuntimeError('Date is required')
-        document = ArreteMinisteriel(
+        document = ArreteMinisterielDocument(
             date=arrete_date,
         )
     elif authority_raw in ['préfectoraux', 'préfectoral']:
-        document = ArretePrefectoral(
+        document = ArretePrefectoralDocument(
             date=arrete_date,
             identifier=_extract_identifier(arrete_match),
         )
     elif arrete_date:
         if not arrete_date:
             raise RuntimeError('Date is required')
-        document = ArreteUnknown(
+        document = ArreteUnknownDocument(
             date=arrete_date,
         )
     else:

@@ -10,7 +10,8 @@ from bench_convertisseur_xml.html_schemas import SECTION_REFERENCE_SCHEMA, SECTI
 from bench_convertisseur_xml.utils.html import make_data_tag, PageElementOrString
 from bench_convertisseur_xml.parsing_utils.patterns import ET_VIRGULE_PATTERN_S, EME_PATTERN_S, ORDINAL_PATTERN_S, ordinal_str_to_int
 from bench_convertisseur_xml.regex_utils import regex_tree, flat_map_regex_tree_match, split_string_with_regex_tree, iter_regex_tree_match_strings, filter_regex_tree_match_children
-from bench_convertisseur_xml.uri import render_uri, Section
+from bench_convertisseur_xml.law_data.types import Section
+from bench_convertisseur_xml.law_data.uri import render_uri
 from bench_convertisseur_xml.types import URI
 
 # TODO : 

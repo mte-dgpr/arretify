@@ -2,7 +2,7 @@ import unittest
 
 from bs4 import BeautifulSoup
 
-from .resolve_unknown_uris import resolve_sections_unknown_uris
+from .sections_unknown_uris import resolve_sections_unknown_uris
 
 
 class TestResolveSectionsDocuments(unittest.TestCase):

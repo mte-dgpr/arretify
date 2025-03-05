@@ -8,8 +8,9 @@ from bench_convertisseur_xml.types import PageElementOrString
 from bench_convertisseur_xml.utils.functional import flat_map_string
 from bench_convertisseur_xml.html_schemas import DOCUMENT_REFERENCE_SCHEMA
 from bench_convertisseur_xml.utils.html import make_data_tag
-from bench_convertisseur_xml.uri import render_uri, EuAct
-from bench_convertisseur_xml.law_data.eurlex import EU_ACT_DOMAINS, EU_ACT_TYPES
+from bench_convertisseur_xml.law_data.types import EuActDocument
+from bench_convertisseur_xml.law_data.uri import render_uri
+from bench_convertisseur_xml.law_data.eurlex_constants import EU_ACT_DOMAINS, EU_ACT_TYPES
 
 # Examples : CE, UE, ...
 DOMAIN_NODE = regex_tree.Literal(
@@ -85,7 +86,7 @@ def _render_eu_act_container(
     eu_act_group_match: regex_tree.Match,
 ) -> PageElementOrString:
     match_dict = eu_act_group_match.match_dict
-    document = EuAct(
+    document = EuActDocument(
         act_type=lookup_normalized_version(EU_ACT_TYPES, match_dict['act_type']),
         identifier=match_dict['identifier'],
         domain=match_dict.get('domain', None),

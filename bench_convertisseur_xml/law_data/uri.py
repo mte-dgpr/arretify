@@ -5,169 +5,10 @@ from enum import Enum
 
 from bench_convertisseur_xml.types import URI
 from bench_convertisseur_xml.law_data.legifrance import get_code_titles
-from bench_convertisseur_xml.law_data.eurlex import EU_ACT_DOMAINS, EU_ACT_TYPES
+from .types import SectionType, Section, Document, ArretePrefectoralDocument, ArreteMinisterielDocument, ArreteUnknownDocument, DecretDocument, CirculaireDocument, CodeDocument, EuActDocument, SelfDocument, UnknownDocumentTypes, UnknownDocument
 
 
 _SEPARATOR = '_'
-
-
-class SectionType(Enum):
-    article = 'article'
-    alinea = 'alinea'
-
-
-class UnknownDocumentTypes(Enum):
-    unknown = 'unknown'
-    arrete = 'arrete'
-
-
-class _DocumentBase:
-    allowed_section_types: ClassVar[List[SectionType]] = []
-    scheme: ClassVar[str] = ''
-
-
-@dataclass(frozen=True)
-class ArreteMinisteriel(_DocumentBase):
-    date: str
-
-    scheme: ClassVar[str] = 'am'
-    allowed_section_types: ClassVar[List[SectionType]] = [
-        SectionType.article,
-        SectionType.alinea,
-    ]
-
-
-@dataclass(frozen=True)
-class ArretePrefectoral(_DocumentBase):
-    date: Union[str, None]
-    identifier: Union[str, None]
-
-    scheme: ClassVar[str] = 'ap'
-    allowed_section_types: ClassVar[List[SectionType]] = [
-        SectionType.article,
-        SectionType.alinea,
-    ]
-
-    def __post_init__(self):
-        if self.date is None and self.identifier is None:
-            raise ValueError('Both date and identifier cannot be None')
-
-
-@dataclass(frozen=True)
-class ArreteUnknown(_DocumentBase):
-    """
-    Arrete from undefined authority.
-    """
-    date: str
-
-    scheme: ClassVar[str] = 'unknown'
-    allowed_section_types: ClassVar[List[SectionType]] = [
-        SectionType.article,
-        SectionType.alinea,
-    ]
-
-
-@dataclass(frozen=True)
-class Decret(_DocumentBase):
-    date: str
-    identifier: Optional[str]
-
-    scheme: ClassVar[str] = 'decret'
-    allowed_section_types: ClassVar[List[SectionType]] = [
-        SectionType.article,
-        SectionType.alinea,
-    ]
-
-
-@dataclass(frozen=True)
-class Circulaire(_DocumentBase):
-    date: str
-    identifier: Optional[str]
-
-    scheme: ClassVar[str] = 'circulaire'
-    allowed_section_types: ClassVar[List[SectionType]] = [
-        SectionType.article,
-        SectionType.alinea,
-    ]
-
-
-@dataclass(frozen=True)
-class Code(_DocumentBase):
-    """
-    Code juridique (https://www.legifrance.gouv.fr/liste/code)
-    """
-    title: str
-
-    scheme: ClassVar[str] = 'code'
-    allowed_section_types: ClassVar[List[SectionType]] = [
-        SectionType.article,
-        SectionType.alinea,
-    ]
-
-    def __post_init__(self):
-        if not self.title in get_code_titles():
-            raise ValueError(f'Code "{self.title}" is not in the list of codes')
-
-
-@dataclass(frozen=True)
-class Self(_DocumentBase):
-    """
-    Self reference.
-    """
-    scheme: ClassVar[str] = 'self'
-    allowed_section_types: ClassVar[List[SectionType]] = [
-        SectionType.article,
-        SectionType.alinea,
-    ]
-
-
-@dataclass(frozen=True)
-class EuAct(_DocumentBase):
-    """
-    EU act. Reference : https://style-guide.europa.eu
-    """
-    act_type: str
-    identifier: str
-    domain: Optional[str]
-
-    scheme: ClassVar[str] = 'eu'
-    allowed_section_types: ClassVar[List[SectionType]] = [
-        SectionType.article,
-        SectionType.alinea,
-    ]
-
-    def __post_init__(self):
-        if self.domain and not self.domain in EU_ACT_DOMAINS:
-            raise ValueError(f'Domain "{self.domain}" is not in the list of EU act domains')
-        if not self.act_type in EU_ACT_TYPES:
-            raise ValueError(f'Act type "{self.act_type}" is not in the list of EU act types')
-
-
-@dataclass(frozen=True)
-class UnknownDocument(_DocumentBase):
-    scheme: ClassVar[str] = 'unknown'
-    allowed_section_types: ClassVar[List[SectionType]] = [
-        SectionType.article,
-        SectionType.alinea,
-    ]
-
-
-@dataclass(frozen=True)
-class Section:
-    type: SectionType
-    start: str
-    end: Union[str, None] = None
-
-    @classmethod
-    def alinea(cls, start: int, end: Union[int, None]=None) -> 'Section':
-        return cls(SectionType.alinea, str(start), str(end) if not end is None else None)
-
-    @classmethod
-    def article(cls, start: str, end: Union[str, None]=None) -> 'Section':
-        return cls(SectionType.article, start, end)
-
-
-Document = Union[ArretePrefectoral, ArreteMinisteriel, ArreteUnknown, Decret, Circulaire, Code, EuAct, Self]
 
 
 def render_uri(
@@ -177,35 +18,35 @@ def render_uri(
     _validate_sections(document, list(sections))
 
     # Format for AP URI base : ap://<date>_<identifier>
-    if isinstance(document, ArretePrefectoral):
+    if isinstance(document, ArretePrefectoralDocument):
         document_part = _join_tokens(document.date, document.identifier)
     
     # Format for AM URI base : am://<date>
-    elif isinstance(document, ArreteMinisteriel):
+    elif isinstance(document, ArreteMinisterielDocument):
         document_part = _join_tokens(document.date)
 
     # Format for unknown arrete : unknown://arrete_<date>
-    elif isinstance(document, ArreteUnknown):
+    elif isinstance(document, ArreteUnknownDocument):
         document_part = _join_tokens(UnknownDocumentTypes.arrete.value, document.date)
 
     # Format for decret : decret://<date>_<identifier>
-    elif isinstance(document, Decret):
+    elif isinstance(document, DecretDocument):
         document_part = _join_tokens(document.date, document.identifier)
 
     # Format for circulaire : circulaire://<date>_<identifier>
-    elif isinstance(document, Circulaire):
+    elif isinstance(document, CirculaireDocument):
         document_part = _join_tokens(document.date, document.identifier)
 
     # Format for code : code://<title>
-    elif isinstance(document, Code):
+    elif isinstance(document, CodeDocument):
         document_part = _join_tokens(document.title)
 
     # Format for EU act : eu://<act_type>_<identifier>_<domain>
-    elif isinstance(document, EuAct):
+    elif isinstance(document, EuActDocument):
         document_part = _join_tokens(document.act_type, document.identifier, document.domain)
 
     # Format for self reference : self://self
-    elif isinstance(document, Self):
+    elif isinstance(document, SelfDocument):
         document_part = 'self'
 
     # Format for unknown document : unknown://unknown
@@ -233,38 +74,38 @@ def parse_uri(uri: URI) -> tuple[Union[Document, None], List[Section]]:
     document_part, *section_parts = rest.split('/')
 
     # Format for AP URI base : ap://<date>_<identifier>
-    if scheme_part == ArretePrefectoral.scheme:
+    if scheme_part == ArretePrefectoralDocument.scheme:
         _, (date, identifier) = _load_tokens(document_part, optional=[0, 1])
-        document = ArretePrefectoral(date=date, identifier=identifier)
+        document = ArretePrefectoralDocument(date=date, identifier=identifier)
 
     # Format for AM URI base : am://<date>
-    elif scheme_part == ArreteMinisteriel.scheme:
+    elif scheme_part == ArreteMinisterielDocument.scheme:
         (date,), _ = _load_tokens(document_part, required=[0])
-        document = ArreteMinisteriel(date=date)
+        document = ArreteMinisterielDocument(date=date)
 
     # Format for decret : decret://<date>_<identifier>
-    elif scheme_part == Decret.scheme:
+    elif scheme_part == DecretDocument.scheme:
         (date,), (identifier,) = _load_tokens(document_part, required=[0], optional=[1])
-        document = Decret(date=date, identifier=identifier)
+        document = DecretDocument(date=date, identifier=identifier)
 
     # Format for circulaire : circulaire://<date>_<identifier>
-    elif scheme_part == Circulaire.scheme:
+    elif scheme_part == CirculaireDocument.scheme:
         (date,), (identifier,) = _load_tokens(document_part, required=[0], optional=[1])
-        document = Circulaire(date=date, identifier=identifier)
+        document = CirculaireDocument(date=date, identifier=identifier)
 
     # Format for code : code://<title>
-    elif scheme_part == Code.scheme:
+    elif scheme_part == CodeDocument.scheme:
         (title,), _ = _load_tokens(document_part, required=[0])
-        document = Code(title=title)
+        document = CodeDocument(title=title)
 
     # Format for EU act : eu://<act_type>_<identifier>_<domain>
-    elif scheme_part == EuAct.scheme:
+    elif scheme_part == EuActDocument.scheme:
         (act_type, identifier), (domain,) = _load_tokens(document_part, required=[0, 1], optional=[2])
-        document = EuAct(act_type=act_type, identifier=identifier, domain=domain)
+        document = EuActDocument(act_type=act_type, identifier=identifier, domain=domain)
 
     # Format for self reference : self://self
-    elif scheme_part == Self.scheme:
-        document = Self()
+    elif scheme_part == SelfDocument.scheme:
+        document = SelfDocument()
 
     # Format for unknown, or not completely defined document
     elif scheme_part == UnknownDocument.scheme:
@@ -273,7 +114,7 @@ def parse_uri(uri: URI) -> tuple[Union[Document, None], List[Section]]:
         # unknown://arrete_<date>
         if document_type == UnknownDocumentTypes.arrete.value:
             (date,), _ = _load_tokens(document_part, required=[1])
-            document = ArreteUnknown(date=date)
+            document = ArreteUnknownDocument(date=date)
 
         # unknown://unknown 
         elif document_type == UnknownDocumentTypes.unknown.value:

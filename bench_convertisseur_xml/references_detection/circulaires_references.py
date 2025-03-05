@@ -8,7 +8,8 @@ from bench_convertisseur_xml.types import PageElementOrString
 from bench_convertisseur_xml.utils.functional import flat_map_string
 from bench_convertisseur_xml.html_schemas import DOCUMENT_REFERENCE_SCHEMA
 from bench_convertisseur_xml.utils.html import make_data_tag
-from bench_convertisseur_xml.uri import render_uri, Circulaire
+from bench_convertisseur_xml.law_data.types import CirculaireDocument
+from bench_convertisseur_xml.law_data.uri import render_uri
 
 
 # Examples :
@@ -80,7 +81,7 @@ def _render_circulaire_container(
     if circulaire_date is None:
         raise ValueError('Could not find circulaire date')
 
-    document = Circulaire(
+    document = CirculaireDocument(
         date=circulaire_date,
         identifier=circulaire_match.match_dict.get('identifier', None),
     )

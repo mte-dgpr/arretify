@@ -9,7 +9,8 @@ from bench_convertisseur_xml.types import PageElementOrString
 from bench_convertisseur_xml.utils.functional import flat_map_string
 from bench_convertisseur_xml.html_schemas import DOCUMENT_REFERENCE_SCHEMA
 from bench_convertisseur_xml.utils.html import make_data_tag
-from bench_convertisseur_xml.uri import render_uri, Code
+from bench_convertisseur_xml.law_data.types import CodeDocument
+from bench_convertisseur_xml.law_data.uri import render_uri
 
 
 # TODO: Makes parsing very slow, because compiles into a big OR regex.
@@ -48,7 +49,7 @@ def _render_code_container(
         get_code_titles(), 
         code_group_match.match_dict['title']
     )
-    document = Code(
+    document = CodeDocument(
         title=title,
     )
     return make_data_tag(

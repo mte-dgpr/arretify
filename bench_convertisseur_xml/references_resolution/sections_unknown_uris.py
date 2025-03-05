@@ -6,7 +6,7 @@ from bench_convertisseur_xml.types import PageElementOrString
 from bench_convertisseur_xml.utils.element_ranges import iter_collapsed_range_right, iter_collapsed_range_left, ElementRange
 from bench_convertisseur_xml.utils.html import make_css_class
 from bench_convertisseur_xml.html_schemas import SECTION_REFERENCE_SCHEMA, SECTION_REFERENCE_MULTIPLE_SCHEMA, DOCUMENT_REFERENCE_SCHEMA
-from bench_convertisseur_xml.uri import UnknownDocument, parse_uri, render_uri
+from bench_convertisseur_xml.law_data.uri import UnknownDocument, parse_uri, render_uri
 from bench_convertisseur_xml.regex_utils import regex_tree
 
 SECTION_REFERENCE_CSS_CLASS = make_css_class(SECTION_REFERENCE_SCHEMA)

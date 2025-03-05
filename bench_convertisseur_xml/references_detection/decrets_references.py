@@ -8,7 +8,8 @@ from bench_convertisseur_xml.types import PageElementOrString
 from bench_convertisseur_xml.utils.functional import flat_map_string
 from bench_convertisseur_xml.html_schemas import DOCUMENT_REFERENCE_SCHEMA
 from bench_convertisseur_xml.utils.html import make_data_tag
-from bench_convertisseur_xml.uri import render_uri, Decret
+from bench_convertisseur_xml.law_data.types import DecretDocument
+from bench_convertisseur_xml.law_data.uri import render_uri
 
 
 # Examples :
@@ -64,7 +65,7 @@ def _render_decret_container(
     if decret_date is None:
         raise ValueError('Could not find decret date')
 
-    document = Decret(
+    document = DecretDocument(
         date=decret_date,
         identifier=decret_match.match_dict.get('identifier', None),
     )
