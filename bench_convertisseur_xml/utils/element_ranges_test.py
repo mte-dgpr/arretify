@@ -2,7 +2,7 @@ import unittest
 
 from bs4 import BeautifulSoup
 
-from .html_find import find_element_range, _find_next_after, _is_descendant, _is_parent, _collapse_element_range
+from .html_ranges import find_element_range, _find_next_after, _is_descendant, _is_parent, _collapse_element_range
 
 
 class TestFindElementRange(unittest.TestCase):

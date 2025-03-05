@@ -3,7 +3,7 @@ from typing import List, Iterable, cast
 from bs4 import BeautifulSoup, Tag, PageElement
 
 from bench_convertisseur_xml.types import PageElementOrString
-from bench_convertisseur_xml.utils.html_find import find_element_range
+from bench_convertisseur_xml.utils.element_ranges import find_element_range
 from bench_convertisseur_xml.utils.html import make_css_class
 from bench_convertisseur_xml.html_schemas import SECTION_REFERENCE_SCHEMA, DOCUMENT_REFERENCE_SCHEMA
 from bench_convertisseur_xml.uri import UnknownDocument, parse_uri, render_uri
