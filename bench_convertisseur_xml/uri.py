@@ -23,7 +23,7 @@ class UnknownDocumentTypes(Enum):
 
 class _DocumentBase:
     allowed_section_types: ClassVar[List[SectionType]] = []
-    scheme: ClassVar[str] = 'unknown'
+    scheme: ClassVar[str] = ''
 
 
 @dataclass(frozen=True)
@@ -115,6 +115,10 @@ class Self(_DocumentBase):
     Self reference.
     """
     scheme: ClassVar[str] = 'self'
+    allowed_section_types: ClassVar[List[SectionType]] = [
+        SectionType.article,
+        SectionType.alinea,
+    ]
 
 
 @dataclass(frozen=True)
@@ -137,6 +141,15 @@ class EuAct(_DocumentBase):
             raise ValueError(f'Domain "{self.domain}" is not in the list of EU act domains')
         if not self.act_type in EU_ACT_TYPES:
             raise ValueError(f'Act type "{self.act_type}" is not in the list of EU act types')
+
+
+@dataclass(frozen=True)
+class UnknownDocument(_DocumentBase):
+    scheme: ClassVar[str] = 'unknown'
+    allowed_section_types: ClassVar[List[SectionType]] = [
+        SectionType.article,
+        SectionType.alinea,
+    ]
 
 
 @dataclass(frozen=True)
@@ -208,7 +221,7 @@ def render_uri(
         else:
             raise ValueError(f'Unsupported section type "{section.type}"')
 
-    scheme_part = document.scheme if document else _DocumentBase.scheme
+    scheme_part = document.scheme if document else UnknownDocument.scheme
 
     return f'{scheme_part}://{document_part}{path}'
 
@@ -254,7 +267,7 @@ def parse_uri(uri: URI) -> tuple[Union[Document, None], List[Section]]:
         document = Self()
 
     # Format for unknown, or not completely defined document
-    elif scheme_part == _DocumentBase.scheme:
+    elif scheme_part == UnknownDocument.scheme:
         (document_type,), _ = _load_tokens(document_part, required=[0])
 
         # unknown://arrete_<date>

@@ -1,6 +1,7 @@
 import unittest
 
 from .compile import Literal, Group, Quantifier, Branching, Sequence
+from . import compile
 
 
 class TestCompilePattern(unittest.TestCase):
@@ -96,6 +97,7 @@ class TestCompilePattern(unittest.TestCase):
 
     def test_node_repr(self):
         # Arrange
+        compile._COUNTER = 0
         node1 = Literal(r"bla")
         node2 = Literal(r"bla|blo|bli|blu")
 
