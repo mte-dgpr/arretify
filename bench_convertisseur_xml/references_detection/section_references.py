@@ -6,7 +6,7 @@ from typing import Iterable, TypedDict, Tuple, cast, Pattern, Dict, Iterable, Li
 
 from ..settings import APP_ROOT, LOGGER
 from bench_convertisseur_xml.utils.functional import flat_map_string
-from bench_convertisseur_xml.html_schemas import SECTION_REFERENCE_SCHEMA
+from bench_convertisseur_xml.html_schemas import SECTION_REFERENCE_SCHEMA, SECTION_REFERENCE_MULTIPLE_SCHEMA
 from bench_convertisseur_xml.utils.html import make_data_tag, PageElementOrString
 from bench_convertisseur_xml.parsing_utils.patterns import ET_VIRGULE_PATTERN_S, EME_PATTERN_S, ORDINAL_PATTERN_S, ordinal_str_to_int
 from bench_convertisseur_xml.regex_utils import regex_tree, flat_map_regex_tree_match, split_string_with_regex_tree, iter_regex_tree_match_strings, filter_regex_tree_match_children
@@ -251,18 +251,24 @@ def _parse_section_reference_multiple_articles(
         children,
         lambda string: flat_map_regex_tree_match(
             split_string_with_regex_tree(SECTION_REFERENCE_MULTIPLE_ARTICLES_NODE, string),
-            lambda section_reference_multiple_match: flat_map_regex_tree_match(
-                section_reference_multiple_match.children,
-                lambda section_reference_match: [
-                    make_data_tag(
-                        soup,
-                        SECTION_REFERENCE_SCHEMA, 
-                        data=dict(uri=_extract_uri(section_reference_match)),
-                        contents=iter_regex_tree_match_strings(section_reference_match),
+            lambda section_reference_multiple_match: [
+                make_data_tag(
+                    soup,
+                    SECTION_REFERENCE_MULTIPLE_SCHEMA, 
+                    contents=flat_map_regex_tree_match(
+                        section_reference_multiple_match.children,
+                        lambda section_reference_match: [
+                            make_data_tag(
+                                soup,
+                                SECTION_REFERENCE_SCHEMA, 
+                                data=dict(uri=_extract_uri(section_reference_match)),
+                                contents=iter_regex_tree_match_strings(section_reference_match),
+                            ),
+                        ],
+                        allowed_group_names=['__section_reference'],
                     ),
-                ],
-                allowed_group_names=['__section_reference'],
-            ),
+                )
+            ],
             allowed_group_names=['__section_reference_multiple'],
         )
     )
@@ -316,28 +322,34 @@ def _parse_section_reference_multiple_alineas(
         children,
         lambda string: flat_map_regex_tree_match(
             split_string_with_regex_tree(SECTION_REFERENCE_MULTIPLE_ALINEA_NODE, string),
-            lambda section_reference_multiple_match: flat_map_regex_tree_match(
-                section_reference_multiple_match.children,
-                lambda section_reference_match: [
-                    make_data_tag(
-                        soup,
-                        SECTION_REFERENCE_SCHEMA, 
-                        data=dict(
-                            uri=_extract_uri(
-                                # Find the tree match that contains the article id
-                                # and pass it to the uri extraction function
-                                filter_regex_tree_match_children(
-                                    section_reference_multiple_match, 
-                                    group_names=['__section_reference_with_article']
-                                )[0],
-                                section_reference_match,
-                            )
-                        ),
-                        contents=iter_regex_tree_match_strings(section_reference_match),
-                    ),
-                ],
-                allowed_group_names=['__section_reference', '__section_reference_with_article'],
-            ),
+            lambda section_reference_multiple_match: [
+                make_data_tag(
+                    soup,
+                    SECTION_REFERENCE_MULTIPLE_SCHEMA, 
+                    contents=flat_map_regex_tree_match(
+                        section_reference_multiple_match.children,
+                        lambda section_reference_match: [
+                            make_data_tag(
+                                soup,
+                                SECTION_REFERENCE_SCHEMA, 
+                                data=dict(
+                                    uri=_extract_uri(
+                                        # Find the tree match that contains the article id
+                                        # and pass it to the uri extraction function
+                                        filter_regex_tree_match_children(
+                                            section_reference_multiple_match, 
+                                            group_names=['__section_reference_with_article']
+                                        )[0],
+                                        section_reference_match,
+                                    )
+                                ),
+                                contents=iter_regex_tree_match_strings(section_reference_match),
+                            ),
+                        ],
+                        allowed_group_names=['__section_reference', '__section_reference_with_article'],
+                    )
+                )
+            ],
             allowed_group_names=['__section_reference_multiple'],
         )
     )

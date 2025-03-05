@@ -81,6 +81,12 @@ SECTION_REFERENCE_SCHEMA = DataElementSchema(
     data_keys=['uri'],
 )
 
+SECTION_REFERENCE_MULTIPLE_SCHEMA = DataElementSchema(
+    name="section_reference_multiple",
+    tag_name="span",
+    data_keys=[],
+)
+
 DATE_SCHEMA = DataElementSchema(
     name="date",
     tag_name="time",
