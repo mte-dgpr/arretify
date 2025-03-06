@@ -1,4 +1,4 @@
-from typing import ClassVar, List, Union, Optional
+from typing import ClassVar, List, Union, Optional, Literal
 from dataclasses import dataclass
 from enum import Enum
 
@@ -13,6 +13,8 @@ class SectionType(Enum):
 class UnknownDocumentTypes(Enum):
     unknown = 'unknown'
     arrete = 'arrete'
+    ap = 'ap'
+    am = 'am'
 
 
 class _DocumentBase:
@@ -23,6 +25,7 @@ class _DocumentBase:
 @dataclass(frozen=True)
 class ArreteMinisterielDocument(_DocumentBase):
     date: str
+    legifrance_id: str
 
     scheme: ClassVar[str] = 'am'
     allowed_section_types: ClassVar[List[SectionType]] = [
@@ -33,8 +36,8 @@ class ArreteMinisterielDocument(_DocumentBase):
 
 @dataclass(frozen=True)
 class ArretePrefectoralDocument(_DocumentBase):
-    date: Union[str, None]
-    identifier: Union[str, None]
+    date: Optional[str]
+    identifier: Optional[str]
 
     scheme: ClassVar[str] = 'ap'
     allowed_section_types: ClassVar[List[SectionType]] = [
@@ -45,20 +48,6 @@ class ArretePrefectoralDocument(_DocumentBase):
     def __post_init__(self):
         if self.date is None and self.identifier is None:
             raise ValueError('Both date and identifier cannot be None')
-
-
-@dataclass(frozen=True)
-class ArreteUnknownDocument(_DocumentBase):
-    """
-    Arrete from undefined authority.
-    """
-    date: str
-
-    scheme: ClassVar[str] = 'unknown'
-    allowed_section_types: ClassVar[List[SectionType]] = [
-        SectionType.article,
-        SectionType.alinea,
-    ]
 
 
 @dataclass(frozen=True)
@@ -135,11 +124,20 @@ class EuActDocument(_DocumentBase):
 
 @dataclass(frozen=True)
 class UnknownDocument(_DocumentBase):
+    type: UnknownDocumentTypes
+    date: Optional[str]
+
     scheme: ClassVar[str] = 'unknown'
     allowed_section_types: ClassVar[List[SectionType]] = [
         SectionType.article,
         SectionType.alinea,
     ]
+
+    def __post_init__(self):
+        if self.type in [
+            UnknownDocumentTypes.arrete, UnknownDocumentTypes.am, UnknownDocumentTypes.ap
+        ] and not self.date:
+            raise ValueError(f'Date is missing for "{self.type}"')
 
 
 @dataclass(frozen=True)
@@ -157,4 +155,4 @@ class Section:
         return cls(SectionType.article, start, end)
 
 
-Document = Union[ArretePrefectoralDocument, ArreteMinisterielDocument, ArreteUnknownDocument, DecretDocument, CirculaireDocument, CodeDocument, EuActDocument, SelfDocument]
+Document = Union[ArretePrefectoralDocument, ArreteMinisterielDocument, DecretDocument, CirculaireDocument, CodeDocument, EuActDocument, SelfDocument, UnknownDocument]

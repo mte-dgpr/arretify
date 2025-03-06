@@ -20,14 +20,8 @@ def get_code_titles() -> List[str]:
     return [code['titre'] for code in CODES]
 
 
-def get_arrete(title: str, date: date) -> str:
+def get_arrete_legifrance_id(title: str, date: date) -> str | None:
     tokens = authenticate()
     for arrete in search_arrete(tokens, title, date):
-        return 
-
-        [
-            "id"
-            "cid"
-            "title"
-        ]
-    raise ValueError(f"Arrete '{title}', date {date} not found")
+        return arrete['titles'][0]['cid']
+    return None

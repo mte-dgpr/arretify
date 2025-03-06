@@ -1,6 +1,7 @@
 import unittest
 
-from .uri import render_uri, parse_uri, ArretePrefectoralDocument, ArreteMinisterielDocument, ArreteUnknownDocument, DecretDocument, CirculaireDocument, CodeDocument, SelfDocument, EuActDocument, SectionType, Section, _validate_sections
+from .uri import render_uri, parse_uri, _validate_sections
+from .types import UnknownDocumentTypes, ArretePrefectoralDocument, ArreteMinisterielDocument, DecretDocument, CirculaireDocument, CodeDocument, SelfDocument, EuActDocument, UnknownDocument, SectionType, Section
 
 
 class TestRenderUri(unittest.TestCase):
@@ -67,15 +68,21 @@ class TestRenderUri(unittest.TestCase):
 
     def test_render_arrete_ministeriel(self):
         uri = render_uri(
-            ArreteMinisterielDocument(date='2022-01-01')
+            ArreteMinisterielDocument(date='2022-01-01', legifrance_id='1234')
         )
-        assert uri == 'am://2022-01-01'
+        assert uri == 'am://2022-01-01_1234'
 
     def test_arrete_unknown(self):
         uri = render_uri(
-            ArreteUnknownDocument(date='2022-01-01')
+            UnknownDocument(type=UnknownDocumentTypes.arrete, date='2022-01-01')
         )
         assert uri == 'unknown://arrete_2022-01-01'
+
+    def test_am_unknown(self):
+        uri = render_uri(
+            UnknownDocument(type=UnknownDocumentTypes.am, date='2022-01-01')
+        )
+        assert uri == 'unknown://am_2022-01-01'
 
     def test_decret(self):
         uri = render_uri(
@@ -169,13 +176,18 @@ class TestParseUri(unittest.TestCase):
         assert sections == [Section(type=SectionType.article, start='R. 511-9')]
 
     def test_am(self):
-        document, sections = parse_uri('am://2022-01-01')
-        assert document == ArreteMinisterielDocument(date='2022-01-01')
+        document, sections = parse_uri('am://2022-01-01_1234')
+        assert document == ArreteMinisterielDocument(date='2022-01-01', legifrance_id='1234')
         assert sections == []
 
     def test_arrete_unknown(self):
         document, sections = parse_uri('unknown://arrete_2022-01-01')
-        assert document == ArreteUnknownDocument(date='2022-01-01')
+        assert document == UnknownDocument(date='2022-01-01', type=UnknownDocumentTypes.arrete)
+        assert sections == []
+
+    def test_am_unknown(self):
+        document, sections = parse_uri('unknown://am_2022-01-01')
+        assert document == UnknownDocument(date='2022-01-01', type=UnknownDocumentTypes.am)
         assert sections == []
 
     def test_decret(self):
@@ -215,7 +227,7 @@ class TestParseUri(unittest.TestCase):
 
     def test_unknown_document_with_sections(self):
         document, sections = parse_uri('unknown://unknown/alinea_1_2')
-        assert document is None
+        assert document == UnknownDocument(date=None, type=UnknownDocumentTypes.unknown)
         assert sections == [Section(type=SectionType.alinea, start='1', end='2')]
 
 

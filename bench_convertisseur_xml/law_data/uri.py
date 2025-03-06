@@ -5,7 +5,7 @@ from enum import Enum
 
 from bench_convertisseur_xml.types import URI
 from bench_convertisseur_xml.law_data.legifrance import get_code_titles
-from .types import SectionType, Section, Document, ArretePrefectoralDocument, ArreteMinisterielDocument, ArreteUnknownDocument, DecretDocument, CirculaireDocument, CodeDocument, EuActDocument, SelfDocument, UnknownDocumentTypes, UnknownDocument
+from .types import SectionType, Section, Document, ArretePrefectoralDocument, ArreteMinisterielDocument, DecretDocument, CirculaireDocument, CodeDocument, EuActDocument, SelfDocument, UnknownDocumentTypes, UnknownDocument
 
 
 _SEPARATOR = '_'
@@ -21,13 +21,9 @@ def render_uri(
     if isinstance(document, ArretePrefectoralDocument):
         document_part = _join_tokens(document.date, document.identifier)
     
-    # Format for AM URI base : am://<date>
+    # Format for AM URI base : am://<date>_<legifrance_id>
     elif isinstance(document, ArreteMinisterielDocument):
-        document_part = _join_tokens(document.date)
-
-    # Format for unknown arrete : unknown://arrete_<date>
-    elif isinstance(document, ArreteUnknownDocument):
-        document_part = _join_tokens(UnknownDocumentTypes.arrete.value, document.date)
+        document_part = _join_tokens(document.date, document.legifrance_id)
 
     # Format for decret : decret://<date>_<identifier>
     elif isinstance(document, DecretDocument):
@@ -49,7 +45,13 @@ def render_uri(
     elif isinstance(document, SelfDocument):
         document_part = 'self'
 
-    # Format for unknown document : unknown://unknown
+    # Format for unknown arrete : unknown://<arrete|am|ap>_<date>
+    elif isinstance(document, UnknownDocument):
+        if document.type in [UnknownDocumentTypes.arrete, UnknownDocumentTypes.am, UnknownDocumentTypes.ap]:
+            document_part = _join_tokens(document.type.value, document.date)
+        else:
+            document_part = _join_tokens(document.type.value)
+
     elif document is None:
         document_part = _join_tokens(UnknownDocumentTypes.unknown.value)
 
@@ -75,13 +77,13 @@ def parse_uri(uri: URI) -> tuple[Union[Document, None], List[Section]]:
 
     # Format for AP URI base : ap://<date>_<identifier>
     if scheme_part == ArretePrefectoralDocument.scheme:
-        _, (date, identifier) = _load_tokens(document_part, optional=[0, 1])
+        (date,), (identifier,) = _load_tokens(document_part, required=[0], optional=[1])
         document = ArretePrefectoralDocument(date=date, identifier=identifier)
 
-    # Format for AM URI base : am://<date>
+    # Format for AM URI base : am://<date>_<legifrance_id>
     elif scheme_part == ArreteMinisterielDocument.scheme:
-        (date,), _ = _load_tokens(document_part, required=[0])
-        document = ArreteMinisterielDocument(date=date)
+        (date, legifrance_id), _ = _load_tokens(document_part, required=[0, 1])
+        document = ArreteMinisterielDocument(date=date, legifrance_id=legifrance_id)
 
     # Format for decret : decret://<date>_<identifier>
     elif scheme_part == DecretDocument.scheme:
@@ -107,18 +109,20 @@ def parse_uri(uri: URI) -> tuple[Union[Document, None], List[Section]]:
     elif scheme_part == SelfDocument.scheme:
         document = SelfDocument()
 
-    # Format for unknown, or not completely defined document
+    # Format for unknown : unknown://unknown
+    # or not completely defined document : unknown://<arrete|am|ap>_<date>
     elif scheme_part == UnknownDocument.scheme:
-        (document_type,), _ = _load_tokens(document_part, required=[0])
+        (document_type_value,), _ = _load_tokens(document_part, required=[0])
+        document_type = UnknownDocumentTypes(document_type_value)
 
-        # unknown://arrete_<date>
-        if document_type == UnknownDocumentTypes.arrete.value:
+        date: str | None = None
+        if document_type in [UnknownDocumentTypes.arrete, UnknownDocumentTypes.am, UnknownDocumentTypes.ap]:
             (date,), _ = _load_tokens(document_part, required=[1])
-            document = ArreteUnknownDocument(date=date)
 
-        # unknown://unknown 
-        elif document_type == UnknownDocumentTypes.unknown.value:
-            document = None
+        document = UnknownDocument(
+            date=date,
+            type=document_type,
+        )
 
     # Format for articles and alineas part : /<type>_<start>_<end>
     sections: List[Section] = []

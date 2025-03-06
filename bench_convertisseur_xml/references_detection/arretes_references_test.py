@@ -10,13 +10,13 @@ class TestParseArreteReferences(unittest.TestCase):
     def test_arrete_date1(self):
         assert _parsed_elements('Vu l\'arrêté ministériel du 2 février 1998, ') == [
             'Vu l\'',
-            '<a class="dsr-document_reference" data-uri="am://1998-02-02">arrêté ministériel du <time class="dsr-date" datetime="1998-02-02">2 février 1998</time></a>',
+            '<a class="dsr-document_reference" data-uri="unknown://am_1998-02-02">arrêté ministériel du <time class="dsr-date" datetime="1998-02-02">2 février 1998</time></a>',
             ', '
         ]
 
     def test_arrete_date1_end_modifiant(self):
         assert _parsed_elements('arrêté ministériel du 23 mai 2016 modifiant relatif aux installations de production de chaleur') == [
-            '<a class="dsr-document_reference" data-uri="am://2016-05-23">arrêté ministériel du <time class="dsr-date" datetime="2016-05-23">23 mai 2016</time> modifiant</a>',
+            '<a class="dsr-document_reference" data-uri="unknown://am_2016-05-23">arrêté ministériel du <time class="dsr-date" datetime="2016-05-23">23 mai 2016</time> modifiant</a>',
             ' relatif aux installations de production de chaleur'
         ]
 
@@ -46,7 +46,7 @@ class TestParseArreteReferencesAll(unittest.TestCase):
     def test_several_references(self):
         assert _parsed_elements('Bla bla arrêté ministériel du 23 mai 2016 relatif aux installations de production de chaleur et arrêté préfectoral n° 1234-567/01.') == [
             'Bla bla ',
-            '<a class="dsr-document_reference" data-uri="am://2016-05-23">arrêté ministériel du <time class="dsr-date" datetime="2016-05-23">23 mai 2016</time></a>',
+            '<a class="dsr-document_reference" data-uri="unknown://am_2016-05-23">arrêté ministériel du <time class="dsr-date" datetime="2016-05-23">23 mai 2016</time></a>',
             ' relatif aux installations de production de chaleur et ',
             '<a class="dsr-document_reference" data-uri="ap://_1234-567%2F01.">arrêté préfectoral n° 1234-567/01.</a>',
         ]

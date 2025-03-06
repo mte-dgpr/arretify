@@ -15,6 +15,7 @@ from .references_detection.codes_references import parse_codes_references
 from .references_detection.self_references import parse_self_references
 from .references_detection.eu_acts_references import parse_eu_acts_references
 from .references_resolution.sections_unknown_uris import resolve_sections_unknown_uris
+from .references_resolution.documents_unknown_arrete_uris import resolve_arretes_ministeriels_legifrance_ids
 from .operations_detection.operations import parse_operations
 from .clean_ocrized_file import clean_ocrized_file
 from .html_schemas import ALINEA_SCHEMA, DOCUMENT_REFERENCE_SCHEMA, VISA_SCHEMA, MOTIF_SCHEMA
@@ -44,13 +45,17 @@ def ocrized_arrete_to_html(lines: TextSegments) -> BeautifulSoup:
         new_children = parse_self_references(soup, new_children)
         new_children = parse_eu_acts_references(soup, new_children)
         new_children = parse_section_references(soup, new_children)
-        
         element.clear()
         element.extend(new_children)
 
         new_children = list(element.children)
-        new_children = resolve_sections_unknown_uris(soup, new_children)
+        new_children = resolve_arretes_ministeriels_legifrance_ids(soup, new_children)
+        element.clear()
+        element.extend(new_children)
 
+    for element in soup.select(f'.{ALINEA_CSS_CLASS}, .{ALINEA_CSS_CLASS} *, .{MOTIF_CSS_CLASS}, .{VISA_CSS_CLASS}'):
+        new_children = list(element.children)
+        new_children = resolve_sections_unknown_uris(soup, new_children)
         element.clear()
         element.extend(new_children)
 

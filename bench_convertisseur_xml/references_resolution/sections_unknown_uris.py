@@ -6,8 +6,10 @@ from bench_convertisseur_xml.types import PageElementOrString
 from bench_convertisseur_xml.utils.element_ranges import iter_collapsed_range_right, iter_collapsed_range_left, ElementRange
 from bench_convertisseur_xml.utils.html import make_css_class
 from bench_convertisseur_xml.html_schemas import SECTION_REFERENCE_SCHEMA, SECTION_REFERENCE_MULTIPLE_SCHEMA, DOCUMENT_REFERENCE_SCHEMA
-from bench_convertisseur_xml.law_data.uri import UnknownDocument, parse_uri, render_uri
+from bench_convertisseur_xml.law_data.uri import parse_uri, render_uri
+from bench_convertisseur_xml.law_data.types import UnknownDocument
 from bench_convertisseur_xml.regex_utils import regex_tree
+from .core import filter_section_references
 
 SECTION_REFERENCE_CSS_CLASS = make_css_class(SECTION_REFERENCE_SCHEMA)
 SECTION_REFERENCE_MULTIPLE_CSS_CLASS = make_css_class(SECTION_REFERENCE_MULTIPLE_SCHEMA)
@@ -45,15 +47,7 @@ def _resolve_single_section_unknown_uri(
     children: Iterable[PageElementOrString],
 ) -> List[PageElementOrString]:
     children = list(children)
-    section_references = [
-        child for child in children
-        if (
-            isinstance(child, Tag) 
-            and SECTION_REFERENCE_CSS_CLASS in child.get('class', []) 
-            and cast(str, child.get('data-uri', '')).startswith(UnknownDocument.scheme)
-        )
-    ]
-
+    section_references = filter_section_references(children, UnknownDocument)
     for section_reference_tag in section_references:
         element_range = _find_section_document_range(section_reference_tag)
         if element_range is None:
