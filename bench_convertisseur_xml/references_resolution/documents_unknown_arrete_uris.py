@@ -7,6 +7,7 @@ from bench_convertisseur_xml.types import PageElementOrString
 from bench_convertisseur_xml.law_data.types import UnknownDocument, UnknownDocumentTypes, ArreteMinisterielDocument
 from bench_convertisseur_xml.law_data.uri import parse_uri, render_uri
 from bench_convertisseur_xml.law_data.legifrance import get_arrete_legifrance_id
+from bench_convertisseur_xml.law_data.external_urls import resolve_external_url
 from bench_convertisseur_xml.regex_utils import PatternProxy, safe_group
 from bench_convertisseur_xml.parsing_utils.dates import parse_date_str
 from bench_convertisseur_xml.settings import LOGGER
@@ -51,6 +52,9 @@ def resolve_arretes_ministeriels_legifrance_ids(
             document = ArreteMinisterielDocument(legifrance_id=arrete_id, date=document.date)
             updated_uri = render_uri(document, *sections)
             document_reference_tag['data-uri'] = updated_uri
+            external_url = resolve_external_url(updated_uri)
+            if external_url is not None:
+                document_reference_tag['href'] = external_url
 
     return children
 
