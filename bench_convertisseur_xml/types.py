@@ -24,3 +24,4 @@ LineColumn = Tuple[int, int]
 """Tuple line and column number. Line and column numbers are 0-indexed."""
 
 URI = str
+ExternalURL = str

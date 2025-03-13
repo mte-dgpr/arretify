@@ -11,7 +11,8 @@ from bench_convertisseur_xml.html_schemas import DOCUMENT_REFERENCE_SCHEMA
 from bench_convertisseur_xml.parsing_utils.patterns import ET_VIRGULE_PATTERN_S
 from bench_convertisseur_xml.parsing_utils.dates import DATE_NODE, render_date_regex_tree_match
 from bench_convertisseur_xml.regex_utils import regex_tree, flat_map_regex_tree_match, split_string_with_regex_tree
-from bench_convertisseur_xml.uri import ArretePrefectoral, ArreteMinisteriel, ArreteUnknown, render_uri, Document
+from bench_convertisseur_xml.law_data.types import ArretePrefectoralDocument, ArreteMinisterielDocument, UnknownDocument, Document, UnknownDocumentTypes
+from bench_convertisseur_xml.law_data.uri import render_uri
 
 Authority = Literal['préfectoral', 'ministériel']
 
@@ -123,25 +124,26 @@ def _render_arrete_container(
     # Build the arrete document object
     authority_raw = base_arrete_match.match_dict.get('authority')
     document: Document
-    if authority_raw in ['ministériels', 'ministériel']:
+    if authority_raw in ['ministériels', 'ministériel'] or not authority_raw:
         if not arrete_date:
-            raise RuntimeError('Date is required')
-        document = ArreteMinisteriel(
-            date=arrete_date,
-        )
+            raise RuntimeError('Date is required for arretes')
+
+        if not authority_raw:
+            document = UnknownDocument(
+                date=arrete_date,
+                type=UnknownDocumentTypes.arrete,
+            )
+        else:
+            document = UnknownDocument(
+                date=arrete_date,
+                type=UnknownDocumentTypes.am,
+            )
+    
     elif authority_raw in ['préfectoraux', 'préfectoral']:
-        document = ArretePrefectoral(
+        document = ArretePrefectoralDocument(
             date=arrete_date,
             identifier=_extract_identifier(arrete_match),
         )
-    elif arrete_date:
-        if not arrete_date:
-            raise RuntimeError('Date is required')
-        document = ArreteUnknown(
-            date=arrete_date,
-        )
-    else:
-        raise ValueError('Could not determine the type of arrete')
 
     # Render the arrete tag
     return make_data_tag(

@@ -304,7 +304,7 @@ La demande d'autorisation de changement d'exploitant est soumise à autorisation
 
 # ARTICLE 1.5.6. CESSATION D'ACTIVITE
 
-Sans préjudice des mesures de l'article R. 512-74 du code de l'environnement, pour l'application des articles R. 512-39.1 à R. 512-39-5, l'usage du site à prévoir en coutume est un usage industriel.
+Sans préjudice des mesures de l'article R. 512-74 du code de l'environnement, pour l'application des articles R. 512-39-1 à R. 512-39-5, l'usage du site à prévoir en coutume est un usage industriel.
 
 Lorsque l'installation classée est mise à l'arrêt définitif, l'exploitant notifie au préfet la date de cet arrêt trois mois au moins avant celui-ci.
 

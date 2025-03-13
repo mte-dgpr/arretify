@@ -7,7 +7,8 @@ from bench_convertisseur_xml.types import PageElementOrString
 from bench_convertisseur_xml.utils.functional import flat_map_string
 from bench_convertisseur_xml.html_schemas import DOCUMENT_REFERENCE_SCHEMA
 from bench_convertisseur_xml.utils.html import make_data_tag
-from bench_convertisseur_xml.uri import render_uri, Self
+from bench_convertisseur_xml.law_data.types import SelfDocument
+from bench_convertisseur_xml.law_data.uri import render_uri
 
 
 SELF_NODE = regex_tree.Group(
@@ -30,7 +31,7 @@ def parse_self_references(
                 make_data_tag(
                     soup, 
                     DOCUMENT_REFERENCE_SCHEMA,
-                    data=dict(uri=render_uri(Self())),
+                    data=dict(uri=render_uri(SelfDocument())),
                     contents=iter_regex_tree_match_strings(self_group_match),
                 ),
             ],

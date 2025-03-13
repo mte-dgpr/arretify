@@ -1,6 +1,7 @@
 import unittest
 
 from .compile import Literal, Group, Quantifier, Branching, Sequence
+from . import compile
 
 
 class TestCompilePattern(unittest.TestCase):
@@ -96,9 +97,10 @@ class TestCompilePattern(unittest.TestCase):
 
     def test_node_repr(self):
         # Arrange
+        compile._COUNTER = 0
         node1 = Literal(r"bla")
         node2 = Literal(r"bla|blo|bli|blu")
 
         # Assert
-        assert repr(node1) == '<_ID_1, LiteralNode, "bla">'
-        assert repr(node2) == '<_ID_2, LiteralNode, "bla|blo|bl...">'
+        assert repr(node1) == f'<{node1.id}, LiteralNode, "bla">'
+        assert repr(node2) == f'<{node2.id}, LiteralNode, "bla|blo|bl...">'
