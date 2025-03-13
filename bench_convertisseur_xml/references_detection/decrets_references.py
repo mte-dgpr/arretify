@@ -7,9 +7,9 @@ from bench_convertisseur_xml.parsing_utils.dates import DATE_NODE, render_date_r
 from bench_convertisseur_xml.types import PageElementOrString
 from bench_convertisseur_xml.utils.functional import flat_map_string
 from bench_convertisseur_xml.html_schemas import DOCUMENT_REFERENCE_SCHEMA
-from bench_convertisseur_xml.utils.html import make_data_tag
-from bench_convertisseur_xml.law_data.types import DecretDocument
-from bench_convertisseur_xml.law_data.uri import render_uri
+from bench_convertisseur_xml.utils.html import make_data_tag, render_bool_attribute
+from bench_convertisseur_xml.law_data.types import Document, DocumentType
+from bench_convertisseur_xml.law_data.uri import render_uri, is_resolvable
 
 
 # Examples :
@@ -65,14 +65,18 @@ def _render_decret_container(
     if decret_date is None:
         raise ValueError('Could not find decret date')
 
-    document = DecretDocument(
+    document = Document(
+        type=DocumentType.decret,
         date=decret_date,
-        identifier=decret_match.match_dict.get('identifier', None),
+        num=decret_match.match_dict.get('identifier', None),
     )
 
     return make_data_tag(
         soup, 
         DOCUMENT_REFERENCE_SCHEMA,
-        data=dict(uri=render_uri(document)),
+        data=dict(
+            uri=render_uri(document),
+            is_resolvable=render_bool_attribute(is_resolvable(document)),
+        ),
         contents=decret_tag_contents,
     )

@@ -20,7 +20,10 @@ def make_data_tag(
     element = make_new_tag(soup, schema.tag_name, contents=contents)
     element['class'] = [make_css_class(schema)]
     for key in schema.data_keys:
-        data_value = data[key]
+        try:
+            data_value = data[key]
+        except KeyError:
+            raise KeyError(f'Missing key "{key}" for schema "{schema.name}"')
         if data_value is not None:
             element[f'data-{key}'] = data_value
     return element
@@ -61,3 +64,11 @@ def make_new_tag(
     element = soup.new_tag(tag_name)
     element.extend(merge_strings(contents))
     return element
+
+
+def parse_bool_attribute(value: str) -> bool:
+    return value == 'true'
+
+
+def render_bool_attribute(value: bool) -> str:
+    return 'true' if value else 'false'

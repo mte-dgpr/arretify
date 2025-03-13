@@ -10,7 +10,7 @@ class TestParseSelfReferences(unittest.TestCase):
     def test_simple(self):
         assert _parsed_elements('l\'article 8 du présent arrêté remplace') == [
             "l'article 8 du ",
-            '<a class="dsr-document_reference" data-uri="self://self">présent arrêté</a>',
+            '<a class="dsr-document_reference" data-is_resolvable="true" data-uri="dsr://self____">présent arrêté</a>',
             ' remplace',
         ]
 

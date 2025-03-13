@@ -5,150 +5,89 @@ from enum import Enum
 
 from bench_convertisseur_xml.types import URI
 from bench_convertisseur_xml.law_data.legifrance import get_code_titles
-from .types import SectionType, Section, Document, ArretePrefectoralDocument, ArreteMinisterielDocument, DecretDocument, CirculaireDocument, CodeDocument, EuActDocument, SelfDocument, UnknownDocumentTypes, UnknownDocument
+from .types import SectionType, Section, Document, DocumentType
 
 
 _SEPARATOR = '_'
+URI_SCHEME = 'dsr'
 
 
 def render_uri(
-    document: Union[Document, None],
+    document: Document,
     *sections: Section,
 ) -> URI:
-    _validate_sections(document, list(sections))
+    _validate_sections(list(sections))
 
-    # Format for AP URI base : ap://<date>_<identifier>
-    if isinstance(document, ArretePrefectoralDocument):
-        document_part = _join_tokens(document.date, document.identifier)
-    
-    # Format for AM URI base : am://<date>_<legifrance_id>
-    elif isinstance(document, ArreteMinisterielDocument):
-        document_part = _join_tokens(document.date, document.legifrance_id)
+    # dsr://<type>_<id>_<num>_<date>_<title>
+    document_part = _join_tokens(
+        document.type.value, 
+        document.id, 
+        document.num, 
+        document.date, 
+        document.title
+    )
 
-    # Format for decret : decret://<date>_<identifier>
-    elif isinstance(document, DecretDocument):
-        document_part = _join_tokens(document.date, document.identifier)
-
-    # Format for circulaire : circulaire://<date>_<identifier>
-    elif isinstance(document, CirculaireDocument):
-        document_part = _join_tokens(document.date, document.identifier)
-
-    # Format for code : code://<title>
-    elif isinstance(document, CodeDocument):
-        document_part = _join_tokens(document.title)
-
-    # Format for EU act : eu://<act_type>_<identifier>_<domain>
-    elif isinstance(document, EuActDocument):
-        document_part = _join_tokens(document.act_type, document.identifier, document.domain)
-
-    # Format for self reference : self://self
-    elif isinstance(document, SelfDocument):
-        document_part = 'self'
-
-    # Format for unknown arrete : unknown://<arrete|am|ap>_<date>
-    elif isinstance(document, UnknownDocument):
-        if document.type in [UnknownDocumentTypes.arrete, UnknownDocumentTypes.am, UnknownDocumentTypes.ap]:
-            document_part = _join_tokens(document.type.value, document.date)
-        else:
-            document_part = _join_tokens(document.type.value)
-
-    elif document is None:
-        document_part = _join_tokens(UnknownDocumentTypes.unknown.value)
-
-    # Format for articles and alineas part : /<type>_<start>_<end>
+    # Format for articles and alineas part : /<type>_<start_id>_<start_num>_<end_id>_<end_num>
     path = ''
     for section in sections:
-        if not document or section.type in document.allowed_section_types:
-            section_part = _join_tokens(section.type.value, section.start, section.end)
-            path += f'/{section_part}'
-        else:
-            raise ValueError(f'Unsupported section type "{section.type}"')
+        section_part = _join_tokens(section.type.value, section.start_id, section.start_num, section.end_id, section.end_num)
+        path += f'/{section_part}'
 
-    scheme_part = document.scheme if document else UnknownDocument.scheme
-
-    return f'{scheme_part}://{document_part}{path}'
+    return f'{URI_SCHEME}://{document_part}{path}'
 
 
-def parse_uri(uri: URI) -> tuple[Union[Document, None], List[Section]]:
+def parse_uri(uri: URI) -> tuple[Document, List[Section]]:
     scheme_part, rest = uri.split('://', 1)
+    if scheme_part != URI_SCHEME:
+        raise ValueError(f'Unsupported URI scheme "{scheme_part}"')
     
     document: Union[Document, None] = None
     document_part, *section_parts = rest.split('/')
+    tokens = _split_tokens(document_part)
+    if len(tokens) != 5:
+        raise ValueError(f'Invalid document part "{document_part}"')
+    document_type_value, id, num, date, title = tokens
+    document = Document(
+        type=DocumentType(document_type_value),
+        id=id,
+        num=num,
+        date=date,
+        title=title,
+    )
 
-    # Format for AP URI base : ap://<date>_<identifier>
-    if scheme_part == ArretePrefectoralDocument.scheme:
-        (date,), (identifier,) = _load_tokens(document_part, required=[0], optional=[1])
-        document = ArretePrefectoralDocument(date=date, identifier=identifier)
-
-    # Format for AM URI base : am://<date>_<legifrance_id>
-    elif scheme_part == ArreteMinisterielDocument.scheme:
-        (date, legifrance_id), _ = _load_tokens(document_part, required=[0, 1])
-        document = ArreteMinisterielDocument(date=date, legifrance_id=legifrance_id)
-
-    # Format for decret : decret://<date>_<identifier>
-    elif scheme_part == DecretDocument.scheme:
-        (date,), (identifier,) = _load_tokens(document_part, required=[0], optional=[1])
-        document = DecretDocument(date=date, identifier=identifier)
-
-    # Format for circulaire : circulaire://<date>_<identifier>
-    elif scheme_part == CirculaireDocument.scheme:
-        (date,), (identifier,) = _load_tokens(document_part, required=[0], optional=[1])
-        document = CirculaireDocument(date=date, identifier=identifier)
-
-    # Format for code : code://<title>
-    elif scheme_part == CodeDocument.scheme:
-        (title,), _ = _load_tokens(document_part, required=[0])
-        document = CodeDocument(title=title)
-
-    # Format for EU act : eu://<act_type>_<identifier>_<domain>
-    elif scheme_part == EuActDocument.scheme:
-        (act_type, identifier), (domain,) = _load_tokens(document_part, required=[0, 1], optional=[2])
-        document = EuActDocument(act_type=act_type, identifier=identifier, domain=domain)
-
-    # Format for self reference : self://self
-    elif scheme_part == SelfDocument.scheme:
-        document = SelfDocument()
-
-    # Format for unknown : unknown://unknown
-    # or not completely defined document : unknown://<arrete|am|ap>_<date>
-    elif scheme_part == UnknownDocument.scheme:
-        (document_type_value,), _ = _load_tokens(document_part, required=[0])
-        document_type = UnknownDocumentTypes(document_type_value)
-
-        date: str | None = None
-        if document_type in [UnknownDocumentTypes.arrete, UnknownDocumentTypes.am, UnknownDocumentTypes.ap]:
-            (date,), _ = _load_tokens(document_part, required=[1])
-
-        document = UnknownDocument(
-            date=date,
-            type=document_type,
-        )
-
-    # Format for articles and alineas part : /<type>_<start>_<end>
     sections: List[Section] = []
     for section_part in section_parts:
-        (section_type, start), (end,) = _load_tokens(section_part, required=[0, 1], optional=[2])
+        tokens = _split_tokens(section_part)
+        if len(tokens) != 5:
+            raise ValueError(f'Invalid section part "{section_part}"')
+        section_type, start_id, start_num, end_id, end_num = tokens
         sections.append(
             Section(
                 type=SectionType(section_type),
-                start=start,
-                end=end,
+                start_id=start_id,
+                start_num=start_num,
+                end_id=end_id,
+                end_num=end_num
             )
         )
 
-    _validate_sections(document, list(sections))
+    _validate_sections(list(sections))
     return document, sections
 
 
-def _validate_sections(document: Union[Document, None], sections: List[Section]) -> None:
-    allowed_section_types: List[SectionType] = document.allowed_section_types if document else list(SectionType)
+def is_uri_document_type(uri: URI, document_type: DocumentType) -> bool:
+    return uri.startswith(f'{URI_SCHEME}://{document_type.value}')
 
+
+def is_resolvable(document: Document, *sections: Section) -> bool:
+    return document.is_resolvable and all(section.is_resolvable for section in sections)
+
+
+def _validate_sections(sections: List[Section]) -> None:
+    allowed_section_types = list(SectionType)
     for i, section in enumerate(sections):
-        if section.type not in allowed_section_types:
-            raise ValueError(f'Unsupported section type "{section.type}"')
-        
         if i < len(sections) - 1:
-            if not section.end is None:
+            if not section.end_id is None or not section.end_num is None:
                 raise ValueError(f'End is allowed only for last section')
             
         if i > 0:
@@ -165,19 +104,6 @@ def _join_tokens(*tokens: Union[str, None]) -> str:
 
 def _split_tokens(part: str) -> List[Union[str, None]]:
     return [_decode(token) or None for token in part.split(_SEPARATOR)]
-
-
-def _load_tokens(part: str, required: List[int]=[], optional: List[int]=[]) -> Tuple[List[str], List[Union[str, None]]]:
-    tokens = _split_tokens(part)
-    try:
-        required_tokens = [tokens[i] for i in required]
-        optional_tokens = [tokens[i] for i in optional]
-    except IndexError:
-        raise ValueError(f'Unexpected token format in "{part}"')
-    if None in required_tokens:
-        raise ValueError(f'Required token is missing in "{part}"')
-
-    return cast(List[str], required_tokens), optional_tokens
 
 
 def _decode(part: str) -> str:

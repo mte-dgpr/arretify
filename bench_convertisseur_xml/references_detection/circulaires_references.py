@@ -7,9 +7,9 @@ from bench_convertisseur_xml.parsing_utils.dates import DATE_NODE, render_date_r
 from bench_convertisseur_xml.types import PageElementOrString
 from bench_convertisseur_xml.utils.functional import flat_map_string
 from bench_convertisseur_xml.html_schemas import DOCUMENT_REFERENCE_SCHEMA
-from bench_convertisseur_xml.utils.html import make_data_tag
-from bench_convertisseur_xml.law_data.types import CirculaireDocument
-from bench_convertisseur_xml.law_data.uri import render_uri
+from bench_convertisseur_xml.utils.html import make_data_tag, render_bool_attribute
+from bench_convertisseur_xml.law_data.types import Document, DocumentType
+from bench_convertisseur_xml.law_data.uri import render_uri, is_resolvable
 
 
 # Examples :
@@ -81,14 +81,18 @@ def _render_circulaire_container(
     if circulaire_date is None:
         raise ValueError('Could not find circulaire date')
 
-    document = CirculaireDocument(
+    document = Document(
+        type=DocumentType.circulaire,
+        num=circulaire_match.match_dict.get('identifier', None),
         date=circulaire_date,
-        identifier=circulaire_match.match_dict.get('identifier', None),
     )
 
     return make_data_tag(
         soup, 
         DOCUMENT_REFERENCE_SCHEMA,
-        data=dict(uri=render_uri(document)),
+        data=dict(
+            uri=render_uri(document),
+            is_resolvable=render_bool_attribute(is_resolvable(document)),
+        ),
         contents=circulaire_tag_contents,
     )

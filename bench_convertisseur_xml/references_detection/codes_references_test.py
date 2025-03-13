@@ -10,7 +10,7 @@ class TestParseCodesReferences(unittest.TestCase):
     def test_simple(self):
         assert _parsed_elements('Bla bla code de l’environnement') == [
             'Bla bla ',
-            '<a class="dsr-document_reference" data-uri="code://Code%20de%20l%27environnement">code de l’environnement</a>',
+            '<a class="dsr-document_reference" data-is_resolvable="true" data-uri="dsr://code_LEGITEXT000006074220___Code%20de%20l%27environnement" href="https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006074220">code de l’environnement</a>',
         ]
 
 

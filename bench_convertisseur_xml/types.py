@@ -24,4 +24,10 @@ LineColumn = Tuple[int, int]
 """Tuple line and column number. Line and column numbers are 0-indexed."""
 
 URI = str
+"""
+Custom URIs for references to documents and sections. The format is as follows:
+
+dsr://<type>_<id>_<num>_<date>_<title>/<type>_<start_id>_<start_num>_<end_id>_<end_num>/
+"""
+
 ExternalURL = str

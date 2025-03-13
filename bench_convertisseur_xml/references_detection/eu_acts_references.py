@@ -7,9 +7,9 @@ from bench_convertisseur_xml.regex_utils.helpers import join_with_or, lookup_nor
 from bench_convertisseur_xml.types import PageElementOrString
 from bench_convertisseur_xml.utils.functional import flat_map_string
 from bench_convertisseur_xml.html_schemas import DOCUMENT_REFERENCE_SCHEMA
-from bench_convertisseur_xml.utils.html import make_data_tag
-from bench_convertisseur_xml.law_data.types import EuActDocument
-from bench_convertisseur_xml.law_data.uri import render_uri
+from bench_convertisseur_xml.utils.html import make_data_tag, render_bool_attribute
+from bench_convertisseur_xml.law_data.types import Document, DocumentType
+from bench_convertisseur_xml.law_data.uri import render_uri, is_resolvable
 from bench_convertisseur_xml.law_data.eurlex_constants import EU_ACT_DOMAINS, EU_ACT_TYPES
 
 # Examples : CE, UE, ...
@@ -18,7 +18,9 @@ DOMAIN_NODE = regex_tree.Literal(
 )
 
 
-# REF : https://style-guide.europa.eu/fr/content/-/isg/topic?identifier=1.2.2-numbering-of-acts
+# REF : 
+# https://style-guide.europa.eu/fr/content/-/isg/topic?identifier=1.2.2-numbering-of-acts
+# https://style-guide.europa.eu/fr/content/-/isg/topic?identifier=summary-tables
 # We are more lenient than the official style guide, as many references do not follow it.
 IDENTIFIER_NODE = regex_tree.Literal(
     r'(?P<identifier>[0-9]+/[0-9]+)',
@@ -71,7 +73,7 @@ def parse_eu_acts_references(
         lambda string: flat_map_regex_tree_match(
             split_string_with_regex_tree(EU_ACT_NODE, string),
             lambda eu_act_group_match: [
-                _render_eu_act_container(
+                _render_eu_act_reference(
                     soup, 
                     eu_act_group_match,
                 ),
@@ -81,19 +83,31 @@ def parse_eu_acts_references(
     ))
 
 
-def _render_eu_act_container(
+def _render_eu_act_reference(
     soup: BeautifulSoup,
     eu_act_group_match: regex_tree.Match,
 ) -> PageElementOrString:
     match_dict = eu_act_group_match.match_dict
-    document = EuActDocument(
-        act_type=lookup_normalized_version(EU_ACT_TYPES, match_dict['act_type']),
-        identifier=match_dict['identifier'],
-        domain=match_dict.get('domain', None),
+    act_type = lookup_normalized_version(EU_ACT_TYPES, match_dict['act_type'])
+    if act_type == 'règlement':
+        document_type = DocumentType.eu_regulation
+    elif act_type == 'directive':
+        document_type = DocumentType.eu_directive
+    elif act_type == 'décision':
+        document_type = DocumentType.eu_decision
+    else:
+        raise ValueError(f'Unknown EU act type {act_type}')
+
+    document = Document(
+        type=document_type,
+        num=match_dict['identifier'],
     )
     return make_data_tag(
         soup, 
         DOCUMENT_REFERENCE_SCHEMA,
-        data=dict(uri=render_uri(document)),
+        data=dict(
+            uri=render_uri(document),
+            is_resolvable=render_bool_attribute(is_resolvable(document)),
+        ),
         contents=iter_regex_tree_match_strings(eu_act_group_match),
     )

@@ -4,10 +4,10 @@ from bs4 import BeautifulSoup, Tag, PageElement
 
 from bench_convertisseur_xml.types import PageElementOrString
 from bench_convertisseur_xml.utils.element_ranges import iter_collapsed_range_right, iter_collapsed_range_left, ElementRange
-from bench_convertisseur_xml.utils.html import make_css_class
+from bench_convertisseur_xml.utils.html import make_css_class, render_bool_attribute
 from bench_convertisseur_xml.html_schemas import SECTION_REFERENCE_SCHEMA, SECTION_REFERENCE_MULTIPLE_SCHEMA, DOCUMENT_REFERENCE_SCHEMA
-from bench_convertisseur_xml.law_data.uri import parse_uri, render_uri
-from bench_convertisseur_xml.law_data.types import UnknownDocument
+from bench_convertisseur_xml.law_data.uri import parse_uri, render_uri, is_resolvable
+from bench_convertisseur_xml.law_data.types import Document, DocumentType
 from bench_convertisseur_xml.regex_utils import regex_tree
 from .core import filter_section_references
 
@@ -32,22 +32,22 @@ CONNECTOR_SECTION_DOCUMENT_NODE = regex_tree.Group(
 )
 
 
-def resolve_sections_unknown_uris(
+def match_sections_with_documents(
     soup: BeautifulSoup,
     children: Iterable[PageElementOrString],
 ) -> List[PageElementOrString]:
     # We must first resolve the multiple section references, 
     # as they may contain single section references.
-    new_children = _resolve_multiple_section_unknown_uris(soup, children)
-    return _resolve_single_section_unknown_uri(soup, new_children)
+    new_children = _match_multiple_sections_with_document(soup, children)
+    return _resolve_single_section_with_document(soup, new_children)
 
 
-def _resolve_single_section_unknown_uri(
+def _resolve_single_section_with_document(
     soup: BeautifulSoup,
     children: Iterable[PageElementOrString],
 ) -> List[PageElementOrString]:
     children = list(children)
-    section_references = filter_section_references(children, UnknownDocument)
+    section_references = filter_section_references(children, DocumentType.unknown)
     for section_reference_tag in section_references:
         element_range = _find_section_document_range(section_reference_tag)
         if element_range is None:
@@ -57,7 +57,7 @@ def _resolve_single_section_unknown_uri(
     return children
 
 
-def _resolve_multiple_section_unknown_uris(
+def _match_multiple_sections_with_document(
     soup: BeautifulSoup,
     children: Iterable[PageElementOrString],
 ) -> List[PageElementOrString]:
@@ -113,6 +113,9 @@ def _update_section_reference_uri(section_reference_tag: Tag, document_reference
     ):
         raise RuntimeError("Expected a document reference tag with a data-uri attribute")
 
-    _, section_list = parse_uri(cast(str, section_reference_tag['data-uri']))
+    _, sections = parse_uri(cast(str, section_reference_tag['data-uri']))
     document, _ = parse_uri(cast(str, document_reference_tag['data-uri']))
-    section_reference_tag['data-uri'] = render_uri(document, *section_list)
+    section_reference_tag['data-uri'] = render_uri(document, *sections)
+    section_reference_tag['data-is_resolvable'] = render_bool_attribute(
+        is_resolvable(document, *sections)
+    )
