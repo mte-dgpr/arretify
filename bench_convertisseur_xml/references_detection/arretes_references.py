@@ -5,14 +5,14 @@ from bs4 import Tag, BeautifulSoup
 from typing import Literal, List, Tuple, Iterator, Dict, Optional, Iterable, Union, cast
 
 from ..settings import APP_ROOT, LOGGER
-from bench_convertisseur_xml.utils.html import PageElementOrString, make_data_tag
+from bench_convertisseur_xml.utils.html import PageElementOrString, make_data_tag, render_bool_attribute
 from bench_convertisseur_xml.utils.functional import flat_map_string
 from bench_convertisseur_xml.html_schemas import DOCUMENT_REFERENCE_SCHEMA
 from bench_convertisseur_xml.parsing_utils.patterns import ET_VIRGULE_PATTERN_S
 from bench_convertisseur_xml.parsing_utils.dates import DATE_NODE, render_date_regex_tree_match
 from bench_convertisseur_xml.regex_utils import regex_tree, flat_map_regex_tree_match, split_string_with_regex_tree
-from bench_convertisseur_xml.law_data.types import ArretePrefectoralDocument, ArreteMinisterielDocument, UnknownDocument, Document, UnknownDocumentTypes
-from bench_convertisseur_xml.law_data.uri import render_uri
+from bench_convertisseur_xml.law_data.types import Document, DocumentType
+from bench_convertisseur_xml.law_data.uri import render_uri, is_resolvable
 
 Authority = Literal['préfectoral', 'ministériel']
 
@@ -123,33 +123,27 @@ def _render_arrete_container(
 
     # Build the arrete document object
     authority_raw = base_arrete_match.match_dict.get('authority')
-    document: Document
-    if authority_raw in ['ministériels', 'ministériel'] or not authority_raw:
-        if not arrete_date:
-            raise RuntimeError('Date is required for arretes')
-
-        if not authority_raw:
-            document = UnknownDocument(
-                date=arrete_date,
-                type=UnknownDocumentTypes.arrete,
-            )
-        else:
-            document = UnknownDocument(
-                date=arrete_date,
-                type=UnknownDocumentTypes.am,
-            )
-    
+    if authority_raw in ['ministériels', 'ministériel']:
+        document_type = DocumentType.arrete_ministeriel
     elif authority_raw in ['préfectoraux', 'préfectoral']:
-        document = ArretePrefectoralDocument(
-            date=arrete_date,
-            identifier=_extract_identifier(arrete_match),
-        )
+        document_type = DocumentType.arrete_prefectoral
+    else:
+        document_type = DocumentType.unknown_arrete
+    
+    document = Document(
+        type=document_type,
+        num=_extract_identifier(arrete_match),
+        date=arrete_date,
+    )
 
     # Render the arrete tag
     return make_data_tag(
         soup, 
         DOCUMENT_REFERENCE_SCHEMA,
-        data=dict(uri=render_uri(document)),
+        data=dict(
+            uri=render_uri(document),
+            is_resolvable=render_bool_attribute(is_resolvable(document)),
+        ),
         contents=arrete_tag_contents,
     )
 

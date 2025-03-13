@@ -6,153 +6,71 @@ from .eurlex_constants import EU_ACT_DOMAINS, EU_ACT_TYPES
 
 
 class SectionType(Enum):
+    """
+    Order in the enum is important. The order is used to determine the hierarchy of the sections.
+    """
     article = 'article'
     alinea = 'alinea'
 
 
-class UnknownDocumentTypes(Enum):
+class DocumentType(Enum):
     unknown = 'unknown'
-    arrete = 'arrete'
-    ap = 'ap'
-    am = 'am'
 
+    self = 'self'
+    """Self reference"""
 
-class _DocumentBase:
-    allowed_section_types: ClassVar[List[SectionType]] = []
-    scheme: ClassVar[str] = ''
+    unknown_arrete = 'arrete'
+    arrete_prefectoral = 'arrete-prefectoral'
+    arrete_ministeriel = 'arrete-ministeriel'
+    decret = 'decret'
+    circulaire = 'circulaire'
+    code = 'code'
+    """Code juridique (https://www.legifrance.gouv.fr/liste/code)"""
 
+    eu_regulation = 'eu-regulation'
+    """EU regulation. (https://style-guide.europa.eu & https://style-guide.europa.eu/fr/content/-/isg/topic?identifier=1.2.1-classification-of-acts)"""
 
-@dataclass(frozen=True)
-class ArreteMinisterielDocument(_DocumentBase):
-    date: str
-    legifrance_id: str
+    eu_directive = 'eu-directive'
+    """EU directive. (https://style-guide.europa.eu & https://style-guide.europa.eu/fr/content/-/isg/topic?identifier=1.2.1-classification-of-acts)"""
 
-    scheme: ClassVar[str] = 'am'
-    allowed_section_types: ClassVar[List[SectionType]] = [
-        SectionType.article,
-        SectionType.alinea,
-    ]
-
-
-@dataclass(frozen=True)
-class ArretePrefectoralDocument(_DocumentBase):
-    date: Optional[str]
-    identifier: Optional[str]
-
-    scheme: ClassVar[str] = 'ap'
-    allowed_section_types: ClassVar[List[SectionType]] = [
-        SectionType.article,
-        SectionType.alinea,
-    ]
-
-    def __post_init__(self):
-        if self.date is None and self.identifier is None:
-            raise ValueError('Both date and identifier cannot be None')
+    eu_decision = 'eu-decision'
+    """EU decision. (https://style-guide.europa.eu & https://style-guide.europa.eu/fr/content/-/isg/topic?identifier=1.2.1-classification-of-acts)"""
 
 
 @dataclass(frozen=True)
-class DecretDocument(_DocumentBase):
-    date: str
-    identifier: Optional[str]
+class Document:
+    type: DocumentType
+    id: Optional[str] = None
+    """External identifier of the document. For example, legifrance id or CELEX."""
+    num: Optional[str] = None
+    """Code, number, or other identifier of the document. For example, the number of a directive or arrete code."""
+    date: Optional[str] = None
+    """Date of the document. Format: YYYY-MM-DD or YYYY"""
+    title: Optional[str] = None
+    """Title of the document or guessed title from parsing the text."""
 
-    scheme: ClassVar[str] = 'decret'
-    allowed_section_types: ClassVar[List[SectionType]] = [
-        SectionType.article,
-        SectionType.alinea,
-    ]
-
-
-@dataclass(frozen=True)
-class CirculaireDocument(_DocumentBase):
-    date: str
-    identifier: Optional[str]
-
-    scheme: ClassVar[str] = 'circulaire'
-    allowed_section_types: ClassVar[List[SectionType]] = [
-        SectionType.article,
-        SectionType.alinea,
-    ]
-
-
-@dataclass(frozen=True)
-class CodeDocument(_DocumentBase):
-    """
-    Code juridique (https://www.legifrance.gouv.fr/liste/code)
-    """
-    title: str
-
-    scheme: ClassVar[str] = 'code'
-    allowed_section_types: ClassVar[List[SectionType]] = [
-        SectionType.article,
-        SectionType.alinea,
-    ]
-
-
-@dataclass(frozen=True)
-class SelfDocument(_DocumentBase):
-    """
-    Self reference.
-    """
-    scheme: ClassVar[str] = 'self'
-    allowed_section_types: ClassVar[List[SectionType]] = [
-        SectionType.article,
-        SectionType.alinea,
-    ]
-
-
-@dataclass(frozen=True)
-class EuActDocument(_DocumentBase):
-    """
-    EU act. Reference : https://style-guide.europa.eu
-    """
-    act_type: str
-    identifier: str
-    domain: Optional[str]
-
-    scheme: ClassVar[str] = 'eu'
-    allowed_section_types: ClassVar[List[SectionType]] = [
-        SectionType.article,
-        SectionType.alinea,
-    ]
-
-    def __post_init__(self):
-        if self.domain and not self.domain in EU_ACT_DOMAINS:
-            raise ValueError(f'Domain "{self.domain}" is not in the list of EU act domains')
-        if not self.act_type in EU_ACT_TYPES:
-            raise ValueError(f'Act type "{self.act_type}" is not in the list of EU act types')
-
-
-@dataclass(frozen=True)
-class UnknownDocument(_DocumentBase):
-    type: UnknownDocumentTypes
-    date: Optional[str]
-
-    scheme: ClassVar[str] = 'unknown'
-    allowed_section_types: ClassVar[List[SectionType]] = [
-        SectionType.article,
-        SectionType.alinea,
-    ]
-
-    def __post_init__(self):
-        if self.type in [
-            UnknownDocumentTypes.arrete, UnknownDocumentTypes.am, UnknownDocumentTypes.ap
-        ] and not self.date:
-            raise ValueError(f'Date is missing for "{self.type}"')
+    @property
+    def is_resolvable(self) -> bool:
+        if self.type == DocumentType.self:
+            return True
+        elif self.type in [DocumentType.unknown, DocumentType.unknown_arrete]:
+            return False
+        else:
+            return self.id is not None
 
 
 @dataclass(frozen=True)
 class Section:
     type: SectionType
-    start: str
-    end: Union[str, None] = None
+    start_id: Union[str, None] = None
+    start_num: Union[str, None] = None
+    end_id: Union[str, None] = None
+    end_num: Union[str, None] = None
 
-    @classmethod
-    def alinea(cls, start: int, end: Union[int, None]=None) -> 'Section':
-        return cls(SectionType.alinea, str(start), str(end) if not end is None else None)
-
-    @classmethod
-    def article(cls, start: str, end: Union[str, None]=None) -> 'Section':
-        return cls(SectionType.article, start, end)
-
-
-Document = Union[ArretePrefectoralDocument, ArreteMinisterielDocument, DecretDocument, CirculaireDocument, CodeDocument, EuActDocument, SelfDocument, UnknownDocument]
+    @property
+    def is_resolvable(self) -> bool:
+        if self.start_id is None:
+            return False
+        if self.end_num:
+            return self.end_id is not None
+        return True

@@ -6,9 +6,9 @@ from bench_convertisseur_xml.regex_utils import regex_tree, flat_map_regex_tree_
 from bench_convertisseur_xml.types import PageElementOrString
 from bench_convertisseur_xml.utils.functional import flat_map_string
 from bench_convertisseur_xml.html_schemas import DOCUMENT_REFERENCE_SCHEMA
-from bench_convertisseur_xml.utils.html import make_data_tag
-from bench_convertisseur_xml.law_data.types import SelfDocument
-from bench_convertisseur_xml.law_data.uri import render_uri
+from bench_convertisseur_xml.utils.html import make_data_tag, render_bool_attribute
+from bench_convertisseur_xml.law_data.types import Document, DocumentType
+from bench_convertisseur_xml.law_data.uri import render_uri, is_resolvable
 
 
 SELF_NODE = regex_tree.Group(
@@ -23,6 +23,7 @@ def parse_self_references(
     soup: BeautifulSoup,
     children: Iterable[PageElementOrString],
 ) -> List[PageElementOrString]:
+    document = Document(type=DocumentType.self)
     return list(flat_map_string(
         children,
             lambda string: flat_map_regex_tree_match(
@@ -31,7 +32,10 @@ def parse_self_references(
                 make_data_tag(
                     soup, 
                     DOCUMENT_REFERENCE_SCHEMA,
-                    data=dict(uri=render_uri(SelfDocument())),
+                    data=dict(
+                        uri=render_uri(document),
+                        is_resolvable=render_bool_attribute(is_resolvable(document)),
+                    ),
                     contents=iter_regex_tree_match_strings(self_group_match),
                 ),
             ],

@@ -1,4 +1,5 @@
 from typing import Iterable, List
+from dataclasses import replace as dataclass_replace
 
 from bs4 import BeautifulSoup
 
@@ -8,10 +9,11 @@ from bench_convertisseur_xml.regex_utils.helpers import lookup_normalized_versio
 from bench_convertisseur_xml.types import PageElementOrString
 from bench_convertisseur_xml.utils.functional import flat_map_string
 from bench_convertisseur_xml.html_schemas import DOCUMENT_REFERENCE_SCHEMA
-from bench_convertisseur_xml.utils.html import make_data_tag
-from bench_convertisseur_xml.law_data.types import CodeDocument
-from bench_convertisseur_xml.law_data.uri import render_uri
+from bench_convertisseur_xml.utils.html import make_data_tag, render_bool_attribute
+from bench_convertisseur_xml.law_data.types import Document, DocumentType
+from bench_convertisseur_xml.law_data.uri import render_uri, is_resolvable
 from bench_convertisseur_xml.law_data.external_urls import resolve_external_url
+from bench_convertisseur_xml.law_data.legifrance import find_code_id_with_title
 
 
 # TODO: Makes parsing very slow, because compiles into a big OR regex.
@@ -50,14 +52,27 @@ def _render_code_reference(
         get_code_titles(), 
         code_group_match.match_dict['title']
     )
-    document = CodeDocument(
+    document = Document(
+        type=DocumentType.code,
         title=title,
     )
+
+    if document.title is None:
+        raise ValueError('Could not find code title')
+
+    code_id = find_code_id_with_title(document.title)
+    if code_id is None:
+        raise ValueError(f'Could not find code id for title {document.title}')
+
+    document = dataclass_replace(document, id=code_id)
     external_url = resolve_external_url(document)
     code_reference_tag = make_data_tag(
         soup, 
         DOCUMENT_REFERENCE_SCHEMA,
-        data=dict(uri=render_uri(document)),
+        data=dict(
+            uri=render_uri(document),
+            is_resolvable=render_bool_attribute(is_resolvable(document)),
+        ),
         contents=iter_regex_tree_match_strings(code_group_match),
     )
     if external_url is not None:

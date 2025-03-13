@@ -7,11 +7,11 @@ from typing import Iterable, TypedDict, Tuple, cast, Pattern, Dict, Iterable, Li
 from ..settings import APP_ROOT, LOGGER
 from bench_convertisseur_xml.utils.functional import flat_map_string
 from bench_convertisseur_xml.html_schemas import SECTION_REFERENCE_SCHEMA, SECTION_REFERENCE_MULTIPLE_SCHEMA
-from bench_convertisseur_xml.utils.html import make_data_tag, PageElementOrString
+from bench_convertisseur_xml.utils.html import make_data_tag, PageElementOrString, render_bool_attribute
 from bench_convertisseur_xml.parsing_utils.patterns import ET_VIRGULE_PATTERN_S, EME_PATTERN_S, ORDINAL_PATTERN_S, ordinal_str_to_int
 from bench_convertisseur_xml.regex_utils import regex_tree, flat_map_regex_tree_match, split_string_with_regex_tree, iter_regex_tree_match_strings, filter_regex_tree_match_children
-from bench_convertisseur_xml.law_data.types import Section
-from bench_convertisseur_xml.law_data.uri import render_uri
+from bench_convertisseur_xml.law_data.types import Section, SectionType, Document, DocumentType
+from bench_convertisseur_xml.law_data.uri import render_uri, is_resolvable
 from bench_convertisseur_xml.types import URI
 
 # TODO : 
@@ -96,10 +96,10 @@ def _extract_alinea(match: regex_tree.Match) -> Alinea:
     return alinea
 
 
-def _extract_uri(
+def _extract_sections(
     article_tree_match: regex_tree.Match, 
     alinea_tree_match: regex_tree.Match | None = None,
-) -> URI:
+) -> List[Section]:
     article_matches = filter_regex_tree_match_children(article_tree_match, ['__article_id'])
     if alinea_tree_match:
         alinea_matches = filter_regex_tree_match_children(alinea_tree_match, ['__alinea'])
@@ -124,23 +124,46 @@ def _extract_uri(
         article_end = _extract_article_id(article_matches[1])
 
     sections = [
-        Section.article(
-            article_start, 
-            article_end,
+        Section(
+            type=SectionType.article,
+            start_num=article_start, 
+            end_num=article_end,
         )
     ]
 
     if alinea_start:
         sections.append(
-            Section.alinea(
-                alinea_start,
-                alinea_end,
+            Section(
+                type=SectionType.alinea,
+                start_num=str(alinea_start),
+                end_num=(alinea_end and str(alinea_end)) or None,
             )
         )
 
-    return render_uri(
-        None,
-        *sections,
+    return sections
+
+
+def _render_section_reference(
+    soup: BeautifulSoup,
+    contents_tree_match: regex_tree.Match,
+    article_tree_match: regex_tree.Match, 
+    alinea_tree_match: regex_tree.Match | None = None,
+) -> Tag:
+    document = Document(
+        type=DocumentType.unknown,
+    )
+    sections = _extract_sections(
+        article_tree_match,
+        alinea_tree_match,
+    )
+    return make_data_tag(
+        soup,
+        SECTION_REFERENCE_SCHEMA, 
+        data=dict(
+            uri=render_uri(document, *sections),
+            is_resolvable=render_bool_attribute(is_resolvable(document, *sections)),
+        ),
+        contents=iter_regex_tree_match_strings(contents_tree_match),
     )
 
 
@@ -181,15 +204,12 @@ def _parse_section_references(
         lambda string: flat_map_regex_tree_match(
             split_string_with_regex_tree(SECTION_REFERENCE_NODE, string),
             lambda section_reference_match: [
-                make_data_tag(
+                _render_section_reference(
                     soup,
-                    SECTION_REFERENCE_SCHEMA, 
-                    data=dict(uri=_extract_uri(
-                        section_reference_match, 
-                        section_reference_match
-                    )),
-                    contents=iter_regex_tree_match_strings(section_reference_match),
-                ),
+                    section_reference_match,
+                    section_reference_match, 
+                    section_reference_match,
+                )
             ],
             allowed_group_names=['__section_reference'],
         )
@@ -259,11 +279,10 @@ def _parse_section_reference_multiple_articles(
                     contents=flat_map_regex_tree_match(
                         section_reference_multiple_match.children,
                         lambda section_reference_match: [
-                            make_data_tag(
+                            _render_section_reference(
                                 soup,
-                                SECTION_REFERENCE_SCHEMA, 
-                                data=dict(uri=_extract_uri(section_reference_match)),
-                                contents=iter_regex_tree_match_strings(section_reference_match),
+                                section_reference_match,
+                                section_reference_match,
                             ),
                         ],
                         allowed_group_names=['__section_reference'],
@@ -330,22 +349,17 @@ def _parse_section_reference_multiple_alineas(
                     contents=flat_map_regex_tree_match(
                         section_reference_multiple_match.children,
                         lambda section_reference_match: [
-                            make_data_tag(
+                            _render_section_reference(
                                 soup,
-                                SECTION_REFERENCE_SCHEMA, 
-                                data=dict(
-                                    uri=_extract_uri(
-                                        # Find the tree match that contains the article id
-                                        # and pass it to the uri extraction function
-                                        filter_regex_tree_match_children(
-                                            section_reference_multiple_match, 
-                                            group_names=['__section_reference_with_article']
-                                        )[0],
-                                        section_reference_match,
-                                    )
-                                ),
-                                contents=iter_regex_tree_match_strings(section_reference_match),
-                            ),
+                                section_reference_match,
+                                # Find the tree match that contains the article id
+                                # and pass it to the uri extraction function
+                                filter_regex_tree_match_children(
+                                    section_reference_multiple_match, 
+                                    group_names=['__section_reference_with_article']
+                                )[0],
+                                section_reference_match,
+                            )
                         ],
                         allowed_group_names=['__section_reference', '__section_reference_with_article'],
                     )
