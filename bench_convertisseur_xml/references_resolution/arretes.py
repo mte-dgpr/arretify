@@ -68,10 +68,3 @@ def resolve_arretes_ministeriels_legifrance_ids(
             document_reference_tag['href'] = external_url
 
     return children
-
-
-# def resolve_unknown_arretes_uris(
-#     soup: BeautifulSoup,
-#     children: Iterable[PageElementOrString],
-# ) -> List[PageElementOrString]:
-#     return _resolve_single_section_unknown_uri(soup, children)

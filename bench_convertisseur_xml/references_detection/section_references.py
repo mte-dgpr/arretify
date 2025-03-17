@@ -17,8 +17,8 @@ from bench_convertisseur_xml.types import URI
 # TODO : 
 # - Phrase and word index 
 
-ArticleId = str
 Alinea = int
+ArticleNum = str
 
 
 def parse_section_references(
@@ -36,9 +36,9 @@ def parse_section_references(
 ARTICLE_ID_NODE = regex_tree.Group(
     regex_tree.Branching([
         # REF : https://reflex.sne.fr/codes-officiels
-        r'(?P<code>(L|R|D)\.?\s*(\d+\s*-?\s*)*\d+)',
+        r'(?P<num_from_code>(L|R|D)\.?\s*(\d+\s*-\s*)*\d+)',
         r'(?P<ordinal>' + ORDINAL_PATTERN_S + r')',
-        r'(?P<num>\d+(\.(\d+|[a-zA-Z]+))*\.?)' + EME_PATTERN_S + r'?',
+        r'(?P<number>\d+(\.(\d+|[a-zA-Z]+))*\.?)' + EME_PATTERN_S + r'?',
     ]), 
     group_name='__article_id'
 )
@@ -60,20 +60,26 @@ ARTICLE_RANGE_NODE = regex_tree.Sequence([
 ])
 
 
-def _extract_article_id(match: regex_tree.Match) -> ArticleId:
+def _normalize_code_article_num(code_article_num: str) -> str:
+    return code_article_num.replace(' ', '').replace('.', '')
+
+
+def _extract_article_num(match: regex_tree.Match) -> ArticleNum:
     match_dict = match.match_dict
-    article_num = match_dict.get('num')
-    article_ordinal = match_dict.get('ordinal')
-    article_code = match_dict.get('code')
+    number = match_dict.get('number')
+    ordinal = match_dict.get('ordinal')
+    num_from_code = match_dict.get('num_from_code')
 
-    article_id = article_num or article_code
-    if article_ordinal:
-        article_id = str(ordinal_str_to_int(article_ordinal))
+    article_num = number
+    if num_from_code:
+        article_num = _normalize_code_article_num(num_from_code)
+    elif ordinal:
+        article_num = str(ordinal_str_to_int(ordinal))
 
-    if not article_id:
+    if not article_num:
         raise RuntimeError('No article found')
 
-    return article_id
+    return article_num
 
 
 def _extract_alinea(match: regex_tree.Match) -> Alinea:
@@ -118,10 +124,10 @@ def _extract_sections(
     if len(alinea_matches) == 2:
         alinea_end = _extract_alinea(alinea_matches[1])
 
-    article_start: ArticleId = _extract_article_id(article_matches[0])
-    article_end: ArticleId | None = None
+    article_start: ArticleNum = _extract_article_num(article_matches[0])
+    article_end: ArticleNum | None = None
     if len(article_matches) == 2:
-        article_end = _extract_article_id(article_matches[1])
+        article_end = _extract_article_num(article_matches[1])
 
     sections = [
         Section(

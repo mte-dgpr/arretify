@@ -14,6 +14,7 @@ from .references_detection.circulaires_references import parse_circulaires_refer
 from .references_detection.codes_references import parse_codes_references
 from .references_detection.self_references import parse_self_references
 from .references_detection.eu_acts_references import parse_eu_acts_references
+from .references_resolution.codes import resolve_code_legifrance_ids, resolve_code_articles_legifrance_ids
 from .references_resolution.sections import match_sections_with_documents
 from .references_resolution.arretes import resolve_arretes_ministeriels_legifrance_ids
 from .operations_detection.operations import parse_operations
@@ -55,7 +56,13 @@ def ocrized_arrete_to_html(lines: TextSegments) -> BeautifulSoup:
 
     for element in soup.select(f'.{ALINEA_CSS_CLASS}, .{ALINEA_CSS_CLASS} *, .{MOTIF_CSS_CLASS}, .{VISA_CSS_CLASS}'):
         new_children = list(element.children)
+        # First resolve all document references
+        new_children = resolve_code_legifrance_ids(soup, new_children)
+
+        # Then match sections with documents,
+        # and resolve section references.
         new_children = match_sections_with_documents(soup, new_children)
+        new_children = resolve_code_articles_legifrance_ids(soup, new_children)
         element.clear()
         element.extend(new_children)
 

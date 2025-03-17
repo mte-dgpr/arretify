@@ -69,8 +69,11 @@ class Section:
 
     @property
     def is_resolvable(self) -> bool:
-        if self.start_id is None:
-            return False
-        if self.end_num:
-            return self.end_id is not None
-        return True
+        if self.type == SectionType.article:
+            if self.start_id is None:
+                return False
+            if self.end_num:
+                return self.end_id is not None
+            return True
+        else:
+            return True
