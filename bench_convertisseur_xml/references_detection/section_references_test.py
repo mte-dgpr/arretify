@@ -17,8 +17,8 @@ class TestHandleArticleRange(unittest.TestCase):
         assert _parsed_elements("article 2ème") == ['<a class="dsr-section_reference" data-is_resolvable="false" data-uri="dsr://unknown____/article__2__">article 2ème</a>']
 
     def test_code_article(self):
-        assert _parsed_elements("article R. 511-9") == ['<a class="dsr-section_reference" data-is_resolvable="false" data-uri="dsr://unknown____/article__R.%20511-9__">article R. 511-9</a>']
-        assert _parsed_elements("article D.12") == ['<a class="dsr-section_reference" data-is_resolvable="false" data-uri="dsr://unknown____/article__D.12__">article D.12</a>']
+        assert _parsed_elements("article R. 511-9") == ['<a class="dsr-section_reference" data-is_resolvable="false" data-uri="dsr://unknown____/article__R511-9__">article R. 511-9</a>']
+        assert _parsed_elements("article D.12") == ['<a class="dsr-section_reference" data-is_resolvable="false" data-uri="dsr://unknown____/article__D12__">article D.12</a>']
         assert _parsed_elements("article L181-3") == ['<a class="dsr-section_reference" data-is_resolvable="false" data-uri="dsr://unknown____/article__L181-3__">article L181-3</a>']
 
     def test_ordinal(self):
@@ -43,11 +43,11 @@ class TestHandleArticleRange(unittest.TestCase):
     def test_code_article_range(self):
         assert _parsed_elements("de l'article R. 511-9 à l'article D.512") == [
             'de l\'',
-            '<a class="dsr-section_reference" data-is_resolvable="false" data-uri="dsr://unknown____/article__R.%20511-9__D.512">article R. 511-9 à l\'article D.512</a>',
+            '<a class="dsr-section_reference" data-is_resolvable="false" data-uri="dsr://unknown____/article__R511-9__D512">article R. 511-9 à l\'article D.512</a>',
         ]
         assert _parsed_elements("l' article R.543-137 à R.543-151") == [
             'l\' ',
-            '<a class="dsr-section_reference" data-is_resolvable="false" data-uri="dsr://unknown____/article__R.543-137__R.543-151">article R.543-137 à R.543-151</a>',
+            '<a class="dsr-section_reference" data-is_resolvable="false" data-uri="dsr://unknown____/article__R543-137__R543-151">article R.543-137 à R.543-151</a>',
         ]
 
 
@@ -85,27 +85,27 @@ class TestArticlePluralRegex(unittest.TestCase):
     def test_article_code(self):
         assert _parsed_elements('articles R. 511-9 et L. 111') == [
             ('<span class="dsr-section_reference_multiple">'
-            '<a class="dsr-section_reference" data-is_resolvable="false" data-uri="dsr://unknown____/article__R.%20511-9__">articles R. 511-9</a>'
+            '<a class="dsr-section_reference" data-is_resolvable="false" data-uri="dsr://unknown____/article__R511-9__">articles R. 511-9</a>'
             ' et '
-            '<a class="dsr-section_reference" data-is_resolvable="false" data-uri="dsr://unknown____/article__L.%20111__">L. 111</a>'
+            '<a class="dsr-section_reference" data-is_resolvable="false" data-uri="dsr://unknown____/article__L111__">L. 111</a>'
             '</span>')
         ]
 
     def test_article_range(self):
-        assert _parsed_elements('articles R. 512 - 74 et R. 512 39-1 à R.512-39-3') == [
+        assert _parsed_elements('articles R. 512 - 74 et R. 512-39-1 à R.512-39-3') == [
             ('<span class="dsr-section_reference_multiple">'
-            '<a class="dsr-section_reference" data-is_resolvable="false" data-uri="dsr://unknown____/article__R.%20512%20-%2074__">articles R. 512 - 74</a>'
+            '<a class="dsr-section_reference" data-is_resolvable="false" data-uri="dsr://unknown____/article__R512-74__">articles R. 512 - 74</a>'
             ' et '
-            '<a class="dsr-section_reference" data-is_resolvable="false" data-uri="dsr://unknown____/article__R.%20512%2039-1__R.512-39-3">R. 512 39-1 à R.512-39-3</a>'
+            '<a class="dsr-section_reference" data-is_resolvable="false" data-uri="dsr://unknown____/article__R512-39-1__R512-39-3">R. 512-39-1 à R.512-39-3</a>'
             '</span>')
         ]
 
     def test_range_first(self):
         assert _parsed_elements('articles R.541-49 à R.541-64 et R.541-79') == [
             ('<span class="dsr-section_reference_multiple">'
-            '<a class="dsr-section_reference" data-is_resolvable="false" data-uri="dsr://unknown____/article__R.541-49__R.541-64">articles R.541-49 à R.541-64</a>'
+            '<a class="dsr-section_reference" data-is_resolvable="false" data-uri="dsr://unknown____/article__R541-49__R541-64">articles R.541-49 à R.541-64</a>'
             ' et '
-            '<a class="dsr-section_reference" data-is_resolvable="false" data-uri="dsr://unknown____/article__R.541-79__">R.541-79</a>'
+            '<a class="dsr-section_reference" data-is_resolvable="false" data-uri="dsr://unknown____/article__R541-79__">R.541-79</a>'
             '</span>')
         ]
 

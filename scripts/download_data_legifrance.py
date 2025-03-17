@@ -38,7 +38,7 @@ def download_code_index(output_dir: Path, code_id: str):
         version=datetime.now().isoformat(),
         data=articles
     )
-    articles_data_path = output_dir / f'{code_id}_articles.json'
+    articles_data_path = output_dir / f'code_index_{code_id}.json'
     print(f"Saving articles data in {articles_data_path}")
     with open(articles_data_path, 'w', encoding='utf-8') as f:
         json.dump(articles_data, f, indent=2, ensure_ascii=False)

@@ -13,7 +13,6 @@ from bench_convertisseur_xml.utils.html import make_data_tag, render_bool_attrib
 from bench_convertisseur_xml.law_data.types import Document, DocumentType
 from bench_convertisseur_xml.law_data.uri import render_uri, is_resolvable
 from bench_convertisseur_xml.law_data.external_urls import resolve_external_url
-from bench_convertisseur_xml.law_data.legifrance import find_code_id_with_title
 
 
 # TODO: Makes parsing very slow, because compiles into a big OR regex.
@@ -60,12 +59,6 @@ def _render_code_reference(
     if document.title is None:
         raise ValueError('Could not find code title')
 
-    code_id = find_code_id_with_title(document.title)
-    if code_id is None:
-        raise ValueError(f'Could not find code id for title {document.title}')
-
-    document = dataclass_replace(document, id=code_id)
-    external_url = resolve_external_url(document)
     code_reference_tag = make_data_tag(
         soup, 
         DOCUMENT_REFERENCE_SCHEMA,
@@ -75,6 +68,4 @@ def _render_code_reference(
         ),
         contents=iter_regex_tree_match_strings(code_group_match),
     )
-    if external_url is not None:
-        code_reference_tag['href'] = external_url
     return code_reference_tag
