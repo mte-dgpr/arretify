@@ -3,16 +3,16 @@ import re
 
 from bs4 import BeautifulSoup, Tag
 
-from bench_convertisseur_xml.utils.html import PageElementOrString, make_ul, make_li, wrap_in_tag, make_new_tag
+from bench_convertisseur_xml.utils.html import PageElementOrString, make_ul, make_li, make_new_tag
 from bench_convertisseur_xml.utils.markdown import parse_markdown_table, is_table_line
 from bench_convertisseur_xml.errors import ParsingError, ErrorCodes
-from bench_convertisseur_xml.regex_utils import PatternProxy, split_string_with_regex, MatchProxy
+from bench_convertisseur_xml.regex_utils import PatternProxy, split_string_with_regex
 from bench_convertisseur_xml.regex_utils import map_matches
+from bench_convertisseur_xml.parsing_utils.source_mapping import TextSegments, apply_to_segment
 from .sentence_rules import (
-    is_liste, is_table_description, is_blockquote_start, is_blockquote_end, 
+    is_liste, is_table_description, is_blockquote_start, is_blockquote_end,
     LIST_PATTERN, BLOCKQUOTE_START_PATTERN, BLOCKQUOTE_END_PATTERN
 )
-from bench_convertisseur_xml.parsing_utils.source_mapping import TextSegments, apply_to_segment
 
 
 BULLET_LIST_RE = re.compile(r'^\s*-\s*')
@@ -23,15 +23,15 @@ DOUBLE_QUOTE_PATTERN = PatternProxy(r'"')
 
 
 def parse_basic_elements(
-    soup: BeautifulSoup, 
-    container: Tag, 
+    soup: BeautifulSoup,
+    container: Tag,
     lines: TextSegments,
     render_default: Callable[[Iterable[PageElementOrString]], Iterable[PageElementOrString]] = lambda elements: elements
 ):
     if is_table_line(lines[0].contents):
         lines, table_elements = parse_table(soup, lines)
         container.extend(table_elements)
-        
+
     elif is_liste(lines[0].contents):
         lines, ul_element = parse_list(soup, lines)
         container.append(ul_element)
@@ -65,12 +65,12 @@ def _clean_bullet_list(line: str):
 #     hellu
 # - bli
 def parse_list(
-    soup: BeautifulSoup, 
+    soup: BeautifulSoup,
     lines: TextSegments
 ) -> Tuple[TextSegments, PageElementOrString]:
     list_pile: List[PageElementOrString] = []
-    ref_indentation =  list_indentation(lines[0].contents)
-    
+    ref_indentation = list_indentation(lines[0].contents)
+
     while lines and is_liste(lines[0].contents):
         current_indentation = list_indentation(lines[0].contents)
         if current_indentation == ref_indentation:
@@ -81,7 +81,7 @@ def parse_list(
             lines, nested_ul = parse_list(soup, lines)
             li = make_li(soup, [list_pile.pop(), nested_ul])
             list_pile.append(li)
-        
+
         else:
             break
 
@@ -150,8 +150,8 @@ def parse_blockquote(
         )
 
     _parse_all_basic_elements(
-        soup, 
-        blockquote, 
+        soup,
+        blockquote,
         pile,
     )
 
@@ -162,8 +162,8 @@ def _parse_inline_quotes(soup: BeautifulSoup, string: str) -> Iterable[PageEleme
     return map_matches(
         split_string_with_regex(INLINE_QUOTE_PATTERN, string),
         lambda inline_quote_match: make_new_tag(
-            soup, 
-            'q', 
+            soup,
+            'q',
             contents=[str(inline_quote_match.group('quoted'))]
         ),
     )
@@ -174,15 +174,15 @@ def _parse_all_inline_elements(soup: BeautifulSoup, string: str) -> List[PageEle
 
 
 def _parse_all_basic_elements(
-    soup: BeautifulSoup, 
-    container: Tag, 
+    soup: BeautifulSoup,
+    container: Tag,
     lines: TextSegments,
 ):
     while lines:
         parse_basic_elements(
-            soup, 
-            container, 
-            lines, 
+            soup,
+            container,
+            lines,
             lambda children: [make_new_tag(soup, 'p', contents=children)],
         )
     return lines
