@@ -4,6 +4,7 @@ from bs4 import BeautifulSoup
 
 from bench_convertisseur_xml.regex_utils import regex_tree, flat_map_regex_tree_match, split_string_with_regex_tree, iter_regex_tree_match_strings
 from bench_convertisseur_xml.regex_utils.helpers import join_with_or, lookup_normalized_version
+from bench_convertisseur_xml.parsing_utils.dates import parse_year_str, render_year_str
 from bench_convertisseur_xml.types import PageElementOrString
 from bench_convertisseur_xml.utils.functional import flat_map_string
 from bench_convertisseur_xml.html_schemas import DOCUMENT_REFERENCE_SCHEMA
@@ -17,16 +18,10 @@ DOMAIN_NODE = regex_tree.Literal(
     r'(?P<domain>' + join_with_or(EU_ACT_DOMAINS) + ')',
 )
 
-
 # REF : 
 # https://style-guide.europa.eu/fr/content/-/isg/topic?identifier=1.2.2-numbering-of-acts
 # https://style-guide.europa.eu/fr/content/-/isg/topic?identifier=summary-tables
 # We are more lenient than the official style guide, as many references do not follow it.
-IDENTIFIER_NODE = regex_tree.Literal(
-    r'(?P<identifier>[0-9]+/[0-9]+)',
-)
-
-
 EU_ACT_NODE = regex_tree.Group(
     regex_tree.Sequence([
         # Examples : 
@@ -40,8 +35,8 @@ EU_ACT_NODE = regex_tree.Group(
             # 2010/75/UE
             regex_tree.Sequence([
                 r'([nN]°\s*)?',
-                IDENTIFIER_NODE,
-                r'/', 
+                r'(?P<year>[0-9]{4}|[0-9]{2})/(?P<num>[0-9]+)',
+                r'/',
                 DOMAIN_NODE,
             ]),
 
@@ -56,7 +51,10 @@ EU_ACT_NODE = regex_tree.Group(
                     quantifier='?',
                 ), 
                 r'([nN]°\s*)?',
-                IDENTIFIER_NODE
+                r'(?P<num>[0-9]+)/(?P<year>[0-9]{4}|[0-9]{2})',
+                # Check that the date string is followed by a valid separator
+                # so that we don't match strings like 23/2003/POIPOIPOI.
+                r'(?=\s|\.|$|,|\)|;)',
             ]),
         ])
     ]),
@@ -98,9 +96,11 @@ def _render_eu_act_reference(
     else:
         raise ValueError(f'Unknown EU act type {act_type}')
 
+    year = parse_year_str(match_dict['year'])
     document = Document(
         type=document_type,
-        num=match_dict['identifier'],
+        num=match_dict['num'],
+        date=render_year_str(year),
     )
     return make_data_tag(
         soup, 

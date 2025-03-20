@@ -17,6 +17,7 @@ from .references_detection.eu_acts_references import parse_eu_acts_references
 from .references_resolution.codes import resolve_code_legifrance_ids, resolve_code_articles_legifrance_ids
 from .references_resolution.sections import match_sections_with_documents
 from .references_resolution.arretes import resolve_arretes_ministeriels_legifrance_ids
+from .references_resolution.eu_acts import resolve_eu_acts_eurlex_urls
 from .operations_detection.operations import parse_operations
 from .clean_ocrized_file import clean_ocrized_file
 from .html_schemas import ALINEA_SCHEMA, DOCUMENT_REFERENCE_SCHEMA, VISA_SCHEMA, MOTIF_SCHEMA
@@ -63,6 +64,7 @@ def ocrized_arrete_to_html(lines: TextSegments) -> BeautifulSoup:
         # and resolve section references.
         new_children = match_sections_with_documents(soup, new_children)
         new_children = resolve_code_articles_legifrance_ids(soup, new_children)
+        new_children = resolve_eu_acts_eurlex_urls(soup, new_children)
         element.clear()
         element.extend(new_children)
 

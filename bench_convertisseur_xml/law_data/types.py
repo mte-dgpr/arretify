@@ -2,6 +2,7 @@ from typing import ClassVar, List, Union, Optional, Literal
 from dataclasses import dataclass
 from enum import Enum
 
+from bench_convertisseur_xml.parsing_utils.dates import parse_date_str, parse_year_str
 from .eurlex_constants import EU_ACT_DOMAINS, EU_ACT_TYPES
 
 
@@ -57,6 +58,19 @@ class Document:
             return False
         else:
             return self.id is not None
+
+    def __post_init__(self):
+        if self.date:
+            if self.type in [DocumentType.eu_decision, DocumentType.eu_directive, DocumentType.eu_regulation]:
+                try:
+                    parse_year_str(self.date)
+                except ValueError:
+                    raise ValueError(f'Invalid year "{self.date}"')
+            else:
+                try:
+                    parse_date_str(self.date)
+                except ValueError:
+                    raise ValueError(f'Invalid date "{self.date}"')
 
 
 @dataclass(frozen=True)

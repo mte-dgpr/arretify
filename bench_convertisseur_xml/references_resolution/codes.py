@@ -6,11 +6,11 @@ from bs4 import BeautifulSoup, Tag
 from bench_convertisseur_xml.settings import LOGGER
 from bench_convertisseur_xml.law_data.types import DocumentType, SectionType, Section
 from bench_convertisseur_xml.law_data.uri import parse_uri, render_uri, is_resolvable
-from bench_convertisseur_xml.law_data.legifrance import find_code_article_id_from_article_num
+from bench_convertisseur_xml.law_data.legifrance import get_code_article_id_from_article_num
 from bench_convertisseur_xml.types import PageElementOrString
 from bench_convertisseur_xml.law_data.external_urls import resolve_external_url
 from bench_convertisseur_xml.utils.html import render_bool_attribute
-from bench_convertisseur_xml.law_data.legifrance import find_code_id_with_title
+from bench_convertisseur_xml.law_data.legifrance import get_code_id_with_title
 from .core import filter_section_references, filter_document_references
 
 
@@ -38,7 +38,7 @@ def resolve_code_articles_legifrance_ids(
 
                 for num_key, id_key in (('start_num', 'start_id'), ('end_num', 'end_id')):
                     if getattr(section, num_key) is not None:
-                        article_id = find_code_article_id_from_article_num(
+                        article_id = get_code_article_id_from_article_num(
                             document.id, 
                             getattr(section, num_key)
                         )
@@ -79,7 +79,7 @@ def resolve_code_legifrance_ids(
 
         if document.title is None:
             raise ValueError('Could not find code title')
-        code_id = find_code_id_with_title(document.title)
+        code_id = get_code_id_with_title(document.title)
         if code_id is None:
             raise ValueError(f'Could not find code id for title {document.title}')
 

@@ -5,7 +5,7 @@ from datetime import date
 
 from bs4 import BeautifulSoup
 
-from .dates import DATE_NODE, parse_date_str, render_date_str, render_date_regex_tree_match
+from .dates import DATE_NODE, parse_date_str, render_date_str, render_date_regex_tree_match, parse_year_str, render_year_str
 from bench_convertisseur_xml.regex_utils import flat_map_regex_tree_match, split_string_with_regex_tree
 
 
@@ -15,6 +15,20 @@ class TestStrToDateAndDateToStr(unittest.TestCase):
 
     def test_render_date_str(self):
         assert render_date_str(date(year=2001, month=1, day=31)) == '2001-01-31'
+
+
+class TestParseYearStrAndRenderYearStr(unittest.TestCase):
+    def test_parse_year_2digits(self):
+        assert parse_year_str('00') == 2000
+        assert parse_year_str('99') == 1999
+
+    def test_parse_year_4digits(self):
+        assert parse_year_str('2000') == 2000
+        assert parse_year_str('1999') == 1999
+
+    def test_render_year_str(self):
+        assert render_year_str(2000) == '2000'
+        assert render_year_str(1999) == '1999'
 
 
 class TestRenderDateRegexTreeMatch(unittest.TestCase):

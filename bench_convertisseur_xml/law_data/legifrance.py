@@ -42,14 +42,14 @@ def get_code_titles() -> List[str]:
     return [code['titre'] for code in CODES]
 
 
-def find_code_id_with_title(title: str) -> str | None:
+def get_code_id_with_title(title: str) -> str | None:
     for code in CODES:
         if code['titre'] == title:
             return code['cid']
     return None
 
 
-def find_code_article_id_from_article_num(code_id: str, article_num: str) -> str | None:
+def get_code_article_id_from_article_num(code_id: str, article_num: str) -> str | None:
     try:
         code_index = CODE_INDEXES[code_id]
     except KeyError:
