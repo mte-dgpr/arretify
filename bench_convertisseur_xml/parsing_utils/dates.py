@@ -52,10 +52,9 @@ def _handle_date_match_dict(match_dict: regex_tree.MatchDict) -> date:
         raise RuntimeError(f'expected day')
 
     if match_dict.get('year_2digits'):
-        year_2digits = int(match_dict['year_2digits'])
-        year = year_2digits + (1900 if year_2digits > (date.today().year - 2000 + 5) else 2000)
+        year = parse_year_str(match_dict['year_2digits'])
     elif match_dict.get('year'):
-        year = int(match_dict['year'])
+        year = parse_year_str(match_dict['year'])
     else:
         raise RuntimeError(f'expected year')
 
@@ -64,6 +63,22 @@ def _handle_date_match_dict(match_dict: regex_tree.MatchDict) -> date:
         month=month,
         year=year,
     )
+
+
+def render_year_str(year: int) -> str:
+    year_str = str(year)
+    if len(year_str) != 4:
+        raise ValueError(f'Invalid year {year}')
+    return year_str
+
+
+def parse_year_str(year_str: str) -> int:
+    if len(year_str) == 4:
+        return int(year_str)
+    if len(year_str) == 2:
+        return int(year_str) + (1900 if int(year_str) > (date.today().year - 2000 + 5) else 2000)
+    else:
+        raise ValueError(f'Invalid year string {year_str}')
 
 
 def render_date_str(date_object: date) -> str:
