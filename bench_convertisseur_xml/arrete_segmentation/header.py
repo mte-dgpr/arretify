@@ -1,31 +1,23 @@
-import re
-from typing import List, cast, Callable, Literal
-from enum import Enum
+from typing import List, Callable, Literal
 
 from bs4 import Tag, BeautifulSoup
 
-from .sentence_rules import (
-    is_arrete, is_entity, is_liste, is_motif, is_visa, VISA_PATTERN, MOTIF_PATTERN, LIST_PATTERN
+from bench_convertisseur_xml.utils.html import (
+    make_data_tag, PageElementOrString, wrap_in_tag, make_new_tag
 )
-from .config import (
-    SERVICE_PATTERNS, REFERENCE_PATTERNS, BodySection
+from bench_convertisseur_xml.regex_utils import (
+    split_string_with_regex, merge_matches_with_siblings, PatternProxy
 )
-from .parse_section_info import parse_section_info, AuthorizedSections
-from .parse_basic_elements import parse_list, list_indentation
-from bench_convertisseur_xml.utils.html import make_data_tag, PageElementOrString, wrap_in_tag, make_new_tag
-from bench_convertisseur_xml.regex_utils import split_string_with_regex, merge_matches_with_siblings, join_with_or, PatternProxy
-from bench_convertisseur_xml.html_schemas import ENTITY_SCHEMA, IDENTIFICATION_SCHEMA, VISA_SCHEMA, MOTIF_SCHEMA
+from bench_convertisseur_xml.html_schemas import (
+    ENTITY_SCHEMA, IDENTIFICATION_SCHEMA, VISA_SCHEMA, MOTIF_SCHEMA
+)
 from bench_convertisseur_xml.types import DataElementSchema
 from bench_convertisseur_xml.parsing_utils.source_mapping import TextSegments, TextSegment
-
-
-SERVICE_AND_REFERENCE_PATTERN = PatternProxy(
-    join_with_or(SERVICE_PATTERNS + REFERENCE_PATTERNS),
+from .sentence_rules import (
+    is_arrete, is_entity, is_liste, is_motif, is_visa, VISA_PATTERN, MOTIF_PATTERN, SERVICES_PATTERN
 )
-
-def _is_body_section(line: TextSegment, authorized_sections) -> bool:
-    new_section_info = parse_section_info(line, authorized_sections=authorized_sections)
-    return new_section_info['type'] in {BodySection.TITLE, BodySection.CHAPTER, BodySection.ARTICLE, BodySection.SUB_ARTICLE}
+from .section_rules import is_body_section
+from .basic_elements import parse_list, list_indentation
 
 
 def _process_identification_pile(pile: List[str]):
@@ -40,7 +32,7 @@ def _process_entity_pile(pile: List[str]) -> List[PageElementOrString]:
     return list(
         merge_matches_with_siblings(
             split_string_with_regex(
-                SERVICE_AND_REFERENCE_PATTERN,
+                SERVICES_PATTERN,
                 entity_line,
             ), 'following'
         )
@@ -48,10 +40,9 @@ def _process_entity_pile(pile: List[str]) -> List[PageElementOrString]:
 
 
 def parse_header(
-    soup: BeautifulSoup, 
-    header: Tag, 
-    lines: TextSegments, 
-    authorized_sections: AuthorizedSections
+    soup: BeautifulSoup,
+    header: Tag,
+    lines: TextSegments,
 ) -> TextSegments:
     pile: List[PageElementOrString] = []
     string_pile: List[str] = []
@@ -70,16 +61,16 @@ def parse_header(
 
     header.append(
         make_data_tag(
-            soup, 
-            ENTITY_SCHEMA, 
+            soup,
+            ENTITY_SCHEMA,
             contents=wrap_in_tag(
-                soup, 
-                _process_entity_pile(string_pile), 
+                soup,
+                _process_entity_pile(string_pile),
                 'div'
             )
         )
     )
-    
+
     # -------- Identification
     string_pile = []
     while True:
@@ -89,9 +80,9 @@ def parse_header(
         elif is_entity(lines[0].contents):
             lines.pop(0)
         elif (
-            VISA_PATTERN.match(lines[0].contents) 
-            or MOTIF_PATTERN.match(lines[0].contents) 
-            or _is_body_section(lines[0], authorized_sections)
+            VISA_PATTERN.match(lines[0].contents)
+            or MOTIF_PATTERN.match(lines[0].contents)
+            or is_body_section(lines[0].contents)
         ):
             break
         # Multi-line identification
@@ -101,11 +92,11 @@ def parse_header(
     # Specific process for the identification
     header.append(
         make_data_tag(
-            soup, 
-            IDENTIFICATION_SCHEMA, 
+            soup,
+            IDENTIFICATION_SCHEMA,
             contents=wrap_in_tag(
-                soup, 
-                _process_identification_pile(string_pile), 
+                soup,
+                _process_identification_pile(string_pile),
                 'h1'
             )
         )
@@ -113,8 +104,8 @@ def parse_header(
 
     # -------- Visas and motifs
     def _is_header_end(line: TextSegment):
-        return is_arrete(line.contents) or _is_body_section(line, authorized_sections)
-    
+        return is_arrete(line.contents) or is_body_section(line.contents)
+
     while (
         not is_visa(lines[0].contents)
         and not is_motif(lines[0].contents)
@@ -126,11 +117,11 @@ def parse_header(
 
     if is_visa(lines[0].contents):
         lines = _parse_visas_or_motifs(
-            soup, 
-            header, 
+            soup,
+            header,
             lines,
-            VISA_PATTERN, 
-            VISA_SCHEMA, 
+            VISA_PATTERN,
+            VISA_SCHEMA,
             lambda line : is_motif(line.contents) or _is_header_end(line),
         )
 
@@ -139,14 +130,14 @@ def parse_header(
         and not _is_header_end(lines[0])
     ):
         header.append(_wrap_in_div(soup, [lines.pop(0)]))
-    
+
     if is_motif(lines[0].contents):
         lines = _parse_visas_or_motifs(
-            soup, 
-            header, 
-            lines, 
-            MOTIF_PATTERN, 
-            MOTIF_SCHEMA, 
+            soup,
+            header,
+            lines,
+            MOTIF_PATTERN,
+            MOTIF_SCHEMA,
             lambda line : _is_header_end(line),
         )
 
@@ -154,8 +145,8 @@ def parse_header(
 
 
 def _parse_visas_or_motifs(
-    soup: BeautifulSoup, 
-    header: Tag, 
+    soup: BeautifulSoup,
+    header: Tag,
     lines: TextSegments,
     section_pattern: PatternProxy,
     section_schema: DataElementSchema,

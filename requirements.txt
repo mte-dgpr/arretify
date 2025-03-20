@@ -6,3 +6,4 @@ types-beautifulsoup4==4.12.*
 Markdown==3.7.*
 types-Markdown==3.7.*
 roman==5.0
+requests_cache==1.2.*

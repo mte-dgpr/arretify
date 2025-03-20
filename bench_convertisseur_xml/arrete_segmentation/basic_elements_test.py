@@ -1,10 +1,12 @@
-import re
 import unittest
 
 from bs4 import BeautifulSoup
 
-from .parse_basic_elements import list_indentation, parse_list, parse_table, parse_blockquote, _parse_inline_quotes
 from bench_convertisseur_xml.parsing_utils.source_mapping import initialize_lines
+from .basic_elements import (
+    list_indentation, parse_list, parse_table, parse_blockquote, _parse_inline_quotes
+)
+
 
 class TestParseTable(unittest.TestCase):
 

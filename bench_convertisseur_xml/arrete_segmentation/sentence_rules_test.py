@@ -1,6 +1,4 @@
 import unittest
-from datetime import date
-from bs4 import BeautifulSoup
 
 from .sentence_rules import is_table_description, is_line_with_semicolumn
 
@@ -34,6 +32,7 @@ Volume autorisé : blablabla.
         assert not is_table_description(lines[10], pile)
         assert is_table_description(lines[11], pile)
 
+
 class TestIsLinedContinued(unittest.TestCase):
 
     def test_valid_lines_with_continuation(self):
@@ -47,4 +46,3 @@ class TestIsLinedContinued(unittest.TestCase):
         assert is_line_with_semicolumn("This is a line with: colon in the middle.") == False
         assert is_line_with_semicolumn("") == False
         assert is_line_with_semicolumn(": ") == False
-

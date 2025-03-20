@@ -4,9 +4,9 @@
 import re
 from typing import List
 
-from .config import HONORARY_PATTERNS, SERVICE_PATTERNS, BodySection
 from bench_convertisseur_xml.utils.html import PageElementOrString
 from bench_convertisseur_xml.regex_utils import PatternProxy, join_with_or
+
 
 VISA_PATTERN = PatternProxy(r"^(vu|-\s*vu)(\s*:\s*|\b)(?P<contents>.*)")
 """Detect if the sentence starts with "vu"."""
@@ -19,9 +19,43 @@ LIST_PATTERN = PatternProxy(r"^(?P<indentation>\s*)(-\s|[a-zA-Z1-9][\)°]\s+)")
 
 SENTENCE_WITH_SEMICOLUMN_PATTERN = PatternProxy(r"\S\s*:\s*$")
 
+SERVICES_PATTERNS_LIST = [
+    r"préfecture",
+    r"sous-préfecture",
+    r"secrétariat",
+    r"sg",
+    r"préfète?",
+    r"direction",
+    r"drire",
+    r"dreal",
+    r"service",
+    r"section",
+    r"pôle",
+    r"bureau",
+    r"unité",
+    r"installations classées pour la protection de l'environnement",  # sometimes independent
+    r"réf",
+    r"n°",
+    r"n/ref",
+    r"nor",
+]
+"""Detect all local authorities taking the arretes."""
+
+SERVICES_PATTERN = PatternProxy(join_with_or(SERVICES_PATTERNS_LIST))
+
+HONORARY_PATTERNS_LIST = [
+    r"la préfecture",
+    r"l[ea] préfète?",
+    r"chevalier",
+    r"officier",
+    r"commandeur",
+]
+"""Detect all honorary titles given to the local authorities."""
+
 ENTITY_PATTERN = PatternProxy(
-    f"^({join_with_or(SERVICE_PATTERNS + HONORARY_PATTERNS)})\\b"
+    f"^({join_with_or(SERVICES_PATTERNS_LIST + HONORARY_PATTERNS_LIST)})\\b"
 )
+"""Detect if starts with local authorities references."""
 
 ARRETE_PATTERN = PatternProxy(r"^(arrêté)\b")
 
@@ -30,6 +64,7 @@ TABLE_DESCRIPTION_PATTERN = PatternProxy(r"^(\(\*+\))|^(\*+)")
 BLOCKQUOTE_START_PATTERN = PatternProxy(r"^\s*\"")
 
 BLOCKQUOTE_END_PATTERN = PatternProxy(r"\"[\s\.]*$")
+
 
 def is_line_with_semicolumn(line: str):
     """Detect that sentence is continuing."""
