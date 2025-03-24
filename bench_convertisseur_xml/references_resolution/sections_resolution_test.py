@@ -2,7 +2,7 @@ import unittest
 
 from bs4 import BeautifulSoup
 
-from .sections import match_sections_with_documents
+from .sections_resolution import match_sections_with_documents
 
 
 class TestResolveSectionsDocuments(unittest.TestCase):

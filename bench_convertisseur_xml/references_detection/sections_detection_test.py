@@ -4,7 +4,7 @@ from typing import Dict, List
 
 from bs4 import BeautifulSoup
 
-from .section_references import parse_section_references
+from .sections_detection import parse_section_references
 
 
 class TestHandleArticleRange(unittest.TestCase):

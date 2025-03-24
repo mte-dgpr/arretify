@@ -2,7 +2,7 @@ import unittest
 
 from bs4 import BeautifulSoup
 
-from .codes_references import parse_codes_references
+from .codes_detection import parse_codes_references
 
 
 class TestParseCodesReferences(unittest.TestCase):

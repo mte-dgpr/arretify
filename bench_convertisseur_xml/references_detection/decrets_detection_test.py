@@ -2,7 +2,7 @@ import unittest
 
 from bs4 import BeautifulSoup
 
-from .decrets_references import parse_decrets_references
+from .decrets_detection import parse_decrets_references
 
 
 class TestParseDecretsReferences(unittest.TestCase):

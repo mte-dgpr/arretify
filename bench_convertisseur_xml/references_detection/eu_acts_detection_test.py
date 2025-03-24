@@ -2,7 +2,7 @@ import unittest
 
 from bs4 import BeautifulSoup
 
-from .eu_acts_references import parse_eu_acts_references
+from .eu_acts_detection import parse_eu_acts_references
 
 
 class TestParseEuActsReferences(unittest.TestCase):

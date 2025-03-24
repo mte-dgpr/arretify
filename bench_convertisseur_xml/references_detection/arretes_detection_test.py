@@ -2,7 +2,7 @@ import unittest
 from datetime import date
 from bs4 import BeautifulSoup
 
-from .arretes_references import parse_arretes_references, _parse_arretes_references, _parse_multiple_arretes_references
+from .arretes_detection import parse_arretes_references, _parse_arretes_references, _parse_multiple_arretes_references
 
 
 class TestParseArreteReferences(unittest.TestCase):
