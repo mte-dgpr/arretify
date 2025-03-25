@@ -8,6 +8,10 @@ Installer les dépendences :
 pip install -r requirements.txt
 ```
 
+Dépendances optionnelles : 
+
+- `clients_api_droit` pour résoudre les références eurlex et légifrance.
+
 La librairie se configure avec des variables d'environnement. 
 Vous pourrez par exemple créer un fichier `.env` avec les variables suivantes : 
 

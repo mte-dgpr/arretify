@@ -1,0 +1,31 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "bench_convertisseur_xml"
+version = "0.0.1"
+authors = [
+  { name="Sébastien Piquemal", email="sebastien.piquemal@developpement-durable.gouv.fr" },
+  { name="Sébastien Meyer", email="sebastien.meyer@developpement-durable.gouv.fr" }
+]
+description = ""
+readme = "README.md"
+requires-python = ">=3.13"
+classifiers = []
+dependencies = [
+  "types-requests==2.32.*",
+  "types-beautifulsoup4==4.12.*",
+  "types-Markdown==3.7.*",
+  "python-dotenv==1.0.*",
+  "requests==2.32.*",
+  "beautifulsoup4==4.12.*",
+  "Markdown==3.7.*",
+  "roman==5.0.*",
+  "pylatexenc==2.10.*"
+]
+
+[project.optional-dependencies]
+test = [
+  "pytest==8.3.*"
+]

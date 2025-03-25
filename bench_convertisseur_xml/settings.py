@@ -6,7 +6,6 @@ import os
 from dotenv import load_dotenv
 
 load_dotenv()
-locale.setlocale(locale.LC_ALL, 'fr')
 
 ENV = os.environ.get('ENV')
 

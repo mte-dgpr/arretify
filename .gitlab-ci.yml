@@ -1,0 +1,31 @@
+variables:
+  ENV: "development"
+  LC_ALL: "C"
+
+
+default:
+  image: python:3.13
+  cache:
+    paths:
+      - .pip-cache/
+  before_script:
+    - python --version
+    - pip install --upgrade pip
+    - pip install .[test]
+    - pip install git+https://id:$PY_CLIENTS_API_DROIT_ACCESS_TOKEN@gitlab-forge.din.developpement-durable.gouv.fr/dgpr/data-studio-risques/py-clients-api-droit.git@main
+
+stages:
+  - test
+
+unit-test-job:
+  stage: test
+  script:
+    - echo "Running unit tests... This will take about 60 seconds."
+    - pytest
+
+# lint-test-job:
+#   stage: test
+#   script:
+#     - echo "Linting code... This will take about 10 seconds."
+#     - sleep 10
+#     - echo "No lint issues found."

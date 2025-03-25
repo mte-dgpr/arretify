@@ -36,7 +36,7 @@ def use_dev_cache(func: Callable[P, R]) -> Callable[P, R]:
             try:
                 return _get_cached_value(func, args, kwargs)
             except KeyError as err:
-                LOGGER.info(f"Miss for {err.args[0]}, calling real API ...")
+                LOGGER.info(f"{err}, calling real API ...")
                 value = func(*args, **kwargs)
                 _set_cached_value(func, args, kwargs, value)
                 return value
