@@ -1,5 +1,6 @@
 import re
 from typing import Pattern, Match, Iterator, Union, Iterable, Dict
+from dataclasses import replace as dataclass_replace
 
 from .types import PatternString, Settings
 from .helpers import remove_accents, normalize_quotes, normalize_string
@@ -24,8 +25,11 @@ class PatternProxy:
     def __init__(self, pattern_string: PatternString, settings: Settings | None = None):
         self.pattern_string = pattern_string
         self.settings = settings or Settings()
+        # Regex handle case insensitivity natively, so we don't need to include it 
+        # in string normalization settings.
+        self._settings_for_normalization = dataclass_replace(self.settings, ignore_case=False)
 
-        pattern_string_for_compilation = normalize_string(pattern_string, self.settings)
+        pattern_string_for_compilation = normalize_string(pattern_string, self._settings_for_normalization)
         compile_flags = 0
         if self.settings.ignore_case:
             compile_flags |= re.IGNORECASE
@@ -39,26 +43,26 @@ class PatternProxy:
         return value
 
     def match(self, string: str) -> Union['MatchProxy', None]:
-        match = self._pattern.match(normalize_string(string, self.settings))
+        match = self._pattern.match(normalize_string(string, self._settings_for_normalization))
         if match:
             return MatchProxy(string, match)
         else:
             return None
 
     def search(self, string: str) -> Union['MatchProxy', None]:
-        match = self._pattern.search(normalize_string(string, self.settings))
+        match = self._pattern.search(normalize_string(string, self._settings_for_normalization))
         if match:
             return MatchProxy(string, match)
         else:
             return None
 
     def finditer(self, string: str) -> Iterator['MatchProxy']:
-        for match in self._pattern.finditer(normalize_string(string, self.settings)):
+        for match in self._pattern.finditer(normalize_string(string, self._settings_for_normalization)):
             yield MatchProxy(string, match)
 
     def sub(self, repl: str, string: str) -> str:
         while True:
-            match = self._pattern.search(normalize_string(string, self.settings))
+            match = self._pattern.search(normalize_string(string, self._settings_for_normalization))
             if match:
                 string = string[:match.start()] + repl + string[match.end():]
             else:

@@ -1,11 +1,13 @@
 import logging
 import locale
 import pathlib
+import os
 
 from dotenv import load_dotenv
 
 load_dotenv()
-locale.setlocale(locale.LC_ALL, 'fr')
+
+ENV = os.environ.get('ENV')
 
 LOGGER = logging.getLogger('bench-convertisseur-xml')
 LOGGER.setLevel(level=logging.INFO)

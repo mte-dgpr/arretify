@@ -2,7 +2,7 @@ import unittest
 
 from bs4 import BeautifulSoup
 
-from .circulaires_references import parse_circulaires_references
+from .circulaires_detection import parse_circulaires_references
 
 
 class TestParseCirculairesReferences(unittest.TestCase):

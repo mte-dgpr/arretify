@@ -47,25 +47,15 @@ class TestWithoutNamedGroups(unittest.TestCase):
 
 class TestNormalizeString(unittest.TestCase):
 
-    def test_normalize_ignore_case(self):
+    def test_normalize_all(self):
         # Arrange
-        settings = Settings(ignore_case=True)
+        settings = Settings()
 
         # Act
-        result = normalize_string("Hello", settings, ignore_case_settings=False)
+        result = normalize_string("“Héllo", settings)
 
         # Assert
-        assert result == "hello"
-
-    def test_normalize_ignore_case_ignore_setting(self):
-        # Arrange
-        settings = Settings(ignore_case=True)
-
-        # Act
-        result = normalize_string("Hello", settings, ignore_case_settings=True)
-
-        # Assert
-        assert result == "Hello"
+        assert result == "\"hello"
 
 
 class TestLookupNormalizedVersion(unittest.TestCase):

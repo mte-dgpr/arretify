@@ -2,7 +2,7 @@ import unittest
 
 from bs4 import BeautifulSoup
 
-from .codes import resolve_code_articles_legifrance_ids, resolve_code_legifrance_ids
+from .codes_resolution import resolve_code_articles_legifrance_ids, resolve_code_legifrance_ids
 
 
 class TestResolveSectionsDocuments(unittest.TestCase):

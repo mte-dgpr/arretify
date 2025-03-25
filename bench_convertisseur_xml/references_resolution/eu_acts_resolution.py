@@ -11,6 +11,7 @@ from bench_convertisseur_xml.types import PageElementOrString
 from bench_convertisseur_xml.utils.html import render_bool_attribute
 from .core import filter_document_references
 
+
 def resolve_eu_acts_eurlex_urls(
     soup: BeautifulSoup,
     children: Iterable[PageElementOrString],
@@ -28,7 +29,7 @@ def resolve_eu_acts_eurlex_urls(
 
         eurlex_url = get_eu_act_url_with_year_and_num(act_type, int(document.date), int(document.num))
         if eurlex_url is None:
-            LOGGER.warn(f'Could not find eurlex url for {act_type} {document.date}/{document.num}')
+            LOGGER.warning(f'Could not find eurlex url for {act_type} {document.date}/{document.num}')
             continue
 
         document = dataclass_replace(document, id=eurlex_url)

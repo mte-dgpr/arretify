@@ -1,25 +1,23 @@
-import calendar
 from datetime import date, datetime
 from bs4 import BeautifulSoup, Tag
 
-# Important so that locale is initialized
-from bench_convertisseur_xml.settings import *
 from bench_convertisseur_xml.html_schemas import DATE_SCHEMA
 from bench_convertisseur_xml.utils.html import make_data_tag
 from bench_convertisseur_xml.regex_utils import (
     regex_tree, join_with_or, iter_regex_tree_match_strings, remove_accents
 )
+from bench_convertisseur_xml.regex_utils.helpers import lookup_normalized_version
 
 
 DATE_FORMAT = '%Y-%m-%d'
 
-MONTH_NAMES = [remove_accents(x) for x in list(calendar.month_name)]
+MONTH_NAMES = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre']
 
 
 DATE_NODE = regex_tree.Group(
     regex_tree.Sequence([
         regex_tree.Branching([
-            r'(((?P<day_first>1er)|(?P<day>\d{1,2})) (?P<month_name>' + join_with_or(MONTH_NAMES[1:]) + r') ((?P<year>\d{4})|(?P<year_2digits>\d{2})))',
+            r'(((?P<day_first>1er)|(?P<day>\d{1,2})) (?P<month_name>' + join_with_or(MONTH_NAMES) + r') ((?P<year>\d{4})|(?P<year_2digits>\d{2})))',
             r'((?P<day>\d{2})/(?P<month>\d{2})/((?P<year>\d{4})|(?P<year_2digits>\d{2})))',
         ]),
         # Check that the date string is followed by a valid separator
@@ -32,12 +30,10 @@ DATE_NODE = regex_tree.Group(
 
 def _handle_date_match_dict(match_dict: regex_tree.MatchDict) -> date:
     if match_dict.get('month_name'):
-        match_month = remove_accents(match_dict['month_name'].lower())
-        month = None
-        for i, month_name in enumerate(MONTH_NAMES):
-            if month_name.startswith(match_month):
-                month = i
-        if month is None:
+        match_month = lookup_normalized_version(MONTH_NAMES, match_dict['month_name'])
+        try: 
+            month = MONTH_NAMES.index(match_month) + 1
+        except ValueError:
             raise RuntimeError(f'couldnt find month for "{match_month}"')
     elif match_dict.get('month'):
         month = int(match_dict['month'])

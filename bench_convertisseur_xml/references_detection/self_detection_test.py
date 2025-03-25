@@ -2,7 +2,7 @@ import unittest
 
 from bs4 import BeautifulSoup
 
-from .self_references import parse_self_references
+from .self_detection import parse_self_references
 
 
 class TestParseSelfReferences(unittest.TestCase):

@@ -8,6 +8,8 @@ from datetime import date
 from bench_convertisseur_xml.settings import LOGGER
 from clients_api_droit.legifrance import authenticate, search_arrete
 
+from .dev_cache import use_dev_cache
+
 
 class CodeDatum(TypedDict):
     titre: str
@@ -22,6 +24,8 @@ class CodeIndexDatum(TypedDict):
 
 CURRENT_DIR = Path(__file__).parent
 LEGIFRANCE_DATA = CURRENT_DIR / 'legifrance'
+_TOKENS: Dict | None = None
+
 
 with open(LEGIFRANCE_DATA / 'codes.json', 'r', encoding='utf-8') as fd:
     CODES: List[CodeDatum] = json.loads(fd.read())['data']
@@ -62,9 +66,12 @@ def get_code_article_id_from_article_num(code_id: str, article_num: str) -> str 
     return None
 
 
+@use_dev_cache
 def get_arrete_legifrance_id(title: str, date: date) -> str | None:
-    tokens = authenticate()
-    for arrete in search_arrete(tokens, title, date):
+    global _TOKENS
+    if _TOKENS is None:
+        _TOKENS = authenticate()
+    for arrete in search_arrete(_TOKENS, title, date):
         arrete_cid = arrete['titles'][0]['cid']
         return arrete_cid
     return None

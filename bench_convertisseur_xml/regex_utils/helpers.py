@@ -43,8 +43,8 @@ def lookup_normalized_version(
     matches: List[str] = []
     for choice in choices:
         if (
-            normalize_string(choice, settings, ignore_case_settings=False) 
-            == normalize_string(text, settings, ignore_case_settings=False)
+            normalize_string(choice, settings) 
+            == normalize_string(text, settings)
         ):
             matches.append(choice)
             break
@@ -55,8 +55,8 @@ def lookup_normalized_version(
     return matches[0]
 
 
-def normalize_string(string: str, settings: Settings, ignore_case_settings=True) -> str:
-    if settings.ignore_case and ignore_case_settings is False:
+def normalize_string(string: str, settings: Settings) -> str:
+    if settings.ignore_case:
         string = string.lower()
     if settings.ignore_accents:
         string = remove_accents(string)
