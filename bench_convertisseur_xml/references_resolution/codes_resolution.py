@@ -45,7 +45,7 @@ def resolve_code_articles_legifrance_ids(
                         if article_id:
                             new_fields[id_key] = article_id
                         else:
-                            LOGGER.warn(
+                            LOGGER.warning(
                                 f'Could not find legifrance article id for '
                                 f'code {document.id} article {getattr(section, num_key)}'
                             )

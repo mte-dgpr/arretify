@@ -8,7 +8,7 @@ from .header import parse_header
 from .main_content import parse_main_content
 
 
-TEMPLATE_PATH = APP_ROOT / 'bench_convertisseur_xml' / 'templates' / 'index.html'
+TEMPLATE_PATH = APP_ROOT / 'bench_convertisseur_xml' / 'templates' / 'arrete.html'
 TEMPLATE_HTML = open(TEMPLATE_PATH, 'r', encoding='utf-8').read()
 
 

@@ -42,11 +42,11 @@ def resolve_arretes_ministeriels_legifrance_ids(
         date_object = parse_date_str(document.date)
         title = safe_group(arrete_title_match, 0)
         arrete_id = get_arrete_legifrance_id(
-            title=title,
-            date=date_object
+            title,
+            date_object,
         )
         if arrete_id is None:
-            LOGGER.warn(
+            LOGGER.warning(
                 f'Could not find legifrance arrete id for '
                 f'date {date_object} "{title}"'
             )

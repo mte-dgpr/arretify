@@ -8,10 +8,30 @@ Installer les dépendences :
 pip install -r requirements.txt
 ```
 
+La librairie se configure avec des variables d'environnement. 
+Vous pourrez par exemple créer un fichier `.env` avec les variables suivantes : 
+
+```bash
+# Si vous voulez utiliser la résolution de références 
+# aux textes de droit français.
+LEGIFRANCE_CLIENT_ID = '<LEGIFRANCE_CLIENT_ID>'
+LEGIFRANCE_CLIENT_SECRET = '<LEGIFRANCE_CLIENT_SECRET>'
+
+# Si vous voulez utiliser la résolution de références
+# aux textes de droit européen.
+EURLEX_WEB_SERVICE_USERNAME = '<EURLEX_WEB_SERVICE_USERNAME>'
+EURLEX_WEB_SERVICE_PASSWORD = '<EURLEX_WEB_SERVICE_PASSWORD>'
+
+# Choix de l'environnement d'execution.
+# Notez qu'en developpement tous les appels à API externe sont 
+# récupérés depuis le cache (voir `law_data\dev_cache.py`)
+ENV = 'development'
+```
+
 
 ## Executer le script de parsing
 
-Pour éxecuter le parsing sur un lot de fichiers OCRisés, copier le dossier de fichiers dans dossier facilement accessible (e.g. `./tmp/arretes_ocr`), et exécuter la commande `main.py`. Par exemple :
+Pour éxecuter le parsing sur un lot de fichiers OCRisés, copier le dossier de fichiers dans un dossier facilement accessible (e.g. `./tmp/arretes_ocr`), et exécuter la commande `main.py`. Par exemple :
 
 ```
 python -m main -i ./tmp/arretes_ocr -o ./tmp/arretes_html
@@ -26,9 +46,16 @@ python -m main -i ./tmp/arretes_ocr/bla.txt -o ./tmp/arretes_html/bla.html
 
 ## Styling des pages HTML générées
 
-Pour le styling, nous utilisons des fichiers CSS. Il faudra donc préparer un dossier où vos fichiers HTML seront générés (de préférence dans `tmp/` pour éviter d'ajouter des fichiers par erreur au repo git).
+Les fichiers html sont générés à partir du template `templates/arrete.html`. Ce fichier charge les feuilles de style suivantes :
 
-Télécharger [une release du DSFR](https://github.com/GouvernementFR/dsfr/releases/download/v1.13.0/dsfr-v1.13.0.zip), extraire le dossier `dist/` et le copier dans votre dossier html. Renommer ce dossier `dist` en `dsfr`.
+```html
+<link href="/dsfr/dsfr.main.css" rel="stylesheet" />
+<link href="/styles.css" rel="stylesheet" />
+```
+
+Pour un rendu correct des styles, il faudra donc générer vos fichiers HTML dans un dossier où ces feuilles de style sont disponibles (vous pourrez par exemple utiliser `tmp/` pour éviter d'ajouter des fichiers par erreur au repo git).
+
+Télécharger [une release du DSFR](https://github.com/GouvernementFR/dsfr/releases/download/v1.13.0/dsfr-v1.13.0.zip), extraire `dist/` et le copier dans votre dossier html. Renommer `dist/` en `dsfr/`.
 
 Copier le fichier `templates/styles.css` dans votre dossier html.
 
@@ -55,6 +82,7 @@ new_children = parse_all_article_references(soup, list(container.children))
 # et tenter de les intégrer.
 new_children = insert_debug_keywords(soup, new_children, 'articles?')
 ```
+
 
 ## Testing
 

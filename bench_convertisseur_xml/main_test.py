@@ -1,5 +1,6 @@
 # Pour re-générer les snapshots HTML, voir README, section "Snapshot testing".
 import os
+import unittest
 from pathlib import Path
 
 from bench_convertisseur_xml.settings import TEST_DATA_DIR, LOGGER, OCR_FILE_EXTENSION
@@ -19,10 +20,11 @@ def _iter_parsed_arretes_ocr_files():
         yield arrete_ocr_file_path, soup.prettify()
 
 
-def test_parse_arrete_snapshots():
-    LOGGER.info('Testing snapshots')
-    for arrete_ocr_file_path, actual_contents in _iter_parsed_arretes_ocr_files():
-        LOGGER.info(f'Input {arrete_ocr_file_path.parent.name}/{arrete_ocr_file_path.stem} ...')
-        arrete_html_file_path = ARRETES_HTML_DIR / f'{arrete_ocr_file_path.parent.name}/{arrete_ocr_file_path.stem}.html'
-        expected_contents = open(arrete_html_file_path, 'r', encoding='utf-8').read()        
-        assert actual_contents == expected_contents
+class TestMain(unittest.TestCase):
+    def test_parse_arrete_snapshots(self):
+        LOGGER.info('Testing snapshots')
+        for arrete_ocr_file_path, actual_contents in _iter_parsed_arretes_ocr_files():
+            LOGGER.info(f'Input {arrete_ocr_file_path.parent.name}/{arrete_ocr_file_path.stem} ...')
+            arrete_html_file_path = ARRETES_HTML_DIR / f'{arrete_ocr_file_path.parent.name}/{arrete_ocr_file_path.stem}.html'
+            expected_contents = open(arrete_html_file_path, 'r', encoding='utf-8').read()        
+            assert actual_contents == expected_contents
