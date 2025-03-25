@@ -6,6 +6,7 @@ from bench_convertisseur_xml.utils.html import make_data_tag
 from bench_convertisseur_xml.regex_utils import (
     regex_tree, join_with_or, iter_regex_tree_match_strings, remove_accents
 )
+from bench_convertisseur_xml.regex_utils.helpers import lookup_normalized_version
 
 
 DATE_FORMAT = '%Y-%m-%d'
@@ -29,13 +30,10 @@ DATE_NODE = regex_tree.Group(
 
 def _handle_date_match_dict(match_dict: regex_tree.MatchDict) -> date:
     if match_dict.get('month_name'):
-        match_month = remove_accents(match_dict['month_name'].lower())
-        month = None
-        for i, month_name in enumerate(MONTH_NAMES):
-            if month_name.startswith(match_month):
-                month = i + 1
-                break
-        if month is None:
+        match_month = lookup_normalized_version(MONTH_NAMES, match_dict['month_name'])
+        try: 
+            month = MONTH_NAMES.index(match_month) + 1
+        except ValueError:
             raise RuntimeError(f'couldnt find month for "{match_month}"')
     elif match_dict.get('month'):
         month = int(match_dict['month'])
