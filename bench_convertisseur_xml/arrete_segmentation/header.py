@@ -47,8 +47,11 @@ def parse_header(
     pile: List[PageElementOrString] = []
     string_pile: List[str] = []
 
-    # Find the first entity line
-    while not is_entity(lines[0].contents):
+    # Find the first useful line
+    while not (
+        is_entity(lines[0].contents) or is_arrete(lines[0].contents) or is_visa(lines[0].contents)
+    ):
+        # TODO-PROCESS-TAG
         lines.pop(0)
 
     # -------- Entity

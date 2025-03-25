@@ -53,7 +53,8 @@ def get_code_article_id_from_article_num(code_id: str, article_num: str) -> str 
     try:
         code_index = CODE_INDEXES[code_id]
     except KeyError:
-        raise ValueError(f"Code index not found for code {code_id}")
+        LOGGER.warning(f"Could not find code index for code {code_id}")
+        return None
 
     for article in code_index:
         if article['num'] == article_num:

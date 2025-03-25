@@ -44,6 +44,11 @@ class TestRenderDateRegexTreeMatch(unittest.TestCase):
         assert _parsed_elements("1er décembre 1999") == ['<time class="dsr-date" datetime="1999-12-01">1er décembre 1999</time>']
         assert _parsed_elements("1 janvier 20") == ['<time class="dsr-date" datetime="2020-01-01">1 janvier 20</time>']
 
+    def test_date_without_accents_valid_cases(self):
+        assert _parsed_elements("15 fevrier 2020") == ['<time class="dsr-date" datetime="2020-02-15">15 fevrier 2020</time>']
+        assert _parsed_elements("15 aout 2020") == ['<time class="dsr-date" datetime="2020-08-15">15 aout 2020</time>']
+        assert _parsed_elements("15 decembre 2020") == ['<time class="dsr-date" datetime="2020-12-15">15 decembre 2020</time>']
+
     def test_date2_valid_cases(self):
         assert _parsed_elements("15/02/2023") == ['<time class="dsr-date" datetime="2023-02-15">15/02/2023</time>']
         assert _parsed_elements("03/03/99") == ['<time class="dsr-date" datetime="1999-03-03">03/03/99</time>']

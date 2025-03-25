@@ -7,3 +7,6 @@ Markdown==3.7.*
 types-Markdown==3.7.*
 roman==5.0
 requests_cache==1.2.*
+lxml==5.3.*
+zeep==4.3.*
+pylatexenc==2.10
