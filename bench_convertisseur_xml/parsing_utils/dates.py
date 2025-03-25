@@ -1,19 +1,19 @@
-import re
 import calendar
 from datetime import date, datetime
-from typing import Literal, List, get_args, cast, TypedDict, Pattern
 from bs4 import BeautifulSoup, Tag
 
 # Important so that locale is initialized
 from bench_convertisseur_xml.settings import *
 from bench_convertisseur_xml.html_schemas import DATE_SCHEMA
 from bench_convertisseur_xml.utils.html import make_data_tag
-from bench_convertisseur_xml.regex_utils import regex_tree, join_with_or, iter_regex_tree_match_strings
-from bench_convertisseur_xml.types import PageElementOrString
+from bench_convertisseur_xml.regex_utils import (
+    regex_tree, join_with_or, iter_regex_tree_match_strings, remove_accents
+)
+
 
 DATE_FORMAT = '%Y-%m-%d'
 
-MONTH_NAMES = list(calendar.month_name)
+MONTH_NAMES = [remove_accents(x) for x in list(calendar.month_name)]
 
 
 DATE_NODE = regex_tree.Group(
@@ -32,7 +32,7 @@ DATE_NODE = regex_tree.Group(
 
 def _handle_date_match_dict(match_dict: regex_tree.MatchDict) -> date:
     if match_dict.get('month_name'):
-        match_month = match_dict['month_name'].lower()
+        match_month = remove_accents(match_dict['month_name'].lower())
         month = None
         for i, month_name in enumerate(MONTH_NAMES):
             if month_name.startswith(match_month):

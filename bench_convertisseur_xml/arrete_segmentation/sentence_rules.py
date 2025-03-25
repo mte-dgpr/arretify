@@ -65,6 +65,8 @@ BLOCKQUOTE_START_PATTERN = PatternProxy(r"^\s*\"")
 
 BLOCKQUOTE_END_PATTERN = PatternProxy(r"\"[\s\.]*$")
 
+IMAGE_PATTERN = PatternProxy(r'!\[[^\[\]]+\]\([^()]+\)')
+
 
 def is_line_with_semicolumn(line: str):
     """Detect that sentence is continuing."""
@@ -123,3 +125,7 @@ def is_blockquote_start(line: str) -> bool:
 
 def is_blockquote_end(line: str) -> bool:
     return bool(BLOCKQUOTE_END_PATTERN.search(line))
+
+
+def is_image(line: str) -> bool:
+    return bool(IMAGE_PATTERN.search(line))

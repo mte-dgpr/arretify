@@ -39,9 +39,9 @@ Démarrer un server HTTP à la racine de ce dossier html. Vous pouvez utiliser p
 
 Des outils de debugging sont fournis dans le module `debug.py`
 
-### Vérifier l'exhaustivité du parsing 
+### Vérifier l'exhaustivité du parsing
 
-Pour vérifier que tous les cas liés au parsing d'un type d'éléments ont été traités, on pourra utiliser la function `insert_debug_keywords`. 
+Pour vérifier que tous les cas liés au parsing d'un type d'éléments ont été traités, on pourra utiliser la function `insert_debug_keywords`.
 Par exemple :
 
 ```
@@ -49,7 +49,7 @@ Par exemple :
 # e.g. article 1.2.3 du code de l'environnement
 new_children = parse_all_article_references(soup, list(container.children))
 
-# Cherche toutes les chaines de caractères 'articles?' qui n'ont pas été 
+# Cherche toutes les chaines de caractères 'articles?' qui n'ont pas été
 # traitées et insère un tag pour pouvoir les parcourir et les vérifier manuellement.
 # On pourra ainsi détecter des cas non encore traités par la fonction `parse_all_article_references`
 # et tenter de les intégrer.
@@ -68,7 +68,7 @@ pytest
 
 Le fichier `bench_convertisseur_xml/main_test.py` permet de détecter les regressions en effectuant le parsing sur tous les documents de notre base de tests de documents dans `arretes_ocr/` et en comparant le résultat obtenu avec des résultats obtenus précédemment et stocké dans `arretes_html/`.
 
-Si les tests échouent c'est que la génération d'html a changé. Il convient donc de vérifier que c'est bien une évolution voulue et non une régression. Pour ça voici une proposition de process : 
+Si les tests échouent c'est que la génération d'html a changé. Il convient donc de vérifier que c'est bien une évolution voulue et non une régression. Pour ça voici une proposition de process :
 
 1. Re-générer les fichiers html de référence en utilisant la commande `python -m bench_convertisseur_xml.main -i test_data/arretes_ocr -o test_data/arretes_html`
 2. Utiliser l'outil de diff de git (ou de vscodium) pour comparer la nouvelle version avec la version de référence
@@ -81,8 +81,17 @@ Afin de parser et résoudre les références citées dans les AP à des textes d
 
 Pour utiliser ces scripts, il faut installer et configurer la librairie du Data Studio Risques `py-clients-api-droit`.
 
+Créer un fichier `.env` dans lequel vous pouvez renseigner les variables d'environnement nécessaires au bon fonctionnement de la librairie
+
+```
+LEGIFRANCE_CLIENT_ID = <CLIENT_ID>
+LEGIFRANCE_CLIENT_SECRET = <LEGIFRANCE_CLIENT_SECRET>
+EURLEX_WEB_SERVICE_USERNAME = <USERNAME>
+EURLEX_WEB_SERVICE_PASSWORD = <PASSWORD>
+```
+
 ### Légifrance
 
-Télécharger la liste des codes : 
+Télécharger la liste des codes :
 
 ```python .\scripts\download_data_legifrance.py -o .\bench_convertisseur_xml\law_data\legifrance```

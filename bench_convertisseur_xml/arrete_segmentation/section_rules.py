@@ -10,10 +10,11 @@ from .types import BodySection, SectionInfo
 
 ROMAN_NUMERALS = r"(?:(?:X{0,3})(?:IX|IV|V?I{0,3}))"
 NUMBERS = r"\d+"
-LETTERS = r"[a-zA-Z]{1,3}"
+LETTER = r"[a-zA-Z]"
+NUMBERING = fr'(?:{NUMBERS}|{LETTER}|{ROMAN_NUMERALS})'
 ROMAN_NUMERALS_PATTERN = PatternProxy(ROMAN_NUMERALS + "$")
 NUMBERS_PATTERN = PatternProxy(NUMBERS + "$")
-LETTERS_PATTERN = PatternProxy(LETTERS + "$")
+LETTER_PATTERN = PatternProxy(LETTER + "$")
 """Detect all types of numbering patterns."""
 
 SECTION_NAMES = [
@@ -32,10 +33,12 @@ SECTION_NODE = regex_tree.Group(
         # Numbering pattern
         regex_tree.Branching([
             r'(?P<number_first>1er)',
-            r'(?P<number>(?:(\d+|[a-zA-Z]{1,3})\.?)+)',
+            fr'(?P<number>{NUMBERING}(?:[.]{NUMBERING})*)',
         ]),
+        # Optional punctuation and whitespace that should be excluded from text
+        r'(?:[.\s-]*)',
         # Optional text group
-        r'(?:\s+(?P<text>.+))?$',
+        r'(?P<text>.+)?$',
     ]),
     group_name='section',
 )
@@ -57,7 +60,7 @@ def _number_to_levels(number: str) -> Optional[List[int]]:
 
         if ROMAN_NUMERALS_PATTERN.match(cur_char):
             cur_number = roman.fromRoman(cur_char)
-        elif LETTERS_PATTERN.match(cur_char):
+        elif LETTER_PATTERN.match(cur_char):
             cur_number = ord(cur_char.lower()) - 96
         elif NUMBERS_PATTERN.match(cur_char):
             cur_number = int(cur_char)

@@ -3,14 +3,19 @@ import re
 
 from bs4 import BeautifulSoup, Tag
 
+from bench_convertisseur_xml.settings import LOGGER
 from bench_convertisseur_xml.utils.html import PageElementOrString, make_ul, make_li, make_new_tag
-from bench_convertisseur_xml.utils.markdown import parse_markdown_table, is_table_line
-from bench_convertisseur_xml.errors import ParsingError, ErrorCodes
+from bench_convertisseur_xml.utils.markdown import (
+    parse_markdown_table, is_table_line, parse_markdown_image
+)
+from bench_convertisseur_xml.errors import ErrorCodes
+from bench_convertisseur_xml.utils.html import make_data_tag
+from bench_convertisseur_xml.html_schemas import ERROR_SCHEMA
 from bench_convertisseur_xml.regex_utils import PatternProxy, split_string_with_regex
 from bench_convertisseur_xml.regex_utils import map_matches
 from bench_convertisseur_xml.parsing_utils.source_mapping import TextSegments, apply_to_segment
 from .sentence_rules import (
-    is_liste, is_table_description, is_blockquote_start, is_blockquote_end,
+    is_liste, is_table_description, is_blockquote_start, is_blockquote_end, is_image,
     LIST_PATTERN, BLOCKQUOTE_START_PATTERN, BLOCKQUOTE_END_PATTERN
 )
 
@@ -37,8 +42,12 @@ def parse_basic_elements(
         container.append(ul_element)
 
     elif is_blockquote_start(lines[0].contents):
-        lines, blockquote_element = parse_blockquote(soup, lines)
-        container.append(blockquote_element)
+        lines, blockquote_or_error_element = parse_blockquote(soup, lines)
+        container.append(blockquote_or_error_element)
+
+    elif is_image(lines[0].contents):
+        image_element = parse_markdown_image(lines.pop(0).contents)
+        container.append(image_element)
 
     # Normal paragraph
     else:
@@ -144,10 +153,19 @@ def parse_blockquote(
     pile[-1] = apply_to_segment(pile[-1], lambda string: BLOCKQUOTE_END_PATTERN.sub('', string))
 
     if quotes_depth_count > 0:
-        raise ParsingError(
-            ErrorCodes.unbalanced_quote,
-            line_col=opening_quote_start,
+        LOGGER.warn(
+            f'Found unbalanced quote starting {opening_quote_start}'
         )
+        error_element = make_data_tag(
+            soup,
+            ERROR_SCHEMA,
+            data=dict(error_code=ErrorCodes.unbalanced_quote.value),
+            contents=[pile[0].contents]
+        )
+        # Put back all the lines except the one raising the error into the pile
+        while len(pile) > 1:
+            lines.append(pile.pop(1))
+        return lines, error_element
 
     _parse_all_basic_elements(
         soup,

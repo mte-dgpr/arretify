@@ -4,5 +4,5 @@ from .functional import flat_map_regex_tree_match, map_matches, iter_regex_tree_
 from .merge import merge_matches_with_siblings
 from . import regex_tree
 from .core import PatternProxy, MatchProxy, safe_group
-from .helpers import sub_with_match, without_named_groups, join_with_or
+from .helpers import sub_with_match, without_named_groups, join_with_or, remove_accents
 from .types import Settings

@@ -46,7 +46,8 @@ def download_code_index(output_dir: Path, code_id: str):
 
 def main(output_dir: Path):
     download_codes(output_dir)
-    download_code_index(output_dir, 'LEGITEXT000006074220')
+    download_code_index(output_dir, 'LEGITEXT000006074220')  # code de l'environnement
+    download_code_index(output_dir, 'LEGITEXT000006072050')  # code du travail
 
 
 if __name__ == '__main__':

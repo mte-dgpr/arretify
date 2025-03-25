@@ -16,4 +16,4 @@ APP_ROOT = pathlib.Path(__file__).resolve().parent.parent
 TEST_DATA_DIR = APP_ROOT / 'test_data'
 TMP_DATA_DIR = APP_ROOT / 'tmp'
 
-OCR_FILE_EXTENSION = '.txt'
+OCR_FILE_EXTENSION = '.md'
