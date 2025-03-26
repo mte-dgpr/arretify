@@ -2,7 +2,7 @@ from typing import Iterable, List
 
 from bs4 import BeautifulSoup
 
-from bench_convertisseur_xml.regex_utils import regex_tree, flat_map_regex_tree_match, split_string_with_regex_tree, iter_regex_tree_match_strings
+from bench_convertisseur_xml.regex_utils import regex_tree, map_regex_tree_match, split_string_with_regex_tree, iter_regex_tree_match_strings
 from bench_convertisseur_xml.regex_utils.helpers import join_with_or, lookup_normalized_version
 from bench_convertisseur_xml.parsing_utils.dates import parse_year_str, render_year_str
 from bench_convertisseur_xml.types import PageElementOrString
@@ -68,14 +68,12 @@ def parse_eu_acts_references(
 ) -> List[PageElementOrString]:
     return list(flat_map_string(
         children,
-        lambda string: flat_map_regex_tree_match(
+        lambda string: map_regex_tree_match(
             split_string_with_regex_tree(EU_ACT_NODE, string),
-            lambda eu_act_group_match: [
-                _render_eu_act_reference(
-                    soup, 
-                    eu_act_group_match,
-                ),
-            ],
+            lambda eu_act_group_match: _render_eu_act_reference(
+                soup, 
+                eu_act_group_match,
+            ),
             allowed_group_names=['__eu_act'],
         )
     ))

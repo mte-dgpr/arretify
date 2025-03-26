@@ -6,7 +6,7 @@ from datetime import date
 from bs4 import BeautifulSoup
 
 from .dates import DATE_NODE, parse_date_str, render_date_str, render_date_regex_tree_match, parse_year_str, render_year_str
-from bench_convertisseur_xml.regex_utils import flat_map_regex_tree_match, split_string_with_regex_tree
+from bench_convertisseur_xml.regex_utils import map_regex_tree_match, split_string_with_regex_tree
 
 
 class TestStrToDateAndDateToStr(unittest.TestCase):
@@ -75,11 +75,9 @@ class TestRenderDateRegexTreeMatch(unittest.TestCase):
 
 def _parsed_elements(string: str) -> list[str]:
     soup = BeautifulSoup(string, features='html.parser')
-    elements = flat_map_regex_tree_match(
+    elements = map_regex_tree_match(
         split_string_with_regex_tree(DATE_NODE, string),
-        lambda regex_tree_match: [
-            render_date_regex_tree_match(soup, regex_tree_match),
-        ],
+        lambda regex_tree_match: render_date_regex_tree_match(soup, regex_tree_match),
         allowed_group_names=[DATE_NODE.group_name],
     )
     return [str(element) for element in elements]
