@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup, Tag, PageElement
 
 from bench_convertisseur_xml.regex_utils import (
     PatternProxy, Settings, regex_tree, split_string_with_regex_tree, 
-    flat_map_regex_tree_match, iter_regex_tree_match_strings, filter_regex_tree_match_children
+    flat_map_regex_tree_match, map_regex_tree_match, iter_regex_tree_match_strings, filter_regex_tree_match_children
 )
 from bench_convertisseur_xml.utils.html import make_data_tag, make_new_tag
 from bench_convertisseur_xml.html_schemas import OPERATION_SCHEMA
@@ -75,20 +75,18 @@ def parse_operations(
 ) -> List[PageElementOrString]:
     return list(flat_map_string(
         children, 
-        lambda string: flat_map_regex_tree_match(
+        lambda string: map_regex_tree_match(
             split_string_with_regex_tree(RTL_OPERATION_NODE, string),
-            lambda operation_match: [
-                make_data_tag(
-                    soup, 
-                    OPERATION_SCHEMA, 
-                    contents=flat_map_regex_tree_match(
-                        operation_match.children,
-                        lambda group_match: _render_group_match(soup, group_match),
-                        allowed_group_names=['__has_right_operand', *OPERATION_TYPES_GROUP_NAMES],
-                    ),
-                    data=_extract_operation_data(operation_match),
-                )
-            ]
+            lambda operation_match: make_data_tag(
+                soup, 
+                OPERATION_SCHEMA, 
+                contents=flat_map_regex_tree_match(
+                    operation_match.children,
+                    lambda group_match: _render_group_match(soup, group_match),
+                    allowed_group_names=['__has_right_operand', *OPERATION_TYPES_GROUP_NAMES],
+                ),
+                data=_extract_operation_data(operation_match),
+            )
         )
     ))
 

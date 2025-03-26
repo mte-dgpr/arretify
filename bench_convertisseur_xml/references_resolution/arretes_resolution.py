@@ -12,9 +12,11 @@ from bench_convertisseur_xml.regex_utils import PatternProxy, safe_group
 from bench_convertisseur_xml.utils.html import render_bool_attribute
 from bench_convertisseur_xml.parsing_utils.dates import parse_date_str
 from bench_convertisseur_xml.settings import LOGGER
-from .core import filter_document_references
+from .core import filter_document_references, update_reference_tag_uri
 
 
+# Regex for searching an arrete ministeriel with its title.
+# Simply picks the first 3 to 15 words following the document reference.
 ARRETE_MINISTERIEL_TITLE_PATTERN = PatternProxy(r'^\s*([^\.;\s]+\s+){3,15}([^\.;\s]+)')
 
 
@@ -52,19 +54,9 @@ def resolve_arretes_ministeriels_legifrance_ids(
             )
             continue
 
-        document = dataclass_replace(
+        update_reference_tag_uri(document_reference_tag, dataclass_replace(
             document,
             id=arrete_id,
-        )
-        is_document_resolvable = is_resolvable(document)
-        updated_uri = render_uri(document, *sections)
-        document_reference_tag['data-uri'] = updated_uri
-        document_reference_tag['is_resolvable'] = render_bool_attribute(is_document_resolvable)
-        
-        if is_document_resolvable:
-            external_url = resolve_external_url(document)
-            if external_url is None:
-                raise ValueError(f'Could not resolve external url for {document}')
-            document_reference_tag['href'] = external_url
+        ), *sections)
 
     return children

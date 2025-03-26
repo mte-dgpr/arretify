@@ -1,7 +1,7 @@
 import unittest
 from typing import List, Union
 
-from .functional import iter_regex_tree_match_strings, map_matches
+from .functional import iter_regex_tree_match_strings, map_matches, map_regex_tree_match
 from .regex_tree.types import RegexTreeMatch
 from .core import PatternProxy
 
@@ -102,3 +102,23 @@ class TestIterRegexTreeMatchStrings(unittest.TestCase):
 
         # Assert
         assert result == ["level1", "level2", "level3", "deep"]
+
+
+class TestMapRegexTreeMatch(unittest.TestCase):
+
+    def test_single_level(self):
+        # Arrange
+        match = ['bla', RegexTreeMatch(
+            children=["hello", "world"],
+            group_name=None,
+            match_dict={}
+        ), 'blo']
+
+        def map_func(m):
+            return 'MATCHED:' + ','.join([m.children[0], m.children[1]])
+
+        # Act
+        result = list(map_regex_tree_match(match, map_func))
+
+        # Assert
+        assert result == ["bla", "MATCHED:hello,world", "blo"]

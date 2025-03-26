@@ -4,7 +4,7 @@ from dataclasses import replace as dataclass_replace
 from bs4 import BeautifulSoup
 
 from bench_convertisseur_xml.law_data.legifrance import get_code_titles
-from bench_convertisseur_xml.regex_utils import regex_tree, flat_map_regex_tree_match, split_string_with_regex_tree, iter_regex_tree_match_strings
+from bench_convertisseur_xml.regex_utils import regex_tree, map_regex_tree_match, split_string_with_regex_tree, iter_regex_tree_match_strings
 from bench_convertisseur_xml.regex_utils.helpers import lookup_normalized_version
 from bench_convertisseur_xml.types import PageElementOrString
 from bench_convertisseur_xml.utils.functional import flat_map_string
@@ -30,14 +30,12 @@ def parse_codes_references(
 ) -> List[PageElementOrString]:
     return list(flat_map_string(
         children,
-            lambda string: flat_map_regex_tree_match(
+        lambda string: map_regex_tree_match(
             split_string_with_regex_tree(CODE_NODE, string),
-            lambda code_group_match: [
-                _render_code_reference(
-                    soup, 
-                    code_group_match,
-                ),
-            ],
+            lambda code_group_match: _render_code_reference(
+                soup, 
+                code_group_match,
+            ),
             allowed_group_names=['__code'],
         )
     ))

@@ -2,7 +2,7 @@ from typing import Iterable, List, Optional, cast
 
 from bs4 import BeautifulSoup, Tag
 
-from bench_convertisseur_xml.regex_utils import regex_tree, flat_map_regex_tree_match, split_string_with_regex_tree
+from bench_convertisseur_xml.regex_utils import regex_tree, map_regex_tree_match, split_string_with_regex_tree
 from bench_convertisseur_xml.parsing_utils.dates import DATE_NODE, render_date_regex_tree_match
 from bench_convertisseur_xml.types import PageElementOrString
 from bench_convertisseur_xml.utils.functional import flat_map_string
@@ -47,14 +47,12 @@ def parse_circulaires_references(
 ) -> List[PageElementOrString]:
     return list(flat_map_string(
         children,
-            lambda string: flat_map_regex_tree_match(
+        lambda string: map_regex_tree_match(
             split_string_with_regex_tree(DECRET_NODE, string),
-            lambda circulaire_match: [
-                _render_circulaire_container(
-                    soup, 
-                    circulaire_match,
-                ),
-            ],
+            lambda circulaire_match: _render_circulaire_container(
+                soup, 
+                circulaire_match,
+            ),
             allowed_group_names=['__circulaire'],
         )
     ))
@@ -65,11 +63,9 @@ def _render_circulaire_container(
     circulaire_match: regex_tree.Match,
 ) -> PageElementOrString:
     # Parse date tag and extract date value
-    circulaire_tag_contents = list(flat_map_regex_tree_match(
+    circulaire_tag_contents = list(map_regex_tree_match(
         circulaire_match.children,
-        lambda date_match: [
-            render_date_regex_tree_match(soup, date_match)
-        ],
+        lambda date_match: render_date_regex_tree_match(soup, date_match),
         allowed_group_names=[DATE_NODE.group_name],
     ))
 
