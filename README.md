@@ -1,19 +1,26 @@
-# Convertisseur arrêté prefectoral -> HTML
+# Convertisseur arrêtés prefectoraux ICPE
+
+Cette librairie permet la conversion d'arrêtés préfectoraux OCRisées depuis du Markdown vers du HTML.
 
 ## Setup
 
-Installer les dépendences :
+Créer un environnement virtuel :
 
 ```
-pip install -r requirements.txt
+py -3.13 -m venv venv
+```
+
+Installer la librairie et ses dépendances :
+
+```
+pip install -e .
 ```
 
 Dépendances optionnelles : 
 
-- `clients_api_droit` pour résoudre les références eurlex et légifrance.
+- `clients_api_droit` pour résoudre les références eurlex et légifrance. Pour installer la librairie une possibilité consiste à la cloner depuis gitlab puis à l'installer localement.
 
-La librairie se configure avec des variables d'environnement. 
-Vous pourrez par exemple créer un fichier `.env` avec les variables suivantes : 
+La librairie se configure avec des variables d'environnement. Vous pourrez par exemple créer un fichier `.env` avec les variables suivantes : 
 
 ```bash
 # Si vous voulez utiliser la résolution de références 
@@ -32,7 +39,6 @@ EURLEX_WEB_SERVICE_PASSWORD = '<EURLEX_WEB_SERVICE_PASSWORD>'
 ENV = 'development'
 ```
 
-
 ## Executer le script de parsing
 
 Pour éxecuter le parsing sur un lot de fichiers OCRisés, copier le dossier de fichiers dans un dossier facilement accessible (e.g. `./tmp/arretes_ocr`), et exécuter la commande `main.py`. Par exemple :
@@ -46,7 +52,6 @@ Il est aussi possible d'éxecuter le parsing sur un fichier unique en passant en
 ```
 python -m main -i ./tmp/arretes_ocr/bla.txt -o ./tmp/arretes_html/bla.html
 ```
-
 
 ## Styling des pages HTML générées
 
@@ -64,7 +69,6 @@ Télécharger [une release du DSFR](https://github.com/GouvernementFR/dsfr/relea
 Copier le fichier `templates/styles.css` dans votre dossier html.
 
 Démarrer un server HTTP à la racine de ce dossier html. Vous pouvez utiliser powershell, naviguer dans votre dossier html, puis executer la commande suivante : `python -m http.server`.
-
 
 ## Debugging
 
@@ -87,7 +91,6 @@ new_children = parse_all_article_references(soup, list(container.children))
 new_children = insert_debug_keywords(soup, new_children, 'articles?')
 ```
 
-
 ## Testing
 
 Pour éxecuter les tests :
@@ -106,21 +109,11 @@ Si les tests échouent c'est que la génération d'html a changé. Il convient d
 2. Utiliser l'outil de diff de git (ou de vscodium) pour comparer la nouvelle version avec la version de référence
 3. Régler les problèmes éventuels, puis répéter étape 1.
 
-
 ## Téléchargement des données de bases de droit
 
 Afin de parser et résoudre les références citées dans les AP à des textes du droit français ou européen, nous téléchargeons grâce à divers scripts des fichiers contenant des listes de références à vérifier. Les fonctionalités pour accéder à ces références se trouvent dans le dossier `bench_convertisseur_xml/law_data`, les scripts se trouvent dans le dossier `scripts`.
 
 Pour utiliser ces scripts, il faut installer et configurer la librairie du Data Studio Risques `py-clients-api-droit`.
-
-Créer un fichier `.env` dans lequel vous pouvez renseigner les variables d'environnement nécessaires au bon fonctionnement de la librairie
-
-```
-LEGIFRANCE_CLIENT_ID = <CLIENT_ID>
-LEGIFRANCE_CLIENT_SECRET = <LEGIFRANCE_CLIENT_SECRET>
-EURLEX_WEB_SERVICE_USERNAME = <USERNAME>
-EURLEX_WEB_SERVICE_PASSWORD = <PASSWORD>
-```
 
 ### Légifrance
 

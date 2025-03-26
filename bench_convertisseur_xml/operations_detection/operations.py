@@ -1,11 +1,9 @@
-import re
-from typing import List, Pattern, Tuple, cast, Iterator, Dict, Iterable
-from dataclasses import dataclass
+from typing import List, Iterator, Dict, Iterable
 
-from bs4 import BeautifulSoup, Tag, PageElement
+from bs4 import BeautifulSoup
 
 from bench_convertisseur_xml.regex_utils import (
-    PatternProxy, Settings, regex_tree, split_string_with_regex_tree, 
+    regex_tree, split_string_with_regex_tree,
     flat_map_regex_tree_match, iter_regex_tree_match_strings, filter_regex_tree_match_children
 )
 from bench_convertisseur_xml.utils.html import make_data_tag, make_new_tag
@@ -13,22 +11,22 @@ from bench_convertisseur_xml.html_schemas import OPERATION_SCHEMA
 from bench_convertisseur_xml.types import OperationType, PageElementOrString
 from bench_convertisseur_xml.utils.functional import flat_map_string
 
+
 OPERATION_TYPES_GROUP_NAMES = [
-    OperationType.ADD.value, 
-    OperationType.DELETE.value, 
+    OperationType.ADD.value,
+    OperationType.DELETE.value,
     OperationType.REPLACE.value,
 ]
 
-
 # Operation `target(1) operation description(2) operand(3, optional)`
-# Example: 
+# Example:
 # les dispositions de l'article 8.1.1.1 l'arrêté du 12 mai 2016(1) sont complétées par les dispositions suivantes :(2)
 # Un contrôle trimestriel de l'alarme en point bas des lignes de zingage et des lignes époxy est mis en place par l'exploitant.(3)
-# 
+#
 # This regex detects the part (2) of the operation.
 RTL_OPERATION_NODE = regex_tree.Group(
     regex_tree.Sequence([
-        # If there is a sentence end left of the operation, 
+        # If there is a sentence end left of the operation,
         # it means there is no (1), therefore we reject the match.
         r'^[^.]*',
         regex_tree.Branching([
@@ -39,8 +37,20 @@ RTL_OPERATION_NODE = regex_tree.Group(
             regex_tree.Group(
                 regex_tree.Branching([
                     r'complétée?s?',
+                    r'créée?s?',
+                    r'ajouté?e?s',
                 ]),
                 group_name=OperationType.ADD.value,
+            ),
+            regex_tree.Group(
+                regex_tree.Branching([
+                    r'modifiée?s?',
+                    r'remplacée?s?',
+                    r'mise?s? à jour',
+                    r'substituée?s?',
+                    r'supprimée?s?\s+et\s+remplacée?s?',
+                ]),
+                group_name=OperationType.REPLACE.value,
             ),
             regex_tree.Group(
                 regex_tree.Branching([
@@ -49,16 +59,8 @@ RTL_OPERATION_NODE = regex_tree.Group(
                 ]),
                 group_name=OperationType.DELETE.value,
             ),
-            regex_tree.Group(
-                regex_tree.Branching([
-                    r'modifiée?s?',
-                    r'remplacée?s?',
-                    r'mise?s? à jour',
-                ]),
-                group_name=OperationType.REPLACE.value,
-            ),
         ]),
-        # When the string is not ended by a period (.), we consider that 
+        # When the string is not ended by a period (.), we consider that
         # there is a right operand.
         regex_tree.Quantifier(regex_tree.Group(
             r'[^\.]*$',
@@ -70,17 +72,17 @@ RTL_OPERATION_NODE = regex_tree.Group(
 
 
 def parse_operations(
-    soup: BeautifulSoup, 
+    soup: BeautifulSoup,
     children: Iterable[PageElementOrString],
 ) -> List[PageElementOrString]:
     return list(flat_map_string(
-        children, 
+        children,
         lambda string: flat_map_regex_tree_match(
             split_string_with_regex_tree(RTL_OPERATION_NODE, string),
             lambda operation_match: [
                 make_data_tag(
-                    soup, 
-                    OPERATION_SCHEMA, 
+                    soup,
+                    OPERATION_SCHEMA,
                     contents=flat_map_regex_tree_match(
                         operation_match.children,
                         lambda group_match: _render_group_match(soup, group_match),
@@ -93,7 +95,9 @@ def parse_operations(
     ))
 
 
-def _render_group_match(soup: BeautifulSoup, group_match: regex_tree.Match) -> Iterator[PageElementOrString]:
+def _render_group_match(
+    soup: BeautifulSoup, group_match: regex_tree.Match
+) -> Iterator[PageElementOrString]:
     if group_match.group_name == '__has_right_operand':
         yield from iter_regex_tree_match_strings(group_match)
     elif group_match.group_name in OPERATION_TYPES_GROUP_NAMES:
@@ -103,9 +107,8 @@ def _render_group_match(soup: BeautifulSoup, group_match: regex_tree.Match) -> I
 
 
 def _extract_operation_data(operation_match: regex_tree.Match) -> Dict[str, str | None]:
-    match_dict = operation_match.match_dict
     operation_type_groups = filter_regex_tree_match_children(
-        operation_match, 
+        operation_match,
         OPERATION_TYPES_GROUP_NAMES,
     )
     if len(operation_type_groups) != 1:
