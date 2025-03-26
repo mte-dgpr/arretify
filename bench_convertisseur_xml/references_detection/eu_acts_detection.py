@@ -27,7 +27,7 @@ EU_ACT_NODE = regex_tree.Group(
         # Examples : 
         # règlement
         # directive
-        r'(?P<act_type>' + join_with_or(EU_ACT_TYPES) + ')\s+(européen(ne)?\s+)?',
+        r'(?P<act_type>' + join_with_or(EU_ACT_TYPES) + r')\s+(européen(ne)?\s+)?',
 
         # Order matters cause second alternative matches also the first one.
         regex_tree.Branching([

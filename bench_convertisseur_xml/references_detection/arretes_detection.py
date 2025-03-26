@@ -44,7 +44,7 @@ ARRETE_NODE = regex_tree.Group(regex_tree.Sequence([
             regex_tree.Quantifier(
                 regex_tree.Sequence([
                     IDENTIFIER_NODE,
-                    '\s',
+                    r'\s',
                 ]), 
                 '?',
             ),
@@ -76,7 +76,7 @@ ARRETE_MULTIPLE_NODE = regex_tree.Group(regex_tree.Sequence([
                         regex_tree.Quantifier(
                             regex_tree.Sequence([
                                 IDENTIFIER_NODE,
-                                '\s',
+                                r'\s',
                             ]),
                             '?',
                         ),

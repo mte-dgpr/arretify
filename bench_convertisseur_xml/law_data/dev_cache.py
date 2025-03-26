@@ -34,20 +34,20 @@ def use_dev_cache(func: Callable[P, R]) -> Callable[P, R]:
     def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
         if ENV == 'development':
             try:
-                return _get_cached_value(func, args, kwargs)
+                return _get_cached_value(func, *args, **kwargs)
             except KeyError as err:
                 LOGGER.info(f"{err}, calling real API ...")
                 value = func(*args, **kwargs)
-                _set_cached_value(func, args, kwargs, value)
+                _set_cached_value(func, value, *args, **kwargs)
                 return value
         else:
             return func(*args, **kwargs)
     return wrapper
 
 
-def _get_cached_value(func: Callable[P, R], args: P.args, kwargs: P.kwargs) -> R:
+def _get_cached_value(func: Callable[P, R], *args: P.args, **kwargs: P.kwargs) -> R:
     func_key = _get_func_key(func)
-    params_key = _get_params_key(args, kwargs)
+    params_key = _get_params_key(func, *args, **kwargs)
     if func_key not in _CACHE:
         _CACHE[func_key] = {}
 
@@ -57,9 +57,9 @@ def _get_cached_value(func: Callable[P, R], args: P.args, kwargs: P.kwargs) -> R
         raise KeyError(f"Miss for {func_key}{params_key}")
 
 
-def _set_cached_value(func: Callable[P, R], args: P.args, kwargs: P.kwargs, value: R) -> None:
+def _set_cached_value(func: Callable[P, R], value: R, *args: P.args, **kwargs: P.kwargs) -> None:
     func_key = _get_func_key(func)
-    params_key = _get_params_key(args, kwargs)
+    params_key = _get_params_key(func, *args, **kwargs)
     if func_key not in _CACHE:
         _CACHE[func_key] = {}
     _CACHE[func_key][params_key] = value
@@ -71,7 +71,7 @@ def _get_func_key(func: Callable[P, R]) -> str:
     return func.__name__
 
 
-def _get_params_key(args: P.args, kwargs: P.kwargs):
+def _get_params_key(func: Callable[P, R], *args: P.args, **kwargs: P.kwargs):
     args_key = ", ".join(str(arg) for arg in args)
     kwargs_key = ", ".join(f"{k}={v}" for k, v in kwargs.items())
     params_key = f"({args_key}"

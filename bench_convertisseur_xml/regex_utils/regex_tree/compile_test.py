@@ -38,7 +38,7 @@ class TestCompilePattern(unittest.TestCase):
         ids = list(node.children.keys())
 
         # Assert
-        assert node.pattern.pattern == r'(?P<' + ids[0] + r'>bla(\d+))(?P<' + ids[1] + '>\w+)'
+        assert node.pattern.pattern == r'(?P<' + ids[0] + r'>bla(\d+))(?P<' + ids[1] + r'>\w+)'
         assert node.children[ids[0]].pattern.pattern == r"bla(?P<index>\d+)"
 
     def test_compile_repeat_pattern(self):
@@ -58,7 +58,7 @@ class TestCompilePattern(unittest.TestCase):
 
         # Assert
         assert node.group_name == "group1"
-        assert node.pattern.pattern == r'(?P<' + node.child.id + '>(blabla)+)'
+        assert node.pattern.pattern == r'(?P<' + node.child.id + r'>(blabla)+)'
         assert node.child.pattern.pattern == r"(blabla)+"
 
     def test_children_nodes_have_unique_ids(self):
