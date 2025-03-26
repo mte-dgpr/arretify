@@ -50,21 +50,19 @@ def ocrized_arrete_to_html(lines: TextSegments) -> BeautifulSoup:
         element.clear()
         element.extend(new_children)
 
-        new_children = list(element.children)
-        new_children = resolve_arretes_ministeriels_legifrance_ids(soup, new_children)
-        element.clear()
-        element.extend(new_children)
-
     for element in soup.select(f'.{ALINEA_CSS_CLASS}, .{ALINEA_CSS_CLASS} *, .{MOTIF_CSS_CLASS}, .{VISA_CSS_CLASS}'):
         new_children = list(element.children)
         # First resolve all document references
+        new_children = resolve_arretes_ministeriels_legifrance_ids(soup, new_children)
         new_children = resolve_code_legifrance_ids(soup, new_children)
+        new_children = resolve_eu_acts_eurlex_urls(soup, new_children)
 
         # Then match sections with documents,
-        # and resolve section references.
         new_children = match_sections_with_documents(soup, new_children)
+
+        # and resolve section references.
         new_children = resolve_code_articles_legifrance_ids(soup, new_children)
-        new_children = resolve_eu_acts_eurlex_urls(soup, new_children)
+
         element.clear()
         element.extend(new_children)
 

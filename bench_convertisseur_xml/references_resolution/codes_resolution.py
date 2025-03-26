@@ -11,7 +11,7 @@ from bench_convertisseur_xml.types import PageElementOrString
 from bench_convertisseur_xml.law_data.external_urls import resolve_external_url
 from bench_convertisseur_xml.utils.html import render_bool_attribute
 from bench_convertisseur_xml.law_data.legifrance import get_code_id_with_title
-from .core import filter_section_references, filter_document_references
+from .core import filter_section_references, filter_document_references, update_reference_tag_uri
 
 
 def resolve_code_articles_legifrance_ids(
@@ -57,13 +57,7 @@ def resolve_code_articles_legifrance_ids(
                 
             resolved_sections.append(section)
 
-        sections = resolved_sections
-        code_article_reference_tag['data-uri'] = render_uri(document, *sections)
-        code_article_reference_tag['data-is_resolvable'] = render_bool_attribute(
-            is_resolvable(document, *sections))
-        external_url = resolve_external_url(document, *sections)
-        if external_url:
-            code_article_reference_tag['href'] = external_url
+        update_reference_tag_uri(code_article_reference_tag, document, *resolved_sections)
 
     return new_children
 
@@ -82,13 +76,7 @@ def resolve_code_legifrance_ids(
         code_id = get_code_id_with_title(document.title)
         if code_id is None:
             raise ValueError(f'Could not find code id for title {document.title}')
-
-        document = dataclass_replace(document, id=code_id)
-        code_reference_tag['data-uri'] = render_uri(document, *sections)
-        code_reference_tag['data-is_resolvable'] = render_bool_attribute(
-            is_resolvable(document, *sections))
-        external_url = resolve_external_url(document, *sections)
-        if external_url:
-            code_reference_tag['href'] = external_url
+        
+        update_reference_tag_uri(code_reference_tag, dataclass_replace(document, id=code_id), *sections)
 
     return new_children

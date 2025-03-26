@@ -27,4 +27,11 @@ def resolve_external_url(
         else:
             return build_code_site_url(document.id)
     
+    elif document.type in [
+        DocumentType.eu_decision,
+        DocumentType.eu_regulation,
+        DocumentType.eu_directive,
+    ]:
+        return document.id
+
     return None
