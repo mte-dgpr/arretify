@@ -1,6 +1,6 @@
-from typing import List, Iterable, cast, Type
+from typing import List, Iterable, cast, Type, Callable
 
-from bs4 import Tag
+from bs4 import Tag, BeautifulSoup
 
 from bench_convertisseur_xml.types import PageElementOrString
 from bench_convertisseur_xml.html_schemas import SECTION_REFERENCE_SCHEMA, DOCUMENT_REFERENCE_SCHEMA
@@ -12,6 +12,29 @@ from bench_convertisseur_xml.utils.html import make_css_class, render_bool_attri
 
 SECTION_REFERENCE_CSS_CLASS = make_css_class(SECTION_REFERENCE_SCHEMA)
 DOCUMENT_REFERENCE_CSS_CLASS = make_css_class(DOCUMENT_REFERENCE_SCHEMA)
+
+
+ReferenceResolutionFunction = Callable[[Tag], None]
+
+
+def resolve_document_references(
+    container: Tag | BeautifulSoup, 
+    document_type: DocumentType,
+    reference_resolution_function: ReferenceResolutionFunction
+):
+    filter_function = _make_reference_filter(document_type, DOCUMENT_REFERENCE_CSS_CLASS)
+    for document_reference_tag in container.find_all(filter_function):
+        reference_resolution_function(document_reference_tag)
+
+
+def resolve_section_references(
+    container: Tag | BeautifulSoup, 
+    document_type: DocumentType,
+    reference_resolution_function: ReferenceResolutionFunction
+):
+    filter_function = _make_reference_filter(document_type, SECTION_REFERENCE_CSS_CLASS)
+    for section_reference_tag in container.find_all(filter_function):
+        reference_resolution_function(section_reference_tag)
 
 
 def filter_section_references(
@@ -28,20 +51,6 @@ def filter_section_references(
     ]
 
 
-def filter_document_references(
-    children: Iterable[PageElementOrString],
-    document_type: DocumentType,
-) -> List[Tag]:
-    return [
-        child for child in children
-        if (
-            isinstance(child, Tag) 
-            and DOCUMENT_REFERENCE_CSS_CLASS in child.get('class', [])
-            and is_uri_document_type(cast(str, child.get('data-uri', '')), document_type)
-        )
-    ]
-
-
 def update_reference_tag_uri(tag: Tag, document: Document, *sections: Section) -> None:
     is_document_resolvable = is_resolvable(document, *sections)
     updated_uri = render_uri(document, *sections)
@@ -53,3 +62,15 @@ def update_reference_tag_uri(tag: Tag, document: Document, *sections: Section) -
         if external_url is None:
             raise ValueError(f'Could not resolve external url for {document}')
         tag['href'] = external_url
+
+
+def _make_reference_filter(
+    document_type: DocumentType,
+    css_class: str,
+) -> Callable[[Tag], bool]:
+    def _filter_function(tag: Tag) -> bool:
+        return (
+            css_class in tag.get('class', [])
+            and is_uri_document_type(cast(str, tag.get('data-uri', '')), document_type)
+        )
+    return _filter_function

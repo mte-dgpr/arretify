@@ -86,6 +86,18 @@ SECTION_REFERENCE_MULTIPLE_SCHEMA = DataElementSchema(
     tag_name="span",
     data_keys=[],
 )
+"""
+A group of section references to the same document.
+"""
+
+SECTIONS_AND_DOCUMENT_REFERENCES = DataElementSchema(
+    name="sections_and_document_references",
+    tag_name="span",
+    data_keys=[],
+)
+"""
+A group of sections references and their associated document reference.
+"""
 
 DATE_SCHEMA = DataElementSchema(
     name="date",

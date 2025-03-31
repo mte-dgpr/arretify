@@ -55,7 +55,23 @@
         "(, notamment par l', 1998-01-02)": null,
         "( relatif aux prélèvements et à la consommation d'eau ainsi qu'aux émissions de toute nature des installations, 2017-07-24)": null,
         "( relatif aux prescriptions générales applicables aux installations classées pour la protection de l'environnement soumises à déclaration, 1998-11-23)": null,
-        "( relatif à l'évaluation et à la prise en compte de la probabilité d'occurrence, de la gravité,, 2005-08-29)": null
+        "( relatif à l'évaluation et à la prise en compte de la probabilité d'occurrence, de la gravité,, 2005-08-29)": null,
+        "( fixant le formulaire du bordereau de suivi des déchets dangereux mentionné à l', 2005-07-29)": null,
+        "( relatif au registre et à la déclaration annuelle des émissions et des transferts de polluants et, 2008-01-31)": "JORFTEXT000018276495",
+        "( fixant le contenu des registres mentionnés aux, 2012-02-29)": "JORFTEXT000025454959",
+        "( relatif à la limitation des bruits émis dans l'environnement par les installations relevant du livre V, 1997-01-23)": null,
+        "( relatif aux installations d'incinération et de coincinération de déchets non dangereux et aux installations incinérant des, 2002-09-20)": null,
+        "( relatif à la limitation des bruits émis dans I'environnement par les installations classées pour la protection, 1997-01-23)": null,
+        "( qui précise notamment: la liste des paramètres analytiques, les fréquences d'analyse, les modalités de prélèvement et, 2016-05-23)": null,
+        "( sus-visé au montant de référence figurant à I', 2012-05-31)": null,
+        "( relatif au contrôle d'étanchéité des éléments assurant le confinement des fluides frigorigènes utilisés dans les équipements, 2007-05-07)": "JORFTEXT000000820657",
+        "(, l'établissement consommant plus de 1 tonne de solvant par an,, 1998-02-02)": null,
+        "( ou substances à phrases de risques R45, R46, R49, R60, R61 et halogénées étiquetées R40 telles, 1998-02-02)": null,
+        "( portant réglementation des installations électriques des établissements réglementés au titre de la législation sur les installations, 1980-03-31)": null,
+        "(, le laboratoire agréé effectue ses prélèvements sur une durée d'au moins une demi-heure et chaque, 2000-09-04)": null,
+        "( ou substances à phrases de risques R45, R46, R49, R60, R61 et halogénées étiquetées R40, 1998-02-02)": null,
+        "( portant modalités d'agrément des laboratoires effectuant des analyses dans le domaine de l'eau et des milieux, 2006-11-29)": "JORFTEXT000000817083",
+        "( a été réalisée en 2017, 2010-10-04)": null
     },
     "get_eu_act_url_with_year_and_num": {
         "(directive, 2010, 75)": "https://eur-lex.europa.eu/legal-content/FR/TXT/HTML/?uri=cellar:c7191b72-4e07-4712-86d6-d3ae5e4f0082",
@@ -69,6 +85,8 @@
         "(directive, 2000, 60)": "https://eur-lex.europa.eu/legal-content/FR/TXT/HTML/?uri=cellar:5c835afb-2ec6-4577-bdf8-756d3d694eeb",
         "(directive, 1976, 464)": "https://eur-lex.europa.eu/legal-content/FR/TXT/HTML/?uri=cellar:2efc093a-eba8-4834-8ae6-c91d6c47db78",
         "(directive, 2008, 105)": "https://eur-lex.europa.eu/legal-content/FR/TXT/HTML/?uri=cellar:66d82696-784f-4a55-9060-678e1076ae7d",
-        "(regulation, 2067, 2018)": null
+        "(regulation, 2067, 2018)": null,
+        "(decision, 2020, 2019)": "https://eur-lex.europa.eu/legal-content/FR/TXT/HTML/?uri=cellar:8e42e417-3ab2-11eb-b27b-01aa75ed71a1",
+        "(regulation, 2020, 2019)": null
     }
 }
