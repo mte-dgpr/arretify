@@ -9,28 +9,39 @@ from bench_convertisseur_xml.law_data.uri import parse_uri, render_uri, is_resol
 from bench_convertisseur_xml.law_data.eurlex import get_eu_act_url_with_year_and_num, ActType
 from bench_convertisseur_xml.types import PageElementOrString
 from bench_convertisseur_xml.utils.html import render_bool_attribute
-from .core import filter_document_references, update_reference_tag_uri
+from .core import update_reference_tag_uri
 
 
-def resolve_eu_acts_eurlex_urls(
-    soup: BeautifulSoup,
-    children: Iterable[PageElementOrString],
-) -> List[PageElementOrString]:
-    new_children = list(children)
-    eu_decisions_references: List[Tuple[ActType, Tag]] = [('decision', tag) for tag in filter_document_references(children, DocumentType.eu_decision)]
-    eu_regulations_references: List[Tuple[ActType, Tag]] = [('regulation', tag) for tag in filter_document_references(children, DocumentType.eu_regulation)]
-    eu_directives_references: List[Tuple[ActType, Tag]] = [('directive', tag) for tag in filter_document_references(children, DocumentType.eu_directive)]
+def resolve_eu_decision_eurlex_url(
+    eu_act_reference_tag: Tag,
+) -> None:
+    return _resolve_eu_act_eurlex_url('decision', eu_act_reference_tag)
 
-    for act_type, eu_act_reference_tag in eu_decisions_references + eu_regulations_references + eu_directives_references:
-        document, sections = parse_uri(cast(str, eu_act_reference_tag['data-uri']))
 
-        if document.num is None or document.date is None:
-            raise ValueError(f'Could not find num or date for document {document}')
+def resolve_eu_regulation_eurlex_url(
+    eu_act_reference_tag: Tag,
+) -> None:
+    return _resolve_eu_act_eurlex_url('regulation', eu_act_reference_tag)
 
-        eurlex_url = get_eu_act_url_with_year_and_num(act_type, int(document.date), int(document.num))
-        if eurlex_url is None:
-            LOGGER.warning(f'Could not find eurlex url for {act_type} {document.date}/{document.num}')
-            continue
 
-        update_reference_tag_uri(eu_act_reference_tag, dataclass_replace(document, id=eurlex_url), *sections)
-    return new_children
+def resolve_eu_directive_eurlex_url(
+    eu_act_reference_tag: Tag,
+) -> None:
+    return _resolve_eu_act_eurlex_url('directive', eu_act_reference_tag)
+
+
+def _resolve_eu_act_eurlex_url(
+    act_type: ActType,
+    eu_act_reference_tag: Tag,
+) -> None:
+    document, sections = parse_uri(cast(str, eu_act_reference_tag['data-uri']))
+
+    if document.num is None or document.date is None:
+        raise ValueError(f'Could not find num or date for document {document}')
+
+    eurlex_url = get_eu_act_url_with_year_and_num(act_type, int(document.date), int(document.num))
+    if eurlex_url is None:
+        LOGGER.warning(f'Could not find eurlex url for {act_type} {document.date}/{document.num}')
+        return
+
+    update_reference_tag_uri(eu_act_reference_tag, dataclass_replace(document, id=eurlex_url), *sections)

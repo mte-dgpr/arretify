@@ -12,14 +12,6 @@ ARRETES_OCR_DIR = TEST_DATA_DIR / 'arretes_ocr'
 ARRETES_HTML_DIR = TEST_DATA_DIR / 'arretes_html'
 
 
-def _iter_parsed_arretes_ocr_files():
-    arretes_ocr_file_paths = Path(ARRETES_OCR_DIR).rglob(f"*.{OCR_FILE_EXTENSION}")
-    for arrete_ocr_file_path in arretes_ocr_file_paths:
-        arrete_contents = open(arrete_ocr_file_path, 'r', encoding='utf-8').readlines()
-        soup = ocrized_arrete_to_html(initialize_lines(arrete_contents))
-        yield arrete_ocr_file_path, soup.prettify()
-
-
 class TestMain(unittest.TestCase):
     def test_parse_arrete_snapshots(self):
         LOGGER.info('Testing snapshots')
@@ -28,3 +20,11 @@ class TestMain(unittest.TestCase):
             arrete_html_file_path = ARRETES_HTML_DIR / f'{arrete_ocr_file_path.parent.name}/{arrete_ocr_file_path.stem}.html'
             expected_contents = open(arrete_html_file_path, 'r', encoding='utf-8').read()        
             assert actual_contents == expected_contents
+
+
+def _iter_parsed_arretes_ocr_files():
+    arretes_ocr_file_paths = Path(ARRETES_OCR_DIR).rglob(f"*{OCR_FILE_EXTENSION}")
+    for arrete_ocr_file_path in arretes_ocr_file_paths:
+        arrete_contents = open(arrete_ocr_file_path, 'r', encoding='utf-8').readlines()
+        soup = ocrized_arrete_to_html(initialize_lines(arrete_contents))
+        yield arrete_ocr_file_path, soup.prettify()
