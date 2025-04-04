@@ -54,7 +54,7 @@ def _get_cached_value(func: Callable[P, R], *args: P.args, **kwargs: P.kwargs) -
     if params_key in _CACHE[func_key]:
         return cast(R, _CACHE[func_key][params_key])
     else:
-        raise KeyError(f"Miss for {func_key}{params_key}")
+        raise KeyError(f"Cache miss for {func_key}{params_key}")
 
 
 def _set_cached_value(func: Callable[P, R], value: R, *args: P.args, **kwargs: P.kwargs) -> None:

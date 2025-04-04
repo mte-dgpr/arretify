@@ -2,6 +2,7 @@ from typing import List, Iterable, cast, Type, Callable
 
 from bs4 import Tag, BeautifulSoup
 
+from bench_convertisseur_xml.regex_utils import PatternProxy, safe_group
 from bench_convertisseur_xml.types import PageElementOrString
 from bench_convertisseur_xml.html_schemas import SECTION_REFERENCE_SCHEMA, DOCUMENT_REFERENCE_SCHEMA
 from bench_convertisseur_xml.law_data.types import Document, DocumentType, Section
@@ -12,6 +13,9 @@ from bench_convertisseur_xml.utils.html import make_css_class, render_bool_attri
 
 SECTION_REFERENCE_CSS_CLASS = make_css_class(SECTION_REFERENCE_SCHEMA)
 DOCUMENT_REFERENCE_CSS_CLASS = make_css_class(DOCUMENT_REFERENCE_SCHEMA)
+# Regex for searching an act with its title.
+# Simply picks the first 3 to 15 words following the document reference.
+TITLE_SAMPLE_PATTERN = PatternProxy(r'^\s*([^\.;\s]+\s+){3,15}([^\.;\s]+)')
 
 
 ReferenceResolutionFunction = Callable[[Tag], None]
@@ -62,6 +66,17 @@ def update_reference_tag_uri(tag: Tag, document: Document, *sections: Section) -
         if external_url is None:
             raise ValueError(f'Could not resolve external url for {document}')
         tag['href'] = external_url
+
+
+def get_title_sample_next_sibling(document_reference_tag: Tag) -> str | None:
+    title_element = document_reference_tag.next_sibling
+    if title_element is None or not isinstance(title_element, str):
+        return None
+
+    match = TITLE_SAMPLE_PATTERN.match(title_element)
+    if match:
+        return safe_group(match, 0)
+    return None
 
 
 def _make_reference_filter(

@@ -18,6 +18,8 @@ from .references_resolution.core import resolve_document_references, resolve_sec
 from .references_resolution.codes_resolution import resolve_code_article_legifrance_id, resolve_code_legifrance_id
 from .references_resolution.sections_resolution import match_sections_with_documents
 from .references_resolution.arretes_resolution import resolve_arrete_ministeriel_legifrance_id
+from .references_resolution.decrets_resolution import resolve_decret_legifrance_id
+from .references_resolution.circulaires_resolution import resolve_circulaire_legifrance_id
 from .references_resolution.eu_acts_resolution import resolve_eu_decision_eurlex_url, resolve_eu_directive_eurlex_url, resolve_eu_regulation_eurlex_url
 from .law_data.types import DocumentType
 from .operations_detection.operations import parse_operations
@@ -55,6 +57,8 @@ def ocrized_arrete_to_html(lines: TextSegments) -> BeautifulSoup:
 
     # Resolve all document references
     resolve_document_references(soup, DocumentType.arrete_ministeriel, resolve_arrete_ministeriel_legifrance_id)
+    resolve_document_references(soup, DocumentType.decret, resolve_decret_legifrance_id)
+    resolve_document_references(soup, DocumentType.circulaire, resolve_circulaire_legifrance_id)
     resolve_document_references(soup, DocumentType.code, resolve_code_legifrance_id)
     resolve_document_references(soup, DocumentType.eu_decision, resolve_eu_decision_eurlex_url)
     resolve_document_references(soup, DocumentType.eu_regulation, resolve_eu_regulation_eurlex_url)
