@@ -10,7 +10,7 @@ from bench_convertisseur_xml.utils.functional import flat_map_string
 from bench_convertisseur_xml.html_schemas import DOCUMENT_REFERENCE_SCHEMA
 from bench_convertisseur_xml.parsing_utils.patterns import ET_VIRGULE_PATTERN_S
 from bench_convertisseur_xml.parsing_utils.dates import DATE_NODE, render_date_regex_tree_match
-from bench_convertisseur_xml.regex_utils import regex_tree, flat_map_regex_tree_match, split_string_with_regex_tree
+from bench_convertisseur_xml.regex_utils import regex_tree, flat_map_regex_tree_match, map_regex_tree_match, split_string_with_regex_tree
 from bench_convertisseur_xml.law_data.types import Document, DocumentType
 from bench_convertisseur_xml.law_data.uri import render_uri, is_resolvable
 
@@ -44,7 +44,7 @@ ARRETE_NODE = regex_tree.Group(regex_tree.Sequence([
             regex_tree.Quantifier(
                 regex_tree.Sequence([
                     IDENTIFIER_NODE,
-                    '\s',
+                    r'\s',
                 ]), 
                 '?',
             ),
@@ -76,7 +76,7 @@ ARRETE_MULTIPLE_NODE = regex_tree.Group(regex_tree.Sequence([
                         regex_tree.Quantifier(
                             regex_tree.Sequence([
                                 IDENTIFIER_NODE,
-                                '\s',
+                                r'\s',
                             ]),
                             '?',
                         ),
@@ -107,11 +107,9 @@ def _render_arrete_container(
     base_arrete_match: regex_tree.Match
 ) -> Tag:
     # Parse date tag and extract date value
-    arrete_tag_contents = list(flat_map_regex_tree_match(
+    arrete_tag_contents = list(map_regex_tree_match(
         arrete_match.children,
-        lambda date_group_match: [
-            render_date_regex_tree_match(soup, date_group_match)
-        ],
+        lambda date_group_match: render_date_regex_tree_match(soup, date_group_match),
         allowed_group_names=[DATE_NODE.group_name],
     ))
 
@@ -154,15 +152,13 @@ def _parse_arretes_references(
 ):
     return flat_map_string(
         children,
-        lambda string: flat_map_regex_tree_match(
+        lambda string: map_regex_tree_match(
             split_string_with_regex_tree(ARRETE_NODE, string),
-            lambda arrete_container_group_match: [
-                _render_arrete_container(
-                    soup, 
-                    arrete_container_group_match, 
-                    arrete_container_group_match,
-                ),
-            ],
+            lambda arrete_container_group_match: _render_arrete_container(
+                soup, 
+                arrete_container_group_match, 
+                arrete_container_group_match,
+            ),
             allowed_group_names=['__arrete'],
         )
     )
@@ -178,15 +174,13 @@ def _parse_multiple_arretes_references(
         children,
         lambda string: flat_map_regex_tree_match(
             split_string_with_regex_tree(ARRETE_MULTIPLE_NODE, string),
-            lambda arrete_multiple_group_match: flat_map_regex_tree_match(
+            lambda arrete_multiple_group_match: map_regex_tree_match(
                 arrete_multiple_group_match.children,
-                lambda arrete_container_group_match: [
-                    _render_arrete_container(
-                        soup, 
-                        arrete_container_group_match, 
-                        arrete_multiple_group_match,
-                    )
-                ],
+                lambda arrete_container_group_match:_render_arrete_container(
+                    soup, 
+                    arrete_container_group_match, 
+                    arrete_multiple_group_match,
+                ),
                 allowed_group_names=['__arrete'],
             ),
             allowed_group_names=['__arrete_multiple'],

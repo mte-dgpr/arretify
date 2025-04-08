@@ -14,7 +14,7 @@ StrSplit = Tuple[str, MatchProxy, str]
 def split_match_by_named_groups(
     match: MatchProxy,
 ) -> Iterator[str | MatchNamedGroup]:
-    '''
+    R'''
     Example:
         >>> pattern = r'(?P<first>\w+)-(?P<second>\w+)'
         >>> text = 'foo-bar'
@@ -67,7 +67,7 @@ def split_string_with_regex(
     pattern: PatternProxy,
     string: str,
 ) -> MatchFlow:
-    '''
+    r'''
     Example:
     
         >>> pattern = PatternProxy(r'\d+')  # Matches sequences of digits

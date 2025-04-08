@@ -14,10 +14,14 @@ from .references_detection.circulaires_detection import parse_circulaires_refere
 from .references_detection.codes_detection import parse_codes_references
 from .references_detection.self_detection import parse_self_references
 from .references_detection.eu_acts_detection import parse_eu_acts_references
-from .references_resolution.codes_resolution import resolve_code_legifrance_ids, resolve_code_articles_legifrance_ids
+from .references_resolution.core import resolve_document_references, resolve_section_references
+from .references_resolution.codes_resolution import resolve_code_article_legifrance_id, resolve_code_legifrance_id
 from .references_resolution.sections_resolution import match_sections_with_documents
-from .references_resolution.arretes_resolution import resolve_arretes_ministeriels_legifrance_ids
-from .references_resolution.eu_acts_resolution import resolve_eu_acts_eurlex_urls
+from .references_resolution.arretes_resolution import resolve_arrete_ministeriel_legifrance_id
+from .references_resolution.decrets_resolution import resolve_decret_legifrance_id
+from .references_resolution.circulaires_resolution import resolve_circulaire_legifrance_id
+from .references_resolution.eu_acts_resolution import resolve_eu_decision_eurlex_url, resolve_eu_directive_eurlex_url, resolve_eu_regulation_eurlex_url
+from .law_data.types import DocumentType
 from .operations_detection.operations import parse_operations
 from .clean_ocrized_file import clean_ocrized_file
 from .html_schemas import ALINEA_SCHEMA, DOCUMENT_REFERENCE_SCHEMA, VISA_SCHEMA, MOTIF_SCHEMA
@@ -36,8 +40,9 @@ VISA_CSS_CLASS = make_css_class(VISA_SCHEMA)
 def ocrized_arrete_to_html(lines: TextSegments) -> BeautifulSoup:
     lines = clean_ocrized_file(lines)
     soup = parse_arrete(lines)
-
     new_children: List[PageElementOrString]
+
+    # Detect all references
     for element in soup.select(f'.{ALINEA_CSS_CLASS}, .{ALINEA_CSS_CLASS} *, .{MOTIF_CSS_CLASS}, .{VISA_CSS_CLASS}'):
         new_children = list(element.children)
         new_children = parse_arretes_references(soup, new_children)
@@ -50,24 +55,26 @@ def ocrized_arrete_to_html(lines: TextSegments) -> BeautifulSoup:
         element.clear()
         element.extend(new_children)
 
-        new_children = list(element.children)
-        new_children = resolve_arretes_ministeriels_legifrance_ids(soup, new_children)
-        element.clear()
-        element.extend(new_children)
+    # Resolve all document references
+    resolve_document_references(soup, DocumentType.arrete_ministeriel, resolve_arrete_ministeriel_legifrance_id)
+    resolve_document_references(soup, DocumentType.decret, resolve_decret_legifrance_id)
+    resolve_document_references(soup, DocumentType.circulaire, resolve_circulaire_legifrance_id)
+    resolve_document_references(soup, DocumentType.code, resolve_code_legifrance_id)
+    resolve_document_references(soup, DocumentType.eu_decision, resolve_eu_decision_eurlex_url)
+    resolve_document_references(soup, DocumentType.eu_regulation, resolve_eu_regulation_eurlex_url)
+    resolve_document_references(soup, DocumentType.eu_directive, resolve_eu_directive_eurlex_url)
 
+    # Match sections with documents,
     for element in soup.select(f'.{ALINEA_CSS_CLASS}, .{ALINEA_CSS_CLASS} *, .{MOTIF_CSS_CLASS}, .{VISA_CSS_CLASS}'):
         new_children = list(element.children)
-        # First resolve all document references
-        new_children = resolve_code_legifrance_ids(soup, new_children)
-
-        # Then match sections with documents,
-        # and resolve section references.
         new_children = match_sections_with_documents(soup, new_children)
-        new_children = resolve_code_articles_legifrance_ids(soup, new_children)
-        new_children = resolve_eu_acts_eurlex_urls(soup, new_children)
         element.clear()
         element.extend(new_children)
 
+    # Resolve all section references
+    resolve_section_references(soup, DocumentType.code, resolve_code_article_legifrance_id)
+
+    # Find consolidation operations
     for container in soup.select(f'.{ALINEA_CSS_CLASS}, .{ALINEA_CSS_CLASS} *'):
         new_children = list(container.children)
 

@@ -4,8 +4,8 @@ from bs4 import BeautifulSoup, Tag, PageElement
 
 from bench_convertisseur_xml.types import PageElementOrString
 from bench_convertisseur_xml.utils.element_ranges import iter_collapsed_range_right, iter_collapsed_range_left, ElementRange
-from bench_convertisseur_xml.utils.html import make_css_class, render_bool_attribute
-from bench_convertisseur_xml.html_schemas import SECTION_REFERENCE_SCHEMA, SECTION_REFERENCE_MULTIPLE_SCHEMA, DOCUMENT_REFERENCE_SCHEMA
+from bench_convertisseur_xml.utils.html import make_css_class, render_bool_attribute, make_data_tag
+from bench_convertisseur_xml.html_schemas import SECTION_REFERENCE_SCHEMA, SECTION_REFERENCE_MULTIPLE_SCHEMA, DOCUMENT_REFERENCE_SCHEMA, SECTIONS_AND_DOCUMENT_REFERENCES
 from bench_convertisseur_xml.law_data.uri import parse_uri, render_uri, is_resolvable
 from bench_convertisseur_xml.law_data.types import Document, DocumentType
 from bench_convertisseur_xml.regex_utils import regex_tree
@@ -48,11 +48,19 @@ def _resolve_single_section_with_document(
 ) -> List[PageElementOrString]:
     children = list(children)
     section_references = filter_section_references(children, DocumentType.unknown)
+    element_ranges: List[ElementRange] = []
+
     for section_reference_tag in section_references:
         element_range = _find_section_document_range(section_reference_tag)
         if element_range is None:
             continue
+        element_ranges.append(element_range)
         _update_section_reference_uri(section_reference_tag, element_range[-1])
+
+    for element_range in element_ranges:
+        children = _wrap_sections_and_document_references(
+            soup, children, element_range
+        )
 
     return children
 
@@ -69,19 +77,31 @@ def _match_multiple_sections_with_document(
             and SECTION_REFERENCE_MULTIPLE_CSS_CLASS in child.get('class', [])
         )
     ]
+    element_ranges: List[ElementRange] = []
 
     for section_multiple_reference_tag in section_multiple_references:
         element_range = _find_section_document_range(section_multiple_reference_tag)
         if element_range is None:
             continue
+
+        element_ranges.append(element_range)
         section_reference_tags = section_multiple_reference_tag.select(f'.{SECTION_REFERENCE_CSS_CLASS}')
         for section_reference_tag in section_reference_tags:
             _update_section_reference_uri(section_reference_tag, element_range[-1])
+
+    for element_range in element_ranges:
+        children = _wrap_sections_and_document_references(
+            soup, children, element_range
+        )
     return children
 
 
 def _find_section_document_range(section_reference_tag: Tag) -> ElementRange | None:
     for element_range in iter_collapsed_range_right(section_reference_tag):
+        # Make sure all elements in the range are contiguous.
+        if (element_range[-1].parent != section_reference_tag.parent):
+            return None
+
         if (len(element_range) > 3):
             return None
 
@@ -119,3 +139,20 @@ def _update_section_reference_uri(section_reference_tag: Tag, document_reference
     section_reference_tag['data-is_resolvable'] = render_bool_attribute(
         is_resolvable(document, *sections)
     )
+
+def _wrap_sections_and_document_references(
+    soup: BeautifulSoup,
+    children: Iterable[PageElementOrString],
+    element_range: ElementRange,
+) -> List[PageElementOrString]:
+    children = list(children)
+    start_index = children.index(element_range[0])
+    end_index = children.index(element_range[-1])
+    children[start_index:end_index + 1] = [
+        make_data_tag(
+            soup, 
+            SECTIONS_AND_DOCUMENT_REFERENCES,
+            contents=children[start_index:end_index + 1],
+        )
+    ]
+    return children
