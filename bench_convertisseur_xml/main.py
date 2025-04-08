@@ -21,10 +21,11 @@ from .references_resolution.arretes_resolution import resolve_arrete_ministeriel
 from .references_resolution.decrets_resolution import resolve_decret_legifrance_id
 from .references_resolution.circulaires_resolution import resolve_circulaire_legifrance_id
 from .references_resolution.eu_acts_resolution import resolve_eu_decision_eurlex_url, resolve_eu_directive_eurlex_url, resolve_eu_regulation_eurlex_url
+from .consolidation_operations.operations_detection import parse_operations
+from .consolidation_operations.operations_resolution import resolve_references_and_operands
 from .law_data.types import DocumentType
-from .operations_detection.operations import parse_operations
 from .clean_ocrized_file import clean_ocrized_file
-from .html_schemas import ALINEA_SCHEMA, DOCUMENT_REFERENCE_SCHEMA, VISA_SCHEMA, MOTIF_SCHEMA
+from .html_schemas import ALINEA_SCHEMA, DOCUMENT_REFERENCE_SCHEMA, VISA_SCHEMA, MOTIF_SCHEMA, OPERATION_SCHEMA
 from .utils.html import make_css_class
 from .debug import insert_debug_keywords
 from .parsing_utils.source_mapping import initialize_lines, TextSegments
@@ -32,6 +33,7 @@ from .types import PageElementOrString
 
 ALINEA_CSS_CLASS = make_css_class(ALINEA_SCHEMA)
 DOCUMENT_REFERENCE_CSS_CLASS = make_css_class(DOCUMENT_REFERENCE_SCHEMA)
+OPERATION_CSS_CLASS = make_css_class(OPERATION_SCHEMA)
 
 MOTIF_CSS_CLASS = make_css_class(MOTIF_SCHEMA)
 VISA_CSS_CLASS = make_css_class(VISA_SCHEMA)
@@ -43,8 +45,8 @@ def ocrized_arrete_to_html(lines: TextSegments) -> BeautifulSoup:
     new_children: List[PageElementOrString]
 
     # Detect all references
-    for element in soup.select(f'.{ALINEA_CSS_CLASS}, .{ALINEA_CSS_CLASS} *, .{MOTIF_CSS_CLASS}, .{VISA_CSS_CLASS}'):
-        new_children = list(element.children)
+    for tag in soup.select(f'.{ALINEA_CSS_CLASS}, .{ALINEA_CSS_CLASS} *, .{MOTIF_CSS_CLASS}, .{VISA_CSS_CLASS}'):
+        new_children = list(tag.children)
         new_children = parse_arretes_references(soup, new_children)
         new_children = parse_decrets_references(soup, new_children)
         new_children = parse_circulaires_references(soup, new_children)
@@ -52,8 +54,8 @@ def ocrized_arrete_to_html(lines: TextSegments) -> BeautifulSoup:
         new_children = parse_self_references(soup, new_children)
         new_children = parse_eu_acts_references(soup, new_children)
         new_children = parse_section_references(soup, new_children)
-        element.clear()
-        element.extend(new_children)
+        tag.clear()
+        tag.extend(new_children)
 
     # Resolve all document references
     resolve_document_references(soup, DocumentType.arrete_ministeriel, resolve_arrete_ministeriel_legifrance_id)
@@ -65,25 +67,29 @@ def ocrized_arrete_to_html(lines: TextSegments) -> BeautifulSoup:
     resolve_document_references(soup, DocumentType.eu_directive, resolve_eu_directive_eurlex_url)
 
     # Match sections with documents,
-    for element in soup.select(f'.{ALINEA_CSS_CLASS}, .{ALINEA_CSS_CLASS} *, .{MOTIF_CSS_CLASS}, .{VISA_CSS_CLASS}'):
-        new_children = list(element.children)
+    for tag in soup.select(f'.{ALINEA_CSS_CLASS}, .{ALINEA_CSS_CLASS} *, .{MOTIF_CSS_CLASS}, .{VISA_CSS_CLASS}'):
+        new_children = list(tag.children)
         new_children = match_sections_with_documents(soup, new_children)
-        element.clear()
-        element.extend(new_children)
+        tag.clear()
+        tag.extend(new_children)
 
     # Resolve all section references
     resolve_section_references(soup, DocumentType.code, resolve_code_article_legifrance_id)
 
     # Find consolidation operations
-    for container in soup.select(f'.{ALINEA_CSS_CLASS}, .{ALINEA_CSS_CLASS} *'):
-        new_children = list(container.children)
+    for container_tag in soup.select(f'.{ALINEA_CSS_CLASS}, .{ALINEA_CSS_CLASS} *'):
+        new_children = list(container_tag.children)
 
-        arretes_references = container.select(f'.{DOCUMENT_REFERENCE_CSS_CLASS}')
-        if arretes_references:
+        document_reference_tags = container_tag.select(f'.{DOCUMENT_REFERENCE_CSS_CLASS}')
+        if document_reference_tags:
             new_children = parse_operations(soup, new_children)
 
-        container.clear()
-        container.extend(new_children)
+        container_tag.clear()
+        container_tag.extend(new_children)
+
+    # Resolve operation references and operands
+    for operation_tag in soup.select(f'.{OPERATION_CSS_CLASS}'):
+        resolve_references_and_operands(operation_tag)
     return soup
 
 

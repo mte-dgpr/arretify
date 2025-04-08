@@ -2,11 +2,11 @@ import unittest
 from datetime import date
 from bs4 import BeautifulSoup
 
-from bench_convertisseur_xml.utils.testing import make_children_processor
+from bench_convertisseur_xml.utils.testing import make_testing_function_for_children_list
 from .arretes_detection import parse_arretes_references
 
 
-process_children = make_children_processor(parse_arretes_references)
+process_children = make_testing_function_for_children_list(parse_arretes_references)
 
 
 class TestParseArreteReferences(unittest.TestCase):

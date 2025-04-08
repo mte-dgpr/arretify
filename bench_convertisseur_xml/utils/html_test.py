@@ -3,7 +3,8 @@ from typing import List, Union
 
 from bs4 import BeautifulSoup, Tag
 
-from .html import make_ul
+from . import html
+from .html import make_ul, assign_element_id
 
 class TestMakeUl(unittest.TestCase):
 
@@ -39,3 +40,32 @@ class TestMakeUl(unittest.TestCase):
             "<li>New Item</li>"
             "</ul>"
         )
+
+
+class TestAssignElementId(unittest.TestCase):
+
+    def setUp(self):
+        html._ID_COUNTER = 0
+
+    def test_simple(self):
+        # Arrange
+        soup = BeautifulSoup("", "html.parser")
+        tag = soup.new_tag("div")
+
+        # Act
+        assign_element_id(tag)
+
+        # Assert
+        assert tag["data-element_id"] == "1"
+
+    def test_already_has_element_id(self):
+        # Arrange
+        soup = BeautifulSoup("", "html.parser")
+        tag = soup.new_tag("div")
+        tag["data-element_id"] = "42"
+
+        # Act
+        assign_element_id(tag)
+
+        # Assert
+        assert tag["data-element_id"] == "42"

@@ -2,11 +2,11 @@ import unittest
 
 from bs4 import BeautifulSoup
 
-from bench_convertisseur_xml.utils.testing import make_children_processor
+from bench_convertisseur_xml.utils.testing import make_testing_function_for_children_list
 from .self_detection import parse_self_references
 
 
-process_children = make_children_processor(parse_self_references)
+process_children = make_testing_function_for_children_list(parse_self_references)
 
 
 class TestParseSelfReferences(unittest.TestCase):

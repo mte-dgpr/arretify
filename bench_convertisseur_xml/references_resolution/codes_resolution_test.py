@@ -2,12 +2,12 @@ import unittest
 
 from bs4 import BeautifulSoup, Tag
 
-from bench_convertisseur_xml.utils.testing import make_element_processor
+from bench_convertisseur_xml.utils.testing import make_testing_function_for_single_tag
 from .codes_resolution import resolve_code_article_legifrance_id, resolve_code_legifrance_id
 
 
-process_code_document_reference = make_element_processor(resolve_code_legifrance_id)
-process_code_article_section_reference = make_element_processor(resolve_code_article_legifrance_id)
+process_code_document_reference = make_testing_function_for_single_tag(resolve_code_legifrance_id)
+process_code_article_section_reference = make_testing_function_for_single_tag(resolve_code_article_legifrance_id)
 
 
 class TestResolveSectionsDocuments(unittest.TestCase):

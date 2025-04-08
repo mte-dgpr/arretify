@@ -2,6 +2,8 @@ from typing import Callable, List, Tuple, Iterator
 
 from bs4 import BeautifulSoup, Tag, PageElement
 
+from .html_tree_navigation import is_parent, is_descendant, closest_common_ancestor
+
 
 ElementRange = List[PageElement]
 """
@@ -30,7 +32,7 @@ def iter_collapsed_range_right(
         # it means we are going down in the tree, so `current`
         # is a leaf and we don't want to collapse it, even if it
         # is the only node of its parent.
-        if _is_parent(collapsed[-1], current):
+        if is_parent(collapsed[-1], current):
             collapsed.pop()
         yield collapsed + [current]
         all_elements.append(current)
@@ -55,30 +57,12 @@ def iter_collapsed_range_left(
         current = current.previous_element
 
 
-def _is_descendant(child: PageElement, parent: PageElement) -> bool:
-    if not isinstance(parent, Tag):
-        return False
-    for descendant in parent.descendants:
-        if child is descendant:
-            return True
-    return False
-
-
-def _is_parent(parent: PageElement, child: PageElement) -> bool:
-    if not isinstance(parent, Tag):
-        return False
-    for ancestor in child.parents:
-        if parent is ancestor:
-            return True
-    return False
-
-
 def _find_next_after(element: PageElement) -> PageElement | None:
     if element.next_sibling:
         return element.next_sibling
     else:
         next_element = element.next_element
-        while next_element and _is_descendant(next_element, element):
+        while next_element and is_descendant(next_element, element):
             next_element = next_element.next_element
         return next_element
 
@@ -134,7 +118,7 @@ def _collapse_element_range(element_range: ElementRange) -> ElementRange:
     element = pile.pop(0)
     while True:
         # A string or tag encountered here can't belong to a collapsed node, 
-        # otherwise it would have been removed from the pile before.
+        # otherwise it would have been removed from the pile before (step 0.).
         # Therefore it can be either : 
         # 
         # 1. COMPLETE SUBTREE -> collapse
@@ -142,10 +126,10 @@ def _collapse_element_range(element_range: ElementRange) -> ElementRange:
         # 3. PARTIAL SUBTREE -> ignore the node and move one level down
         #
         if isinstance(element, Tag):
-            # Grab and remove all the descendants of the current element that 
+            # 0. Grab and remove all the descendants of the current element that 
             # are in the pile.
             descendants_in_pile: ElementRange = []
-            while pile and _is_parent(element, pile[0]):
+            while pile and is_parent(element, pile[0]):
                 descendants_in_pile.append(pile.pop(0))
 
             # 1. COMPLETE SUBTREE
@@ -174,3 +158,71 @@ def _collapse_element_range(element_range: ElementRange) -> ElementRange:
         else:
             break
     return collapsed
+
+
+def get_contiguous_elements_left(start_tag: Tag) -> List[PageElement]:
+    """
+    List elements contiguous to `start_tag` in parsing order in the left direction.
+    
+    Example, with the following html structure :
+        <div>
+            <div id="blu"></div>
+            <div id="bli">
+                <span id="bla"></span>
+                blo
+            </div>
+            <div id="start"></div>
+        </div>
+    
+    This function will return the following list of elements :
+        [bli, "blo"]
+    """
+    elements: List[PageElement] = []
+    for element_range in iter_collapsed_range_left(start_tag):
+        if len(element_range) < 2:
+            continue
+
+        elif len(element_range) == 2:
+            elements.insert(0, element_range[-2])
+            continue
+
+        # If more than 2 elements, the right most neighbor has already been encountered, 
+        # so we can ignore that range
+        # If in addition, we have reached the contiguous neighbors at the top of ancestor
+        # hierarchy, it means we can stop collecting elements.
+        common_ancestor = closest_common_ancestor(*element_range[:-1])
+        if is_parent(common_ancestor, start_tag):
+            break
+
+    return elements
+
+
+def get_contiguous_elements_right(start_tag: Tag) -> List[PageElement]:
+    """
+    List elements contiguous to `start_tag` in parsing order in the right direction.
+
+    Example, with the following html structure :
+        <div id="start"></div>
+        <div id="bli">
+            <span id="bla">blo</span>
+            blu
+        </div>
+        <div id="ble"></div>
+
+    This function will return the following list of elements :
+        [bli, bla, "blo"]
+    """
+    elements: List[PageElement] = []
+    for element_range in iter_collapsed_range_right(start_tag):
+        if len(element_range) < 2:
+            continue
+
+        # Since we are searching right, we will start from top element and go down.
+        # If we have more than 2 elements in the range (including the start element),
+        # it means that we reached bottom and we have all contiguous elements.
+        if len(element_range) > 2:
+            break
+        else:
+            elements.append(element_range[1])
+    
+    return elements

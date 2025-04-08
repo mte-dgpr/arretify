@@ -2,11 +2,11 @@ import unittest
 
 from bs4 import BeautifulSoup
 
-from bench_convertisseur_xml.utils.testing import make_children_processor
+from bench_convertisseur_xml.utils.testing import make_testing_function_for_children_list
 from .decrets_detection import parse_decrets_references
 
 
-process_children = make_children_processor(parse_decrets_references)
+process_children = make_testing_function_for_children_list(parse_decrets_references)
 
 
 class TestParseDecretsReferences(unittest.TestCase):
