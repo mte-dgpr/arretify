@@ -103,13 +103,13 @@ def main(input_path: Path, output_path: Path):
 
 
 def _walk_ocrized_files(dir_path: Path) -> Iterator[Tuple[Path, Path]]:
-    for root, _, file_names in input_path.walk():
-        ocrized_file_paths = [
-            root / file_name for file_name in file_names 
-            if file_name.endswith(OCR_FILE_EXTENSION)
-        ]
-        for ocrized_file_path in ocrized_file_paths:
-            yield root.relative_to(dir_path), ocrized_file_path
+    # Look for AIOT codes making subdirs
+    for sub_dir in dir_path.iterdir():
+        if sub_dir.is_dir():
+            # Look for files directly in this subdir
+            for file_path in sub_dir.iterdir():
+                if file_path.is_file() and file_path.suffix == OCR_FILE_EXTENSION:
+                    yield sub_dir.relative_to(dir_path), file_path
 
 
 if __name__ == "__main__":
@@ -142,10 +142,9 @@ if __name__ == "__main__":
             LOGGER.info(f'[{i + 1}/{len(ocrized_files_walk)}] parsing {ocrized_file_path} ...')
             try:
                 main(ocrized_file_path, html_file_path)
-            except BaseException as err:
+            except Exception as err:
                 LOGGER.error(f'[{i + 1}/{len(ocrized_files_walk)}] FAILED : {ocrized_file_path} ...')
                 print(traceback.format_exc())
 
     else:
         main(input_path, output_path)
-

@@ -21,7 +21,10 @@ def resolve_decret_legifrance_id(
 
     title = get_title_sample_next_sibling(document_reference_tag)
     if title is None and document.num is None:
-        raise ValueError(f'Could not resolve decret {document_reference_tag}. No title or num')
+        LOGGER.warning(
+            f'Could not resolve decret {document_reference_tag}. No title or num'
+        )
+        return
 
     date_object = parse_date_str(document.date)
     decret_id = get_decret_legifrance_id(
