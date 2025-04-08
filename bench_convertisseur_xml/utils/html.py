@@ -1,14 +1,31 @@
 import re
-from typing import Dict, List, Optional, Union, Iterable
+from typing import Dict, List, Optional, Union, Iterable, cast
 
 from bs4 import BeautifulSoup, PageElement, Tag
 
 from bench_convertisseur_xml.utils.merge import merge_strings
-from bench_convertisseur_xml.types import DataElementSchema, PageElementOrString
+from bench_convertisseur_xml.types import DataElementSchema, PageElementOrString, ElementId
+
+
+_ID_COUNTER = 0
 
 
 def make_css_class(schema: DataElementSchema):
     return f'dsr-{schema.name}'
+
+
+def has_css_class(tag: Tag, css_class: str) -> bool:
+    return css_class in tag.get('class', [])
+
+
+def assign_element_id(tag: Tag) -> ElementId:
+    global _ID_COUNTER
+    if 'data-element_id' in tag.attrs:
+        return cast(ElementId, tag['data-element_id'])
+    _ID_COUNTER += 1
+    element_id: ElementId = f'{_ID_COUNTER}'
+    tag['data-element_id'] = element_id
+    return element_id
 
 
 def make_data_tag(
@@ -72,3 +89,14 @@ def parse_bool_attribute(value: str) -> bool:
 
 def render_bool_attribute(value: bool) -> str:
     return 'true' if value else 'false'
+
+
+def parse_str_list_attribute(value: str) -> List[str]:
+    return value.split(',')
+
+
+def render_str_list_attribute(value: List[str]) -> str:
+    for item in value:
+        if ',' in item:
+            raise ValueError(f'Invalid item "{item}" in list')
+    return ','.join(value)

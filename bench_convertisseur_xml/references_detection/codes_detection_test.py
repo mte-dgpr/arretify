@@ -2,11 +2,11 @@ import unittest
 
 from bs4 import BeautifulSoup
 
-from bench_convertisseur_xml.utils.testing import make_children_processor
+from bench_convertisseur_xml.utils.testing import make_testing_function_for_children_list
 from .codes_detection import parse_codes_references
 
 
-process_children = make_children_processor(parse_codes_references)
+process_children = make_testing_function_for_children_list(parse_codes_references)
 
 
 class TestParseCodesReferences(unittest.TestCase):

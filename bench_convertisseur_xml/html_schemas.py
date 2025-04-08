@@ -114,7 +114,7 @@ ERROR_SCHEMA = DataElementSchema(
 OPERATION_SCHEMA = DataElementSchema(
     name='operation',
     tag_name='span',
-    data_keys=['operation_type', 'keyword', 'has_right_operand'],
+    data_keys=['operation_type', 'direction', 'keyword', 'has_operand', 'references', 'operand'],
 )
 
 DEBUG_KEYWORD_SCHEMA = DataElementSchema(

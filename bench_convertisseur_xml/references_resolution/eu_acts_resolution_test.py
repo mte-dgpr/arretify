@@ -3,13 +3,13 @@ from unittest.mock import patch, MagicMock
 
 from bs4 import BeautifulSoup
 
-from bench_convertisseur_xml.utils.testing import make_element_processor
+from bench_convertisseur_xml.utils.testing import make_testing_function_for_single_tag
 from .eu_acts_resolution import resolve_eu_directive_eurlex_url, resolve_eu_decision_eurlex_url, resolve_eu_regulation_eurlex_url
 
 
-process_eu_directive_document_reference = make_element_processor(resolve_eu_directive_eurlex_url)
-process_eu_decision_document_reference = make_element_processor(resolve_eu_decision_eurlex_url)
-process_eu_regulation_document_reference = make_element_processor(resolve_eu_regulation_eurlex_url)
+process_eu_directive_document_reference = make_testing_function_for_single_tag(resolve_eu_directive_eurlex_url)
+process_eu_decision_document_reference = make_testing_function_for_single_tag(resolve_eu_decision_eurlex_url)
+process_eu_regulation_document_reference = make_testing_function_for_single_tag(resolve_eu_regulation_eurlex_url)
 
 
 class TestResolveEuActUrls(unittest.TestCase):

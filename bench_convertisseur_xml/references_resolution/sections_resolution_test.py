@@ -2,11 +2,11 @@ import unittest
 
 from bs4 import BeautifulSoup
 
-from bench_convertisseur_xml.utils.testing import make_children_processor
+from bench_convertisseur_xml.utils.testing import make_testing_function_for_children_list
 from .sections_resolution import match_sections_with_documents
 
 
-process_sections_and_documents = make_children_processor(match_sections_with_documents)
+process_sections_and_documents = make_testing_function_for_children_list(match_sections_with_documents)
 
 
 class TestResolveSectionsDocuments(unittest.TestCase):
