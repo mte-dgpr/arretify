@@ -5,6 +5,7 @@ from pathlib import Path
 
 from bench_convertisseur_xml.settings import TEST_DATA_DIR, LOGGER, OCR_FILE_EXTENSION
 from bench_convertisseur_xml.parsing_utils.source_mapping import initialize_lines
+from bench_convertisseur_xml.utils import html
 
 from .main import ocrized_arrete_to_html
 
@@ -13,6 +14,9 @@ ARRETES_HTML_DIR = TEST_DATA_DIR / 'arretes_html'
 
 
 class TestMain(unittest.TestCase):
+    def setUp(self):
+        html._ID_COUNTER = 0
+
     def test_parse_arrete_snapshots(self):
         LOGGER.info('Testing snapshots')
         for arrete_ocr_file_path, actual_contents in _iter_parsed_arretes_ocr_files():
@@ -23,7 +27,7 @@ class TestMain(unittest.TestCase):
 
 
 def _iter_parsed_arretes_ocr_files():
-    arretes_ocr_file_paths = Path(ARRETES_OCR_DIR).rglob(f"*{OCR_FILE_EXTENSION}")
+    arretes_ocr_file_paths = sorted(Path(ARRETES_OCR_DIR).rglob(f"*{OCR_FILE_EXTENSION}"))
     for arrete_ocr_file_path in arretes_ocr_file_paths:
         arrete_contents = open(arrete_ocr_file_path, 'r', encoding='utf-8').readlines()
         soup = ocrized_arrete_to_html(initialize_lines(arrete_contents))

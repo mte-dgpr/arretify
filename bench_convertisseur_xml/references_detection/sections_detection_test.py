@@ -4,11 +4,11 @@ from typing import Dict, List
 
 from bs4 import BeautifulSoup
 
-from bench_convertisseur_xml.utils.testing import make_children_processor
+from bench_convertisseur_xml.utils.testing import make_testing_function_for_children_list
 from .sections_detection import parse_section_references
 
 
-process_children = make_children_processor(parse_section_references)
+process_children = make_testing_function_for_children_list(parse_section_references)
 
 
 class TestHandleArticleRange(unittest.TestCase):
