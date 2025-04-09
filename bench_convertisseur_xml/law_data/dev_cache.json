@@ -1156,7 +1156,11 @@
         "(2016-02-15,  relatif aux installations de stockage de déchets non dangereux et principalement son chapitre IV relatif aux)": null,
         "(2016-02-15,  relatif aux installations de stockage de déchets non dangereux, le dossier de demande de modification des)": null,
         "(2016-02-15,  relatif aux installations de stockage de déchets non dangereux, et principalement le chapitre II du titre)": null,
-        "(2012-05-31,  susvisé et qu'elle est considérée comme existante au sens de ce même à arrêté,)": null
+        "(2012-05-31,  susvisé et qu'elle est considérée comme existante au sens de ce même à arrêté,)": null,
+        "(2003-09-11,  fixant les prescriptions générales applicables aux sondages, forages, création de puits ou d'ouvrage souterrain soumis à)": "JORFTEXT000000415722",
+        "(2014-03-27,  sont applicables aux installations suivantes du site :)": null,
+        "(2014-03-27,  et en particulier des articles suivants :)": null,
+        "(2008-09-30,  sont applicables aux installations suivantes du site : locaux d'emballages n° 1)": null
     },
     "get_eu_act_url_with_year_and_num": {
         "(directive, 2010, 75)": "https://eur-lex.europa.eu/legal-content/FR/TXT/HTML/?uri=cellar:c7191b72-4e07-4712-86d6-d3ae5e4f0082",
@@ -2102,6 +2106,7 @@
         "(2016-05-06, title= du Président de la République nommant M, num=None)": null,
         "(2015-02-05, title= du Président de la République nommant Mme Anne LAPARRELACASSAGNE, secrétaire générale de la préfecture de l'Eure,, num=None)": null,
         "(2021-02-25, title= du Président de la République nommant madame Isabelle DORLIATPOUZET, secrétaire générale de la préfecture de l'Eure, num=None)": null,
-        "(2021-02-25, title= du Président de la République nommant Madame Isabelle DORLIAT-POUZET, secrétaire général de la préfecture de l'Eure,, num=None)": null
+        "(2021-02-25, title= du Président de la République nommant Madame Isabelle DORLIAT-POUZET, secrétaire général de la préfecture de l'Eure,, num=None)": null,
+        "(2021-08-17, title= nommant madame Marie CORNET secrétaire générale de la préfecture de l'Orne, num=None)": null
     }
 }

@@ -144,7 +144,9 @@ if __name__ == "__main__":
                 main(ocrized_file_path, html_file_path)
             except Exception as err:
                 LOGGER.error(f'[{i + 1}/{len(ocrized_files_walk)}] FAILED : {ocrized_file_path} ...')
-                print(traceback.format_exc())
+                error_traceback = traceback.format_exc()
+                LOGGER.error(f"Traceback:\n{error_traceback}")
+                print(error_traceback)
 
     else:
         main(input_path, output_path)

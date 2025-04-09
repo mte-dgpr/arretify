@@ -24,36 +24,21 @@ SECTION_NAMES = [
 ]
 """Detect all section names."""
 
-PUNCTUATION = r'[.\s\-:–]'
-
 SECTION_NODE = regex_tree.Group(
     regex_tree.Sequence([
         r'^',
-        regex_tree.Branching([
-            # With section name - optional punctuation
-            regex_tree.Sequence([
-                fr'(?P<section_name>{join_with_or(SECTION_NAMES)})\s+',
-                # Numbering pattern
-                regex_tree.Branching([
-                    r'(?P<number_first>1er)',
-                    fr'(?P<number>{NUMBERING}(?:[.]{NUMBERING})*)',
-                ]),
-                # Optional punctuation that should be excluded from text
-                fr'(?:{PUNCTUATION}*)',
+        regex_tree.Sequence([
+            fr'(?P<section_name>{join_with_or(SECTION_NAMES)})\s+',
+            # Numbering pattern
+            regex_tree.Branching([
+                r'(?P<number_first>1er)',
+                fr'(?P<number>{NUMBERING}(?:[.]{NUMBERING})*)',
             ]),
-            # Without section name - mandatory punctuation
-            regex_tree.Sequence([
-                # Numbering pattern
-                regex_tree.Branching([
-                    r'(?P<number_first>1er)',
-                    fr'(?P<number>{NUMBERING}(?:[.]{NUMBERING})*)',
-                ]),
-                # Mandatory punctuation that should be excluded from text
-                fr'{PUNCTUATION}+',
-            ]),
+            # Optional punctuation that should be excluded from text
+            r'(?:[.\s\-:–]*)',
+            # Optional text group
+            r'(?P<text>\s*(.+))?$',
         ]),
-        # Optional text group
-        r'(?P<text>\s*(.+))?$',
     ]),
     group_name='section',
 )
@@ -135,21 +120,25 @@ def are_sections_contiguous(
 
 
 def parse_section_info(line: str) -> SectionInfo:
+
+    # First detect patterns
     match_pattern = match(SECTION_NODE, line)
 
+    # Find section type
     if not match_pattern:
         return SectionInfo(type=BodySection.NONE)
 
     match_dict = match_pattern.match_dict
+    section = BodySection.from_string(match_dict.get('section_name', 'article'))
 
-    section = BodySection.from_string(match_dict.get('section_name', 'none'))
-
+    # Find numbering
     if match_dict.get('number_first'):
         number = '1'
     else:
         number = match_dict.get('number', '0').rstrip('.')
     levels = _number_to_levels(number)
 
+    # Find optional text
     text = match_dict.get('text')
     if text:
         # Remove starting separator such as '-' which might be catched in the title text
