@@ -35,6 +35,10 @@ def normalize_quotes(text: str):
         .replace('»', '"'))
 
 
+def normalize_dashes(text: str):
+    return text.replace('–', '-')
+
+
 def lookup_normalized_version(
     choices: List[str],
     text: str,
@@ -62,4 +66,6 @@ def normalize_string(string: str, settings: Settings) -> str:
         string = remove_accents(string)
     if settings.normalize_quotes:
         string = normalize_quotes(string)
+    if settings.normalize_dashes:
+        string = normalize_dashes(string)
     return string

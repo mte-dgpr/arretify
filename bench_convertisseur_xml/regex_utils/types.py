@@ -19,3 +19,4 @@ class Settings:
     ignore_case: bool = True
     ignore_accents: bool = True
     normalize_quotes: bool = True
+    normalize_dashes: bool = True

@@ -20,7 +20,7 @@ from .section_rules import is_body_section
 from .basic_elements import parse_list, list_indentation
 
 
-def _process_identification_pile(pile: List[str]):
+def _process_identification_pile(pile: List[str]) -> List[PageElementOrString]:
     return [" ".join(pile)]
 
 
@@ -44,22 +44,28 @@ def parse_header(
     header: Tag,
     lines: TextSegments,
 ) -> TextSegments:
-    pile: List[PageElementOrString] = []
     string_pile: List[str] = []
 
     # Find the first useful line
     while not (
-        is_entity(lines[0].contents) or is_arrete(lines[0].contents) or is_visa(lines[0].contents)
+        is_entity(lines[0].contents)
+        or is_arrete(lines[0].contents)
+        or is_visa(lines[0].contents)
+        or is_motif(lines[0].contents)
+        or is_body_section(lines[0].contents)
     ):
         # TODO-PROCESS-TAG
+        # Here we could deal with cases such as Rapport d'inspection, Lettre de décision...
         lines.pop(0)
 
     # -------- Entity
     string_pile = []
-    while True:
-        if is_arrete(lines[0].contents):
-            break
-        # Multi-line entity
+    while not (
+        is_arrete(lines[0].contents)
+        or is_visa(lines[0].contents)
+        or is_motif(lines[0].contents)
+        or is_body_section(lines[0].contents)
+    ):
         string_pile.append(lines.pop(0).contents)
 
     header.append(
@@ -76,23 +82,18 @@ def parse_header(
 
     # -------- Identification
     string_pile = []
-    while True:
-        if is_arrete(lines[0].contents):
-            string_pile.append(lines.pop(0).contents)
+    while not (
+        is_visa(lines[0].contents)
+        or is_motif(lines[0].contents)
+        or is_body_section(lines[0].contents)
+    ):
         # Discard entity in subsection identification
-        elif is_entity(lines[0].contents):
+        if is_entity(lines[0].contents):
+            # TODO-PROCESS-TAG
             lines.pop(0)
-        elif (
-            VISA_PATTERN.match(lines[0].contents)
-            or MOTIF_PATTERN.match(lines[0].contents)
-            or is_body_section(lines[0].contents)
-        ):
-            break
-        # Multi-line identification
         else:
             string_pile.append(lines.pop(0).contents)
 
-    # Specific process for the identification
     header.append(
         make_data_tag(
             soup,
@@ -109,6 +110,7 @@ def parse_header(
     def _is_header_end(line: TextSegment):
         return is_arrete(line.contents) or is_body_section(line.contents)
 
+    # Add lines until we find first visa
     while (
         not is_visa(lines[0].contents)
         and not is_motif(lines[0].contents)
@@ -118,6 +120,7 @@ def parse_header(
             _wrap_in_div(soup, [lines.pop(0)])
         )
 
+    # Start visas parsing
     if is_visa(lines[0].contents):
         lines = _parse_visas_or_motifs(
             soup,
@@ -125,15 +128,17 @@ def parse_header(
             lines,
             VISA_PATTERN,
             VISA_SCHEMA,
-            lambda line : is_motif(line.contents) or _is_header_end(line),
+            lambda line: is_motif(line.contents) or _is_header_end(line),
         )
 
+    # Add lines until we find first motif
     while (
         not is_motif(lines[0].contents)
         and not _is_header_end(lines[0])
     ):
         header.append(_wrap_in_div(soup, [lines.pop(0)]))
 
+    # Start motifs parsing
     if is_motif(lines[0].contents):
         lines = _parse_visas_or_motifs(
             soup,
@@ -141,7 +146,7 @@ def parse_header(
             lines,
             MOTIF_PATTERN,
             MOTIF_SCHEMA,
-            lambda line : _is_header_end(line),
+            _is_header_end,
         )
 
     return lines
@@ -215,7 +220,10 @@ def _parse_visas_or_motifs(
         while has_more:
             pile = [lines.pop(0).contents]
             while True:
-                if is_liste(lines[0].contents) and list_indentation(lines[0].contents) > indentation_0:
+                if (
+                    is_liste(lines[0].contents)
+                    and list_indentation(lines[0].contents) > indentation_0
+                ):
                     lines, ul_element = parse_list(soup, lines)
                     pile.append(ul_element)
                 else:
