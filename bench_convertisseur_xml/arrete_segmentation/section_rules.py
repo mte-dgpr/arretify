@@ -24,21 +24,26 @@ SECTION_NAMES = [
 ]
 """Detect all section names."""
 
+# This regex matches section names in arretes such as
+# Titre I - PORTEE DE L'AUTORISATION
+# Titre 1. PORTEE DE L'AUTORISATION
+# Titre 2 PORTEE DE ...
+# Chapitre 1.2 - ...
+# Chapitre A. ...
+# Article X.X.X - ...
+# It splits the title into a section name, a numbering pattern and an optional text group
 SECTION_NODE = regex_tree.Group(
     regex_tree.Sequence([
-        # For sections starting with a name
-        fr'^(?P<section_name>{join_with_or(SECTION_NAMES)})',
-        # Mandatory whitespace
-        r'\s+',
+        fr'^(?P<section_name>{join_with_or(SECTION_NAMES)})\s+',
         # Numbering pattern
         regex_tree.Branching([
             r'(?P<number_first>1er)',
             fr'(?P<number>{NUMBERING}(?:[.]{NUMBERING})*)',
         ]),
-        # Optional punctuation and whitespace that should be excluded from text
-        r'(?:[.\s-]*)',
+        # Optional punctuation that should be excluded from text
+        r'(?:[.\s\-:]*)',
         # Optional text group
-        r'(?P<text>.+)?$',
+        r'(?P<text>\s*(.+))?$',
     ]),
     group_name='section',
 )
@@ -120,25 +125,26 @@ def are_sections_contiguous(
 
 
 def parse_section_info(line: str) -> SectionInfo:
+
+    # First detect pattern
     match_pattern = match(SECTION_NODE, line)
 
+    # Find section type
     if not match_pattern:
         return SectionInfo(type=BodySection.NONE)
 
     match_dict = match_pattern.match_dict
-
     section = BodySection.from_string(match_dict.get('section_name', 'none'))
 
+    # Find numbering
     if match_dict.get('number_first'):
         number = '1'
     else:
         number = match_dict.get('number', '0').rstrip('.')
     levels = _number_to_levels(number)
 
+    # Find optional text
     text = match_dict.get('text')
-    if text:
-        # Remove starting separator such as '-' which might be catched in the title text
-        text = re.sub(r'^[-–:\s]*', '', text)
 
     section_info = SectionInfo(
         type=section,

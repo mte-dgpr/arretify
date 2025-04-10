@@ -57,7 +57,7 @@ ENTITY_PATTERN = PatternProxy(
 )
 """Detect if starts with local authorities references."""
 
-ARRETE_PATTERN = PatternProxy(r"^(arrêté)\b")
+ARRETE_PATTERN = PatternProxy(r"^[\s-]*(a\s*r\s*r\s*ê\s*t\s*é)[\s-]*\b")
 
 TABLE_DESCRIPTION_PATTERN = PatternProxy(r"^(\(\*+\))|^(\*+)")
 

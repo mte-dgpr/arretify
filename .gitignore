@@ -10,6 +10,7 @@ temp
 results
 ground-truth
 output*.xml
+logs
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

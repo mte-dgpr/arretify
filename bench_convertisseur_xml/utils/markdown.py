@@ -18,7 +18,7 @@ LATEX_NODE = LatexNodes2Text(keep_comments=True)
 
 def parse_markdown_table(elements: List[PageElementOrString]):
     if [element for element in elements if not isinstance(element, str)]:
-        raise ValueError(f'got unexpected non-string element to parse markdown from')
+        raise ValueError('got unexpected non-string element to parse markdown from')
 
     markdown_str = '\n'.join(cast(List[str], elements))
     html_str = markdown.markdown(markdown_str, extensions=['tables'])
@@ -96,22 +96,30 @@ def convert_latex(match) -> str:
 
 # TODO-PROCESS-TAG
 def clean_markdown(line: TextSegment) -> TextSegment:
+
     # Remove newline at the end
     line = apply_to_segment(line, lambda contents: re.sub(r'[\n\r]+$', '', contents))
-    line_mem: TextSegment
 
     # Remove * at the beginning only if matching closing * found
     matched_em_open = re.search(r"^\s*(?P<em_open>\*+)(?!\s)", line.contents)
+
+    line_mem: TextSegment
     if matched_em_open:
         asterisk_count = len(matched_em_open.group('em_open'))
         line_mem = line
-        line = apply_to_segment(line, lambda contents: sub_with_match(contents, matched_em_open, 'em_open'))
-        matched_em_close = re.search(r"\s*(?P<em_close>\*" + f"{{{asterisk_count}}})\b*", line.contents)
+        line = apply_to_segment(
+            line, lambda contents: sub_with_match(contents, matched_em_open, 'em_open')
+        )
+        matched_em_close = re.search(
+            r"\s*(?P<em_close>\*" + f"{{{asterisk_count}}})\b*", line.contents
+        )
         # If there's no matching closing asterisks, we restore the line
         if not matched_em_close or matched_em_close.start() == 0:
             line = line_mem
         else:
-            line = apply_to_segment(line, lambda contents: sub_with_match(contents, matched_em_close, 'em_close'))
+            line = apply_to_segment(
+                line, lambda contents: sub_with_match(contents, matched_em_close, 'em_close')
+            )
 
     # Remove any number of # or whitespaces at the beginning of the sentence
     if not LIST_PATTERN.match(line.contents):
@@ -120,6 +128,24 @@ def clean_markdown(line: TextSegment) -> TextSegment:
     # Convert from latex to plain text
     line = apply_to_segment(
         line, lambda contents: re.sub(r'\$(.*?)\$', convert_latex, contents)
+    )
+
+    # Convert OCR errors
+    ocr_replacements = {
+        r'N̊': 'n°',
+        r'ı': 'i',
+        r'pğ̣': 'pg',
+        r'é́': 'é',
+        r'ó́': 'oï',
+        r'ś́': 's',
+        r'Nํ': 'N°',
+    }
+    for wrong, correct in ocr_replacements.items():
+        line = apply_to_segment(line, lambda contents: re.sub(wrong, correct, contents))
+
+    # Resolve diacritics
+    line = apply_to_segment(
+        line, lambda contents: re.sub(r'([a-zA-Z])[\u0300-\u036F]{1,}', r'\1', contents)
     )
 
     return line
