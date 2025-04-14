@@ -3,10 +3,10 @@ from typing import List, cast
 from bs4 import Tag
 
 from bench_convertisseur_xml.settings import LOGGER
-from bench_convertisseur_xml.types import ElementId
 from bench_convertisseur_xml.html_schemas import (
     SECTIONS_AND_DOCUMENT_REFERENCES,
     SECTION_REFERENCE_SCHEMA,
+    DOCUMENT_REFERENCE_SCHEMA,
 )
 from bench_convertisseur_xml.utils.html import (
     make_css_class,
@@ -21,6 +21,7 @@ from bench_convertisseur_xml.utils.element_ranges import (
 )
 
 
+DOCUMENT_REFERENCE_CLASS = make_css_class(DOCUMENT_REFERENCE_SCHEMA)
 SECTION_REFERENCE_CLASS = make_css_class(SECTION_REFERENCE_SCHEMA)
 SECTIONS_AND_DOCUMENT_REFERENCES_CLASS = make_css_class(SECTIONS_AND_DOCUMENT_REFERENCES)
 
@@ -35,26 +36,31 @@ def resolve_references_and_operands(operation_tag: Tag) -> None:
 
 
 def _resolve_rtl_references(operation_tag: Tag) -> None:
-    references_container_tag: Tag | None = None
-    for element in get_contiguous_elements_left(operation_tag):
+    contiguous_elements_left = get_contiguous_elements_left(operation_tag)
+    reference_tags: List[Tag] = []
+
+    for element in contiguous_elements_left:
         if isinstance(element, Tag) and has_css_class(
             element, SECTIONS_AND_DOCUMENT_REFERENCES_CLASS
         ):
-            references_container_tag = element
+            reference_tags = element.select(f".{SECTION_REFERENCE_CLASS}")
+            if len(reference_tags) == 0:
+                raise ValueError("No section reference found in operation")
             break
 
-    if references_container_tag is None:
-        LOGGER.warning("No references container found in operation")
+    if len(reference_tags) == 0:
+        for element in contiguous_elements_left:
+            if isinstance(element, Tag) and has_css_class(element, DOCUMENT_REFERENCE_CLASS):
+                reference_tags = [element]
+                break
+
+    if len(reference_tags) == 0:
+        LOGGER.warning("No references found in operation")
         return
 
-    section_reference_tags = references_container_tag.select(f".{SECTION_REFERENCE_CLASS}")
-    if len(section_reference_tags) == 0:
-        raise ValueError("No section reference found in operation")
-
-    reference_ids: List[ElementId] = [assign_element_id(tag) for tag in section_reference_tags]
-
-    if reference_ids:
-        operation_tag["data-references"] = render_str_list_attribute(reference_ids)
+    operation_tag["data-references"] = render_str_list_attribute(
+        [assign_element_id(tag) for tag in reference_tags]
+    )
 
 
 def _resolve_rtl_operand(operation_tag: Tag) -> None:
