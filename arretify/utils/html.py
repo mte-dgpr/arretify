@@ -57,7 +57,7 @@ def wrap_in_tag(
     soup: BeautifulSoup,
     elements: List[PageElementOrString],
     tag_name: str,
-):
+) -> List[Tag]:
     wrapped: List[Tag] = []
     for element in elements:
         if isinstance(element, str) and element.strip():
@@ -113,3 +113,11 @@ def render_str_list_attribute(value: List[str]) -> str:
         if "," in item:
             raise ValueError(f'Invalid item "{item}" in list')
     return ",".join(value)
+
+
+def replace_children(
+    tag: Tag,
+    new_children: Iterable[PageElementOrString],
+) -> None:
+    tag.clear()
+    tag.extend(new_children)

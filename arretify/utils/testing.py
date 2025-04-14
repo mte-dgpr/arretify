@@ -4,6 +4,7 @@ from typing import Callable, List, Iterable, TypeVar
 from bs4 import Tag, BeautifulSoup, PageElement, NavigableString
 
 from arretify.types import PageElementOrString
+from arretify.utils.html import replace_children
 
 
 _INLINE_TAGS = [
@@ -169,6 +170,5 @@ def _normalize_tag(tag: P) -> P:
                 new_children.append(normalized_string)
         elif isinstance(child, (Tag, BeautifulSoup)):
             new_children.append(_normalize_tag(child))
-    tag.clear()
-    tag.extend(new_children)
+    replace_children(tag, new_children)
     return tag

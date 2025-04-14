@@ -66,7 +66,7 @@ from .html_schemas import (
     MOTIF_SCHEMA,
     OPERATION_SCHEMA,
 )
-from .utils.html import make_css_class
+from .utils.html import make_css_class, replace_children
 from .parsing_utils.source_mapping import (
     initialize_lines,
     TextSegments,
@@ -98,8 +98,7 @@ def ocrized_arrete_to_html(lines: TextSegments) -> BeautifulSoup:
         new_children = parse_self_references(soup, new_children)
         new_children = parse_eu_acts_references(soup, new_children)
         new_children = parse_section_references(soup, new_children)
-        tag.clear()
-        tag.extend(new_children)
+        replace_children(tag, new_children)
 
     # Resolve all document references
     resolve_document_references(
@@ -132,8 +131,7 @@ def ocrized_arrete_to_html(lines: TextSegments) -> BeautifulSoup:
     ):
         new_children = list(tag.children)
         new_children = match_sections_with_documents(soup, new_children)
-        tag.clear()
-        tag.extend(new_children)
+        replace_children(tag, new_children)
 
     # Resolve all section references
     resolve_section_references(soup, DocumentType.code, resolve_code_article_legifrance_id)
@@ -146,8 +144,7 @@ def ocrized_arrete_to_html(lines: TextSegments) -> BeautifulSoup:
         if document_reference_tags:
             new_children = parse_operations(soup, new_children)
 
-        container_tag.clear()
-        container_tag.extend(new_children)
+        replace_children(container_tag, new_children)
 
     # Resolve operation references and operands
     for operation_tag in soup.select(f".{OPERATION_CSS_CLASS}"):

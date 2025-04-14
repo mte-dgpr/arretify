@@ -5,6 +5,7 @@ from bs4 import BeautifulSoup
 from .header import (
     _process_entity_pile,
     _parse_visas_or_motifs,
+    _parse_identification_info,
 )
 from .sentence_rules import VISA_PATTERN, MOTIF_PATTERN
 from arretify.html_schemas import (
@@ -15,7 +16,12 @@ from arretify.parsing_utils.source_mapping import (
     initialize_lines,
     TextSegment,
 )
-from arretify.utils.testing import normalized_html_str
+from arretify.utils.testing import normalized_html_str, make_testing_function_for_children_list
+
+
+process_parse_identification_info = make_testing_function_for_children_list(
+    _parse_identification_info,
+)
 
 
 class TestProcessEntityPile(unittest.TestCase):
@@ -32,6 +38,39 @@ class TestProcessEntityPile(unittest.TestCase):
             "DIRECTION DES COLLECTIVITÉS LOCALES ET DE L'ENVIRONNEMENT ",
             "BUREAU DE L'ENVIRONNEMENT",
         ]
+
+
+class TestParseIdentificationInfo(unittest.TestCase):
+
+    def test_parse_date(self):
+        assert (
+            process_parse_identification_info(
+                """
+                Arrêté du 22 fevrier 2023 portant modification de l'autorisation d'exploiter
+                une unité de valorisation énergétique de combustibles solides de
+                récupération (CSR), de déchets d'activité économique (DAE) et d'ordures
+                ménagères (OM) sur le territoire de la commune de Bantzenheim à la
+                société B+T ENERGIE France Sas
+            """
+            )
+            == [
+                "Arrêté du ",
+                normalized_html_str(
+                    """
+                    <time class="dsr-date" datetime="2023-02-22">
+                        22 fevrier 2023
+                    </time>
+                """
+                ),
+                (
+                    " portant modification de l'autorisation d'exploiter "
+                    "une unité de valorisation énergétique de combustibles solides de "
+                    "récupération (CSR), de déchets d'activité économique (DAE) et d'ordures "
+                    "ménagères (OM) sur le territoire de la commune de Bantzenheim à la "
+                    "société B+T ENERGIE France Sas"
+                ),
+            ]
+        )
 
 
 class TestParseMotifsOrVisas(unittest.TestCase):
