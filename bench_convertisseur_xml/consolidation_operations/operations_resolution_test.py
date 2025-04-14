@@ -153,3 +153,53 @@ class TestParseOperations(unittest.TestCase):
             </div>
         """  # noqa: E501
         )
+
+    def test_with_single_document_reference(self):
+        # Arrange
+        soup = create_bs(
+            normalized_html_str(
+                """
+            <div class="dsr-alinea">
+                Les prescriptions de l'
+                <a class="dsr-document_reference">
+                    arrêté préfectoral du
+                    <time class="dsr-date" datetime="2008-12-10">
+                            10 décembre 2008
+                    </time>
+                </a>
+                <span class="dsr-operation" data-direction="rtl" data-has_operand="" data-keyword="abrogées" data-operand="" data-operation_type="delete">
+                    sont
+                    <b>
+                        abrogées
+                    </b>
+                    .
+                </span>
+            </div>
+        """  # noqa: E501
+            )
+        )
+
+        # Act
+        resolve_references_and_operands(soup.find(class_="dsr-operation"))
+
+        # Assert
+        assert str(soup) == normalized_html_str(
+            """
+            <div class="dsr-alinea">
+                Les prescriptions de l'
+                <a class="dsr-document_reference" data-element_id="1">
+                    arrêté préfectoral du
+                    <time class="dsr-date" datetime="2008-12-10">
+                            10 décembre 2008
+                    </time>
+                </a>
+                <span class="dsr-operation" data-direction="rtl" data-has_operand="" data-keyword="abrogées" data-operand="" data-operation_type="delete" data-references="1">
+                    sont
+                    <b>
+                        abrogées
+                    </b>
+                    .
+                </span>
+            </div>
+        """  # noqa: E501
+        )
