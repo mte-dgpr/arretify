@@ -1,4 +1,4 @@
-# Convertisseur arrêtés prefectoraux vers HTML
+# Arrêtify
 
 Cette librairie permet la conversion d'arrêtés préfectoraux OCRisées depuis du Markdown vers du HTML.
 
@@ -90,7 +90,7 @@ La librairie utilise les outils suivants :
         --remove-all-unused-imports \
         --remove-unused-variables \
         --exclude=__init__.py \
-        bench_convertisseur_xml scripts
+        arretify scripts
     ```
 - `pre-commit` pour la gestion des git pre-commit hooks
 
@@ -133,18 +133,18 @@ pytest
 
 #### Snapshot testing
 
-Le fichier `bench_convertisseur_xml/main_test.py` permet de détecter les regressions en effectuant le parsing sur tous les documents de notre base de tests de documents dans `arretes_ocr/` et en comparant le résultat obtenu avec des résultats obtenus précédemment et stocké dans `arretes_html/`.
+Le fichier `arretify/main_test.py` permet de détecter les regressions en effectuant le parsing sur tous les documents de notre base de tests de documents dans `arretes_ocr/` et en comparant le résultat obtenu avec des résultats obtenus précédemment et stocké dans `arretes_html/`.
 
 Si les tests échouent c'est que la génération d'html a changé. Il convient donc de vérifier que c'est bien une évolution voulue et non une régression. Pour ça voici une proposition de process :
 
-1. Re-générer les fichiers html de référence en utilisant la commande `python -m bench_convertisseur_xml.main -i test_data/arretes_ocr -o test_data/arretes_html`
+1. Re-générer les fichiers html de référence en utilisant la commande `python -m arretify.main -i test_data/arretes_ocr -o test_data/arretes_html`
 2. Utiliser l'outil de diff de git (ou de vscodium) pour comparer la nouvelle version avec la version de référence
 3. Régler les problèmes éventuels, puis répéter étape 1.
 
 
 ### Téléchargement des données de bases de droit
 
-Afin de parser et résoudre les références citées dans les AP à des textes du droit français ou européen, nous téléchargeons grâce à divers scripts des fichiers contenant des listes de références à vérifier. Les fonctionalités pour accéder à ces références se trouvent dans le dossier `bench_convertisseur_xml/law_data`, les scripts se trouvent dans le dossier `scripts`.
+Afin de parser et résoudre les références citées dans les AP à des textes du droit français ou européen, nous téléchargeons grâce à divers scripts des fichiers contenant des listes de références à vérifier. Les fonctionalités pour accéder à ces références se trouvent dans le dossier `arretify/law_data`, les scripts se trouvent dans le dossier `scripts`.
 
 Pour utiliser ces scripts, il faut installer et configurer la librairie du Data Studio Risques `py-clients-api-droit`.
 
@@ -153,5 +153,5 @@ Pour utiliser ces scripts, il faut installer et configurer la librairie du Data 
 Télécharger la liste des codes :
 
 ```bash
-python ./scripts/download_data_legifrance.py -o ./bench_convertisseur_xml/law_data/legifrance
+python ./scripts/download_data_legifrance.py -o ./arretify/law_data/legifrance
 ```
