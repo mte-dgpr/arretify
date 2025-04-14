@@ -38,7 +38,10 @@
         "(2010-01-25,  relatif aux méthodes et critères d'évaluation de l'état écologique, de l'état chimique et du potentiel écologique)": "JORFTEXT000021865356",
         "(2006-11-29,  portant modalités d'agrément des laboratoires effectuant des analyses dans le domaine de l'eau et des milieux)": "JORFTEXT000000817083",
         "(2010-10-04, , relatif à la prévention des risques accidentels au sein des installations classées pour la protection)": "JORFTEXT000023081900",
-        "(2010-10-04,  a été réalisée en 2017)": null
+        "(2010-10-04,  a été réalisée en 2017)": null,
+        "(1998-02-02, \n                relatif aux prélèvements et à la consommation d'eau ainsi\n                qu'aux émissions de toute nature des installations)": "JORFTEXT000000204891",
+        "(1998-02-02, relatif aux prélèvements et à la consommation d'eau ainsiqu'aux émissions de toute nature des installations classéespour)": null,
+        "(1998-02-02,  relatif aux prélèvements et à la consommation d'eau ainsiqu'aux émissions de toute nature des installations classéespour)": null
     },
     "get_eu_act_url_with_year_and_num": {
         "(directive, 2010, 75)": "https://eur-lex.europa.eu/legal-content/FR/TXT/HTML/?uri=cellar:c7191b72-4e07-4712-86d6-d3ae5e4f0082",
@@ -54,14 +57,18 @@
         "(directive, 2008, 105)": "https://eur-lex.europa.eu/legal-content/FR/TXT/HTML/?uri=cellar:66d82696-784f-4a55-9060-678e1076ae7d",
         "(regulation, 2067, 2018)": null,
         "(decision, 2020, 2019)": "https://eur-lex.europa.eu/legal-content/FR/TXT/HTML/?uri=cellar:8e42e417-3ab2-11eb-b27b-01aa75ed71a1",
-        "(regulation, 2020, 2019)": null
+        "(regulation, 2020, 2019)": null,
+        "(regulation, 2020, 20)": null,
+        "(regulation, 2020, 21)": "https://eur-lex.europa.eu/legal-content/FR/TXT/HTML/?uri=cellar:fa14e336-3777-11ea-ba6e-01aa75ed71a1"
     },
     "get_decret_legifrance_id": {
         "(2005-04-20, title= relatif au programme national d'action contre la pollution des milieux aquatiques par certaines substances dangereuses, num=None)": "JORFTEXT000000259598",
         "(2005-05-30, title=None, num=2005-635)": "JORFTEXT000000257088",
         "(1995-01-23, title= et des textes pris pour son application), num=95-79)": "JORFTEXT000000734830",
         "(2005-05-30, title= relatif au contrôle des circuits de traitement des déchets, num=2005-635)": "JORFTEXT000000257088",
-        "(2005-04-20, title= relatif au programme national d'action contre la pollution des milieux aquatiques par certaines substances dangereuses, num=2005-378)": "JORFTEXT000000259598"
+        "(2005-04-20, title= relatif au programme national d'action contre la pollution des milieux aquatiques par certaines substances dangereuses, num=2005-378)": "JORFTEXT000000259598",
+        "(2005-04-20, title=\n            relatif au programme national d'action contre la pollution des milieux aquatiques par certaines substances dangereuses, num=None)": "JORFTEXT000000259598",
+        "(2005-04-20, title=relatif au programme national d'action contre la pollution des milieux aquatiques par certaines substances dangereuses, num=None)": "JORFTEXT000000259598"
     },
     "get_circulaire_legifrance_id": {
         "(1986-07-23,  relative aux vibrations mecaniques emises dans l'environnement par les installations classees pour la protection de l'environnement)": "JORFTEXT000000866509",
@@ -75,6 +82,8 @@
         "(2009-01-05,  relative aux actions de recherche et de réduction des substances dangereuses dans les rejets aqueux des)": null,
         "(2007-05-07, ), concentrations définies dans le tableau de l'annexe 1 du)": null,
         "(2009-01-05,  et téléchargeables sur le site http://rsde)": null,
-        "(2007-05-07, ) et de la directive fille de la DCE adoptée le 20 octobre 2008 (anthracène et)": null
+        "(2007-05-07, ) et de la directive fille de la DCE adoptée le 20 octobre 2008 (anthracène et)": null,
+        "(1986-07-23, \n            relative aux vibrations mecaniques emises dans l'environnement par les installations classees pour la protection de l'environnement)": "JORFTEXT000000866509",
+        "(1986-07-23, relative aux vibrations mecaniques emises dans l'environnement par les installations classees pour la protection de l'environnement)": "JORFTEXT000000866509"
     }
 }

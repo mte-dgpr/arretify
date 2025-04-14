@@ -1,7 +1,6 @@
-from typing import List, Callable, Tuple
+from typing import List, Callable
 from dataclasses import dataclass
 
-from bs4 import PageElement
 
 from bench_convertisseur_xml.types import LineColumn
 
@@ -16,16 +15,13 @@ class _SegmentBase:
 class TextSegment(_SegmentBase):
     contents: str
 
+
 TextSegments = List[TextSegment]
 
 
 def initialize_lines(lines: List[str]) -> TextSegments:
     return [
-        TextSegment(
-            contents=line, 
-            start=(i, 0), 
-            end=(i, len(line))
-        ) for i, line in enumerate(lines)
+        TextSegment(contents=line, start=(i, 0), end=(i, len(line))) for i, line in enumerate(lines)
     ]
 
 

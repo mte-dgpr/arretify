@@ -1,15 +1,18 @@
 import re
 import unittest
-from unittest.mock import patch
 from .core import PatternProxy, MatchProxy
 from .types import Settings
 
 
 class TestPatternProxy(unittest.TestCase):
-    
+
     def setUp(self):
-        self.pattern_string = r'\d+'
-        self.settings = Settings(ignore_case=True, ignore_accents=True, normalize_quotes=True)
+        self.pattern_string = r"\d+"
+        self.settings = Settings(
+            ignore_case=True,
+            ignore_accents=True,
+            normalize_quotes=True,
+        )
         self.pattern_proxy = PatternProxy(self.pattern_string, self.settings)
 
     def test_match_success(self):
@@ -92,7 +95,7 @@ class TestPatternProxy(unittest.TestCase):
 
     def test_ignore_case(self):
         # Arrange
-        pattern_string = r'hello'
+        pattern_string = r"hello"
         settings = Settings(ignore_case=True)
         pattern_proxy = PatternProxy(pattern_string, settings)
         test_string = "HELLO world"
@@ -106,7 +109,7 @@ class TestPatternProxy(unittest.TestCase):
 
     def test_ignore_accents(self):
         # Arrange
-        pattern_string = r'cafécafé'
+        pattern_string = r"cafécafé"
         settings = Settings(ignore_accents=True)
         pattern_proxy = PatternProxy(pattern_string, settings)
         test_string = "cafecafé"
@@ -120,7 +123,7 @@ class TestPatternProxy(unittest.TestCase):
 
     def test_normalize_quotes(self):
         # Arrange
-        pattern_string = r'“double”single’'
+        pattern_string = r"“double”single’"
         settings = Settings(normalize_quotes=True)
         pattern_proxy = PatternProxy(pattern_string, settings)
         test_string = '"double"single\''
@@ -134,7 +137,7 @@ class TestPatternProxy(unittest.TestCase):
 
     def test_unimplemented_method(self):
         # Arrange
-        method = 'findall'
+        method = "findall"
 
         # Act
         with self.assertRaises(NotImplementedError):
@@ -144,12 +147,12 @@ class TestPatternProxy(unittest.TestCase):
 class TestMatchProxy(unittest.TestCase):
     def setUp(self):
         self.test_string = "abc123def"
-        self.match = re.search(r'\d+', self.test_string)
+        self.match = re.search(r"\d+", self.test_string)
         self.match_proxy = MatchProxy(self.test_string, self.match)
 
     def test_group(self):
         # Arrange
-        pattern_string = r'cafe'
+        pattern_string = r"cafe"
         settings = Settings(ignore_accents=True)
         pattern_proxy = PatternProxy(pattern_string, settings)
         test_string = "café"
@@ -163,20 +166,20 @@ class TestMatchProxy(unittest.TestCase):
 
     def test_group_absent(self):
         # Arrange
-        pattern_string = r'bla(?P<blo>blo)?'
+        pattern_string = r"bla(?P<blo>blo)?"
         pattern_proxy = PatternProxy(pattern_string)
         test_string = "bla"
         match_proxy = pattern_proxy.match(test_string)
 
         # Act
-        result = match_proxy.group('blo')
+        result = match_proxy.group("blo")
 
         # Assert
         assert result is None
 
     def test_getattr(self):
         # Arrange
-        attr = 'start'
+        attr = "start"
 
         # Act
         result = getattr(self.match_proxy, attr)
@@ -186,7 +189,7 @@ class TestMatchProxy(unittest.TestCase):
 
     def test_groupdict(self):
         # Arrange
-        pattern_string = r'(?P<first>\d+)-(?P<second>cafe)'
+        pattern_string = r"(?P<first>\d+)-(?P<second>cafe)"
         test_string = "123-café"
         pattern_proxy = PatternProxy(pattern_string)
         match_proxy = pattern_proxy.match(test_string)
@@ -195,12 +198,12 @@ class TestMatchProxy(unittest.TestCase):
         result = match_proxy.groupdict()
 
         # Assert
-        expected = {'first': '123', 'second': 'café'}
+        expected = {"first": "123", "second": "café"}
         assert result == expected
 
     def test_groupdict_no_groups(self):
         # Arrange
-        pattern_string = r'\d+'
+        pattern_string = r"\d+"
         test_string = "123"
         pattern_proxy = PatternProxy(pattern_string)
         match_proxy = pattern_proxy.match(test_string)

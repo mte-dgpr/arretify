@@ -1,0 +1,15 @@
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+repos:
+  - repo: https://github.com/psf/black
+    rev: 25.1.0
+    hooks:
+    -   id: black
+  - repo: https://github.com/PyCQA/autoflake
+    rev: v2.3.1
+    hooks:
+    -   id: autoflake
+  - repo: https://github.com/PyCQA/flake8
+    rev: 7.2.0
+    hooks:
+    -   id: flake8

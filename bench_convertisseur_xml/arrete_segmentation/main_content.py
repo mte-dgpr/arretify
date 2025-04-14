@@ -5,13 +5,22 @@ from bs4 import BeautifulSoup, Tag
 from bench_convertisseur_xml.settings import LOGGER
 from bench_convertisseur_xml.utils.html import make_data_tag
 from bench_convertisseur_xml.html_schemas import (
-    SECTION_SCHEMA, SECTION_TITLE_SCHEMAS, ALINEA_SCHEMA, ERROR_SCHEMA
+    SECTION_SCHEMA,
+    SECTION_TITLE_SCHEMAS,
+    ALINEA_SCHEMA,
+    ERROR_SCHEMA,
 )
 from bench_convertisseur_xml.errors import ErrorCodes
-from bench_convertisseur_xml.parsing_utils.source_mapping import TextSegments
+from bench_convertisseur_xml.parsing_utils.source_mapping import (
+    TextSegments,
+)
 from .types import SectionParsingContext
 from .basic_elements import parse_basic_elements
-from .section_rules import is_body_section, parse_section_info, are_sections_contiguous
+from .section_rules import (
+    is_body_section,
+    parse_section_info,
+    are_sections_contiguous,
+)
 
 
 def parse_main_content(soup: BeautifulSoup, main_content: Tag, lines: TextSegments):
@@ -30,11 +39,15 @@ def parse_main_content(soup: BeautifulSoup, main_content: Tag, lines: TextSegmen
     while lines:
         section_info = parse_section_info(lines[0].contents)
 
-        section_element = make_data_tag(soup, SECTION_SCHEMA, data=dict(
-            type=section_info.type.value,
-            number=section_info.number,
-            title=section_info.text,
-        ))
+        section_element = make_data_tag(
+            soup,
+            SECTION_SCHEMA,
+            data=dict(
+                type=section_info.type.value,
+                number=section_info.number,
+                title=section_info.text,
+            ),
+        )
         new_levels = section_info.levels
 
         # Process ancestry for new section
@@ -50,7 +63,7 @@ def parse_main_content(soup: BeautifulSoup, main_content: Tag, lines: TextSegmen
                 current_level = len(body_sections) - 2
         else:
             raise RuntimeError(
-                f'unexpected title {lines[0].contents}, current level {len(body_sections)}'
+                f"unexpected title {lines[0].contents}, current level {len(body_sections)}"
             )
 
         body_sections[-1].append(section_element)
@@ -63,19 +76,20 @@ def parse_main_content(soup: BeautifulSoup, main_content: Tag, lines: TextSegmen
 
         if not are_sections_contiguous(current_levels, new_levels):
             LOGGER.warn(
-                f'Detected title of levels {new_levels} after title of levels {current_levels}'
+                f"Detected title of levels {new_levels} after title of levels {current_levels}"
             )
             error_element = make_data_tag(
                 soup,
                 ERROR_SCHEMA,
                 data=dict(error_code=ErrorCodes.non_contiguous_sections.value),
-                contents=[title_contents])
+                contents=[title_contents],
+            )
             section_element.append(error_element)
         else:
             title_element = make_data_tag(
                 soup,
                 SECTION_TITLE_SCHEMAS[new_level],
-                contents=[title_contents]
+                contents=[title_contents],
             )
             section_element.append(title_element)
 
@@ -96,7 +110,7 @@ def parse_main_content(soup: BeautifulSoup, main_content: Tag, lines: TextSegmen
             alinea_element = make_data_tag(
                 soup,
                 ALINEA_SCHEMA,
-                data=dict(number=str(section_context.alinea_count))
+                data=dict(number=str(section_context.alinea_count)),
             )
             section_element.append(alinea_element)
             parse_basic_elements(soup, alinea_element, lines)

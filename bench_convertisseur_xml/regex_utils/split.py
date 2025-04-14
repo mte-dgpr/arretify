@@ -1,9 +1,11 @@
-import re
-from typing import List, Pattern, cast, List, Callable, Iterable, Iterator, Union, Dict, Tuple, Literal
-from dataclasses import dataclass
+from typing import (
+    Iterator,
+    Tuple,
+)
 
-from bench_convertisseur_xml.types import PageElementOrString
-from bench_convertisseur_xml.utils.generators import remove_empty_strings_from_flow
+from bench_convertisseur_xml.utils.generators import (
+    remove_empty_strings_from_flow,
+)
 from .types import MatchNamedGroup
 from .core import MatchProxy, PatternProxy, MatchFlow, safe_group
 
@@ -14,7 +16,7 @@ StrSplit = Tuple[str, MatchProxy, str]
 def split_match_by_named_groups(
     match: MatchProxy,
 ) -> Iterator[str | MatchNamedGroup]:
-    R'''
+    R"""
     Example:
         >>> pattern = r'(?P<first>\w+)-(?P<second>\w+)'
         >>> text = 'foo-bar'
@@ -23,8 +25,8 @@ def split_match_by_named_groups(
         ...     print(segment)
         MatchNamedGroup(text='foo', group_name='first')
         '-'
-        MatchNamedGroup(text='bar', group_name='second')    
-    '''
+        MatchNamedGroup(text='bar', group_name='second')
+    """
     match_text = safe_group(match, 0)
     # Offset in original text
     match_offset = match.start(0)
@@ -41,7 +43,7 @@ def split_match_by_named_groups(
         if not match.group(group_name):
             continue
 
-        # Adjust named group start & end indices 
+        # Adjust named group start & end indices
         # with offset in original text.
         group_start = match.start(group_name) - match_offset
         group_end = match.end(group_name) - match_offset
@@ -52,8 +54,8 @@ def split_match_by_named_groups(
             if group_start > max_group_end:
                 yield match_text[max_group_end:group_start]
             yield MatchNamedGroup(
-                text=safe_group(match, group_name), 
-                group_name=group_name
+                text=safe_group(match, group_name),
+                group_name=group_name,
             )
         max_group_end = max(group_end, max_group_end)
 
@@ -67,9 +69,9 @@ def split_string_with_regex(
     pattern: PatternProxy,
     string: str,
 ) -> MatchFlow:
-    r'''
+    r"""
     Example:
-    
+
         >>> pattern = PatternProxy(r'\d+')  # Matches sequences of digits
         >>> string = "abc123def456ghi"
         >>> result = list(split_string_with_regex(pattern, string))
@@ -83,17 +85,17 @@ def split_string_with_regex(
         Substring: 'def'
         Match: '456'
         Substring: 'ghi'
-    '''
+    """
     previous_match: MatchProxy | None = None
     for match in pattern.finditer(string):
         if previous_match:
-            yield string[previous_match.end():match.start()]
+            yield string[previous_match.end() : match.start()]
         else:
-            yield string[:match.start()]
+            yield string[: match.start()]
         yield match
         previous_match = match
-    
+
     if previous_match:
-        yield string[previous_match.end():]
+        yield string[previous_match.end() :]
     else:
         yield string

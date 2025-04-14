@@ -10,7 +10,17 @@ class TestMergeStrings(unittest.TestCase):
         # Arrange
         match_mock1 = re.match(r"dummy1", "dummy1")
         match_mock2 = re.match(r"dummy2", "dummy2")
-        input_gen = iter(["abc", match_mock1, "def", "ghi", match_mock2, "jkl", "mno"])
+        input_gen = iter(
+            [
+                "abc",
+                match_mock1,
+                "def",
+                "ghi",
+                match_mock2,
+                "jkl",
+                "mno",
+            ]
+        )
 
         # Act
         result = list(merge_strings(input_gen))
@@ -59,4 +69,3 @@ class TestMergeStrings(unittest.TestCase):
 
         # Assert
         assert result == [match_mock1, match_mock2]
-

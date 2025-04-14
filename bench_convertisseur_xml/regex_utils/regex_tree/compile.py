@@ -1,14 +1,22 @@
-import enum
-from typing import List, Dict, TypedDict, Union
-from dataclasses import dataclass, replace
+from typing import List, Union
+from dataclasses import replace
 
-from .types import GroupName, QuantifierNode, GroupNode, SequenceNode, BranchingNode, LiteralNode, Node, NodeMap
+from .types import (
+    GroupName,
+    QuantifierNode,
+    GroupNode,
+    SequenceNode,
+    BranchingNode,
+    LiteralNode,
+    Node,
+    NodeMap,
+)
 from ..types import Settings
 from ..core import PatternProxy
 from ..helpers import without_named_groups, join_with_or
 
 
-def Literal(pattern_string: str, settings: Settings | None=None) -> LiteralNode:
+def Literal(pattern_string: str, settings: Settings | None = None) -> LiteralNode:
     settings = settings or Settings()
     return LiteralNode(
         id=_get_unique_id(),
@@ -20,7 +28,10 @@ def Literal(pattern_string: str, settings: Settings | None=None) -> LiteralNode:
     )
 
 
-def Branching(child_or_str_list: List[Node | str], settings: Settings | None=None) -> BranchingNode:
+def Branching(
+    child_or_str_list: List[Node | str],
+    settings: Settings | None = None,
+) -> BranchingNode:
     settings = settings or Settings()
     children_list: List[Node] = []
     for child_or_str in child_or_str_list:
@@ -29,10 +40,12 @@ def Branching(child_or_str_list: List[Node | str], settings: Settings | None=Non
     return BranchingNode(
         id=_get_unique_id(),
         pattern=PatternProxy(
-            join_with_or([
-                f'(?P<{child.id}>{without_named_groups(child.pattern.pattern)})' 
-                for child in children_list
-            ]),
+            join_with_or(
+                [
+                    f"(?P<{child.id}>{without_named_groups(child.pattern.pattern)})"
+                    for child in children_list
+                ]
+            ),
             settings=settings,
         ),
         children={child.id: child for child in children_list},
@@ -40,16 +53,19 @@ def Branching(child_or_str_list: List[Node | str], settings: Settings | None=Non
     )
 
 
-def Sequence(child_or_str_list: List[Node | str], settings: Settings | None=None) -> SequenceNode:
+def Sequence(
+    child_or_str_list: List[Node | str],
+    settings: Settings | None = None,
+) -> SequenceNode:
     settings = settings or Settings()
-    pattern_string = ''
+    pattern_string = ""
     children: NodeMap = {}
     child: Node
     for child_or_str in child_or_str_list:
         child = _initialize_child(child_or_str, settings)
-        pattern_string += f'(?P<{child.id}>{without_named_groups(child.pattern.pattern)})'
+        pattern_string += f"(?P<{child.id}>{without_named_groups(child.pattern.pattern)})"
         children[child.id] = child
-    
+
     return SequenceNode(
         id=_get_unique_id(),
         pattern=PatternProxy(
@@ -64,7 +80,7 @@ def Sequence(child_or_str_list: List[Node | str], settings: Settings | None=None
 def Group(
     child_or_str: Union[Node, str],
     group_name: GroupName,
-    settings: Settings | None=None,
+    settings: Settings | None = None,
 ) -> GroupNode:
     settings = settings or Settings()
     child = _initialize_child(child_or_str, settings)
@@ -72,7 +88,7 @@ def Group(
         id=_get_unique_id(),
         group_name=group_name,
         pattern=PatternProxy(
-            f'(?P<{child.id}>{without_named_groups(child.pattern.pattern)})',
+            f"(?P<{child.id}>{without_named_groups(child.pattern.pattern)})",
             settings=settings,
         ),
         child=child,
@@ -83,7 +99,7 @@ def Group(
 def Quantifier(
     child_or_str: Union[Node, str],
     quantifier: str,
-    settings: Settings | None=None,
+    settings: Settings | None = None,
 ) -> QuantifierNode:
     settings = settings or Settings()
     child = _initialize_child(child_or_str, settings)
@@ -91,7 +107,7 @@ def Quantifier(
         id=_get_unique_id(),
         quantifier=quantifier,
         pattern=PatternProxy(
-            f'({without_named_groups(child.pattern.pattern)}){quantifier}',
+            f"({without_named_groups(child.pattern.pattern)}){quantifier}",
             settings=settings,
         ),
         child=child,
@@ -102,9 +118,11 @@ def Quantifier(
 def _get_unique_id() -> str:
     global _COUNTER
     _COUNTER += 1
-    return f'{_PREFIX}{_COUNTER}'
+    return f"{_PREFIX}{_COUNTER}"
+
+
 _COUNTER = 0
-_PREFIX = '_ID_'
+_PREFIX = "_ID_"
 
 
 def _initialize_child(node_or_str: Node | str, default_settings: Settings) -> Node:

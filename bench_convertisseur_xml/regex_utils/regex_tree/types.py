@@ -1,12 +1,23 @@
 from dataclasses import dataclass
-from typing import List, Dict, Union, Optional, List, Union, Iterator, Iterable
+from typing import (
+    List,
+    Dict,
+    Union,
+    Iterable,
+)
 
 from ..core import PatternProxy
 from ..types import GroupName, Settings
 
 
-NodeMap = Dict[GroupName, 'Node']
-Node = Union['SequenceNode', 'BranchingNode', 'LiteralNode', 'GroupNode', 'QuantifierNode']
+NodeMap = Dict[GroupName, "Node"]
+Node = Union[
+    "SequenceNode",
+    "BranchingNode",
+    "LiteralNode",
+    "GroupNode",
+    "QuantifierNode",
+]
 MatchDict = Dict[str, str]
 
 
@@ -17,7 +28,11 @@ class BaseNode:
     pattern: PatternProxy
 
     def __repr__(self):
-        pattern_repr = self.pattern.pattern[:10] + '...' if len(self.pattern.pattern) > 10 else self.pattern.pattern
+        pattern_repr = (
+            self.pattern.pattern[:10] + "..."
+            if len(self.pattern.pattern) > 10
+            else self.pattern.pattern
+        )
         return f'<{self.id}, {self.__class__.__name__}, "{pattern_repr}">'
 
 
@@ -50,7 +65,7 @@ class QuantifierNode(BaseNode):
 
 @dataclass(frozen=True)
 class RegexTreeMatch:
-    children: List[Union[str, 'RegexTreeMatch']]
+    children: List[Union[str, "RegexTreeMatch"]]
     group_name: Union[GroupName, None]
     match_dict: MatchDict
 

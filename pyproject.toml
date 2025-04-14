@@ -26,11 +26,19 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-test = [
+dev = [
   "pytest==8.3.*",
-  "mypy==1.15.*"
+  "mypy==1.15.*",
+  "black==25.1.*",
+  "pre-commit==4.2.*",
+  "flake8==7.2.*",
+  "flake8-bugbear==24.12.*",
+  "autoflake==2.3.*"
 ]
 
 [tool.mypy]
 packages=["bench_convertisseur_xml"]
 follow_untyped_imports = true
+
+[tool.black]
+line-length = 100

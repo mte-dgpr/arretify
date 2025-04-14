@@ -1,8 +1,12 @@
 import unittest
 import re
-from typing import Iterator
 
-from .helpers import sub_with_match, without_named_groups, normalize_string, lookup_normalized_version
+from .helpers import (
+    sub_with_match,
+    without_named_groups,
+    normalize_string,
+    lookup_normalized_version,
+)
 from .types import Settings
 
 
@@ -42,7 +46,12 @@ class TestSubWithMatch(unittest.TestCase):
 class TestWithoutNamedGroups(unittest.TestCase):
 
     def test_simple(self):
-        assert without_named_groups(r'(([nN]° ?(?P<code1>\S+))|(?P<code2>\S+[/\-]\S+))(?=\s|\.|$|,|\)|;)') == r'(([nN]° ?(\S+))|(\S+[/\-]\S+))(?=\s|\.|$|,|\)|;)'
+        assert (
+            without_named_groups(
+                r"(([nN]° ?(?P<code1>\S+))|(?P<code2>\S+[/\-]\S+))(?=\s|\.|$|,|\)|;)"
+            )
+            == r"(([nN]° ?(\S+))|(\S+[/\-]\S+))(?=\s|\.|$|,|\)|;)"
+        )
 
 
 class TestNormalizeString(unittest.TestCase):
@@ -55,7 +64,7 @@ class TestNormalizeString(unittest.TestCase):
         result = normalize_string("“Héllo", settings)
 
         # Assert
-        assert result == "\"hello"
+        assert result == '"hello'
 
 
 class TestLookupNormalizedVersion(unittest.TestCase):

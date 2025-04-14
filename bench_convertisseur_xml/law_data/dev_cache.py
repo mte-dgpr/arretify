@@ -1,38 +1,42 @@
 """
-Simple cache system to avoid calling the API too often. 
+Simple cache system to avoid calling the API too often.
 It is not concurrent safe, **to be used only in development mode**.
 """
-import unittest
+
 import json
-import os
 from pathlib import Path
 from functools import wraps
-from typing import TypeVar, ParamSpec, Tuple, Union, cast, Callable, Dict, List, Tuple, Type, Iterator
-from importlib import import_module
+from typing import (
+    TypeVar,
+    ParamSpec,
+    cast,
+    Callable,
+)
 
 from bench_convertisseur_xml.settings import LOGGER, ENV
 
 
-R = TypeVar('R')
-P = ParamSpec('P')
+R = TypeVar("R")
+P = ParamSpec("P")
 
-_CACHE_FILE_PATH = Path(__file__).parent / 'dev_cache.json'
+_CACHE_FILE_PATH = Path(__file__).parent / "dev_cache.json"
 
 # Load cache from file if it exists
 if ENV == "development":
     if _CACHE_FILE_PATH.exists():
-        with open(_CACHE_FILE_PATH, 'r', encoding='utf8') as f:
+        with open(_CACHE_FILE_PATH, "r", encoding="utf8") as f:
             _CACHE = json.load(f)
     else:
         raise ValueError(f"Cache file {_CACHE_FILE_PATH} not found")
 
 
 def use_dev_cache(func: Callable[P, R]) -> Callable[P, R]:
-    if ENV == 'development':
+    if ENV == "development":
         LOGGER.info(f"{ENV} mode detected, using cache for {func.__name__}")
+
     @wraps(func)
     def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
-        if ENV == 'development':
+        if ENV == "development":
             try:
                 return _get_cached_value(func, *args, **kwargs)
             except KeyError as err:
@@ -42,6 +46,7 @@ def use_dev_cache(func: Callable[P, R]) -> Callable[P, R]:
                 return value
         else:
             return func(*args, **kwargs)
+
     return wrapper
 
 
@@ -63,7 +68,7 @@ def _set_cached_value(func: Callable[P, R], value: R, *args: P.args, **kwargs: P
     if func_key not in _CACHE:
         _CACHE[func_key] = {}
     _CACHE[func_key][params_key] = value
-    with open(_CACHE_FILE_PATH, 'w', encoding='utf8') as f:
+    with open(_CACHE_FILE_PATH, "w", encoding="utf8") as f:
         json.dump(_CACHE, f, ensure_ascii=False, indent=4)
 
 

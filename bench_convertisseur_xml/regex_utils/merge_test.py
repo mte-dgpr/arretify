@@ -1,5 +1,4 @@
 import unittest
-import re
 
 from .merge import merge_matches_with_siblings
 from .split import split_string_with_regex
@@ -14,10 +13,15 @@ class TestMergeMatchWithSiblingString(unittest.TestCase):
         string = "abc123def456ghi"
 
         # Act
-        result = list(merge_matches_with_siblings(split_string_with_regex(
-            pattern,
-            string,
-        ), 'following'))
+        result = list(
+            merge_matches_with_siblings(
+                split_string_with_regex(
+                    pattern,
+                    string,
+                ),
+                "following",
+            )
+        )
 
         # Assert
         assert result == ["abc", "123def", "456ghi"]
@@ -28,10 +32,15 @@ class TestMergeMatchWithSiblingString(unittest.TestCase):
         string = "abc123def456ghi"
 
         # Act
-        result = list(merge_matches_with_siblings(split_string_with_regex(
-            pattern,
-            string,
-        ), 'previous'))
+        result = list(
+            merge_matches_with_siblings(
+                split_string_with_regex(
+                    pattern,
+                    string,
+                ),
+                "previous",
+            )
+        )
 
         # Assert
         assert result == ["abc123", "def456", "ghi"]
@@ -42,13 +51,18 @@ class TestMergeMatchWithSiblingString(unittest.TestCase):
         string = "abcdef"
 
         # Act
-        result = list(merge_matches_with_siblings(split_string_with_regex(
-            pattern,
-            string,
-        ), 'following'))
+        result = list(
+            merge_matches_with_siblings(
+                split_string_with_regex(
+                    pattern,
+                    string,
+                ),
+                "following",
+            )
+        )
 
         # Assert
-        assert result == ['abcdef']
+        assert result == ["abcdef"]
 
     def test_split_with_match_at_start(self):
         # Arrange
@@ -56,10 +70,15 @@ class TestMergeMatchWithSiblingString(unittest.TestCase):
         string = "123abc456"
 
         # Act
-        result = list(merge_matches_with_siblings(split_string_with_regex(
-            pattern,
-            string,
-        ), 'following'))
+        result = list(
+            merge_matches_with_siblings(
+                split_string_with_regex(
+                    pattern,
+                    string,
+                ),
+                "following",
+            )
+        )
 
         # Assert
         assert result == ["123abc", "456"]
@@ -70,11 +89,15 @@ class TestMergeMatchWithSiblingString(unittest.TestCase):
         string = "abc123"
 
         # Act
-        result = list(merge_matches_with_siblings(split_string_with_regex(
-            pattern,
-            string,
-        ), 'following'))
+        result = list(
+            merge_matches_with_siblings(
+                split_string_with_regex(
+                    pattern,
+                    string,
+                ),
+                "following",
+            )
+        )
 
         # Assert
         assert result == ["abc", "123"]
-

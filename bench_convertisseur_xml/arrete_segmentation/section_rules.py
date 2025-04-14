@@ -1,17 +1,22 @@
-import re
 from typing import List, Optional, Union
 
 import roman
 
-from bench_convertisseur_xml.regex_utils import PatternProxy, regex_tree, join_with_or
-from bench_convertisseur_xml.regex_utils.regex_tree.execute import match
+from bench_convertisseur_xml.regex_utils import (
+    PatternProxy,
+    regex_tree,
+    join_with_or,
+)
+from bench_convertisseur_xml.regex_utils.regex_tree.execute import (
+    match,
+)
 from .types import BodySection, SectionInfo
 
 
 ROMAN_NUMERALS = r"(?:(?:X{0,3})(?:IX|IV|V?I{0,3}))"
 NUMBERS = r"\d+"
 LETTER = r"[a-zA-Z]"
-NUMBERING = fr'(?:{NUMBERS}|{LETTER}|{ROMAN_NUMERALS})'
+NUMBERING = rf"(?:{NUMBERS}|{LETTER}|{ROMAN_NUMERALS})"
 ROMAN_NUMERALS_PATTERN = PatternProxy(ROMAN_NUMERALS + "$")
 NUMBERS_PATTERN = PatternProxy(NUMBERS + "$")
 LETTER_PATTERN = PatternProxy(LETTER + "$")
@@ -33,35 +38,39 @@ SECTION_NAMES = [
 # Article X.X.X - ...
 # It splits the title into a section name, a numbering pattern and an optional text group
 SECTION_NODE = regex_tree.Group(
-    regex_tree.Sequence([
-        fr'^(?P<section_name>{join_with_or(SECTION_NAMES)})\s+',
-        # Numbering pattern
-        regex_tree.Branching([
-            r'(?P<number_first>1er)',
-            fr'(?P<number>{NUMBERING}(?:[.]{NUMBERING})*)',
-        ]),
-        # Optional punctuation that should be excluded from text
-        r'(?:[.\s\-:]*)',
-        # Optional text group
-        r'(?P<text>\s*(.+))?$',
-    ]),
-    group_name='section',
+    regex_tree.Sequence(
+        [
+            rf"^(?P<section_name>{join_with_or(SECTION_NAMES)})\s+",
+            # Numbering pattern
+            regex_tree.Branching(
+                [
+                    r"(?P<number_first>1er)",
+                    rf"(?P<number>{NUMBERING}(?:[.]{NUMBERING})*)",
+                ]
+            ),
+            # Optional punctuation that should be excluded from text
+            r"(?:[.\s\-:]*)",
+            # Optional text group
+            r"(?P<text>\s*(.+))?$",
+        ]
+    ),
+    group_name="section",
 )
 
 
 def _number_to_levels(number: str) -> Optional[List[int]]:
 
-    number_split = number.split('.')
+    number_split = number.split(".")
     level = len(number_split) - 1
 
     if level < 0:
         return None
 
-    section_levels = [0] * (level+1)
+    section_levels = [0] * (level + 1)
 
-    for i in range(level+1):
+    for i in range(level + 1):
 
-        cur_char = number_split[level-i]
+        cur_char = number_split[level - i]
 
         if ROMAN_NUMERALS_PATTERN.match(cur_char):
             cur_number = roman.fromRoman(cur_char)
@@ -73,7 +82,7 @@ def _number_to_levels(number: str) -> Optional[List[int]]:
             err_msg = f"Unsupported level conversion for {cur_char}"
             raise ValueError(err_msg)
 
-        section_levels[level-i] = cur_number
+        section_levels[level - i] = cur_number
 
     return section_levels
 
@@ -111,7 +120,7 @@ def are_sections_contiguous(
 
     else:
 
-        if new_section_levels[-1] == cur_section_levels[new_section_level-1] + 1:
+        if new_section_levels[-1] == cur_section_levels[new_section_level - 1] + 1:
             is_continuing_section = True
 
         common_level = new_section_level - 1
@@ -134,17 +143,17 @@ def parse_section_info(line: str) -> SectionInfo:
         return SectionInfo(type=BodySection.NONE)
 
     match_dict = match_pattern.match_dict
-    section = BodySection.from_string(match_dict.get('section_name', 'none'))
+    section = BodySection.from_string(match_dict.get("section_name", "none"))
 
     # Find numbering
-    if match_dict.get('number_first'):
-        number = '1'
+    if match_dict.get("number_first"):
+        number = "1"
     else:
-        number = match_dict.get('number', '0').rstrip('.')
+        number = match_dict.get("number", "0").rstrip(".")
     levels = _number_to_levels(number)
 
     # Find optional text
-    text = match_dict.get('text')
+    text = match_dict.get("text")
 
     section_info = SectionInfo(
         type=section,

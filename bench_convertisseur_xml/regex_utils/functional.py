@@ -6,12 +6,12 @@ from .regex_tree.types import RegexTreeMatch, RegexTreeMatchFlow
 from bench_convertisseur_xml.types import PageElementOrString
 
 
-R = TypeVar('R')
+R = TypeVar("R")
 
 
 def map_matches(
     elements: MatchFlow,
-    map_func: Callable[[MatchProxy], PageElementOrString]
+    map_func: Callable[[MatchProxy], PageElementOrString],
 ) -> Iterator[PageElementOrString]:
     for element in elements:
         if isinstance(element, str):
@@ -57,13 +57,20 @@ def _map_regex_tree_match_generic(
         if isinstance(str_or_group, str):
             yield str_or_group
         else:
-            if allowed_group_names is not None and str_or_group.group_name not in allowed_group_names:
-                raise ValueError(f"received unexpected group named {str_or_group.group_name}. Allowed : {allowed_group_names}")
+            if (
+                allowed_group_names is not None
+                and str_or_group.group_name not in allowed_group_names
+            ):
+                raise ValueError(
+                    f"received unexpected group named {str_or_group.group_name}. "
+                    f"Allowed : {allowed_group_names}"
+                )
             yield map_func(str_or_group)
 
 
-
-def iter_regex_tree_match_strings(match: RegexTreeMatch) -> Iterator[str]:
+def iter_regex_tree_match_strings(
+    match: RegexTreeMatch,
+) -> Iterator[str]:
     """
     Iterates over the strings in a regex tree match by traversing the whole tree.
 
@@ -74,7 +81,7 @@ def iter_regex_tree_match_strings(match: RegexTreeMatch) -> Iterator[str]:
     ... )
     >>> list(iter_regex_tree_match_strings(match))
     ['hello', 'world', '!', 'python']
-    """
+    """  # noqa: E501
     for child in match.children:
         if isinstance(child, str):
             yield child
@@ -101,6 +108,7 @@ def filter_regex_tree_match_children(
     [RegexTreeMatch(children=[], group_name='g1', match_dict={})]
     """
     return [
-        child for child in match.children 
+        child
+        for child in match.children
         if isinstance(child, RegexTreeMatch) and child.group_name in group_names
     ]

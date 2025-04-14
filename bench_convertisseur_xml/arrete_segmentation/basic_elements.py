@@ -4,23 +4,42 @@ import re
 from bs4 import BeautifulSoup, Tag
 
 from bench_convertisseur_xml.settings import LOGGER
-from bench_convertisseur_xml.utils.html import PageElementOrString, make_ul, make_li, make_new_tag
+from bench_convertisseur_xml.utils.html import (
+    PageElementOrString,
+    make_ul,
+    make_li,
+    make_new_tag,
+)
 from bench_convertisseur_xml.utils.markdown import (
-    parse_markdown_table, is_table_line, parse_markdown_image
+    parse_markdown_table,
+    is_table_line,
+    parse_markdown_image,
 )
 from bench_convertisseur_xml.errors import ErrorCodes
 from bench_convertisseur_xml.utils.html import make_data_tag
 from bench_convertisseur_xml.html_schemas import ERROR_SCHEMA
-from bench_convertisseur_xml.regex_utils import PatternProxy, split_string_with_regex
+from bench_convertisseur_xml.regex_utils import (
+    PatternProxy,
+    split_string_with_regex,
+)
 from bench_convertisseur_xml.regex_utils import map_matches
-from bench_convertisseur_xml.parsing_utils.source_mapping import TextSegments, apply_to_segment
+from bench_convertisseur_xml.parsing_utils.source_mapping import (
+    TextSegments,
+    apply_to_segment,
+)
 from .sentence_rules import (
-    is_liste, is_table_description, is_blockquote_start, is_blockquote_end, is_image,
-    LIST_PATTERN, BLOCKQUOTE_START_PATTERN, BLOCKQUOTE_END_PATTERN
+    is_liste,
+    is_table_description,
+    is_blockquote_start,
+    is_blockquote_end,
+    is_image,
+    LIST_PATTERN,
+    BLOCKQUOTE_START_PATTERN,
+    BLOCKQUOTE_END_PATTERN,
 )
 
 
-BULLET_LIST_RE = re.compile(r'^\s*-\s*')
+BULLET_LIST_RE = re.compile(r"^\s*-\s*")
 
 INLINE_QUOTE_PATTERN = PatternProxy(r'"(?P<quoted>[^"]+)"')
 
@@ -31,7 +50,9 @@ def parse_basic_elements(
     soup: BeautifulSoup,
     container: Tag,
     lines: TextSegments,
-    render_default: Callable[[Iterable[PageElementOrString]], Iterable[PageElementOrString]] = lambda elements: elements
+    render_default: Callable[
+        [Iterable[PageElementOrString]], Iterable[PageElementOrString]
+    ] = lambda elements: elements,
 ):
     if is_table_line(lines[0].contents):
         lines, table_elements = parse_table(soup, lines)
@@ -59,13 +80,13 @@ def list_indentation(line: str):
     list_match = LIST_PATTERN.match(line)
     if not list_match:
         raise ValueError("Expected line to be a list element")
-    indentation = list_match.group('indentation')
+    indentation = list_match.group("indentation")
     assert indentation is not None
     return len(indentation)
 
 
 def _clean_bullet_list(line: str):
-    return BULLET_LIST_RE.sub('', line)
+    return BULLET_LIST_RE.sub("", line)
 
 
 # TODO : deal with case :
@@ -74,8 +95,7 @@ def _clean_bullet_list(line: str):
 #     hellu
 # - bli
 def parse_list(
-    soup: BeautifulSoup,
-    lines: TextSegments
+    soup: BeautifulSoup, lines: TextSegments
 ) -> Tuple[TextSegments, PageElementOrString]:
     list_pile: List[PageElementOrString] = []
     ref_indentation = list_indentation(lines[0].contents)
@@ -109,24 +129,24 @@ def parse_table(
     elements.append(parse_markdown_table(pile))
 
     while lines and is_table_description(lines[0].contents, pile):
-        elements.append(soup.new_tag('br'))
+        elements.append(soup.new_tag("br"))
         elements.append(lines.pop(0).contents)
 
     return lines, elements
 
 
-def parse_blockquote(
-    soup: BeautifulSoup,
-    lines: TextSegments
-) -> Tuple[TextSegments, Tag]:
+def parse_blockquote(soup: BeautifulSoup, lines: TextSegments) -> Tuple[TextSegments, Tag]:
     if not is_blockquote_start(lines[0].contents):
         raise RuntimeError("Expected block quote start")
 
-    blockquote = soup.new_tag('blockquote')
+    blockquote = soup.new_tag("blockquote")
     opening_quote_start = lines[0].start
     # Remove opening quote
     # TODO-PROCESS-TAG
-    lines[0] = apply_to_segment(lines[0], lambda string: BLOCKQUOTE_START_PATTERN.sub('', string))
+    lines[0] = apply_to_segment(
+        lines[0],
+        lambda string: BLOCKQUOTE_START_PATTERN.sub("", string),
+    )
 
     # In order to capture nested quotes, we keep track of the quotes depth.
     # +1 for each opening quote, -1 for each closing quote.
@@ -150,17 +170,18 @@ def parse_blockquote(
 
     # Remove the end quote
     # TODO-PROCESS-TAG
-    pile[-1] = apply_to_segment(pile[-1], lambda string: BLOCKQUOTE_END_PATTERN.sub('', string))
+    pile[-1] = apply_to_segment(
+        pile[-1],
+        lambda string: BLOCKQUOTE_END_PATTERN.sub("", string),
+    )
 
     if quotes_depth_count > 0:
-        LOGGER.warn(
-            f'Found unbalanced quote starting {opening_quote_start}'
-        )
+        LOGGER.warn(f"Found unbalanced quote starting {opening_quote_start}")
         error_element = make_data_tag(
             soup,
             ERROR_SCHEMA,
             data=dict(error_code=ErrorCodes.unbalanced_quote.value),
-            contents=[pile[0].contents]
+            contents=[pile[0].contents],
         )
         # Put back all the lines except the one raising the error into the pile
         while len(pile) > 1:
@@ -181,8 +202,8 @@ def _parse_inline_quotes(soup: BeautifulSoup, string: str) -> Iterable[PageEleme
         split_string_with_regex(INLINE_QUOTE_PATTERN, string),
         lambda inline_quote_match: make_new_tag(
             soup,
-            'q',
-            contents=[str(inline_quote_match.group('quoted'))]
+            "q",
+            contents=[str(inline_quote_match.group("quoted"))],
         ),
     )
 
@@ -201,6 +222,6 @@ def _parse_all_basic_elements(
             soup,
             container,
             lines,
-            lambda children: [make_new_tag(soup, 'p', contents=children)],
+            lambda children: [make_new_tag(soup, "p", contents=children)],
         )
     return lines

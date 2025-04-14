@@ -1,10 +1,10 @@
 import unittest
-from typing import List, Union
 
-from bs4 import BeautifulSoup, Tag
+from bs4 import BeautifulSoup
 
 from . import html
 from .html import make_ul, assign_element_id
+
 
 class TestMakeUl(unittest.TestCase):
 
@@ -34,11 +34,7 @@ class TestMakeUl(unittest.TestCase):
 
         # Assert
         assert str(ul) == (
-            "<ul>"
-            "<li>Existing Item 1</li>"
-            "<li>Existing Item 2</li>"
-            "<li>New Item</li>"
-            "</ul>"
+            "<ul>" "<li>Existing Item 1</li>" "<li>Existing Item 2</li>" "<li>New Item</li>" "</ul>"
         )
 
 

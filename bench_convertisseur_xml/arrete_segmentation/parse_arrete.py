@@ -1,15 +1,20 @@
 from bs4 import BeautifulSoup
 
 from bench_convertisseur_xml.settings import APP_ROOT
-from bench_convertisseur_xml.html_schemas import HEADER_SCHEMA, MAIN_SCHEMA
+from bench_convertisseur_xml.html_schemas import (
+    HEADER_SCHEMA,
+    MAIN_SCHEMA,
+)
 from bench_convertisseur_xml.utils.html import make_data_tag
-from bench_convertisseur_xml.parsing_utils.source_mapping import TextSegments
+from bench_convertisseur_xml.parsing_utils.source_mapping import (
+    TextSegments,
+)
 from .header import parse_header
 from .main_content import parse_main_content
 
 
-TEMPLATE_PATH = APP_ROOT / 'bench_convertisseur_xml' / 'templates' / 'arrete.html'
-TEMPLATE_HTML = open(TEMPLATE_PATH, 'r', encoding='utf-8').read()
+TEMPLATE_PATH = APP_ROOT / "bench_convertisseur_xml" / "templates" / "arrete.html"
+TEMPLATE_HTML = open(TEMPLATE_PATH, "r", encoding="utf-8").read()
 
 
 def parse_arrete(lines: TextSegments) -> BeautifulSoup:

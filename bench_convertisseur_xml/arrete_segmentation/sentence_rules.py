@@ -1,11 +1,13 @@
 """Regex rules."""
 
-
 import re
 from typing import List
 
 from bench_convertisseur_xml.utils.html import PageElementOrString
-from bench_convertisseur_xml.regex_utils import PatternProxy, join_with_or
+from bench_convertisseur_xml.regex_utils import (
+    PatternProxy,
+    join_with_or,
+)
 
 
 VISA_PATTERN = PatternProxy(r"^(vu|-\s*vu)(\s*:\s*|\b)(?P<contents>.*)")
@@ -65,7 +67,7 @@ BLOCKQUOTE_START_PATTERN = PatternProxy(r"^\s*\"")
 
 BLOCKQUOTE_END_PATTERN = PatternProxy(r"\"[\s\.]*$")
 
-IMAGE_PATTERN = PatternProxy(r'!\[[^\[\]]+\]\([^()]+\)')
+IMAGE_PATTERN = PatternProxy(r"!\[[^\[\]]+\]\([^()]+\)")
 
 
 def is_line_with_semicolumn(line: str):
@@ -108,13 +110,13 @@ def is_table_description(line: str, pile: List[PageElementOrString]) -> bool:
         columns_split = pile_bottom.split("|")
         for column_split in columns_split:
             column_strip = column_split.strip()
-            column_raw = re.sub(r"\([^)]*\)", '', column_strip).strip()
+            column_raw = re.sub(r"\([^)]*\)", "", column_strip).strip()
             if len(column_raw) > 0:
                 column_names.append(column_raw)
 
         # For each column name, check if we have it followed by :
         for column_name in column_names:
-            if re.match(fr".*{re.escape(column_name)} :", line, re.IGNORECASE):
+            if re.match(rf".*{re.escape(column_name)} :", line, re.IGNORECASE):
                 return True
     return False
 

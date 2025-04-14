@@ -1,7 +1,4 @@
 from dataclasses import dataclass
-import enum
-import re
-from typing import List, Dict, Union, Optional, List, Union, Iterator, Iterable
 
 
 PatternString = str

@@ -1,7 +1,10 @@
 import unittest
-from typing import List, Union
 
-from .functional import iter_regex_tree_match_strings, map_matches, map_regex_tree_match
+from .functional import (
+    iter_regex_tree_match_strings,
+    map_matches,
+    map_regex_tree_match,
+)
 from .regex_tree.types import RegexTreeMatch
 from .core import PatternProxy
 
@@ -13,15 +16,26 @@ class TestFlatMapNonString(unittest.TestCase):
 
     def test_map_matches(self):
         # Arrange
-        elements = ["hello", self.pattern_proxy.match('bla'), "world", self.pattern_proxy.match('blo')]
+        elements = [
+            "hello",
+            self.pattern_proxy.match("bla"),
+            "world",
+            self.pattern_proxy.match("blo"),
+        ]
+
         def map_func(m):
-            return 'MATCHED:' + m.group(0)
+            return "MATCHED:" + m.group(0)
 
         # Act
         result = list(map_matches(elements, map_func))
 
         # Assert
-        assert result == ["hello", 'MATCHED:bla', "world", 'MATCHED:blo']
+        assert result == [
+            "hello",
+            "MATCHED:bla",
+            "world",
+            "MATCHED:blo",
+        ]
 
 
 class TestIterRegexTreeMatchStrings(unittest.TestCase):
@@ -30,7 +44,7 @@ class TestIterRegexTreeMatchStrings(unittest.TestCase):
         match = RegexTreeMatch(
             children=["hello", "world"],
             group_name=None,
-            match_dict={}
+            match_dict={},
         )
 
         # Act
@@ -47,12 +61,12 @@ class TestIterRegexTreeMatchStrings(unittest.TestCase):
                 RegexTreeMatch(
                     children=["world", "!"],
                     group_name=None,
-                    match_dict={}
+                    match_dict={},
                 ),
-                "python"
+                "python",
             ],
             group_name=None,
-            match_dict={}
+            match_dict={},
         )
 
         # Act
@@ -63,11 +77,7 @@ class TestIterRegexTreeMatchStrings(unittest.TestCase):
 
     def test_empty_match(self):
         # Arrange
-        match = RegexTreeMatch(
-            children=[],
-            group_name=None,
-            match_dict={}
-        )
+        match = RegexTreeMatch(children=[], group_name=None, match_dict={})
 
         # Act
         result = list(iter_regex_tree_match_strings(match))
@@ -86,15 +96,15 @@ class TestIterRegexTreeMatchStrings(unittest.TestCase):
                         RegexTreeMatch(
                             children=["level3", "deep"],
                             group_name=None,
-                            match_dict={}
-                        )
+                            match_dict={},
+                        ),
                     ],
                     group_name=None,
-                    match_dict={}
-                )
+                    match_dict={},
+                ),
             ],
             group_name=None,
-            match_dict={}
+            match_dict={},
         )
 
         # Act
@@ -108,14 +118,18 @@ class TestMapRegexTreeMatch(unittest.TestCase):
 
     def test_single_level(self):
         # Arrange
-        match = ['bla', RegexTreeMatch(
-            children=["hello", "world"],
-            group_name=None,
-            match_dict={}
-        ), 'blo']
+        match = [
+            "bla",
+            RegexTreeMatch(
+                children=["hello", "world"],
+                group_name=None,
+                match_dict={},
+            ),
+            "blo",
+        ]
 
         def map_func(m):
-            return 'MATCHED:' + ','.join([m.children[0], m.children[1]])
+            return "MATCHED:" + ",".join([m.children[0], m.children[1]])
 
         # Act
         result = list(map_regex_tree_match(match, map_func))

@@ -1,10 +1,13 @@
-import re
-from typing import Iterable, List, cast, Callable
+from typing import Iterable, List
 
 from bs4 import BeautifulSoup
 
 from .utils.functional import flat_map_string
-from .regex_utils import split_string_with_regex, map_matches, PatternProxy, MatchProxy
+from .regex_utils import (
+    split_string_with_regex,
+    map_matches,
+    PatternProxy,
+)
 from .utils.html import make_data_tag
 from .html_schemas import DEBUG_KEYWORD_SCHEMA
 from .types import PageElementOrString
@@ -18,15 +21,15 @@ def insert_debug_keywords(
     pattern = PatternProxy(query)
     return list(
         flat_map_string(
-            children, 
+            children,
             lambda string: map_matches(
                 split_string_with_regex(pattern, string),
                 lambda match: make_data_tag(
-                    soup, 
-                    DEBUG_KEYWORD_SCHEMA, 
+                    soup,
+                    DEBUG_KEYWORD_SCHEMA,
                     contents=[str(match.group(0))],
-                    data=dict(query=query)
-                )
-            )
+                    data=dict(query=query),
+                ),
+            ),
         )
     )

@@ -3,28 +3,50 @@ from typing import List, Callable, Literal
 from bs4 import Tag, BeautifulSoup
 
 from bench_convertisseur_xml.utils.html import (
-    make_data_tag, PageElementOrString, wrap_in_tag, make_new_tag
+    make_data_tag,
+    PageElementOrString,
+    wrap_in_tag,
+    make_new_tag,
 )
 from bench_convertisseur_xml.regex_utils import (
-    split_string_with_regex, merge_matches_with_siblings, PatternProxy
+    split_string_with_regex,
+    merge_matches_with_siblings,
+    PatternProxy,
 )
 from bench_convertisseur_xml.html_schemas import (
-    ENTITY_SCHEMA, IDENTIFICATION_SCHEMA, VISA_SCHEMA, MOTIF_SCHEMA
+    ENTITY_SCHEMA,
+    IDENTIFICATION_SCHEMA,
+    VISA_SCHEMA,
+    MOTIF_SCHEMA,
 )
 from bench_convertisseur_xml.types import DataElementSchema
-from bench_convertisseur_xml.parsing_utils.source_mapping import TextSegments, TextSegment
+from bench_convertisseur_xml.parsing_utils.source_mapping import (
+    TextSegments,
+    TextSegment,
+)
 from .sentence_rules import (
-    is_arrete, is_entity, is_liste, is_motif, is_visa, VISA_PATTERN, MOTIF_PATTERN, SERVICES_PATTERN
+    is_arrete,
+    is_entity,
+    is_liste,
+    is_motif,
+    is_visa,
+    VISA_PATTERN,
+    MOTIF_PATTERN,
+    SERVICES_PATTERN,
 )
 from .section_rules import is_body_section
 from .basic_elements import parse_list, list_indentation
 
 
-def _process_identification_pile(pile: List[str]) -> List[PageElementOrString]:
+def _process_identification_pile(
+    pile: List[str],
+) -> List[PageElementOrString]:
     return [" ".join(pile)]
 
 
-def _process_entity_pile(pile: List[str]) -> List[PageElementOrString]:
+def _process_entity_pile(
+    pile: List[str],
+) -> List[PageElementOrString]:
     # Combine all lines of current pile
     entity_line = " ".join(pile)
 
@@ -34,7 +56,8 @@ def _process_entity_pile(pile: List[str]) -> List[PageElementOrString]:
             split_string_with_regex(
                 SERVICES_PATTERN,
                 entity_line,
-            ), 'following'
+            ),
+            "following",
         )
     )
 
@@ -72,11 +95,7 @@ def parse_header(
         make_data_tag(
             soup,
             ENTITY_SCHEMA,
-            contents=wrap_in_tag(
-                soup,
-                _process_entity_pile(string_pile),
-                'div'
-            )
+            contents=wrap_in_tag(soup, _process_entity_pile(string_pile), "div"),
         )
     )
 
@@ -98,11 +117,7 @@ def parse_header(
         make_data_tag(
             soup,
             IDENTIFICATION_SCHEMA,
-            contents=wrap_in_tag(
-                soup,
-                _process_identification_pile(string_pile),
-                'h1'
-            )
+            contents=wrap_in_tag(soup, _process_identification_pile(string_pile), "h1"),
         )
     )
 
@@ -116,9 +131,7 @@ def parse_header(
         and not is_motif(lines[0].contents)
         and not _is_header_end(lines[0])
     ):
-        header.append(
-            _wrap_in_div(soup, [lines.pop(0)])
-        )
+        header.append(_wrap_in_div(soup, [lines.pop(0)]))
 
     # Start visas parsing
     if is_visa(lines[0].contents):
@@ -132,10 +145,7 @@ def parse_header(
         )
 
     # Add lines until we find first motif
-    while (
-        not is_motif(lines[0].contents)
-        and not _is_header_end(lines[0])
-    ):
+    while not is_motif(lines[0].contents) and not _is_header_end(lines[0]):
         header.append(_wrap_in_div(soup, [lines.pop(0)]))
 
     # Start motifs parsing
@@ -165,21 +175,21 @@ def _parse_visas_or_motifs(
     # simple : "Vu blabla" ou "- vu blabla"
     # bullet_list : "- vu blabla" ou "Vu \n - blabla"
     # list : "Vu:\n blabla"
-    flavor: Literal['simple', 'bullet_list', 'list'] | None = None
+    flavor: Literal["simple", "bullet_list", "list"] | None = None
 
     section_match = section_pattern.match(lines[0].contents)
-    if section_match and section_match.group('contents'):
-        flavor = 'simple'
+    if section_match and section_match.group("contents"):
+        flavor = "simple"
     else:
         # Add the "Vu :" to the header
         header.append(_wrap_in_div(soup, [lines.pop(0)]))
         if is_liste(lines[0].contents):
-            flavor = 'bullet_list'
+            flavor = "bullet_list"
         else:
-            flavor = 'list'
+            flavor = "list"
 
     has_more = True
-    if flavor == 'simple':
+    if flavor == "simple":
         while has_more:
             pile = [lines.pop(0).contents]
             while True:
@@ -200,7 +210,7 @@ def _parse_visas_or_motifs(
                 else:
                     header.append(_wrap_in_div(soup, [lines.pop(0)]))
 
-    elif flavor == 'list':
+    elif flavor == "list":
         while has_more:
             pile = [lines.pop(0).contents]
             while True:
@@ -215,7 +225,7 @@ def _parse_visas_or_motifs(
             if is_next_section(lines[0]):
                 has_more = False
 
-    elif flavor == 'bullet_list':
+    elif flavor == "bullet_list":
         indentation_0 = list_indentation(lines[0].contents)
         while has_more:
             pile = [lines.pop(0).contents]
@@ -244,4 +254,4 @@ def _parse_visas_or_motifs(
 
 
 def _wrap_in_div(soup: BeautifulSoup, lines: TextSegments):
-    return make_new_tag(soup, 'div', contents=[line.contents for line in lines])
+    return make_new_tag(soup, "div", contents=[line.contents for line in lines])
