@@ -1,13 +1,14 @@
-import re
 import unittest
 
 from .markdown import clean_markdown, is_table_line
-from bench_convertisseur_xml.parsing_utils.source_mapping import TextSegment
+from bench_convertisseur_xml.parsing_utils.source_mapping import (
+    TextSegment,
+)
 
 
 class TestTableDetection(unittest.TestCase):
 
-    TABLE_MD_1 = '''Blabla blabla blabla.
+    TABLE_MD_1 = """Blabla blabla blabla.
 
 | Rubrique | Régime (*) | Libellé de la rubrique (activité) | Nature de l’installation | Volume autorisé |
 |----------|------------|-----------------------------------|-------------------------|-----------------|
@@ -19,7 +20,7 @@ class TestTableDetection(unittest.TestCase):
 ** Some other description
 
 Volume autorisé : blablabla.
-'''
+"""  # noqa: E501
 
     def test_is_table_line(self):
         # Arrange
@@ -54,7 +55,9 @@ class TestCleanMarkdown(unittest.TestCase):
         result = clean_markdown(text)
 
         # Assert
-        assert result.contents == "Test without space bla", "Should remove leading asterisks not followed by space"
+        assert (
+            result.contents == "Test without space bla"
+        ), "Should remove leading asterisks not followed by space"
 
     def test_keep_asterisk_with_space_at_start(self):
         # Arrange
@@ -64,7 +67,9 @@ class TestCleanMarkdown(unittest.TestCase):
         result = clean_markdown(text)
 
         # Assert
-        assert result.contents == "* Test with space* bla", "Should retain leading asterisks followed by space"
+        assert (
+            result.contents == "* Test with space* bla"
+        ), "Should retain leading asterisks followed by space"
 
     def test_remove_asterisk_at_end(self):
         # Arrange
@@ -74,7 +79,9 @@ class TestCleanMarkdown(unittest.TestCase):
         result = clean_markdown(text)
 
         # Assert
-        assert result.contents == "Test without space*", "Should keep trailing asterisks not preceded by space"
+        assert (
+            result.contents == "Test without space*"
+        ), "Should keep trailing asterisks not preceded by space"
 
     def test_remove_hashes_and_whitespace_at_start(self):
         # Arrange

@@ -16,67 +16,65 @@ class TestCompilePattern(unittest.TestCase):
 
     def test_compile_or_pattern(self):
         # Arrange
-        node = Branching([
-            Literal(pattern_string=r"bla(?P<index>\d+)"),
-            r"\w+"
-        ])
+        node = Branching([Literal(pattern_string=r"bla(?P<index>\d+)"), r"\w+"])
         assert len(node.children) == 2
         ids = list(node.children.keys())
 
         # Assert
-        assert node.pattern.pattern == r'(?P<' + ids[0] + r'>bla(\d+))|(?P<' + ids[1] + r'>\w+)'
+        assert node.pattern.pattern == r"(?P<" + ids[0] + r">bla(\d+))|(?P<" + ids[1] + r">\w+)"
         assert node.children[ids[0]].pattern.pattern == r"bla(?P<index>\d+)"
         assert node.children[ids[1]].pattern.pattern == r"\w+"
 
     def test_compile_sequence_pattern(self):
         # Arrange
-        node = Sequence([
-            Literal(r"bla(?P<index>\d+)"),
-            r"\w+"
-        ])
+        node = Sequence([Literal(r"bla(?P<index>\d+)"), r"\w+"])
         assert len(node.children) == 2
         ids = list(node.children.keys())
 
         # Assert
-        assert node.pattern.pattern == r'(?P<' + ids[0] + r'>bla(\d+))(?P<' + ids[1] + r'>\w+)'
+        assert node.pattern.pattern == r"(?P<" + ids[0] + r">bla(\d+))(?P<" + ids[1] + r">\w+)"
         assert node.children[ids[0]].pattern.pattern == r"bla(?P<index>\d+)"
 
     def test_compile_repeat_pattern(self):
         # Arrange
-        node = Quantifier(
-            Literal(pattern_string=r"\w+"), 
-            r"+"
-        )
+        node = Quantifier(Literal(pattern_string=r"\w+"), r"+")
 
         # Assert
-        assert node.pattern.pattern == r'(\w+)+'
+        assert node.pattern.pattern == r"(\w+)+"
         assert node.child.pattern.pattern == r"\w+"
 
     def test_compile_group_pattern(self):
         # Arrange
-        node = Group(r"(blabla)+", "group1", )
+        node = Group(
+            r"(blabla)+",
+            "group1",
+        )
 
         # Assert
         assert node.group_name == "group1"
-        assert node.pattern.pattern == r'(?P<' + node.child.id + r'>(blabla)+)'
+        assert node.pattern.pattern == r"(?P<" + node.child.id + r">(blabla)+)"
         assert node.child.pattern.pattern == r"(blabla)+"
 
     def test_children_nodes_have_unique_ids(self):
         # Arrange
         child1 = Literal(r"bla")
         child2 = Literal(r"blo")
-        sequence_node = Sequence([
-            child1,
-            child2,
-        ])
+        sequence_node = Sequence(
+            [
+                child1,
+                child2,
+            ]
+        )
         quantifier_node = Quantifier(
             child1,
             r"+",
         )
-        branching_node = Branching([
-            child1,
-            child2,
-        ])
+        branching_node = Branching(
+            [
+                child1,
+                child2,
+            ]
+        )
         group_node = Group(
             child1,
             "group1",

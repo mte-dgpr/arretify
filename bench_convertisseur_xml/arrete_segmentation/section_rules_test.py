@@ -1,11 +1,18 @@
 """Test section parser."""
+
 import unittest
 
 from bs4 import BeautifulSoup
 
-from bench_convertisseur_xml.parsing_utils.source_mapping import initialize_lines
+from bench_convertisseur_xml.parsing_utils.source_mapping import (
+    initialize_lines,
+)
 from .types import BodySection, SectionInfo
-from .section_rules import are_sections_contiguous, parse_section_info, _number_to_levels
+from .section_rules import (
+    are_sections_contiguous,
+    parse_section_info,
+    _number_to_levels,
+)
 
 
 class TestLevelList(unittest.TestCase):
@@ -92,7 +99,7 @@ class TestCompareLevelList(unittest.TestCase):
         result = are_sections_contiguous(current_levels, new_levels)
 
         # Assert
-        assert result == True
+        assert result is True
 
     def test_hierarchical_chapter_article(self):
         # Arrange
@@ -103,7 +110,7 @@ class TestCompareLevelList(unittest.TestCase):
         result = are_sections_contiguous(current_levels, new_levels)
 
         # Assert
-        assert result == True
+        assert result is True
 
     def test_new_article(self):
         # Arrange
@@ -114,7 +121,7 @@ class TestCompareLevelList(unittest.TestCase):
         result = are_sections_contiguous(current_levels, new_levels)
 
         # Assert
-        assert result == True
+        assert result is True
 
     def test_new_title_from_article(self):
         # Arrange
@@ -125,7 +132,7 @@ class TestCompareLevelList(unittest.TestCase):
         result = are_sections_contiguous(current_levels, new_levels)
 
         # Assert
-        assert result == True
+        assert result is True
 
     def test_quoted_article(self):
         # Arrange
@@ -136,7 +143,7 @@ class TestCompareLevelList(unittest.TestCase):
         result = are_sections_contiguous(current_levels, new_levels)
 
         # Assert
-        assert result == False
+        assert result is False
 
     def test_ocr_dot_not_detected(self):
         # Arrange
@@ -147,7 +154,7 @@ class TestCompareLevelList(unittest.TestCase):
         result = are_sections_contiguous(current_levels, new_levels)
 
         # Assert
-        assert result == False
+        assert result is False
 
 
 class TestSectionValidCases(unittest.TestCase):
@@ -165,9 +172,9 @@ class TestSectionValidCases(unittest.TestCase):
         # Assert
         assert section_info == SectionInfo(
             type=BodySection.TITRE,
-            number='I',
+            number="I",
             levels=[1],
-            text='Premier titre',
+            text="Premier titre",
         )
 
     def test_title_with_arabic_number(self):
@@ -180,9 +187,9 @@ class TestSectionValidCases(unittest.TestCase):
         # Assert
         assert section_info == SectionInfo(
             type=BodySection.TITRE,
-            number='1',
+            number="1",
             levels=[1],
-            text='Autre titre',
+            text="Autre titre",
         )
 
     def test_chapter_with_letter_without_dot(self):
@@ -195,9 +202,9 @@ class TestSectionValidCases(unittest.TestCase):
         # Assert
         assert section_info == SectionInfo(
             type=BodySection.CHAPITRE,
-            number='A',
+            number="A",
             levels=[1],
-            text='Premier chapitre',
+            text="Premier chapitre",
         )
 
     def test_chapter_with_letter_with_dot(self):
@@ -210,9 +217,9 @@ class TestSectionValidCases(unittest.TestCase):
         # Assert
         assert section_info == SectionInfo(
             type=BodySection.CHAPITRE,
-            number='A',
+            number="A",
             levels=[1],
-            text='Premier chapitre',
+            text="Premier chapitre",
         )
 
     def test_article_with_arabic_number_without_dot(self):
@@ -225,7 +232,7 @@ class TestSectionValidCases(unittest.TestCase):
         # Assert
         assert section_info == SectionInfo(
             type=BodySection.ARTICLE,
-            number='1',
+            number="1",
             levels=[1],
         )
 
@@ -239,7 +246,7 @@ class TestSectionValidCases(unittest.TestCase):
         # Assert
         assert section_info == SectionInfo(
             type=BodySection.ARTICLE,
-            number='1',
+            number="1",
             levels=[1],
         )
 
@@ -253,7 +260,7 @@ class TestSectionValidCases(unittest.TestCase):
         # Assert
         assert section_info == SectionInfo(
             type=BodySection.ARTICLE,
-            number='1',
+            number="1",
             levels=[1],
         )
 
@@ -267,9 +274,9 @@ class TestSectionValidCases(unittest.TestCase):
         # Assert
         assert section_info == SectionInfo(
             type=BodySection.CHAPITRE,
-            number='I.A',
+            number="I.A",
             levels=[1, 1],
-            text='Premier chapitre',
+            text="Premier chapitre",
         )
 
     def test_hierarchical_chapter_with_letter_with_dot(self):
@@ -282,12 +289,14 @@ class TestSectionValidCases(unittest.TestCase):
         # Assert
         assert section_info == SectionInfo(
             type=BodySection.CHAPITRE,
-            number='I.A',
+            number="I.A",
             levels=[1, 1],
-            text='Premier chapitre',
+            text="Premier chapitre",
         )
 
-    def test_hierarchical_chapter_with_arabic_number_without_dot(self):
+    def test_hierarchical_chapter_with_arabic_number_without_dot(
+        self,
+    ):
         # Arrange
         lines = initialize_lines(["CHAPITRE 1.1 Premier chapitre"])
 
@@ -297,12 +306,14 @@ class TestSectionValidCases(unittest.TestCase):
         # Assert
         assert section_info == SectionInfo(
             type=BodySection.CHAPITRE,
-            number='1.1',
+            number="1.1",
             levels=[1, 1],
-            text='Premier chapitre',
+            text="Premier chapitre",
         )
 
-    def test_hierarchical_article_with_arabic_number_without_dot(self):
+    def test_hierarchical_article_with_arabic_number_without_dot(
+        self,
+    ):
         # Arrange
         lines = initialize_lines(["ARTICLE 1.1.1 Premier article"])
 
@@ -312,12 +323,14 @@ class TestSectionValidCases(unittest.TestCase):
         # Assert
         assert section_info == SectionInfo(
             type=BodySection.ARTICLE,
-            number='1.1.1',
+            number="1.1.1",
             levels=[1, 1, 1],
-            text='Premier article',
+            text="Premier article",
         )
 
-    def test_hierarchical_sub_article_with_arabic_number_without_dot(self):
+    def test_hierarchical_sub_article_with_arabic_number_without_dot(
+        self,
+    ):
         # Arrange
         lines = initialize_lines(["ARTICLE 1.1.1.1 Premier sous article"])
 
@@ -327,12 +340,14 @@ class TestSectionValidCases(unittest.TestCase):
         # Assert
         assert section_info == SectionInfo(
             type=BodySection.ARTICLE,
-            number='1.1.1.1',
+            number="1.1.1.1",
             levels=[1, 1, 1, 1],
-            text='Premier sous article',
+            text="Premier sous article",
         )
 
-    def test_hierarchical_article_with_arabic_number_with_letter(self):
+    def test_hierarchical_article_with_arabic_number_with_letter(
+        self,
+    ):
         # Arrange
         lines = initialize_lines(["ARTICLE 1.A.3 - Premier article"])
 
@@ -342,12 +357,14 @@ class TestSectionValidCases(unittest.TestCase):
         # Assert
         assert section_info == SectionInfo(
             type=BodySection.ARTICLE,
-            number='1.A.3',
+            number="1.A.3",
             levels=[1, 1, 3],
-            text='Premier article',
+            text="Premier article",
         )
 
-    def test_hierarchical_article_with_arabic_number_with_letter_and_dot(self):
+    def test_hierarchical_article_with_arabic_number_with_letter_and_dot(
+        self,
+    ):
         # Arrange
         lines = initialize_lines(["ARTICLE 1.A.3. - Premier article"])
 
@@ -357,7 +374,7 @@ class TestSectionValidCases(unittest.TestCase):
         # Assert
         assert section_info == SectionInfo(
             type=BodySection.ARTICLE,
-            number='1.A.3',
+            number="1.A.3",
             levels=[1, 1, 3],
-            text='Premier article',
+            text="Premier article",
         )

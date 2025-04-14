@@ -1,15 +1,15 @@
-from typing import Union, Literal, List, ClassVar, Optional, Tuple, cast
-from dataclasses import dataclass
+from typing import (
+    Union,
+    List,
+)
 import urllib.parse
-from enum import Enum
 
 from bench_convertisseur_xml.types import URI
-from bench_convertisseur_xml.law_data.legifrance import get_code_titles
 from .types import SectionType, Section, Document, DocumentType
 
 
-_SEPARATOR = '_'
-URI_SCHEME = 'dsr'
+_SEPARATOR = "_"
+URI_SCHEME = "dsr"
 
 
 def render_uri(
@@ -20,29 +20,35 @@ def render_uri(
 
     # dsr://<type>_<id>_<num>_<date>_<title>
     document_part = _join_tokens(
-        document.type.value, 
-        document.id, 
-        document.num, 
-        document.date, 
-        document.title
+        document.type.value,
+        document.id,
+        document.num,
+        document.date,
+        document.title,
     )
 
     # Format for articles and alineas part : /<type>_<start_id>_<start_num>_<end_id>_<end_num>
-    path = ''
+    path = ""
     for section in sections:
-        section_part = _join_tokens(section.type.value, section.start_id, section.start_num, section.end_id, section.end_num)
-        path += f'/{section_part}'
+        section_part = _join_tokens(
+            section.type.value,
+            section.start_id,
+            section.start_num,
+            section.end_id,
+            section.end_num,
+        )
+        path += f"/{section_part}"
 
-    return f'{URI_SCHEME}://{document_part}{path}'
+    return f"{URI_SCHEME}://{document_part}{path}"
 
 
 def parse_uri(uri: URI) -> tuple[Document, List[Section]]:
-    scheme_part, rest = uri.split('://', 1)
+    scheme_part, rest = uri.split("://", 1)
     if scheme_part != URI_SCHEME:
         raise ValueError(f'Unsupported URI scheme "{scheme_part}"')
-    
+
     document: Union[Document, None] = None
-    document_part, *section_parts = rest.split('/')
+    document_part, *section_parts = rest.split("/")
     tokens = _split_tokens(document_part)
     if len(tokens) != 5:
         raise ValueError(f'Invalid document part "{document_part}"')
@@ -67,7 +73,7 @@ def parse_uri(uri: URI) -> tuple[Document, List[Section]]:
                 start_id=start_id,
                 start_num=start_num,
                 end_id=end_id,
-                end_num=end_num
+                end_num=end_num,
             )
         )
 
@@ -76,7 +82,7 @@ def parse_uri(uri: URI) -> tuple[Document, List[Section]]:
 
 
 def is_uri_document_type(uri: URI, document_type: DocumentType) -> bool:
-    return uri.startswith(f'{URI_SCHEME}://{document_type.value}')
+    return uri.startswith(f"{URI_SCHEME}://{document_type.value}")
 
 
 def is_resolvable(document: Document, *sections: Section) -> bool:
@@ -87,19 +93,21 @@ def _validate_sections(sections: List[Section]) -> None:
     allowed_section_types = list(SectionType)
     for i, section in enumerate(sections):
         if i < len(sections) - 1:
-            if not section.end_id is None or not section.end_num is None:
-                raise ValueError(f'End is allowed only for last section')
-            
+            if section.end_id is not None or section.end_num is not None:
+                raise ValueError("End is allowed only for last section")
+
         if i > 0:
             previous_section = sections[i - 1]
             previous_section_type_index = allowed_section_types.index(previous_section.type)
             section_type_index = allowed_section_types.index(section.type)
             if section_type_index < previous_section_type_index:
-                raise ValueError(f'Section type "{section.type}" is not allowed after "{previous_section.type}"')
+                raise ValueError(
+                    f'Section type "{section.type}" is not allowed after "{previous_section.type}"'
+                )
 
 
 def _join_tokens(*tokens: Union[str, None]) -> str:
-    return _SEPARATOR.join([_encode(token) if token else '' for token in tokens])
+    return _SEPARATOR.join([_encode(token) if token else "" for token in tokens])
 
 
 def _split_tokens(part: str) -> List[Union[str, None]]:
@@ -112,7 +120,7 @@ def _decode(part: str) -> str:
 
 def _encode(part: str) -> str:
     _assert_allowed_chars(part)
-    return urllib.parse.quote(part, safe='')
+    return urllib.parse.quote(part, safe="")
 
 
 def _assert_allowed_chars(raw_part: str) -> None:

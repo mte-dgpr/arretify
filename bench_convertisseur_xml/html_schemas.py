@@ -42,7 +42,7 @@ MOTIF_SCHEMA = DataElementSchema(
 SECTION_SCHEMA = DataElementSchema(
     name="section",
     tag_name="section",
-    data_keys=['title', 'number', 'type'],
+    data_keys=["title", "number", "type"],
 )
 
 SECTION_TITLE1_SCHEMA = DataElementSchema(
@@ -66,19 +66,19 @@ SECTION_TITLE_SCHEMAS = [
 ALINEA_SCHEMA = DataElementSchema(
     name="alinea",
     tag_name="div",
-    data_keys=['number'],
+    data_keys=["number"],
 )
 
 DOCUMENT_REFERENCE_SCHEMA = DataElementSchema(
     name="document_reference",
     tag_name="a",
-    data_keys=['uri', 'is_resolvable'],
+    data_keys=["uri", "is_resolvable"],
 )
 
 SECTION_REFERENCE_SCHEMA = DataElementSchema(
     name="section_reference",
     tag_name="a",
-    data_keys=['uri', 'is_resolvable'],
+    data_keys=["uri", "is_resolvable"],
 )
 
 SECTION_REFERENCE_MULTIPLE_SCHEMA = DataElementSchema(
@@ -99,26 +99,29 @@ SECTIONS_AND_DOCUMENT_REFERENCES = DataElementSchema(
 A group of sections references and their associated document reference.
 """
 
-DATE_SCHEMA = DataElementSchema(
-    name="date",
-    tag_name="time",
-    data_keys=[]
-)
+DATE_SCHEMA = DataElementSchema(name="date", tag_name="time", data_keys=[])
 
 ERROR_SCHEMA = DataElementSchema(
-    name='error',
-    tag_name='span',
-    data_keys=['error_code'],
+    name="error",
+    tag_name="span",
+    data_keys=["error_code"],
 )
 
 OPERATION_SCHEMA = DataElementSchema(
-    name='operation',
-    tag_name='span',
-    data_keys=['operation_type', 'direction', 'keyword', 'has_operand', 'references', 'operand'],
+    name="operation",
+    tag_name="span",
+    data_keys=[
+        "operation_type",
+        "direction",
+        "keyword",
+        "has_operand",
+        "references",
+        "operand",
+    ],
 )
 
 DEBUG_KEYWORD_SCHEMA = DataElementSchema(
     name="debug_keyword",
     tag_name="span",
-    data_keys=['query'],
+    data_keys=["query"],
 )

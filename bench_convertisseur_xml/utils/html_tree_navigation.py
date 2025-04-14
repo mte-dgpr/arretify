@@ -1,12 +1,10 @@
-from typing import List
-
 from bs4 import Tag, PageElement
 
 
 def closest_common_ancestor(*elements: PageElement) -> Tag:
     if len(elements) < 2:
-        raise ValueError('At least two elements are required')
-    
+        raise ValueError("At least two elements are required")
+
     for parent in elements[0].parents:
         # Standard `in` operator uses value equality `==` for comparison.
         # For two tags this is not satisfying because for example two empty divs
@@ -16,7 +14,7 @@ def closest_common_ancestor(*elements: PageElement) -> Tag:
             for element in elements[1:]
         ):
             return parent
-    raise ValueError('No common parent found')
+    raise ValueError("No common parent found")
 
 
 def is_descendant(child: PageElement, parent: PageElement) -> bool:

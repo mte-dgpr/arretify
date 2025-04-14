@@ -11,7 +11,7 @@ default:
   before_script:
     - python --version
     - pip install --upgrade pip
-    - pip install .[test]
+    - pip install .[dev]
     - pip install git+https://id:$PY_CLIENTS_API_DROIT_ACCESS_TOKEN@gitlab-forge.din.developpement-durable.gouv.fr/dgpr/data-studio-risques/py-clients-api-droit.git@main
 
 stages:
@@ -28,4 +28,5 @@ lint-test-job:
   script:
     - echo "Linting code... This will take about 10 seconds."
     - mypy
+    - black . --check
     - echo "No lint issues found."

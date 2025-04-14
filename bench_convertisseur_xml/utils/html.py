@@ -1,52 +1,63 @@
-import re
-from typing import Dict, List, Optional, Union, Iterable, cast
+from typing import Dict, List, Iterable, cast
 
-from bs4 import BeautifulSoup, PageElement, Tag
+from bs4 import BeautifulSoup, Tag
 
 from bench_convertisseur_xml.utils.merge import merge_strings
-from bench_convertisseur_xml.types import DataElementSchema, PageElementOrString, ElementId
+from bench_convertisseur_xml.types import (
+    DataElementSchema,
+    PageElementOrString,
+    ElementId,
+)
 
 
 _ID_COUNTER = 0
 
 
 def make_css_class(schema: DataElementSchema):
-    return f'dsr-{schema.name}'
+    return f"dsr-{schema.name}"
 
 
 def has_css_class(tag: Tag, css_class: str) -> bool:
-    return css_class in tag.get('class', [])
+    return css_class in tag.get("class", [])
 
 
 def assign_element_id(tag: Tag) -> ElementId:
     global _ID_COUNTER
-    if 'data-element_id' in tag.attrs:
-        return cast(ElementId, tag['data-element_id'])
+    if "data-element_id" in tag.attrs:
+        return cast(ElementId, tag["data-element_id"])
     _ID_COUNTER += 1
-    element_id: ElementId = f'{_ID_COUNTER}'
-    tag['data-element_id'] = element_id
+    element_id: ElementId = f"{_ID_COUNTER}"
+    tag["data-element_id"] = element_id
     return element_id
 
 
 def make_data_tag(
-    soup: BeautifulSoup, 
-    schema: DataElementSchema, 
-    contents: Iterable[PageElementOrString]=[],
-    data: Dict[str, str | None]=dict(), 
+    soup: BeautifulSoup,
+    schema: DataElementSchema,
+    contents: Iterable[PageElementOrString] | None = None,
+    data: Dict[str, str | None] | None = None,
 ) -> Tag:
+    if contents is None:
+        contents = []
+    if data is None:
+        data = {}
     element = make_new_tag(soup, schema.tag_name, contents=contents)
-    element['class'] = [make_css_class(schema)]
+    element["class"] = [make_css_class(schema)]
     for key in schema.data_keys:
         try:
             data_value = data[key]
         except KeyError:
             raise KeyError(f'Missing key "{key}" for schema "{schema.name}"')
         if data_value is not None:
-            element[f'data-{key}'] = data_value
+            element[f"data-{key}"] = data_value
     return element
 
 
-def wrap_in_tag(soup: BeautifulSoup, elements: List[PageElementOrString], tag_name: str):
+def wrap_in_tag(
+    soup: BeautifulSoup,
+    elements: List[PageElementOrString],
+    tag_name: str,
+):
     wrapped: List[Tag] = []
     for element in elements:
         if isinstance(element, str) and element.strip():
@@ -57,9 +68,9 @@ def wrap_in_tag(soup: BeautifulSoup, elements: List[PageElementOrString], tag_na
 
 
 def make_ul(soup: BeautifulSoup, elements: List[PageElementOrString]):
-    ul = soup.new_tag('ul')
+    ul = soup.new_tag("ul")
     for element in elements:
-        if isinstance(element, Tag) and element.name == 'li':
+        if isinstance(element, Tag) and element.name == "li":
             li = element
         else:
             li = make_li(soup, [element])
@@ -68,35 +79,37 @@ def make_ul(soup: BeautifulSoup, elements: List[PageElementOrString]):
 
 
 def make_li(soup: BeautifulSoup, elements: List[PageElementOrString]):
-    li = soup.new_tag('li')
+    li = soup.new_tag("li")
     li.extend(elements)
     return li
 
 
 def make_new_tag(
-    soup: BeautifulSoup, 
-    tag_name: str, 
-    contents: Iterable[PageElementOrString] = []
+    soup: BeautifulSoup,
+    tag_name: str,
+    contents: Iterable[PageElementOrString] | None = None,
 ) -> Tag:
+    if contents is None:
+        contents = []
     element = soup.new_tag(tag_name)
     element.extend(merge_strings(contents))
     return element
 
 
 def parse_bool_attribute(value: str) -> bool:
-    return value == 'true'
+    return value == "true"
 
 
 def render_bool_attribute(value: bool) -> str:
-    return 'true' if value else 'false'
+    return "true" if value else "false"
 
 
 def parse_str_list_attribute(value: str) -> List[str]:
-    return value.split(',')
+    return value.split(",")
 
 
 def render_str_list_attribute(value: List[str]) -> str:
     for item in value:
-        if ',' in item:
+        if "," in item:
             raise ValueError(f'Invalid item "{item}" in list')
-    return ','.join(value)
+    return ",".join(value)

@@ -4,22 +4,6 @@ Cette librairie permet la conversion d'arrêtés préfectoraux OCRisées depuis 
 
 ## Setup
 
-Créer un environnement virtuel :
-
-```
-py -3.13 -m venv venv
-```
-
-Installer la librairie et ses dépendances :
-
-```
-pip install .
-```
-
-Dépendances optionnelles : 
-
-- `clients_api_droit` pour résoudre les références eurlex et légifrance. Pour installer la librairie une possibilité consiste à la cloner depuis gitlab puis à l'installer localement.
-
 La librairie se configure avec des variables d'environnement. Vous pourrez par exemple créer un fichier `.env` avec les variables suivantes : 
 
 ```bash
@@ -43,13 +27,13 @@ ENV = 'development'
 
 Pour éxecuter le parsing sur un lot de fichiers OCRisés, copier le dossier de fichiers dans un dossier facilement accessible (e.g. `./tmp/arretes_ocr`), et exécuter la commande `main.py`. Par exemple :
 
-```
+```bash
 python -m main -i ./tmp/arretes_ocr -o ./tmp/arretes_html
 ```
 
 Il est aussi possible d'éxecuter le parsing sur un fichier unique en passant en option le chemin complet d'entrée et de sortie, par exemple :
 
-```
+```bash
 python -m main -i ./tmp/arretes_ocr/bla.txt -o ./tmp/arretes_html/bla.html
 ```
 
@@ -70,16 +54,64 @@ Copier le fichier `templates/styles.css` dans votre dossier html.
 
 Démarrer un server HTTP à la racine de ce dossier html. Vous pouvez utiliser powershell, naviguer dans votre dossier html, puis executer la commande suivante : `python -m http.server`.
 
-## Debugging
+
+## Developpement
+
+### Setup
+
+Créer un environnement virtuel :
+
+```bash
+py -3.13 -m venv venv
+```
+
+Installer la librairie et ses dépendances :
+
+```bash
+pip install .[dev]
+```
+
+Dépendances optionnelles : 
+
+- `clients_api_droit` pour résoudre les références eurlex et légifrance. Pour installer la librairie une possibilité consiste à la cloner depuis gitlab puis à l'installer localement.
+
+
+#### Outils de développement
+
+La librairie utilise les outils suivants :
+- `pytest` pour les tests
+- `black` pour le formattage de code automatique
+- `flake8` et `flake8-bugbear` pour le linting
+- `autoflake` pour la suppression automatique des imports inutilisés. Utilisation : 
+    ```bash
+    autoflake \
+        --in-place \
+        --recursive \
+        --remove-all-unused-imports \
+        --remove-unused-variables \
+        --exclude=__init__.py \
+        bench_convertisseur_xml scripts
+    ```
+- `pre-commit` pour la gestion des git pre-commit hooks
+
+Afin d'initialiser les pre-commit hooks dans votre repository, lancer la commande suivante :
+
+```bash
+pre-commit install
+```
+
+Ainsi avant chaque commit un run des outils de linting sera executé pour vérifier le formattage et les fautes de style.
+
+
+### Debugging
 
 Des outils de debugging sont fournis dans le module `debug.py`
 
-### Vérifier l'exhaustivité du parsing
+On pourra par exemple vérifier l'exhaustivité du parsing en utilisant la fonction `insert_debug_keywords`, qui permet de vérifier que tous les cas liés au parsing d'un type d'éléments ont été traités.
 
-Pour vérifier que tous les cas liés au parsing d'un type d'éléments ont été traités, on pourra utiliser la function `insert_debug_keywords`.
 Par exemple :
 
-```
+```python
 # Parse toutes les références à des articles
 # e.g. article 1.2.3 du code de l'environnement
 new_children = parse_all_article_references(soup, list(container.children))
@@ -91,15 +123,15 @@ new_children = parse_all_article_references(soup, list(container.children))
 new_children = insert_debug_keywords(soup, new_children, 'articles?')
 ```
 
-## Testing
+### Testing
 
 Pour éxecuter les tests :
 
-```
+```bash
 pytest
 ```
 
-### Snapshot testing
+#### Snapshot testing
 
 Le fichier `bench_convertisseur_xml/main_test.py` permet de détecter les regressions en effectuant le parsing sur tous les documents de notre base de tests de documents dans `arretes_ocr/` et en comparant le résultat obtenu avec des résultats obtenus précédemment et stocké dans `arretes_html/`.
 
@@ -109,14 +141,17 @@ Si les tests échouent c'est que la génération d'html a changé. Il convient d
 2. Utiliser l'outil de diff de git (ou de vscodium) pour comparer la nouvelle version avec la version de référence
 3. Régler les problèmes éventuels, puis répéter étape 1.
 
-## Téléchargement des données de bases de droit
+
+### Téléchargement des données de bases de droit
 
 Afin de parser et résoudre les références citées dans les AP à des textes du droit français ou européen, nous téléchargeons grâce à divers scripts des fichiers contenant des listes de références à vérifier. Les fonctionalités pour accéder à ces références se trouvent dans le dossier `bench_convertisseur_xml/law_data`, les scripts se trouvent dans le dossier `scripts`.
 
 Pour utiliser ces scripts, il faut installer et configurer la librairie du Data Studio Risques `py-clients-api-droit`.
 
-### Légifrance
+#### Légifrance
 
 Télécharger la liste des codes :
 
-```python .\scripts\download_data_legifrance.py -o .\bench_convertisseur_xml\law_data\legifrance```
+```bash
+python ./scripts/download_data_legifrance.py -o ./bench_convertisseur_xml/law_data/legifrance
+```

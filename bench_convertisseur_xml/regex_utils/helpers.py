@@ -1,60 +1,60 @@
 import re
 import unicodedata
-from typing import List, Pattern, cast, List, Callable, Iterable, Union, Dict, Tuple, Literal
-from dataclasses import dataclass
+from typing import (
+    List,
+)
 
-from bench_convertisseur_xml.types import PageElementOrString
 from .types import Settings
 
-NAMED_GROUP_PATTERN = re.compile(r'\?P\<(?P<name>\w+)\>')
-NAME_WITH_INDEX_PATTERN = re.compile(r'(\w+?)(?P<index>\d+)')
+NAMED_GROUP_PATTERN = re.compile(r"\?P\<(?P<name>\w+)\>")
+NAME_WITH_INDEX_PATTERN = re.compile(r"(\w+?)(?P<index>\d+)")
 
 
-def sub_with_match(string: str, match: re.Match, group: int | str=0) -> str:
-    return string[:match.start(group)] + string[match.end(group):]
+def sub_with_match(string: str, match: re.Match, group: int | str = 0) -> str:
+    return string[: match.start(group)] + string[match.end(group) :]
 
 
 def without_named_groups(pattern_string: str):
-    return NAMED_GROUP_PATTERN.sub('', pattern_string)
+    return NAMED_GROUP_PATTERN.sub("", pattern_string)
 
 
 def join_with_or(pattern_strings: List[str]):
-    return '|'.join(pattern_strings)
+    return "|".join(pattern_strings)
 
 
 def remove_accents(s: str) -> str:
-    return ''.join((c for c in unicodedata.normalize('NFD', s) if unicodedata.category(c) != 'Mn'))
+    return "".join((c for c in unicodedata.normalize("NFD", s) if unicodedata.category(c) != "Mn"))
 
 
 def normalize_quotes(text: str):
-    return (text
-        .replace('’', "'")
-        .replace('“', '"')
-        .replace('”', '"')
-        .replace('«', '"')
-        .replace('»', '"'))
+    return (
+        text.replace("’", "'")
+        .replace("“", '"')
+        .replace("”", '"')
+        .replace("«", '"')
+        .replace("»", '"')
+    )
 
 
 def normalize_dashes(text: str):
-    return text.replace('–', '-')
+    return text.replace("–", "-")
 
 
 def lookup_normalized_version(
     choices: List[str],
     text: str,
-    settings: Settings=Settings(),
+    settings: Settings | None = None,
 ):
+    if settings is None:
+        settings = Settings()
     matches: List[str] = []
     for choice in choices:
-        if (
-            normalize_string(choice, settings) 
-            == normalize_string(text, settings)
-        ):
+        if normalize_string(choice, settings) == normalize_string(text, settings):
             matches.append(choice)
             break
 
     if not matches:
-        raise ValueError(f'No match found for {text}')
+        raise ValueError(f"No match found for {text}")
 
     return matches[0]
 

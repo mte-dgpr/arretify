@@ -1,29 +1,32 @@
-from typing import List, Iterable, cast
+from typing import cast
 from dataclasses import replace as dataclass_replace
 
 from bs4 import Tag
 
 from bench_convertisseur_xml.law_data.uri import parse_uri
-from bench_convertisseur_xml.law_data.legifrance import get_decret_legifrance_id
+from bench_convertisseur_xml.law_data.legifrance import (
+    get_decret_legifrance_id,
+)
 from bench_convertisseur_xml.parsing_utils.dates import parse_date_str
 from bench_convertisseur_xml.settings import LOGGER
-from .core import update_reference_tag_uri, get_title_sample_next_sibling
+from .core import (
+    update_reference_tag_uri,
+    get_title_sample_next_sibling,
+)
 
 
 def resolve_decret_legifrance_id(
     document_reference_tag: Tag,
 ) -> None:
-    uri = cast(str, document_reference_tag.get('data-uri'))
+    uri = cast(str, document_reference_tag.get("data-uri"))
     document, sections = parse_uri(uri)
 
     if document.date is None:
-        raise ValueError(f'Arrete ministeriel document {document} has no date')
+        raise ValueError(f"Arrete ministeriel document {document} has no date")
 
     title = get_title_sample_next_sibling(document_reference_tag)
     if title is None and document.num is None:
-        LOGGER.warning(
-            f'Could not resolve decret {document_reference_tag}. No title or num'
-        )
+        LOGGER.warning(f"Could not resolve decret {document_reference_tag}. No title or num")
         return
 
     date_object = parse_date_str(document.date)
@@ -34,12 +37,16 @@ def resolve_decret_legifrance_id(
     )
     if decret_id is None:
         LOGGER.warning(
-            f'Could not find legifrance decret id for '
+            f"Could not find legifrance decret id for "
             f'date {date_object}{' n°' + document.num if document.num else ''} "{title}"'
         )
         return
 
-    update_reference_tag_uri(document_reference_tag, dataclass_replace(
-        document,
-        id=decret_id,
-    ), *sections)
+    update_reference_tag_uri(
+        document_reference_tag,
+        dataclass_replace(
+            document,
+            id=decret_id,
+        ),
+        *sections,
+    )

@@ -1,11 +1,14 @@
 import unittest
 
-from .sentence_rules import is_table_description, is_line_with_semicolumn
+from .sentence_rules import (
+    is_table_description,
+    is_line_with_semicolumn,
+)
 
 
 class TestTableDetection(unittest.TestCase):
 
-    TABLE_MD_1 = '''Blabla blabla blabla.
+    TABLE_MD_1 = """Blabla blabla blabla.
 
 | Rubrique | Régime (*) | Libellé de la rubrique (activité) | Nature de l’installation | Volume autorisé |
 |----------|------------|-----------------------------------|-------------------------|-----------------|
@@ -17,7 +20,8 @@ class TestTableDetection(unittest.TestCase):
 ** Some other description
 
 Volume autorisé : blablabla.
-'''
+"""  # noqa: E501
+
     def test_is_table_description(self):
         # Arrange
         lines = self.TABLE_MD_1.split("\n")
@@ -36,13 +40,13 @@ Volume autorisé : blablabla.
 class TestIsLinedContinued(unittest.TestCase):
 
     def test_valid_lines_with_continuation(self):
-        assert is_line_with_semicolumn("This is a line: ") == True
-        assert is_line_with_semicolumn("This is a line:") == True
-        assert is_line_with_semicolumn("This is a line :") == True
-        assert is_line_with_semicolumn("This is a line : ") == True
+        assert is_line_with_semicolumn("This is a line: ") is True
+        assert is_line_with_semicolumn("This is a line:") is True
+        assert is_line_with_semicolumn("This is a line :") is True
+        assert is_line_with_semicolumn("This is a line : ") is True
 
     def test_line_without_continuation(self):
-        assert is_line_with_semicolumn("This is a complete sentence.") == False
-        assert is_line_with_semicolumn("This is a line with: colon in the middle.") == False
-        assert is_line_with_semicolumn("") == False
-        assert is_line_with_semicolumn(": ") == False
+        assert is_line_with_semicolumn("This is a complete sentence.") is False
+        assert is_line_with_semicolumn("This is a line with: colon in the middle.") is False
+        assert is_line_with_semicolumn("") is False
+        assert is_line_with_semicolumn(": ") is False

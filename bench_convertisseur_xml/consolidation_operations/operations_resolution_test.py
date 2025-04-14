@@ -1,7 +1,7 @@
 import unittest
 
-from bench_convertisseur_xml.utils.testing import create_bs
-from bench_convertisseur_xml.utils import html 
+from bench_convertisseur_xml.utils.testing import create_bs, normalized_html_str
+from bench_convertisseur_xml.utils import html
 from .operations_resolution import resolve_references_and_operands
 
 
@@ -12,7 +12,9 @@ class TestParseOperations(unittest.TestCase):
 
     def test_several_references_no_operand(self):
         # Arrange
-        soup = create_bs("""
+        soup = create_bs(
+            normalized_html_str(
+                """
             <div class="dsr-alinea">
                 Les
                 <span class="dsr-sections_and_document_references">
@@ -40,14 +42,18 @@ class TestParseOperations(unittest.TestCase):
                     </b>
                 </span>
             </div>
-        """)
-        
+        """  # noqa: E501
+            )
+        )
+
         # Act
-        resolve_references_and_operands(soup.find(class_='dsr-operation'))
+        resolve_references_and_operands(soup.find(class_="dsr-operation"))
 
         # Assert
-        # Check that elmeent_id was added to both references, and that the references were added to the operation
-        expected = create_bs("""
+        # Check that element_id was added to both references, and that the references were
+        # added to the operation
+        assert str(soup) == normalized_html_str(
+            """
             <div class="dsr-alinea">
                 Les
                 <span class="dsr-sections_and_document_references">
@@ -75,12 +81,14 @@ class TestParseOperations(unittest.TestCase):
                     </b>
                 </span>
             </div>
-        """)
-        assert str(soup) == str(expected)
+        """  # noqa: E501
+        )
 
     def test_one_reference_one_operand(self):
         # Arrange
-        soup = create_bs("""
+        soup = create_bs(
+            normalized_html_str(
+                """
             <div class="dsr-alinea">
                 La dernière phrase de l'
                 <span class="dsr-sections_and_document_references">
@@ -107,13 +115,16 @@ class TestParseOperations(unittest.TestCase):
                 </q>
                 .
             </div>
-        """)
+        """  # noqa: E501
+            )
+        )
 
         # Act
-        resolve_references_and_operands(soup.find(class_='dsr-operation'))
+        resolve_references_and_operands(soup.find(class_="dsr-operation"))
 
         # Assert
-        expected = create_bs("""
+        assert str(soup) == normalized_html_str(
+            """
             <div class="dsr-alinea">
                 La dernière phrase de l'
                 <span class="dsr-sections_and_document_references">
@@ -140,5 +151,5 @@ class TestParseOperations(unittest.TestCase):
                 </q>
                 .
             </div>
-        """)
-        assert str(soup) == str(expected)
+        """  # noqa: E501
+        )

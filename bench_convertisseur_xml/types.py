@@ -1,12 +1,12 @@
 import re
-from typing import List, Union, Iterable, Tuple
+from typing import List, Union, Tuple
 from enum import Enum
 from dataclasses import dataclass
 
 from bs4 import PageElement
 
 
-ELEMENT_NAME_PATTERN = re.compile(r'^[a-z0-9_]+$')
+ELEMENT_NAME_PATTERN = re.compile(r"^[a-z0-9_]+$")
 
 
 @dataclass(frozen=True)
@@ -19,14 +19,14 @@ class DataElementSchema:
         matched = ELEMENT_NAME_PATTERN.match(self.name)
         if not matched:
             raise ValueError(f"Invalid name: {self.name}")
-        if 'element_id' in self.data_keys:
+        if "element_id" in self.data_keys:
             raise ValueError("element_id is a reserved key")
 
 
 class OperationType(Enum):
-    ADD = 'add'
-    DELETE = 'delete'
-    REPLACE = 'replace'
+    ADD = "add"
+    DELETE = "delete"
+    REPLACE = "replace"
 
 
 PageElementOrString = Union[PageElement, str]

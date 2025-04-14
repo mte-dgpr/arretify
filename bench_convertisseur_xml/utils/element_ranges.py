@@ -1,13 +1,17 @@
-from typing import Callable, List, Tuple, Iterator
+from typing import List, Iterator
 
-from bs4 import BeautifulSoup, Tag, PageElement
+from bs4 import Tag, PageElement
 
-from .html_tree_navigation import is_parent, is_descendant, closest_common_ancestor
+from .html_tree_navigation import (
+    is_parent,
+    is_descendant,
+    closest_common_ancestor,
+)
 
 
 ElementRange = List[PageElement]
 """
-A range of elements which follow each other in parsing order. e.g. : 
+A range of elements which follow each other in parsing order. e.g. :
 
     <div id="el1"></div>
     <div id="el2">
@@ -22,13 +26,13 @@ A range of elements which follow each other in parsing order. e.g. :
 
 
 def iter_collapsed_range_right(
-    start_tag: Tag, 
+    start_tag: Tag,
 ) -> Iterator[ElementRange]:
     all_elements: ElementRange = [start_tag]
     current = _find_next_after(start_tag)
     while current:
         collapsed = _collapse_element_range(all_elements)
-        # If the last element is parent of `current`, 
+        # If the last element is parent of `current`,
         # it means we are going down in the tree, so `current`
         # is a leaf and we don't want to collapse it, even if it
         # is the only node of its parent.
@@ -67,11 +71,13 @@ def _find_next_after(element: PageElement) -> PageElement | None:
         return next_element
 
 
-def _collapse_element_range(element_range: ElementRange) -> ElementRange:
+def _collapse_element_range(
+    element_range: ElementRange,
+) -> ElementRange:
     """
     Collapses an ElementRange into a list of elements that are not parent of each other.
 
-    There are mostly two cases : 
+    There are mostly two cases :
 
     Consider the following html structure :
 
@@ -99,7 +105,7 @@ def _collapse_element_range(element_range: ElementRange) -> ElementRange:
             <div id="el2"></div>
 
     2. For partial subtrees, we keep only leaf nodes. e.g., collapsing the range :
-        
+
             <div id="el3"></div>
             <div id="el4">
                 <div id="el5">
@@ -117,28 +123,25 @@ def _collapse_element_range(element_range: ElementRange) -> ElementRange:
     collapsed: ElementRange = []
     element = pile.pop(0)
     while True:
-        # A string or tag encountered here can't belong to a collapsed node, 
+        # A string or tag encountered here can't belong to a collapsed node,
         # otherwise it would have been removed from the pile before (step 0.).
-        # Therefore it can be either : 
-        # 
+        # Therefore it can be either :
+        #
         # 1. COMPLETE SUBTREE -> collapse
         # 2. LEAF NODE -> directly add to the collapsed list
         # 3. PARTIAL SUBTREE -> ignore the node and move one level down
         #
         if isinstance(element, Tag):
-            # 0. Grab and remove all the descendants of the current element that 
+            # 0. Grab and remove all the descendants of the current element that
             # are in the pile.
             descendants_in_pile: ElementRange = []
             while pile and is_parent(element, pile[0]):
                 descendants_in_pile.append(pile.pop(0))
 
             # 1. COMPLETE SUBTREE
-            if all(
-                descendant in descendants_in_pile
-                for descendant in element.descendants
-            ):
+            if all(descendant in descendants_in_pile for descendant in element.descendants):
                 collapsed.append(element)
-            
+
             # 2. LEAF NODE
             elif len(descendants_in_pile) == 0:
                 collapsed.append(element)
@@ -146,7 +149,7 @@ def _collapse_element_range(element_range: ElementRange) -> ElementRange:
             # 3. PARTIAL SUBTREE
             else:
                 pile = descendants_in_pile + pile
-        
+
         # 2. LEAF NODE
         # String at this point can only be a leaf node.
         else:
@@ -163,7 +166,7 @@ def _collapse_element_range(element_range: ElementRange) -> ElementRange:
 def get_contiguous_elements_left(start_tag: Tag) -> List[PageElement]:
     """
     List elements contiguous to `start_tag` in parsing order in the left direction.
-    
+
     Example, with the following html structure :
         <div>
             <div id="blu"></div>
@@ -173,7 +176,7 @@ def get_contiguous_elements_left(start_tag: Tag) -> List[PageElement]:
             </div>
             <div id="start"></div>
         </div>
-    
+
     This function will return the following list of elements :
         [bli, "blo"]
     """
@@ -186,7 +189,7 @@ def get_contiguous_elements_left(start_tag: Tag) -> List[PageElement]:
             elements.insert(0, element_range[-2])
             continue
 
-        # If more than 2 elements, the right most neighbor has already been encountered, 
+        # If more than 2 elements, the right most neighbor has already been encountered,
         # so we can ignore that range
         # If in addition, we have reached the contiguous neighbors at the top of ancestor
         # hierarchy, it means we can stop collecting elements.
@@ -197,7 +200,9 @@ def get_contiguous_elements_left(start_tag: Tag) -> List[PageElement]:
     return elements
 
 
-def get_contiguous_elements_right(start_tag: Tag) -> List[PageElement]:
+def get_contiguous_elements_right(
+    start_tag: Tag,
+) -> List[PageElement]:
     """
     List elements contiguous to `start_tag` in parsing order in the right direction.
 
@@ -224,5 +229,5 @@ def get_contiguous_elements_right(start_tag: Tag) -> List[PageElement]:
             break
         else:
             elements.append(element_range[1])
-    
+
     return elements

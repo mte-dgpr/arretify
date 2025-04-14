@@ -1,20 +1,26 @@
-import re
-from typing import Iterator, Dict, Callable, List, Iterable, Union
-from dataclasses import dataclass
-
-from .types import Node, RegexTreeMatch, MatchDict, LiteralNode, BranchingNode, QuantifierNode, GroupNode, SequenceNode, RegexTreeMatchFlow
-from ..types import GroupName
-from ..split import split_string_with_regex, split_match_by_named_groups
-from ..core import MatchProxy, safe_group
-from bench_convertisseur_xml.types import PageElementOrString
+from .types import (
+    Node,
+    RegexTreeMatch,
+    LiteralNode,
+    BranchingNode,
+    QuantifierNode,
+    GroupNode,
+    SequenceNode,
+    RegexTreeMatchFlow,
+)
+from ..split import (
+    split_string_with_regex,
+    split_match_by_named_groups,
+)
+from ..core import safe_group
 
 
 def match(node: GroupNode, string: str) -> RegexTreeMatch | None:
-    try :
+    try:
         results = list(_match_recursive(node, string, None))
     except NoMatch:
         return None
-    
+
     if len(results) != 1 or not isinstance(results[0], RegexTreeMatch):
         raise RuntimeError(f"expected exactly one match group, got {results}")
     else:
@@ -22,7 +28,7 @@ def match(node: GroupNode, string: str) -> RegexTreeMatch | None:
 
 
 def _match_recursive(
-    node: Node, 
+    node: Node,
     string: str,
     current_group: RegexTreeMatch | None,
 ) -> RegexTreeMatchFlow:
@@ -46,9 +52,7 @@ def _match_recursive(
             group_name=node.group_name,
             match_dict=dict(),
         )
-        child_group.children.extend(
-            _match_recursive(node.child, string, child_group)
-        )
+        child_group.children.extend(_match_recursive(node.child, string, child_group))
         yield child_group
         return
 
@@ -61,10 +65,9 @@ def _match_recursive(
 
     if isinstance(node, LiteralNode):
         # Remove None values from the match_dict
-        current_group.match_dict.update({
-            k: v for k, v in match.groupdict().items()
-            if v is not None
-        })
+        current_group.match_dict.update(
+            {k: v for k, v in match.groupdict().items() if v is not None}
+        )
         yield safe_group(match, 0)
         return
 
@@ -73,9 +76,7 @@ def _match_recursive(
             if isinstance(str_or_match, str):
                 yield str_or_match
                 continue
-            yield from _match_recursive(
-                node.child, safe_group(str_or_match, 0), current_group
-            )
+            yield from _match_recursive(node.child, safe_group(str_or_match, 0), current_group)
 
     elif isinstance(node, SequenceNode):
         for str_or_group in split_match_by_named_groups(match):
@@ -93,4 +94,3 @@ class NoMatch(Exception):
     """
     Enables the algorithm to break out of the current branch and try the next one.
     """
-    pass

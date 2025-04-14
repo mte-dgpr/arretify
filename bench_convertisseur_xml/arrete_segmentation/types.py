@@ -4,10 +4,10 @@ from typing import List, Optional
 
 
 class BodySection(Enum):
-    TITRE = 'titre'
-    CHAPITRE = 'chapitre'
-    ARTICLE = 'article'
-    NONE = 'none'
+    TITRE = "titre"
+    CHAPITRE = "chapitre"
+    ARTICLE = "article"
+    NONE = "none"
 
     @classmethod
     def from_string(cls, section_name):
