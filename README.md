@@ -37,23 +37,6 @@ Il est aussi possible d'éxecuter le parsing sur un fichier unique en passant en
 python -m main -i ./tmp/arretes_ocr/bla.txt -o ./tmp/arretes_html/bla.html
 ```
 
-## Styling des pages HTML générées
-
-Les fichiers html sont générés à partir du template `templates/arrete.html`. Ce fichier charge les feuilles de style suivantes :
-
-```html
-<link href="/dsfr/dsfr.main.css" rel="stylesheet" />
-<link href="/styles.css" rel="stylesheet" />
-```
-
-Pour un rendu correct des styles, il faudra donc générer vos fichiers HTML dans un dossier où ces feuilles de style sont disponibles (vous pourrez par exemple utiliser `tmp/` pour éviter d'ajouter des fichiers par erreur au repo git).
-
-Télécharger [une release du DSFR](https://github.com/GouvernementFR/dsfr/releases/download/v1.13.0/dsfr-v1.13.0.zip), extraire `dist/` et le copier dans votre dossier html. Renommer `dist/` en `dsfr/`.
-
-Copier le fichier `templates/styles.css` dans votre dossier html.
-
-Démarrer un server HTTP à la racine de ce dossier html. Vous pouvez utiliser powershell, naviguer dans votre dossier html, puis executer la commande suivante : `python -m http.server`.
-
 
 ## Developpement
 
