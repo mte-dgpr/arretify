@@ -125,6 +125,16 @@ class TestRenderDateRegexTreeMatch(unittest.TestCase):
             ")",
         ]
 
+    def test_abbreviation_month(self):
+        assert _parsed_elements("20 AVR. 2020") == [
+            '<time class="dsr-date" datetime="2020-04-20">20 AVR. 2020</time>',
+        ]
+
+    def test_3_chars_month(self):
+        assert _parsed_elements("20 JUL 2020") == [
+            '<time class="dsr-date" datetime="2020-07-20">20 JUL 2020</time>',
+        ]
+
 
 def _parsed_elements(string: str) -> list[str]:
     soup = BeautifulSoup(string, features="html.parser")
