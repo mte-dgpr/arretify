@@ -1,4 +1,4 @@
-from typing import List, Callable, Literal
+from typing import List, Callable, Literal, Iterable
 
 from bs4 import Tag, BeautifulSoup
 
@@ -24,6 +24,12 @@ from arretify.parsing_utils.source_mapping import (
     TextSegments,
     TextSegment,
 )
+from arretify.regex_utils import (
+    map_regex_tree_match,
+    split_string_with_regex_tree,
+)
+from arretify.parsing_utils.dates import DATE_NODE, render_date_regex_tree_match
+from arretify.utils.functional import flat_map_string
 from .sentence_rules import (
     is_arrete,
     is_entity,
@@ -36,12 +42,6 @@ from .sentence_rules import (
 )
 from .section_rules import is_body_section
 from .basic_elements import parse_list, list_indentation
-
-
-def _process_identification_pile(
-    pile: List[str],
-) -> List[PageElementOrString]:
-    return [" ".join(pile)]
 
 
 def _process_entity_pile(
@@ -117,7 +117,16 @@ def parse_header(
         make_data_tag(
             soup,
             IDENTIFICATION_SCHEMA,
-            contents=wrap_in_tag(soup, _process_identification_pile(string_pile), "h1"),
+            contents=[
+                make_new_tag(
+                    soup,
+                    "h1",
+                    contents=_parse_identification_info(
+                        soup,
+                        [" ".join(string_pile)],
+                    ),
+                )
+            ],
         )
     )
 
@@ -160,6 +169,23 @@ def parse_header(
         )
 
     return lines
+
+
+def _parse_identification_info(
+    soup: BeautifulSoup,
+    children: Iterable[PageElementOrString],
+) -> List[PageElementOrString]:
+    children = list(
+        flat_map_string(
+            children,
+            lambda string: map_regex_tree_match(
+                split_string_with_regex_tree(DATE_NODE, string),
+                lambda date_match: render_date_regex_tree_match(soup, date_match),
+                allowed_group_names=["__date"],
+            ),
+        )
+    )
+    return children
 
 
 def _parse_visas_or_motifs(

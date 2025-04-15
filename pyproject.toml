@@ -14,9 +14,6 @@ readme = "README.md"
 requires-python = ">=3.13"
 classifiers = []
 dependencies = [
-  "types-requests==2.32.*",
-  "types-beautifulsoup4==4.12.*",
-  "types-Markdown==3.7.*",
   "python-dotenv==1.0.*",
   "requests==2.32.*",
   "beautifulsoup4==4.12.*",
@@ -33,7 +30,10 @@ dev = [
   "pre-commit==4.2.*",
   "flake8==7.2.*",
   "flake8-bugbear==24.12.*",
-  "autoflake==2.3.*"
+  "autoflake==2.3.*",
+  "types-requests==2.32.*",
+  "types-beautifulsoup4==4.12.*",
+  "types-Markdown==3.7.*",
 ]
 
 [tool.mypy]
