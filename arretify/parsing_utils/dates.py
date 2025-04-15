@@ -1,4 +1,6 @@
 from datetime import date, datetime
+from typing import List
+
 from bs4 import BeautifulSoup, Tag
 
 from arretify.html_schemas import DATE_SCHEMA
@@ -30,15 +32,66 @@ MONTH_NAMES = [
     "décembre",
 ]
 
+MONTH_ABBREVIATIONS = [
+    "janv.",
+    "févr.",
+    "mars",
+    "avr.",
+    "mai",
+    "juin",
+    "juill.",
+    "août",
+    "sept.",
+    "oct.",
+    "nov.",
+    "déc.",
+]
+
+MONTH_CODE_3_CHARS = [
+    "jan",
+    "fév",
+    "mar",
+    "avr",
+    "mai",
+    "jun",
+    "jul",
+    "aoû",
+    "sep",
+    "oct",
+    "nov",
+    "déc",
+]
 
 DATE_NODE = regex_tree.Group(
     regex_tree.Sequence(
         [
             regex_tree.Branching(
                 [
-                    r"(((?P<day_first>1er)|(?P<day>\d{1,2})) (?P<month_name>"
-                    + join_with_or(MONTH_NAMES)
-                    + r") ((?P<year>\d{4})|(?P<year_2digits>\d{2})))",
+                    # Examples of valid date strings:
+                    # 1er janvier 2023
+                    # 3 mar 1999
+                    # 15 févr. 2020
+                    regex_tree.Sequence(
+                        [
+                            r"((?P<day_first>1er)|(?P<day>\d{1,2})) ",
+                            regex_tree.Branching(
+                                [
+                                    r"(?P<month_name>" + join_with_or(MONTH_NAMES) + r")",
+                                    r"(?P<month_abbreviation>"
+                                    + join_with_or(MONTH_ABBREVIATIONS)
+                                    + r")",
+                                    r"(?P<month_code_3_chars>"
+                                    + join_with_or(MONTH_CODE_3_CHARS)
+                                    + r")",
+                                ]
+                            ),
+                            r" ((?P<year>\d{4})|(?P<year_2digits>\d{2}))",
+                        ]
+                    ),
+                    # Examples of valid date strings:
+                    # 01/01/2023
+                    # 3/3/99
+                    # 15/2/20
                     r"((?P<day>\d{2})/(?P<month>\d{2})/((?P<year>\d{4})|(?P<year_2digits>\d{2})))",
                 ]
             ),
@@ -53,11 +106,11 @@ DATE_NODE = regex_tree.Group(
 
 def _handle_date_match_dict(match_dict: regex_tree.MatchDict) -> date:
     if match_dict.get("month_name"):
-        match_month = lookup_normalized_version(MONTH_NAMES, match_dict["month_name"])
-        try:
-            month = MONTH_NAMES.index(match_month) + 1
-        except ValueError:
-            raise RuntimeError(f'couldnt find month for "{match_month}"')
+        month = _get_month_index(match_dict["month_name"], MONTH_NAMES)
+    elif match_dict.get("month_abbreviation"):
+        month = _get_month_index(match_dict["month_abbreviation"], MONTH_ABBREVIATIONS)
+    elif match_dict.get("month_code_3_chars"):
+        month = _get_month_index(match_dict["month_code_3_chars"], MONTH_CODE_3_CHARS)
     elif match_dict.get("month"):
         month = int(match_dict["month"])
     else:
@@ -82,6 +135,14 @@ def _handle_date_match_dict(match_dict: regex_tree.MatchDict) -> date:
         month=month,
         year=year,
     )
+
+
+def _get_month_index(month: str, month_strings: List[str]) -> int:
+    match_month = lookup_normalized_version(month_strings, month)
+    try:
+        return month_strings.index(match_month) + 1
+    except ValueError:
+        raise RuntimeError(f'couldnt find month for "{match_month}"')
 
 
 def render_year_str(year: int) -> str:
