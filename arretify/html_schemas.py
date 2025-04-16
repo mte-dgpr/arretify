@@ -15,6 +15,12 @@ MAIN_SCHEMA = DataElementSchema(
     data_keys=[],
 )
 
+APPENDIX_SCHEMA = DataElementSchema(
+    name="appendix",
+    tag_name="appendix",
+    data_keys=[],
+)
+
 ENTITY_SCHEMA = DataElementSchema(
     name="entity",
     tag_name="div",
@@ -61,7 +67,6 @@ SECTION_TITLE_SCHEMAS = [
     SECTION_TITLE4_SCHEMA,
     SECTION_TITLE5_SCHEMA,
 ]
-
 
 ALINEA_SCHEMA = DataElementSchema(
     name="alinea",

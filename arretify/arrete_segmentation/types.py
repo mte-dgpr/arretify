@@ -7,6 +7,7 @@ class BodySection(Enum):
     TITRE = "titre"
     CHAPITRE = "chapitre"
     ARTICLE = "article"
+    APPENDIX = "annexe"
     NONE = "none"
 
     @classmethod
@@ -27,5 +28,5 @@ class SectionInfo:
 
 
 @dataclass
-class SectionParsingContext:
+class GroupParsingContext:
     alinea_count: int
