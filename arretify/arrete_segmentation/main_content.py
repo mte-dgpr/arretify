@@ -14,13 +14,14 @@ from arretify.errors import ErrorCodes
 from arretify.parsing_utils.source_mapping import (
     TextSegments,
 )
-from .types import SectionParsingContext
+from .types import GroupParsingContext
 from .basic_elements import parse_basic_elements
 from .section_rules import (
     is_body_section,
     parse_section_info,
     are_sections_contiguous,
 )
+from .appendix import is_appendix_title
 
 
 def parse_main_content(soup: BeautifulSoup, main_content: Tag, lines: TextSegments):
@@ -36,7 +37,8 @@ def parse_main_content(soup: BeautifulSoup, main_content: Tag, lines: TextSegmen
     current_levels: Optional[List[int]] = None
     current_level = len(body_sections) - 2
 
-    while lines:
+    while lines and not is_appendix_title(lines[0].contents):
+
         section_info = parse_section_info(lines[0].contents)
 
         section_element = make_data_tag(
@@ -103,9 +105,11 @@ def parse_main_content(soup: BeautifulSoup, main_content: Tag, lines: TextSegmen
         # (point, deux-points ou point-virgule).
         # Un tableau constitue un seul alinéa (définition complète dans le guide de légistique)."
         # REF : https://www.legifrance.gouv.fr/contenu/Media/files/lexique-api-lgf.docx
-        section_context = SectionParsingContext(alinea_count=0)
+        section_context = GroupParsingContext(alinea_count=0)
 
-        while lines and not is_body_section(lines[0].contents):
+        while lines and not (
+            is_body_section(lines[0].contents) or is_appendix_title(lines[0].contents)
+        ):
             section_context.alinea_count += 1
             alinea_element = make_data_tag(
                 soup,
@@ -114,3 +118,5 @@ def parse_main_content(soup: BeautifulSoup, main_content: Tag, lines: TextSegmen
             )
             section_element.append(alinea_element)
             parse_basic_elements(soup, alinea_element, lines)
+
+    return lines
