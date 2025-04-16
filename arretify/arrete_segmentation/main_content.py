@@ -16,7 +16,7 @@ from arretify.parsing_utils.source_mapping import (
 )
 from .types import GroupParsingContext
 from .basic_elements import parse_basic_elements
-from .section_rules import (
+from .section_titles import (
     is_body_section,
     parse_section_info,
     are_sections_contiguous,

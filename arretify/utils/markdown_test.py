@@ -1,6 +1,7 @@
 import unittest
 
-from .markdown import clean_markdown, is_table_line
+from .markdown_cleaning import clean_markdown
+from .markdown_parsing import is_table_line, is_table_description
 from arretify.parsing_utils.source_mapping import (
     TextSegment,
 )
@@ -10,7 +11,7 @@ class TestTableDetection(unittest.TestCase):
 
     TABLE_MD_1 = """Blabla blabla blabla.
 
-| Rubrique | Régime (*) | Libellé de la rubrique (activité) | Nature de l’installation | Volume autorisé |
+| Rubrique | Régime (*) | Libellé de la rubrique (activité) | Nature de l'installation | Volume autorisé |
 |----------|------------|-----------------------------------|-------------------------|-----------------|
 | 2771    | A          | bla | 70 MW |
 | 4511.2  | D          | blo | 117 t |
@@ -33,6 +34,20 @@ Volume autorisé : blablabla.
             assert is_table_line(line)
         for line in lines[6:]:
             assert not is_table_line(line)
+
+    def test_is_table_description(self):
+        # Arrange
+        lines = self.TABLE_MD_1.split("\n")
+        pile = lines[2:6]
+
+        # Assert
+        for line in lines[0:7]:
+            assert not is_table_description(line, pile)
+        assert is_table_description(lines[7], pile)
+        assert not is_table_description(lines[8], pile)
+        assert is_table_description(lines[9], pile)
+        assert not is_table_description(lines[10], pile)
+        assert is_table_description(lines[11], pile)
 
 
 class TestCleanMarkdown(unittest.TestCase):

@@ -1,3 +1,5 @@
+from typing import Dict
+
 from .types import DataElementSchema
 from dataclasses import replace as dataclass_replace
 
@@ -33,6 +35,18 @@ IDENTIFICATION_SCHEMA = DataElementSchema(
     data_keys=[],
 )
 
+ARRETE_TITLE_SCHEMA = DataElementSchema(
+    name="arrete_title",
+    tag_name="div",
+    data_keys=[],
+)
+
+HONORARY_SCHEMA = DataElementSchema(
+    name="honorary",
+    tag_name="div",
+    data_keys=[],
+)
+
 VISA_SCHEMA = DataElementSchema(
     name="visa",
     tag_name="div",
@@ -44,6 +58,22 @@ MOTIF_SCHEMA = DataElementSchema(
     tag_name="div",
     data_keys=[],
 )
+
+SUPPLEMENTARY_MOTIF_INFORMATION_SCHEMA = DataElementSchema(
+    name="supplementary_motif_info",
+    tag_name="div",
+    data_keys=[],
+)
+
+HEADER_ELEMENTS_SCHEMAS: Dict[str, DataElementSchema] = {
+    "entity": ENTITY_SCHEMA,
+    "identification": IDENTIFICATION_SCHEMA,
+    "arrete_title": ARRETE_TITLE_SCHEMA,
+    "honorary": HONORARY_SCHEMA,
+    "visa": VISA_SCHEMA,
+    "motif": MOTIF_SCHEMA,
+    "supplementary_motif_info": SUPPLEMENTARY_MOTIF_INFORMATION_SCHEMA,
+}
 
 SECTION_SCHEMA = DataElementSchema(
     name="section",

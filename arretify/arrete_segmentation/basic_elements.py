@@ -1,5 +1,5 @@
-from typing import List, Tuple, Callable, Iterable
 import re
+from typing import List, Tuple, Callable, Iterable
 
 from bs4 import BeautifulSoup, Tag
 
@@ -9,41 +9,65 @@ from arretify.utils.html import (
     make_ul,
     make_li,
     make_new_tag,
+    make_data_tag,
 )
-from arretify.utils.markdown import (
-    parse_markdown_table,
+from arretify.utils.markdown_parsing import (
     is_table_line,
+    is_table_description,
+    is_list,
+    is_image,
+    LIST_PATTERN,
+    parse_markdown_table,
     parse_markdown_image,
 )
-from arretify.errors import ErrorCodes
-from arretify.utils.html import make_data_tag
-from arretify.html_schemas import ERROR_SCHEMA
 from arretify.regex_utils import (
     PatternProxy,
-    split_string_with_regex,
 )
+from arretify.errors import ErrorCodes
+from arretify.html_schemas import ERROR_SCHEMA
+from arretify.regex_utils import split_string_with_regex
 from arretify.regex_utils import map_matches
 from arretify.parsing_utils.source_mapping import (
     TextSegments,
     apply_to_segment,
 )
-from .sentence_rules import (
-    is_liste,
-    is_table_description,
-    is_blockquote_start,
-    is_blockquote_end,
-    is_image,
-    LIST_PATTERN,
-    BLOCKQUOTE_START_PATTERN,
-    BLOCKQUOTE_END_PATTERN,
-)
 
 
 BULLET_LIST_RE = re.compile(r"^\s*-\s*")
+"""Detect if a sentence starts with a bullet list."""
+
+BLOCKQUOTE_START_PATTERN = PatternProxy(r"^\s*\"")
+"""Detect if a sentence starts with a quote '"'."""
+
+BLOCKQUOTE_END_PATTERN = PatternProxy(r"\"[\s\.]*$")
+"""Detect if a sentence ends with a quote '"'."""
 
 INLINE_QUOTE_PATTERN = PatternProxy(r'"(?P<quoted>[^"]+)"')
+"""Detect if a sentence has inline quotes."""
 
 DOUBLE_QUOTE_PATTERN = PatternProxy(r'"')
+"""Basic double quote '"' pattern."""
+
+
+def list_indentation(line: str) -> int:
+    list_match = LIST_PATTERN.match(line)
+    if not list_match:
+        raise ValueError("Expected line to be a list element")
+    indentation = list_match.group("indentation")
+    assert indentation is not None
+    return len(indentation)
+
+
+def _clean_bullet_list(line: str) -> str:
+    return BULLET_LIST_RE.sub("", line)
+
+
+def is_blockquote_start(line: str) -> bool:
+    return bool(BLOCKQUOTE_START_PATTERN.search(line))
+
+
+def is_blockquote_end(line: str) -> bool:
+    return bool(BLOCKQUOTE_END_PATTERN.search(line))
 
 
 def parse_basic_elements(
@@ -58,7 +82,7 @@ def parse_basic_elements(
         lines, table_elements = parse_table(soup, lines)
         container.extend(table_elements)
 
-    elif is_liste(lines[0].contents):
+    elif is_list(lines[0].contents):
         lines, ul_element = parse_list(soup, lines)
         container.append(ul_element)
 
@@ -76,19 +100,6 @@ def parse_basic_elements(
         container.extend(render_default(children))
 
 
-def list_indentation(line: str):
-    list_match = LIST_PATTERN.match(line)
-    if not list_match:
-        raise ValueError("Expected line to be a list element")
-    indentation = list_match.group("indentation")
-    assert indentation is not None
-    return len(indentation)
-
-
-def _clean_bullet_list(line: str):
-    return BULLET_LIST_RE.sub("", line)
-
-
 # TODO : deal with case :
 # - bla
 #     hello
@@ -100,7 +111,7 @@ def parse_list(
     list_pile: List[PageElementOrString] = []
     ref_indentation = list_indentation(lines[0].contents)
 
-    while lines and is_liste(lines[0].contents):
+    while lines and is_list(lines[0].contents):
         current_indentation = list_indentation(lines[0].contents)
         if current_indentation == ref_indentation:
             line = apply_to_segment(lines.pop(0), _clean_bullet_list)

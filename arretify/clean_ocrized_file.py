@@ -1,4 +1,4 @@
-from arretify.utils.markdown import clean_markdown
+from arretify.utils.markdown_cleaning import clean_markdown
 from arretify.regex_utils import (
     PatternProxy,
     join_with_or,
@@ -25,12 +25,6 @@ IS_NOT_INFORMATION_PATTERN = PatternProxy(
             r"^page\s+\d+\s+sur\s+\d+\s*$",
             # Bottom-page with format "Page X"
             r"^page\s+\d+$",
-            # Sentence starting with "le demandeur/pétitionnaire entendu"
-            r"^le (demandeur|pétitionnaire) entendu",
-            # Sentence starting with "après communication"
-            r"^apres communication\b",
-            # Sentence starting with "sur proposition"
-            r"^sur proposition\b",
             # French Republic
             r"république fran[cç]aise",
             # French national motto
