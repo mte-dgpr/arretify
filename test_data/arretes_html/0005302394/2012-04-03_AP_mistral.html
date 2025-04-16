@@ -54,22 +54,22 @@
                 margin-bottom: var(--spacing-1);
             }
 
-            .dsr-entity, .dsr-identification {
+            .dsr-entity, .dsr-identification, .dsr-arrete_title, .dsr-honorary {
                 padding: var(--spacing-1);
                 background-color: var(--background-alt-grey);
                 text-align: center;
             }
 
-            .dsr-identification {
+            .dsr-arrete_title {
                 color: var(--text-title-grey);
             }
 
-            .dsr-entity {
+            .dsr-entity, .dsr-identification, .dsr-honorary {
                 color: var(--text-title-blue-france);
                 font-size: 120%;
             }
 
-            .dsr-visa, .dsr-motifs {
+            .dsr-visa, .dsr-motifs, .dsr-supplementary_motif_info {
                 position: relative;
                 margin-top: var(--spacing-1);
                 padding-bottom: 0;
@@ -117,12 +117,18 @@
  </head>
  <body>
   <header class="dsr-header">
-   <div class="dsr-entity">
-   </div>
-   <div class="dsr-identification">
+   <div class="dsr-arrete_title">
     <h1>
      ARRÊTÉ DE PRESCRIPTIONS COMPLÉMENTAIRES  COMMUNE DE TINCHEBRAY SOCIÉTÉ MERMIER LEMARCHAND
     </h1>
+   </div>
+   <div class="dsr-honorary">
+    <div>
+     Le Préfet de l'Orne,
+    </div>
+    <div>
+     Chevalier de l'Ordre National du Mérite
+    </div>
    </div>
    <div class="dsr-visa">
     VU le
@@ -235,6 +241,16 @@
      </a>
     </span>
     rend nécessaire ;
+   </div>
+   <div class="dsr-supplementary_motif_info">
+    <div>
+     SUR PROPOSITION du secrétaire général de la préfecture de l'Orne ;
+    </div>
+   </div>
+   <div class="dsr-arrete_title">
+    <h1>
+     ARRETE
+    </h1>
    </div>
   </header>
   <main class="dsr-main">

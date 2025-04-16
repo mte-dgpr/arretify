@@ -54,22 +54,22 @@
                 margin-bottom: var(--spacing-1);
             }
 
-            .dsr-entity, .dsr-identification {
+            .dsr-entity, .dsr-identification, .dsr-arrete_title, .dsr-honorary {
                 padding: var(--spacing-1);
                 background-color: var(--background-alt-grey);
                 text-align: center;
             }
 
-            .dsr-identification {
+            .dsr-arrete_title {
                 color: var(--text-title-grey);
             }
 
-            .dsr-entity {
+            .dsr-entity, .dsr-identification, .dsr-honorary {
                 color: var(--text-title-blue-france);
                 font-size: 120%;
             }
 
-            .dsr-visa, .dsr-motifs {
+            .dsr-visa, .dsr-motifs, .dsr-supplementary_motif_info {
                 position: relative;
                 margin-top: var(--spacing-1);
                 padding-bottom: 0;
@@ -117,12 +117,18 @@
  </head>
  <body>
   <header class="dsr-header">
-   <div class="dsr-entity">
-   </div>
-   <div class="dsr-identification">
+   <div class="dsr-arrete_title">
     <h1>
      ARRÊTÉ COMPLÉMENTAIRE  Société MERMIER LEMARCHAND Commune de TINCHEBRAY
     </h1>
+   </div>
+   <div class="dsr-honorary">
+    <div>
+     Le Préfet de l'Orne,
+    </div>
+    <div>
+     Chevalier de la Légion d'Honneur,
+    </div>
    </div>
    <div class="dsr-visa">
     VU le
@@ -162,6 +168,16 @@
    </div>
    <div class="dsr-visa">
     VU l'avis en date du 7 décembre 2009 du conseil départemental de l'environnement et des risques sanitaires et technologiques ;
+   </div>
+   <div class="dsr-supplementary_motif_info">
+    <div>
+     SUR PROPOSITION du secrétaire général de la préfecture ;
+    </div>
+   </div>
+   <div class="dsr-arrete_title">
+    <h1>
+     ARRÊTE
+    </h1>
    </div>
   </header>
   <main class="dsr-main">

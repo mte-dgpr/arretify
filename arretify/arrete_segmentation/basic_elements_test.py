@@ -14,6 +14,40 @@ from .basic_elements import (
 )
 
 
+class TestListIndentation(unittest.TestCase):
+
+    def test_correct_indentation(self):
+        # Arrange
+        line = "    - Item in list"
+
+        # Act
+        result = list_indentation(line)
+
+        # Assert
+        assert result == 4, "Should return the correct indentation level"
+
+    def test_no_indentation(self):
+        # Arrange
+        line = "- Item in list"
+
+        # Act
+        result = list_indentation(line)
+
+        # Assert
+        assert result == 0, "Should return zero for no indentation"
+
+    def test_not_a_list_element(self):
+        # Arrange
+        line = "This is not a list item"
+
+        # Act / Assert
+        with self.assertRaises(ValueError) as context:
+            list_indentation(line)
+        assert (
+            str(context.exception) == "Expected line to be a list element"
+        ), "Should raise ValueError for non-list lines"
+
+
 class TestParseTable(unittest.TestCase):
 
     def setUp(self):
@@ -105,40 +139,6 @@ class TestParseList(unittest.TestCase):
             "<li>Item 2</li>"
             "</ul>"
         )
-
-
-class TestListIndentation(unittest.TestCase):
-
-    def test_correct_indentation(self):
-        # Arrange
-        line = "    - Item in list"
-
-        # Act
-        result = list_indentation(line)
-
-        # Assert
-        assert result == 4, "Should return the correct indentation level"
-
-    def test_no_indentation(self):
-        # Arrange
-        line = "- Item in list"
-
-        # Act
-        result = list_indentation(line)
-
-        # Assert
-        assert result == 0, "Should return zero for no indentation"
-
-    def test_not_a_list_element(self):
-        # Arrange
-        line = "This is not a list item"
-
-        # Act / Assert
-        with self.assertRaises(ValueError) as context:
-            list_indentation(line)
-        assert (
-            str(context.exception) == "Expected line to be a list element"
-        ), "Should raise ValueError for non-list lines"
 
 
 class TestParseBlockQuote(unittest.TestCase):
