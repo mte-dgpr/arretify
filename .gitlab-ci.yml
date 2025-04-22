@@ -12,7 +12,7 @@ default:
     - python --version
     - pip install --upgrade pip
     - pip install .[dev]
-    - pip install git+https://id:$PY_CLIENTS_API_DROIT_ACCESS_TOKEN@gitlab-forge.din.developpement-durable.gouv.fr/dgpr/data-studio-risques/py-clients-api-droit.git@main
+    - git submodule update --init --recursive
 
 stages:
   - test
