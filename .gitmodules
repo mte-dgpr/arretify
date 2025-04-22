@@ -1,0 +1,3 @@
+[submodule "arretify/_vendor/clients_api_droit"]
+	path = arretify/_vendor/clients_api_droit
+	url = https://gitlab-forge.din.developpement-durable.gouv.fr/dgpr/data-studio-risques/py-clients-api-droit

@@ -2,7 +2,7 @@ from typing import Literal
 
 # Load settings to be sure that we provide
 # config to the eurlex package
-from clients_api_droit.eurlex import search_act
+from arretify._vendor.clients_api_droit.clients_api_droit.eurlex import search_act
 
 from .dev_cache import use_dev_cache
 

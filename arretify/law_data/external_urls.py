@@ -1,4 +1,4 @@
-from clients_api_droit.legifrance import (
+from arretify._vendor.clients_api_droit.clients_api_droit.legifrance import (
     build_jorf_url,
     build_code_site_url,
     build_code_article_site_url,

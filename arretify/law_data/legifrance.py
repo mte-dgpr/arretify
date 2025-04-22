@@ -6,7 +6,7 @@ from datetime import date
 # Load settings to be sure that we provide
 # config to the legifrance package
 from arretify.settings import LOGGER
-from clients_api_droit.legifrance import (
+from arretify._vendor.clients_api_droit.clients_api_droit.legifrance import (
     authenticate,
     search_arrete,
     search_decret,

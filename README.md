@@ -54,15 +54,17 @@ Installer la librairie et ses dépendances :
 pip install .[dev]
 ```
 
-Dépendances optionnelles : 
+Initialiser les sous-modules Git (qui se trouvent dans `arretify/_vendor`) : 
 
-- `clients_api_droit` pour résoudre les références eurlex et légifrance. Pour installer la librairie une possibilité consiste à la cloner depuis gitlab puis à l'installer localement.
-
+```bash
+git submodule update --init --recursive
+```
 
 #### Outils de développement
 
 La librairie utilise les outils suivants :
 - `pytest` pour les tests
+- `mypy` for static type-checking
 - `black` pour le formattage de code automatique
 - `flake8` et `flake8-bugbear` pour le linting
 - `autoflake` pour la suppression automatique des imports inutilisés. Utilisation : 

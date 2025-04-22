@@ -16,6 +16,7 @@ TMP_DATA_DIR = APP_ROOT / "tmp"
 
 # Logger setup
 LOGGER = logging.getLogger("arretify")
+logging.basicConfig(level=logging.INFO)
 LOGGER.setLevel(level=logging.INFO)
 
 # Console handler

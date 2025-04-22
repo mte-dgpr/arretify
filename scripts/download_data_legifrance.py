@@ -6,7 +6,7 @@ import json
 from dotenv import load_dotenv
 
 load_dotenv()
-from clients_api_droit.legifrance import (  # noqa: E402
+from arretify._vendor.clients_api_droit.clients_api_droit.legifrance import (  # noqa: E402
     authenticate,
     list_codes,
     get_code_summary,
