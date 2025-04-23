@@ -113,7 +113,7 @@ DOCUMENT_REFERENCE_SCHEMA = DataElementSchema(
 SECTION_REFERENCE_SCHEMA = DataElementSchema(
     name="section_reference",
     tag_name="a",
-    data_keys=["uri", "is_resolvable"],
+    data_keys=["uri", "is_resolvable", "document_reference"],
 )
 
 SECTION_REFERENCE_MULTIPLE_SCHEMA = DataElementSchema(
