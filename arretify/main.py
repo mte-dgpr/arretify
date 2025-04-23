@@ -1,4 +1,4 @@
-from typing import List, Iterator, Tuple
+from typing import Iterator, Tuple
 from pathlib import Path
 from optparse import OptionParser
 import traceback
@@ -6,149 +6,24 @@ import traceback
 from bs4 import BeautifulSoup
 
 from .settings import TEST_DATA_DIR, LOGGER, OCR_FILE_EXTENSION
-from .arrete_segmentation.parse_arrete import parse_arrete
-from .references_detection.sections_detection import (
-    parse_section_references,
-)
-from .references_detection.arretes_detection import (
-    parse_arretes_references,
-)
-from .references_detection.decrets_detection import (
-    parse_decrets_references,
-)
-from .references_detection.circulaires_detection import (
-    parse_circulaires_references,
-)
-from .references_detection.codes_detection import (
-    parse_codes_references,
-)
-from .references_detection.self_detection import parse_self_references
-from .references_detection.eu_acts_detection import (
-    parse_eu_acts_references,
-)
-from .references_resolution.core import (
-    resolve_document_references,
-    resolve_section_references,
-)
-from .references_resolution.codes_resolution import (
-    resolve_code_article_legifrance_id,
-    resolve_code_legifrance_id,
-)
-from .references_resolution.sections_resolution import (
-    match_sections_with_documents,
-)
-from .references_resolution.arretes_resolution import (
-    resolve_arrete_ministeriel_legifrance_id,
-)
-from .references_resolution.decrets_resolution import (
-    resolve_decret_legifrance_id,
-)
-from .references_resolution.circulaires_resolution import (
-    resolve_circulaire_legifrance_id,
-)
-from .references_resolution.eu_acts_resolution import (
-    resolve_eu_decision_eurlex_url,
-    resolve_eu_directive_eurlex_url,
-    resolve_eu_regulation_eurlex_url,
-)
-from .consolidation_operations.operations_detection import (
-    parse_operations,
-)
-from .consolidation_operations.operations_resolution import (
-    resolve_references_and_operands,
-)
-from .law_data.types import DocumentType
+from .step_segmentation import step_segmentation
+from .step_references_detection import step_references_detection
+from .step_references_resolution import step_references_resolution
+from .step_consolidation import step_consolidation
+
 from .clean_ocrized_file import clean_ocrized_file
-from .html_schemas import (
-    ALINEA_SCHEMA,
-    DOCUMENT_REFERENCE_SCHEMA,
-    VISA_SCHEMA,
-    MOTIF_SCHEMA,
-    OPERATION_SCHEMA,
-)
-from .utils.html import make_css_class, replace_children
 from .parsing_utils.source_mapping import (
     initialize_lines,
     TextSegments,
 )
-from .types import PageElementOrString
-
-ALINEA_CSS_CLASS = make_css_class(ALINEA_SCHEMA)
-DOCUMENT_REFERENCE_CSS_CLASS = make_css_class(DOCUMENT_REFERENCE_SCHEMA)
-OPERATION_CSS_CLASS = make_css_class(OPERATION_SCHEMA)
-
-MOTIF_CSS_CLASS = make_css_class(MOTIF_SCHEMA)
-VISA_CSS_CLASS = make_css_class(VISA_SCHEMA)
 
 
 def ocrized_arrete_to_html(lines: TextSegments) -> BeautifulSoup:
     lines = clean_ocrized_file(lines)
-    soup = parse_arrete(lines)
-    new_children: List[PageElementOrString]
-
-    # Detect all references
-    for tag in soup.select(
-        f".{ALINEA_CSS_CLASS}, .{ALINEA_CSS_CLASS} *, .{MOTIF_CSS_CLASS}, .{VISA_CSS_CLASS}"
-    ):
-        new_children = list(tag.children)
-        new_children = parse_arretes_references(soup, new_children)
-        new_children = parse_decrets_references(soup, new_children)
-        new_children = parse_circulaires_references(soup, new_children)
-        new_children = parse_codes_references(soup, new_children)
-        new_children = parse_self_references(soup, new_children)
-        new_children = parse_eu_acts_references(soup, new_children)
-        new_children = parse_section_references(soup, new_children)
-        replace_children(tag, new_children)
-
-    # Resolve all document references
-    resolve_document_references(
-        soup,
-        DocumentType.arrete_ministeriel,
-        resolve_arrete_ministeriel_legifrance_id,
-    )
-    resolve_document_references(soup, DocumentType.decret, resolve_decret_legifrance_id)
-    resolve_document_references(
-        soup,
-        DocumentType.circulaire,
-        resolve_circulaire_legifrance_id,
-    )
-    resolve_document_references(soup, DocumentType.code, resolve_code_legifrance_id)
-    resolve_document_references(soup, DocumentType.eu_decision, resolve_eu_decision_eurlex_url)
-    resolve_document_references(
-        soup,
-        DocumentType.eu_regulation,
-        resolve_eu_regulation_eurlex_url,
-    )
-    resolve_document_references(
-        soup,
-        DocumentType.eu_directive,
-        resolve_eu_directive_eurlex_url,
-    )
-
-    # Match sections with documents,
-    for tag in soup.select(
-        f".{ALINEA_CSS_CLASS}, .{ALINEA_CSS_CLASS} *, .{MOTIF_CSS_CLASS}, .{VISA_CSS_CLASS}"
-    ):
-        new_children = list(tag.children)
-        new_children = match_sections_with_documents(soup, new_children)
-        replace_children(tag, new_children)
-
-    # Resolve all section references
-    resolve_section_references(soup, DocumentType.code, resolve_code_article_legifrance_id)
-
-    # Find consolidation operations
-    for container_tag in soup.select(f".{ALINEA_CSS_CLASS}, .{ALINEA_CSS_CLASS} *"):
-        new_children = list(container_tag.children)
-
-        document_reference_tags = container_tag.select(f".{DOCUMENT_REFERENCE_CSS_CLASS}")
-        if document_reference_tags:
-            new_children = parse_operations(soup, new_children)
-
-        replace_children(container_tag, new_children)
-
-    # Resolve operation references and operands
-    for operation_tag in soup.select(f".{OPERATION_CSS_CLASS}"):
-        resolve_references_and_operands(operation_tag)
+    soup = step_segmentation(lines)
+    soup = step_references_detection(soup)
+    soup = step_references_resolution(soup)
+    soup = step_consolidation(soup)
     return soup
 
 
