@@ -10,7 +10,8 @@ from dotenv import load_dotenv
 from bs4 import BeautifulSoup
 
 from .types import ParsingContext, SessionContext
-from .settings import Settings, APP_ROOT, TEST_DATA_DIR, OCR_FILE_EXTENSION, DEFAULT_ARRETE_TEMPLATE
+from .settings import APP_ROOT, TEST_DATA_DIR, OCR_FILE_EXTENSION, DEFAULT_ARRETE_TEMPLATE
+from .utils.scripts import load_settings_from_env
 from .step_segmentation import step_segmentation
 from .step_references_detection import step_references_detection
 from .step_references_resolution import step_references_resolution
@@ -21,17 +22,10 @@ from .parsing_utils.source_mapping import (
 )
 from .law_data.apis.legifrance import initialize_legifrance_client
 from .law_data.apis.eurlex import initialize_eurlex_client
+from .errors import ArretifyError, ErrorCodes
 
 
 _LOGGER = logging.getLogger("arretify")
-_SETTINGS_ENV_MAP = {
-    "tmp_dir": "TMP_DIR",
-    "env": "ENV",
-    "legifrance_client_id": "LEGIFRANCE_CLIENT_ID",
-    "legifrance_client_secret": "LEGIFRANCE_CLIENT_SECRET",
-    "eurlex_web_service_username": "EURLEX_WEB_SERVICE_USERNAME",
-    "eurlex_web_service_password": "EURLEX_WEB_SERVICE_PASSWORD",
-}
 
 
 def ocr_to_html(session_context: SessionContext, raw_lines: List[str]) -> ParsingContext:
@@ -91,9 +85,13 @@ def main():
     output_path = Path(options.output)
 
     session_context = SessionContext(
-        settings=Settings.from_env(_SETTINGS_ENV_MAP),
+        settings=load_settings_from_env(),
     )
-    session_context = initialize_legifrance_client(session_context)
+    try:
+        session_context = initialize_legifrance_client(session_context)
+    except ArretifyError as error:
+        if error.code is ErrorCodes.law_data_api_error:
+            _LOGGER.warning("failed to initialize Legifrance client")
     session_context = initialize_eurlex_client(session_context)
 
     # Do the parsing
@@ -106,7 +104,7 @@ def main():
             # Makes sure output dir exists
             output_root.mkdir(parents=True, exist_ok=True)
             html_file_path = output_root / f"{ocrized_file_path.stem}.html"
-            _LOGGER.info(f"[{i + 1}/{len(ocrized_files_walk)}] parsing {ocrized_file_path} ...")
+            _LOGGER.info(f"\n\n[{i + 1}/{len(ocrized_files_walk)}] parsing {ocrized_file_path} ...")
             try:
                 ocr_file_to_html_file(session_context, ocrized_file_path, html_file_path)
             except Exception:
@@ -131,15 +129,31 @@ def _walk_ocrized_files(
             yield root.relative_to(dir_path), ocrized_file_path
 
 
+class _MainLoggingFormatter(logging.Formatter):
+    def __init__(self):
+        super().__init__()
+        self.simple_formatter = logging.Formatter("%(message)s")
+        self.warning_formatter = logging.Formatter("%(levelname)s - %(message)s")
+
+    def format(self, record: logging.LogRecord) -> str:
+        if record.levelno >= logging.WARNING:
+            return self.warning_formatter.format(record)
+        else:
+            return self.simple_formatter.format(record)
+
+
 def _initialize_root_logger(logger: logging.Logger, verbose: bool) -> None:
     # Configure root logger
     log_dir = APP_ROOT / "logs"
     log_dir.mkdir(exist_ok=True)
     log_file = log_dir / f"{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.log"
+
+    stream_handler = logging.StreamHandler()
+    stream_handler.setFormatter(_MainLoggingFormatter())
+
     logging.basicConfig(
         level=logging.WARNING,
-        format="%(name)s - %(levelname)s - %(message)s",
-        handlers=[logging.StreamHandler(), logging.FileHandler(log_file, encoding="utf-8")],
+        handlers=[stream_handler, logging.FileHandler(log_file, encoding="utf-8")],
     )
 
     # Set level globally based on verbosity flag

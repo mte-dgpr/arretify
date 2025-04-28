@@ -7,6 +7,7 @@ from bs4 import Tag
 from arretify.law_data.uri import parse_uri
 from arretify.parsing_utils.dates import parse_date_str
 from arretify.types import ParsingContext
+from arretify.errors import catch_and_log_arretify_error
 
 from .core import (
     update_reference_tag_uri,
@@ -20,6 +21,7 @@ from arretify.law_data.apis.legifrance import (
 _LOGGER = logging.getLogger(__name__)
 
 
+@catch_and_log_arretify_error(_LOGGER)
 def resolve_circulaire_legifrance_id(
     parsing_context: ParsingContext,
     document_reference_tag: Tag,
