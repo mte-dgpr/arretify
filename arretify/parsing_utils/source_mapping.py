@@ -1,22 +1,7 @@
 from typing import List, Callable
-from dataclasses import dataclass
 
 
-from arretify.types import LineColumn
-
-
-@dataclass(frozen=True)
-class _SegmentBase:
-    start: LineColumn
-    end: LineColumn
-
-
-@dataclass(frozen=True)
-class TextSegment(_SegmentBase):
-    contents: str
-
-
-TextSegments = List[TextSegment]
+from arretify.types import TextSegments, TextSegment
 
 
 def initialize_lines(lines: List[str]) -> TextSegments:

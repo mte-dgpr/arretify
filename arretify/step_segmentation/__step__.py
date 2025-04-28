@@ -1,10 +1,6 @@
-from bs4 import BeautifulSoup
-
-from arretify.parsing_utils.source_mapping import (
-    TextSegments,
-)
+from arretify.types import ParsingContext
 from .parse_arrete import parse_arrete
 
 
-def step_segmentation(lines: TextSegments) -> BeautifulSoup:
-    return parse_arrete(lines)
+def step_segmentation(parsing_context: ParsingContext) -> ParsingContext:
+    return parse_arrete(parsing_context)

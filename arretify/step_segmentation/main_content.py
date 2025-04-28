@@ -1,8 +1,8 @@
 from typing import List, Optional
+import logging
 
 from bs4 import BeautifulSoup, Tag
 
-from arretify.settings import LOGGER
 from arretify.utils.html import make_data_tag
 from arretify.html_schemas import (
     SECTION_SCHEMA,
@@ -22,6 +22,9 @@ from .section_titles import (
     are_sections_contiguous,
 )
 from .appendix import is_appendix_title
+
+
+_LOGGER = logging.getLogger(__name__)
 
 
 def parse_main_content(soup: BeautifulSoup, main_content: Tag, lines: TextSegments):
@@ -77,7 +80,7 @@ def parse_main_content(soup: BeautifulSoup, main_content: Tag, lines: TextSegmen
         title_contents = lines.pop(0).contents
 
         if not are_sections_contiguous(current_levels, new_levels):
-            LOGGER.warn(
+            _LOGGER.warning(
                 f"Detected title of levels {new_levels} after title of levels {current_levels}"
             )
             error_element = make_data_tag(

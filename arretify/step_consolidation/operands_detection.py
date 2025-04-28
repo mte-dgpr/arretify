@@ -1,8 +1,9 @@
 from typing import List, cast
+import logging
 
 from bs4 import Tag
 
-from arretify.settings import LOGGER
+from arretify.types import ParsingContext
 from arretify.html_schemas import (
     SECTIONS_AND_DOCUMENT_REFERENCES,
     SECTION_REFERENCE_SCHEMA,
@@ -25,8 +26,10 @@ DOCUMENT_REFERENCE_CLASS = make_css_class(DOCUMENT_REFERENCE_SCHEMA)
 SECTION_REFERENCE_CLASS = make_css_class(SECTION_REFERENCE_SCHEMA)
 SECTIONS_AND_DOCUMENT_REFERENCES_CLASS = make_css_class(SECTIONS_AND_DOCUMENT_REFERENCES)
 
+_LOGGER = logging.getLogger(__name__)
 
-def resolve_references_and_operands(operation_tag: Tag) -> None:
+
+def resolve_references_and_operands(_: ParsingContext, operation_tag: Tag) -> None:
     if operation_tag["data-direction"] != "rtl":
         raise ValueError("Only right-to-left is supported so far")
     _resolve_rtl_references(operation_tag)
@@ -55,7 +58,7 @@ def _resolve_rtl_references(operation_tag: Tag) -> None:
                 break
 
     if len(reference_tags) == 0:
-        LOGGER.warning("No references found in operation")
+        _LOGGER.warning("No references found in operation")
         return
 
     operation_tag["data-references"] = render_str_list_attribute(
@@ -75,7 +78,7 @@ def _resolve_rtl_operand(operation_tag: Tag) -> None:
             break
 
     if operand_tag is None:
-        LOGGER.warning("No right operand found for operation")
+        _LOGGER.warning("No right operand found for operation")
         return
 
     element_id = assign_element_id(operand_tag)

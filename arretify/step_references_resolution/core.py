@@ -1,6 +1,6 @@
 from typing import cast, Callable
 
-from bs4 import Tag, BeautifulSoup
+from bs4 import Tag
 from arretify._vendor.clients_api_droit.clients_api_droit.legifrance import (
     build_jorf_url,
     build_code_site_url,
@@ -30,7 +30,7 @@ from arretify.utils.html import (
     make_css_class,
     render_bool_attribute,
 )
-from arretify.types import ExternalURL
+from arretify.types import ExternalURL, ParsingContext
 
 
 SECTION_REFERENCE_CSS_CLASS = make_css_class(SECTION_REFERENCE_SCHEMA)
@@ -40,7 +40,7 @@ DOCUMENT_REFERENCE_CSS_CLASS = make_css_class(DOCUMENT_REFERENCE_SCHEMA)
 TITLE_SAMPLE_PATTERN = PatternProxy(r"^\s*([^\.;\s]+\s+){3,15}([^\.;\s]+)")
 
 
-ReferenceResolutionFunction = Callable[[Tag], None]
+ReferenceResolutionFunction = Callable[[ParsingContext, Tag], None]
 
 
 def resolve_external_url(
@@ -80,23 +80,23 @@ def resolve_external_url(
 
 
 def resolve_document_references(
-    container: Tag | BeautifulSoup,
+    parsing_context: ParsingContext,
     document_type: DocumentType,
     reference_resolution_function: ReferenceResolutionFunction,
 ):
     filter_function = _make_reference_filter(document_type, DOCUMENT_REFERENCE_CSS_CLASS)
-    for document_reference_tag in container.find_all(filter_function):
-        reference_resolution_function(document_reference_tag)
+    for document_reference_tag in parsing_context.soup.find_all(filter_function):
+        reference_resolution_function(parsing_context, document_reference_tag)
 
 
 def resolve_section_references(
-    container: Tag | BeautifulSoup,
+    parsing_context: ParsingContext,
     document_type: DocumentType,
     reference_resolution_function: ReferenceResolutionFunction,
 ):
     filter_function = _make_reference_filter(document_type, SECTION_REFERENCE_CSS_CLASS)
-    for section_reference_tag in container.find_all(filter_function):
-        reference_resolution_function(section_reference_tag)
+    for section_reference_tag in parsing_context.soup.find_all(filter_function):
+        reference_resolution_function(parsing_context, section_reference_tag)
 
 
 def update_reference_tag_uri(tag: Tag, document: Document, *sections: Section) -> None:

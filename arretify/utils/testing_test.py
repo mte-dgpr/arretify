@@ -2,7 +2,7 @@ import unittest
 
 from bs4.element import Tag
 
-from .testing import normalized_html_str, create_bs
+from .testing import normalized_html_str, normalized_soup
 
 
 class TestHtmlNormalization(unittest.TestCase):
@@ -11,21 +11,21 @@ class TestHtmlNormalization(unittest.TestCase):
         assert (
             normalized_html_str(
                 """
-            <div>
-                bla <a>link</a>
-                <span class="start">
-                    blo <b>bold blo</b>
-                </span>
-            </div>
-            <div>
                 <div>
-                    bli <i>italic bli</i>
+                    bla <a>link</a>
+                    <span class="start">
+                        blo <b>bold blo</b>
+                    </span>
                 </div>
-                <blockquote>
-                    blu <u>underline blu</u>
-                </blockquote>
-            </div>
-        """
+                <div>
+                    <div>
+                        bli <i>italic bli</i>
+                    </div>
+                    <blockquote>
+                        blu <u>underline blu</u>
+                    </blockquote>
+                </div>
+                """
             )
             == (
                 '<div>bla <a>link</a><span class="start">blo <b>bold blo</b></span></div>'
@@ -38,11 +38,11 @@ class TestHtmlNormalization(unittest.TestCase):
         assert (
             normalized_html_str(
                 """
-            arrêté ministériel du
-            <time class="dsr-date" datetime="1998-02-02">
-                2 février 1998
-            </time>
-        """
+                    arrêté ministériel du
+                    <time class="dsr-date" datetime="1998-02-02">
+                        2 février 1998
+                    </time>
+                """
             )
             == (
                 'arrêté ministériel du <time class="dsr-date" datetime="1998-02-02">'
@@ -54,11 +54,11 @@ class TestHtmlNormalization(unittest.TestCase):
         assert (
             normalized_html_str(
                 """
-            <time class="dsr-date" datetime="1998-02-02">
-                2 février 1998
-            </time>
-            arrêté ministériel du
-        """
+                    <time class="dsr-date" datetime="1998-02-02">
+                        2 février 1998
+                    </time>
+                    arrêté ministériel du
+                """
             )
             == (
                 '<time class="dsr-date" datetime="1998-02-02">'
@@ -70,21 +70,20 @@ class TestHtmlNormalization(unittest.TestCase):
         assert (
             normalized_html_str(
                 """
-            <a>
-                bla
-            </a>
-            he ho
-            hi hu
-            ha hy ha
-        """
+                    <a>
+                        bla
+                    </a>
+                    he ho
+                    hi hu
+                    ha hy ha
+                """
             )
             == ("<a>bla</a> he ho hi hu ha hy ha")
         )
 
     def test_remove_empty_strings(self):
-        bs = create_bs(
-            normalized_html_str(
-                """
+        bs = normalized_soup(
+            """
             <div id="el1">
                 <div id="el2"></div>
                 <div id="el3"></div>
@@ -95,8 +94,7 @@ class TestHtmlNormalization(unittest.TestCase):
                     <div id="el7"></div>
                 </div>
             </div>
-        """
-            )
+            """
         )
         assert str(bs) == (
             '<div id="el1"><div id="el2"></div><div id="el3"></div></div>'

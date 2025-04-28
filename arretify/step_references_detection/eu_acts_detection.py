@@ -16,7 +16,7 @@ from arretify.parsing_utils.dates import (
     parse_year_str,
     render_year_str,
 )
-from arretify.types import PageElementOrString
+from arretify.types import PageElementOrString, ParsingContext
 from arretify.utils.functional import flat_map_string
 from arretify.html_schemas import (
     DOCUMENT_REFERENCE_SCHEMA,
@@ -94,7 +94,7 @@ EU_ACT_NODE = regex_tree.Group(
 
 
 def parse_eu_acts_references(
-    soup: BeautifulSoup,
+    parsing_context: ParsingContext,
     children: Iterable[PageElementOrString],
 ) -> List[PageElementOrString]:
     return list(
@@ -103,7 +103,7 @@ def parse_eu_acts_references(
             lambda string: map_regex_tree_match(
                 split_string_with_regex_tree(EU_ACT_NODE, string),
                 lambda eu_act_group_match: _render_eu_act_reference(
-                    soup,
+                    parsing_context.soup,
                     eu_act_group_match,
                 ),
                 allowed_group_names=["__eu_act"],

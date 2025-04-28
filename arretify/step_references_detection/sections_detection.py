@@ -5,6 +5,7 @@ from typing import (
     Union,
 )
 
+from arretify.types import ParsingContext
 from arretify.utils.functional import flat_map_string
 from arretify.html_schemas import (
     SECTION_REFERENCE_SCHEMA,
@@ -47,13 +48,15 @@ ArticleNum = str
 
 
 def parse_section_references(
-    soup: BeautifulSoup,
+    parsing_context: ParsingContext,
     children: Iterable[PageElementOrString],
 ) -> List[PageElementOrString]:
     # First check for multiple, cause it is the most exhaustive pattern
-    new_children = list(_parse_section_reference_multiple_articles(soup, children))
-    new_children = list(_parse_section_reference_multiple_alineas(soup, new_children))
-    return list(_parse_section_references(soup, new_children))
+    new_children = list(_parse_section_reference_multiple_articles(parsing_context.soup, children))
+    new_children = list(
+        _parse_section_reference_multiple_alineas(parsing_context.soup, new_children)
+    )
+    return list(_parse_section_references(parsing_context.soup, new_children))
 
 
 # -------------------- Shared -------------------- #

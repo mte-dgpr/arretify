@@ -1,6 +1,5 @@
 from typing import Iterable, List
 
-from bs4 import BeautifulSoup
 
 from arretify.regex_utils import (
     regex_tree,
@@ -8,7 +7,7 @@ from arretify.regex_utils import (
     split_string_with_regex_tree,
     iter_regex_tree_match_strings,
 )
-from arretify.types import PageElementOrString
+from arretify.types import PageElementOrString, ParsingContext
 from arretify.utils.functional import flat_map_string
 from arretify.html_schemas import (
     DOCUMENT_REFERENCE_SCHEMA,
@@ -38,7 +37,7 @@ SELF_NODE = regex_tree.Group(
 
 
 def parse_self_references(
-    soup: BeautifulSoup,
+    parsing_context: ParsingContext,
     children: Iterable[PageElementOrString],
 ) -> List[PageElementOrString]:
     document = Document(type=DocumentType.self)
@@ -48,7 +47,7 @@ def parse_self_references(
             lambda string: map_regex_tree_match(
                 split_string_with_regex_tree(SELF_NODE, string),
                 lambda self_group_match: make_data_tag(
-                    soup,
+                    parsing_context.soup,
                     DOCUMENT_REFERENCE_SCHEMA,
                     data=dict(
                         uri=render_uri(document),

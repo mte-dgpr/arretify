@@ -1,10 +1,13 @@
+import logging
 import json
 from pathlib import Path
 from typing import Dict, List, TypedDict
-from arretify.settings import LOGGER
+
 
 CURRENT_DIR = Path(__file__).parent
 LEGIFRANCE_DATA = CURRENT_DIR / "legifrance"
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class CodeDatum(TypedDict):
@@ -48,7 +51,7 @@ def get_code_article_id_from_article_num(code_id: str, article_num: str) -> str 
     try:
         code_index = CODE_INDEXES[code_id]
     except KeyError:
-        LOGGER.warning(f"Could not find code index for code {code_id}")
+        _LOGGER.warning(f"Could not find code index for code {code_id}")
         return None
 
     for article in code_index:

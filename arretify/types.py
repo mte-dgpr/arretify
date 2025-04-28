@@ -1,15 +1,33 @@
 import re
-from typing import List, Union, Tuple
+from typing import List, Union, Tuple, Optional
 from enum import Enum
-from dataclasses import dataclass
+from dataclasses import dataclass, fields
 
-from bs4 import PageElement
+from bs4 import BeautifulSoup, PageElement
+from arretify._vendor.clients_api_droit.clients_api_droit.legifrance import LegifranceClient
+from arretify._vendor.clients_api_droit.clients_api_droit.eurlex import EurlexClient
+
+from arretify.settings import Settings
 
 
 ELEMENT_NAME_PATTERN = re.compile(r"^[a-z0-9_]+$")
 
 
+LineColumn = Tuple[int, int]
+"""Tuple line and column number. Line and column numbers are 0-indexed."""
+
+
 @dataclass(frozen=True)
+class TextSegment:
+    start: LineColumn
+    end: LineColumn
+    contents: str
+
+
+TextSegments = List[TextSegment]
+
+
+@dataclass(frozen=True, kw_only=True)
 class DataElementSchema:
     name: str
     tag_name: str
@@ -29,9 +47,41 @@ class OperationType(Enum):
     REPLACE = "replace"
 
 
+@dataclass(frozen=True, kw_only=True)
+class SessionContext:
+    settings: Settings
+    legifrance_client: Optional[LegifranceClient] = None
+    eurlex_client: Optional[EurlexClient] = None
+
+
+@dataclass(frozen=True, kw_only=True)
+class ParsingContext(SessionContext):
+    """
+    Container for parsing context information.
+    This includes the lines of text being parsed, the BeautifulSoup object,
+    and the settings used for parsing.
+    """
+
+    lines: TextSegments
+    soup: BeautifulSoup
+
+    @classmethod
+    def from_session_context(
+        cls,
+        session_context: SessionContext,
+        lines: TextSegments,
+        soup: BeautifulSoup,
+    ) -> "ParsingContext":
+        return cls(
+            **{
+                field.name: getattr(session_context, field.name) for field in fields(SessionContext)
+            },
+            lines=lines,
+            soup=soup,
+        )
+
+
 PageElementOrString = Union[PageElement, str]
-LineColumn = Tuple[int, int]
-"""Tuple line and column number. Line and column numbers are 0-indexed."""
 
 URI = str
 """

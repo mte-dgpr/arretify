@@ -1,12 +1,14 @@
 from typing import cast
 from dataclasses import replace as dataclass_replace
+import logging
 
 from bs4 import Tag
 
+from arretify.types import ParsingContext
 from arretify.law_data.uri import parse_uri
 from arretify.parsing_utils.dates import parse_date_str
-from arretify.settings import LOGGER
-from .apis.legifrance import (
+
+from arretify.law_data.apis.legifrance import (
     get_arrete_legifrance_id,
 )
 from .core import (
@@ -15,7 +17,11 @@ from .core import (
 )
 
 
+_LOGGER = logging.getLogger(__name__)
+
+
 def resolve_arrete_ministeriel_legifrance_id(
+    parsing_context: ParsingContext,
     document_reference_tag: Tag,
 ) -> None:
     uri = cast(str, document_reference_tag.get("data-uri"))
@@ -30,11 +36,12 @@ def resolve_arrete_ministeriel_legifrance_id(
 
     date_object = parse_date_str(document.date)
     arrete_id = get_arrete_legifrance_id(
+        parsing_context,
         date_object,
         title,
     )
     if arrete_id is None:
-        LOGGER.warning(f"Could not find legifrance arrete id for " f'date {date_object} "{title}"')
+        _LOGGER.warning(f"Could not find legifrance arrete id for " f'date {date_object} "{title}"')
         return
 
     update_reference_tag_uri(
