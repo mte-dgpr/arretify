@@ -113,7 +113,7 @@ class TestParseList(unittest.TestCase):
 
         # Assert
         assert [line.contents for line in remaining_lines] == ["END"]
-        assert str(ul) == "<ul><li>Item 1</li><li>Item 2</li><li>Item 3</li></ul>"
+        assert str(ul) == "<ul><li>- Item 1</li><li>- Item 2</li><li>- Item 3</li></ul>"
 
     def test_nested_list(self):
         # Arrange
@@ -133,10 +133,10 @@ class TestParseList(unittest.TestCase):
         assert remaining_lines == [], "All lines should be parsed into the list"
         assert str(ul) == (
             "<ul>"
-            "<li>Item 1"
-            "<ul><li>Subitem 1.1</li><li>Subitem 1.2</li></ul>"
+            "<li>- Item 1"
+            "<ul><li>- Subitem 1.1</li><li>- Subitem 1.2</li></ul>"
             "</li>"
-            "<li>Item 2</li>"
+            "<li>- Item 2</li>"
             "</ul>"
         )
 
@@ -167,7 +167,7 @@ class TestParseBlockQuote(unittest.TestCase):
             "<blockquote>"
             "<p>bla bla</p>"
             "<p>blo blo :</p>"
-            "<ul><li>Item 1</li><li>Item 2</li></ul>"
+            "<ul><li>- Item 1</li><li>- Item 2</li></ul>"
             "</blockquote>"
         )
 

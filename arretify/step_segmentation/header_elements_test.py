@@ -326,9 +326,9 @@ class TestParseMotifsOrVisas(unittest.TestCase):
                 <div class="dsr-visa">
                     l'avis des directeurs départementaux des services consultés :
                     <ul>
-                        <li>territoires et de la mer,</li>
-                        <li>architecture et patrimoine,</li>
-                        <li>incendie et secours,</li>
+                        <li>- territoires et de la mer,</li>
+                        <li>- architecture et patrimoine,</li>
+                        <li>- incendie et secours,</li>
                     </ul>
                 </div>
                 <div class="dsr-visa">la nomenclature des installations classées,</div>
@@ -366,8 +366,8 @@ class TestParseMotifsOrVisas(unittest.TestCase):
                 <div class="dsr-visa">
                     - les avis :
                     <ul>
-                        <li>de la Direction Départementale de l’Equipement en date du 3 octobre 2000,</li>
-                        <li>de la Direction Départementale de l’Agriculture et de la Forêt en date
+                        <li>- de la Direction Départementale de l’Equipement en date du 3 octobre 2000,</li>
+                        <li>- de la Direction Départementale de l’Agriculture et de la Forêt en date
                         du 6 octobre 2000,</li>
                     </ul>
                 </div>

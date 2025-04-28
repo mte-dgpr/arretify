@@ -22,7 +22,6 @@ from arretify.regex_utils import (
 )
 from arretify.parsing_utils.dates import DATE_NODE, render_date_regex_tree_match
 from arretify.utils.functional import flat_map_string
-from arretify.utils.markdown_cleaning import clean_newlines
 from arretify.utils.markdown_parsing import (
     is_list,
     is_image,
@@ -34,6 +33,16 @@ from .basic_elements import (
 )
 from .section_titles import is_body_section
 
+EMBLEMS_LIST = [
+    r"liberte",
+    r"egalite",
+    r"fraternite",
+    r"republique fran[cç]aise",
+]
+
+EMBLEM_PATTERN = PatternProxy(rf"^{join_with_or(EMBLEMS_LIST)}")
+"""Detect all sentences starting with French emblems."""
+
 ENTITIES_LIST = [
     r"prefecture",
     r"sous-prefecture",
@@ -42,13 +51,16 @@ ENTITIES_LIST = [
     r"prefete?",
     r"direction",
     r"drire",
+    r"deal",
     r"dreal",
     r"service",
     r"section",
     r"pole",
     r"bureau",
     r"unite",
-    r"installations classees pour la protection de l'environnement",
+    r"installations? classees? pour la protection de l'environnement",
+    r"affaires? suivies? par",
+    r"cheff?e? de (bureau|mission)",
 ]
 
 ENTITY_PATTERN = PatternProxy(rf"^{join_with_or(ENTITIES_LIST)}")
@@ -64,8 +76,8 @@ IDENTIFICATIONS_LIST = [
 IDENTIFICATION_PATTERN = PatternProxy(rf"^{join_with_or(IDENTIFICATIONS_LIST)}")
 """Detect all references."""
 
-ARRETE_TITLE_PATTERN = PatternProxy(r"^[\s-]*(a\s*r\s*r\s*e\s*t\s*e)[\s-]*\b")
-"""Detect if the setence starts with "arrete"."""
+ARRETE_TITLE_PATTERN = PatternProxy(r"^[\s-]*(a\s*r\s*r\s*e\s*t\s*e\s*n?\s*t?)[\s-]*\b")
+"""Detect if the sentence starts with "arrete"."""
 
 HONORARIES_LIST = [
     r"la prefecture",
@@ -73,20 +85,23 @@ HONORARIES_LIST = [
     r"chevalier",
     r"officier",
     r"commandeur",
+    r"commissaire",
 ]
 
 HONORARY_PATTERN = PatternProxy(rf"^{join_with_or(HONORARIES_LIST)}")
 """Detect all honorary titles."""
 
-VISA_PATTERN = PatternProxy(r"^(vu|-\s*vu)(\s*:\s*|\b)(?P<contents>.*)")
+VISA_PATTERN = PatternProxy(r"^(v\s*u|-\s*v\s*u)(\s*:\s*|\b)(?P<contents>.*)")
 """Detect if the sentence starts with "vu"."""
 
 MOTIF_PATTERN = PatternProxy(r"^(considerant|-\s*considerant)(\s*:\s*|\b)(?P<contents>.*)")
 """Detect if the sentence starts with "considerant"."""
 
 SUPPLEMENTARY_MOTIF_INFORMATIONS_LIST = [
+    r"le (demandeur|petitionnaire) entendu",
+    r"l'exploitant entendu",
     r"apres communication",
-    r"sur proposition",
+    r"sur (?:la )?proposition",
 ]
 
 SUPPLEMENTARY_MOTIF_INFORMATION_PATTERN = PatternProxy(
@@ -95,6 +110,7 @@ SUPPLEMENTARY_MOTIF_INFORMATION_PATTERN = PatternProxy(
 """Detect all other information that can be part of the motifs."""
 
 HEADER_ELEMENTS_PATTERNS: Dict[str, PatternProxy] = {
+    "emblem": EMBLEM_PATTERN,
     "entity": ENTITY_PATTERN,
     "identification": IDENTIFICATION_PATTERN,
     "arrete_title": ARRETE_TITLE_PATTERN,
@@ -105,6 +121,7 @@ HEADER_ELEMENTS_PATTERNS: Dict[str, PatternProxy] = {
 }
 
 HEADER_ELEMENTS_PROBES: Dict[str, Callable] = {
+    "emblem": lambda line: bool(EMBLEM_PATTERN.match(line)),
     "entity": lambda line: bool(ENTITY_PATTERN.match(line)),
     "identification": lambda line: bool(IDENTIFICATION_PATTERN.match(line)),
     "arrete_title": lambda line: bool(ARRETE_TITLE_PATTERN.match(line)),
@@ -140,7 +157,7 @@ def _join_split_pile_with_pattern(
     pattern: Optional[PatternProxy] = None,
 ) -> List[PageElementOrString]:
     # Combine all lines of current pile
-    combined_line = clean_newlines(" ".join(pile))
+    combined_line = " ".join(pile)
 
     if not pattern:
         return [combined_line]
@@ -326,6 +343,19 @@ def parse_header_beginning(
             header.append(parse_markdown_image(lines.pop(0).contents))
         else:
             header.append(_wrap_in_div(soup, [lines.pop(0)]))
+
+
+def parse_emblem_element(
+    soup: BeautifulSoup,
+    header: Tag,
+    lines: TextSegments,
+) -> TextSegments:
+    return _parse_header_element(
+        soup,
+        header,
+        lines,
+        "emblem",
+    )
 
 
 def parse_entity_element(

@@ -2,6 +2,8 @@ from typing import List, Optional, Union
 
 import roman
 
+from arretify.settings import LOGGER
+from arretify.parsing_utils.patterns import EME_PATTERN_S
 from arretify.regex_utils import (
     PatternProxy,
     regex_tree,
@@ -44,7 +46,7 @@ SECTION_TITLE_NODE = regex_tree.Group(
             # Numbering pattern
             regex_tree.Branching(
                 [
-                    r"(?P<number_first>1er)",
+                    rf"(?P<number>\d){EME_PATTERN_S}",
                     rf"(?P<number>{NUMBERING}(?:[.]{NUMBERING})*)",
                 ]
             ),
@@ -146,10 +148,9 @@ def parse_section_info(line: str) -> SectionInfo:
     section = BodySection.from_string(match_dict.get("section_name", "none"))
 
     # Find numbering
-    if match_dict.get("number_first"):
-        number = "1"
-    else:
-        number = match_dict.get("number", "0").rstrip(".")
+    number = match_dict.get("number", "0").rstrip(".")
+    if number == "0":
+        LOGGER.warn("Detected title of level 0, which means there was no numbering")
     levels = _number_to_levels(number)
 
     # Find optional text

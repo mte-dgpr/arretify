@@ -3,6 +3,7 @@ from bs4 import Tag, BeautifulSoup
 from arretify.parsing_utils.source_mapping import TextSegments
 from .header_elements import (
     parse_header_beginning,
+    parse_emblem_element,
     parse_entity_element,
     parse_identification_element,
     parse_arrete_title_element,
@@ -23,6 +24,9 @@ def parse_header(
     parse_header_beginning(soup, header, lines)
 
     while lines and not is_body_section(lines[0].contents):
+
+        # Emblem
+        lines = parse_emblem_element(soup, header, lines)
 
         # Entity
         lines = parse_entity_element(soup, header, lines)
