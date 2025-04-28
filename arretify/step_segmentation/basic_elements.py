@@ -1,4 +1,3 @@
-import re
 from typing import List, Tuple, Callable, Iterable
 
 from bs4 import BeautifulSoup, Tag
@@ -33,8 +32,8 @@ from arretify.parsing_utils.source_mapping import (
 )
 
 
-BULLET_LIST_RE = re.compile(r"^\s*-\s*")
-"""Detect if a sentence starts with a bullet list."""
+LEADING_WHITESPACES_PATTERN = PatternProxy(r"^\s+")
+"""Detect leading whitespaces."""
 
 BLOCKQUOTE_START_PATTERN = PatternProxy(r"^\s*\"")
 """Detect if a sentence starts with a quote '"'."""
@@ -58,8 +57,8 @@ def list_indentation(line: str) -> int:
     return len(indentation)
 
 
-def _clean_bullet_list(line: str) -> str:
-    return BULLET_LIST_RE.sub("", line)
+def _clean_leading_whitespaces(line: str) -> str:
+    return LEADING_WHITESPACES_PATTERN.sub("", line)
 
 
 def is_blockquote_start(line: str) -> bool:
@@ -114,7 +113,7 @@ def parse_list(
     while lines and is_list(lines[0].contents):
         current_indentation = list_indentation(lines[0].contents)
         if current_indentation == ref_indentation:
-            line = apply_to_segment(lines.pop(0), _clean_bullet_list)
+            line = apply_to_segment(lines.pop(0), _clean_leading_whitespaces)
             list_pile.append(line.contents)
 
         elif current_indentation > ref_indentation:

@@ -19,8 +19,8 @@ TABLE_LINE_PATTERN = PatternProxy(r"(\|)")
 TABLE_DESCRIPTION_PATTERN = PatternProxy(r"^(\(\*+\))|^(\*+)")
 """Detect if the line is a table description, i.e. starts with "*" or "(*)"."""
 
-LIST_PATTERN = PatternProxy(r"^(?P<indentation>\s*)(-\s|[a-zA-Z1-9][\)°]\s+)")
-"""Detect if the line starts with - or a number or letter followed by )."""
+LIST_PATTERN = PatternProxy(r"^(?P<indentation>\s*)(→|-\s|[a-zA-Z1-9][\)°]\s+)")
+"""Detect if the line starts with → or - or a number or letter followed by )."""
 
 IMAGE_PATTERN = PatternProxy(r"!\[[^\[\]]+\]\([^()]+\)")
 """Detect if the line starts with an image."""

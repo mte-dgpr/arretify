@@ -23,6 +23,12 @@ APPENDIX_SCHEMA = DataElementSchema(
     data_keys=[],
 )
 
+EMBLEM_SCHEMA = DataElementSchema(
+    name="emblem",
+    tag_name="div",
+    data_keys=[],
+)
+
 ENTITY_SCHEMA = DataElementSchema(
     name="entity",
     tag_name="div",
@@ -66,6 +72,7 @@ SUPPLEMENTARY_MOTIF_INFORMATION_SCHEMA = DataElementSchema(
 )
 
 HEADER_ELEMENTS_SCHEMAS: Dict[str, DataElementSchema] = {
+    "emblem": EMBLEM_SCHEMA,
     "entity": ENTITY_SCHEMA,
     "identification": IDENTIFICATION_SCHEMA,
     "arrete_title": ARRETE_TITLE_SCHEMA,

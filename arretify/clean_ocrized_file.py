@@ -1,7 +1,6 @@
 from arretify.utils.markdown_cleaning import clean_markdown
 from arretify.regex_utils import (
     PatternProxy,
-    join_with_or,
     Settings,
 )
 from arretify.parsing_utils.source_mapping import (
@@ -11,37 +10,21 @@ from arretify.parsing_utils.source_mapping import (
 
 
 CONTINUING_SENTENCE_PATTERN = PatternProxy(r"^[a-z]", settings=Settings(ignore_case=False))
+"""Detect if this is a continuing sentence."""
 
-IS_NOT_INFORMATION_PATTERN = PatternProxy(
-    join_with_or(
-        [
-            # Empty sentence or full of whitespaces
-            r"^\s*$",
-            # Bottom-page with format "X/YY"
-            r"^\d+/\d+\s*$",
-            # Bottom-page with format "Page X/YY"
-            r"^page\s+\d+/\d+\s*$",
-            # Bottom-page with format "Page X sur YY"
-            r"^page\s+\d+\s+sur\s+\d+\s*$",
-            # Bottom-page with format "Page X"
-            r"^page\s+\d+$",
-            # French Republic
-            r"république fran[cç]aise",
-            # French national motto
-            r"(liberté|égalité|fraternité)",
-            # Phone numbers
-            r"\d{2}[\s.]\d{2}[\s.]\d{2}[\s.]\d{2}[\s.]\d{2}",
-            # Email address
-            r"\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b",
-        ]
-    )
-)
+EMPTY_LINE_PATTERN = PatternProxy(r"^\s*$")
+"""Detect if the sentence is empty or full of whitespaces."""
 
 
 def clean_ocrized_file(lines: TextSegments) -> TextSegments:
-    lines = [clean_markdown(line) for line in lines]
-    lines = [line for line in lines if not _is_not_information(line.contents)]
 
+    # Clean input markdown
+    lines = [clean_markdown(line) for line in lines]
+
+    # Remove empty lines
+    lines = [line for line in lines if not _is_empty_line(line.contents)]
+
+    # Assemble continuing lines
     stitched_lines: TextSegments = []
     for line in lines:
         if _is_continuing_sentence(line.contents) and stitched_lines:
@@ -61,5 +44,5 @@ def _is_continuing_sentence(line: str) -> bool:
     return bool(CONTINUING_SENTENCE_PATTERN.match(line))
 
 
-def _is_not_information(line: str) -> bool:
-    return bool(IS_NOT_INFORMATION_PATTERN.search(line))
+def _is_empty_line(line: str) -> bool:
+    return bool(EMPTY_LINE_PATTERN.search(line))

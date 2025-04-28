@@ -37,7 +37,7 @@ def normalize_quotes(text: str):
 
 
 def normalize_dashes(text: str):
-    return text.replace("–", "-")
+    return text.replace("–", "-").replace("—", "-")
 
 
 def lookup_normalized_version(
