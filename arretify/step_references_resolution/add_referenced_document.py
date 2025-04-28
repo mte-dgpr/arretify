@@ -4,8 +4,7 @@
 
 from typing import cast
 
-from bs4 import BeautifulSoup
-
+from arretify.types import ParsingContext
 from arretify.utils.html import make_css_class, render_bool_attribute
 from arretify.html_schemas import SECTION_REFERENCE_SCHEMA, DOCUMENT_REFERENCE_SCHEMA
 from arretify.law_data.uri import parse_uri, render_uri, is_resolvable
@@ -16,16 +15,16 @@ DOCUMENT_REFERENCE_CSS_CLASS = make_css_class(DOCUMENT_REFERENCE_SCHEMA)
 
 
 def add_referenced_document_DEPRECATED(
-    soup: BeautifulSoup,
+    parsing_context: ParsingContext,
 ) -> None:
 
-    for section_reference_tag in soup.select(f".{SECTION_REFERENCE_CSS_CLASS}"):
+    for section_reference_tag in parsing_context.soup.select(f".{SECTION_REFERENCE_CSS_CLASS}"):
         document_reference_element_id = section_reference_tag.get("data-document_reference")
         if not document_reference_element_id:
             continue
 
         # Get the document reference tag
-        document_reference_tag = soup.select_one(
+        document_reference_tag = parsing_context.soup.select_one(
             f'.{DOCUMENT_REFERENCE_CSS_CLASS}[data-element_id="{document_reference_element_id}"]'
         )
         if not document_reference_tag:

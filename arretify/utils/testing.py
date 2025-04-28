@@ -3,7 +3,8 @@ from typing import Callable, List, Iterable, TypeVar
 
 from bs4 import Tag, BeautifulSoup, PageElement, NavigableString
 
-from arretify.types import PageElementOrString
+from arretify.settings import Settings
+from arretify.types import PageElementOrString, ParsingContext, SessionContext
 from arretify.utils.html import replace_children
 
 
@@ -47,16 +48,16 @@ P = TypeVar("P", bound=Tag | BeautifulSoup)
 
 
 def make_testing_function_for_single_tag(
-    process_function: Callable[[Tag], None],
+    process_function: Callable[[ParsingContext, Tag], None],
 ) -> Callable[[str], str]:
     def _testing_function(string: str, css_selector: str | None = None) -> str:
-        soup = create_bs(normalized_html_str(string))
+        parsing_context = create_parsing_context(normalized_html_str(string))
 
         tag_list: List[PageElement]
         if css_selector is None:
-            tag_list = list(soup.children)
+            tag_list = list(parsing_context.soup.children)
         else:
-            tag_list = list(soup.select(css_selector))
+            tag_list = list(parsing_context.soup.select(css_selector))
         tag_list = [tag for tag in tag_list if isinstance(tag, Tag)]
 
         if len(tag_list) != 1:
@@ -66,7 +67,7 @@ def make_testing_function_for_single_tag(
             raise ValueError("No tag found")
 
         tag = tag_list[0]
-        process_function(tag)
+        process_function(parsing_context, tag)
         return normalized_html_str(str(tag))
 
     return _testing_function
@@ -74,26 +75,77 @@ def make_testing_function_for_single_tag(
 
 def make_testing_function_for_children_list(
     process_function: Callable[
-        [BeautifulSoup, Iterable[PageElementOrString]],
+        [ParsingContext, Iterable[PageElementOrString]],
         List[PageElementOrString],
     ],
 ) -> Callable[[str], str]:
     def _testing_function(string: str):
-        soup = create_bs(normalized_html_str(string))
-        elements = process_function(soup, soup.children)
-        return [
-            normalized_html_str(str(element)) if isinstance(element, Tag) else str(element)
-            for element in elements
-        ]
+        parsing_context = create_parsing_context(normalized_html_str(string))
+        elements = process_function(parsing_context, parsing_context.soup.children)
+        return _normalize_element_list(elements)
 
     return _testing_function
 
 
-def create_bs(html: str) -> BeautifulSoup:
+def create_session_context() -> SessionContext:
+    return SessionContext(
+        settings=create_settings(),
+        legifrance_client=None,
+        eurlex_client=None,
+    )
+
+
+def create_parsing_context(
+    html: str,
+) -> ParsingContext:
+    return ParsingContext(
+        soup=BeautifulSoup(html, features="html.parser"),
+        lines=[],
+        settings=create_settings(),
+        legifrance_client=None,
+        eurlex_client=None,
+    )
+
+
+def create_settings() -> Settings:
+    return Settings(
+        tmp_dir="./tmp",
+        env="development",
+        legifrance_client_id=None,
+        legifrance_client_secret=None,
+        eurlex_web_service_username=None,
+        eurlex_web_service_password=None,
+    )
+
+
+def normalized_soup(html: str) -> BeautifulSoup:
     return BeautifulSoup(
-        html,
+        normalized_html_str(html),
         features="html.parser",
     )
+
+
+def assert_html_list_equal(
+    actual: List[PageElementOrString],
+    expected: List[PageElementOrString],
+) -> None:
+    """
+    Assert that two lists of HTML strings are equal after normalization.
+    """
+    assert len(actual) == len(expected)
+    for i, (actual_html, expected_html) in enumerate(
+        zip(_normalize_element_list(actual), _normalize_element_list(expected))
+    ):
+        assert actual_html == expected_html, f"Elements in position {i} are not equal"
+
+
+def _normalize_element_list(
+    html_list: List[PageElementOrString],
+) -> List[PageElementOrString]:
+    return [
+        normalized_html_str(str(element)) if isinstance(element, Tag) else str(element)
+        for element in html_list
+    ]
 
 
 def normalized_html_str(html: str) -> str:

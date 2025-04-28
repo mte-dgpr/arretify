@@ -9,6 +9,7 @@ from typing import (
     cast,
 )
 
+from arretify.types import ParsingContext
 from arretify.utils.html import (
     PageElementOrString,
     make_data_tag,
@@ -158,6 +159,15 @@ ARRETE_MULTIPLE_NODE = regex_tree.Group(
 )
 
 
+def parse_arretes_references(
+    parsing_context: ParsingContext,
+    children: Iterable[PageElementOrString],
+) -> List[PageElementOrString]:
+    # First check for multiple, cause it is the most exhaustive pattern
+    new_children = list(_parse_multiple_arretes_references(parsing_context.soup, children))
+    return list(_parse_arretes_references(parsing_context.soup, new_children))
+
+
 def _extract_identifier(
     arrete_match: regex_tree.Match,
 ) -> Union[Code, None]:
@@ -251,12 +261,3 @@ def _parse_multiple_arretes_references(
             allowed_group_names=["__arrete_multiple"],
         ),
     )
-
-
-def parse_arretes_references(
-    soup: BeautifulSoup,
-    children: Iterable[PageElementOrString],
-) -> List[PageElementOrString]:
-    # First check for multiple, cause it is the most exhaustive pattern
-    new_children = list(_parse_multiple_arretes_references(soup, children))
-    return list(_parse_arretes_references(soup, new_children))

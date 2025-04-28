@@ -2,7 +2,7 @@ from typing import List, Iterable
 
 from bs4 import BeautifulSoup, Tag, PageElement
 
-from arretify.types import PageElementOrString
+from arretify.types import PageElementOrString, ParsingContext
 from arretify.utils.element_ranges import (
     iter_collapsed_range_right,
     ElementRange,
@@ -47,13 +47,13 @@ CONNECTOR_SECTION_DOCUMENT_NODE = regex_tree.Group(
 
 
 def match_sections_with_documents(
-    soup: BeautifulSoup,
+    parsing_context: ParsingContext,
     children: Iterable[PageElementOrString],
 ) -> List[PageElementOrString]:
     # We must first match the multiple section references,
     # as they may contain single section references.
-    new_children = _match_multiple_sections_with_document(soup, children)
-    return _match_single_section_with_document(soup, new_children)
+    new_children = _match_multiple_sections_with_document(parsing_context.soup, children)
+    return _match_single_section_with_document(parsing_context.soup, new_children)
 
 
 def _match_single_section_with_document(

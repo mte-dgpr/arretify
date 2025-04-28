@@ -1,9 +1,9 @@
 import re
 from typing import List, Tuple, Callable, Iterable
+import logging
 
 from bs4 import BeautifulSoup, Tag
 
-from arretify.settings import LOGGER
 from arretify.utils.html import (
     PageElementOrString,
     make_ul,
@@ -47,6 +47,9 @@ INLINE_QUOTE_PATTERN = PatternProxy(r'"(?P<quoted>[^"]+)"')
 
 DOUBLE_QUOTE_PATTERN = PatternProxy(r'"')
 """Basic double quote '"' pattern."""
+
+
+_LOGGER = logging.getLogger(__name__)
 
 
 def list_indentation(line: str) -> int:
@@ -187,7 +190,7 @@ def parse_blockquote(soup: BeautifulSoup, lines: TextSegments) -> Tuple[TextSegm
     )
 
     if quotes_depth_count > 0:
-        LOGGER.warn(f"Found unbalanced quote starting {opening_quote_start}")
+        _LOGGER.warning(f"Found unbalanced quote starting {opening_quote_start}")
         error_element = make_data_tag(
             soup,
             ERROR_SCHEMA,

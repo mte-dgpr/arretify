@@ -3,7 +3,7 @@ from typing import List
 
 from bs4 import Tag
 
-from arretify.utils.testing import create_bs, normalized_html_str
+from arretify.utils.testing import normalized_soup
 from .element_ranges import (
     iter_collapsed_range_right,
     iter_collapsed_range_left,
@@ -19,25 +19,23 @@ class TestIterCollapsedRange(unittest.TestCase):
 
     def test_right(self):
         # Arrange
-        soup = create_bs(
-            normalized_html_str(
-                """
-            <div>
-                bla <a>link</a>
-                <span class="start">
-                    blo <b>bold blo</b>
-                </span>
-            </div>
-            <div>
+        soup = normalized_soup(
+            """
                 <div>
-                    bli <i>italic bli</i>
+                    bla <a>link</a>
+                    <span class="start">
+                        blo <b>bold blo</b>
+                    </span>
                 </div>
-                <blockquote>
-                    blu <u>underline blu</u>
-                </blockquote>
-            </div>
-        """
-            )
+                <div>
+                    <div>
+                        bli <i>italic bli</i>
+                    </div>
+                    <blockquote>
+                        blu <u>underline blu</u>
+                    </blockquote>
+                </div>
+                """
         )
         start_tag = soup.find(class_="start")
         assert start_tag is not None
@@ -87,9 +85,8 @@ class TestIterCollapsedRange(unittest.TestCase):
 
     def test_left(self):
         # Arrange
-        soup = create_bs(
-            normalized_html_str(
-                """
+        soup = normalized_soup(
+            """
             <div>
                 bla <a>link</a>
                 <span>
@@ -104,8 +101,7 @@ class TestIterCollapsedRange(unittest.TestCase):
                     blu <u>underline blu</u>
                 </blockquote>
             </div>
-        """
-            )
+            """
         )
         start_tag = soup.find(class_="start")
         assert start_tag is not None
@@ -167,17 +163,15 @@ class TestIterCollapsedRange(unittest.TestCase):
 class TestFindNextAfter(unittest.TestCase):
     def test_direct_sibling(self):
         # Arrange
-        soup = create_bs(
-            normalized_html_str(
-                """
+        soup = normalized_soup(
+            """
             <span class="start">
                 blo <b>bold blo</b>
             </span>
             <div id="next">
                 bli
             </div>
-        """
-            )
+            """
         )
         start_tag = soup.find(class_="start")
         assert start_tag is not None
@@ -190,9 +184,8 @@ class TestFindNextAfter(unittest.TestCase):
 
     def test_cross_container(self):
         # Arrange
-        soup = create_bs(
-            normalized_html_str(
-                """
+        soup = normalized_soup(
+            """
             <div>
                 <span class="start">
                     blo <b>bold blo</b>
@@ -201,8 +194,7 @@ class TestFindNextAfter(unittest.TestCase):
             <div id="next">
                 <i>bli</i>
             </div>
-        """
-            )
+            """
         )
         start_tag = soup.find(class_="start")
         assert start_tag is not None
@@ -215,14 +207,12 @@ class TestFindNextAfter(unittest.TestCase):
 
     def test_no_next_element(self):
         # Arrange
-        soup = create_bs(
-            normalized_html_str(
-                """
+        soup = normalized_soup(
+            """
             <span class="start">
                 blo <b>bold blo</b>
             </span>
-        """
-            )
+            """
         )
         start_tag = soup.find(class_="start")
         assert start_tag is not None
@@ -238,9 +228,8 @@ class TestCollapseElementRange(unittest.TestCase):
 
     def test_collapse_full(self):
         # Arrange
-        soup = create_bs(
-            normalized_html_str(
-                """
+        soup = normalized_soup(
+            """
             <div id="el1">
                 <div id="el2"></div>
                 <div id="el3"></div>
@@ -251,8 +240,7 @@ class TestCollapseElementRange(unittest.TestCase):
                     <div id="el7"></div>
                 </div>
             </div>
-        """
-            )
+            """
         )
         all_divs = list(soup.find_all("div"))
         assert [div["id"] for div in all_divs] == [
@@ -277,9 +265,8 @@ class TestCollapseElementRange(unittest.TestCase):
 
     def test_should_not_collapse_partial(self):
         # Arrange
-        soup = create_bs(
-            normalized_html_str(
-                """
+        soup = normalized_soup(
+            """
             <div id="el1">
                 <div id="el2"></div>
             </div>
@@ -288,8 +275,7 @@ class TestCollapseElementRange(unittest.TestCase):
                 <div id="el5"></div>
                 <div id="el6"></div>
             </div>
-        """
-            )
+            """
         )
         divs = list(soup.find_all(lambda tag: tag["id"] in ["el1", "el2", "el3", "el4", "el5"]))
         assert len(divs) == 5
@@ -306,9 +292,8 @@ class TestCollapseElementRange(unittest.TestCase):
 
     def test_should_not_collapse_partial_end_deep(self):
         # Arrange
-        soup = create_bs(
-            normalized_html_str(
-                """
+        soup = normalized_soup(
+            """
             <div id="el1">
                 <div id="el2"></div>
             </div>
@@ -319,8 +304,7 @@ class TestCollapseElementRange(unittest.TestCase):
                     <div id="el7"></div>
                 </div>
             </div>
-        """
-            )
+            """
         )
         divs = list(
             soup.find_all(lambda tag: tag["id"] in ["el1", "el2", "el3", "el4", "el5", "el6"])
@@ -339,9 +323,8 @@ class TestCollapseElementRange(unittest.TestCase):
 
     def test_should_not_collapse_partial_start_deep(self):
         # Arrange
-        soup = create_bs(
-            normalized_html_str(
-                """
+        soup = normalized_soup(
+            """
             <div id="el1">
                 <div id="el2">
                     <div id="el3"></div>
@@ -349,8 +332,7 @@ class TestCollapseElementRange(unittest.TestCase):
                 </div>
             </div>
             <div id="el5"></div>
-        """
-            )
+            """
         )
         divs = list(soup.find_all(lambda tag: tag["id"] in ["el4", "el5"]))
         assert len(divs) == 2
@@ -363,9 +345,8 @@ class TestCollapseElementRange(unittest.TestCase):
 
     def test_should_work_if_already_collapsed(self):
         # Arrange
-        soup = create_bs(
-            normalized_html_str(
-                """
+        soup = normalized_soup(
+            """
             <div id="el1">
                 <div id="el2"></div>
             </div>
@@ -374,8 +355,7 @@ class TestCollapseElementRange(unittest.TestCase):
                 <div id="el5"></div>
                 <div id="el6"></div>
             </div>
-        """
-            )
+            """
         )
         all_divs = list(soup.find_all("div"))
         assert [div["id"] for div in all_divs] == [
@@ -399,9 +379,8 @@ class TestGetContiguousElementsLeft(unittest.TestCase):
 
     def test_simple(self):
         # Arrange
-        soup = create_bs(
-            normalized_html_str(
-                """
+        soup = normalized_soup(
+            """
             <div>
                 <div id="blu"></div>
                 <div id="bli">
@@ -410,8 +389,7 @@ class TestGetContiguousElementsLeft(unittest.TestCase):
                 </div>
                 <div id="start"></div>
             </div>
-        """
-            )
+            """
         )
         start_tag = soup.find(id="start")
 
@@ -426,17 +404,15 @@ class TestGetContiguousElementsLeft(unittest.TestCase):
 
     def test_no_parent(self):
         # Arrange
-        soup = create_bs(
-            normalized_html_str(
-                """
+        soup = normalized_soup(
+            """
             <div id="blu"></div>
             <div id="bli">
                 <span id="bla"></span>
                 blo
             </div>
             <div id="start"></div>
-        """
-            )
+            """
         )
         start_tag = soup.find(id="start")
 
@@ -454,17 +430,15 @@ class TestGetContiguousElementsRight(unittest.TestCase):
 
     def test_simple(self):
         # Arrange
-        soup = create_bs(
-            normalized_html_str(
-                """
+        soup = normalized_soup(
+            """
             <div id="start"></div>
             <div id="bli">
                 <span id="bla">blo</span>
                 blu
             </div>
             <div id="ble"></div>
-        """
-            )
+            """
         )
         start_tag = soup.find(id="start")
 

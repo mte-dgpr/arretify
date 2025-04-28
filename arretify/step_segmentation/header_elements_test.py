@@ -11,12 +11,7 @@ from .header_elements import (
     _parse_visas_or_motifs,
     _parse_arrete_title_info,
 )
-from arretify.utils.testing import normalized_html_str, make_testing_function_for_children_list
-
-
-process_parse_arrete_title_info = make_testing_function_for_children_list(
-    _parse_arrete_title_info,
-)
+from arretify.utils.testing import normalized_html_str, assert_html_list_equal, normalized_soup
 
 
 class TestJoinSplitPile(unittest.TestCase):
@@ -66,17 +61,18 @@ class TestJoinSplitPile(unittest.TestCase):
 class TestParseArreteTitleInfo(unittest.TestCase):
 
     def test_parse_date(self):
-        assert (
-            process_parse_arrete_title_info(
-                """
-                Arrêté du 22 fevrier 2023 portant modification de l'autorisation d'exploiter
-                une unité de valorisation énergétique de combustibles solides de
-                récupération (CSR), de déchets d'activité économique (DAE) et d'ordures
-                ménagères (OM) sur le territoire de la commune de Bantzenheim à la
-                société B+T ENERGIE France Sas
+        soup = normalized_soup(
             """
-            )
-            == [
+            Arrêté du 22 fevrier 2023 portant modification de l'autorisation d'exploiter
+            une unité de valorisation énergétique de combustibles solides de
+            récupération (CSR), de déchets d'activité économique (DAE) et d'ordures
+            ménagères (OM) sur le territoire de la commune de Bantzenheim à la
+            société B+T ENERGIE France Sas
+            """
+        )
+        assert_html_list_equal(
+            _parse_arrete_title_info(soup, soup.children),
+            [
                 "Arrêté du ",
                 normalized_html_str(
                     """
@@ -92,7 +88,7 @@ class TestParseArreteTitleInfo(unittest.TestCase):
                     "ménagères (OM) sur le territoire de la commune de Bantzenheim à la "
                     "société B+T ENERGIE France Sas"
                 ),
-            ]
+            ],
         )
 
 

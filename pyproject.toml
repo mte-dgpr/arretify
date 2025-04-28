@@ -20,13 +20,13 @@ dependencies = [
   "Markdown==3.7.*",
   "roman==5.0.*",
   "pylatexenc==2.10.*",
+  "pydantic==2.11.*",
 
   # from _vendor.clients_api_droit
   "requests==2.32.*",
-  "requests-oauthlib==2.0.*",
   "requests-cache==1.2.*",
   "zeep==4.3.*",
-  "lxml==5.3.*"
+  "lxml==5.3.*",
 ]
 
 [project.optional-dependencies]
@@ -45,6 +45,7 @@ dev = [
 
 [tool.mypy]
 packages=["arretify"]
+plugins = ['pydantic.mypy']
 follow_untyped_imports = true
 exclude = "arretify/_vendor"
 

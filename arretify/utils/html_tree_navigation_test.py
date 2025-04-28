@@ -2,7 +2,7 @@ import unittest
 
 from bs4 import BeautifulSoup
 
-from arretify.utils.testing import create_bs, normalized_html_str
+from arretify.utils.testing import normalized_soup
 from .html_tree_navigation import (
     closest_common_ancestor,
     is_descendant,
@@ -14,17 +14,15 @@ class TestIsDescendant(unittest.TestCase):
 
     def test_is_descendant(self):
         # Arrange
-        soup = create_bs(
-            normalized_html_str(
-                """
+        soup = normalized_soup(
+            """
             <div>
                 bla <a>link</a>
                 <span class="parent">
                     blo <b class="child">bold blo</b>
                 </span>
             </div>
-        """
-            )
+            """
         )
         parent_tag = soup.find(class_="parent")
         child_tag = soup.find(class_="child")
@@ -36,17 +34,15 @@ class TestIsDescendant(unittest.TestCase):
 
     def test_is_not_descendant(self):
         # Arrange
-        soup = create_bs(
-            normalized_html_str(
-                """
+        soup = normalized_soup(
+            """
             <div>
                 bla <a class="other">link</a>
                 <span class="parent">
                     blo <b>bold blo</b>
                 </span>
             </div>
-        """
-            )
+            """
         )
         parent_tag = soup.find(class_="parent")
         other_tag = soup.find(class_="other")
@@ -61,17 +57,15 @@ class TestIsParent(unittest.TestCase):
 
     def test_is_parent(self):
         # Arrange
-        soup = create_bs(
-            normalized_html_str(
-                """
+        soup = normalized_soup(
+            """
             <div>
                 bla <a>link</a>
                 <span class="parent">
                     blo <b class="child">bold blo</b>
                 </span>
             </div>
-        """
-            )
+            """
         )
         parent_tag = soup.find(class_="parent")
         child_tag = soup.find(class_="child")
@@ -83,17 +77,15 @@ class TestIsParent(unittest.TestCase):
 
     def test_is_not_parent(self):
         # Arrange
-        soup = create_bs(
-            normalized_html_str(
-                """
+        soup = normalized_soup(
+            """
             <div>
                 bla <a class="other">link</a>
                 <span class="parent">
                     blo <b>bold blo</b>
                 </span>
             </div>
-        """
-            )
+            """
         )
         parent_tag = soup.find(class_="parent")
         other_tag = soup.find(class_="other")

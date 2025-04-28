@@ -1,9 +1,10 @@
 from typing import List, cast, Dict
 from dataclasses import replace as dataclass_replace
+import logging
 
 from bs4 import Tag
 
-from arretify.settings import LOGGER
+from arretify.types import ParsingContext
 from arretify.law_data.types import (
     SectionType,
     Section,
@@ -15,10 +16,15 @@ from arretify.law_data.legifrance_constants import (
     get_code_id_with_title,
     get_code_article_id_from_article_num,
 )
+
 from .core import update_reference_tag_uri
 
 
+_LOGGER = logging.getLogger(__name__)
+
+
 def resolve_code_article_legifrance_id(
+    parsing_context: ParsingContext,
     code_article_reference_tag: Tag,
 ) -> None:
     document, sections = parse_uri(cast(str, code_article_reference_tag["data-uri"]))
@@ -47,7 +53,7 @@ def resolve_code_article_legifrance_id(
                     if article_id:
                         new_fields[id_key] = article_id
                     else:
-                        LOGGER.warning(
+                        _LOGGER.warning(
                             f"Could not find legifrance article id for "
                             f"code {document.id} article {getattr(section, num_key)}"
                         )
@@ -64,6 +70,7 @@ def resolve_code_article_legifrance_id(
 
 
 def resolve_code_legifrance_id(
+    parsing_context: ParsingContext,
     code_reference_tag: Tag,
 ) -> None:
     document, sections = parse_uri(cast(str, code_reference_tag["data-uri"]))

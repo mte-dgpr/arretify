@@ -1,21 +1,27 @@
 from typing import cast
 from dataclasses import replace as dataclass_replace
+import logging
 
 from bs4 import Tag
 
 from arretify.law_data.uri import parse_uri
 from arretify.parsing_utils.dates import parse_date_str
-from arretify.settings import LOGGER
+from arretify.types import ParsingContext
+
 from .core import (
     update_reference_tag_uri,
     get_title_sample_next_sibling,
 )
-from .apis.legifrance import (
+from arretify.law_data.apis.legifrance import (
     get_circulaire_legifrance_id,
 )
 
 
+_LOGGER = logging.getLogger(__name__)
+
+
 def resolve_circulaire_legifrance_id(
+    parsing_context: ParsingContext,
     document_reference_tag: Tag,
 ) -> None:
     uri = cast(str, document_reference_tag.get("data-uri"))
@@ -30,11 +36,12 @@ def resolve_circulaire_legifrance_id(
 
     date_object = parse_date_str(document.date)
     circulaire_id = get_circulaire_legifrance_id(
+        parsing_context,
         date_object,
         title,
     )
     if circulaire_id is None:
-        LOGGER.warning(
+        _LOGGER.warning(
             f"Could not find legifrance circulaire id for " f'date {date_object} "{title}"'
         )
         return
