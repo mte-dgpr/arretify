@@ -1,8 +1,8 @@
 from typing import List, Optional, Union
+import logging
 
 import roman
 
-from arretify.settings import LOGGER
 from arretify.parsing_utils.patterns import EME_PATTERN_S
 from arretify.regex_utils import (
     PatternProxy,
@@ -13,6 +13,9 @@ from arretify.regex_utils.regex_tree.execute import (
     match,
 )
 from .types import BodySection, SectionInfo
+
+
+_LOGGER = logging.getLogger(__name__)
 
 
 ROMAN_NUMERALS = r"(?:(?:X{0,3})(?:IX|IV|V?I{0,3}))"
@@ -150,7 +153,7 @@ def parse_section_info(line: str) -> SectionInfo:
     # Find numbering
     number = match_dict.get("number", "0").rstrip(".")
     if number == "0":
-        LOGGER.warn("Detected title of level 0, which means there was no numbering")
+        _LOGGER.warning("Detected title of level 0, which means there was no numbering")
     levels = _number_to_levels(number)
 
     # Find optional text
