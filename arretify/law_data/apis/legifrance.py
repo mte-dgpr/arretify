@@ -1,6 +1,8 @@
 from datetime import date
 from dataclasses import replace as dataclass_replace
 
+from requests.exceptions import RequestException
+
 from arretify._vendor.clients_api_droit.clients_api_droit.legifrance import (
     LegifranceClient,
     LegifranceSettings,
@@ -12,8 +14,10 @@ from arretify._vendor.clients_api_droit.clients_api_droit.legifrance import (
 
 from arretify.types import SessionContext
 from arretify.utils.dev_cache import use_dev_cache
+from arretify.errors import ErrorCodes, catch_and_convert_into_arretify_error
 
 
+@catch_and_convert_into_arretify_error(RequestException, ErrorCodes.law_data_api_error)
 def initialize_legifrance_client(session_context: SessionContext) -> SessionContext:
     if (
         not session_context.settings.legifrance_client_id
@@ -21,12 +25,12 @@ def initialize_legifrance_client(session_context: SessionContext) -> SessionCont
     ):
         raise ValueError("Legifrance credentials are not provided")
 
-    eurlex_settings = LegifranceSettings(
+    legifrance_settings = LegifranceSettings(
         client_id=session_context.settings.legifrance_client_id,
         client_secret=session_context.settings.legifrance_client_secret,
         tmp_dir=session_context.settings.tmp_dir,
     )
-    legifrance_client = authenticate(LegifranceClient(settings=eurlex_settings))
+    legifrance_client = authenticate(LegifranceClient(settings=legifrance_settings))
     return dataclass_replace(
         session_context,
         legifrance_client=legifrance_client,
@@ -34,6 +38,7 @@ def initialize_legifrance_client(session_context: SessionContext) -> SessionCont
 
 
 @use_dev_cache
+@catch_and_convert_into_arretify_error(RequestException, ErrorCodes.law_data_api_error)
 def get_arrete_legifrance_id(session_context: SessionContext, date: date, title: str) -> str | None:
     legifrance_client = _assert_client_initialized(session_context)
     for arrete in search_arrete(legifrance_client, date, title):
@@ -43,6 +48,7 @@ def get_arrete_legifrance_id(session_context: SessionContext, date: date, title:
 
 
 @use_dev_cache
+@catch_and_convert_into_arretify_error(RequestException, ErrorCodes.law_data_api_error)
 def get_decret_legifrance_id(
     session_context: SessionContext, date: date, num: str | None, title: str | None
 ) -> str | None:
@@ -57,6 +63,7 @@ def get_decret_legifrance_id(
 
 
 @use_dev_cache
+@catch_and_convert_into_arretify_error(RequestException, ErrorCodes.law_data_api_error)
 def get_circulaire_legifrance_id(
     session_context: SessionContext, date: date, title: str
 ) -> str | None:

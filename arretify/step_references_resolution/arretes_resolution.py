@@ -11,6 +11,7 @@ from arretify.parsing_utils.dates import parse_date_str
 from arretify.law_data.apis.legifrance import (
     get_arrete_legifrance_id,
 )
+from arretify.errors import catch_and_log_arretify_error
 from .core import (
     update_reference_tag_uri,
     get_title_sample_next_sibling,
@@ -20,6 +21,7 @@ from .core import (
 _LOGGER = logging.getLogger(__name__)
 
 
+@catch_and_log_arretify_error(_LOGGER)
 def resolve_arrete_ministeriel_legifrance_id(
     parsing_context: ParsingContext,
     document_reference_tag: Tag,
@@ -40,6 +42,7 @@ def resolve_arrete_ministeriel_legifrance_id(
         date_object,
         title,
     )
+
     if arrete_id is None:
         _LOGGER.warning(f"Could not find legifrance arrete id for " f'date {date_object} "{title}"')
         return

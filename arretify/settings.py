@@ -1,6 +1,5 @@
 import pathlib
-import os
-from typing import Optional, Any, Literal, Dict
+from typing import Optional, Any, Literal
 from pathlib import Path
 from tempfile import mkdtemp
 import logging
@@ -28,19 +27,6 @@ class Settings(BaseModel):
     legifrance_client_secret: Optional[str] = Field(default=None)
     eurlex_web_service_username: Optional[str] = Field(default=None)
     eurlex_web_service_password: Optional[str] = Field(default=None)
-
-    @classmethod
-    def from_env(cls, env_map: Dict[str, str]) -> "Settings":
-        """
-        Load settings from environment variables.
-        """
-        # Remove keys with None values, so pydantic will use field defaults
-        clean_values = {
-            field: os.getenv(env_var)
-            for field, env_var in env_map.items()
-            if os.getenv(env_var) is not None
-        }
-        return cls(**clean_values)
 
     def model_post_init(self, _: Any) -> None:
         # Pretty print the current settings
