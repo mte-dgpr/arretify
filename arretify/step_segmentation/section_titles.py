@@ -1,13 +1,19 @@
-from typing import List, Optional, Union
 import logging
+from typing import List, Optional, Union
 
 import roman
 
-from arretify.parsing_utils.patterns import EME_PATTERN_S
+from arretify.parsing_utils.patterns import (
+    EME_PATTERN_S,
+    ORDINAL_PATTERN_S,
+    ORDINAL_PATTERN,
+    ordinal_str_to_int,
+)
 from arretify.regex_utils import (
     PatternProxy,
     regex_tree,
     join_with_or,
+    Settings,
 )
 from arretify.regex_utils.regex_tree.execute import (
     match,
@@ -16,6 +22,10 @@ from .types import BodySection, SectionInfo
 
 
 _LOGGER = logging.getLogger(__name__)
+
+
+LEADING_TRAILING_PUNCTUATION_PATTERN = PatternProxy(r"^[\s.]+|[\s.]+$")
+"""Detect leading and trailing points or whitespaces."""
 
 
 ROMAN_NUMERALS = r"(?:(?:X{0,3})(?:IX|IV|V?I{0,3}))"
@@ -34,29 +44,57 @@ SECTION_NAMES = [
 ]
 """Detect all section names."""
 
-# This regex matches section names in arretes such as
-# Titre I - PORTEE DE L'AUTORISATION
-# Titre 1. PORTEE DE L'AUTORISATION
-# Titre 2 PORTEE DE ...
-# Chapitre 1.2 - ...
-# Chapitre A. ...
-# Article X.X.X - ...
-# It splits the title into a section name, a numbering pattern and an optional text group
+
 SECTION_TITLE_NODE = regex_tree.Group(
-    regex_tree.Sequence(
+    regex_tree.Branching(
         [
-            rf"^(?P<section_name>{join_with_or(SECTION_NAMES)})\s+",
-            # Numbering pattern
-            regex_tree.Branching(
+            # This regex matches section names in arretes such as
+            # Titre 1
+            # Titre I - TITRE
+            # Titre 1. TITRE
+            # Titre 2 TITRE
+            # Chapitre 1.A
+            # Chapitre 1.2 - CHAPITRE
+            # Chapitre A. CHAPITRE
+            # Article X.X.X - Article
+            # Article X.X.X
+            # Article X.X.X. - Article.
+            # Section is split into a section name, a numbering pattern and an optional text group
+            regex_tree.Sequence(
                 [
-                    rf"(?P<number>\d){EME_PATTERN_S}",
-                    rf"(?P<number>{NUMBERING}(?:[.]{NUMBERING})*)",
+                    # Section name
+                    rf"^(?P<section_name>{join_with_or(SECTION_NAMES)})\s*",
+                    # Numbering pattern
+                    regex_tree.Branching(
+                        [
+                            rf"(?P<number>{ORDINAL_PATTERN_S})",
+                            rf"(?P<number>(\d|I|i)){EME_PATTERN_S}",
+                            rf"(?P<number>{NUMBERING}(?:[.]{NUMBERING})*)",
+                        ],
+                        settings=Settings(ignore_accents=False),
+                    ),
+                    # Do not catch the optional punctuation
+                    r"(?:[.\s\-:]*)",
+                    # Optional text group
+                    r"(?P<text>\s*(.+))?$",
                 ]
             ),
-            # Optional punctuation that should be excluded from text
-            r"(?:[.\s\-:]*)",
-            # Optional text group
-            r"(?P<text>\s*(.+))?$",
+            # This regex matches section names in arretes such as
+            # 1. TITRE
+            # 1.2 - CHAPITRE
+            # 1.A. CHAPITRE
+            # 1.X.X - Article
+            # Section is split into a numbering pattern and a text group
+            regex_tree.Sequence(
+                [
+                    # Numbering pattern with space
+                    # First number must be an integer followed by point
+                    rf"^(?P<number>{NUMBERS}[.](?:{NUMBERING}[.])*{NUMBERING})\s+",
+                    # Text group without ending punctuation
+                    r"(?P<text>\s*(.+?)(?<![.;:,]))$",
+                ],
+                settings=Settings(ignore_accents=False),
+            ),
         ]
     ),
     group_name="section",
@@ -65,7 +103,7 @@ SECTION_TITLE_NODE = regex_tree.Group(
 
 def _number_to_levels(number: str) -> Optional[List[int]]:
 
-    number_split = number.split(".")
+    number_split = number.replace(".", " ").split()
     level = len(number_split) - 1
 
     if level < 0:
@@ -138,26 +176,39 @@ def are_sections_contiguous(
     return is_continuing_section
 
 
+def _clean_numbering_match(numbering: str) -> str:
+    # Remove leading and trailing points or whitespaces
+    numbering = LEADING_TRAILING_PUNCTUATION_PATTERN.sub("", numbering)
+
+    # Consider empty numbering to be set at 0
+    if len(numbering) <= 0:
+        numbering = "0"
+
+    return numbering
+
+
 def parse_section_info(line: str) -> SectionInfo:
 
-    # First detect pattern
+    # Detect pattern
     match_pattern = match(SECTION_TITLE_NODE, line)
-
-    # Find section type
     if not match_pattern:
         return SectionInfo(type=BodySection.NONE)
 
+    # Extract dict
     match_dict = match_pattern.match_dict
-    section = BodySection.from_string(match_dict.get("section_name", "none"))
 
-    # Find numbering
-    number = match_dict.get("number", "0").rstrip(".")
-    if number == "0":
-        _LOGGER.warning("Detected title of level 0, which means there was no numbering")
-    levels = _number_to_levels(number)
-
-    # Find optional text
+    section = BodySection.from_string(match_dict.get("section_name", "unknown"))
+    number = match_dict.get("number", "")
     text = match_dict.get("text")
+
+    # Compute levels
+    number = _clean_numbering_match(number)
+    if ORDINAL_PATTERN.match(number):
+        number = str(ordinal_str_to_int(number))
+    if number == "0":
+        _LOGGER.warning(f"Numbering parsing output none for section title: {line}")
+        return SectionInfo(type=BodySection.NONE)
+    levels = _number_to_levels(number)
 
     section_info = SectionInfo(
         type=section,

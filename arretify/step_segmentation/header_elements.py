@@ -174,21 +174,20 @@ def _join_split_pile_with_pattern(
     )
 
 
-def _parse_arrete_title_info(
+def parse_header_beginning(
     soup: BeautifulSoup,
-    children: Iterable[PageElementOrString],
-) -> List[PageElementOrString]:
-    children = list(
-        flat_map_string(
-            children,
-            lambda string: map_regex_tree_match(
-                split_string_with_regex_tree(DATE_NODE, string),
-                lambda date_match: render_date_regex_tree_match(soup, date_match),
-                allowed_group_names=["__date"],
-            ),
-        )
-    )
-    return children
+    header: Tag,
+    lines: TextSegments,
+):
+    is_first_header_element = _make_probe("")
+
+    while lines and not is_first_header_element(lines[0].contents):
+        if is_image(lines[0].contents):
+            header.append(parse_markdown_image(lines.pop(0).contents))
+        else:
+            header.append(_wrap_in_div(soup, [lines.pop(0)]))
+
+    return lines
 
 
 def _parse_header_element(
@@ -205,7 +204,7 @@ def _parse_header_element(
     header_element_pattern = HEADER_ELEMENTS_PATTERNS[header_element_name]
     header_element_schema = HEADER_ELEMENTS_SCHEMAS[header_element_name]
 
-    while not is_next_header_element(lines[0].contents):
+    while lines and not is_next_header_element(lines[0].contents):
 
         if is_image(lines[0].contents):
             image_pile.append(lines.pop(0).contents)
@@ -231,118 +230,6 @@ def _parse_header_element(
         header.append(header_element)
 
     return lines
-
-
-def _parse_visas_or_motifs(
-    soup: BeautifulSoup,
-    header: Tag,
-    lines: TextSegments,
-    header_element_name: str,
-) -> TextSegments:
-    pile: List[PageElementOrString]
-    is_next_header_element = _make_probe(header_element_name)
-
-    if is_next_header_element(lines[0].contents):
-        return lines
-
-    header_element_pattern = HEADER_ELEMENTS_PATTERNS[header_element_name]
-    header_element_schema = HEADER_ELEMENTS_SCHEMAS[header_element_name]
-
-    has_more = bool(header_element_pattern.match(lines[0].contents))
-    # simple : "Vu blabla" ou "- vu blabla"
-    # bullet_list : "- vu blabla" ou "Vu \n - blabla"
-    # list : "Vu:\n blabla"
-    flavor: Literal["simple", "bullet_list", "list"] | None = None
-
-    section_match = header_element_pattern.match(lines[0].contents)
-    if section_match and section_match.group("contents"):
-        flavor = "simple"
-    else:
-        # Add the "Vu :" to the header
-        header.append(_wrap_in_div(soup, [lines.pop(0)]))
-        if is_list(lines[0].contents):
-            flavor = "bullet_list"
-        else:
-            flavor = "list"
-
-    has_more = True
-    if flavor == "simple":
-        while has_more:
-            pile = [lines.pop(0).contents]
-            while True:
-                if is_list(lines[0].contents) and not header_element_pattern.match(
-                    lines[0].contents
-                ):
-                    lines, ul_element = parse_list(soup, lines)
-                    pile.append(ul_element)
-                else:
-                    break
-            header.append(make_data_tag(soup, header_element_schema, contents=pile))
-
-            # Consume lines until we find the next visa, or the beginning of the next section
-            while True:
-                if header_element_pattern.match(lines[0].contents):
-                    break
-                elif is_next_header_element(lines[0].contents):
-                    has_more = False
-                    break
-                else:
-                    header.append(_wrap_in_div(soup, [lines.pop(0)]))
-
-    elif flavor == "list":
-        while has_more:
-            pile = [lines.pop(0).contents]
-            while True:
-                if is_list(lines[0].contents):
-                    lines, ul_element = parse_list(soup, lines)
-                    pile.append(ul_element)
-                else:
-                    break
-            header.append(make_data_tag(soup, header_element_schema, contents=pile))
-
-            # Consume lines until we find the next visa, or the beginning of the next section
-            if is_next_header_element(lines[0].contents):
-                has_more = False
-
-    elif flavor == "bullet_list":
-        indentation_0 = list_indentation(lines[0].contents)
-        while has_more:
-            pile = [lines.pop(0).contents]
-            while True:
-                if (
-                    is_list(lines[0].contents)
-                    and list_indentation(lines[0].contents) > indentation_0
-                ):
-                    lines, ul_element = parse_list(soup, lines)
-                    pile.append(ul_element)
-                else:
-                    break
-            header.append(make_data_tag(soup, header_element_schema, contents=pile))
-
-            # Consume lines until we find the next visa, or the beginning of the next section
-            while True:
-                if is_next_header_element(lines[0].contents):
-                    has_more = False
-                    break
-                elif is_list(lines[0].contents):
-                    break
-                else:
-                    header.append(_wrap_in_div(soup, [lines.pop(0)]))
-
-    return lines
-
-
-def parse_header_beginning(
-    soup: BeautifulSoup,
-    header: Tag,
-    lines: TextSegments,
-):
-    is_first_header_element = _make_probe("")
-    while not is_first_header_element(lines[0].contents):
-        if is_image(lines[0].contents):
-            header.append(parse_markdown_image(lines.pop(0).contents))
-        else:
-            header.append(_wrap_in_div(soup, [lines.pop(0)]))
 
 
 def parse_emblem_element(
@@ -384,6 +271,23 @@ def parse_identification_element(
     )
 
 
+def _parse_arrete_title_info(
+    soup: BeautifulSoup,
+    children: Iterable[PageElementOrString],
+) -> List[PageElementOrString]:
+    children = list(
+        flat_map_string(
+            children,
+            lambda string: map_regex_tree_match(
+                split_string_with_regex_tree(DATE_NODE, string),
+                lambda date_match: render_date_regex_tree_match(soup, date_match),
+                allowed_group_names=["__date"],
+            ),
+        )
+    )
+    return children
+
+
 def parse_arrete_title_element(
     soup: BeautifulSoup,
     header: Tag,
@@ -395,7 +299,7 @@ def parse_arrete_title_element(
     header_element_name = "arrete_title"
     is_next_header_element = _make_probe(header_element_name)
 
-    while not is_next_header_element(lines[0].contents):
+    while lines and not is_next_header_element(lines[0].contents):
 
         if is_image(lines[0].contents):
             image_pile.append(lines.pop(0).contents)
@@ -438,6 +342,102 @@ def parse_honorary_element(
         lines,
         "honorary",
     )
+
+
+def _parse_visas_or_motifs(
+    soup: BeautifulSoup,
+    header: Tag,
+    lines: TextSegments,
+    header_element_name: str,
+) -> TextSegments:
+    pile: List[PageElementOrString]
+    is_next_header_element = _make_probe(header_element_name)
+
+    if not lines or is_next_header_element(lines[0].contents):
+        return lines
+
+    header_element_pattern = HEADER_ELEMENTS_PATTERNS[header_element_name]
+    header_element_schema = HEADER_ELEMENTS_SCHEMAS[header_element_name]
+
+    has_more = bool(header_element_pattern.match(lines[0].contents))
+    # simple : "Vu blabla" ou "- vu blabla"
+    # bullet_list : "- vu blabla" ou "Vu \n - blabla"
+    # list : "Vu:\n blabla"
+    flavor: Literal["simple", "bullet_list", "list"] | None = None
+
+    section_match = header_element_pattern.match(lines[0].contents)
+    if section_match and section_match.group("contents"):
+        flavor = "simple"
+    else:
+        # Add the "Vu :" to the header
+        header.append(_wrap_in_div(soup, [lines.pop(0)]))
+        if is_list(lines[0].contents):
+            flavor = "bullet_list"
+        else:
+            flavor = "list"
+
+    has_more = True
+    if flavor == "simple":
+        while has_more:
+            pile = [lines.pop(0).contents]
+            while (
+                lines
+                and is_list(lines[0].contents)
+                and not header_element_pattern.match(lines[0].contents)
+            ):
+                lines, ul_element = parse_list(soup, lines)
+                pile.append(ul_element)
+            header.append(make_data_tag(soup, header_element_schema, contents=pile))
+
+            # Consume lines until we find the next visa, or the beginning of the next section
+            while True:
+                if not lines:
+                    has_more = False
+                    break
+                elif header_element_pattern.match(lines[0].contents):
+                    break
+                elif is_next_header_element(lines[0].contents):
+                    has_more = False
+                    break
+                else:
+                    header.append(_wrap_in_div(soup, [lines.pop(0)]))
+
+    elif flavor == "list":
+        while has_more:
+            pile = [lines.pop(0).contents]
+            while lines and is_list(lines[0].contents):
+                lines, ul_element = parse_list(soup, lines)
+                pile.append(ul_element)
+            header.append(make_data_tag(soup, header_element_schema, contents=pile))
+
+            # Consume lines until we find the next visa, or the beginning of the next section
+            if not lines or is_next_header_element(lines[0].contents):
+                has_more = False
+
+    elif flavor == "bullet_list":
+        indentation_0 = list_indentation(lines[0].contents)
+        while has_more:
+            pile = [lines.pop(0).contents]
+            while (
+                lines
+                and is_list(lines[0].contents)
+                and list_indentation(lines[0].contents) > indentation_0
+            ):
+                lines, ul_element = parse_list(soup, lines)
+                pile.append(ul_element)
+            header.append(make_data_tag(soup, header_element_schema, contents=pile))
+
+            # Consume lines until we find the next visa, or the beginning of the next section
+            while True:
+                if not lines or is_next_header_element(lines[0].contents):
+                    has_more = False
+                    break
+                elif is_list(lines[0].contents):
+                    break
+                else:
+                    header.append(_wrap_in_div(soup, [lines.pop(0)]))
+
+    return lines
 
 
 def parse_visa_element(

@@ -8,6 +8,7 @@ class BodySection(Enum):
     CHAPITRE = "chapitre"
     ARTICLE = "article"
     APPENDIX = "annexe"
+    UNKNOWN = "unknown"
     NONE = "none"
 
     @classmethod

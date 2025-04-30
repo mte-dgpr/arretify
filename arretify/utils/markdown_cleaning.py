@@ -7,11 +7,36 @@ from arretify.parsing_utils.source_mapping import (
     TextSegment,
     apply_to_segment,
 )
-from arretify.regex_utils import sub_with_match
+from arretify.regex_utils import (
+    sub_with_match,
+    lookup_normalized_version,
+    join_with_or,
+    split_string_with_regex_tree,
+    map_regex_tree_match_strings,
+)
+from arretify.parsing_utils.dates import MONTH_POINT_ABBREVIATIONS
+from arretify.regex_utils import regex_tree
 from .markdown_parsing import LIST_PATTERN, is_table_line
 
 
 LATEX_NODE = LatexNodes2Text(keep_comments=True)
+
+
+FAILED_MONTH_POINT_ABBREVIATIONS = regex_tree.Group(
+    regex_tree.Sequence(
+        [
+            r"\s",
+            regex_tree.Literal(
+                join_with_or(
+                    [month_name.replace(".", r"") for month_name in MONTH_POINT_ABBREVIATIONS]
+                ),
+                key="month_name",
+            ),
+            r"(,)\s",
+        ]
+    ),
+    group_name="__failed_month_point_abbreviation",
+)
 
 
 def _underscript_numbers_replacement(match):
@@ -102,6 +127,37 @@ def _convert_latex(match) -> str:
     return contents
 
 
+def _render_point_abbreviation_month(match: regex_tree.Match) -> str:
+    month_name = match.match_dict["month_name"]
+    for lookup_text in [month_name, month_name + "."]:
+        try:
+            return (
+                " "
+                + lookup_normalized_version(
+                    MONTH_POINT_ABBREVIATIONS,
+                    lookup_text,
+                    settings=FAILED_MONTH_POINT_ABBREVIATIONS.settings,
+                )
+                + " "
+            )
+        except KeyError:
+            continue
+    raise KeyError(f"No match found for {month_name}")
+
+
+def _clean_failed_month_abbreviations(line_contents: str) -> str:
+    return "".join(
+        map_regex_tree_match_strings(
+            split_string_with_regex_tree(
+                FAILED_MONTH_POINT_ABBREVIATIONS,
+                line_contents,
+            ),
+            _render_point_abbreviation_month,
+            allowed_group_names=["__failed_month_point_abbreviation"],
+        )
+    )
+
+
 # TODO-PROCESS-TAG
 def clean_markdown(line: TextSegment) -> TextSegment:
 
@@ -145,12 +201,20 @@ def clean_markdown(line: TextSegment) -> TextSegment:
     # Resolve diacritics
     line = apply_to_segment(line, _resolve_diacritics)
 
+    # Replace wrong month abbreviations
+    line = apply_to_segment(line, _clean_failed_month_abbreviations)
+
     # Resolve specific OCR mismatches
     ocr_replacements = {
         r"n̊": "n°",
         r"N̊": "N°",
         r"Nํ": "N°",
         r"ı": "i",
+        r"p̧i": "pti",
+        r"p̣": "p",
+        r"Y̌": "Y",
+        r"g̣": "g",
+        r"'́p": "p",
     }
     for wrong, correct in ocr_replacements.items():
         line = apply_to_segment(line, _make_sub_wrong(wrong, correct))
@@ -158,8 +222,14 @@ def clean_markdown(line: TextSegment) -> TextSegment:
     # Convert any '\%' to '%'
     line = apply_to_segment(line, _make_sub_wrong(r"\\%", "%"))
 
+    # Convert any '\&' to '&'
+    line = apply_to_segment(line, _make_sub_wrong(r"\\&", "&"))
+
     # Remove <br> tags outside of tables, since the latter are rendered correctly
     if not is_table_line(line.contents):
         line = apply_to_segment(line, _make_sub_wrong(r"<br>", ""))
+
+    # Remove footnotes detected by OCR
+    line = apply_to_segment(line, _make_sub_wrong(r"\[\^0\]\s*", ""))
 
     return line

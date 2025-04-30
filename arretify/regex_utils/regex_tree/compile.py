@@ -16,14 +16,19 @@ from ..core import PatternProxy
 from ..helpers import without_named_groups, join_with_or
 
 
-def Literal(pattern_string: str, settings: Settings | None = None) -> LiteralNode:
+def Literal(
+    pattern_string: str, key: str | None = None, settings: Settings | None = None
+) -> LiteralNode:
     settings = settings or Settings()
+    if key is not None:
+        pattern_string = f"(?P<{key}>{without_named_groups(pattern_string)})"
     return LiteralNode(
         id=_get_unique_id(),
         pattern=PatternProxy(
             pattern_string,
             settings=settings,
         ),
+        key=key,
         settings=settings,
     )
 

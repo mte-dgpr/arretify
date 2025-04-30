@@ -93,6 +93,14 @@ class TestCompilePattern(unittest.TestCase):
             assert node.child.pattern is child1.pattern
             assert node.child.id != child1.id
 
+    def test_compile_literal_with_key(self):
+        # Arrange
+        node = Literal(r"bla", key="key1")
+
+        # Assert
+        assert node.key == "key1"
+        assert node.pattern.pattern == r"(?P<key1>bla)"
+
     def test_node_repr(self):
         # Arrange
         compile._COUNTER = 0

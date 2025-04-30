@@ -18,7 +18,7 @@ ORDINAL_PATTERN = PatternProxy(ORDINAL_PATTERN_S)
 
 
 def ordinal_str_to_int(ordinal: str) -> int:
-    ordinal_match = re.match(ORDINAL_PATTERN_S, ordinal)
+    ordinal_match = re.match(ORDINAL_PATTERN_S, ordinal, re.IGNORECASE)
     if not ordinal_match:
         raise RuntimeError("Ordinal match unexpectedly failed")
 

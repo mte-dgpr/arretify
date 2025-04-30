@@ -48,7 +48,7 @@ class BranchingNode(BaseNode):
 
 @dataclass(frozen=True, repr=False)
 class LiteralNode(BaseNode):
-    pass
+    key: str | None
 
 
 @dataclass(frozen=True, repr=False)

@@ -97,12 +97,16 @@ SECTION_TITLE2_SCHEMA = dataclass_replace(SECTION_TITLE1_SCHEMA, tag_name="h3")
 SECTION_TITLE3_SCHEMA = dataclass_replace(SECTION_TITLE1_SCHEMA, tag_name="h4")
 SECTION_TITLE4_SCHEMA = dataclass_replace(SECTION_TITLE1_SCHEMA, tag_name="h5")
 SECTION_TITLE5_SCHEMA = dataclass_replace(SECTION_TITLE1_SCHEMA, tag_name="h6")
+SECTION_TITLE6_SCHEMA = dataclass_replace(SECTION_TITLE1_SCHEMA, tag_name="h7")
+SECTION_TITLE7_SCHEMA = dataclass_replace(SECTION_TITLE1_SCHEMA, tag_name="h8")
 SECTION_TITLE_SCHEMAS = [
     SECTION_TITLE1_SCHEMA,
     SECTION_TITLE2_SCHEMA,
     SECTION_TITLE3_SCHEMA,
     SECTION_TITLE4_SCHEMA,
     SECTION_TITLE5_SCHEMA,
+    SECTION_TITLE6_SCHEMA,
+    SECTION_TITLE7_SCHEMA,
 ]
 
 ALINEA_SCHEMA = DataElementSchema(
@@ -141,7 +145,11 @@ SECTIONS_AND_DOCUMENT_REFERENCES = DataElementSchema(
 A group of sections references and their associated document reference.
 """
 
-DATE_SCHEMA = DataElementSchema(name="date", tag_name="time", data_keys=[])
+DATE_SCHEMA = DataElementSchema(
+    name="date",
+    tag_name="time",
+    data_keys=[],
+)
 
 ERROR_SCHEMA = DataElementSchema(
     name="error",
