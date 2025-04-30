@@ -48,6 +48,18 @@ def map_regex_tree_match(
     )
 
 
+def map_regex_tree_match_strings(
+    regex_tree_match_flow: RegexTreeMatchFlow,
+    map_func: Callable[[RegexTreeMatch], str],
+    allowed_group_names: List[GroupName] | None = None,
+) -> Iterator[str]:
+    return _map_regex_tree_match_generic(
+        regex_tree_match_flow,
+        map_func,
+        allowed_group_names,
+    )
+
+
 def _map_regex_tree_match_generic(
     regex_tree_match_flow: RegexTreeMatchFlow,
     map_func: Callable[[RegexTreeMatch], R],

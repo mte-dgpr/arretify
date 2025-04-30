@@ -93,6 +93,21 @@ class TestPatternProxy(unittest.TestCase):
         # Assert
         assert result == expected
 
+    def test_sub_with_matching_repl(self):
+        """
+        Tests the substitution of a pattern with a replacement string
+        that also matches the pattern. We shouldnt end up in an infinite loop.
+        """
+        # Arrange
+        test_string = "abc123déf456"
+        repl = "666"
+
+        # Act
+        result = self.pattern_proxy.sub(repl, test_string)
+
+        # Assert
+        assert result == "abc666déf666"
+
     def test_ignore_case(self):
         # Arrange
         pattern_string = r"hello"

@@ -22,6 +22,10 @@ def join_with_or(pattern_strings: List[str]):
     return "|".join(pattern_strings)
 
 
+def named_group(pattern_string: str, group_name: str):
+    return f"(?P<{group_name}>{pattern_string})"
+
+
 def remove_accents(s: str) -> str:
     return "".join((c for c in unicodedata.normalize("NFD", s) if unicodedata.category(c) != "Mn"))
 
@@ -54,7 +58,7 @@ def lookup_normalized_version(
             break
 
     if not matches:
-        raise ValueError(f"No match found for {text}")
+        raise KeyError(f"No match found for {text}")
 
     return matches[0]
 

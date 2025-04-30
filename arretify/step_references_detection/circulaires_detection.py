@@ -1,3 +1,4 @@
+import logging
 from typing import Iterable, List, Optional, cast
 
 from bs4 import BeautifulSoup, Tag
@@ -28,6 +29,9 @@ from arretify.law_data.uri import (
     render_uri,
     is_resolvable,
 )
+
+
+_LOGGER = logging.getLogger(__name__)
 
 
 # Examples :
@@ -100,7 +104,7 @@ def _render_circulaire_container(
             circulaire_date = cast(str, tag_or_str["datetime"])
             break
     if circulaire_date is None:
-        raise ValueError("Could not find circulaire date")
+        _LOGGER.warning(f"Could not find date for circulaire: {circulaire_tag_contents}")
 
     document = Document(
         type=DocumentType.circulaire,

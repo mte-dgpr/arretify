@@ -15,7 +15,7 @@ def is_appendix_title(line: str) -> bool:
     return bool(APPENDIX_PATTERN.match(line))
 
 
-def parse_appendix(soup: BeautifulSoup, appendix: Tag, lines: TextSegments):
+def parse_appendix(soup: BeautifulSoup, appendix: Tag, lines: TextSegments) -> TextSegments:
 
     appendix_count = 0
 
@@ -57,3 +57,5 @@ def parse_appendix(soup: BeautifulSoup, appendix: Tag, lines: TextSegments):
             )
             section_element.append(alinea_element)
             parse_basic_elements(soup, alinea_element, lines)
+
+    return lines

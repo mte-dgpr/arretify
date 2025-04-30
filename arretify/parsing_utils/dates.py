@@ -1,3 +1,4 @@
+import logging
 from datetime import date, datetime
 from typing import List
 
@@ -13,6 +14,9 @@ from arretify.regex_utils import (
 from arretify.regex_utils.helpers import (
     lookup_normalized_version,
 )
+
+
+_LOGGER = logging.getLogger(__name__)
 
 
 DATE_FORMAT = "%Y-%m-%d"
@@ -32,7 +36,7 @@ MONTH_NAMES = [
     "décembre",
 ]
 
-MONTH_ABBREVIATIONS = [
+MONTH_POINT_ABBREVIATIONS = [
     "janv.",
     "févr.",
     "mars",
@@ -77,8 +81,8 @@ DATE_NODE = regex_tree.Group(
                             regex_tree.Branching(
                                 [
                                     r"(?P<month_name>" + join_with_or(MONTH_NAMES) + r")",
-                                    r"(?P<month_abbreviation>"
-                                    + join_with_or(MONTH_ABBREVIATIONS)
+                                    r"(?P<month_point_abbreviation>"
+                                    + join_with_or(MONTH_POINT_ABBREVIATIONS)
                                     + r")",
                                     r"(?P<month_code_3_chars>"
                                     + join_with_or(MONTH_CODE_3_CHARS)
@@ -107,8 +111,8 @@ DATE_NODE = regex_tree.Group(
 def _handle_date_match_dict(match_dict: regex_tree.MatchDict) -> date:
     if match_dict.get("month_name"):
         month = _get_month_index(match_dict["month_name"], MONTH_NAMES)
-    elif match_dict.get("month_abbreviation"):
-        month = _get_month_index(match_dict["month_abbreviation"], MONTH_ABBREVIATIONS)
+    elif match_dict.get("month_point_abbreviation"):
+        month = _get_month_index(match_dict["month_point_abbreviation"], MONTH_POINT_ABBREVIATIONS)
     elif match_dict.get("month_code_3_chars"):
         month = _get_month_index(match_dict["month_code_3_chars"], MONTH_CODE_3_CHARS)
     elif match_dict.get("month"):

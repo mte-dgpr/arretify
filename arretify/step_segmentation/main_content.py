@@ -27,14 +27,9 @@ from .appendix import is_appendix_title
 _LOGGER = logging.getLogger(__name__)
 
 
-def parse_main_content(soup: BeautifulSoup, main_content: Tag, lines: TextSegments):
+def parse_main_content(soup: BeautifulSoup, main_content: Tag, lines: TextSegments) -> TextSegments:
     # Ancestry order from root to the current section in the parsing context
     body_sections: List[Tag] = [main_content]
-
-    # Consume lines until we detect the first section
-    while not is_body_section(lines[0].contents):
-        # TODO-PROCESS-TAG
-        lines.pop(0)
 
     # Parse one section at a time
     current_levels: Optional[List[int]] = None

@@ -378,3 +378,198 @@ class TestSectionValidCases(unittest.TestCase):
             levels=[1, 1, 3],
             text="Premier article",
         )
+
+    def test_simple_title_no_name(self):
+        # Arrange
+        lines = initialize_lines(["1. TITRE "])
+
+        # Act
+        section_info = parse_section_info(lines[0].contents)
+
+        # Assert
+        assert section_info == SectionInfo(
+            type=BodySection.UNKNOWN,
+            number="1",
+            levels=[1],
+            text="TITRE ",
+        )
+
+    def test_hierarchical_title_no_name(self):
+        # Arrange
+        lines = initialize_lines(["1.1.1 Article"])
+
+        # Act
+        section_info = parse_section_info(lines[0].contents)
+
+        # Assert
+        assert section_info == SectionInfo(
+            type=BodySection.UNKNOWN,
+            number="1.1.1",
+            levels=[1, 1, 1],
+            text="Article",
+        )
+
+    def test_table_description(self):
+        # Arrange
+        lines = initialize_lines(["(1) à l'exception du monoxyde de carbone."])
+
+        # Act
+        section_info = parse_section_info(lines[0].contents)
+
+        # Assert
+        assert section_info == SectionInfo(
+            type=BodySection.NONE,
+            number=None,
+            levels=None,
+            text=None,
+        )
+
+    def test_sub_article_no_name(self):
+        # Arrange
+        lines = initialize_lines(["3.1. Sous-article"])
+
+        # Act
+        section_info = parse_section_info(lines[0].contents)
+
+        # Assert
+        assert section_info == SectionInfo(
+            type=BodySection.UNKNOWN,
+            number="3.1",
+            levels=[3, 1],
+            text="Sous-article",
+        )
+
+    def test_list_with_point(self):
+        # Arrange
+        lines = initialize_lines(["3. Liste ;"])
+
+        # Act
+        section_info = parse_section_info(lines[0].contents)
+
+        # Assert
+        assert section_info == SectionInfo(
+            type=BodySection.NONE,
+            number=None,
+            levels=None,
+            text=None,
+        )
+
+    def test_one_line_list_with_colon(self):
+        # Arrange
+        lines = initialize_lines(["1. Liste : a. Point b. Point"])
+
+        # Act
+        section_info = parse_section_info(lines[0].contents)
+
+        # Assert
+        assert section_info == SectionInfo(
+            type=BodySection.UNKNOWN,
+            number="1",
+            levels=[1],
+            text="Liste : a. Point b. Point",
+        )
+
+    def test_simple_no_space(self):
+        # Arrange
+        lines = initialize_lines(["ARTICLE 6-ARTICLE"])
+
+        # Act
+        section_info = parse_section_info(lines[0].contents)
+
+        # Assert
+        assert section_info == SectionInfo(
+            type=BodySection.ARTICLE,
+            number="6",
+            levels=[6],
+            text="ARTICLE",
+        )
+
+    def test_ocr_error_eme(self):
+        # Arrange
+        lines = initialize_lines(["ARTICLE 1erCeci est un titre"])
+
+        # Act
+        section_info = parse_section_info(lines[0].contents)
+
+        # Assert
+        assert section_info == SectionInfo(
+            type=BodySection.ARTICLE,
+            number="1",
+            levels=[1],
+            text="Ceci est un titre",
+        )
+
+    def test_chapter_joined_text(self):
+        # Arrange
+        lines = initialize_lines(["CHAPITRE 5.1CECI EST UN CHAPITRE"])
+
+        # Act
+        section_info = parse_section_info(lines[0].contents)
+
+        # Assert
+        assert section_info == SectionInfo(
+            type=BodySection.CHAPITRE,
+            number="5.1",
+            levels=[5, 1],
+            text="CECI EST UN CHAPITRE",
+        )
+
+    def test_article_ordinal(self):
+        # Arrange
+        lines = initialize_lines(["Article premier :"])
+
+        # Act
+        section_info = parse_section_info(lines[0].contents)
+
+        # Assert
+        assert section_info == SectionInfo(
+            type=BodySection.ARTICLE,
+            number="1",
+            levels=[1],
+            text=None,
+        )
+
+    def test_article_roman_eme(self):
+        # Arrange
+        lines = initialize_lines(["Article Ier :"])
+
+        # Act
+        section_info = parse_section_info(lines[0].contents)
+
+        # Assert
+        assert section_info == SectionInfo(
+            type=BodySection.ARTICLE,
+            number="I",
+            levels=[1],
+            text=None,
+        )
+
+    def test_sentence_start_point(self):
+        # Arrange
+        lines = initialize_lines([". Ni 5,0 mg / 1"])
+
+        # Act
+        section_info = parse_section_info(lines[0].contents)
+
+        # Assert
+        assert section_info == SectionInfo(
+            type=BodySection.NONE,
+            number=None,
+            levels=None,
+            text=None,
+        )
+
+    def test_mister_madam(self):
+        # Arrange
+        lines = initialize_lines(["M. le Maire de"])
+
+        # Act
+        section_info = parse_section_info(lines[0].contents)
+
+        # Assert
+        assert section_info == SectionInfo(
+            type=BodySection.NONE,
+            number=None,
+            levels=None,
+            text=None,
+        )

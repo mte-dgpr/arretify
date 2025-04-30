@@ -30,10 +30,12 @@ def resolve_arrete_ministeriel_legifrance_id(
     document, sections = parse_uri(uri)
 
     if document.date is None:
-        raise ValueError(f"Arrete ministeriel document {document} has no date")
+        _LOGGER.warning(f"Arrete ministeriel {document} has no date")
+        return
 
     title = get_title_sample_next_sibling(document_reference_tag)
     if title is None:
+        _LOGGER.warning(f"Arrete ministeriel {document} has no title")
         return
 
     date_object = parse_date_str(document.date)

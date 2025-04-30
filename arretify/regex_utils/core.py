@@ -73,12 +73,17 @@ class PatternProxy:
             yield MatchProxy(string, match)
 
     def sub(self, repl: str, string: str) -> str:
+        processed = ""
+        remaining = string
         while True:
-            match = self._pattern.search(normalize_string(string, self._settings_for_normalization))
+            match = self._pattern.search(
+                normalize_string(remaining, self._settings_for_normalization)
+            )
             if match:
-                string = string[: match.start()] + repl + string[match.end() :]
+                processed += remaining[: match.start()] + repl
+                remaining = remaining[match.end() :]
             else:
-                return string
+                return processed + remaining
 
 
 class MatchProxy:

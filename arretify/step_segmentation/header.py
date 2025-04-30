@@ -21,7 +21,7 @@ def parse_header(
     lines: TextSegments,
 ) -> TextSegments:
     # Add lines until we find first meaningful line
-    parse_header_beginning(soup, header, lines)
+    lines = parse_header_beginning(soup, header, lines)
 
     while lines and not is_body_section(lines[0].contents):
 
