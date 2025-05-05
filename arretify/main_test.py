@@ -1,20 +1,17 @@
 # Pour re-générer les snapshots HTML, voir README, section "Snapshot testing".
 import unittest
-import logging
 from pathlib import Path
+from tempfile import mkdtemp
 
 from arretify.settings import (
     TEST_DATA_DIR,
-    OCR_FILE_EXTENSION,
 )
 from arretify.utils import html
-from arretify.utils.testing import create_session_context
 
-from .main import ocr_to_html
+from .main import main
 
 ARRETES_OCR_DIR = TEST_DATA_DIR / "arretes_ocr"
 ARRETES_HTML_DIR = TEST_DATA_DIR / "arretes_html"
-_LOGGER = logging.getLogger(__name__)
 
 
 class TestMain(unittest.TestCase):
@@ -22,26 +19,17 @@ class TestMain(unittest.TestCase):
         html._ID_COUNTER = 0
 
     def test_parse_arrete_snapshots(self):
-        _LOGGER.info("Testing snapshots")
-        for (
-            arrete_ocr_file_path,
-            actual_contents,
-        ) in _iter_parsed_arretes_ocr_files():
-            _LOGGER.info(
-                f"Input {arrete_ocr_file_path.parent.name}/{arrete_ocr_file_path.stem} ..."
-            )
-            arrete_html_file_path = (
-                ARRETES_HTML_DIR
-                / f"{arrete_ocr_file_path.parent.name}/{arrete_ocr_file_path.stem}.html"
-            )
-            expected_contents = open(arrete_html_file_path, "r", encoding="utf-8").read()
+        print("Testing snapshots")
+        tmp_dir = Path(mkdtemp(prefix="arretify-testing-"))
+        main(args=["--input", str(ARRETES_OCR_DIR), "--output", str(tmp_dir)])
+        for relative_path in _iter_reference_html_files():
+            print(f"Comparing {relative_path}")
+            expected_contents = open(ARRETES_HTML_DIR / relative_path, "r", encoding="utf-8").read()
+            actual_contents = open(tmp_dir / relative_path, "r", encoding="utf-8").read()
             assert actual_contents == expected_contents
 
 
-def _iter_parsed_arretes_ocr_files():
-    arretes_ocr_file_paths = sorted(Path(ARRETES_OCR_DIR).rglob(f"*{OCR_FILE_EXTENSION}"))
-    session_context = create_session_context()
-    for arrete_ocr_file_path in arretes_ocr_file_paths:
-        arrete_contents = open(arrete_ocr_file_path, "r", encoding="utf-8").readlines()
-        parsing_context = ocr_to_html(session_context, arrete_contents)
-        yield arrete_ocr_file_path, parsing_context.soup.prettify()
+def _iter_reference_html_files():
+    arretes_html_paths = sorted(Path(ARRETES_HTML_DIR).rglob("*html"))
+    for arrete_html_path in arretes_html_paths:
+        yield arrete_html_path.relative_to(ARRETES_HTML_DIR)

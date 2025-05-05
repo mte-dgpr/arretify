@@ -4,7 +4,7 @@ from datetime import datetime
 import json
 
 from arretify.types import SessionContext
-from arretify.utils.scripts import load_settings_from_env
+from arretify.settings import Settings
 from arretify.law_data.apis.legifrance import initialize_legifrance_client
 from arretify._vendor.clients_api_droit.clients_api_droit.legifrance import (  # noqa: E402
     list_codes,
@@ -62,7 +62,7 @@ if __name__ == "__main__":
 
     load_dotenv()
     session_context = SessionContext(
-        settings=load_settings_from_env(),
+        settings=Settings.from_env(),
     )
     session_context = initialize_legifrance_client(session_context)
 

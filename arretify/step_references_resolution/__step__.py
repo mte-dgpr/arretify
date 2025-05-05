@@ -26,8 +26,9 @@ from .eu_acts_resolution import (
 from .add_referenced_document import add_referenced_document_DEPRECATED
 
 
-def step_references_resolution(parsing_context: ParsingContext) -> ParsingContext:
-
+def step_legifrance_references_resolution(
+    parsing_context: ParsingContext,
+) -> ParsingContext:
     # Resolve all document references
     resolve_document_references(
         parsing_context,
@@ -41,6 +42,17 @@ def step_references_resolution(parsing_context: ParsingContext) -> ParsingContex
         resolve_circulaire_legifrance_id,
     )
     resolve_document_references(parsing_context, DocumentType.code, resolve_code_legifrance_id)
+
+    # Resolve all section references
+    add_referenced_document_DEPRECATED(parsing_context)
+    resolve_section_references(
+        parsing_context, DocumentType.code, resolve_code_article_legifrance_id
+    )
+
+    return parsing_context
+
+
+def step_eurlex_references_resolution(parsing_context: ParsingContext) -> ParsingContext:
     resolve_document_references(
         parsing_context, DocumentType.eu_decision, resolve_eu_decision_eurlex_url
     )
@@ -56,10 +68,5 @@ def step_references_resolution(parsing_context: ParsingContext) -> ParsingContex
     )
 
     add_referenced_document_DEPRECATED(parsing_context)
-
-    # Resolve all section references
-    resolve_section_references(
-        parsing_context, DocumentType.code, resolve_code_article_legifrance_id
-    )
 
     return parsing_context

@@ -10,6 +10,10 @@ R = TypeVar("R")
 P = ParamSpec("P")
 
 
+class MissingSettingsError(ValueError):
+    pass
+
+
 class ErrorCodes(Enum):
     markdown_parsing = "markdown_parsing"
     unbalanced_quote = "unbalanced_quote"

@@ -17,6 +17,12 @@ DOCUMENT_REFERENCE_CSS_CLASS = make_css_class(DOCUMENT_REFERENCE_SCHEMA)
 def add_referenced_document_DEPRECATED(
     parsing_context: ParsingContext,
 ) -> None:
+    """
+    This function is deprecated and will be removed in a future version.
+    It is a temporary solution to duplicate the document part of the uri
+    into the section reference tag.
+    Eventually section reference will only use element_id to link the document reference.
+    """
 
     for section_reference_tag in parsing_context.soup.select(f".{SECTION_REFERENCE_CSS_CLASS}"):
         document_reference_element_id = section_reference_tag.get("data-document_reference")

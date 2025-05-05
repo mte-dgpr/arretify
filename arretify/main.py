@@ -1,3 +1,4 @@
+import sys
 from typing import Iterator, Tuple, List
 from pathlib import Path
 from optparse import OptionParser
@@ -7,53 +8,25 @@ from datetime import datetime
 
 from dotenv import load_dotenv
 
-from bs4 import BeautifulSoup
-
-from .types import ParsingContext, SessionContext
-from .settings import APP_ROOT, TEST_DATA_DIR, OCR_FILE_EXTENSION, DEFAULT_ARRETE_TEMPLATE
-from .utils.scripts import load_settings_from_env
+from .types import SessionContext
+from .settings import APP_ROOT, TEST_DATA_DIR, OCR_FILE_EXTENSION, DEFAULT_ARRETE_TEMPLATE, Settings
 from .step_segmentation import step_segmentation
 from .step_references_detection import step_references_detection
-from .step_references_resolution import step_references_resolution
-from .step_consolidation import step_consolidation
-from .clean_ocrized_file import clean_ocrized_file
-from .parsing_utils.source_mapping import (
-    initialize_lines,
+from .step_references_resolution import (
+    step_legifrance_references_resolution,
+    step_eurlex_references_resolution,
 )
-from .law_data.apis.legifrance import initialize_legifrance_client
+from .step_consolidation import step_consolidation
+from .law_data.apis.legifrance import initialize_legifrance_client, MissingSettingsError
 from .law_data.apis.eurlex import initialize_eurlex_client
 from .errors import ArretifyError, ErrorCodes
+from .pipeline import ocr_to_html, load_ocr_file, save_html_file, ParsingPipelineStep
 
 
 _LOGGER = logging.getLogger("arretify")
 
 
-def ocr_to_html(session_context: SessionContext, raw_lines: List[str]) -> ParsingContext:
-    lines = initialize_lines(raw_lines)
-    lines = clean_ocrized_file(lines)
-    soup = BeautifulSoup(DEFAULT_ARRETE_TEMPLATE, features="html.parser")
-    parsing_context = ParsingContext.from_session_context(
-        session_context,
-        lines=lines,
-        soup=soup,
-    )
-    parsing_context = step_segmentation(parsing_context)
-    parsing_context = step_references_detection(parsing_context)
-    parsing_context = step_references_resolution(parsing_context)
-    parsing_context = step_consolidation(parsing_context)
-
-    return parsing_context
-
-
-def ocr_file_to_html_file(settings, input_path: Path, output_path: Path):
-    with open(input_path, "r", encoding="utf-8") as f:
-        raw_lines = f.readlines()
-    parsing_context = ocr_to_html(settings, raw_lines)
-    with open(output_path, "w", encoding="utf-8") as f:
-        f.write(parsing_context.soup.prettify())
-
-
-def main():
+def main(args: List[str]) -> None:
     parser = OptionParser()
     parser.add_option(
         "-i",
@@ -73,7 +46,7 @@ def main():
         default=False,
         help="Enable verbose logging.",
     )
-    (options, args) = parser.parse_args()
+    (options, args) = parser.parse_args(args=args)
 
     # Load environment variables from .env file
     load_dotenv()
@@ -81,24 +54,53 @@ def main():
     # Initialize logging before anything else, so we get all logs
     _initialize_root_logger(_LOGGER, options.verbose)
 
+    # Initialize session context
+    session_context = SessionContext(
+        settings=Settings.from_env(),
+    )
+
+    # Initialize input and output paths
     input_path = Path(options.input)
     output_path = Path(options.output)
 
-    session_context = SessionContext(
-        settings=load_settings_from_env(),
-    )
+    # Initialize steps
+    parsing_steps: List[ParsingPipelineStep] = [
+        step_segmentation,
+        step_references_detection,
+    ]
+
+    # Initialize reference resolution steps
     try:
         session_context = initialize_legifrance_client(session_context)
+    except MissingSettingsError:
+        _LOGGER.info(
+            "Legifrance credentials not provided, skipping Legifrance references resolution"
+        )
     except ArretifyError as error:
         if error.code is ErrorCodes.law_data_api_error:
             _LOGGER.warning("failed to initialize Legifrance client")
-    session_context = initialize_eurlex_client(session_context)
+    else:
+        _LOGGER.info("Legifrance references resolution is active")
+        parsing_steps.append(step_legifrance_references_resolution)
+
+    try:
+        session_context = initialize_eurlex_client(session_context)
+    except MissingSettingsError:
+        _LOGGER.info("Eurlex credentials not provided, skipping Eurlex references resolution")
+    else:
+        _LOGGER.info("Eurlex references resolution is active")
+        parsing_steps.append(step_eurlex_references_resolution)
+
+    # Add consolidation step
+    parsing_steps.append(step_consolidation)
 
     # Do the parsing
     if input_path.is_dir():
         if not output_path.is_dir():
             _LOGGER.error(f"Expected output to be a directory, got {output_path}")
-        ocrized_files_walk = list(_walk_ocrized_files(input_path))
+
+        # Sort the files to ensure consistent order (useful for snapshot testing)
+        ocrized_files_walk = sorted(_walk_ocrized_files(input_path), key=lambda x: x[1].name)
         for i, (relative_root, ocrized_file_path) in enumerate(ocrized_files_walk):
             output_root = output_path / relative_root
             # Makes sure output dir exists
@@ -106,7 +108,15 @@ def main():
             html_file_path = output_root / f"{ocrized_file_path.stem}.html"
             _LOGGER.info(f"\n\n[{i + 1}/{len(ocrized_files_walk)}] parsing {ocrized_file_path} ...")
             try:
-                ocr_file_to_html_file(session_context, ocrized_file_path, html_file_path)
+                save_html_file(
+                    html_file_path,
+                    ocr_to_html(
+                        session_context,
+                        load_ocr_file(ocrized_file_path),
+                        arrete_template=DEFAULT_ARRETE_TEMPLATE,
+                        parsing_steps=parsing_steps,
+                    ),
+                )
             except Exception:
                 _LOGGER.error(
                     f"[{i + 1}/{len(ocrized_files_walk)}] FAILED : {ocrized_file_path} ..."
@@ -115,7 +125,15 @@ def main():
                 _LOGGER.error(f"Traceback:\n{error_traceback}")
 
     else:
-        ocr_file_to_html_file(session_context, input_path, output_path)
+        save_html_file(
+            output_path,
+            ocr_to_html(
+                session_context,
+                load_ocr_file(input_path),
+                arrete_template=DEFAULT_ARRETE_TEMPLATE,
+                parsing_steps=parsing_steps,
+            ),
+        )
 
 
 def _walk_ocrized_files(
@@ -164,4 +182,4 @@ def _initialize_root_logger(logger: logging.Logger, verbose: bool) -> None:
 
 
 if __name__ == "__main__":
-    main()
+    main(sys.argv[1:])
