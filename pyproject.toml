@@ -14,33 +14,33 @@ readme = "README.md"
 requires-python = ">=3.13"
 classifiers = []
 dependencies = [
-  "python-dotenv==1.0.*",
-  "requests==2.32.*",
-  "beautifulsoup4==4.12.*",
-  "Markdown==3.7.*",
-  "roman==5.0.*",
-  "pylatexenc==2.10.*",
-  "pydantic==2.11.*",
+  "python-dotenv~=1.0",
+  "requests~=2.32",
+  "beautifulsoup4~=4.13",
+  "Markdown~=3.7",
+  "roman~=5.0",
+  "pylatexenc~=2.10",
+  "pydantic~=2.11",
 
   # from _vendor.clients_api_droit
-  "requests==2.32.*",
-  "requests-cache==1.2.*",
-  "zeep==4.3.*",
-  "lxml==5.3.*",
+  "requests~=2.32",
+  "requests-cache~=1.2",
+  "zeep~=4.3",
+  "lxml~=5.3",
 ]
 
 [project.optional-dependencies]
 dev = [
-  "pytest==8.3.*",
-  "mypy==1.15.*",
-  "black==25.1.*",
-  "pre-commit==4.2.*",
-  "flake8==7.2.*",
-  "flake8-bugbear==24.12.*",
-  "autoflake==2.3.*",
-  "types-requests==2.32.*",
-  "types-beautifulsoup4==4.12.*",
-  "types-Markdown==3.7.*",
+  "pytest~=8.3",
+  "mypy~=1.15",
+  "black~=25.1",
+  "pre-commit~=4.2",
+  "flake8~=7.2",
+  "flake8-bugbear~=24.12",
+  "autoflake~=2.3",
+  "types-requests~=2.32",
+  "types-beautifulsoup4~=4.12",
+  "types-Markdown~=3.7",
 ]
 
 [tool.mypy]

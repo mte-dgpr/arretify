@@ -1,1 +1,1 @@
-from .__step__ import step_references_resolution
+from .__step__ import step_eurlex_references_resolution, step_legifrance_references_resolution

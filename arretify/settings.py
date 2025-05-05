@@ -1,12 +1,25 @@
 import pathlib
-from typing import Optional, Any, Literal
+import os
+from typing import Optional, Any, Literal, Dict, TypeVar, Type
 from pathlib import Path
 from tempfile import mkdtemp
 import logging
 
 from pydantic import Field, BaseModel
 
+
+SettingsType = TypeVar("SettingsType", bound="Settings")
+
+
 _LOGGER = logging.getLogger(__name__)
+_SETTINGS_ENV_MAP = {
+    "tmp_dir": "TMP_DIR",
+    "env": "ENV",
+    "legifrance_client_id": "LEGIFRANCE_CLIENT_ID",
+    "legifrance_client_secret": "LEGIFRANCE_CLIENT_SECRET",
+    "eurlex_web_service_username": "EURLEX_WEB_SERVICE_USERNAME",
+    "eurlex_web_service_password": "EURLEX_WEB_SERVICE_PASSWORD",
+}
 
 
 APP_ROOT = pathlib.Path(__file__).resolve().parent.parent
@@ -27,6 +40,22 @@ class Settings(BaseModel):
     legifrance_client_secret: Optional[str] = Field(default=None)
     eurlex_web_service_username: Optional[str] = Field(default=None)
     eurlex_web_service_password: Optional[str] = Field(default=None)
+
+    @classmethod
+    def from_env(cls: Type[SettingsType], env_map: Dict[str, str] | None = None) -> SettingsType:
+        """
+        Load settings from environment variables.
+        """
+        if env_map is None:
+            env_map = _SETTINGS_ENV_MAP
+
+        # Remove keys with None values, so pydantic will use field defaults
+        clean_values = {
+            field: os.getenv(env_var)
+            for field, env_var in env_map.items()
+            if os.getenv(env_var) is not None
+        }
+        return cls(**clean_values)
 
     def model_post_init(self, _: Any) -> None:
         # Pretty print the current settings

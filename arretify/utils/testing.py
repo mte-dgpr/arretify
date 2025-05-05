@@ -4,7 +4,7 @@ from typing import Callable, List, Iterable, TypeVar
 from bs4 import Tag, BeautifulSoup, PageElement, NavigableString
 
 from arretify.settings import Settings
-from arretify.types import PageElementOrString, ParsingContext, SessionContext
+from arretify.types import PageElementOrString, ParsingContext
 from arretify.utils.html import replace_children
 
 
@@ -85,14 +85,6 @@ def make_testing_function_for_children_list(
         return _normalize_element_list(elements)
 
     return _testing_function
-
-
-def create_session_context() -> SessionContext:
-    return SessionContext(
-        settings=create_settings(),
-        legifrance_client=None,
-        eurlex_client=None,
-    )
 
 
 def create_parsing_context(

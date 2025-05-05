@@ -1,5 +1,5 @@
 import re
-from typing import List, Union, Tuple, Optional
+from typing import List, Union, Tuple, Optional, Type, TypeVar
 from enum import Enum
 from dataclasses import dataclass, fields
 
@@ -11,7 +11,7 @@ from arretify.settings import Settings
 
 
 ELEMENT_NAME_PATTERN = re.compile(r"^[a-z0-9_]+$")
-
+ParsingContextType = TypeVar("ParsingContextType", bound="ParsingContext")
 
 LineColumn = Tuple[int, int]
 """Tuple line and column number. Line and column numbers are 0-indexed."""
@@ -67,11 +67,11 @@ class ParsingContext(SessionContext):
 
     @classmethod
     def from_session_context(
-        cls,
+        cls: Type[ParsingContextType],
         session_context: SessionContext,
         lines: TextSegments,
         soup: BeautifulSoup,
-    ) -> "ParsingContext":
+    ) -> ParsingContextType:
         return cls(
             **{
                 field.name: getattr(session_context, field.name) for field in fields(SessionContext)
