@@ -41,6 +41,23 @@ class DataElementSchema:
             raise ValueError("element_id is a reserved key")
 
 
+class SectionType(Enum):
+    """
+    Order in the enum is important. The order is used to determine the hierarchy of the sections.
+    """
+
+    ANNEXE = "annexe"
+    TITRE = "titre"
+    CHAPITRE = "chapitre"
+    ARTICLE = "article"
+    UNKNOWN = "unknown"
+    ALINEA = "alinea"
+
+    @classmethod
+    def from_string(cls, section_name):
+        return cls(section_name.lower())
+
+
 class OperationType(Enum):
     ADD = "add"
     DELETE = "delete"

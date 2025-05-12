@@ -2,19 +2,11 @@ from typing import Union, Optional
 from dataclasses import dataclass
 from enum import Enum
 
+from arretify.types import SectionType
 from arretify.parsing_utils.dates import (
     parse_date_str,
     parse_year_str,
 )
-
-
-class SectionType(Enum):
-    """
-    Order in the enum is important. The order is used to determine the hierarchy of the sections.
-    """
-
-    article = "article"
-    alinea = "alinea"
 
 
 class DocumentType(Enum):
@@ -105,7 +97,7 @@ class Section:
 
     @property
     def is_resolvable(self) -> bool:
-        if self.type == SectionType.article:
+        if self.type == SectionType.ARTICLE:
             if self.start_id is None:
                 return False
             if self.end_num:

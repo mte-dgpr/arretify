@@ -13,7 +13,7 @@ from .header_elements import (
     parse_supplementary_motif_info_element,
     parse_table_of_contents,
 )
-from .sections_detection import is_body_section
+from .titles_detection import is_title
 
 
 def parse_header(
@@ -24,7 +24,7 @@ def parse_header(
     # Add lines until we find first meaningful line
     lines = parse_header_beginning(soup, header, lines)
 
-    while lines and not is_body_section(lines[0].contents):
+    while lines and not is_title(lines[0].contents):
 
         # Emblem
         lines = parse_emblem_element(soup, header, lines)

@@ -17,7 +17,7 @@ class MissingSettingsError(ValueError):
 class ErrorCodes(Enum):
     markdown_parsing = "markdown_parsing"
     unbalanced_quote = "unbalanced_quote"
-    non_contiguous_sections = "non_contiguous_sections"
+    non_contiguous_titles = "non_contiguous_titles"
     law_data_api_error = "law_data_api_error"
 
 

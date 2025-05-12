@@ -29,7 +29,8 @@ from .basic_elements import (
     parse_list,
     list_indentation,
 )
-from .sections_detection import is_body_section
+from .titles_detection import is_title
+
 
 EMBLEMS_LIST = [
     r"liberte",
@@ -155,7 +156,7 @@ HEADER_ELEMENTS_PROBES: Dict[str, Callable] = {
         SUPPLEMENTARY_MOTIF_INFORMATION_PATTERN.match(line)
     ),
     "table_of_contents": lambda line: bool(TABLE_OF_CONTENTS_PATTERN.match(line)),
-    "body_section": is_body_section,
+    "title": is_title,
 }
 """Header elements probes."""
 
