@@ -4,7 +4,7 @@ from arretify.utils.html import make_data_tag
 from arretify.html_schemas import ALINEA_SCHEMA, SECTION_SCHEMA, SECTION_TITLE_SCHEMAS
 from arretify.parsing_utils.source_mapping import TextSegments
 from arretify.regex_utils import PatternProxy
-from .types import GroupParsingContext, BodySection
+from .types import GroupParsingContext, SectionType
 from .basic_elements import parse_basic_elements
 
 
@@ -29,7 +29,7 @@ def parse_appendix(soup: BeautifulSoup, appendix: Tag, lines: TextSegments) -> T
             soup,
             SECTION_SCHEMA,
             data=dict(
-                type=BodySection.APPENDIX.value,
+                type=SectionType.APPENDIX.value,
                 number=str(appendix_count),
                 title=title_contents,
             ),

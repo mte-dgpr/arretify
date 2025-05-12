@@ -1,4 +1,4 @@
-from typing import List, Optional, Dict
+from typing import List, Dict
 import logging
 
 from bs4 import BeautifulSoup, Tag
@@ -9,16 +9,17 @@ from arretify.html_schemas import (
     SECTION_TITLE_SCHEMAS,
     ALINEA_SCHEMA,
 )
+from arretify.parsing_utils.source_mapping import TextSegments
 from arretify.errors import ErrorCodes
-from arretify.parsing_utils.source_mapping import (
-    TextSegments,
+from .types import (
+    GroupParsingContext,
+    SectionsParsingContext,
 )
-from .types import GroupParsingContext
 from .basic_elements import parse_basic_elements
-from .section_titles import (
+from .sections_detection import (
     is_body_section,
     parse_section_info,
-    are_sections_contiguous,
+    is_next_section,
 )
 from .appendix import is_appendix_title
 
@@ -31,7 +32,7 @@ def parse_main_content(soup: BeautifulSoup, main_content: Tag, lines: TextSegmen
     body_sections: List[Tag] = [main_content]
 
     # Parse one section at a time
-    current_levels: Optional[List[int]] = None
+    sections_parsing_context = SectionsParsingContext()
     current_level = len(body_sections) - 2
 
     while lines and not is_appendix_title(lines[0].contents):
@@ -47,6 +48,7 @@ def parse_main_content(soup: BeautifulSoup, main_content: Tag, lines: TextSegmen
                 title=section_info.text,
             ),
         )
+        new_section_type = section_info.type
         new_levels = section_info.levels
 
         # Process ancestry for new section
@@ -72,9 +74,9 @@ def parse_main_content(soup: BeautifulSoup, main_content: Tag, lines: TextSegmen
 
         # Add a tag if the sections are not contiguous
         title_contents = lines.pop(0).contents
-
         title_element_data: Dict[str, str | None] = dict()
-        if not are_sections_contiguous(current_levels, new_levels):
+        if not is_next_section(sections_parsing_context, new_section_type, new_levels):
+            current_levels = sections_parsing_context.last_section_levels
             _LOGGER.warning(
                 f"Detected title of levels {new_levels} after title of levels {current_levels}"
             )
@@ -89,7 +91,7 @@ def parse_main_content(soup: BeautifulSoup, main_content: Tag, lines: TextSegmen
         )
         section_element.append(title_element)
 
-        current_levels = new_levels
+        sections_parsing_context.update_section_levels(section_info.type, section_info.levels)
 
         # Parse alineas until a new section is detected.
         # ALINEA : "Constitue un alinéa toute phrase, tout mot, tout ensemble de phrases

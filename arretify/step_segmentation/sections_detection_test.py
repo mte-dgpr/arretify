@@ -4,12 +4,15 @@ import unittest
 
 from bs4 import BeautifulSoup
 
-from arretify.parsing_utils.source_mapping import (
-    initialize_lines,
+from arretify.parsing_utils.source_mapping import initialize_lines
+from .types import (
+    SectionType,
+    SectionInfo,
+    SectionsParsingContext,
 )
-from .types import BodySection, SectionInfo
-from .section_titles import (
-    are_sections_contiguous,
+from .sections_detection import (
+    is_next_section,
+    is_body_section,
     parse_section_info,
     _number_to_levels,
 )
@@ -92,72 +95,178 @@ class TestCompareLevelList(unittest.TestCase):
 
     def test_hierarchical_title_chapter(self):
         # Arrange
-        current_levels = [1]
+        sections_parsing_context = SectionsParsingContext()
+        sections_parsing_context.update_section_levels(SectionType.TITRE, [1])
+        new_section_type = SectionType.CHAPITRE
         new_levels = [1, 1]
 
         # Act
-        result = are_sections_contiguous(current_levels, new_levels)
+        result = is_next_section(sections_parsing_context, new_section_type, new_levels)
 
         # Assert
         assert result is True
 
     def test_hierarchical_chapter_article(self):
         # Arrange
-        current_levels = [1, 1]
+        sections_parsing_context = SectionsParsingContext()
+        sections_parsing_context.update_section_levels(SectionType.CHAPITRE, [1, 1])
+        new_section_type = SectionType.ARTICLE
         new_levels = [1, 1, 1]
 
         # Act
-        result = are_sections_contiguous(current_levels, new_levels)
+        result = is_next_section(sections_parsing_context, new_section_type, new_levels)
 
         # Assert
         assert result is True
 
     def test_new_article(self):
         # Arrange
-        current_levels = [1, 1, 1]
+        sections_parsing_context = SectionsParsingContext()
+        sections_parsing_context.update_section_levels(SectionType.ARTICLE, [1, 1, 1])
+        new_section_type = SectionType.ARTICLE
         new_levels = [1, 1, 2]
 
         # Act
-        result = are_sections_contiguous(current_levels, new_levels)
+        result = is_next_section(sections_parsing_context, new_section_type, new_levels)
 
         # Assert
         assert result is True
 
     def test_new_title_from_article(self):
         # Arrange
-        current_levels = [1, 8, 1]
+        sections_parsing_context = SectionsParsingContext()
+        sections_parsing_context.update_section_levels(SectionType.ARTICLE, [1, 8, 1])
+        new_section_type = SectionType.CHAPITRE
         new_levels = [2]
 
         # Act
-        result = are_sections_contiguous(current_levels, new_levels)
+        result = is_next_section(sections_parsing_context, new_section_type, new_levels)
 
         # Assert
         assert result is True
 
     def test_quoted_article(self):
         # Arrange
-        current_levels = [6]
+        sections_parsing_context = SectionsParsingContext()
+        sections_parsing_context.update_section_levels(SectionType.ARTICLE, [6])
+        new_section_type = SectionType.ARTICLE
         new_levels = [4, 3, 14]
 
         # Act
-        result = are_sections_contiguous(current_levels, new_levels)
+        result = is_next_section(sections_parsing_context, new_section_type, new_levels)
 
         # Assert
         assert result is False
 
     def test_ocr_dot_not_detected(self):
         # Arrange
-        current_levels = [3, 1, 1]
+        sections_parsing_context = SectionsParsingContext()
+        sections_parsing_context.update_section_levels(SectionType.CHAPITRE, [3, 1])
+        sections_parsing_context.update_section_levels(SectionType.ARTICLE, [3, 1, 1])
+        new_section_type = SectionType.ARTICLE
         new_levels = [31, 2]
 
         # Act
-        result = are_sections_contiguous(current_levels, new_levels)
+        result = is_next_section(sections_parsing_context, new_section_type, new_levels)
+
+        # Assert
+        assert result is False
+
+    def test_only_one_numbering_article(self):
+        # Arrange
+        sections_parsing_context = SectionsParsingContext()
+        sections_parsing_context.update_section_levels(SectionType.TITRE, [2])
+        sections_parsing_context.update_section_levels(SectionType.CHAPITRE, [1])
+        sections_parsing_context.update_section_levels(SectionType.ARTICLE, [12])
+        new_section_type = SectionType.ARTICLE
+        new_levels = [13]
+
+        # Act
+        result = is_next_section(sections_parsing_context, new_section_type, new_levels)
+
+        # Assert
+        assert result is True
+
+    def test_only_one_numbering_chapitre(self):
+        # Arrange
+        sections_parsing_context = SectionsParsingContext()
+        sections_parsing_context.update_section_levels(SectionType.TITRE, [2])
+        sections_parsing_context.update_section_levels(SectionType.CHAPITRE, [1])
+        sections_parsing_context.update_section_levels(SectionType.ARTICLE, [12])
+        new_section_type = SectionType.CHAPITRE
+        new_levels = [2]
+
+        # Act
+        result = is_next_section(sections_parsing_context, new_section_type, new_levels)
+
+        # Assert
+        assert result is True
+
+    def test_only_one_numbering_unknown_1(self):
+        # Arrange
+        sections_parsing_context = SectionsParsingContext()
+        sections_parsing_context.update_section_levels(SectionType.TITRE, [1])
+        sections_parsing_context.update_section_levels(SectionType.ARTICLE, [1])
+        sections_parsing_context.update_section_levels(SectionType.UNKNOWN, [1, 1])
+        new_section_type = SectionType.UNKNOWN
+        new_levels = [1, 2]
+
+        # Act
+        result = is_next_section(sections_parsing_context, new_section_type, new_levels)
+
+        # Assert
+        assert result is True
+
+    def test_only_one_numbering_unknown_2(self):
+        # Arrange
+        sections_parsing_context = SectionsParsingContext()
+        sections_parsing_context.update_section_levels(SectionType.TITRE, [1])
+        sections_parsing_context.update_section_levels(SectionType.ARTICLE, [1])
+        sections_parsing_context.update_section_levels(SectionType.UNKNOWN, [1, 1])
+        sections_parsing_context.update_section_levels(SectionType.UNKNOWN, [1, 2])
+        new_section_type = SectionType.UNKNOWN
+        new_levels = [1, 2, 1]
+
+        # Act
+        result = is_next_section(sections_parsing_context, new_section_type, new_levels)
+
+        # Assert
+        assert result is True
+
+    def test_title_after_article(self):
+        # Arrange
+        sections_parsing_context = SectionsParsingContext()
+        sections_parsing_context.update_section_levels(SectionType.ARTICLE, [1])
+        new_section_type = SectionType.TITRE
+        new_levels = [1]
+
+        # Act
+        result = is_next_section(sections_parsing_context, new_section_type, new_levels)
 
         # Assert
         assert result is False
 
 
-class TestSectionValidCases(unittest.TestCase):
+class TestSectionPattern(unittest.TestCase):
+
+    def test_table_description(self):
+        text = "(1) à l'exception du monoxyde de carbone."
+        assert not is_body_section(text)
+
+    def test_list_with_colon(self):
+        text = "3. Liste ;"
+        assert not is_body_section(text)
+
+    def test_sentence_start_point(self):
+        text = ". Ni 5,0 mg / 1"
+        assert not is_body_section(text)
+
+    def test_mister(self):
+        text = "M. le Maire de"
+        assert not is_body_section(text)
+
+
+class TestParseSectionInfo(unittest.TestCase):
 
     def setUp(self):
         self.soup = BeautifulSoup("", "html.parser")
@@ -171,7 +280,7 @@ class TestSectionValidCases(unittest.TestCase):
 
         # Assert
         assert section_info == SectionInfo(
-            type=BodySection.TITRE,
+            type=SectionType.TITRE,
             number="I",
             levels=[1],
             text="Premier titre",
@@ -186,7 +295,7 @@ class TestSectionValidCases(unittest.TestCase):
 
         # Assert
         assert section_info == SectionInfo(
-            type=BodySection.TITRE,
+            type=SectionType.TITRE,
             number="1",
             levels=[1],
             text="Autre titre",
@@ -201,7 +310,7 @@ class TestSectionValidCases(unittest.TestCase):
 
         # Assert
         assert section_info == SectionInfo(
-            type=BodySection.CHAPITRE,
+            type=SectionType.CHAPITRE,
             number="A",
             levels=[1],
             text="Premier chapitre",
@@ -216,7 +325,7 @@ class TestSectionValidCases(unittest.TestCase):
 
         # Assert
         assert section_info == SectionInfo(
-            type=BodySection.CHAPITRE,
+            type=SectionType.CHAPITRE,
             number="A",
             levels=[1],
             text="Premier chapitre",
@@ -231,7 +340,7 @@ class TestSectionValidCases(unittest.TestCase):
 
         # Assert
         assert section_info == SectionInfo(
-            type=BodySection.ARTICLE,
+            type=SectionType.ARTICLE,
             number="1",
             levels=[1],
         )
@@ -245,7 +354,7 @@ class TestSectionValidCases(unittest.TestCase):
 
         # Assert
         assert section_info == SectionInfo(
-            type=BodySection.ARTICLE,
+            type=SectionType.ARTICLE,
             number="1",
             levels=[1],
         )
@@ -259,7 +368,7 @@ class TestSectionValidCases(unittest.TestCase):
 
         # Assert
         assert section_info == SectionInfo(
-            type=BodySection.ARTICLE,
+            type=SectionType.ARTICLE,
             number="1",
             levels=[1],
         )
@@ -273,7 +382,7 @@ class TestSectionValidCases(unittest.TestCase):
 
         # Assert
         assert section_info == SectionInfo(
-            type=BodySection.CHAPITRE,
+            type=SectionType.CHAPITRE,
             number="I.A",
             levels=[1, 1],
             text="Premier chapitre",
@@ -288,7 +397,7 @@ class TestSectionValidCases(unittest.TestCase):
 
         # Assert
         assert section_info == SectionInfo(
-            type=BodySection.CHAPITRE,
+            type=SectionType.CHAPITRE,
             number="I.A",
             levels=[1, 1],
             text="Premier chapitre",
@@ -305,7 +414,7 @@ class TestSectionValidCases(unittest.TestCase):
 
         # Assert
         assert section_info == SectionInfo(
-            type=BodySection.CHAPITRE,
+            type=SectionType.CHAPITRE,
             number="1.1",
             levels=[1, 1],
             text="Premier chapitre",
@@ -322,7 +431,7 @@ class TestSectionValidCases(unittest.TestCase):
 
         # Assert
         assert section_info == SectionInfo(
-            type=BodySection.ARTICLE,
+            type=SectionType.ARTICLE,
             number="1.1.1",
             levels=[1, 1, 1],
             text="Premier article",
@@ -339,7 +448,7 @@ class TestSectionValidCases(unittest.TestCase):
 
         # Assert
         assert section_info == SectionInfo(
-            type=BodySection.ARTICLE,
+            type=SectionType.ARTICLE,
             number="1.1.1.1",
             levels=[1, 1, 1, 1],
             text="Premier sous article",
@@ -356,7 +465,7 @@ class TestSectionValidCases(unittest.TestCase):
 
         # Assert
         assert section_info == SectionInfo(
-            type=BodySection.ARTICLE,
+            type=SectionType.ARTICLE,
             number="1.A.3",
             levels=[1, 1, 3],
             text="Premier article",
@@ -373,7 +482,7 @@ class TestSectionValidCases(unittest.TestCase):
 
         # Assert
         assert section_info == SectionInfo(
-            type=BodySection.ARTICLE,
+            type=SectionType.ARTICLE,
             number="1.A.3",
             levels=[1, 1, 3],
             text="Premier article",
@@ -388,7 +497,7 @@ class TestSectionValidCases(unittest.TestCase):
 
         # Assert
         assert section_info == SectionInfo(
-            type=BodySection.UNKNOWN,
+            type=SectionType.UNKNOWN,
             number="1",
             levels=[1],
             text="TITRE",
@@ -403,25 +512,10 @@ class TestSectionValidCases(unittest.TestCase):
 
         # Assert
         assert section_info == SectionInfo(
-            type=BodySection.UNKNOWN,
+            type=SectionType.UNKNOWN,
             number="1.1.1",
             levels=[1, 1, 1],
             text="Article",
-        )
-
-    def test_table_description(self):
-        # Arrange
-        lines = initialize_lines(["(1) à l'exception du monoxyde de carbone."])
-
-        # Act
-        section_info = parse_section_info(lines[0].contents)
-
-        # Assert
-        assert section_info == SectionInfo(
-            type=BodySection.NONE,
-            number=None,
-            levels=None,
-            text=None,
         )
 
     def test_sub_article_no_name(self):
@@ -433,25 +527,10 @@ class TestSectionValidCases(unittest.TestCase):
 
         # Assert
         assert section_info == SectionInfo(
-            type=BodySection.UNKNOWN,
+            type=SectionType.UNKNOWN,
             number="3.1",
             levels=[3, 1],
             text="Sous-article",
-        )
-
-    def test_list_with_point(self):
-        # Arrange
-        lines = initialize_lines(["3. Liste ;"])
-
-        # Act
-        section_info = parse_section_info(lines[0].contents)
-
-        # Assert
-        assert section_info == SectionInfo(
-            type=BodySection.NONE,
-            number=None,
-            levels=None,
-            text=None,
         )
 
     def test_one_line_list_with_colon(self):
@@ -463,7 +542,7 @@ class TestSectionValidCases(unittest.TestCase):
 
         # Assert
         assert section_info == SectionInfo(
-            type=BodySection.UNKNOWN,
+            type=SectionType.UNKNOWN,
             number="1",
             levels=[1],
             text="Liste : a. Point b. Point",
@@ -478,7 +557,7 @@ class TestSectionValidCases(unittest.TestCase):
 
         # Assert
         assert section_info == SectionInfo(
-            type=BodySection.ARTICLE,
+            type=SectionType.ARTICLE,
             number="6",
             levels=[6],
             text="ARTICLE",
@@ -493,7 +572,7 @@ class TestSectionValidCases(unittest.TestCase):
 
         # Assert
         assert section_info == SectionInfo(
-            type=BodySection.ARTICLE,
+            type=SectionType.ARTICLE,
             number="1",
             levels=[1],
             text="Ceci est un titre",
@@ -508,7 +587,7 @@ class TestSectionValidCases(unittest.TestCase):
 
         # Assert
         assert section_info == SectionInfo(
-            type=BodySection.CHAPITRE,
+            type=SectionType.CHAPITRE,
             number="5.1",
             levels=[5, 1],
             text="CECI EST UN CHAPITRE",
@@ -523,7 +602,7 @@ class TestSectionValidCases(unittest.TestCase):
 
         # Assert
         assert section_info == SectionInfo(
-            type=BodySection.ARTICLE,
+            type=SectionType.ARTICLE,
             number="1",
             levels=[1],
             text=None,
@@ -538,98 +617,8 @@ class TestSectionValidCases(unittest.TestCase):
 
         # Assert
         assert section_info == SectionInfo(
-            type=BodySection.ARTICLE,
+            type=SectionType.ARTICLE,
             number="I",
             levels=[1],
-            text=None,
-        )
-
-    def test_sentence_start_point(self):
-        # Arrange
-        lines = initialize_lines([". Ni 5,0 mg / 1"])
-
-        # Act
-        section_info = parse_section_info(lines[0].contents)
-
-        # Assert
-        assert section_info == SectionInfo(
-            type=BodySection.NONE,
-            number=None,
-            levels=None,
-            text=None,
-        )
-
-    def test_mister_madam(self):
-        # Arrange
-        lines = initialize_lines(["M. le Maire de"])
-
-        # Act
-        section_info = parse_section_info(lines[0].contents)
-
-        # Assert
-        assert section_info == SectionInfo(
-            type=BodySection.NONE,
-            number=None,
-            levels=None,
-            text=None,
-        )
-
-    def test_no_point(self):
-        # Arrange
-        lines = initialize_lines(["1 Titre"])
-
-        # Act
-        section_info = parse_section_info(lines[0].contents)
-
-        # Assert
-        assert section_info == SectionInfo(
-            type=BodySection.UNKNOWN,
-            number="1",
-            levels=[1],
-            text="Titre",
-        )
-
-    def test_joined_text(self):
-        # Arrange
-        lines = initialize_lines(["5.1CECI EST UN CHAPITRE"])
-
-        # Act
-        section_info = parse_section_info(lines[0].contents)
-
-        # Assert
-        assert section_info == SectionInfo(
-            type=BodySection.UNKNOWN,
-            number="5.1",
-            levels=[5, 1],
-            text="CECI EST UN CHAPITRE",
-        )
-
-    def test_toc_no_name(self):
-        # Arrange
-        lines = initialize_lines(["1. Titre ..... 5"])
-
-        # Act
-        section_info = parse_section_info(lines[0].contents)
-
-        # Assert
-        assert section_info == SectionInfo(
-            type=BodySection.NONE,
-            number=None,
-            levels=None,
-            text=None,
-        )
-
-    def test_toc(self):
-        # Arrange
-        lines = initialize_lines(["Titre 1 - Titre ..... 5"])
-
-        # Act
-        section_info = parse_section_info(lines[0].contents)
-
-        # Assert
-        assert section_info == SectionInfo(
-            type=BodySection.NONE,
-            number=None,
-            levels=None,
             text=None,
         )

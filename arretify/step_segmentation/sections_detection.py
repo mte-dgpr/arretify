@@ -1,5 +1,5 @@
 import logging
-from typing import List, Optional, Union
+from typing import List, Optional
 
 import roman
 
@@ -18,7 +18,11 @@ from arretify.regex_utils import (
 from arretify.regex_utils.regex_tree.execute import (
     match,
 )
-from .types import BodySection, SectionInfo
+from .types import (
+    SectionType,
+    SectionInfo,
+    SectionsParsingContext,
+)
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -131,9 +135,9 @@ def _number_to_levels(number: str) -> Optional[List[int]]:
     return section_levels
 
 
-def are_sections_contiguous(
-    cur_section_levels: Union[None, List[int]],
-    new_section_levels: Union[None, List[int]],
+def _are_sections_contiguous(
+    cur_section_levels: Optional[List[int]],
+    new_section_levels: Optional[List[int]],
 ) -> bool:
 
     if not new_section_levels:
@@ -177,40 +181,45 @@ def are_sections_contiguous(
     return is_continuing_section
 
 
-def _clean_numbering_match(numbering: str) -> str:
-    # Remove leading and trailing points or whitespaces
-    numbering = LEADING_TRAILING_PUNCTUATION_PATTERN.sub("", numbering)
+def is_next_section(
+    sections_parsing_context: SectionsParsingContext,
+    new_section_type: SectionType,
+    new_section_levels: Optional[List[int]],
+) -> bool:
 
-    # Consider empty numbering to be set at 0
-    if len(numbering) <= 0:
-        numbering = "0"
+    # Test for last section level across context
+    last_section_levels = sections_parsing_context.last_section_levels
+    is_continuing_section = _are_sections_contiguous(last_section_levels, new_section_levels)
 
-    return numbering
+    if is_continuing_section:
+        return is_continuing_section
+
+    # Test for last section level across section type
+    section_levels = sections_parsing_context.get_section_levels(new_section_type)
+    is_continuing_section = _are_sections_contiguous(section_levels, new_section_levels)
+
+    return is_continuing_section
 
 
 def parse_section_info(line: str) -> SectionInfo:
 
     # Detect pattern
     match_pattern = match(SECTION_TITLE_NODE, line)
-    if not match_pattern:
-        return SectionInfo(type=BodySection.NONE)
+    assert match_pattern, "Only use parse function when match pattern exists!"
 
     # Extract dict
     match_dict = match_pattern.match_dict
 
-    section_type = BodySection.from_string(match_dict.get("section_name", "unknown"))
+    section_type = SectionType.from_string(match_dict.get("section_name", "unknown"))
     section_number = match_dict.get("number", "")
     section_text = match_dict.get("text")
 
-    # Adjust number
-    section_number = _clean_numbering_match(section_number)
+    # Compute levels
+    section_number = LEADING_TRAILING_PUNCTUATION_PATTERN.sub("", section_number)
+    if len(section_number) <= 0:
+        _LOGGER.warning(f"Numbering parsing output none for section title: {line}")
     if ORDINAL_PATTERN.match(section_number):
         section_number = str(ordinal_str_to_int(section_number))
-    if section_number == "0":
-        _LOGGER.warning(f"Numbering parsing output none for section title: {line}")
-        return SectionInfo(type=BodySection.NONE)
-
-    # Compute section levels
     section_levels = _number_to_levels(section_number)
 
     section_info = SectionInfo(
@@ -223,10 +232,9 @@ def parse_section_info(line: str) -> SectionInfo:
     return section_info
 
 
+# TODO : change to bool?
 def is_body_section(line: str) -> bool:
-    section_info = parse_section_info(line)
-
-    if section_info.type == BodySection.NONE:
+    match_pattern = match(SECTION_TITLE_NODE, line)
+    if not match_pattern:
         return False
-
     return True

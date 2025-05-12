@@ -29,7 +29,7 @@ from .basic_elements import (
     parse_list,
     list_indentation,
 )
-from .section_titles import is_body_section
+from .sections_detection import is_body_section
 
 EMBLEMS_LIST = [
     r"liberte",

@@ -13,7 +13,7 @@ from .header_elements import (
     parse_supplementary_motif_info_element,
     parse_table_of_contents,
 )
-from .section_titles import is_body_section
+from .sections_detection import is_body_section
 
 
 def parse_header(
