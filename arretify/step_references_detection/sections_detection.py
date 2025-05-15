@@ -171,6 +171,15 @@ ARTICLE_RANGE_NODE = regex_tree.Sequence(
         ARTICLE_NUMBER_NODE,
     ]
 )
+PARAGRAPH_REFERENCE_NODE = regex_tree.Group(
+    regex_tree.Sequence(
+        [
+            r"(paragraphe|alinéa) ",
+            r"(?P<paragraph_num>\d+(\.\d+)*)",
+        ]
+    ),
+    group_name="__section_reference_paragraph_only",
+)
 
 
 def _extract_section_number(match: regex_tree.Match) -> SectionNumber:
@@ -457,5 +466,19 @@ def _parse_section_reference_multiple(
                 section_reference_multiple_match,
             ),
             allowed_group_names=["__section_reference_multiple"],
+        ),
+    )
+
+
+def parse_section_reference_paragraph_only(
+    soup: BeautifulSoup,
+    children: Iterable[PageElementOrString],
+) -> Iterable[PageElementOrString]:
+    return flat_map_string(
+        children,
+        lambda string: map_regex_tree_match(
+            split_string_with_regex_tree(PARAGRAPH_REFERENCE_NODE, string),
+            lambda match: _render_paragraph_reference(soup, match, match),
+            allowed_group_names=["__section_reference_paragraph_only"],
         ),
     )
