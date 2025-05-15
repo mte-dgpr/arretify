@@ -419,3 +419,63 @@ class TestParseOperations(unittest.TestCase):
                 """
             )
         ]
+
+    # Détection " Sont insérés après le"
+    def test_insert_operation(self):
+        assert process_operations("Sont insérés après le") == [
+            normalized_html_str(
+                """
+                <span
+                    class="dsr-operation"
+                    data-direction="rtl"
+                    data-has_operand="true"
+                    data-keyword="insérés"
+                    data-operand=""
+                    data-operation_type="add"
+                    data-references=""
+                >
+                    Sont <b>insérés</b> après le
+                </span>
+                """
+            ),
+        ]
+
+    # Détection "complété comme suit :"
+    def test_add_completed_as_follows(self):
+        assert process_operations("est complété comme suit :") == [
+            normalized_html_str(
+                """
+                <span
+                    class="dsr-operation"
+                    data-direction="rtl"
+                    data-has_operand="true"
+                    data-keyword="complété comme suit "
+                    data-operand=""
+                    data-operation_type="add"
+                    data-references=""
+                >
+                    est <b>complété comme suit</b> :
+                </span>
+                """
+            ),
+        ]
+
+    # Détection de l'opération malgré la présence du point
+    def test_replace_operation(self):
+        assert process_operations("Il est remplacé par :") == [
+            normalized_html_str(
+                """
+                <span
+                    class="dsr-operation"
+                    data-direction="rtl"
+                    data-has_operand="true"
+                    data-keyword="remplacé"
+                    data-operand=""
+                    data-operation_type="replace"
+                    data-references=""
+                >
+                    Il est <b>remplacé</b> par :
+                </span>
+                """
+            ),
+        ]
