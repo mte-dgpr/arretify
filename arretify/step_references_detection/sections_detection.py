@@ -60,8 +60,6 @@ def parse_section_references(
     new_children = list(
         _parse_section_reference_multiple_articles(parsing_context.soup, new_children)
     )
-    new_children = list(parse_section_reference_paragraph_only(parsing_context.soup, new_children))
-
     return list(_parse_section_references(parsing_context.soup, new_children))
 
 
@@ -99,15 +97,6 @@ ARTICLE_RANGE_NODE = regex_tree.Sequence(
         r" à (l\'article )?",
         ARTICLE_ID_NODE,
     ]
-)
-PARAGRAPH_REFERENCE_NODE = regex_tree.Group(
-    regex_tree.Sequence(
-        [
-            r"(paragraphe|alinéa) ",
-            r"(?P<paragraph_num>\d+(\.\d+)*)",
-        ]
-    ),
-    group_name="__section_reference_paragraph_only",
 )
 
 
@@ -151,13 +140,6 @@ def _extract_alinea(match: regex_tree.Match) -> Alinea:
         raise RuntimeError("No alinea found")
 
     return alinea
-
-
-def _extract_paragraph_section(match: regex_tree.Match) -> Section:
-    paragraph_id = match.match_dict.get("paragraph_num")
-    if not paragraph_id:
-        raise RuntimeError("No paragraph number found")
-    return Section(type=SectionType.alinea, start_num=paragraph_id, end_num=None)
 
 
 def _extract_sections(
@@ -229,28 +211,6 @@ def _render_section_reference(
             document_reference=None,
         ),
         contents=iter_regex_tree_match_strings(contents_tree_match),
-    )
-
-
-# -------------------- Paragraph reference -------------------- #
-
-
-def _render_paragraph_reference(
-    soup: BeautifulSoup,
-    contents_match: regex_tree.Match,
-    paragraph_match: regex_tree.Match,
-) -> Tag:
-    section = _extract_paragraph_section(paragraph_match)
-    document = Document(type=DocumentType.unknown)
-    return make_data_tag(
-        soup,
-        SECTION_REFERENCE_SCHEMA,
-        data=dict(
-            uri=render_uri(document, section),
-            is_resolvable=render_bool_attribute(is_resolvable(document, section)),
-            document_reference=None,  # TODO : add document reference
-        ),
-        contents=["".join(str(child) for child in contents_match.children)],
     )
 
 
@@ -471,19 +431,5 @@ def _parse_section_reference_multiple_alineas(
                 ),
             ),
             allowed_group_names=["__section_reference_multiple"],
-        ),
-    )
-
-
-def parse_section_reference_paragraph_only(
-    soup: BeautifulSoup,
-    children: Iterable[PageElementOrString],
-) -> Iterable[PageElementOrString]:
-    return flat_map_string(
-        children,
-        lambda string: map_regex_tree_match(
-            split_string_with_regex_tree(PARAGRAPH_REFERENCE_NODE, string),
-            lambda match: _render_paragraph_reference(soup, match, match),
-            allowed_group_names=["__section_reference_paragraph_only"],
         ),
     )
