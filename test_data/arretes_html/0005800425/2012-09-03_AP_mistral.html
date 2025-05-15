@@ -2,17 +2,141 @@
 <html>
  <head>
   <meta charset="utf-8"/>
-  <link href="/dsfr/dsfr.main.css" rel="stylesheet"/>
-  <link href="/styles.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/@gouvfr/dsfr@1.13.0/dist/dsfr.css" rel="stylesheet"/>
+  <style>
+   :root {
+                --spacing-1: 1rem;
+                --spacing-0p5: 0.5rem;
+            }
+
+            header, main, .dsr-appendix {
+                max-width: 800px;
+                margin: auto;
+                padding: var(--spacing-1);
+            }
+
+            blockquote {
+                border-left: 1px solid var(--border-plain-grey);
+                padding-left: var(--spacing-1);
+            }
+
+            th {
+                text-align: left;
+            }
+
+            a.dsr-document_reference, a.dsr-section_reference {
+                color: var(--text-action-high-blue-france);
+            }
+
+            .dsr-error {
+                font-family: monospace;
+                background-color: #ffd0d0;
+            }
+
+            .dsr-error:before {
+                content: '❌';
+            }
+
+            .dsr-alinea::before, .dsr-visa::before, .dsr-motifs::before {
+                color: var(--text-disabled-grey);
+                position: absolute;
+                top: 0;
+                left: -1rem;
+            }
+
+            .dsr-debug_keyword {
+                color: var(--warning-425-625);
+            }
+
+            /**************** HEADER ****************/
+            header {
+                padding-bottom: var(--spacing-1);
+                margin-bottom: var(--spacing-1);
+            }
+
+            .dsr-emblem, .dsr-entity, .dsr-identification, .dsr-arrete_title, .dsr-honorary {
+                padding: var(--spacing-1);
+                background-color: var(--background-alt-grey);
+                text-align: center;
+            }
+
+            .dsr-arrete_title {
+                color: var(--text-title-grey);
+            }
+
+            .dsr-emblem, .dsr-entity, .dsr-identification, .dsr-honorary {
+                color: var(--text-title-blue-france);
+                font-size: 120%;
+            }
+
+            .dsr-visa, .dsr-motifs, .dsr-supplementary_motif_info {
+                position: relative;
+                margin-top: var(--spacing-1);
+                padding-bottom: 0;
+            }
+
+            .dsr-visa::before, .dsr-motifs::before {
+                content: '⮞';
+            }
+
+            header > *:last-child {
+                border-bottom: 1px solid var(--background-action-low-blue-france);
+                padding-bottom: var(--spacing-1);
+            }
+
+            /**************** MAIN CONTENT AND APPENDIX ****************/
+            .dsr-table {
+                font-family: monospace;
+            }
+
+            .dsr-section {
+                padding: var(--spacing-0p5) 0;
+            }
+
+            .dsr-alinea {
+                position: relative;
+                margin-top: var(--spacing-0p5);
+            }
+
+            .dsr-alinea::before {
+                content: '¶';
+            }
+
+            .dsr-alinea img {
+                max-width: 100%;
+            }
+
+            ul, ol { 
+                list-style: none;
+            }
+
+            .dsr-section_title {
+                background-color: var(--colors-title-bg);
+            }
+
+            .dsr-operation {
+                background-color: var(--background-action-low-blue-france);
+            }
+  </style>
  </head>
  <body>
   <header class="dsr-header">
-   <div class="dsr-entity">
-   </div>
-   <div class="dsr-identification">
+   <img alt="img-0.jpeg" src="data:image/jpeg;base64,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"/>
+   <div class="dsr-arrete_title">
     <h1>
      Arrêté n D1-B1-12- 467 réglementant les activités de la société  RECTICEL, sise à LOUVIERS, dans l'exploitation de son établissement de fabrication et de transformation de mousse polyuréthane
     </h1>
+   </div>
+   <div class="dsr-honorary">
+    <div>
+     Le préfet de l'Eure
+    </div>
+    <div>
+     Chevalier de la Légion d'Honneur
+    </div>
+    <div>
+     Chevalier de l'Ordre National du Mérite
+    </div>
    </div>
    <div>
     VU
@@ -104,15 +228,20 @@
    <div class="dsr-motifs">
     - Qu'il y a lieu, en conséquence, de faire application à l'encontre de l'exploitant, des dispositions prévues par l'
     <span class="dsr-sections_and_document_references">
-     <a class="dsr-section_reference" data-is_resolvable="true" data-uri="dsr://code_LEGITEXT000006074220___Code%20de%20l%27environnement/article_LEGIARTI000006838708_R512-31__" href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000006838708">
+     <a class="dsr-section_reference" data-document_reference="85" data-is_resolvable="true" data-uri="dsr://code_LEGITEXT000006074220___Code%20de%20l%27environnement/article_LEGIARTI000006838708_R512-31__" href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000006838708">
       article R512-31
      </a>
      du
-     <a class="dsr-document_reference" data-is_resolvable="true" data-uri="dsr://code_LEGITEXT000006074220___Code%20de%20l%27environnement" href="https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006074220">
+     <a class="dsr-document_reference" data-element_id="85" data-is_resolvable="true" data-uri="dsr://code_LEGITEXT000006074220___Code%20de%20l%27environnement" href="https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006074220">
       Code de l'Environnement
      </a>
     </span>
     susvisé,
+   </div>
+   <div class="dsr-arrete_title">
+    <h1>
+     ARRETE
+    </h1>
    </div>
   </header>
   <main class="dsr-main">
@@ -159,11 +288,11 @@
     <div class="dsr-alinea" data-number="1">
      Conformément à l'
      <span class="dsr-sections_and_document_references">
-      <a class="dsr-section_reference" data-is_resolvable="true" data-uri="dsr://code_LEGITEXT000006074220___Code%20de%20l%27environnement/article_LEGIARTI000033933152_L514-6__" href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000033933152">
+      <a class="dsr-section_reference" data-document_reference="86" data-is_resolvable="true" data-uri="dsr://code_LEGITEXT000006074220___Code%20de%20l%27environnement/article_LEGIARTI000033933152_L514-6__" href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000033933152">
        article L.514-6
       </a>
       du
-      <a class="dsr-document_reference" data-is_resolvable="true" data-uri="dsr://code_LEGITEXT000006074220___Code%20de%20l%27environnement" href="https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006074220">
+      <a class="dsr-document_reference" data-element_id="86" data-is_resolvable="true" data-uri="dsr://code_LEGITEXT000006074220___Code%20de%20l%27environnement" href="https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006074220">
        code de l'environnement
       </a>
      </span>
@@ -230,13 +359,13 @@
     </span>
     <div class="dsr-alinea" data-number="1">
      Les dispositions de l'
-     <a class="dsr-document_reference" data-is_resolvable="false" data-uri="dsr://arrete-prefectoral__D3-B4-07-86_2007-04-19_">
+     <a class="dsr-document_reference" data-element_id="94" data-is_resolvable="false" data-uri="dsr://arrete-prefectoral__D3-B4-07-86_2007-04-19_">
       arrêté préfectoral n° D3-B4-07-86 du
       <time class="dsr-date" datetime="2007-04-19">
        19 avril 2007
       </time>
      </a>
-     <span class="dsr-operation" data-direction="rtl" data-has_operand="false" data-keyword="supprimées" data-operand="" data-operation_type="delete" data-references="">
+     <span class="dsr-operation" data-direction="rtl" data-has_operand="false" data-keyword="supprimées" data-operand="" data-operation_type="delete" data-references="94">
       réglementant des activités de la société RECTICEL sise à Louviers et qui exploite un établissement de fabrication de mousse de polyuréthane sont
       <b>
        supprimées
@@ -251,13 +380,13 @@
     </h2>
     <div class="dsr-alinea" data-number="1">
      Les dispositions de l'
-     <a class="dsr-document_reference" data-is_resolvable="false" data-uri="dsr://arrete-prefectoral___2005-11-08_">
+     <a class="dsr-document_reference" data-element_id="95" data-is_resolvable="false" data-uri="dsr://arrete-prefectoral___2005-11-08_">
       arrêté préfectoral du
       <time class="dsr-date" datetime="2005-11-08">
        08 novembre 2005
       </time>
      </a>
-     <span class="dsr-operation" data-direction="rtl" data-has_operand="true" data-keyword="modifiées" data-operand="" data-operation_type="replace" data-references="">
+     <span class="dsr-operation" data-direction="rtl" data-has_operand="true" data-keyword="modifiées" data-operand="" data-operation_type="replace" data-references="95">
       réglementant les activités de la société RECTICEL SAS, rue de la Mécanique, 27460 LOUVIERS (et dont le siège social est implanté 7, rue du Fossé Blanc - 92622 GENNEVILLIERS) sont
       <b>
        modifiées
@@ -275,10 +404,16 @@
      <a class="dsr-section_reference" data-is_resolvable="false" data-uri="dsr://unknown____/article__1.2__">
       article 1.2
      </a>
-     - Liste des installations est supprimé. Il est remplacé par :
+     <span class="dsr-operation" data-direction="rtl" data-has_operand="true" data-keyword="remplacé" data-operand="96" data-operation_type="replace" data-references="">
+      - Liste des installations est supprimé. Il est
+      <b>
+       remplacé
+      </b>
+      par :
+     </span>
     </div>
     <div class="dsr-alinea" data-number="2">
-     <table>
+     <table data-element_id="96">
       <thead>
        <tr>
         <th style="text-align: center;">
@@ -312,11 +447,11 @@
         <td style="text-align: center;">
          Bâtiment 1
          <br/>
-         Cuve 6: 25  m³
+         Cuve 6: 25 m³
          <br/>
-         Cuve 7: 25  m³
+         Cuve 7: 25 m³
          <br/>
-         Volume total de 50  m³, soit une quantité totale de 62 tonnes.
+         Volume total de 50 m³, soit une quantité totale de 62 tonnes.
         </td>
         <td style="text-align: center;">
          A
@@ -336,13 +471,13 @@
         <td style="text-align: center;">
          Bâtiment 1 :
          <br/>
-         Cuve 5: 25  m³
+         Cuve 5: 25 m³
          <br/>
-         Cuve 8: 25  m³
+         Cuve 8: 25 m³
          <br/>
-         Cuve 9: 25  m³
+         Cuve 9: 25 m³
          <br/>
-         Volume totale de 75  m³, soit une quantité totale de 93 tonnes.
+         Volume totale de 75 m³, soit une quantité totale de 93 tonnes.
         </td>
         <td style="text-align: center;">
          A
@@ -401,10 +536,10 @@
         <td style="text-align: center;">
          Stockages de pneumatiques et produits dont 50 % au moins de la masse totale unitaire est composée de polymères (matières plastiques, caoutchoucs, élastomères, résines et adhésifs synthétiques).
          <br/>
-         A l'état alvéolaire ou expansé tels que mousse de latex, de polyuréthane, de polystyrène, etc, le volume susceptible d'être stocké étant supérieur ou égal à 2000  m³ mais inférieur à 45000  m³.
+         A l'état alvéolaire ou expansé tels que mousse de latex, de polyuréthane, de polystyrène, etc, le volume susceptible d'être stocké étant supérieur ou égal à 2000 m³ mais inférieur à 45000 m³.
         </td>
         <td style="text-align: center;">
-         Le volume maximal de stockage sur le site est de 31138  m³ de polymères à l'état alvéolaire.
+         Le volume maximal de stockage sur le site est de 31138 m³ de polymères à l'état alvéolaire.
         </td>
         <td style="text-align: center;">
          E
@@ -428,7 +563,7 @@
        </tr>
        <tr>
         <td style="text-align: center;">
-         𝐍° de la rubrique
+         N° de la rubrique
         </td>
         <td style="text-align: center;">
          Intitulé de la rubrique « Installations Classées »
@@ -485,10 +620,10 @@
         <td style="text-align: center;">
          Stockage de pneumatiques et produits dont 50 % au moins de la masse totale unitaire est composée de polymères (matières plastiques, caoutchoucs, élastomères, résines et adhésifs synthétiques).
          <br/>
-         Dans les autres états qu'alvéolaire ou expansé et pour les pneumatiques, le volume susceptible d'étre stocké étant supérieur ou égal à 1000  m³, mais inférieur à 10000  m³.
+         Dans les autres états qu'alvéolaire ou expansé et pour les pneumatiques, le volume susceptible d'étre stocké étant supérieur ou égal à 1000 m³, mais inférieur à 10000 m³.
         </td>
         <td style="text-align: center;">
-         Stockage de matières plastiques à l'état non alvéolaire, le volume maximal étant de 1953  m³.
+         Stockage de matières plastiques à l'état non alvéolaire, le volume maximal étant de 1953 m³.
         </td>
         <td style="text-align: center;">
          D
@@ -508,7 +643,7 @@
          La quantité totale susceptible d'étre présente dans l'installation étant inférieure à 6 tonnes.
         </td>
         <td style="text-align: center;">
-         Cuve de stockage de propane destinée à l'alimentation des réservoirs des chariots élévateurs : 3  m³ soit environ 1,5 t.
+         Cuve de stockage de propane destinée à l'alimentation des réservoirs des chariots élévateurs : 3 m³ soit environ 1,5 t.
         </td>
         <td style="text-align: center;">
          NC
@@ -523,18 +658,18 @@
         <td style="text-align: center;">
          Stockage en réservoirs manufacturés de liquides inflammables.
          <br/>
-         a) représentant une capacité équivalente totale inférieure à 10  m³.
+         a) représentant une capacité équivalente totale inférieure à 10 m³.
         </td>
         <td style="text-align: center;">
          Stockage de liquide inflammable de catégorie B
          <br/>
-         - quantités de colle et solvants de 0,15  m³
+         - quantités de colle et solvants de 0,15 m³
          <br/>
          Stockage de liquide inflammable de catégorie C
          <br/>
-         - stockage de 1000 litres de fioul domestique pour le fonctionnement des motopompes du système de sprinklage et du groupe électrogène, soit un volume équivalent de 0,2  m³.
+         - stockage de 1000 litres de fioul domestique pour le fonctionnement des motopompes du système de sprinklage et du groupe électrogène, soit un volume équivalent de 0,2 m³.
          <br/>
-         Soit un volume équivalent de 0,35  m³.
+         Soit un volume équivalent de 0,35 m³.
         </td>
         <td style="text-align: center;">
          NC
@@ -547,10 +682,10 @@
          1530
         </td>
         <td style="text-align: center;">
-         Papier, carton ou matériaux combustibles analogues y compris les produits finis conditionnés (dépôt de) à l'exclusion des établissements recevant du public. Le volume susceptible d'étre stocké étant inférieur à 1000  m³.
+         Papier, carton ou matériaux combustibles analogues y compris les produits finis conditionnés (dépôt de) à l'exclusion des établissements recevant du public. Le volume susceptible d'étre stocké étant inférieur à 1000 m³.
         </td>
         <td style="text-align: center;">
-         Stockage de papier et de carton : 100  m³.
+         Stockage de papier et de carton : 100 m³.
         </td>
         <td style="text-align: center;">
          NC
@@ -565,10 +700,10 @@
         <td style="text-align: center;">
          Dépôts de bois sec ou matériaux combustibles analogues, y compris les produits finis conditionnés à l'exclusion des établissements recevant du public.
          <br/>
-         Le volume stocké étant inférieur à 1000  m³.
+         Le volume stocké étant inférieur à 1000 m³.
         </td>
         <td style="text-align: center;">
-         Stockage de bois : 100  m³.
+         Stockage de bois : 100 m³.
         </td>
         <td style="text-align: center;">
          NC
@@ -662,10 +797,16 @@
      <a class="dsr-section_reference" data-is_resolvable="false" data-uri="dsr://unknown____/article__2.7__">
       article 2.7
      </a>
-     - Règlementation générale - Arrêtés ministériels sont supprimées. Elles sont remplacées par celles inscrites dans le tableau suivant :
+     <span class="dsr-operation" data-direction="rtl" data-has_operand="true" data-keyword="remplacées" data-operand="97" data-operation_type="replace" data-references="">
+      - Règlementation générale - Arrêtés ministériels sont supprimées. Elles sont
+      <b>
+       remplacées
+      </b>
+      par celles inscrites dans le tableau suivant :
+     </span>
     </div>
     <div class="dsr-alinea" data-number="2">
-     <table>
+     <table data-element_id="97">
       <thead>
        <tr>
         <th style="text-align: center;">
@@ -748,16 +889,16 @@
          Arrêté relatif à la déclaration annuette à l'administration, pris en application des
          <span class="dsr-sections_and_document_references">
           <span class="dsr-section_reference_multiple">
-           <a class="dsr-section_reference" data-is_resolvable="false" data-uri="dsr://decret_JORFTEXT000000257088_2005-635_2005-05-30_/article__3__">
+           <a class="dsr-section_reference" data-document_reference="87" data-is_resolvable="false" data-uri="dsr://decret_JORFTEXT000000257088_2005-635_2005-05-30_/article__3__">
             articles 3
            </a>
            et
-           <a class="dsr-section_reference" data-is_resolvable="false" data-uri="dsr://decret_JORFTEXT000000257088_2005-635_2005-05-30_/article__5__">
+           <a class="dsr-section_reference" data-document_reference="87" data-is_resolvable="false" data-uri="dsr://decret_JORFTEXT000000257088_2005-635_2005-05-30_/article__5__">
             5
            </a>
           </span>
           du
-          <a class="dsr-document_reference" data-is_resolvable="true" data-uri="dsr://decret_JORFTEXT000000257088_2005-635_2005-05-30_" href="https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000000257088">
+          <a class="dsr-document_reference" data-element_id="87" data-is_resolvable="true" data-uri="dsr://decret_JORFTEXT000000257088_2005-635_2005-05-30_" href="https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000000257088">
            décret n° 2005-635 du
            <time class="dsr-date" datetime="2005-05-30">
             30 mai 2005
@@ -774,11 +915,11 @@
         <td style="text-align: center;">
          Arrêté relatif aux modalités de traitement des déchets d'équipements électriques et électroniques prévues à l'
          <span class="dsr-sections_and_document_references">
-          <a class="dsr-section_reference" data-is_resolvable="false" data-uri="dsr://decret_JORFTEXT000000810278_2005-829_2005-07-20_/article__21__">
+          <a class="dsr-section_reference" data-document_reference="88" data-is_resolvable="false" data-uri="dsr://decret_JORFTEXT000000810278_2005-829_2005-07-20_/article__21__">
            article 21
           </a>
           du
-          <a class="dsr-document_reference" data-is_resolvable="true" data-uri="dsr://decret_JORFTEXT000000810278_2005-829_2005-07-20_" href="https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000000810278">
+          <a class="dsr-document_reference" data-element_id="88" data-is_resolvable="true" data-uri="dsr://decret_JORFTEXT000000810278_2005-829_2005-07-20_" href="https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000000810278">
            décret n° 2005-829 du
            <time class="dsr-date" datetime="2005-07-20">
             20 juillet 2005
@@ -795,11 +936,11 @@
         <td style="text-align: center;">
          Arrêté relatif à la déclaration annuelle à l'administration des installations de stockage de déchets inertes mentionnée à l'
          <span class="dsr-sections_and_document_references">
-          <a class="dsr-section_reference" data-is_resolvable="false" data-uri="dsr://decret_JORFTEXT000000257088_2005-635_2005-05-30_/article__5__">
+          <a class="dsr-section_reference" data-document_reference="89" data-is_resolvable="false" data-uri="dsr://decret_JORFTEXT000000257088_2005-635_2005-05-30_/article__5__">
            article 5
           </a>
           du
-          <a class="dsr-document_reference" data-is_resolvable="true" data-uri="dsr://decret_JORFTEXT000000257088_2005-635_2005-05-30_" href="https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000000257088">
+          <a class="dsr-document_reference" data-element_id="89" data-is_resolvable="true" data-uri="dsr://decret_JORFTEXT000000257088_2005-635_2005-05-30_" href="https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000000257088">
            décret n° 2005-635 du
            <time class="dsr-date" datetime="2005-05-30">
             30 mai 2005
@@ -824,11 +965,11 @@
         <td style="text-align: center;">
          Arrêté fixant la formulaire de bordereau de suivi de déchets dangereux mentionné à l'
          <span class="dsr-sections_and_document_references">
-          <a class="dsr-section_reference" data-is_resolvable="false" data-uri="dsr://decret_JORFTEXT000000257088_2005-635_2005-05-30_/article__4__">
+          <a class="dsr-section_reference" data-document_reference="90" data-is_resolvable="false" data-uri="dsr://decret_JORFTEXT000000257088_2005-635_2005-05-30_/article__4__">
            article 4
           </a>
           du
-          <a class="dsr-document_reference" data-is_resolvable="true" data-uri="dsr://decret_JORFTEXT000000257088_2005-635_2005-05-30_" href="https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000000257088">
+          <a class="dsr-document_reference" data-element_id="90" data-is_resolvable="true" data-uri="dsr://decret_JORFTEXT000000257088_2005-635_2005-05-30_" href="https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000000257088">
            décret n° 2005-635 du
            <time class="dsr-date" datetime="2005-05-30">
             30 mai 2005
@@ -845,11 +986,11 @@
         <td style="text-align: center;">
          Arrêté fixant le contenu des registres mentionnés à l'
          <span class="dsr-sections_and_document_references">
-          <a class="dsr-section_reference" data-is_resolvable="false" data-uri="dsr://decret_JORFTEXT000000257088_2005-635_2005-05-30_/article__2__">
+          <a class="dsr-section_reference" data-document_reference="91" data-is_resolvable="false" data-uri="dsr://decret_JORFTEXT000000257088_2005-635_2005-05-30_/article__2__">
            article 2
           </a>
           du
-          <a class="dsr-document_reference" data-is_resolvable="true" data-uri="dsr://decret_JORFTEXT000000257088_2005-635_2005-05-30_" href="https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000000257088">
+          <a class="dsr-document_reference" data-element_id="91" data-is_resolvable="true" data-uri="dsr://decret_JORFTEXT000000257088_2005-635_2005-05-30_" href="https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000000257088">
            décret n° 2005-635 du
            <time class="dsr-date" datetime="2005-05-30">
             30 mai 2005
@@ -936,10 +1077,16 @@
      <a class="dsr-section_reference" data-is_resolvable="false" data-uri="dsr://unknown____/article__2.8__">
       article 2.8
      </a>
-     - Arrêtés types sont supprimées et sont remplacées par celles du tableau suivant :
+     <span class="dsr-operation" data-direction="rtl" data-has_operand="true" data-keyword="remplacées" data-operand="98" data-operation_type="replace" data-references="">
+      - Arrêtés types sont supprimées et sont
+      <b>
+       remplacées
+      </b>
+      par celles du tableau suivant :
+     </span>
     </div>
     <div class="dsr-alinea" data-number="2">
-     <table>
+     <table data-element_id="98">
       <thead>
        <tr>
         <th style="text-align: center;">
@@ -996,7 +1143,17 @@
      Article 6 :
     </h2>
     <div class="dsr-alinea" data-number="1">
-     Les dispositions du paragraphe 3.1.9 - Confinement sont complétées comme suit :
+     Les dispositions du
+     <a class="dsr-section_reference" data-is_resolvable="false" data-uri="dsr://unknown____/article__3.1.9__">
+      paragraphe 3.1.9
+     </a>
+     <span class="dsr-operation" data-direction="rtl" data-has_operand="true" data-keyword="complétées comme suit " data-operand="" data-operation_type="add" data-references="">
+      - Confinement sont
+      <b>
+       complétées comme suit
+      </b>
+      :
+     </span>
     </div>
     <div class="dsr-alinea" data-number="2">
      Les vannes sont dûment repérées et d'un accès aisé. L'organe permettant leur manœuvre est placé à demeure au droit de ces vannes. Des dispositifs (bassin de confinement, vannes...) et des dispositions (pentes des terrains...) doivent permettre le confinement des eaux susceptibles d'être polluées (lors d'un incendie...), sur le site.
@@ -1007,13 +1164,13 @@
     <div class="dsr-alinea" data-number="4">
      <ul>
       <li>
-       d'un bassin de confinement étanche (en partie ouest) de 710  m³;
+       - d'un bassin de confinement étanche (en partie ouest) de 710 m³;
       </li>
       <li>
-       de rétentions (en partie ouest) constituées de murets permettant de retenir 390  m³ d'eaux polluées ;
+       - de rétentions (en partie ouest) constituées de murets permettant de retenir 390 m³ d'eaux polluées ;
       </li>
       <li>
-       d'un volume potentiel complémentaire de 120  m³ constitué par les regards ou tuyauteries des réseaux d'eaux pluviiates.
+       - d'un volume potentiel complémentaire de 120 m³ constitué par les regards ou tuyauteries des réseaux d'eaux pluviiates.
       </li>
      </ul>
     </div>
@@ -1026,7 +1183,17 @@
      Article 7 :
     </h2>
     <div class="dsr-alinea" data-number="1">
-     Les dispositions du paragraphe 4.2 - Zones de dangers sont supprimées. Elles sont remplacées par les dispositions suivantes :
+     Les dispositions du
+     <a class="dsr-section_reference" data-is_resolvable="false" data-uri="dsr://unknown____/article__4.2__">
+      paragraphe 4.2
+     </a>
+     <span class="dsr-operation" data-direction="rtl" data-has_operand="true" data-keyword="remplacées" data-operand="" data-operation_type="replace" data-references="">
+      - Zones de dangers sont supprimées. Elles sont
+      <b>
+       remplacées
+      </b>
+      par les dispositions suivantes :
+     </span>
     </div>
     <div class="dsr-alinea" data-number="2">
      Les données (distances ...) des effets toxiques susceptibles de sortir du site sont reprises dans le tableau suivant :
@@ -1063,7 +1230,7 @@
       <tbody>
        <tr>
         <td style="text-align: center;">
-         Dispersion atmosphérique de vapeurs de TDI, suite à la rupture guillotine du flexible DN 100, lors du dépotage d'une citerne ( 18  m³ de produit épanou)
+         Dispersion atmosphérique de vapeurs de TDI, suite à la rupture guillotine du flexible DN 100, lors du dépotage d'une citerne ( 18 m³ de produit épanou)
         </td>
         <td style="text-align: center;">
          Non atteint
@@ -1088,7 +1255,7 @@
        </tr>
        <tr>
         <td style="text-align: center;">
-         Dispersion des fumées toxiques lors d'un feu de nappe de 22 t de TDI/MDI (à 1,5  m du sol)
+         Dispersion des fumées toxiques lors d'un feu de nappe de 22 t de TDI/MDI (à 1,5 m du sol)
         </td>
         <td style="text-align: center;">
          Non atteint
@@ -1113,7 +1280,7 @@
        </tr>
        <tr>
         <td style="text-align: center;">
-         Dispersion des fumées toxiques lors de l'incendie du bâtiment B9 (à 1,5  m du sol)
+         Dispersion des fumées toxiques lors de l'incendie du bâtiment B9 (à 1,5 m du sol)
         </td>
         <td style="text-align: center;">
          75 m
@@ -1182,13 +1349,13 @@
         <td style="text-align: center;">
         </td>
         <td style="text-align: center;">
-         5  kW / m²
+         5 kW / m²
         </td>
         <td style="text-align: center;">
-         5  kW / m²
+         5 kW / m²
         </td>
         <td style="text-align: center;">
-         3  K / m²
+         3 K / m²
         </td>
         <td style="text-align: center;">
         </td>
@@ -1278,13 +1445,13 @@
     <div class="dsr-alinea" data-number="10">
      <ul>
       <li>
-       3  kW / m², seuil des effets irréversibles délimitant « la zone des dangers significatifs pour la vie humaine »;
+       - 3 kW / m², seuil des effets irréversibles délimitant « la zone des dangers significatifs pour la vie humaine »;
       </li>
       <li>
-       5  kW / m², seuil des effets irréversibles délimitant « la zone des dangers graves pour la vie humaine »;
+       - 5 kW / m², seuil des effets irréversibles délimitant « la zone des dangers graves pour la vie humaine »;
       </li>
       <li>
-       8  kW / m² seuil des effets irréversibles délimitant « la zone des dangers très graves pour la vie humaine».
+       - 8 kW / m² seuil des effets irréversibles délimitant « la zone des dangers très graves pour la vie humaine».
       </li>
      </ul>
     </div>
@@ -1294,11 +1461,11 @@
     <div class="dsr-alinea" data-number="12">
      L'exploitant doit intégrer ces éléments dans le POI visé à l'
      <span class="dsr-sections_and_document_references">
-      <a class="dsr-section_reference" data-is_resolvable="false" data-uri="dsr://self____/article__13__">
+      <a class="dsr-section_reference" data-document_reference="92" data-is_resolvable="false" data-uri="dsr://self____/article__13__">
        article 13
       </a>
       du
-      <a class="dsr-document_reference" data-is_resolvable="true" data-uri="dsr://self____">
+      <a class="dsr-document_reference" data-element_id="92" data-is_resolvable="true" data-uri="dsr://self____">
        présent arrêté
       </a>
      </span>
@@ -1310,7 +1477,17 @@
      Article 8 :
     </h2>
     <div class="dsr-alinea" data-number="1">
-     Le contenu du paragraphe 4.6 - Equipements et paramètres de fonctionnement importants pour la sécurité est supprimé. Il est remplacé par :
+     Le contenu du
+     <a class="dsr-section_reference" data-is_resolvable="false" data-uri="dsr://unknown____/article__4.6__">
+      paragraphe 4.6
+     </a>
+     <span class="dsr-operation" data-direction="rtl" data-has_operand="true" data-keyword="remplacé" data-operand="" data-operation_type="replace" data-references="">
+      - Equipements et paramètres de fonctionnement importants pour la sécurité est supprimé. Il est
+      <b>
+       remplacé
+      </b>
+      par :
+     </span>
     </div>
     <div class="dsr-alinea" data-number="2">
      Mesures de maîtrise des risques
@@ -1348,7 +1525,17 @@
      Article 10 :
     </span>
     <div class="dsr-alinea" data-number="1">
-     Les dispositions du paragraphe 4.8 - Caractéristiques et aménagement sont supprimées. Elles sont remplacées par les dispositions suivantes :
+     Les dispositions du
+     <a class="dsr-section_reference" data-is_resolvable="false" data-uri="dsr://unknown____/article__4.8__">
+      paragraphe 4.8
+     </a>
+     <span class="dsr-operation" data-direction="rtl" data-has_operand="true" data-keyword="remplacées" data-operand="" data-operation_type="replace" data-references="">
+      - Caractéristiques et aménagement sont supprimées. Elles sont
+      <b>
+       remplacées
+      </b>
+      par les dispositions suivantes :
+     </span>
     </div>
     <div class="dsr-alinea" data-number="2">
      L'exploitant implante des murs coupe-feu 2 heures dans les locaux à risques.
@@ -1443,7 +1630,17 @@
      Article 11 :
     </h2>
     <div class="dsr-alinea" data-number="1">
-     Le paragraphe 4.14 - Postes de chargement -déchargement est complété comme suit :
+     Le
+     <a class="dsr-section_reference" data-is_resolvable="false" data-uri="dsr://unknown____/article__4.14__">
+      paragraphe 4.14
+     </a>
+     <span class="dsr-operation" data-direction="rtl" data-has_operand="true" data-keyword="complété comme suit " data-operand="" data-operation_type="add" data-references="">
+      - Postes de chargement -déchargement est
+      <b>
+       complété comme suit
+      </b>
+      :
+     </span>
     </div>
     <div class="dsr-alinea" data-number="2">
      L'exploitant établit une consigne intégrée si besoin est dans une check-list de dépotage des produits TDI/MDI et polyols. Elle doit viser à interdire le dépotage de 2 camions citernes ou conteneurs chargés de MDI/TDI et polyols en même temps.
@@ -1457,10 +1654,10 @@
     <div class="dsr-alinea" data-number="5">
      <ul>
       <li>
-       pour le TDI, à un pressostat en sortie de pompe et à un détecteur de passage de fluide,
+       - pour le TDI, à un pressostat en sortie de pompe et à un détecteur de passage de fluide,
       </li>
       <li>
-       pour le MDI, à un pressostat en sortie de pompe.
+       - pour le MDI, à un pressostat en sortie de pompe.
       </li>
      </ul>
     </div>
@@ -1484,7 +1681,16 @@
      Article 12 :
     </h2>
     <div class="dsr-alinea" data-number="1">
-     Le paragraphe 4.19.1 - Réseau d'eau incendie est complété ainsi :
+     Le
+     <a class="dsr-section_reference" data-is_resolvable="false" data-uri="dsr://unknown____/article__4.19.1__">
+      paragraphe 4.19.1
+     </a>
+     <span class="dsr-operation" data-direction="rtl" data-has_operand="false" data-keyword="complété ainsi :" data-operand="" data-operation_type="add" data-references="">
+      - Réseau d'eau incendie est
+      <b>
+       complété ainsi :
+      </b>
+     </span>
     </div>
     <div class="dsr-alinea" data-number="2">
      Une vanne d'isolement (barrage...) dûment repérée et facilement manoeuvrable est mise en œuvre au droit des 2 antennes alimentant les poleaux incendie.
@@ -1501,10 +1707,28 @@
      Article 13 :
     </h2>
     <div class="dsr-alinea" data-number="1">
-     Sont insérés après le paragraphe 4.23 - clôture - gardiennage, les paragraphes suivants :
+     <span class="dsr-operation" data-direction="rtl" data-has_operand="true" data-keyword="insérés" data-operand="" data-operation_type="add" data-references="">
+      Sont
+      <b>
+       insérés
+      </b>
+      après le
+     </span>
+     <a class="dsr-section_reference" data-is_resolvable="false" data-uri="dsr://unknown____/article__4.23__">
+      paragraphe 4.23
+     </a>
+     - clôture - gardiennage, les paragraphes suivants :
     </div>
     <div class="dsr-alinea" data-number="2">
-     Paragraphe 4.24 - POI. Il est rédigé ainsi :
+     <a class="dsr-section_reference" data-is_resolvable="false" data-uri="dsr://unknown____/article__4.24__">
+      Paragraphe 4.24
+     </a>
+     <span class="dsr-operation" data-direction="rtl" data-has_operand="false" data-keyword="rédigé ainsi :" data-operand="" data-operation_type="replace" data-references="">
+      - POI. Il est
+      <b>
+       rédigé ainsi :
+      </b>
+     </span>
     </div>
     <div class="dsr-alinea" data-number="3">
      L'exploitant doit établir un Plan d'Opération Interne (POI) sur la base de l'analyses des risques et des moyens nécessaires (humains et matériels) pour réduire la gravité d'un phénomène dangereux et ses conséquences. Ce POI doit être validé par les services de secours extérieurs (SDIS).
@@ -1525,11 +1749,11 @@
      </a>
      du décret 2005-1158 du 13 septembre 2005 et de l'
      <span class="dsr-sections_and_document_references">
-      <a class="dsr-section_reference" data-is_resolvable="true" data-uri="dsr://code_LEGITEXT000006074220___Code%20de%20l%27environnement/article_LEGIARTI000031624415_R512-29__" href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000031624415">
+      <a class="dsr-section_reference" data-document_reference="93" data-is_resolvable="true" data-uri="dsr://code_LEGITEXT000006074220___Code%20de%20l%27environnement/article_LEGIARTI000031624415_R512-29__" href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000031624415">
        article R 512-29
       </a>
       du
-      <a class="dsr-document_reference" data-is_resolvable="true" data-uri="dsr://code_LEGITEXT000006074220___Code%20de%20l%27environnement" href="https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006074220">
+      <a class="dsr-document_reference" data-element_id="93" data-is_resolvable="true" data-uri="dsr://code_LEGITEXT000006074220___Code%20de%20l%27environnement" href="https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006074220">
        code de l'environnement
       </a>
      </span>
@@ -1539,7 +1763,16 @@
      Le POI est homogène avec la nature et les enveloppes des différents phénomènes de dangers envisagés dans les études de dangers. Un exemplaire du POI doit être disponible en permanence sur l'emplacement prévu pour y installer le poste de commandement.
     </div>
     <div class="dsr-alinea" data-number="9">
-     Paragraphe 4.25 - Cuyes de stockages de TDI/MOI. Il est ajouté un paragraphe rédigé ainsi :
+     <a class="dsr-section_reference" data-is_resolvable="false" data-uri="dsr://unknown____/article__4.25__">
+      Paragraphe 4.25
+     </a>
+     <span class="dsr-operation" data-direction="rtl" data-has_operand="true" data-keyword="ajouté" data-operand="" data-operation_type="add" data-references="">
+      - Cuyes de stockages de TDI/MOI. Il est
+      <b>
+       ajouté
+      </b>
+      un paragraphe rédigé ainsi :
+     </span>
     </div>
     <div class="dsr-alinea" data-number="10">
      Les équipements suivants sont installés sur les cuves de stockage de TDI/MOI :
@@ -1547,16 +1780,16 @@
     <div class="dsr-alinea" data-number="11">
      <ul>
       <li>
-       pour éviter toute surpression possible dans les cuves, une tuyauterie équipée d'un clapet taré oriente les gaz, au moyen de vannes, soit vers le camion citerne, en phase de dépotage, soit vers l'extérieur au travers d'une solution neutralisante ;
+       - pour éviter toute surpression possible dans les cuves, une tuyauterie équipée d'un clapet taré oriente les gaz, au moyen de vannes, soit vers le camion citerne, en phase de dépotage, soit vers l'extérieur au travers d'une solution neutralisante ;
       </li>
       <li>
-       pour éviter toute mise en dépression, la cuve est pressurisée en air sec ( 150 à 180 mbars), et est équipée d'un clapet à ressort «casse vide »;
+       - pour éviter toute mise en dépression, la cuve est pressurisée en air sec ( 150 à 180 mbars), et est équipée d'un clapet à ressort «casse vide »;
       </li>
       <li>
-       pour éviter toute mise en contact avec l'eau, le réseau d'air sec de pressurisation est distinct du réseau d'air « usine » (compresseur et sècheur séparés) ; le circuit de l'échangeur de chaleur est alimenté avec un fluide calcporteur «neutre» (ne pouvant pas réagir avec les produits stockés dans les cuves);
+       - pour éviter toute mise en contact avec l'eau, le réseau d'air sec de pressurisation est distinct du réseau d'air « usine » (compresseur et sècheur séparés) ; le circuit de l'échangeur de chaleur est alimenté avec un fluide calcporteur «neutre» (ne pouvant pas réagir avec les produits stockés dans les cuves);
       </li>
       <li>
-       pour éviter tout risque de débordement dans les cuves, elles sont équipées de délecteurs de niveau à flotteur avec alarme et asservissement des pompes.
+       - pour éviter tout risque de débordement dans les cuves, elles sont équipées de délecteurs de niveau à flotteur avec alarme et asservissement des pompes.
       </li>
      </ul>
     </div>
@@ -1566,10 +1799,10 @@
     <div class="dsr-alinea" data-number="13">
      <ul>
       <li>
-       d'un suivi en permanence du niveau dans les cuves avec un report d'alarme en salle de conduite,
+       - d'un suivi en permanence du niveau dans les cuves avec un report d'alarme en salle de conduite,
       </li>
       <li>
-       d'un niveau haut (indépendant du précédent) avec asservissement de la pompe de dépotage.
+       - d'un niveau haut (indépendant du précédent) avec asservissement de la pompe de dépotage.
       </li>
      </ul>
     </div>
@@ -1579,13 +1812,13 @@
     <div class="dsr-alinea" data-number="15">
      <ul>
       <li>
-       pour diminuer le risque d'épandage, le dépotage s'effectue par aspiration :
+       - pour diminuer le risque d'épandage, le dépotage s'effectue par aspiration :
       </li>
       <li>
-       pressostat d'asservissement sur la pompe de puisage/gavage d'un type adapté pour une faible surpression ;
+       - pressostat d'asservissement sur la pompe de puisage/gavage d'un type adapté pour une faible surpression ;
       </li>
       <li>
-       pressostat et soupape de sécurité en sortie de la pompe de dosage (volumétrique) avec asservissement sur arrêt de la coulée.
+       - pressostat et soupape de sécurité en sortie de la pompe de dosage (volumétrique) avec asservissement sur arrêt de la coulée.
       </li>
      </ul>
     </div>
@@ -1597,7 +1830,16 @@
      jusqu'à la tête de mélange sont différenciées des autres circuits.
     </div>
     <div class="dsr-alinea" data-number="17">
-     Paragraphe 4.26 - Stockage des mousses. Il est ajouté un paragraphe rédigé ainsi :
+     <a class="dsr-section_reference" data-is_resolvable="false" data-uri="dsr://unknown____/article__4.26__">
+      Paragraphe 4.26
+     </a>
+     <span class="dsr-operation" data-direction="rtl" data-has_operand="true" data-keyword="ajouté" data-operand="" data-operation_type="add" data-references="">
+      - Stockage des mousses. Il est
+      <b>
+       ajouté
+      </b>
+      un paragraphe rédigé ainsi :
+     </span>
     </div>
     <div class="dsr-alinea" data-number="18">
      Dans les casiers de mûrissage :
@@ -1612,7 +1854,16 @@
      Pour tous les stockages en hauteur : un espace libre d'au moins 1 mètre doit être préservé entre le haut du stockage et le niveau du pied de ferme.
     </div>
     <div class="dsr-alinea" data-number="22">
-     Paragraphe 4.27 - Equipement sous pression. Il est ajouté un paragraphe rédigé ainsi :
+     <a class="dsr-section_reference" data-is_resolvable="false" data-uri="dsr://unknown____/article__4.27__">
+      Paragraphe 4.27
+     </a>
+     <span class="dsr-operation" data-direction="rtl" data-has_operand="true" data-keyword="ajouté" data-operand="" data-operation_type="add" data-references="">
+      - Equipement sous pression. Il est
+      <b>
+       ajouté
+      </b>
+      un paragraphe rédigé ainsi :
+     </span>
     </div>
     <div class="dsr-alinea" data-number="23">
      L'exploitant établit et tient à jour un état des équipements sous pression soumis aux dispositions de l'
@@ -1628,37 +1879,37 @@
     <div class="dsr-alinea" data-number="24">
      <ul>
       <li>
-       le nom du constructeur ou du fabricant ;
+       - le nom du constructeur ou du fabricant ;
       </li>
       <li>
-       le numéro de fabrication (ou référence de l'ISO pour les tuyauteries);
+       - le numéro de fabrication (ou référence de l'ISO pour les tuyauteries);
       </li>
       <li>
-       le type : R pour récipient, ACAFR pour appareil à couvercle amovible à fermeture rapide, GVAPHP pour générateur avec présence humaine permanente, GVSPHP pour générateur sans présence humaine permanente, T pour tuyauterie ;
+       - le type : R pour récipient, ACAFR pour appareil à couvercle amovible à fermeture rapide, GVAPHP pour générateur avec présence humaine permanente, GVSPHP pour générateur sans présence humaine permanente, T pour tuyauterie ;
       </li>
       <li>
-       l'année de fabrication ;
+       - l'année de fabrication ;
       </li>
       <li>
-       la nature du fluide et groupe : 1 ou 2 ;
+       - la nature du fluide et groupe : 1 ou 2 ;
       </li>
       <li>
-       la pression de calcul ou pression maximale admissible ;
+       - la pression de calcul ou pression maximale admissible ;
       </li>
       <li>
-       le volume en litres ou le DN pour les tuyauteries ;
+       - le volume en litres ou le DN pour les tuyauteries ;
       </li>
       <li>
-       les dates de la dernière et de la prochaine inspection périodique ;
+       - les dates de la dernière et de la prochaine inspection périodique ;
       </li>
       <li>
-       les dates de la dernière et de la prochaine requallification périodique ;
+       - les dates de la dernière et de la prochaine requallification périodique ;
       </li>
       <li>
-       l'existence d'un dossier descriptif (état descriptif ou notice d'instructions);
+       - l'existence d'un dossier descriptif (état descriptif ou notice d'instructions);
       </li>
       <li>
-       les dérogations ou aménagement s éventuels.
+       - les dérogations ou aménagement s éventuels.
       </li>
      </ul>
     </div>
@@ -1666,7 +1917,16 @@
      Cet état peut être tenu à jour sous forme numérique ; un exemplaire sous format papier est remis à l'inspecteur des installations classées ou à l'agent chargé de la surveillance des équipements sous pression à sa demande.
     </div>
     <div class="dsr-alinea" data-number="26">
-     Paragraphe 4.28 - Information des secours. Il est ajouté un paragraphe rédigé ainsi :
+     <a class="dsr-section_reference" data-is_resolvable="false" data-uri="dsr://unknown____/article__4.28__">
+      Paragraphe 4.28
+     </a>
+     <span class="dsr-operation" data-direction="rtl" data-has_operand="true" data-keyword="ajouté" data-operand="" data-operation_type="add" data-references="">
+      - Information des secours. Il est
+      <b>
+       ajouté
+      </b>
+      un paragraphe rédigé ainsi :
+     </span>
     </div>
     <div class="dsr-alinea" data-number="27">
      L'exploitant transmettra dans les trois mois suivant la notification du
@@ -1678,21 +1938,30 @@
     <div class="dsr-alinea" data-number="28">
      <ul>
       <li>
-       Le plan de masse des installations;
+       - Le plan de masse des installations;
       </li>
       <li>
-       Le plan de situation de l'entreprise ;
+       - Le plan de situation de l'entreprise ;
       </li>
       <li>
-       Les plans des niveaux ;
+       - Les plans des niveaux ;
       </li>
       <li>
-       Les fiches des matières dangereuses utilisées sur le site .
+       - Les fiches des matières dangereuses utilisées sur le site .
       </li>
      </ul>
     </div>
     <div class="dsr-alinea" data-number="29">
-     Paragraphe 4.29 - Efficacité énergétique. lutte contre les gaz à effet de serre et pollution lumineuse. Il est ajouté un paragraphe rédigé ainsi :
+     <a class="dsr-section_reference" data-is_resolvable="false" data-uri="dsr://unknown____/article__4.29__">
+      Paragraphe 4.29
+     </a>
+     <span class="dsr-operation" data-direction="rtl" data-has_operand="true" data-keyword="ajouté" data-operand="" data-operation_type="add" data-references="">
+      - Efficacité énergétique. lutte contre les gaz à effet de serre et pollution lumineuse. Il est
+      <b>
+       ajouté
+      </b>
+      un paragraphe rédigé ainsi :
+     </span>
     </div>
     <div class="dsr-alinea" data-number="30">
      Généralités

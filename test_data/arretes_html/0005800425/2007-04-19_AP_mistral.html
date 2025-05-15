@@ -2,20 +2,152 @@
 <html>
  <head>
   <meta charset="utf-8"/>
-  <link href="/dsfr/dsfr.main.css" rel="stylesheet"/>
-  <link href="/styles.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/@gouvfr/dsfr@1.13.0/dist/dsfr.css" rel="stylesheet"/>
+  <style>
+   :root {
+                --spacing-1: 1rem;
+                --spacing-0p5: 0.5rem;
+            }
+
+            header, main, .dsr-appendix {
+                max-width: 800px;
+                margin: auto;
+                padding: var(--spacing-1);
+            }
+
+            blockquote {
+                border-left: 1px solid var(--border-plain-grey);
+                padding-left: var(--spacing-1);
+            }
+
+            th {
+                text-align: left;
+            }
+
+            a.dsr-document_reference, a.dsr-section_reference {
+                color: var(--text-action-high-blue-france);
+            }
+
+            .dsr-error {
+                font-family: monospace;
+                background-color: #ffd0d0;
+            }
+
+            .dsr-error:before {
+                content: '❌';
+            }
+
+            .dsr-alinea::before, .dsr-visa::before, .dsr-motifs::before {
+                color: var(--text-disabled-grey);
+                position: absolute;
+                top: 0;
+                left: -1rem;
+            }
+
+            .dsr-debug_keyword {
+                color: var(--warning-425-625);
+            }
+
+            /**************** HEADER ****************/
+            header {
+                padding-bottom: var(--spacing-1);
+                margin-bottom: var(--spacing-1);
+            }
+
+            .dsr-emblem, .dsr-entity, .dsr-identification, .dsr-arrete_title, .dsr-honorary {
+                padding: var(--spacing-1);
+                background-color: var(--background-alt-grey);
+                text-align: center;
+            }
+
+            .dsr-arrete_title {
+                color: var(--text-title-grey);
+            }
+
+            .dsr-emblem, .dsr-entity, .dsr-identification, .dsr-honorary {
+                color: var(--text-title-blue-france);
+                font-size: 120%;
+            }
+
+            .dsr-visa, .dsr-motifs, .dsr-supplementary_motif_info {
+                position: relative;
+                margin-top: var(--spacing-1);
+                padding-bottom: 0;
+            }
+
+            .dsr-visa::before, .dsr-motifs::before {
+                content: '⮞';
+            }
+
+            header > *:last-child {
+                border-bottom: 1px solid var(--background-action-low-blue-france);
+                padding-bottom: var(--spacing-1);
+            }
+
+            /**************** MAIN CONTENT AND APPENDIX ****************/
+            .dsr-table {
+                font-family: monospace;
+            }
+
+            .dsr-section {
+                padding: var(--spacing-0p5) 0;
+            }
+
+            .dsr-alinea {
+                position: relative;
+                margin-top: var(--spacing-0p5);
+            }
+
+            .dsr-alinea::before {
+                content: '¶';
+            }
+
+            .dsr-alinea img {
+                max-width: 100%;
+            }
+
+            ul, ol { 
+                list-style: none;
+            }
+
+            .dsr-section_title {
+                background-color: var(--colors-title-bg);
+            }
+
+            .dsr-operation {
+                background-color: var(--background-action-low-blue-france);
+            }
+  </style>
  </head>
  <body>
   <header class="dsr-header">
+   <div>
+    CHAPIT 1  LÉsité : Égalité : Fraternité RÉPUSUQUE FRANÇAIS
+   </div>
    <div class="dsr-entity">
     <div>
      PREFECTURE DE L'EURE
     </div>
    </div>
-   <div class="dsr-identification">
+   <div class="dsr-arrete_title">
     <h1>
-     Arrêté n D3-B4-07-86 du 18 AVR. 2007 réglementant l'activité de la société RECTICEL, sise à Louviers, qui exploite un établissement de fabrication et de transformation de mousse polyuréthane.
+     Arrêté n D3-B4-07-86 du
+     <time class="dsr-date" datetime="2007-04-18">
+      18 AVR. 2007
+     </time>
+     réglementant l'activité de la société RECTICEL, sise à Louviers, qui exploite un établissement de fabrication et de transformation de mousse polyuréthane.
     </h1>
+   </div>
+   <div class="dsr-honorary">
+    <div>
+     Le préfet de l'Eure
+    </div>
+    <div>
+     Officier de la Légion d'Honneur
+    </div>
+    <div>
+     Officier de l'Ordre National du Mérite
+    </div>
    </div>
    <div>
     VU
@@ -95,18 +227,25 @@
     </a>
     permettent de prévenir les dangers et inconvénients de l'installation pour les intérêts mentionnés à l'
     <span class="dsr-sections_and_document_references">
-     <a class="dsr-section_reference" data-is_resolvable="true" data-uri="dsr://code_LEGITEXT000006074220___Code%20de%20l%27environnement/article_LEGIARTI000043978078_L511-1__" href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000043978078">
+     <a class="dsr-section_reference" data-document_reference="26" data-is_resolvable="true" data-uri="dsr://code_LEGITEXT000006074220___Code%20de%20l%27environnement/article_LEGIARTI000043978078_L511-1__" href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000043978078">
       article L511-1
      </a>
      du
-     <a class="dsr-document_reference" data-is_resolvable="true" data-uri="dsr://code_LEGITEXT000006074220___Code%20de%20l%27environnement" href="https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006074220">
+     <a class="dsr-document_reference" data-element_id="26" data-is_resolvable="true" data-uri="dsr://code_LEGITEXT000006074220___Code%20de%20l%27environnement" href="https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006074220">
       code de l'environnement
      </a>
     </span>
     , notamment pour la commodité du voisinage, pour la santé, la sécurité, la salubrité publique et pour la protection de la nature et de l'environnement,
    </div>
-   <div>
-    LISTE DES CHAPITRES
+   <div class="dsr-supplementary_motif_info">
+    <div>
+     Sur proposition de la Secrétaire générale de la préfecture de l'Eure, LISTE DES CHAPITRES
+    </div>
+   </div>
+   <div class="dsr-arrete_title">
+    <h1>
+     Arrêté n D3-B4-07-86 réglementant l'activité de la société RECTICEL, sise à Louviers, qui exploite un établissement de fabrication et de transformation de mousse polyuréthane. ..... 1
+    </h1>
    </div>
   </header>
   <main class="dsr-main">
@@ -252,7 +391,7 @@
            Alinés
           </th>
           <th style="text-align: center;">
-           AC        DC        D  N  N
+           AC        DC        D  N N
           </th>
           <th style="text-align: center;">
            Ubisile de la rubrique (activite)
@@ -295,9 +434,9 @@
            Itisupérieure ou égale à 10 t mais inférieure à 100 t
           </td>
           <td style="text-align: center;">
-           Cuve 6=25  m³
+           Cuve 6=25 m³
            <br/>
-           Cuve 7=25  m³
+           Cuve 7=25 m³
            <br/>
            Rdc local cuves bâtiment 01
           </td>
@@ -334,11 +473,11 @@
            1. Supérieure à 20 t
           </td>
           <td style="text-align: center;">
-           Cuve 8=25  m³
+           Cuve 8=25 m³
            <br/>
-           Cuve 8=25  m³
+           Cuve 8=25 m³
            <br/>
-           Cuve 9=25  m³
+           Cuve 9=25 m³
            <br/>
            Rdc local cuves bâtiment 01
           </td>
@@ -587,20 +726,20 @@
            D
           </td>
           <td style="text-align: center;">
-           Réfrigération ou compression (installations de) fonctionnant à des pressions effectives supérieure à 10⁵  Pa.
+           Réfrigération ou compression (installations de) fonctionnant à des pressions effectives supérieure à 10⁵ Pa.
            <br/>
            2. Dans tous les autres cas :
            <br/>
            (c)supérieure à 50 kW , mais inférieure ou égale à 500 kW .
           </td>
           <td style="text-align: center;">
-           Compression : 2 * 65 kW Réfrigération : 70 ÷30  kW
+           Compression : 2 * 65 kW Réfrigération : 70 ÷30 kW
           </td>
           <td style="text-align: center;">
            Puissance totale absorbée
           </td>
           <td style="text-align: center;">
-           50&lt;P ≤    500  kW
+           50&lt;P ≤    500 kW
           </td>
           <td style="text-align: center;">
            230
@@ -631,7 +770,7 @@
            Puissance maximale de courant continu utilisable
           </td>
           <td style="text-align: center;">
-           P&lt;50  kW
+           P&lt;50 kW
           </td>
           <td style="text-align: center;">
            35
@@ -693,7 +832,7 @@
            Quantité de matière susceptible d'être présente
           </td>
           <td style="text-align: center;">
-           Q&lt;1000   m²
+           Q&lt;1000  m²
           </td>
           <td style="text-align: center;">
            200
@@ -710,11 +849,11 @@
       <div class="dsr-alinea" data-number="2">
        A (Autorisation) - D (Déclaration) - DC déclaration soumise au contrôle périodique prévu par l'
        <span class="dsr-sections_and_document_references">
-        <a class="dsr-section_reference" data-is_resolvable="true" data-uri="dsr://code_LEGITEXT000006074220___Code%20de%20l%27environnement/article_LEGIARTI000022495275_L512-11__" href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000022495275">
+        <a class="dsr-section_reference" data-document_reference="27" data-is_resolvable="true" data-uri="dsr://code_LEGITEXT000006074220___Code%20de%20l%27environnement/article_LEGIARTI000022495275_L512-11__" href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000022495275">
          article L.512-11
         </a>
         du
-        <a class="dsr-document_reference" data-is_resolvable="true" data-uri="dsr://code_LEGITEXT000006074220___Code%20de%20l%27environnement" href="https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006074220">
+        <a class="dsr-document_reference" data-element_id="27" data-is_resolvable="true" data-uri="dsr://code_LEGITEXT000006074220___Code%20de%20l%27environnement" href="https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006074220">
          code de l'environnement
         </a>
        </span>
@@ -786,16 +925,16 @@
       <div class="dsr-alinea" data-number="2">
        <ul>
         <li>
-         pour éviter toute surpression possible dans les cuves, une tuyauterie équipée d'un clapet taré oriente les gaz, au moyen de vannes, soit vers le camion citerne, en phase de dépotage, soit vers l'extérieur au travers d'une solution neutralisante,
+         - pour éviter toute surpression possible dans les cuves, une tuyauterie équipée d'un clapet taré oriente les gaz, au moyen de vannes, soit vers le camion citerne, en phase de dépotage, soit vers l'extérieur au travers d'une solution neutralisante,
         </li>
         <li>
-         pour éviter toute mise en dépression, la cuve est pressurisée en air sec ( 150 à 180 mbars), et est équipée d'un clapet à ressort «casse vide»,
+         - pour éviter toute mise en dépression, la cuve est pressurisée en air sec ( 150 à 180 mbars), et est équipée d'un clapet à ressort «casse vide»,
         </li>
         <li>
-         pour éviter toute mise en contact avec l'eau, le réseau d'air sec de pressurisation est distinct du réseau d'air «usine» (compresseur et sécheur séparés) ; le circuit de l'échangeur de chaleur est alimenté avec un fluide caloporteur «neutre» (ne pouvant pas réagir avec les produits stockés dans les cuves) ; pour les cuves 8 et 9 , cette dernière disposition devra être respectée avant la fin de l'année 2008,
+         - pour éviter toute mise en contact avec l'eau, le réseau d'air sec de pressurisation est distinct du réseau d'air «usine» (compresseur et sécheur séparés) ; le circuit de l'échangeur de chaleur est alimenté avec un fluide caloporteur «neutre» (ne pouvant pas réagir avec les produits stockés dans les cuves) ; pour les cuves 8 et 9 , cette dernière disposition devra être respectée avant la fin de l'année 2008,
         </li>
         <li>
-         pour éviter tout risque de débordement dans les cuves, elles sont équipées de détecteurs de niveau à flotteur avec alarme et asservissement pompes.
+         - pour éviter tout risque de débordement dans les cuves, elles sont équipées de détecteurs de niveau à flotteur avec alarme et asservissement pompes.
         </li>
        </ul>
       </div>
@@ -805,13 +944,13 @@
       <div class="dsr-alinea" data-number="4">
        <ul>
         <li>
-         pour diminuer le risque d'épandage, le dépotage s'effectuera par aspiration; pour les cuves 8 et 9 , cette disposition devra être respectée avant la fin de l'année 2008,
+         - pour diminuer le risque d'épandage, le dépotage s'effectuera par aspiration; pour les cuves 8 et 9 , cette disposition devra être respectée avant la fin de l'année 2008,
         </li>
         <li>
-         pressostat d'asservissement sur la pompe de puisage / gavage de type centrifuge (faible surpression),
+         - pressostat d'asservissement sur la pompe de puisage / gavage de type centrifuge (faible surpression),
         </li>
         <li>
-         pressostat et soupape de sécurité en sortie de la pompe de dosage (volumétrique) avec asservissement sur arrêt de la coulée.
+         - pressostat et soupape de sécurité en sortie de la pompe de dosage (volumétrique) avec asservissement sur arrêt de la coulée.
         </li>
        </ul>
       </div>
@@ -875,11 +1014,11 @@
       <div class="dsr-alinea" data-number="1">
        Sans préjudice des dispositions des
        <span class="dsr-sections_and_document_references">
-        <a class="dsr-section_reference" data-is_resolvable="false" data-uri="dsr://decret_JORFTEXT000000518520_77-1133_1977-09-21_/article__34__">
+        <a class="dsr-section_reference" data-document_reference="28" data-is_resolvable="false" data-uri="dsr://decret_JORFTEXT000000518520_77-1133_1977-09-21_/article__34__">
          articles 34
         </a>
         -1 et suivants du
-        <a class="dsr-document_reference" data-is_resolvable="true" data-uri="dsr://decret_JORFTEXT000000518520_77-1133_1977-09-21_" href="https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000000518520">
+        <a class="dsr-document_reference" data-element_id="28" data-is_resolvable="true" data-uri="dsr://decret_JORFTEXT000000518520_77-1133_1977-09-21_" href="https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000000518520">
          décret n° 77-1133 du
          <time class="dsr-date" datetime="1977-09-21">
           21 septembre 1977
@@ -894,16 +1033,16 @@
       <div class="dsr-alinea" data-number="3">
        <ul>
         <li>
-         l'évacuation ou l'élimination des produits dangereux, des matières polluantes susceptibles d'être véhiculées par l'eau ainsi que des déchets présents sur le site,
+         - l'évacuation ou l'élimination des produits dangereux, des matières polluantes susceptibles d'être véhiculées par l'eau ainsi que des déchets présents sur le site,
         </li>
         <li>
-         les interdictions ou limitations d'accès au site ;
+         - les interdictions ou limitations d'accès au site ;
         </li>
         <li>
-         la suppression des risques d'incendie et d'explosion ;
+         - la suppression des risques d'incendie et d'explosion ;
         </li>
         <li>
-         la surveillance des effets de l'installation sur son environnement.
+         - la surveillance des effets de l'installation sur son environnement.
         </li>
        </ul>
       </div>
@@ -984,11 +1123,11 @@
      <div class="dsr-alinea" data-number="1">
       L'exploitant est tenu à déclarer dans les meilleurs délais à l'inspection des installations classées les accidents ou incidents survenus du fait du fonctionnement de son installation qui sont de nature à porter atteinte aux intérêts mentionnés à l'
       <span class="dsr-sections_and_document_references">
-       <a class="dsr-section_reference" data-is_resolvable="true" data-uri="dsr://code_LEGITEXT000006074220___Code%20de%20l%27environnement/article_LEGIARTI000043978078_L511-1__" href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000043978078">
+       <a class="dsr-section_reference" data-document_reference="29" data-is_resolvable="true" data-uri="dsr://code_LEGITEXT000006074220___Code%20de%20l%27environnement/article_LEGIARTI000043978078_L511-1__" href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000043978078">
         article L.511-1
        </a>
        du
-       <a class="dsr-document_reference" data-is_resolvable="true" data-uri="dsr://code_LEGITEXT000006074220___Code%20de%20l%27environnement" href="https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006074220">
+       <a class="dsr-document_reference" data-element_id="29" data-is_resolvable="true" data-uri="dsr://code_LEGITEXT000006074220___Code%20de%20l%27environnement" href="https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006074220">
         code de l'environnement
        </a>
       </span>
@@ -1011,16 +1150,16 @@
      <div class="dsr-alinea" data-number="2">
       <ul>
        <li>
-        les plans tenus à jour,
+        - les plans tenus à jour,
        </li>
        <li>
-        le récépissé de déclaration et les prescriptions générales, en cas d'installations soumises à déclaration non couvertes par un arrêté d'autorisation,
+        - le récépissé de déclaration et les prescriptions générales, en cas d'installations soumises à déclaration non couvertes par un arrêté d'autorisation,
        </li>
        <li>
-        les arrêtés préfectoraux relatifs aux installations soumises à autorisation, pris en application de la législation relative aux installations classées pour la protection de l'environnement,
+        - les arrêtés préfectoraux relatifs aux installations soumises à autorisation, pris en application de la législation relative aux installations classées pour la protection de l'environnement,
        </li>
        <li>
-        les résultats des dernières mesures sur les effluents et le bruit.
+        - les résultats des dernières mesures sur les effluents et le bruit.
        </li>
       </ul>
      </div>
@@ -1106,28 +1245,28 @@
       <div class="dsr-alinea" data-number="3">
        <ul>
         <li>
-         à l'inspecteur des installations classées (DRIRE Eure, DRIRE Rouen),
+         - à l'inspecteur des installations classées (DRIRE Eure, DRIRE Rouen),
         </li>
         <li>
-         au directeur départemental de l'agriculture et de la foret,
+         - au directeur départemental de l'agriculture et de la foret,
         </li>
         <li>
-         au directeur départemental des affaires sanitaires et sociales,
+         - au directeur départemental des affaires sanitaires et sociales,
         </li>
         <li>
-         au directeur départemental des services d'incendie et de secours,
+         - au directeur départemental des services d'incendie et de secours,
         </li>
         <li>
-         au directeur départemental du travail, de l'emploi et de la formation professionnelle,
+         - au directeur départemental du travail, de l'emploi et de la formation professionnelle,
         </li>
         <li>
-         au directeur départemental de l'équipement,
+         - au directeur départemental de l'équipement,
         </li>
         <li>
-         au directeur régional de l'environnement,
+         - au directeur régional de l'environnement,
         </li>
         <li>
-         au maire de Louviers.
+         - au maire de Louviers.
         </li>
        </ul>
       </div>
