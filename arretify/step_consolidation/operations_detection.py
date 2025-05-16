@@ -92,7 +92,7 @@ RTL_OPERATION_NODE = regex_tree.Group(
                             [
                                 r"modifiée?s?",
                                 r"remplacée?s?",
-                                r"mise?s?\s+à\s+jour",
+                                r"mises?\s+à\s+jour",
                                 r"substituée?s?",
                                 r"supprimée?s?\s+et\s+remplacée?s?",
                                 r"annulée?s?\s+et\s+remplacée?s?",
