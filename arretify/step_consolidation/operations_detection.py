@@ -90,8 +90,6 @@ RTL_OPERATION_NODE = regex_tree.Group(
                     regex_tree.Group(
                         regex_tree.Branching(
                             [
-                                r"modifiée?s?",
-                                r"remplacée?s?",
                                 r"mises?\s+à\s+jour",
                                 r"substituée?s?",
                                 r"supprimée?s?\s+et\s+remplacée?s?",
