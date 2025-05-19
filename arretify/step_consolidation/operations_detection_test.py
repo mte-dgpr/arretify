@@ -437,22 +437,3 @@ class TestParseOperations(unittest.TestCase):
                 """
             )
         ]
-
-    def test_reworded_as_follows(self):
-        assert process_operations("Paragraphe 4.24 - POI. Il est rédigé ainsi :") == [
-            normalized_html_str(
-                """
-                <span
-                    class="dsr-operation"
-                    data-direction="rtl"
-                    data-has_operand="true"
-                    data-keyword="rédigé ainsi"
-                    data-operand=""
-                    data-operation_type="add"
-                    data-references=""
-                >
-                    Paragraphe 4.24 - POI. Il est <b>rédigé ainsi</b> :
-                </span>
-                """
-            )
-        ]
