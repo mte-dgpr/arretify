@@ -9,6 +9,7 @@ from arretify.utils.html import (
     make_li,
     make_new_tag,
     make_data_tag,
+    render_str_list_attribute,
 )
 from arretify.utils.markdown_parsing import (
     is_table_line,
@@ -193,7 +194,7 @@ def parse_blockquote(soup: BeautifulSoup, lines: TextSegments) -> Tuple[TextSegm
         error_element = make_data_tag(
             soup,
             ERROR_SCHEMA,
-            data=dict(error_code=ErrorCodes.unbalanced_quote.value),
+            data=dict(error_codes=render_str_list_attribute([ErrorCodes.unbalanced_quote.value])),
             contents=[pile[0].contents],
         )
         # Put back all the lines except the one raising the error into the pile

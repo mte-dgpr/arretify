@@ -28,13 +28,9 @@
                 color: var(--text-action-high-blue-france);
             }
 
-            .dsr-error {
+            *[data-error_codes] {
                 font-family: monospace;
-                background-color: #ffd0d0;
-            }
-
-            .dsr-error:before {
-                content: '❌';
+                background-color: #ffd0d0 !important;
             }
 
             .dsr-alinea::before, .dsr-visa::before, .dsr-motifs::before {
@@ -108,10 +104,6 @@
 
             ul, ol { 
                 list-style: none;
-            }
-
-            .dsr-section_title {
-                background-color: var(--colors-title-bg);
             }
 
             .dsr-operation {
@@ -439,9 +431,9 @@
     </div>
    </section>
    <section class="dsr-section" data-number="1" data-title="Justificatifs d'accréditations sur les opérations de prélèvements (si disponible) et d'analyse de substances dans la matrice «eaux résiduaires» comprenant a minima : a. Numéro d'accréditation b. Extrait de l'annexe technique sur les substances concernées" data-type="unknown">
-    <span class="dsr-error" data-error_code="non_contiguous_sections">
+    <h2 class="dsr-section_title" data-error_codes="non_contiguous_sections">
      1. Justificatifs d'accréditations sur les opérations de prélèvements (si disponible) et d'analyse de substances dans la matrice «eaux résiduaires» comprenant a minima : a. Numéro d'accréditation b. Extrait de l'annexe technique sur les substances concernées
-    </span>
+    </h2>
     <div class="dsr-alinea" data-number="1">
      2. Liste de références en matière d'opérations de prélèvements de substances dangereuses dans les rejets industriels;
     </div>
@@ -529,9 +521,9 @@
     </div>
    </section>
    <section class="dsr-section" data-number="3" data-title="Mise en cuvre de la surveillance initiale" data-type="article">
-    <span class="dsr-error" data-error_code="non_contiguous_sections">
+    <h2 class="dsr-section_title" data-error_codes="non_contiguous_sections">
      Article 3 : Mise en cuvre de la surveillance initiale
-    </span>
+    </h2>
     <section class="dsr-section" data-number="3.1" data-title="Programme de surveillance initiale" data-type="unknown">
      <h3 class="dsr-section_title">
       3.1. Programme de surveillance initiale

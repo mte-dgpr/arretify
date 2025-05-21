@@ -154,7 +154,7 @@ DATE_SCHEMA = DataElementSchema(
 ERROR_SCHEMA = DataElementSchema(
     name="error",
     tag_name="span",
-    data_keys=["error_code"],
+    data_keys=[],
 )
 
 OPERATION_SCHEMA = DataElementSchema(

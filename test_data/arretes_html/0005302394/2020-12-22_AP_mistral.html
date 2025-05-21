@@ -28,13 +28,9 @@
                 color: var(--text-action-high-blue-france);
             }
 
-            .dsr-error {
+            *[data-error_codes] {
                 font-family: monospace;
-                background-color: #ffd0d0;
-            }
-
-            .dsr-error:before {
-                content: '❌';
+                background-color: #ffd0d0 !important;
             }
 
             .dsr-alinea::before, .dsr-visa::before, .dsr-motifs::before {
@@ -108,10 +104,6 @@
 
             ul, ol { 
                 list-style: none;
-            }
-
-            .dsr-section_title {
-                background-color: var(--colors-title-bg);
             }
 
             .dsr-operation {
