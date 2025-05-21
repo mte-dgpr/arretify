@@ -47,7 +47,7 @@ from arretify.law_data.uri import (
 # TODO :
 # - Phrase and word index
 
-Alinea = str
+Alinea = int
 ArticleNum = str
 
 
@@ -132,9 +132,9 @@ def _extract_alinea(match: regex_tree.Match) -> Alinea:
 
     alinea: Union[Alinea, None] = None
     if alinea_num:
-        alinea = alinea_num
+        alinea = int(alinea_num)
     elif alinea_ordinal:
-        alinea = str(ordinal_str_to_int(alinea_ordinal))
+        alinea = ordinal_str_to_int(alinea_ordinal)
 
     if alinea is None:
         raise RuntimeError("No alinea found")
@@ -181,8 +181,8 @@ def _extract_sections(
         sections.append(
             Section(
                 type=SectionType.ALINEA,
-                start_num=alinea_start,
-                end_num=(alinea_end and alinea_end) or None,
+                start_num=str(alinea_start),
+                end_num=(alinea_end and str(alinea_end)) or None,
             )
         )
 
