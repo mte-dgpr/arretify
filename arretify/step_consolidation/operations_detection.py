@@ -42,8 +42,7 @@ OPERATION_TYPES_GROUP_NAMES = [
 RTL_OPERATION_NODE = regex_tree.Group(
     regex_tree.Sequence(
         [
-            # If there is a sentence end left of the operation,
-            # it means there is no (1), therefore we reject the match.
+            # Ignore the match if a paragraph break appears left of the operation
             r"^.*",
             regex_tree.Branching(
                 [
@@ -72,12 +71,10 @@ RTL_OPERATION_NODE = regex_tree.Group(
                     regex_tree.Group(
                         regex_tree.Branching(
                             [
-                                r"mises?\s+à\s+jour",
                                 r"substituée?s?",
                                 r"supprimée?s?\s+et\s+remplacée?s?",
                                 r"annulée?s?\s+et\s+remplacée?s?",
                                 r"abrogée?s?\s+et\s+remplacée?s?",
-                                r"abrogée?s?\s+ou\s+modifiée?s?",
                                 r"modifiée?s?\s+et\s+remplacée?s?",
                                 r"modifiée?s?\s+ou\s+supprimée?s?\s+et\s+remplacée?s?",
                                 r"modifiée?s?",
