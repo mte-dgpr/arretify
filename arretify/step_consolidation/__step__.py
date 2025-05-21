@@ -5,6 +5,7 @@ from arretify.html_schemas import (
     ALINEA_SCHEMA,
     DOCUMENT_REFERENCE_SCHEMA,
     OPERATION_SCHEMA,
+    SECTION_REFERENCE_SCHEMA,
 )
 from arretify.types import PageElementOrString, ParsingContext
 from arretify.utils.html import make_css_class, replace_children
@@ -20,6 +21,7 @@ from .operands_detection import (
 ALINEA_CSS_CLASS = make_css_class(ALINEA_SCHEMA)
 DOCUMENT_REFERENCE_CSS_CLASS = make_css_class(DOCUMENT_REFERENCE_SCHEMA)
 OPERATION_CSS_CLASS = make_css_class(OPERATION_SCHEMA)
+SECTION_REFERENCE_SCHEMA = make_css_class(SECTION_REFERENCE_SCHEMA)
 
 
 def step_consolidation(parsing_context: ParsingContext) -> ParsingContext:
@@ -27,7 +29,9 @@ def step_consolidation(parsing_context: ParsingContext) -> ParsingContext:
     for container_tag in parsing_context.soup.select(f".{ALINEA_CSS_CLASS}, .{ALINEA_CSS_CLASS} *"):
         new_children: List[PageElementOrString] = list(container_tag.children)
 
-        document_reference_tags = container_tag.select(f".{DOCUMENT_REFERENCE_CSS_CLASS}")
+        document_reference_tags = container_tag.select(
+            f".{DOCUMENT_REFERENCE_CSS_CLASS}, .{SECTION_REFERENCE_SCHEMA}"
+        )
         if document_reference_tags:
             new_children = parse_operations(parsing_context, new_children)
 

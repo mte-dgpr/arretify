@@ -41,7 +41,13 @@
         "(2010-10-04,  a été réalisée en 2017)": null,
         "(1998-02-02, \n                relatif aux prélèvements et à la consommation d'eau ainsi\n                qu'aux émissions de toute nature des installations)": "JORFTEXT000000204891",
         "(1998-02-02, relatif aux prélèvements et à la consommation d'eau ainsiqu'aux émissions de toute nature des installations classéespour)": null,
-        "(1998-02-02,  relatif aux prélèvements et à la consommation d'eau ainsiqu'aux émissions de toute nature des installations classéespour)": null
+        "(1998-02-02,  relatif aux prélèvements et à la consommation d'eau ainsiqu'aux émissions de toute nature des installations classéespour)": null,
+        "(2000-05-10,  relatif à la prévention des accidents majeurs,)": "JORFTEXT000000752492",
+        "(2000-03-15,  avec l'indication des éléments suivants pour chaque équipement concerné :)": null,
+        "(1985-01-04, , notamment en ce qui concerne l'émission d'un bordereau de suivi)": null,
+        "(1985-01-04,  relatif au contrôle des circuits d'élimination des déchets générateurs de nuisances)": "LEGITEXT000006074754",
+        "(1980-03-31,  portant réglementation des installations électriques des établissements réglementés au titre de la législation des installations classées)": null,
+        "(1993-01-28,  ainsi qu'à la norme NF-C1700)": null
     },
     "get_eu_act_url_with_year_and_num": {
         "(directive, 2010, 75)": "https://eur-lex.europa.eu/legal-content/FR/TXT/HTML/?uri=cellar:c7191b72-4e07-4712-86d6-d3ae5e4f0082",
@@ -68,7 +74,22 @@
         "(2005-05-30, title= relatif au contrôle des circuits de traitement des déchets, num=2005-635)": "JORFTEXT000000257088",
         "(2005-04-20, title= relatif au programme national d'action contre la pollution des milieux aquatiques par certaines substances dangereuses, num=2005-378)": "JORFTEXT000000259598",
         "(2005-04-20, title=\n            relatif au programme national d'action contre la pollution des milieux aquatiques par certaines substances dangereuses, num=None)": "JORFTEXT000000259598",
-        "(2005-04-20, title=relatif au programme national d'action contre la pollution des milieux aquatiques par certaines substances dangereuses, num=None)": "JORFTEXT000000259598"
+        "(2005-04-20, title=relatif au programme national d'action contre la pollution des milieux aquatiques par certaines substances dangereuses, num=None)": "JORFTEXT000000259598",
+        "(2005-07-20, title=None, num=2005-829)": "JORFTEXT000000810278",
+        "(1977-09-21, title= modifié, relatif aux installations classées pour la protection de l'environnement,, num=77-1133)": "JORFTEXT000000518520",
+        "(1953-05-20, title= modifié, relatif à la nomenclature des installations classées pour la protection de l'environnement,, num=53-578)": "JORFTEXT000000497189",
+        "(1977-09-21, title=None, num=77-1133)": "JORFTEXT000000518520",
+        "(1998-09-11, title= relatif aux rendements minimaux et à l'équipement des chaudières, num=98-817)": "JORFTEXT000000739635",
+        "(1998-09-16, title= relatif au contrôle périodique des installations consommant de l'énergie thermique, num=98-833)": "JORFTEXT000000206876",
+        "(1998-09-11, title=None, num=98-817)": "JORFTEXT000000739635",
+        "(2002-04-18, title=None, num=2002-540)": "JORFTEXT000000594802",
+        "(1979-11-21, title= modifié portant réglementation de la récupération des huiles usagées et aux textes subséquents, num=None)": null,
+        "(1994-07-13, title= réglementant l'élimination des déchets d'emballages dont les détenteurs ne sont pas les ménages, l'exploitant est tenu, num=None)": null,
+        "(1995-01-23, title= fixant les prescriptions prévues par l', num=95-79)": "JORFTEXT000000734830",
+        "(1988-11-14, title= relatif à la protection des travailleurs dans les établissements mettant en œuvre des courants électriques, num=88-1056)": "JORFTEXT000000866441",
+        "(1977-09-21, title= modifié pris pour l'application de la loi 76-663 du 19 juillet 1976 relative aux installations classées, num=77-1133)": "JORFTEXT000000518520",
+        "(2024-10-31, title= du Président de la République nommant Monsieur Charles GIUSTI, préfet de l'Eure, le procès-verbal d'installation de, num=None)": null,
+        "(2024-02-14, title= du Président de la République nommant Monsieur Alaric MALVES, secrétaire général de la préfecture de l'Eure,, num=None)": null
     },
     "get_circulaire_legifrance_id": {
         "(1986-07-23,  relative aux vibrations mecaniques emises dans l'environnement par les installations classees pour la protection de l'environnement)": "JORFTEXT000000866509",
@@ -86,6 +107,13 @@
         "(1986-07-23, \n            relative aux vibrations mecaniques emises dans l'environnement par les installations classees pour la protection de l'environnement)": "JORFTEXT000000866509",
         "(1986-07-23, relative aux vibrations mecaniques emises dans l'environnement par les installations classees pour la protection de l'environnement)": "JORFTEXT000000866509",
         "(2010-03-23,  relative à l'adaptation des conditions de mise en œuvre de la circulaire du 5 janv)": null,
-        "(2007-05-07, ) et de la directive fille de la DCE adoptée le 20 oct)": null
+        "(2007-05-07, ) et de la directive fille de la DCE adoptée le 20 oct)": null,
+        "(2005-09-29,  relative aux critères d'appréciation de la démarche de maîtrise des risques d'accidents susceptibles de survenir dans)": null,
+        "(2010-05-10,  récapitulant les règles méthodologiques applicables aux études de dangers, à l'appropriation de la démarche de réduction)": null,
+        "(1979-08-10,  relative à la conception des circuits de réfrigération en vue de prévenir la pollution de l'eau)": null,
+        "(1993-01-28,  concernant la protection contre la foudre de certaines installations classées)": null,
+        "(1986-07-23,  relative aux vibrations mécaniques émises dans l'environnement par les Installations classées)": "JORFTEXT000000866509",
+        "(2007-05-07,  définissant les « normes de qualité environnementale provisoires(NQEp) » et les objectifs nationaux de réduction des)": null,
+        "(2007-05-07, ) et de la directive fitte de la DCE adoptée le 20 octobre 2008 (anthracène et)": null
     }
 }

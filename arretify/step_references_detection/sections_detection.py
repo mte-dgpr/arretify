@@ -43,7 +43,7 @@ from arretify.law_data.uri import (
 # TODO :
 # - Phrase and word index
 
-Alinea = int
+Alinea = str
 ArticleNum = str
 
 
@@ -52,9 +52,9 @@ def parse_section_references(
     children: Iterable[PageElementOrString],
 ) -> List[PageElementOrString]:
     # First check for multiple, cause it is the most exhaustive pattern
-    new_children = list(_parse_section_reference_multiple_articles(parsing_context.soup, children))
+    new_children = list(_parse_section_reference_multiple_alineas(parsing_context.soup, children))
     new_children = list(
-        _parse_section_reference_multiple_alineas(parsing_context.soup, new_children)
+        _parse_section_reference_multiple_articles(parsing_context.soup, new_children)
     )
     return list(_parse_section_references(parsing_context.soup, new_children))
 
@@ -77,8 +77,12 @@ ARTICLE_ID_NODE = regex_tree.Group(
 ALINEA_NODE = regex_tree.Group(
     regex_tree.Branching(
         [
-            r"(?P<alinea_num>\d+)" + EME_PATTERN_S + r"?",
+            # Case "3ème alinéa"
+            r"(?P<alinea_num>\d+)" + EME_PATTERN_S,
+            # Case "alinéa premier"
             r"(?P<alinea_ordinal>" + ORDINAL_PATTERN_S + r")",
+            # Case "alinéa 3.3"
+            r"(?P<alinea_num>\d+(\.\d+)*)",
         ]
     ),
     group_name="__alinea",
@@ -126,9 +130,9 @@ def _extract_alinea(match: regex_tree.Match) -> Alinea:
 
     alinea: Union[Alinea, None] = None
     if alinea_num:
-        alinea = int(alinea_num)
+        alinea = alinea_num
     elif alinea_ordinal:
-        alinea = ordinal_str_to_int(alinea_ordinal)
+        alinea = str(ordinal_str_to_int(alinea_ordinal))
 
     if alinea is None:
         raise RuntimeError("No alinea found")
@@ -175,8 +179,8 @@ def _extract_sections(
         sections.append(
             Section(
                 type=SectionType.alinea,
-                start_num=str(alinea_start),
-                end_num=(alinea_end and str(alinea_end)) or None,
+                start_num=alinea_start,
+                end_num=(alinea_end and alinea_end) or None,
             )
         )
 
@@ -231,13 +235,13 @@ SECTION_REFERENCE_NODE = regex_tree.Group(
             ),
             regex_tree.Sequence(
                 [
-                    r"articles? ",
+                    r"(article|paragraphe)s? ",
                     ARTICLE_RANGE_NODE,
                 ]
             ),
             regex_tree.Sequence(
                 [
-                    r"articles? ",
+                    r"(article|paragraphe)s? ",
                     ARTICLE_ID_NODE,
                 ]
             ),
@@ -274,7 +278,7 @@ SECTION_REFERENCE_MULTIPLE_ARTICLES_NODE = regex_tree.Group(
             regex_tree.Group(
                 regex_tree.Sequence(
                     [
-                        r"articles? ",
+                        r"(article|paragraphe)s? ",
                         # Order of patterns matters, from most specific to less specific.
                         regex_tree.Branching(
                             [
@@ -357,7 +361,7 @@ SECTION_REFERENCE_MULTIPLE_ALINEA_NODE = regex_tree.Group(
             regex_tree.Group(
                 regex_tree.Sequence(
                     [
-                        r"(alinéas|paragraphes) ",
+                        r"(alinéa|paragraphe)s ",
                         ALINEA_NODE,
                     ]
                 ),

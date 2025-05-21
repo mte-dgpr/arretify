@@ -44,7 +44,7 @@ RTL_OPERATION_NODE = regex_tree.Group(
         [
             # If there is a sentence end left of the operation,
             # it means there is no (1), therefore we reject the match.
-            r"^[^.]*",
+            r"^.*",
             regex_tree.Branching(
                 [
                     r"est\sainsi\s",
@@ -58,10 +58,13 @@ RTL_OPERATION_NODE = regex_tree.Group(
                     regex_tree.Group(
                         regex_tree.Branching(
                             [
+                                r"complétée?s?(?:\s+(ainsi\s*[:]?|comme\s+suit[\s:]?))?",
                                 r"complétée?s?",
                                 r"créée?s?",
+                                r"insérée?s?",
+                                r"modifiée?s?\s+par\s+l'ajout",
+                                r"ajouté\s+un\s+paragraphe\s+rédigé\s+ainsi",
                                 r"ajoutée?s?",
-                                r"modifiée?s?\s+par\s+l\'ajout",
                             ]
                         ),
                         group_name=OperationType.ADD.value,
@@ -69,15 +72,16 @@ RTL_OPERATION_NODE = regex_tree.Group(
                     regex_tree.Group(
                         regex_tree.Branching(
                             [
-                                r"modifiée?s?",
-                                r"remplacée?s?",
-                                r"mise?s? à jour",
+                                r"mises?\s+à\s+jour",
                                 r"substituée?s?",
                                 r"supprimée?s?\s+et\s+remplacée?s?",
+                                r"annulée?s?\s+et\s+remplacée?s?",
                                 r"abrogée?s?\s+et\s+remplacée?s?",
                                 r"abrogée?s?\s+ou\s+modifiée?s?",
                                 r"modifiée?s?\s+et\s+remplacée?s?",
                                 r"modifiée?s?\s+ou\s+supprimée?s?\s+et\s+remplacée?s?",
+                                r"modifiée?s?",
+                                r"remplacée?s?",
                             ]
                         ),
                         group_name=OperationType.REPLACE.value,
@@ -87,6 +91,7 @@ RTL_OPERATION_NODE = regex_tree.Group(
                             [
                                 r"abrogée?s?",
                                 r"supprimée?s?",
+                                r"annulée?s?",
                             ]
                         ),
                         group_name=OperationType.DELETE.value,
