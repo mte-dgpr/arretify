@@ -28,13 +28,9 @@
                 color: var(--text-action-high-blue-france);
             }
 
-            .dsr-error {
+            *[data-error_codes] {
                 font-family: monospace;
-                background-color: #ffd0d0;
-            }
-
-            .dsr-error:before {
-                content: '❌';
+                background-color: #ffd0d0 !important;
             }
 
             .dsr-alinea::before, .dsr-visa::before, .dsr-motifs::before {
@@ -108,10 +104,6 @@
 
             ul, ol { 
                 list-style: none;
-            }
-
-            .dsr-section_title {
-                background-color: var(--colors-title-bg);
             }
 
             .dsr-operation {
@@ -255,9 +247,9 @@
     </div>
    </section>
    <section class="dsr-section" data-number="1" data-title="OBJET " data-type="unknown">
-    <span class="dsr-error" data-error_code="non_contiguous_sections">
+    <h2 class="dsr-section_title" data-error_codes="non_contiguous_sections">
      1. OBJET
-    </span>
+    </h2>
     <section class="dsr-section" data-number="1.1" data-title="Installations autorisées" data-type="unknown">
      <h3 class="dsr-section_title">
       1.1. Installations autorisées
@@ -2455,18 +2447,18 @@
       Les opérations correspondantes sont programmées et effectuées sous la responsabilité de l'exploitant.
      </div>
      <section class="dsr-section" data-number="4.1.17" data-title="Propreté" data-type="unknown">
-      <span class="dsr-error" data-error_code="non_contiguous_sections">
+      <h4 class="dsr-section_title" data-error_codes="non_contiguous_sections">
        4.1.17. Propreté
-      </span>
+      </h4>
       <div class="dsr-alinea" data-number="1">
        Les locaux doivent être maintenus propres et régulièrement nettoyés notamment de manière à éviter les amas de matières dangereuses ou polluantes et de poussières. Le matériel de nettoyage doit être adapté aux risques présentés par les produits.
       </div>
      </section>
     </section>
     <section class="dsr-section" data-number="4.18" data-title="Registre entrée-sortie" data-type="unknown">
-     <span class="dsr-error" data-error_code="non_contiguous_sections">
+     <h3 class="dsr-section_title" data-error_codes="non_contiguous_sections">
       4.18. Registre entrée-sortie
-     </span>
+     </h3>
      <div class="dsr-alinea" data-number="1">
       L'exploitant doit tenir à jour un état indiquant la nature et la quantité des produits toxiques (TDI, MDI) stockés sur le site auquel est annexé un plan général des stockages. Cet état est tenu à la disposition de l'inspecteur des installations classées et des services d'incendie et de secours.
      </div>
@@ -2543,9 +2535,9 @@
      </div>
     </section>
     <section class="dsr-section" data-number="4.23" data-title="Clôture - Gardiennage" data-type="unknown">
-     <span class="dsr-error" data-error_code="non_contiguous_sections">
+     <h3 class="dsr-section_title" data-error_codes="non_contiguous_sections">
       4.23. Clôture - Gardiennage
-     </span>
+     </h3>
      <div class="dsr-alinea" data-number="1">
       L'établissement est entouré d'une clôture efficace de 2 m de hauteur et résistante, afin d'en interdire l'accès à toute personne ou véhicule en dehors des heures d'ouverture.
      </div>
@@ -2629,9 +2621,9 @@
     </section>
    </section>
    <section class="dsr-section" data-number="2" data-type="article">
-    <span class="dsr-error" data-error_code="non_contiguous_sections">
+    <h2 class="dsr-section_title" data-error_codes="non_contiguous_sections">
      ARTICLE 2 :
-    </span>
+    </h2>
     <div class="dsr-alinea" data-number="1">
      Conformément à l'
      <span class="dsr-sections_and_document_references">

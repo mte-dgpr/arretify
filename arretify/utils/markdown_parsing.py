@@ -8,6 +8,7 @@ from arretify.errors import ErrorCodes
 from arretify.utils.html import (
     PageElementOrString,
     make_data_tag,
+    render_str_list_attribute,
 )
 from arretify.html_schemas import ERROR_SCHEMA
 from arretify.regex_utils import PatternProxy
@@ -77,7 +78,7 @@ def parse_markdown_table(elements: List[PageElementOrString]):
         return make_data_tag(
             soup,
             ERROR_SCHEMA,
-            data=dict(error_code=ErrorCodes.markdown_parsing.value),
+            data=dict(error_codes=render_str_list_attribute([ErrorCodes.markdown_parsing.value])),
             contents=[markdown_str],
         )
 

@@ -1,14 +1,13 @@
-from typing import List, Optional
+from typing import List, Optional, Dict
 import logging
 
 from bs4 import BeautifulSoup, Tag
 
-from arretify.utils.html import make_data_tag
+from arretify.utils.html import make_data_tag, render_str_list_attribute
 from arretify.html_schemas import (
     SECTION_SCHEMA,
     SECTION_TITLE_SCHEMAS,
     ALINEA_SCHEMA,
-    ERROR_SCHEMA,
 )
 from arretify.errors import ErrorCodes
 from arretify.parsing_utils.source_mapping import (
@@ -74,24 +73,21 @@ def parse_main_content(soup: BeautifulSoup, main_content: Tag, lines: TextSegmen
         # Add a tag if the sections are not contiguous
         title_contents = lines.pop(0).contents
 
+        title_element_data: Dict[str, str | None] = dict()
         if not are_sections_contiguous(current_levels, new_levels):
             _LOGGER.warning(
                 f"Detected title of levels {new_levels} after title of levels {current_levels}"
             )
-            error_element = make_data_tag(
-                soup,
-                ERROR_SCHEMA,
-                data=dict(error_code=ErrorCodes.non_contiguous_sections.value),
-                contents=[title_contents],
+            title_element_data["error_codes"] = render_str_list_attribute(
+                [ErrorCodes.non_contiguous_sections.value]
             )
-            section_element.append(error_element)
-        else:
-            title_element = make_data_tag(
-                soup,
-                SECTION_TITLE_SCHEMAS[new_level],
-                contents=[title_contents],
-            )
-            section_element.append(title_element)
+        title_element = make_data_tag(
+            soup,
+            SECTION_TITLE_SCHEMAS[new_level],
+            contents=[title_contents],
+            data=title_element_data,
+        )
+        section_element.append(title_element)
 
         current_levels = new_levels
 

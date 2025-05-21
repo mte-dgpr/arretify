@@ -28,13 +28,9 @@
                 color: var(--text-action-high-blue-france);
             }
 
-            .dsr-error {
+            *[data-error_codes] {
                 font-family: monospace;
-                background-color: #ffd0d0;
-            }
-
-            .dsr-error:before {
-                content: '❌';
+                background-color: #ffd0d0 !important;
             }
 
             .dsr-alinea::before, .dsr-visa::before, .dsr-motifs::before {
@@ -108,10 +104,6 @@
 
             ul, ol { 
                 list-style: none;
-            }
-
-            .dsr-section_title {
-                background-color: var(--colors-title-bg);
             }
 
             .dsr-operation {
@@ -309,9 +301,9 @@
      TITRE 2 EXECUTION DE L'ARRETE ..... 7
     </h2>
     <section class="dsr-section" data-number="1.1" data-title="BENEFICIAIRE ET PORTEE DE L'AUTORISATION " data-type="chapitre">
-     <span class="dsr-error" data-error_code="non_contiguous_sections">
+     <h3 class="dsr-section_title" data-error_codes="non_contiguous_sections">
       CHAPITRE 1.1 BENEFICIAIRE ET PORTEE DE L'AUTORISATION
-     </span>
+     </h3>
      <section class="dsr-section" data-number="1.1.1" data-title="EXPLOITANT TITULAIRE DE L'AUTORISATION" data-type="article">
       <h4 class="dsr-section_title">
        ARTICLE 1.1.1. EXPLOITANT TITULAIRE DE L'AUTORISATION

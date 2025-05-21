@@ -10,6 +10,9 @@ from arretify.types import (
 )
 
 
+SHARED_DATA_KEYS = [
+    "error_codes",
+]
 _ID_COUNTER = 0
 
 
@@ -50,6 +53,13 @@ def make_data_tag(
             raise KeyError(f'Missing key "{key}" for schema "{schema.name}"')
         if data_value is not None:
             element[f"data-{key}"] = data_value
+
+    for key in SHARED_DATA_KEYS:
+        if key in data:
+            data_value = data[key]
+            if data_value is not None:
+                element[f"data-{key}"] = data_value
+
     return element
 
 

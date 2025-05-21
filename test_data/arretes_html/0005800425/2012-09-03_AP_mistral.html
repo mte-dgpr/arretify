@@ -28,13 +28,9 @@
                 color: var(--text-action-high-blue-france);
             }
 
-            .dsr-error {
+            *[data-error_codes] {
                 font-family: monospace;
-                background-color: #ffd0d0;
-            }
-
-            .dsr-error:before {
-                content: '❌';
+                background-color: #ffd0d0 !important;
             }
 
             .dsr-alinea::before, .dsr-visa::before, .dsr-motifs::before {
@@ -108,10 +104,6 @@
 
             ul, ol { 
                 list-style: none;
-            }
-
-            .dsr-section_title {
-                background-color: var(--colors-title-bg);
             }
 
             .dsr-operation {
@@ -354,9 +346,9 @@
     </div>
    </section>
    <section class="dsr-section" data-number="1" data-type="article">
-    <span class="dsr-error" data-error_code="non_contiguous_sections">
+    <h2 class="dsr-section_title" data-error_codes="non_contiguous_sections">
      Article 1 :
-    </span>
+    </h2>
     <div class="dsr-alinea" data-number="1">
      Les dispositions de l'
      <a class="dsr-document_reference" data-element_id="93" data-is_resolvable="false" data-uri="dsr://arrete-prefectoral__D3-B4-07-86_2007-04-19_">
@@ -1521,9 +1513,9 @@
     </div>
    </section>
    <section class="dsr-section" data-number="10" data-type="article">
-    <span class="dsr-error" data-error_code="non_contiguous_sections">
+    <h2 class="dsr-section_title" data-error_codes="non_contiguous_sections">
      Article 10 :
-    </span>
+    </h2>
     <div class="dsr-alinea" data-number="1">
      Les dispositions du
      <a class="dsr-section_reference" data-is_resolvable="false" data-uri="dsr://unknown____/article__4.8__">
