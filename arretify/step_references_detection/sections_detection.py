@@ -78,11 +78,9 @@ ALINEA_NODE = regex_tree.Group(
     regex_tree.Branching(
         [
             # Case "3ème alinéa"
-            r"(?P<alinea_num>\d+)" + EME_PATTERN_S,
+            r"(?P<alinea_num>\d+)" + EME_PATTERN_S + r"?",
             # Case "alinéa premier"
             r"(?P<alinea_ordinal>" + ORDINAL_PATTERN_S + r")",
-            # Case "alinéa 3.3"
-            r"(?P<alinea_num>\d+(\.\d+)*)",
         ]
     ),
     group_name="__alinea",
