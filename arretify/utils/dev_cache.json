@@ -89,7 +89,8 @@
         "(1988-11-14, title= relatif à la protection des travailleurs dans les établissements mettant en œuvre des courants électriques, num=88-1056)": "JORFTEXT000000866441",
         "(1977-09-21, title= modifié pris pour l'application de la loi 76-663 du 19 juillet 1976 relative aux installations classées, num=77-1133)": "JORFTEXT000000518520",
         "(2024-10-31, title= du Président de la République nommant Monsieur Charles GIUSTI, préfet de l'Eure, le procès-verbal d'installation de, num=None)": null,
-        "(2024-02-14, title= du Président de la République nommant Monsieur Alaric MALVES, secrétaire général de la préfecture de l'Eure,, num=None)": null
+        "(2024-02-14, title= du Président de la République nommant Monsieur Alaric MALVES, secrétaire général de la préfecture de l'Eure,, num=None)": null,
+        "(1996-11-19, title=, relatif aux appareils et aux systèmes de protection destinés à être utilisés en atmosphère explosible, num=96-1110)": "JORFTEXT000000196772"
     },
     "get_circulaire_legifrance_id": {
         "(1986-07-23,  relative aux vibrations mecaniques emises dans l'environnement par les installations classees pour la protection de l'environnement)": "JORFTEXT000000866509",
@@ -114,6 +115,12 @@
         "(1993-01-28,  concernant la protection contre la foudre de certaines installations classées)": null,
         "(1986-07-23,  relative aux vibrations mécaniques émises dans l'environnement par les Installations classées)": "JORFTEXT000000866509",
         "(2007-05-07,  définissant les « normes de qualité environnementale provisoires(NQEp) » et les objectifs nationaux de réduction des)": null,
-        "(2007-05-07, ) et de la directive fitte de la DCE adoptée le 20 octobre 2008 (anthracène et)": null
+        "(2007-05-07, ) et de la directive fitte de la DCE adoptée le 20 octobre 2008 (anthracène et)": null,
+        "(2007-05-07, ) et de la directive file de la DCE adoptée le 20 octobre 2008 (anthracène et)": null,
+        "(2007-05-07,  définissant les « normes de qualité environnementale provisoires (NQEp) » et les objectifs nationaux de réduction)": null,
+        "(2009-01-05,  et téléchargeable sur le site http://rsde)": null,
+        "(2007-05-07, ) Autres substances pertinentes issues de la liste I de la)": null,
+        "(2007-05-07, ) Autres substances pertinentes issues de la liste II de la)": null,
+        "(2010-05-10,  récapitulant les règles méthodologiques applicables aux études de dangers, à l'appréciation de la démarche de réduction)": null
     }
 }

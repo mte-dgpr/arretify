@@ -1,15 +1,15 @@
-# PRÉFET DU HAUT-RHIN 
-
+PRÉFET
+DU HAUT-RHIN
 Liberté
-Egalité
+Égalité
 Fraternité
 
-SERVICE DE LA COORDINATION DES POLITIQUES
+Service de la coordination des politiques
 PUBLIQUES ET DE L'APPUI TERRITORIAL
 BUREAU DES ENQUÊTES PUBLIQUES ET INSTALLATIONS
-CLASSÉES
+CLASSEES
 
-## Arrêté du 24 septembre 2021
+# Arrêté du 24 septembre 2021 
 
 portant modification de l'autorisation d'exploiter une unité de valorisation énergétique de combustibles solides de récupération (CSR), de déchets d'activité économique (DAE) et d'ordures ménagères (OM) sur le territoire de la commune de Bantzenheim à la société B+T ENERGIE France Sas
 en référence au titre VIII du livre I et au titre I ${ }^{\text {er }}$ du livre V du code de l'environnement
@@ -17,12 +17,11 @@ en référence au titre VIII du livre I et au titre I ${ }^{\text {er }}$ du liv
 VU le code de l'environnement, livre V, titre $1^{\text {er }}$ relatif aux installations classées pour la protection de l'environnement, livre I, titre VIII relatif aux procédures administratives et livre II, titre II, relatif aux quotas d'émission de gaz à effet de serre ;
 
 VU le code des relations entre le public et l'administration et notamment son article L.121-1 ;
-
 VU notamment l'article R.181-46 du code de l'environnement ;
-VU la nomenclature des installations classées, annexée à l'article R.511-9 du code de I'environnement ;
+VU la nomenclature des installations classées, annexée à l'article R.511-9 du code de l'environnement ;
 
 VU le code des relations entre le public et l'administration et notamment son article L.121-1 ;
-VU la directive 2010/75/UE du 24 novembre 2010 relative aux émissions industrielles, dite «directive IED» et les conclusions sur les meilleures techniques disponibles relatives, notamment, à l'incinération de déchets (BREF «WI ») ;
+VU la directive 2010/75/UE du 24 novembre 2010 relative aux émissions industrielles, dite «directive IED» et les conclusions sur les meilleures techniques disponibles relatives, notamment, à l'incinération de déchets (BREF «WI »);
 
 VU la directive 2003/87/CE du 13 octobre 2003 établissant un système d'échange de quotas d'émission de gaz à effet de serre dans la Communauté et modifiant la directive 96/61/CE du Conseil ;
 
@@ -35,7 +34,7 @@ VU l'arrêté ministériel du 2 février 1998 modifié, notamment par l'arrêté
 
 VU l'arrêté ministériel du 23 décembre 1998 relatif aux prescriptions générales applicables aux installations classées pour la protection de l'environnement soumises à déclaration sous la rubrique $n^{\circ} 4511$ (déchets non-dangereux non inertes) ;
 
-VU l'arrêté ministériel du 23 janvier 1997 modifié relatif à la limitation des bruits émis dans I'environnement par les installations classées pour la protection de l'environnement ;
+VU l'arrêté ministériel du 23 janvier 1997 modifié relatif à la limitation des bruits émis dans l'environnement par les installations classées pour la protection de l'environnement ;
 
 VU l'arrêté ministériel du 29 septembre 2005 relatif à l'évaluation et à la prise en compte de la probabilité d'occurrence, de la cinétique, de l'intensité des effets et de la gravité des conséquences des accidents potentiels dans les études de dangers des installations classées soumises à autorisation ;
 
@@ -60,7 +59,7 @@ VU le rapport du 4 août 2021 de la direction régionale de l'environnement, de 
 
 Considérant que les installations projetées par la société B+T Energie France Sas sur le territoire de la commune de Bantzenheim relèvent du régime de l'autorisation au titre de I'article L.512-1 du livre V du titre 1er relatif aux installations classées pour la protection de I'environnement ;
 
-Considérant qu'en application des dispositions de l'article L.181-3 du code de I'environnement, l'autorisation environnementale ne peut être accordée que si les mesures qu'elle comporte assurent la prévention des dangers ou inconvénients pour les intérêts mentionnés aux articles L.211-1 et L.511-1 ;
+Considérant qu'en application des dispositions de l'article L.181-3 du code de I'environnement, I'autorisation environnementale ne peut être accordée que si les mesures qu'elle comporte assurent la prévention des dangers ou inconvénients pour les intérêts mentionnés aux articles L.211-1 et L.511-1 ;
 
 Considérant que l'incinération de déchets non-dangereux est de nature à porter atteinte aux intérêts à protéger mentionnés à l'article L.511-1 du code de l'environnement susvisé et qu'il convient en conséquence de prévoir les mesures adaptées destinées à prévenir ou empêcher ses effets ;
 
@@ -79,10 +78,10 @@ Considérant que les mesures imposées à l'exploitant tiennent compte des résu
 Considérant que la demande de modification sollicitée le 19 juillet 2021 porte sur :
 - l'augmentation à 80 MW de la valeur de la puissance de son installation mentionnée dans son arrêté d'autorisation pour inclure le réchauffeur des condensats en entrée de l'incinérateur qui n'avait pas été inclus dans le projet initial à 70 MW ;
 - différents ajustements :
-- Légère augmentation de la puissance maximum de l'incinérateur ( $26,2 \mathrm{t} / \mathrm{h}$ au lieu de $25,2 \mathrm{t} / \mathrm{h}$ ), la puissance moyenne annuelle restant la même ;
+- Légère augmentation de la puissance maximum de l'incinérateur (26,2 t/h au lieu de $25,2 \mathrm{t} / \mathrm{h}$ ), la puissance moyenne annuelle restant la même ;
 - Augmentation du montant des garanties financières qui passe de 548389 euros à 588 401,68 euros, en appliquant l'indice TP01 de 2020 à la place de celui de 2019 ;
 - Augmentation des valeurs limites des flux journaliers autorisés pour les rejets dans l'air suite à la révision du calcul des débits des gaz à la cheminée;
-- Modification de la quantité annuelle de cendres et mâchefers produits par l'installation ; ces quantités n'évoluent pas, seule la répartition entre les cendres et mâchefers est modifiée ;
+- Modification de la quantité annuelle de cendres et mâchefers produits par l'installation; ces quantités n'évoluent pas, seule la répartition entre les cendres et mâchefers est modifiée ;
 Considérant que la demande de modification sus-visée n'est pas substantielle (l'exploitant a notamment procédé à la mise à jour de l'évaluation des risques sanitaires réalisée en 2018 qui montre que les risques pour la santé humaine sont acceptables) ;
 
 Après communication du projet d'arrêté à l'exploitant ;
@@ -98,8 +97,7 @@ Sur proposition du sous-préfet, secrétaire général de la préfecture,
 
 La société B+T Energie France Sas, dont le siège social est sis 7 avenue de Strasbourg - Parc des Collines - 68350 Brunstatt-Didenheim est autorisée, sous réserve du respect des prescriptions annexées au présent arrêté, à exploiter sur le territoire de la commune de Bantzenheim, les installations détaillées dans les articles suivants.
 
-## Article 1.1.2. Modifications et compléments apportés aux prescriptions des actes antérieurs
-
+Article 1.1.2. Modifications et compléments apportés aux prescriptions des actes antérieurs
 Les prescriptions de l'arrêté préfectoral du 20 avril 2020 sont remplacées celles définies par le présent arrêté.
 
 ## Article 1.1.3. Installations non visées par la nomenclature ou soumises à déclaration ou soumises a enregistrement
@@ -109,23 +107,23 @@ Les dispositions des arrêtés ministériels existants relatifs aux prescription
 
 # CHAPITRE 1.2 Nature des installations 
 
-Article 1.2.1. Liste des installations concernées par une rubrique de la nomenclature des installations classées
+## Article 1.2.1. Liste des installations concernées par une rubrique de la nomenclature des installations classées
 
-Les installations exploitées sont classées selon les rubriques et régimes définis dans le tableau ci-dessous :
+Les installations exploitées sont classées selon les rubriques et régimes définis dans le tableau ci-dessous:
 
-| Rubriqu <br> e | Régime <br> (*) | Libellé de la rubrique (activité) | Nature de l'installation | Volume autorisé |
+| Rubrique | Régime <br> (*) | Libellé de la rubrique (activité) | Nature de l'installation | Volume autorisé |
 | :--: | :--: | :--: | :--: | :--: |
-| 2771 | A | Installation de traitement thermique de déchets non dangereux, à l'exclusion des installations visées à la rubrique 2971 | Installation de production de chaleur à partir de CSR (Combustibles Solides de Récupération), de DAE (Déchets d'Activités Economiques) et d'OM (Ordures Ménagères) | 80 MW <br> CSR, DAE et OM : <br> 200604 t/an <br> dont au maximum 60000 t/an d'OM |
-| 2971.1 | A | Installation de production de chaleur ou d'électricité à partir de déchets non dangereux préparés sous forme de combustibles solides de récupération dans une installation prévue à cet effet, associés ou non à un autre combustible. 1. Installations intégrées dans un procédé industriel de fabrication |  | 80 MW |
-| 3110 | A | Combustion de combustibles dans des installations d'une puissance thermique nominale totale égale ou supérieure à 50 MW |  | 26,2 t/h au maximum $22,9 \mathrm{t} / \mathrm{h}$ en moyenne annuelle |
-| 3520.a | A | Incinération ou coincinération de déchets Elimination ou valorisation de déchets dans des installations d'incinération des déchets ou des installations de coincinération des déchets : <br> a) Pour les déchets non dangereux avec une capacité supérieure à 3 tonnes par heure |  | 26,2 t/h au maximum $22,9 \mathrm{t} / \mathrm{h}$ en moyenne annuelle |
+| 2771 | A | Installation de traitement thermique de déchets non dangereux, à l'exclusion des installations visées à la rubrique 2971 | Installation de production de chaleur ou d'électricité à partir de déchets non dangereux préparés sous forme de combustibles solides de récupération dans une installation prévue à cet effet, associés ou non à un autre combustible. 1. Installations intégrées dans un procédé industriel de fabrication | Installation de production de chaleur à partir de CSR (Combustibles Solides de Récupération), de DAE (Déchets d'Activités Economiques) et d'OM (Ordures Ménagères) |
+| 2971.1 | A |  |  | 200604 t/an dont au maximum 60000 t/an d'OM |
+| 3110 | A | Combustion de combustibles dans des installations d'une puissance thermique nominale totale égale ou supérieure à 50 MW |  | 80 MW |
+| 3520.a | A | Incinération ou coincinération de déchets Elimination ou valorisation de déchets dans des installations d'incinération des déchets ou des installations de coincinération des déchets : <br> a) Pour les déchets non dangereux avec une capacité supérieure à 3 tonnes par heure |  | $26,2 \mathrm{t} / \mathrm{h}$ au maximum $22,9 \mathrm{t} / \mathrm{h}$ en moyenne annuelle |
 | 4511.2 | D | Dangereux pour l'environnement aquatique de catégorie chronique 2. La quantité totale susceptible d'être présente dans l'installation étant : <br> 2. Supérieure ou égale à 100 t mais inférieure à 200 t | Stockage des résidus d'épuration des fumées / poussières des filtres / eaux issues du séparateur | 117 t |
 
 (*) A (Autorisation) - D (Déclaration)
 Volume autorisé : éléments caractérisant la consistance, le rythme de fonctionnement, le volume des installations ou les capacités maximales autorisées.
 # Article 1.2.2. établissement concerné par la directive ied 
 
-L'établissement possède des installations visées par la directive 2010/75/UE du 24 novembre 2010 relative aux émissions industrielles, dite « directive IED ». Ces installations relèvent de la rubrique $n^{\circ} 3520-a$ de la nomenclature des installations classées et sont soumises aux dispositions des articles R. 515-60 à R. 515-84 du code de l'environnement.
+L'établissement possède des installations visées par la directive 2010/75/UE du 24 novembre 2010 relative aux émissions industrielles, dite «directive IED». Ces installations relèvent de la rubrique $n^{\circ} 3520$-a de la nomenclature des installations classées et sont soumises aux dispositions des articles R. 515-60 à R. 515-84 du code de l'environnement.
 Au sens de l'article R. 515-61, la rubrique principale retenue est la rubrique $n^{\circ} 3520$ relative à l'incinération de déchets, et les conclusions sur les meilleures techniques disponibles relatives à la rubrique principale sont celles relatives à l'incinération de déchets (BREF « WI »).
 
 ## Article 1.2.3. Situation de l'établissement
@@ -147,7 +145,7 @@ Les déchets d'activités de soins à risques infectieux et assimilés (DASRI) n
 L'acceptation des déchets à incinérer répond à l'ordre de priorisation suivant :
 
 1) CSR provenant d'installation de préparation des CSR visée à l'arrêté du 23 mai 2016 relatif à la préparation des combustibles solides de récupération et préparés tels que prévu par cet arrêté ;
-2) DAE ayant fait l'objet d'un pré-traitement mais ne répondant pas à l'ensemble des critères définis dans l'arrêté du 23 mai 2016 relatif à la préparation des combustibles solides de récupération;
+2) DAE ayant fait l'objet d'un pré-traitement mais ne répondant pas à l'ensemble des critères définis dans l'arrêté du 23 mai 2016 relatif à la préparation des combustibles solides de récupération ;
 3) DAE ne pouvant faire l'objet d'un pré-traitement. A ce titre, les DAE «non triés» acceptés sur le site se limitent à des refus d'installations de valorisation matière des déchets (exemple : déchets de pulpeur issus de l'industrie papetière).
 
 Les OM sont admises uniquement sur demande du SIVOM de la région mulhousienne pour pallier les incapacités temporaires de l'UIOM de Sausheim. L'exploitant soumet au préfet sa proposition de service en réponse au SIVOM dès lors qu'elle dépasse 10000 tonnes cumulées sur 12 mois glissants.
@@ -157,7 +155,7 @@ Les OM sont admises uniquement sur demande du SIVOM de la région mulhousienne p
 L'exploitant applique le principe de proximité pour l'approvisionnement de ses installations en déchets combustibles, en respectant notamment les critères suivants :
 
 - le tonnage de CSR et DAE incinérés annuellement provient a minima pour $74 \%$ des départements du Haut-Rhin, du Bas-Rhin et de la Moselle ;
-- pour chaque provenance de déchets, l'exploitant s'assure que cette opération est autorisée par les plans de gestion des déchets en vigueur sur la zone d'origine du déchet. Les éléments justificatifs de cette vérification sont tenus à disposition de I'inspection des installations classées et transmis sur demande.
+- pour chaque provenance de déchets, l'exploitant s'assure que cette opération est autorisée par les plans de gestion des déchets en vigueur sur la zone d'origine du déchet. Les éléments justificatifs de cette vérification sont tenus à disposition de l'inspection des installations classées et transmis sur demande.
 
 
 # Article 1.2.4.3. Itinéraire de transport 
@@ -172,20 +170,20 @@ Les déchets doivent préalablement à leur admission faire l'objet d'un contrô
 Le seuil de déclenchement de l'alarme du dispositif de détection est fixé par l'exploitant en tenant compte du bruit de fond local. Les éléments techniques justificatifs de la détermination de ce seuil de déclenchement sont tenus à la disposition de l'inspection des installations classées. Le seuil de déclenchement ne peut être modifié que par action d'une personne habilitée par l'exploitant. Le réglage de ce seuil de déclenchement est vérifié à fréquence a minima annuelle, selon un programme de vérification défini par l'exploitant.
 La vérification du bon fonctionnement du dispositif de détection de la radioactivité est réalisée périodiquement. La périodicité retenue par l'exploitant doit être justifiée, elle a lieu au moins une fois par an. L'exploitant doit pouvoir justifier que l'équipement de détection de la radioactivité est en service de façon continue.
 L'exploitant tient à la disposition de l'inspection des installations classées les documents nécessaires à la traçabilité des opérations de vérification et de maintenance réalisées sur le dispositif de détection de la radioactivité.
-L'exploitant s'assure de la conformité des combustibles utilisés par rapport aux critères définis à l'article 1.2.4.1 du présent arrêté en effectuant:
+L'exploitant s'assure de la conformité des combustibles utilisés par rapport aux critères définis à l'article 1.2.4.1 du présent arrêté en effectuant :
 
 - un contrôle visuel à la livraison sur chaque lot. Les critères de vérification du contrôle visuel sont définis par l'exploitant dans le programme de suivi visé à l'article 7 et permettent notamment de s'assurer de la conformité du combustible en terme de présence de corps étrangers tels que ferrailles ou pierres et autres matériaux inertes ou indésirables à la combustion ;
-- pour la vérification de la conformité des CSR, I'exploitant appliquera les prescriptions de l'arrêté ministériel du 23 mai 2016 modifié qui précise notamment: la liste des paramètres analytiques, les fréquences d'analyse, les modalités de prélèvement et d'analyse, les teneurs maximales autorisées.
+- pour la vérification de la conformité des CSR, l'exploitant appliquera les prescriptions de l'arrêté ministériel du 23 mai 2016 modifié qui précise notamment: la liste des paramètres analytiques, les fréquences d'analyse, les modalités de prélèvement et d'analyse, les teneurs maximales autorisées.
 - une analyse de la teneur en métaux et dioxines dans les cendres volantes une fois par semestre.
-L'exploitant établit et tient à jour un registre chronologique où sont consignées, pour chaque flux de combustibles dont les CSR, les informations suivantes :
+L'exploitant établit et tient à jour un registre chronologique où sont consignées, pour chaque flux de combustibles dont les CSR, les informations suivantes:
 
 - la fiche d'identification de chaque lot reçu (pour les CSR) ;
-- la date de réception de chaque lot ;
+- la date de réception de chaque lot;
 - la nature du combustible entrant (code du déchet au regard de la nomenclature définie à l'annexe II de l'article R.541-8 du code de l'environnement) ;
 - la quantité ;
 - le nom et l'adresse de l'installation expéditrice ;
 - le nom et l'adresse du ou des transporteurs, ainsi que leur numéro de récépissé mentionné à l'article R.541-53 du code de l'environnement.
-Ce registre comptabilise par fournisseur le tonnage réceptionné par type de déchet, le résultat du contrôle visuel et, le cas échéant, les résultats d'analyses effectuées. II comptabilise également le tonnage réceptionné par origine géographique (département pour une origine française et pays pour les pays étrangers). Les données de ce registre sont tenues à disposition de l'inspection des installations classées pendant au moins trois ans.
+Ce registre comptabilise par fournisseur le tonnage réceptionné par type de déchet, le résultat du contrôle visuel et, le cas échéant, les résultats d'analyses effectuées. Il comptabilise également le tonnage réceptionné par origine géographique (département pour une origine française et pays pour les pays étrangers). Les données de ce registre sont tenues à disposition de l'inspection des installations classées pendant au moins trois ans.
 
 L'installation est équipée de telle sorte que l'entreposage des déchets et l'approvisionnement du four d'incinération ne soit pas à l'origine de nuisances olfactives pour le voisinage. L'aire de déchargement des déchets doit être conçue pour éviter tout envol de déchets et de poussières ou écoulement d'effluents liquides vers l'extérieur.
 
@@ -253,7 +251,7 @@ Sans préjudice des mesures de l'article R.512-74 du code de l'environnement, po
 Lorsque l'installation classée est mise à l'arrêt définitif, l'exploitant notifie au préfet la date de cet arrêt trois mois au moins avant celui-ci.
 La notification prévue ci-dessus indique les mesures prises ou prévues pour assurer, dès l'arrêt de l'exploitation, la mise en sécurité du site. Ces mesures comportent notamment :
 
-- I'évacuation ou l'élimination des produits dangereux, et, pour les installations autres que les installations de stockage de déchets, celle des déchets présents sur le site ;
+- l'évacuation ou l'élimination des produits dangereux, et, pour les installations autres que les installations de stockage de déchets, celle des déchets présents sur le site ;
 - des interdictions ou limitations d'accès au site ;
 - la suppression des risques d'incendie et d'explosion ;
 - la surveillance des effets de l'installation sur son environnement.
@@ -266,11 +264,11 @@ En outre, l'exploitant doit placer le site de l'installation dans un état confo
 
 Sans préjudice de la réglementation en vigueur, sont notamment applicables à l'établissement les prescriptions qui le concernent des textes cités ci-dessous (liste non exhaustive) :
 
-- arrêté ministériel du 23 janvier 1997 relatif à la limitation des bruits émis dans l'environnement par les installations classées pour la protection de l'environnement ;
+- arrêté ministériel du 23 janvier 1997 relatif à la limitation des bruits émis dans I'environnement par les installations classées pour la protection de l'environnement ;
 - arrêté ministériel du 2 février 1998 modifié relatif aux prélèvements et à la consommation d'eau ainsi qu'aux émissions de toute nature des installations classées pour la protection de l'environnement soumises à autorisation ;
 - arrêté ministériel du 23 décembre 1998 relatif aux prescriptions générales applicables aux installations classées pour la protection de l'environnement soumises à déclaration sous la rubrique $n^{\circ} 4511$ (déchets non-dangereux non inertes) ;
 - arrêté ministériel du 20 septembre 2002 relatif aux installations d'incinération et de co-incinération de déchets non dangereux et aux installations incinérant des déchets d'activités de soins à risques infectieux ;
-- arrêté ministériel du 29 juillet 2005 modifié fixant le formulaire du bordereau de suivi des déchets dangereux mentionné à l'article 4 du décret $n^{\circ}$ 2005-635 du 30 mai 2005Arrêté du 23/01/97 relatif à la limitation des bruits émis dans l'environnement par les installations classées pour la protection de l'environnement ;
+- arrêté ministériel du 29 juillet 2005 modifié fixant le formulaire du bordereau de suivi des déchets dangereux mentionné à l'article 4 du décret $n^{\circ}$ 2005-635 du 30 mai 2005Arrêté du 23/01/97 relatif à la limitation des bruits émis dans l'environnement par les installations classées pour la protection de l'environnement;
 - arrêté ministériel du 31 janvier 2008 modifié relatif au registre et à la déclaration annuelle des émissions et des transferts de polluants et des déchets ;
 - arrêté ministériel du 7 juillet 2009 relatif aux modalités d'analyse dans l'air et dans l'eau dans les installations classées pour la protection de l'environnement et aux normes de référence ;
 - arrêté ministériel du 4 octobre 2010 modifié relatif à la prévention des risques accidentels au sein des installations classées pour la protection de l'environnement soumises à autorisation ;
@@ -278,7 +276,9 @@ Sans préjudice de la réglementation en vigueur, sont notamment applicables à 
 - arrêté ministériel du 23 mai 2016 modifié relatif aux installations de production de chaleur et/ou d'électricité à partir de déchets non dangereux préparés sous forme de combustibles solides de récupération dans des installations prévues à cet effet, associés ou non à un autre combustible et relevant de la rubrique 2971 de la nomenclature des installations classées pour la protection de l'environnement ;
 - arrêté ministériel du 12 janvier 2021 relatif aux meilleures techniques disponibles (MTD) applicables aux installations d'incinération et de co-incinération de déchets relevant du régime de l'autorisation au titre de la rubrique 3520 ;
 
-Article 1.6.2. Respect des autres législations et réglementations
+
+# Article 1.6.2. Respect des autres législations et réglementations 
+
 Les dispositions de cet arrêté préfectoral sont prises sans préjudice :
 
 - des autres législations et réglementations applicables, et notamment le code minier, le code civil, le code de l'urbanisme, le code du travail et le code général des collectivités territoriales, la réglementation sur les équipements sous pression,
@@ -287,7 +287,7 @@ Les dispositions de cet arrêté préfectoral sont prises sans préjudice :
 Les droits des tiers sont et demeurent expressément réservés.
 La présente autorisation ne vaut pas permis de construire.
 
-# CHAPITRE 1.7 Garanties financières environnementales 
+## CHAPITRE 1.7 Garanties financières environnementales
 
 ## Article 1.7.1. Objet des garanties financières
 
@@ -313,7 +313,7 @@ Le renouvellement des garanties financières intervient au moins trois mois avan
 
 ## Article 1.7.5. Actualisation des garanties financières
 
-Sans préjudice des dispositions de l'article R.516-5-1 du code de l'environnement, I'exploitant présente tous les cinq ans un état actualisé du montant de ses garanties financières.
+Sans préjudice des dispositions de l'article R.516-5-1 du code de l'environnement, l'exploitant présente tous les cinq ans un état actualisé du montant de ses garanties financières.
 
 Ce montant réactualisé est obtenu par application de la méthode d'actualisation précisée à I'annexe II de l'arrêté ministériel du 31 mai 2012 sus-visé au montant de référence figurant à I'article 1.7.2 du présent arrêté pour la période considérée.
 
@@ -325,7 +325,7 @@ L'exploitant informe le préfet, dès qu'il en a connaissance, de tout changemen
 
 ## Article 1.7.7. Absence de garanties financières
 
-Outre les sanctions rappelées à l'article L.516-1 du code de l'environnement, I'absence de garanties financières peut entraîner la suspension du fonctionnement des installations classées visées au présent arrêté, après mise en œuvre des modalités prévues à l'article L.514-1 de ce code. Conformément à l'article L.514-3 du même code, pendant la durée de la suspension, l'exploitant est tenu d'assurer à son personnel le paiement des salaires, indemnités et rémunérations de toute nature auxquels il avait droit jusqu'alors.
+Outre les sanctions rappelées à l'article L.516-1 du code de l'environnement, l'absence de garanties financières peut entraîner la suspension du fonctionnement des installations classées visées au présent arrêté, après mise en œuvre des modalités prévues à l'article L.514-1 de ce code. Conformément à l'article L.514-3 du même code, pendant la durée de la suspension, l'exploitant est tenu d'assurer à son personnel le paiement des salaires, indemnités et rémunérations de toute nature auxquels il avait droit jusqu'alors.
 
 ## Article 1.7.8. Appel des garanties financières
 
@@ -337,7 +337,7 @@ En cas de défaillance de l'exploitant, le préfet peut faire appel aux garantie
 
 L'obligation de garanties financières est levée à la cessation d'exploitation des installations nécessitant la mise en place des garanties financières, et après que les travaux couverts par les garanties financières ont été normalement réalisés.
 
-Ce retour à une situation normale est constaté, dans le cadre de la procédure de cessation d'activité prévue aux articles R.512-74 et R.512 39-1 à R.512-39-3, par l'inspecteur des installations classées qui établit un procès-verbal de récolement.
+Ce retour à une situation normale est constaté, dans le cadre de la procédure de cessation d'activité prévue aux articles R.512-74 et R. 512 39-1 à R.512-39-3, par l'inspecteur des installations classées qui établit un procès-verbal de récolement.
 L'obligation de garanties financières est levée par arrêté préfectoral.
 En application de l'article R.516-5 du code de l'environnement, le préfet peut demander la réalisation, aux frais de l'exploitant, d'une évaluation critique par un tiers expert des éléments techniques justifiant la levée de l'obligation de garanties financières.
 
@@ -350,13 +350,12 @@ En application de l'article R.516-5 du code de l'environnement, le préfet peut 
 L'exploitant prend toutes les dispositions nécessaires dans la conception, l'aménagement, l'entretien et l'exploitation des installations pour :
 
 - limiter le prélèvement et la consommation d'eau ;
-- limiter les émissions de polluants dans l'environnement;
-- respecter les valeurs limites d'émissions pour les substances polluantes définies ciaprès;
+- limiter les émissions de polluants dans l'environnement ;
+- respecter les valeurs limites d'émissions pour les substances polluantes définies ciaprès ;
 - gérer les effluents ainsi que les déchets en fonction de leurs caractéristiques, ainsi que la réduction des quantités rejetées;
 - prévenir en toutes circonstances, l'émission, la dissémination ou le déversement, chroniques ou accidentels, directs ou indirects, de matières ou substances qui peuvent présenter des dangers ou inconvénients pour la commodité de voisinage, pour la santé, la sécurité, la salubrité publique, pour l'agriculture, pour la protection de la nature, de l'environnement et des paysages, pour l'utilisation rationnelle de l'énergie ainsi que pour la conservation des sites et des monuments ainsi que des éléments du patrimoine archéologique.
 
-
-## Article 2.1.2. Impacts sur le milieu naturel: mesures d'évitement, de réduction et de compensation des impacts
+Article 2.1.2. Impacts sur le milieu naturel: mesures d'évitement, de réduction et de compensation des impacts
 
 Sans objet.
 
@@ -376,6 +375,7 @@ L'établissement dispose de réserves suffisantes de produits ou matières conso
 ## Article 2.3.1. Propreté
 
 L'exploitant assure la propreté des voies de circulation, en particulier à la sortie de l'installation, et veille à ce que les véhicules sortant de l'installation ne puissent pas conduire au dépôt de déchets sur les voies publiques d'accès au site.
+
 L'ensemble du site doit être maintenu propre et les bâtiments et installations entretenus. Les abords de l'installation, dont l'entrée du site, font l'objet d'une maintenance régulière.
 
 ## Article 2.3.2. Esthétique
@@ -393,8 +393,11 @@ Tout danger ou nuisance non susceptible d'être prévenu par les prescriptions d
 ## Article 2.5.1. Déclaration et rapport
 
 L'exploitant est tenu à informer immédiatement l'inspection des installations classées en cas d'accident et de lui indiquer toutes les mesures prises à titre conservatoire.
+
 L'exploitant est tenu à déclarer dans les meilleurs délais à l'inspection des installations classées les accidents ou incidents survenus du fait du fonctionnement de son installation qui sont de nature à porter atteinte aux intérêts mentionnés à l'article L.181-3 du code de I'environnement.
+
 Un rapport d'accident ou, sur demande de l'inspection des installations classées, un rapport d'incident est transmis par l'exploitant à l'inspection des installations classées. Il précise notamment les circonstances et les causes de l'accident ou de l'incident, les effets sur les personnes et l'environnement, les mesures prises ou envisagées pour éviter un accident ou un incident similaire et pour en pallier les effets à moyen ou long terme.
+
 Ce rapport est transmis sous 15 jours à l'inspection des installations classées.
 # CHAPITRE 2.6 Récapitulatif des documents tenus à la disposition de l'inspection 
 
@@ -402,12 +405,12 @@ Ce rapport est transmis sous 15 jours à l'inspection des installations classée
 
 L'exploitant établit et tient à jour un dossier comportant les documents suivants :
 
-- le dossier de demande d'autorisation ;
+- le dossier de demande d'autorisation;
 - les dossiers modifiants les conditions d'exploitation du dossier de demande d'autorisation;
 - les plans tenus à jour ;
-- les récépissés de déclaration et les prescriptions générales, en cas d'installations soumises à déclaration non couvertes par l'arrêté d'autorisation ;
-- les arrêtés préfectoraux et les prescriptions générales, en cas d'installations soumises à enregistrement non couvertes par un arrêté préfectoral d'autorisation ;
-- les arrêtés préfectoraux relatifs aux installations soumises à autorisation, pris en application de la législation relative aux installations classées pour la protection de I'environnement ;
+- les récépissés de déclaration et les prescriptions générales, en cas d'installations soumises à déclaration non couvertes par l'arrêté d'autorisation;
+- les arrêtés préfectoraux et les prescriptions générales, en cas d'installations soumises à enregistrement non couvertes par un arrêté préfectoral d'autorisation;
+- les arrêtés préfectoraux relatifs aux installations soumises à autorisation, pris en application de la législation relative aux installations classées pour la protection de l'environnement;
 - tous les documents, enregistrements, résultats de vérification et registres répertoriés dans le présent arrêté.
 Ces documents peuvent être informatisés, mais dans ce cas des dispositions doivent être prises pour la sauvegarde des données.
 Ces documents sont tenus à la disposition de l'inspection des installations classées sur le site durant toute la durée d'exploitation et au moins cinq ans après l'arrêt définitif.
@@ -433,12 +436,12 @@ L'exploitant transmet à l'inspection les documents suivants :
 | 10.3 .2 | Résultats de la surveillance des émissions <br> atmosphériques, des déchets incinérés et | Trimestrielle ou annuelle suivant <br> les paramètres |
 |  | des déchets produits |  |
 | :--: | :--: | :--: |
-| 10.3.2 | Résultats de la surveillance des émissions <br> aqueuses | Mensuelle (GIDAF : ste de <br> télédéclaration) |
-| 10.4.1 | Déclaration annuelle des émissions | Annuelle (GEREP : site de <br> télédéclaration) |
-| 10.4.2 | Rapport d'activité annuel | Annuelle |
-| 10.5.1 | Informations nécessaires pour l'ouverture <br> d'un compte de dépôt d'exploitant dans le <br> registre de l'Union lié au système d'échange <br> de quotas de gaz à effet de serre | Dans les vingt jours ouvrables <br> suivant la date de publication de <br> l'arrêté préfectoral d'autorisation, <br> à l'administrateur national du <br> registre |
-| 10.5.2 | Plan de surveillance des émissions de gaz à <br> effet de serre | Transmis au préfet pour <br> approbation avant la mise en <br> service de l'installation. |
-| 10.5.3 | Déclaration annuelle des émissions de gaz à <br> effet de serre | Annuelle, avant le 28 février pour <br> l'année précédente |
+| 10.3 .2 | Résultats de la surveillance des émissions <br> aqueuses | Mensuelle (GIDAF : ste de <br> télédéclaration) |
+| 10.4 .1 | Déclaration annuelle des émissions | Annuelle (GEREP : site de <br> télédéclaration) |
+| 10.4 .2 | Rapport d'activité annuel | Annuelle |
+| 10.5 .1 | Informations nécessaires pour l'ouverture <br> d'un compte de dépôt d'exploitant dans le <br> registre de l'Union lié au système d'échange <br> de quotas de gaz à effet de serre | Dans les vingt jours ouvrables <br> suivant la date de publication de <br> l'arrêté préfectoral d'autorisation, <br> à l'administrateur national du <br> registre |
+| 10.5 .2 | Plan de surveillance des émissions de gaz à <br> effet de serre | Transmis au préfet pour <br> approbation avant la mise en <br> service de l'installation. |
+| 10.5 .3 | Déclaration annuelle des émissions de gaz à <br> effet de serre | Annuelle, avant le 28 février pour <br> l'année précédente |
 
 # TITRE 3 - Prévention de la pollution atmosphérique 
 
@@ -446,7 +449,7 @@ L'exploitant transmet à l'inspection les documents suivants :
 
 ## Article 3.1.1. Dispositions générales
 
-L'exploitant prend toutes les dispositions nécessaires dans la conception, l'exploitation et l'entretien des installations de manière à limiter les émissions à l'atmosphère, y compris diffuses, notamment par la mise en œuvre des meilleures Techniques Disponibles (MTD), de technologies propres, la mise en œuvre de techniques de valorisation, la collecte sélective et le traitement des effluents en fonction de leurs caractéristiques et la réduction des quantités rejetées en optimisant notamment l'efficacité énergétique.
+L'exploitant prend toutes les dispositions nécessaires dans la conception, l'exploitation et l'entretien des installations de manière à limiter les émissions à l'atmosphère, y compris diffuses, notamment par la mise en œuvre des Meilleures Techniques Disponibles (MTD), de technologies propres, la mise en œuvre de techniques de valorisation, la collecte sélective et le traitement des effluents en fonction de leurs caractéristiques et la réduction des quantités rejetées en optimisant notamment l'efficacité énergétique.
 
 Sauf autorisation explicite, la dilution des effluents est interdite. En aucun cas elle ne doit constituer un moyen de respecter les valeurs limites.
 Les installations de traitement d'effluents gazeux doivent être conçues, exploitées et entretenues de manière :
@@ -474,7 +477,7 @@ L'inspection des installations classées peut demander la réalisation d'une cam
 
 ## Article 3.1.4. Voies de circulation
 
-Sans préjudice des règlements d'urbanisme, I'exploitant prend les dispositions nécessaires pour prévenir les envols de poussières et de matières diverses :
+Sans préjudice des règlements d'urbanisme, l'exploitant prend les dispositions nécessaires pour prévenir les envols de poussières et de matières diverses :
 
 - les voies de circulation et aires de stationnement des véhicules sont aménagées (formes de pente, revêtement, etc.), et convenablement nettoyées,
 - les véhicules sortant de l'installation n'entraînent pas de dépôt de poussière ou de boue sur les voies de circulation. Pour cela, des dispositions telles que le lavage des roues des véhicules doivent être prévues en cas de besoin,
@@ -515,7 +518,7 @@ Ces points sont aménagés de manière à être aisément accessibles et permett
 
 Le tableau suivant identifie les différentes émissions canalisées et fixe les conditions générales de fonctionnement :
 
-| $\begin{gathered} \hline \text { N } \\ \text { condu } \\ \text { it } \end{gathered}$ | Installations raccordées | Haute <br> ur <br> en m | Diamètr <br> e <br> en m | Débit nominal en $\mathrm{Nm}^{3} / \mathrm{h}$ | Vitesse d'éjection minimale en $\mathrm{m} / \mathrm{s}$ | Système de traitement | Appareil de mesure installé |
+| $\begin{gathered} \mathrm{N}^{\circ} \\ \text { condu } \\ \text { it } \end{gathered}$ | Installations raccordées | Haute ur en m | Diamètr <br> e <br> en m | Débit nominal en $\mathrm{Nm}^{3} / \mathrm{h}$ | Vitesse d'éjection minimale en $\mathrm{m} / \mathrm{s}$ | Système de traitement | Appareil de mesure installé |
 | :--: | :--: | :--: | :--: | :--: | :--: | :--: | :--: |
 | 1 | Cheminée de l'installatio n d'incinérati on | 49,6 | 2,3 | 172870 | 12 | Systèmes prévus à l'article 1.2.5 | Plate-forme de mesure prévue à l'article 3.2.2 |
 
@@ -523,8 +526,7 @@ Le débit des effluents gazeux est exprimé en mètres cubes par heure rapporté
 
 Les différents points de rejets des émissions atmosphériques canalisées sont identifiés dans le plan annexé au présent arrêté.
 
-## Article 3.2.4. Valeurs limites des concentrations dans les rejets atmosphériques - Conduit $\mathbf{n}^{\circ} 1$
-
+Article 3.2.4. Valeurs limites des concentrations dans les rejets atmosphériques - Conduit $\mathbf{n}^{\circ} 1$
 Le tableau ci-dessous définit les valeurs limites en concentration et en flux à ne pas dépasser, les volumes de gaz rejetés étant rapportés :
 
 - à des conditions normalisées de température (273 kelvins) et de pression (101,3 kilopascals) après déduction de la vapeur d'eau (gaz secs),
@@ -532,23 +534,23 @@ Le tableau ci-dessous définit les valeurs limites en concentration et en flux �
 
 Article 3.2.4.1.
 
-| Paramètres | Concentration moyenne journalière en $\mathrm{mg} / \mathrm{Nm}^{3}$ | Concentration moyenne sur une demi-heure en $\mathrm{mg} /$ $\mathrm{Nm}^{3}$ | Flux journalier en $\mathrm{kg} / \mathrm{j}{ }^{[1]}$ |
+| Paramètres | Concentration moyenne journalière en $\mathrm{mg} / \mathrm{Nm}^{3}$ | Concentration moyenne sur une demi-heure en $\mathrm{mg} /$ $\mathrm{Nm}^{3}$ | Flux journalier en $\mathrm{kg} / \mathrm{j}^{11)}$ |
 | :--: | :--: | :--: | :--: |
 | Poussières totales | 5 | 30 | 20,74 |
 | Substances organiques à l'état de gaz ou de vapeur, exprimées en carbone organique total (COT) | 10 | 20 | 41,49 |
-| Chlorure d'hydrogène (HCl) | 6 | 60 | 24,89 |
+| Chlorure d'hydrogène ( HCl ) | 6 | 60 | 24,89 |
 | Fluorure d'hydrogène (HF) | 1 | 4 | 4,15 |
 | Dioxyde de soufre $\left(\mathrm{SO}_{2}\right)$ | 30 | 200 | 124,47 |
-| Oxydes d'azote (NO et $\mathrm{NO}_{2}$ ), exprimés en | 120 | 400 | 497,87 |
+| Oxydes d'azote (NO et $\mathrm{NO}_{2}$ ) , exprimés en | 120 | 400 | 497,87 |
 | $\mathrm{NO}_{2}$ |  |  |  |
 | :--: | :--: | :--: | :--: |
-| Monoxyde de carbone (CO) - en dehors des phases de démarrage et d'arrêt | 50 | ${ }^{(2)}$ | 207,44 |
+| Monoxyde de carbone (CO) - en dehors <br> des <br> phases de démarrage et d'arrêt | 50 | ${ }^{(2)}$ | 207,44 |
 | Ammoniac $\left(\mathrm{NH}_{3}\right)$ | 10 | 15 | 41,49 |
-| Paramètres | Concentration sur la période d'échantillonnage en $\mathrm{mg} / \mathrm{Nm} 3^{(3)}$ | Concentration moyenne sur une demi-heure en mg/ Nm3 | Flux journalier en $\mathrm{kg} / \mathrm{j}$ |
-| Cadmium (Cd) et ses composés +Thallium (Tl) et ses composés | 0,02 | - | 0,083 |
-| Mercure (Hg) et ses composés | 0,02 | - | 0,083 |
-| Total des autres métaux lourds ( $\mathrm{Sb}, \mathrm{As}, \mathrm{Pb}$, $\mathrm{Cr}, \mathrm{Co}, \mathrm{Cu}, \mathrm{Mn}, \mathrm{Ni}, \mathrm{V}$ ) | 0,3 | - | 1,245 |
-| As + Benzo(a)pyrène +Cd+ Co + Cr | 0,05 | - | 0,207 |
+| Paramètres | Concentration <br> sur la période <br> d'échantillonnage <br> en mg/Nm3 ${ }^{(3)}$ | Concentration <br> moyenne sur une <br> demi-heure en mg/ <br> Nm3 | Flux <br> journalier <br> en $\mathrm{kg} / \mathrm{j}$ |
+| Cadmium (Cd) et ses composés +Thallium <br> (Tl) et ses composés | 0,02 | - | 0,083 |
+| Mercure $(\mathrm{Hg})$ et ses composés | 0,02 | - | 0,083 |
+| Total des autres métaux lourds (Sb,As, Pb, <br> $\mathrm{Cr}, \mathrm{Co}, \mathrm{Cu}, \mathrm{Mn}, \mathrm{Ni}, \mathrm{V}$ ) | 0,3 | - | 1,245 |
+| As + Benzo(a)pyrène $+\mathrm{Cd}+\mathrm{Co}+\mathrm{Cr}$ | 0,05 | - | 0,207 |
 | Dioxines et furanes ${ }^{(4)}$ | $4.10^{-8}$ | - | $1,66.10^{-7}$ |
 
 (1) Les flux journaliers sont déterminés au débit nominal de 172870 Nm3/ h (gaz secs) pour un flux maximal de $26,2 \mathrm{t} / \mathrm{h}$ de déchets incinérés
@@ -561,8 +563,8 @@ Article 3.2.4.1.
 Les valeurs limites d'émission dans l'air sont respectées si :
 
 - aucune des moyennes journalières mesurées ne dépasse les limites d'émission fixées à l'article 3.2.4 pour le monoxyde de carbone et pour les poussières totales, les substances organiques à l'état de gaz ou de vapeur exprimées en carbone organique total (COT), le chlorure d'hydrogène, le fluorure d'hydrogène, le dioxyde de soufre et les oxydes d'azote ;
-- aucune des moyennes sur une demi-heure, mesurées pour les poussières totales, les substances organiques à l'état de gaz ou de vapeur exprimées en carbone organique total, le chlorure d'hydrogène, le fluorure d'hydrogène, le dioxyde de soufre et les oxydes d'azote ne dépasse les valeurs limites définies à l'article 3.2.4 ;
-- aucune des moyennes mesurées sur la période d'échantillonnage prévue pour le cadmium et ses composés, ainsi que le thallium et ses composés, le mercure et ses composés, le total des autres métaux $(\mathrm{Sb}+\mathrm{As}+\mathrm{Pb}+\mathrm{Cr}+\mathrm{Co}+\mathrm{Cu}+\mathrm{Mn}+\mathrm{Ni}+\mathrm{V})$, les dioxines et furanes ne dépasse les valeurs limites définies à l'article 3.2.4;
+- aucune des moyennes sur une demi-heure, mesurées pour les poussières totales, les substances organiques à l'état de gaz ou de vapeur exprimées en carbone organique total, le chlorure d'hydrogène, le fluorure d'hydrogène, le dioxyde de soufre et les oxydes d'azote ne dépasse les valeurs limites définies à l'article 3.2.4;
+- aucune des moyennes mesurées sur la période d'échantillonnage prévue pour le cadmium et ses composés, ainsi que le thallium et ses composés, le mercure et ses composés, le total des autres métaux ( $\mathrm{Sb}+\mathrm{As}+\mathrm{Pb}+\mathrm{Cr}+\mathrm{Co}+\mathrm{Cu}+\mathrm{Mn}+\mathrm{Ni}+\mathrm{V}$ ), les dioxines et furanes ne dépasse les valeurs limites définies à l'article 3.2.4;
 - aucune des moyennes sur une demi-heure mesurées pour l'ammoniac ne dépasse les valeurs limites fixées par l'article 3.2.4;
 
 Les moyennes déterminées pendant les périodes d'indisponibilité visées à l'article 9.2.2 ne sont pas prises en compte pour juger du respect des valeurs limites.
@@ -571,7 +573,7 @@ Les moyennes sur une demi-heure et les moyennes sur dix minutes sont déterminé
 
 - Monoxyde de carbone : $10 \%$;
 - Dioxyde de soufre : $20 \%$;
-- Ammoniac : $40 \%$;
+- Ammoniac: $40 \%$;
 - Dioxyde d'azote : $20 \%$;
 - Poussières totales : $30 \%$;
 - Carbone organique total : $30 \%$;
@@ -581,16 +583,14 @@ Les moyennes sur une demi-heure et les moyennes sur dix minutes sont déterminé
 Les moyennes journalières sont calculées à partir de ces moyennes validées.
 Pour qu'une moyenne journalière soit valide, il faut que, dans une même journée, pas plus de cinq moyennes sur une demi-heure n'aient dû être écartées. Dix moyennes journalières par an peuvent être écartées au maximum.
 
-Les résultats des mesures réalisées pour vérifier le respect des valeurs limites d'émission définies à l'article 3.2.4 sont rapportés aux conditions normales de température et de pression, c'est-à-dire 273 K , pour une pression de $101,3 \mathrm{kPa}$, avec une teneur en oxygène de 11 $\%$ sur gaz sec, fixée selon les indications de l'annexe I et corrigée selon la formule de l'annexe IV de l'arrêté ministériel du 23 mai 2016 relatif aux installations de production de chaleur à partir de déchets non dangereux préparés sous forme de combustibles solides de récupération.
+Les résultats des mesures réalisées pour vérifier le respect des valeurs limites d'émission définies à l'article 3.2.4 sont rapportés aux conditions normales de température et de pression, c'est-à-dire 273 K , pour une pression de $101,3 \mathrm{kPa}$, avec une teneur en oxygène de 11 \% sur gaz sec, fixée selon les indications de l'annexe I et corrigée selon la formule de l'annexe IV de l'arrêté ministériel du 23 mai 2016 relatif aux installations de production de chaleur à partir de déchets non dangereux préparés sous forme de combustibles solides de récupération.
 
-# TITRE 4 - Protection des ressources en eaux et des milieux aquatiques 
+TITRE 4 - Protection des ressources en eaux et des milieux aquatiques
 
-## CHAPITRE 4.1 COMPATIBILITÉ AVEC LES OBJECTIFS DE QUALITÉ DU MILIEU
+# CHAPITRE 4.1 COMPATIBILITÉ AVEC LES OBJECTIFS DE QUALITÉ DU MILIEU 
 
 L'implantation et le fonctionnement de l'installation est compatible avec les objectifs de qualité et de quantité des eaux visés au IV de l'article L.212-1 du code de l'environnement. Elle respecte les dispositions du schéma directeur d'aménagement et de gestion des eaux et du schéma d'aménagement et de gestion des eaux.
 La conception et l'exploitation de l'installation permettent de limiter la consommation d'eau et les flux polluants.
-# CHAPITRE 4.2 Prélèvements et consommations d'eau 
-
 Article 4.2.1. Origine des approvisionnements en eau
 
 | Origine de la ressource | Nom de la masse d'eau | Code national de la masse d'eau | Approvisionnement | Utilisation | Consomma tion annuelle (m3/an) |
@@ -605,7 +605,7 @@ L'eau souterraine utilisée par l'exploitant dans ses procédés industriels est
 L'eau en provenance du réseau public est prélevée via le réseau d'alimentation en eau potable de la société Alsachimie et est utilisée exclusivement pour les besoins en eau potable et sanitaire. Ce réseau est totalement indépendant des réseaux d'eau de forage et d'eau du Grand Canal d'Alsace ainsi que de toutes les lignes procédés.
 Une convention entre l'exploitant et le titulaire de l'autorisation de prélèvement d'eau est établie et tenue à la disposition de l'inspection des installations classées. Elle précise les volumes et les conditions d'utilisation de l'eau fournie, sans préjudice des conditions d'autorisation délivrées à la société Alsachimie.
 
-## Article 4.2.2. Protection des réseaux d'eau potable et des milieux de prélèvement
+# Article 4.2.2. Protection des réseaux d'eau potable et des milieux de prélèvement 
 
 Tout point de connexion au réseau public d'eau potable est raccordé par un disconnecteur à zone de pression réduite contrôlable entretenu régulièrement.
 L'exploitant tient à disposition de l'inspection un registre des entretiens effectués. La fréquence de ces entretiens est a minima annuelle.
@@ -614,7 +614,6 @@ L'exploitant tient à disposition de l'inspection un registre des entretiens eff
 ## Article 4.3.1. Dispositions générales
 
 Tous les effluents aqueux sont canalisés. Tout rejet d'effluent liquide non prévu à l'article 4.4.1 ou non conforme aux dispositions du chapitre 4.4 est interdit.
-
 A l'exception des cas accidentels où la sécurité des personnes ou des installations serait compromise, il est interdit d'établir des liaisons directes entre les réseaux de collecte des effluents devant subir un traitement ou être détruits et le milieu récepteur.
 Les procédés de traitement non susceptibles de conduire à un transfert de pollution sont privilégiés pour l'épuration des effluents.
 
@@ -635,6 +634,7 @@ Le plan des réseaux d'alimentation et de collecte fait notamment apparaître :
 
 Les réseaux de collecte des effluents sont conçus et aménagés de manière à être curables, étanches et à résister dans le temps aux actions physiques et chimiques des effluents ou produits susceptibles d'y transiter.
 L'exploitant s'assure par des contrôles appropriés et préventifs de leur bon état et de leur étanchéité.
+
 Les différentes canalisations accessibles sont repérées conformément aux règles en vigueur.
 
 ## Article 4.3.4. Isolement avec les milieux
@@ -650,7 +650,7 @@ Les effluents aqueux rejetés par les installations ne sont pas susceptibles de 
 
 L'exploitant est en mesure de distinguer les différentes catégories d'effluents suivants :
 
-- eaux pluviales de toiture, non susceptibles d'être polluées. Les eaux pluviales de toiture sont collectées et prioritairement injectées dans le bain de refroidissement des mâchefers; seul l'éventuel excédent par rapport aux besoins du bain de refroidissement des mâchefers génère des effluents;
+- eaux pluviales de toiture, non susceptibles d'être polluées. Les eaux pluviales de toiture sont collectées et prioritairement injectées dans le bain de refroidissement des mâchefers; seul l'éventuel excédent par rapport aux besoins du bain de refroidissement des mâchefers génère des effluents ;
 - eaux pluviales de voiries, susceptibles d'être polluées ;
 - eaux sanitaires ;
 - eaux résiduaires (eaux de purge de chaudière) ;
@@ -670,7 +670,7 @@ Les rejets directs ou indirects d'effluents dans la nappe d'eaux souterraines ou
 ## Article 4.4.3. Gestion des ouvrages : conception, dysfonctionnement
 
 La conception et la performance des installations de traitement (ou de pré-traitement) des effluents aqueux permettent de respecter les valeurs limites imposées au rejet par le présent arrêté. Elles sont entretenues, exploitées et surveillées de manière à réduire au minimum les durées d'indisponibilité ou à faire face aux variations des caractéristiques des effluents bruts (débit, température, composition...) y compris à l'occasion du démarrage ou d'arrêt des installations.
-Si une indisponibilité ou un dysfonctionnement des installations de traitement est susceptible de conduire à un dépassement des valeurs limites imposées par le présent arrêté, l'exploitant prend les dispositions nécessaires pour réduire la pollution émise en limitant ou en arrêtant si besoin les fabrications concernées.
+Si une indisponibilité ou un dysfonctionnement des installations de traitement est susceptible de conduire à un dépassement des valeurs limites imposées par le présent arrêté, I'exploitant prend les dispositions nécessaires pour réduire la pollution émise en limitant ou en arrêtant si besoin les fabrications concernées.
 Les dispositions nécessaires doivent être prises pour limiter les odeurs provenant du traitement des effluents ou dans les canaux à ciel ouvert (conditions anaérobies notamment).
 Les eaux pluviales de voiries transitent par un décanteur/déshuileur dont le dimensionnement en débit est justifié par l'exploitant et permet d'atteindre une concentration en hydrocarbures totaux de $5 \mathrm{mg} / \mathrm{l}$. Cet équipement est entretenu périodiquement par l'exploitant, qui procède notamment à son curage et à son nettoyage selon une fréquence définie. L'exploitant tient à la disposition de l'inspection des installations classées tout justificatif relatif à ces travaux d'entretien.
 
@@ -678,27 +678,27 @@ Les eaux pluviales de voiries transitent par un décanteur/déshuileur dont le d
 
 Les réseaux de collecte des effluents générés par l'établissement aboutissent aux points de rejet qui présentent les caractéristiques suivantes :
 
-| Points de rejet vers le réseau « Nord I» ALSACHIMIE | «0123» | «0121» | «0124» |
+| Points de rejet vers <br> le réseau « Nord I » <br> ALSACHIMIE | «0123 » | «0121 » | «0124 » |
 | :--: | :--: | :--: | :--: |
-| Nature des effluents | Eaux résiduaires (eaux de purge) | Eaux pluviales de voiries | Eaux sanitaires |
-| Débit maximum journalier $\left(\mathrm{m}^{3} / \mathrm{j}\right)$ | 5 | 220 | 60 |
-| Traitement avant rejet | Neutralisation (station PIC ALSACHIMIE) | Décanteur/déshuileur puis neutralisation (station PIC ALSACHIMIE) | Fosse septique puis neutralisation (station PIC ALSACHIMIE) |
-| Point de prélèvement | Amont de la connexion avec l'égout effluents ALSACHIMIE | Aval du décanteur/déshuileur et amont de la connexion avec l'égout effluents ALSACHIMIE | Aval de la fosse et amont de la connexion avec l'égout effluents ALSACHIMIE |
-| Exutoire du rejet | Rejet « Nord I » du réseau « ALSACHIMIE », qui se déverse dans le Grand Canal d'Alsace |  |  |
+| Nature des <br> effluents | Eaux résiduaires <br> (eaux de purge) | Eaux pluviales de voiries | Eaux sanitaires |
+| Débit maximum <br> journalier (m²/1) | 5 | 220 | 60 |
+| Traitement avant <br> rejet | Neutralisation <br> (station PIC <br> ALSACHIMIE) | Décanteur/déshuileur puis <br> neutralisation (station PIC <br> ALSACHIMIE) | Fosse septique puis <br> neutralisation (station <br> PIC ALSACHIMIE) |
+| Point de <br> prélèvement | Amont de la <br> connexion avec <br> l'égout effluents <br> ALSACHIMIE | Aval du décanteur/déshuileur <br> et amont de la connexion <br> avec l'égout effluents <br> ALSACHIMIE | Aval de la fosse et <br> amont de la <br> connexion avec <br> l'égout effluents <br> ALSACHIMIE |
+| Exutoire du rejet | Rejet « Nord I » du réseau « ALSACHIMIE », qui se déverse dans le <br> Grand Canal d'Alsace |  |  |
 
 
-| Point de rejet vers le réseau « Sud» ALSACHIMIE | «0122 » |
+| Point de rejet vers <br> le réseau «Sud » <br> ALSACHIMIE | «0122 » |
 | :--: | :--: |
-| Nature des effluents | Eaux pluviales de toiture en cas d'excédent par rapport aux besoins du bain de refroidissement des mâchefers |
-| Débit maximum journalier $\left(\mathrm{m}^{3} / \mathrm{j}\right)$ | 149 |
-| Traitement avant rejet | Aucun |
-| Point de prélèvement | Amont de la connexion avec l'égout « eaux propres » ALSACHIMIE |
-| Exutoire du rejet | Rejet « Sud » du réseau « ALSACHIMIE », qui se déverse dans le Grand Canal d'Alsace |
+| Nature des <br> effluents | Eaux pluviales de toiture en cas d'excédent par rapport aux besoins du <br> bain de refroidissement des mâchefers |
+| Débit maximum <br> journalier (m²/1) | 149 |
+| Traitement avant <br> rejet | Aucun |
+| Point de <br> prélèvement | Amont de la connexion avec l'égout « eaux propres » ALSACHIMIE |
+| Exutoire du rejet | Rejet «Sud » du réseau « ALSACHIMIE », qui se déverse dans le Grand <br> Canal d'Alsace |
 
 Les points de rejets ainsi définis figurent sur le plan annexé au présent arrêté. Leurs coordonnées précises (Lambert II étendu) sont tenues à disposition de l'inspection des installations classées.
-# Article 4.4.5. Conception, aménagement et équipement des ouvrages de rejet 
+Article 4.4.5. Conception, aménagement et équipement des ouvrages de rejet
 
-## Article 4.4.5.1. Conception
+# Article 4.4.5.1. Conception 
 
 Les dispositions du présent arrêté s'appliquent sans préjudice de l'autorisation délivrée par la société Alsachimie implantée sur le site et à laquelle appartient le réseau d'évacuation des eaux.
 
@@ -720,7 +720,7 @@ Les systèmes permettant le prélèvement continu sont proportionnels au débit 
 
 Les effluents rejetés doivent être exempts :
 
-- de matières flottantes ;
+- de matières flottantes;
 - de produits susceptibles de dégager, en égout ou dans le milieu naturel, directement ou indirectement, des gaz ou vapeurs toxiques, inflammables ou odorantes ;
 - de tout produit susceptible de nuire à la conservation des ouvrages, ainsi que des matières déposables ou précipitables qui, directement ou indirectement, sont susceptibles d'entraver le bon fonctionnement des ouvrages ;
 - de produits susceptibles d'entraîner une modification de la coloration du milieu récepteur final, mesurée en un point représentatif de la zone de mélange, supérieure à $100 \mathrm{mg} / \mathrm{Pt} / \mathrm{l}$.
@@ -731,19 +731,19 @@ En cas de non-conformité au regard des valeurs limites d'émission définies da
 L'exploitant est tenu de respecter, avant mélange avec les eaux de la société Alsachimie implantée sur le site, les valeurs limites en concentration ci-dessous définies, et sans préjudice du respect des seuils de rejets imposés à Alsachimie.
 
 | Paramètre | Code SANDRE | Valeur limite |
-| :--: | :--: | :--: |
+| :-- | :-- | :--: |
 | Température | 1301 | $30^{\circ} \mathrm{C}$ |
 | pH | 1302 | Compris entre 5,5 et 8,5 |
-| MEST (Matières En Suspension Totales) | 1305 | $30 \mathrm{mg} / \mathrm{l}$ |
+| MEST (Matières En Suspension <br> Totales) | 1305 | $30 \mathrm{mg} / \mathrm{l}$ |
 | COT (Carbone Organique Total) | 1841 | $40 \mathrm{mg} / \mathrm{l}$ |
-| DCO (Demande Chimique en Oxygène) | 1314 | $125 \mathrm{mg} / \mathrm{l}$ |
-| TI (thallium et ses composés, exprimé en thallium) | 2555 | $0,05 \mathrm{mg} / \mathrm{l}$ |
+| DCO (Demande Chimique en <br> Oxygène) | 1314 | $125 \mathrm{mg} / \mathrm{l}$ |
+| TI (thallium et ses composés, <br> exprimé en thallium) | 2555 | $0,05 \mathrm{mg} / \mathrm{l}$ |
 | CN (Cyanures libres) | 1084 | $0,1 \mathrm{mg} / \mathrm{l}$ |
-| AOX (Composés organiques halogénés ) | 1106 | $5 \mathrm{mg} / \mathrm{l}$ si le rejet dépasse $30 \mathrm{~g} / \mathrm{j}$ |
+| AOX (Composés organiques <br> halogénés ) | 1106 | $5 \mathrm{mg} / \mathrm{l}$ si le rejet dépasse $30 \mathrm{~g} / \mathrm{j}$ |
 | Hydrocarbures totaux | 7009 | $5 \mathrm{mg} / \mathrm{l}$ |
 | Fluorures | 7073 | $15 \mathrm{mg} / \mathrm{l}$ |
 | Pb et ses composés | 1382 | $0,1 \mathrm{mg} / \mathrm{l}$ |
-| Cr et ses composés | 1389 | $0,1 \mathrm{mg} / \mathrm{l}$ (dont $\mathrm{Cr}^{6+}: 0,05 \mathrm{mg} / \mathrm{l}$ ) |
+| Cr et ses composés | 1389 | $0,1 \mathrm{mg} / \mathrm{l}$ (dont $\mathrm{Cr}^{3+}: 0,05 \mathrm{mg} / \mathrm{l}$ ) |
 | Cu et ses composés | 1392 | $0,25 \mathrm{mg} / \mathrm{l}$ |
 | Ni et ses composés | 1386 | $0,1 \mathrm{mg} / \mathrm{l}$ |
 | Zn et ses composés | 1383 | $0,8 \mathrm{mg} / \mathrm{l}$ |
@@ -785,6 +785,7 @@ d) l'élimination.
 ## Article 5.1.2. Séparation des déchets
 
 L'exploitant effectue à l'intérieur de son établissement la séparation des déchets dangereux et non dangereux de façon à assurer leur orientation dans les filières autorisées adaptées à leur nature et à leur dangerosité. Les déchets dangereux sont définis par l'article R.541-8 du code de l'environnement.
+
 Les huiles usagées sont gérées conformément aux articles R.543-3 à R.543-15 et R.543-40 du code de l'environnement. Dans l'attente de leur ramassage, elles sont stockées dans des réservoirs étanches et dans des conditions de séparation satisfaisantes, évitant notamment les mélanges avec de l'eau ou tout autre déchet non huileux ou contaminé par des PCB.
 Les déchets d'emballages industriels sont gérés dans les conditions des articles R.543-66 à R.543-72 du code de l'environnement.
 
@@ -817,30 +818,30 @@ Il fait en sorte de limiter le transport des déchets en distance et en volume.
 
 Chaque lot de déchets dangereux expédié vers l'extérieur est accompagné du bordereau de suivi défini à l'article R.541-45 du code de l'environnement. Les bordereaux et justificatifs correspondants sont tenus à la disposition de l'inspection des installations classées sur le site durant 5 années au minimum.
 Les opérations de transport de déchets (dangereux ou non) respectent les dispositions des articles R.541-49 à R.541-64 et R.541-79 du code de l'environnement relatifs à la collecte, au transport, au négoce et au courtage de déchets. La liste mise à jour des transporteurs utilisés par l'exploitant, est tenue à la disposition de l'inspection des installations classées.
-L'importation ou l'exportation de déchets ne peut être réalisée qu'après accord des autorités compétentes en application du règlement (CE) n 1013/2006 du Parlement européen et du Conseil du 14 juin 2006 concernant les transferts de déchets.
+L'importation ou l'exportation de déchets ne peut être réalisée qu'après accord des autorités compétentes en application du règlement (CE) $n^{\circ}$ 1013/2006 du Parlement européen et du Conseil du 14 juin 2006 concernant les transferts de déchets.
 
 ## Article 5.1.8. Déchets produits par l'établissement
 
 Les principaux déchets générés par le fonctionnement normal des installations sont limités aux quantités suivantes :
-| Code déchet | Nature du déchet | Origine | Stockage sur site |  | Quantité annuelle maximale produite (t) | Nivea u de gestio n |
+| Code <br> déchet | Nature du déchet | Origine | Stockage sur site |  | Quantité annuelle maximale produite (t) | Nivea u de gestio n |
 | :--: | :--: | :--: | :--: | :--: | :--: | :--: |
-|  |  |  | Quantité maximale stockée (t) | Mode de stockage |  |  |
-| 190112 | Mâchefers | Incinération | 591 | Fosse de $537 \mathrm{~m}^{3}$ | 42000 t | Valori sation <br> (1) |
-| $\begin{aligned} & 190107^{*} \\ & 190113^{*}$ | Résidus d'épuration des fumées d'incinération et cendres volantes contenant des substances dangereuses | Traitement des fumées et incinération | 108 | Silo résidus de $180 \mathrm{~m}^{3}$ | 11000 | Élimin ation |
+|  |  |  | Quantité <br> maximale <br> stockée <br> (t) | Mode de stockage |  |  |
+| 190112 | Mâchefers | Incinération | 591 | Fosse de $537 \mathrm{~m}^{3}$ | 42000 t | Valori <br> sation <br> (1) |
+| $\begin{aligned} & 190107^{*} \\ & 190113^{*} \end{aligned}$ | Résidus d'épuration des fumées d'incinération et cendres volantes contenant des substances dangereuses | Traitement des fumées et incinération | 108 | Silo <br> résidus de <br> $180 \mathrm{~m}^{3}$ | 11000 | Élimin ation |
 | 190116 | Cendres sous chaudières | Incinération | 50 | Silo cendres de $150 \mathrm{~m}^{3}$ | 4000 | Élimin ation |
 | 190199 | Eaux de nettoyage de la chaudière | Nettoyage chaudière | Évacuation directe |  | 500 | Élimin ation |
 | 190199 | Eaux de vidange du bain de mâchefers | Vidange pour nettoyage de la fosse à mâchefers | Évacuation directe |  | 50 | Élimin ation |
 
-* : I'astérisque signifie que le déchet est dangereux.
+* : l'astérisque signifie que le déchet est dangereux.
 ${ }^{(1)}$ dès lors que les caractéristiques chimiques des mâchefers, déterminées par analyses, le permettront. Dans le cas contraire, le niveau de gestion des mâchefers sera l'élimination.
 
 
 # Article 5.1.9. Gestion et traitement des déchets issus de l'incinération 
 
-L'exploitant s'assure que toutes les dispositions nécessaires dans la conception et l'exploitation de l'installation sont prises pour permettre une bonne gestion des résidus issus de ses activités, selon les meilleures techniques disponibles à un coût économiquement acceptable, en s'appuyant, le cas échéant, sur les documents de référence. En particulier, I'analyse des effets directs et indirects, temporaires et permanents de l'installation sur I'environnement et sur la santé présente une description des mesures prévues pour :
+L'exploitant s'assure que toutes les dispositions nécessaires dans la conception et l'exploitation de l'installation sont prises pour permettre une bonne gestion des résidus issus de ses activités, selon les meilleures techniques disponibles à un coût économiquement acceptable, en s'appuyant, le cas échéant, sur les documents de référence. En particulier, l'analyse des effets directs et indirects, temporaires et permanents de l'installation sur l'environnement et sur la santé présente une description des mesures prévues pour :
 
-- limiter à la source la quantité et la toxicité des déchets produits, notamment en ce qui concerne les résidus de l'incinération;
-- faciliter le recyclage et l'utilisation des résidus, si cela est possible et judicieux du point de vue de la protection de l'environnement;
+- limiter à la source la quantité et la toxicité des déchets produits, notamment en ce qui concerne les résidus de l'incinération ;
+- faciliter le recyclage et l'utilisation des résidus, si cela est possible et judicieux du point de vue de la protection de l'environnement ;
 - s'assurer, à défaut, du traitement ou du prétraitement des résidus pour en extraire la plus grande part valorisable ou en réduire les dangers potentiels.
 
 Les déchets et les différents résidus produits sont entreposés séparément avant leur utilisation ou leur élimination, dans des conditions ne présentant pas de risques de pollution (prévention d'un lessivage par les eaux météoriques, d'une pollution des eaux superficielles et souterraines, des envols et des odeurs) pour les populations avoisinantes et l'environnement. Les mâchefers sont en particulier refroidis.
@@ -855,7 +856,7 @@ L'exploitant est en mesure de justifier l'élimination de tous les résidus qu'i
 L'exploitant tient en particulier une comptabilité précise des quantités de résidus d'incinération produits, en distinguant notamment :
 
 - les mâchefers;
-- les cendres sous chaudière;
+- les cendres sous chaudière ;
 - les résidus d'épuration des fumées de l'incinération, dont :
 - poussières et cendres volantes en mélange ou séparément;
 - gâteaux de filtration provenant de l'épuration des fumées;
@@ -878,7 +879,7 @@ L'inventaire et l'état des stocks des substances et mélanges susceptibles d'ê
 L'exploitant veille notamment à disposer sur le site, et à tenir à disposition de l'inspection des installations classées, l'ensemble des documents nécessaires à l'identification des substances et des produits, et en particulier les fiches de sécurité à jour pour les substances chimiques et mélanges chimiques concernés présents sur le site.
 # Article 6.1.2. Étiquetage des substances et mélanges dangereux 
 
-Les fûts, réservoirs et autre emballages portent en caractères très lisibles le nom des substances et mélanges, et s'il y a lieu, les éléments d'étiquetage conformément au règlement $n^{\circ}$ 1272/2008 dit CLP ou le cas échéant par la réglementation sectorielle applicable aux produits considérés.
+Les fûts, réservoirs et autre emballages portent en caractères très lisibles le nom des substances et mélanges, et s'il y a lieu, les éléments d'étiquetage conformément au règlement $n^{\circ} 1272 / 2008$ dit CLP ou le cas échéant par la réglementation sectorielle applicable aux produits considérés.
 Les tuyauteries apparentes contenant ou transportant des substances ou mélanges dangereux devront également être munis du pictogramme défini par le règlement susvisé.
 
 ## TITRE 7 - Prévention des nuisances sonores et des vibrations
@@ -908,16 +909,16 @@ L'usage de tout appareil de communication par voie acoustique (sirènes, avertis
 
 Les émissions sonores dues aux activités des installations ne doivent pas engendrer une émergence supérieure aux valeurs admissibles fixées dans le tableau suivant dans les zones à émergence réglementée, définies conformément à l'arrêté du 23 janvier 1997 susmentionné et reprises en annexe du présent arrêté.
 
-| Niveau de bruit ambiant existant <br> dans les zones à émergence <br> réglementée (incluant le bruit de <br> l'établissement) | Émergence admissible pour <br> la période allant de 7 h à <br> 22 h , <br> sauf dimanches et jours <br> fériés | Émergence admissible pour <br> la période allant de 22 h à 7 <br> h, <br> ainsi que les dimanches et <br> jours fériés |
+| Niveau de bruit ambiant existant <br> dans les zones à émergence <br> réglementée (incluant le bruit de <br> l'établissement) | Émergence admissible pour <br> la période allant de 7 h à <br> 22 h, <br> sauf dimanches et jours <br> fériés | Émergence admissible pour <br> la période allant de 22 h à 7 <br> h, <br> ainsi que les dimanches et <br> jours fériés |
 | :-- | :-- | :-- |
 | Supérieur à 35 dB(A) et inférieur <br> ou égal à 45 dB (A) | $6 \mathrm{~dB}(\mathrm{~A})$ | $4 \mathrm{~dB}(\mathrm{~A})$ |
-| Supérieur à $45 \mathrm{~dB}(\mathrm{~A})$ | $5 \mathrm{~dB}(\mathrm{~A})$ | $3 \mathrm{~dB}(\mathrm{~A})$ |
+| Supérieur à 45 dB(A) | $5 \mathrm{~dB}(\mathrm{~A})$ | $3 \mathrm{~dB}(\mathrm{~A})$ |
 
 ## Article 7.2.2. Niveaux limites de bruit
 
 Les niveaux limites de bruit ne doivent pas dépasser en limite de propriété de l'établissement les valeurs suivantes pour les différentes périodes de la journée :
 
-| Points de mesure | 7.2.2.1.1 Emplacement du point de mesure | PERIODE DE JOUR <br> Allant de 7h à 22h, (sauf dimanches et jours fériés) | PERIODE DE NUIT Allant de 22h à 7h, (ainsi que dimanches et jours fériés) |
+| Points de mesure | 7.2.2.1.1 Emplacement du point de mesure | PERIODE DE JOUR <br> Allant de 7h à 22h, (sauf dimanches et jours fériés) | PERIODE DE NUIT <br> Allant de 22h à 7h, (ainsi que dimanches et jours fériés) |
 | :--: | :--: | :--: | :--: |
 | Point A | Au Nord-Est de la plateforme, à proximité de Chalampé | $70 \mathrm{~dB}(\mathrm{~A})$ | $60 \mathrm{~dB}(\mathrm{~A})$ |
 | Point F | A proximité du faisceau Sud du réseau ferroviaire de la plateforme | $70 \mathrm{~dB}(\mathrm{~A})$ | $60 \mathrm{~dB}(\mathrm{~A})$ |
@@ -928,7 +929,7 @@ Les emplacements des points de mesure sont définis (approximativement) sur le p
 
 ## Article 7.3.1. Vibrations
 
-En cas d'émissions de vibrations mécaniques gênantes pour le voisinage ainsi que pour la sécurité des biens ou des personnes, les points de contrôle, les valeurs des niveaux limites admissibles ainsi que la mesure des niveaux vibratoires émis seront déterminés suivant les spécifications des règles techniques annexées à la circulaire ministérielle $\mathrm{n}^{\circ} 23$ du 23 juillet 1986 relative aux vibrations mécaniques émises dans l'environnement par les installations classées.
+En cas d'émissions de vibrations mécaniques gênantes pour le voisinage ainsi que pour la sécurité des biens ou des personnes, les points de contrôle, les valeurs des niveaux limites admissibles ainsi que la mesure des niveaux vibratoires émis seront déterminés suivant les spécifications des règles techniques annexées à la circulaire ministérielle $n^{\circ} 23$ du 23 juillet 1986 relative aux vibrations mécaniques émises dans l'environnement par les installations classées.
 # CHAPITRE 7.4 
 
 ## TITRE 8 - Prévention des risques technologiques
@@ -972,7 +973,7 @@ Les bâtiments et locaux sont conçus et aménagés de façon à pouvoir détect
 
 Les éléments de construction des bâtiments et locaux présentent des caractéristiques de résistance et de réaction eu feu (parois coupe-feu; couverture, sols et planchers hauts incombustibles ; portes pare-flamme, ...) adaptés aux risques encourus. En particulier :
 
-- le bâtiment abritant la fosse à déchets combustibles est isolé des autres parties de I'installation par des parois coupe-feu de degré REI 90 ;
+- le bâtiment abritant la fosse à déchets combustibles est isolé des autres parties de l'installation par des parois coupe-feu de degré REI 90 ;
 - les deux cages d'escaliers sont isolées par des parois coupe-feu de degré REI 90 avec des blocs-portes coupe-feu de degré $1 / 2$ heure avec ferme-porte.
 
 Les ouvertures effectuées dans les éléments séparatifs (passage de gaines et canalisations, de convoyeurs) sont munies de dispositifs assurant un degré coupe-feu équivalent à celui exigé pour ces éléments séparatifs.
@@ -988,16 +989,16 @@ Au sens du présent arrêté, on entend par "accès à l'installation" une ouver
 Les véhicules dont la présence est liée à l'exploitation de l'installation stationnent sans occasionner de gêne pour l'accessibilité des engins des services de secours depuis les voies de circulation externes à l'installation, même en dehors des heures d'exploitation et d'ouverture de l'installation.
 # Article 8.2.2.2. Accessibilité des engins à proximité de l'installation 
 
-Une voie "engins" au moins est maintenue dégagée pour la circulation sur le périmètre de I'installation. Elle est positionnée de façon à ne pouvoir être obstruée par l'effondrement de tout ou partie de cette installation.
+Une voie "engins" au moins est maintenue dégagée pour la circulation sur le périmètre de l'installation. Elle est positionnée de façon à ne pouvoir être obstruée par l'effondrement de tout ou partie de cette installation.
 
 Cette voie "engins" respecte les caractéristiques suivantes :
 
 - la largeur utile est au minimum de 3 mètres ;
 - la hauteur libre au minimum de 3,5 mètres ;
 - la pente inférieure à $15 \%$;
-- dans les virages de rayon intérieur inférieur à 50 mètres, un rayon intérieur $R$ minimal de 13 mètres est maintenu et une sur-largeur de $S=15 / R$ mètres est ajoutée ;
+- dans les virages de rayon intérieur inférieur à 50 mètres, un rayon intérieur R minimal de 13 mètres est maintenu et une sur-largeur de $S=15 / R$ mètres est ajoutée ;
 - elle résiste à la force portante calculée pour un véhicule de 160 kN avec un maximum de 90 kN par essieu ;
-- chaque point du périmètre de l'installation est à une distance maximale de 60 mètres de cette voie;
+- chaque point du périmètre de l'installation est à une distance maximale de 60 mètres de cette voie ;
 - aucun obstacle n'est disposé entre les accès à l'installation et la voie engin.
 
 
@@ -1071,7 +1072,7 @@ Si l'une de ces vérifications fait apparaître la nécessité d'une remise en �
 # Article 8.3.4. Ventilation des locaux 
 
 Sans préjudice des dispositions du code du travail, les locaux sont convenablement ventilés pour prévenir la formation d'atmosphère explosive ou toxique. Le débouché à l'atmosphère de la ventilation est placé aussi loin que possible des bâtiments environnants occupés par des tiers et des bouches d'aspiration d'air extérieur, et à une hauteur suffisante compte tenu de la hauteur des bâtiments environnants afin de favoriser la dispersion des gaz rejetés et au minimum à 1 mètre au-dessus du faîtage.
-La forme du conduit d'évacuation, notamment dans la partie la plus proche du débouché à I'atmosphère, est conçue de manière à favoriser au maximum l'ascension et la dispersion des polluants dans l'atmosphère (par exemple l'utilisation de chapeaux est interdite).
+La forme du conduit d'évacuation, notamment dans la partie la plus proche du débouché à l'atmosphère, est conçue de manière à favoriser au maximum l'ascension et la dispersion des polluants dans l'atmosphère (par exemple l'utilisation de chapeaux est interdite).
 
 ## Article 8.3.5. Systèmes de détection
 
@@ -1083,7 +1084,7 @@ L'exploitant est en mesure de démontrer la pertinence du dimensionnement retenu
 
 Toutes les alarmes de l'installation sont reportées en salle de contrôle de l'installation.
 
-## Article 8.3.6. Évents et parois soufflables
+## Article 8.3.6. Events et parois soufflables
 
 Le bâtiment abritant la chaudière comporte au moins $10 \%$ de surface soufflable ne résistant pas à une surpression de $4,9 \mathrm{mbar}$. Cette surface est composée de $90 \mathrm{~m}^{2}$ de bardage légers. L'exploitant tient à disposition de l'inspection les éléments justifiant des caractéristiques des surfaces soufflables installées.
 Ces surfaces soufflables sont disposées de façon à ne pas produire de projection à hauteur d'homme en cas d'explosion.
@@ -1094,7 +1095,7 @@ Ces surfaces soufflables sont disposées de façon à ne pas produire de project
 
 ## Article 8.4.1.1. Capacité de rétention
 
-Tout stockage d'un liquide susceptible de créer une pollution des eaux ou des sols est associé à une capacité de rétention dont le volume est au moins égal à la plus grande des deux valeurs suivantes :
+Tout stockage d'un liquide susceptible de créer une pollution des eaux ou des sols est associé à une capacité de rétention dont le volume est au moins égal à la plus grande des deux valeurs suivantes:
 
 - $100 \%$ de la capacité du plus grand réservoir ;
 - $50 \%$ de la capacité totale des réservoirs associés.
@@ -1102,14 +1103,14 @@ Tout stockage d'un liquide susceptible de créer une pollution des eaux ou des s
 Cette disposition n'est pas applicable aux bassins de traitement des eaux résiduaires.
 Pour les stockages de récipients de capacité unitaire inférieure ou égale à 250 litres, la capacité de rétention est au moins égale à :
 
-- dans le cas de liquides inflammables, $50 \%$ de la capacité totale des fûts ;
-- dans les autres cas, $20 \%$ de la capacité totale des fûts ;
+- dans le cas de liquides inflammables, $50 \%$ de la capacité totale des fûts;
+- dans les autres cas, $20 \%$ de la capacité totale des fûts;
 - dans tous les cas 800 litres minimum ou égale à la capacité totale lorsque celle-là est inférieure à 800 litres.
 
 
 # Article 8.4.1.2. Étanchéité et résistance aux actions physico-chimiques 
 
-La capacité de rétention est étanche aux produits qu'elle pourrait contenir et résiste à l'action physique et chimique des fluides. Il en est de même pour son dispositif d'obturation qui est maintenu fermé.
+La capacité de rétention est étanche aux produits qu'elle pourrait contenir et résiste à I'action physique et chimique des fluides. Il en est de même pour son dispositif d'obturation qui est maintenu fermé.
 Les produits récupérés en cas d'accident ne peuvent être rejetés que dans des conditions conformes au présent arrêté ou sont éliminés comme les déchets.
 Les réservoirs ou récipients contenant des produits incompatibles ne sont pas associés à une même rétention.
 Le stockage des liquides inflammables, ainsi que des autres produits toxiques ou dangereux pour l'environnement, n'est permis sous le niveau du sol que dans des réservoirs en fosse maçonnée, ou assimilés, et pour les liquides inflammables, dans les conditions énoncées cidessus.
@@ -1158,14 +1159,14 @@ Ces consignes indiquent notamment :
 
 - les contrôles à effectuer, en marche normale et à la suite d'un arrêt pour travaux de modification ou d'entretien de façon à permettre en toutes circonstances le respect des dispositions du présent arrêté ;
 - les mesures à prendre en cas de défaillance d'un système de traitement et d'épuration ;
-- I'interdiction d'apporter du feu sous une forme quelconque, dans les zones d'entreposage des déchets et dans les zones présentant des risques d'incendie ou d'explosion ;
-- I'interdiction de tout brûlage à l'air libre ;
+- l'interdiction d'apporter du feu sous une forme quelconque, dans les zones d'entreposage des déchets et dans les zones présentant des risques d'incendie ou d'explosion ;
+- l'interdiction de tout brûlage à l'air libre ;
 - I'obligation du "permis d'intervention" ou du "permis de feu" pour les parties concernées de l'installation ;
 - les conditions de conservation et de stockage des produits, notamment les précautions à prendre pour l'emploi et le stockage de produits incompatibles ;
 - les procédures d'arrêt d'urgence et de mise en sécurité de l'installation (électricité, ventilation, climatisation, chauffage, fermeture des portes coupe-feu, obturation des écoulements d'égouts notamment) ;
 - les mesures permettant de tenir à jour en permanence et de porter à la connaissance des services d'incendie et de secours la localisation des matières dangereuses ;
-- les mesures à prendre en cas de fuite sur un récipient ou une tuyauterie contenant des substances dangereuses ;
-- les modalités de mise en œuvre des dispositifs d'isolement du réseau de collecte, prévues à l'article 8.4.1.5 ;
+- les mesures à prendre en cas de fuite sur un récipient ou une tuyauterie contenant des substances dangereuses;
+- les modalités de mise en œuvre des dispositifs d'isolement du réseau de collecte, prévues à l'article 8.4.1.5;
 - les moyens d'extinction à utiliser en cas d'incendie, les dispositions à mettre en œuvre lors de l'indisponibilité (maintenance,...) de ceux-ci ;
 - la procédure d'alerte avec les numéros de téléphone du responsable d'intervention de l'établissement, des services d'incendie et de secours, etc. ;
 - I'obligation d'informer l'inspection des installations classées en cas d'accident.
@@ -1195,14 +1196,14 @@ L'établissement est doté de moyens adaptés aux risques à défendre et répar
 - de plans des locaux facilitant l'intervention des services d'incendie et de secours avec une description des dangers pour chaque local ;
 - d'un réseau fixe d'eau incendie, s'appuyant sur les poteaux incendie du réseau incendie du site, géré par Alsachimie. L'alimentation du réseau de protection incendie de l'installation est faite par un piquage DN250 sur le réseau DN400 d'Alsachimie. Ce dernier est alimenté par deux pomperies permettant de fournir un débit égal à $3000 \mathrm{~m}^{3} / \mathrm{h}$ à 12 bars. Les poteaux incendie d'un diamètre nominal DN100 sont implantés de telle sorte que tout point de la limite de l'installation se trouve à moins de 100 mètres d'un appareil permettant de fournir un débit minimal de 60 mètres cubes par heure pendant une durée d'au moins deux heures consécutives et dont les prises de raccordement sont conformes aux normes en vigueur pour permettre au service d'incendie et de secours de s'alimenter sur ces appareils.
 
-Les poteaux incendie assurent un débit minimum simultané de 180 mètres cubes par heure pendant une durée d'au moins deux heures consécutives;
+Les poteaux incendie assurent un débit minimum simultané de 180 mètres cubes par heure pendant une durée d'au moins deux heures consécutives ;
 
 - de deux canons à mousse positionnés de façon à intervenir au sein de la fosse de stockage de déchets, assurant un débit de 1200 litres par minute chacun. L'exploitant dispose de réserves en émulseur adapté aux produits présents sur le site, d'une capacité de 4200 litres. Il s'assure de la pérennité de l'agent moussant et tient à disposition de l'inspection les justificatifs de bon dimensionnement des quantités disponibles au vu des risques à défendre ;
 - de systèmes de pulvérisation d'eau pour la cabine de commande des grappins et au niveau de la trémie ;
-- de deux dispositifs rideau d'eau au niveau des espaces de stationnement des grappins;
-- d'extincteurs répartis dans l'installation, sur les aires extérieures et dans les lieux présentant des risques spécifiques, à proximité des dégagements, bien visibles et facilement accessibles. Les agents d'extinction sont appropriés aux risques à combattre et compatibles avec les matières stockées. Le dimensionnement du nombre et de la nature des extincteurs est conforme à un référentiel reconnu ;
+- de deux dispositifs rideau d'eau au niveau des espaces de stationnement des grappins ;
+- d'extincteurs répartis dans l'installation, sur les aires extérieures et dans les lieux présentant des risques spécifiques, à proximité des dégagements, bien visibles et facilement accessibles. Les agents d'extinction sont appropriés aux risques à combattre et compatibles avec les matières stockées. Le dimensionnement du nombre et de la nature des extincteurs est conforme à un référentiel reconnu;
 - de Robinets d'Incendie Armés (RIA) couplés à un surpresseur leur assurant une alimentation en eau quel que soit leur positionnement. Le dimensionnement du nombre et de l'implantation des RIA est conforme à un référentiel reconnu ;
-- d'une colonne sèche par cage d'escalier, d'un diamètre nominal DN100 avec une prise incendie DN65 et deux prises DN40 à chaque niveau. Le poteau incendie le plus proche est situé à 60 mètres au maximum des raccords d'alimentation des deux colonnes sèches (tracé réel des voies);
+- d'une colonne sèche par cage d'escalier, d'un diamètre nominal DN100 avec une prise incendie DN65 et deux prises DN40 à chaque niveau. Le poteau incendie le plus proche est situé à 60 mètres au maximum des raccords d'alimentation des deux colonnes sèches (tracé réel des voies) ;
 - pour les locaux à risque incendie abritant des produits chimiques, d'une réserve de sable meuble et sec adaptés aux risques, sans être inférieure à 100 litres et des pelles ainsi qu'un neutralisant adapté au risque en cas d'épandage ;
 
 Les moyens de lutte contre l'incendie sont capables de fonctionner efficacement quelle que soit la température de l'installation et notamment en période de gel.
@@ -1240,8 +1241,8 @@ Les résidus produits seront aussi minimes et peu nocifs que possible. L'élimin
 
 Le rendement énergétique des installations d'incinération est calculé chaque mois de l'année et les résultats sont rapportés annuellement à l'inspection des installations classées conformément à l'article 10.4.2.
 Le rendement énergétique est calculé selon la formule suivante :
-$R=$ [énergie produite/energie primaire]* 100
-$=[\mathrm{Eth}+\mathrm{Eelec}] /[\mathrm{ECSR}+\mathrm{Ecombustible}(\mathrm{s})] * 100$
+$R=[$ énergie produite/energie primaire $]^{* 100}$
+$=[E t h+E e l e c] /[E C S R+E c o m b u s t i b l e(s)]^{*} 100$
 où
 Eth = Energie thermique produite vendue + Energie thermique autoconsommee (MWh/an)
 Eelec = Energie électrique produite et vendue + Energie électrique autoconsommee (MWh/an)
@@ -1284,13 +1285,11 @@ L'installation d'incinération possède et utilise un système automatique qui e
 Sans préjudice des dispositions de l'article 9.2.1.4, la durée maximale des arrêts, dérèglements ou défaillances techniques des installations d'incinération ou des installations de traitement des effluents atmosphériques pendant lesquels les concentrations dans les rejets peuvent dépasser les valeurs limites fixées est limitée à 4 heures sans interruption lorsque les mesures en continu prévues à l'article 10.2.1.1 montrent qu'une valeur limite de rejet à l'atmosphère est dépassée.
 La durée cumulée de fonctionnement sur une année dans de telles conditions doit être inférieure à soixante heures.
 La teneur en poussières des rejets atmosphériques ne doit en aucun cas dépasser $150 \mathrm{mg} / \mathrm{m}^{3}$, exprimée en moyenne sur une demi-heure. En outre, les valeurs limites d'émission fixées pour le monoxyde de carbone et pour les substances organiques à l'état de gaz ou de vapeur, exprimées en carbone organique total, ne doivent pas être dépassées. Les conditions relatives au niveau d'incinération à atteindre doivent être respectées.
-# Article 9.2.3. Indisponibilité des dispositifs de mesure 
-
-## Article 9.2.3.1. Dispositifs de mesure en semi-continu des dioxines et furanes
-
+Article 9.2.3. Indisponibilité des dispositifs de mesure
+Article 9.2.3.1. Dispositifs de mesure en semi-continu des dioxines et furanes
 La durée maximale des arrêts, dérèglements ou défaillances techniques des dispositifs de mesure en semi-continu des effluents atmosphériques est limitée à 4 heures sans interruption. Sur une année, le temps cumulé d'indisponibilité d'un dispositif de mesure en semi-continu ne peut excéder $15 \%$ du temps de fonctionnement de l'installation.
 
-## Article 9.2.3.2. Dispositifs de mesure en continu
+# Article 9.2.3.2. Dispositifs de mesure en continu 
 
 La durée maximale des arrêts, dérèglements ou défaillances techniques des dispositifs de mesure en continu des effluents aqueux et atmosphériques est limitée à 10 heures sans interruption.
 Le temps cumulé d'indisponibilité d'un dispositif de mesure en continu ne peut excéder soixante heures cumulées sur une année.
@@ -1329,7 +1328,7 @@ L'exploitant met en place un programme de surveillance des rejets atmosphérique
 
 ## Article 10.2.1.1. Mesures en continu
 
-L'exploitant réalise la mesure en continu, au conduit $\mathrm{n}^{\circ} 1$ défini à l'article 3.2.3 du présent arrêté, des substances suivantes :
+L'exploitant réalise la mesure en continu, au conduit $n^{\circ} 1$ défini à l'article 3.2.3 du présent arrêté, des substances suivantes :
 - poussières totales ;
 - substances organiques à l'état de gaz ou de vapeur exprimées en carbone organique total (COT) ;
 - chlorure d'hydrogène ;
@@ -1341,7 +1340,7 @@ L'exploitant réalise la mesure en continu, au conduit $\mathrm{n}^{\circ} 1$ d�
 L'exploitant mesure également en continu dans les gaz de combustion :
 
 - le monoxyde de carbone ;
-- I'oxygène ;
+- l'oxygène ;
 - la vapeur d'eau;
 - le débit de fumée ;
 - température ;
@@ -1361,21 +1360,17 @@ L'exploitant fait réaliser par un organisme agréé par le ministre chargé des
 - des dioxines et furanes.
 
 Au cours de la première année d'exploitation, une telle mesure externe de l'ensemble des éléments métalliques mentionnés à l'alinéa précédent et des paramètres suivis en continu et en semi-continu est réalisée tous les trois mois.
-
 Les résultats des teneurs en métaux font apparaître la teneur en chacun des métaux pour les formes particulaires et gazeuses avant d'effectuer la somme.
-
 Au cours des deux premières années d'exploitation, une telle mesure externe des dioxines et furanes mentionnés à l'alinéa précédent est réalisée huit fois par an à intervalles réguliers.
-
 Ces mesures sont réalisées sans préjudice des mesures de contrôle réalisées par l'inspection des installations classées en application des dispositions des articles L. 514-5 et L. 514-8 du code de l'environnement. Cependant, les contrôles inopinés exécutés à la demande de l'inspection des installations classées peuvent, avec l'accord de cette dernière, se substituer aux mesures prévues au présent article.
 
 ## Article 10.2.1.3. Disposition relative à la mesure en semi-continu des dioxines et furanes
 
-Lorsqu'un dépassement est constaté sur une installation dans le cadre de la surveillance des émissions, I'exploitant met en œuvre, sous un délai de trois mois à compter de la date de réception des résultats, la mesure en semi-continu des dioxines et furanes durant deux périodes consécutives de quatre semaines.
+Lorsqu'un dépassement est constaté sur une installation dans le cadre de la surveillance des émissions, l'exploitant met en œuvre, sous un délai de trois mois à compter de la date de réception des résultats, la mesure en semi-continu des dioxines et furanes durant deux périodes consécutives de quatre semaines.
 Si aucun dépassement n'est constaté durant cette période de mise en œuvre temporaire de la mesure en semi-continu, l'exploitant reprend une surveillance ponctuelle, huit fois par an à intervalles réguliers au cours des deux années d'exploitation suivantes, puis une fois par trimestre les années qui suivent conformément à l'article 10.2.1.2.
 
 L'exploitant met en œuvre définitivement la mesure en semi-continu des dioxines et furanes sur l'installation concernée dès lors qu'un dépassement est constaté durant la mise en œuvre temporaire de la mesure en semi-continu. Les échantillons aux fins d'analyse sont constitués de prélèvements de gaz sur une période d'échantillonnage de 4 semaines.
-
-Lorsqu'un résultat d'analyse des échantillons prélevés par le dispositif de mesure en semicontinu dépasse la valeur limite définie à l'article 3.2.4, l'exploitant doit faire réaliser dès que possible par un organisme accrédité par le Comité français d'accréditation (COFRAC) ou par un organisme signataire de l'accord multilatéral pris dans le cadre de la coordination européenne des organismes d'accréditation ou par un organisme agréé par le ministère en charge de l'inspection des installations classées, s'il existe, une mesure ponctuelle à l'émission des dioxines et furannes; les échantillons analysés sont constitués de prélèvements issus des gaz, réalisés sur une période d'échantillonnage de six à huit heures.
+Lorsqu'un résultat d'analyse des échantillons prélevés par le dispositif de mesure en semicontinu dépasse la valeur limite définie à l'article 3.2.4, l'exploitant doit faire réaliser dès que possible par un organisme accrédité par le Comité français d'accréditation (COFRAC) ou par un organisme signataire de l'accord multilatéral pris dans le cadre de la coordination européenne des organismes d'accréditation ou par un organisme agréé par le ministère en charge de l'inspection des installations classées, s'il existe, une mesure ponctuelle à l'émission des dioxines et furannes ; les échantillons analysés sont constitués de prélèvements issus des gaz, réalisés sur une période d'échantillonnage de six à huit heures .
 
 Ce dépassement est porté à la connaissance de l'inspection des installations classées dans les meilleurs délais.
 
@@ -1386,11 +1381,11 @@ Les résultats sont portés sur un registre tenu à la disposition de l'inspecti
 
 ## Article 10.2.3. Surveillance des rejets aqueux
 
-La surveillance de la qualité des rejets aqueux est réalisée pour les points de rejet définis à I'article 4.4.4 suivant les paramètres et fréquences définis ci-après :
+La surveillance de la qualité des rejets aqueux est réalisée pour les points de rejet définis à l'article 4.4.4 suivant les paramètres et fréquences définis ci-après :
 
 | Paramètre | Code <br> SANDR <br> E | Fréquence |  |  |
 | :--: | :--: | :--: | :--: | :--: |
-|  |  | «0123 » <br> (eaux <br> résiduaires) ${ }^{(4)}$ | «0121 » <br> (eaux pluviales de <br> voirie) | «0122 » <br> (eaux pluviales de <br> toiture) |
+|  |  | «0123 » <br> (eaux <br> résiduaires) ${ }^{(4)}$ | «0121» <br> (eaux pluviales de <br> voirie) | «0122» <br> (eaux pluviales de <br> toiture) |
 | pH | 1302 | Continue | Annuelle ${ }^{(1)}$ | Annuelle ${ }^{(1)}$ |
 | Débit | 1421 | Continue | - | - |
 | Température | 1301 | Continue | - | - |
@@ -1408,19 +1403,19 @@ La surveillance de la qualité des rejets aqueux est réalisée pour les points 
 | CN libres | 1084 | Mensuelle ${ }^{(2)}$ | - | - |
 | Hydrocarbures <br> totaux | 7009 | Mensuelle ${ }^{(2)}$ | Annuelle ${ }^{(1)}$ | Annuelle ${ }^{(1)}$ |
 | AOX | 1106 | Mensuelle ${ }^{(2)}$ | Annuelle ${ }^{(1)}$ | Annuelle ${ }^{(1)}$ |
-| :-- | :-- | :-- | :-- | :--: |
+| :-- | :-- | :-- | :-- | :-- |
 | Dioxine et furanes | 7707 | Semestrielle ${ }^{(3)}$ | - | - |
 
 ${ }^{(1)}$ La mesure est réalisée sur un prélèvement ponctuel.
 ${ }^{(2)}$ La mesure est réalisée par un laboratoire agréé sur un prélèvement sur 24 heures proportionnel au débit.
 ${ }^{(3)}$ la mesure est réalisée par un laboratoire agréé . Au cours de la première année d'exploitation, la mesure est réalisée tous les trois mois.
-${ }^{(4)}$ Concernant les éventuelles autres substances dangereuses présentes au point de rejet $X$, au regard de la liste de substances définie au paragraphe 3 de l'annexe III de l'arrêté ministériel du 23 mai 2016 relatif aux installations de production de chaleur à partir de déchets non dangereux préparés sous forme de combustibles solides de récupération, l'exploitant fait réaliser une analyse mensuelle par un laboratoire agréé durant les 6 premiers mois d'exploitation, puis met en place les mesures de surveillance suivantes lorsque les seuils définis ci-dessous sont dépassés en contributions nettes :
+${ }^{(4)}$ Concernant les éventuelles autres substances dangereuses présentes au point de rejet X , au regard de la liste de substances définie au paragraphe 3 de l'annexe III de l'arrêté ministériel du 23 mai 2016 relatif aux installations de production de chaleur à partir de déchets non dangereux préparés sous forme de combustibles solides de récupération, l'exploitant fait réaliser une analyse mensuelle par un laboratoire agréé durant les 6 premiers mois d'exploitation, puis met en place les mesures de surveillance suivantes lorsque les seuils définis ci-dessous sont dépassés en contributions nettes :
 
 | Paramètre | Fréquence | Seuil de flux |
 | :-- | :-- | :-- |
 | Autre substance dangereuse <br> visée au paragraphe 3 de <br> l'annexe III de l'arrêté <br> ministériel du 23 mai 2016 | Mensuelle | $100 \mathrm{~g} / \mathrm{j}$ |
-| Autre substance dangereuse <br> visée au paragraphe 3 de <br> l'annexe III de l'arrêté <br> ministériel du 23 mai 2016 | Mensuelle | $5 \mathrm{~g} / \mathrm{j}$ |
-|  | Trimestrielle | $2 \mathrm{~g} / \mathrm{j}$ |
+| Autre substance dangereuse <br> visée au paragraphe 3 de <br> l'annexe III de l'arrêté <br> ministériel du 23 mai 2016 | Mensuelle | $20 \mathrm{~g} / \mathrm{j}$ |
+|  | Trimestrielle |  |
 
 # Article 10.2.4. Surveillance des eaux souterraines 
 
@@ -1428,8 +1423,8 @@ ${ }^{(4)}$ Concernant les éventuelles autres substances dangereuses présentes
 
 Le réseau de surveillance se compose des ouvrages suivants :
 
-| Dénomination <br> de l'ouvrage | $\mathbf{N}^{\circ} \mathbf{B S S}$ | Localisation par <br> rapport aux <br> installations | Aquifère <br> capté | Profondeur <br> atteinte <br> $(\mathbf{m})$ |
-| :-- | :--: | :--: | :--: | :--: |
+| Dénomination <br> de l'ouvrage | $\mathbf{N}^{\circ} \mathbf{B S S}$ | Localisation par <br> rapport aux <br> installations | Aquifère <br> capté | Profondeur <br> atteinte <br> (m) |
+| :-- | :-- | :-- | :-- | :--: |
 | Piézomètre 4 | BSS003GSGW | Amont hydraulique | Superficiel | 16 |
 | Piézomètre 87 | BSS003GSDE | Aval hydraulique | Superficiel | 20,30 |
 
@@ -1444,8 +1439,8 @@ La surveillance de la qualité des eaux souterraines est réalisée suivant les 
 | Paramètre | Code <br> SANDR <br> E | Fréquence |  |
 | :--: | :--: | :--: | :--: |
 |  |  | Piézomètre 4 | Piézomètre 87 |
-| Niveau |  | Semestrielle, |  |
-| Conductivité à $25^{\circ} \mathrm{C}$ | 1304 | (un prélèvement en période de basses eaux et un prélèvement en période de hautes eaux) |  |
+| Niveau |  | Semestrielle, <br> (un prélèvement en période de basses eaux et un <br> prélèvement en période de hautes eaux) |  |
+| Conductivité à <br> $25^{\circ} \mathrm{C}$ | 1304 |  |  |
 | pH | 1302 |  |  |
 | Turbidité | 1295 |  |  |
 | Nitrates | 1340 |  |  |
@@ -1454,7 +1449,7 @@ La surveillance de la qualité des eaux souterraines est réalisée suivant les 
 | Sodium | 1375 |  |  |
 | Fer | 1393 |  |  |
 | Manganèse | 1394 |  |  |
-| Hydrocarbures totaux | 2962 |  |  |
+| Hydrocarbures <br> totaux | 2962 |  |  |
 
 Les prélèvements, l'échantillonnage et le conditionnement des échantillons d'eau sont effectués conformément aux méthodes normalisées en vigueur.
 
@@ -1479,13 +1474,13 @@ La surveillance des effets sur l'environnement est réalisée comme suit :
 | :--: | :--: | :--: | :--: | :--: | :--: |
 |  |  | Type de prélèvement | Périodicité de la mesure |  |  |
 | Surveillance de l'air ambiant | Paramètres visés à l'article 3.2.4 ${ }^{(1)}$ | Prélèvements actifs | Annuelle ${ }^{(2)}$ | Prélèvements d'une durée de 1 semaine pour les deux premières campagnes | Points fixés en fonctio n des |
-| Surveillance des retombées atmosphériq ues | Dioxines, furanes et métaux visés à l'article 3.2.4 | Jauges de retombées de type jauge OWEN |  | - | résulta ts de l'étude prescri te à l'article 10.2.5.1 |
-| Surveillance des sols |  | Échantillons de sols |  | Campagnes de durée minimale d'1 mois |  |
+| Surveillance des retombées atmosphériq ues | Dioxines, furanes et métaux visés à l'article 3.2.4 | Jauges de retombées de type jauge OWEN |  | - | résulta ts de l'étude prescri te à |
+| Surveillance des sols |  | Échantillons de sols |  | Campagnes de durée minimale d'1 mois | 10.2.5.1 |
 | Biosurveillan ce | Modalités fixées en fonction des résultats de l'étude prescrite à l'article 10.2.5.3 |  |  |  |  |
 
 ${ }^{(1)}$ à l'exception du monoxyde de carbone.
 ${ }^{(2)}$ Les deux premières campagnes de mesures sont réalisées (1) avant la mise en service de l'installation (point zéro) puis (2) dans un délai compris entre trois mois et six mois après la mise en service de l'installation. Après cette période initiale, les campagnes de mesures sont réalisées selon une fréquence au moins annuelle.
-Les analyses sont réalisées par des laboratoires compétents ; l'accréditation est le mode privilégié de reconnaissance de la compétence.
+Les analyses sont réalisées par des laboratoires compétents; l'accréditation est le mode privilégié de reconnaissance de la compétence.
 
 Le programme de surveillance pourra être en partie commun avec celui de la société ALSACHIMIE implantée sur le site.
 
@@ -1506,7 +1501,7 @@ Une mesure des émissions sonores est effectuée aux frais de l'exploitant par u
 
 ## Article 10.3.1. Actions correctives
 
-L'exploitant suit les résultats des mesures qu'il réalise en application du chapitre 10.2, notamment celles de son programme d'auto surveillance, les analyse et les interprète. Il prend le cas échéant les actions correctives appropriées lorsque des résultats font présager des risques ou inconvénients pour l'environnement ou d'écart par rapport au respect des valeurs réglementaires relatives aux émissions de ses installations ou de leurs effets sur l'environnement.
+L'exploitant suit les résultats des mesures qu'il réalise en application du chapitre 10.2, notamment celles de son programme d'auto surveillance, les analyse et les interprète. Il prend le cas échéant les actions correctives appropriées lorsque des résultats font présager des risques ou inconvénients pour l'environnement ou d'écart par rapport au respect des valeurs réglementaires relatives aux émissions de ses installations ou de leurs effets sur I'environnement.
 
 En particulier, lorsque la surveillance environnementale sur les eaux souterraines ou les sols fait apparaître une dérive par rapport à l'état initial de l'environnement, soit réalisé en application de l'article R512-8 II $1^{\circ}$ du code de l'environnement, soit reconstitué aux fins d'interprétation des résultats de surveillance, l'exploitant met en œuvre les actions de réduction complémentaires des émissions appropriées et met en œuvre, le cas échéant, un plan de gestion visant à rétablir la compatibilité entre les milieux impactés et leurs usages.
 
@@ -1523,14 +1518,14 @@ Les résultats de la mesure en continu de la température obtenue à proximité 
 Les résultats des analyses demandées aux articles 5.1.9, 9.2.1, 10.2.1 et 10.2.5, accompagnés des flux des polluants mesurés, sont communiqués à l'inspection des installations classées :
 
 - trimestriellement en ce qui concerne la mesure de la température de la chambre de combustion, les mesures en continu et en semi-continu demandées à l'article 10.2.1, accompagnées de commentaires sur les causes des dépassements constatés ainsi que sur les actions correctives mises en œuvre ou envisagées;
-- une fois par an en ce qui concerne les mesures ponctuelles telles que définies aux articles 10.2.1 et 10.2.5 et les informations demandées à l'article 5.1.9 ;
+- une fois par an en ce qui concerne les mesures ponctuelles telles que définies aux articles 10.2.1 et 10.2.5 et les informations demandées à l'article 5.1.9;
 - dans les meilleurs délais lorsque les mesures en continu prévues à l'article 10.2.1 montrent qu'une valeur limite de rejet à l'atmosphère est dépassée, au-delà des limites fixées par l'article 9.2.2, en cas de dépassement des valeurs limites d'émission en ce qui concerne les mesures réalisées par un organisme tiers telles que définies à l'article 10.2.1 et pour tout dépassement des valeurs limites de fraction soluble et de teneurs en métaux lourds dans les lixiviats des déchets produits par l'installation en ce qui concerne les mesures réalisées, le cas échéant, en application de l'article 5.1.9.
 
 Ces résultats sont accompagnés, à chaque fois que cela semble pertinent, par une présentation graphique de l'évolution des résultats obtenus sur une période représentative du phénomène observé, avec tous commentaires utiles.
 
 L'exploitant calcule une fois par an, sur la base de la moyenne annuelle des valeurs mesurées et du tonnage admis dans l'année :
 
-- les flux moyens annuels de substances faisant l'objet de limite de rejet par tonne de déchets incinérés;
+- les flux moyens annuels de substances faisant l'objet de limite de rejet par tonne de déchets incinérés ;
 - les flux moyens annuels produits de déchets issus de l'incinération énumérés à l'article 5.1.8 par tonne de déchets incinérés.
 
 Il communique ce calcul à l'inspection des installations classées et en suit l'évolution.
@@ -1582,18 +1577,18 @@ L'exploitant informe le préfet de tout changement prévu en ce qui concerne la 
 # Article 10.5.2. Surveillance des émissions de gaz à effet de serre 
 
 L'exploitant surveille ses émissions de gaz à effet de serre sur la base d'un plan de surveillance conforme au règlement $n^{\circ} 601 / 2012$ du 21 juin 2012 relatif à la surveillance et à la déclaration des émissions de gaz à effet de serre au titre de la directive 2003/87/CE du Parlement européen et du Conseil. Le plan de surveillance est transmis au préfet pour approbation avant la mise en service de l'installation.
-Dès le début de l'exploitation, l'exploitant doit surveiller ses émissions conformément au plan de surveillance approuvé par le préfet avant le début de l'exploitation.
+Dès le début de l'exploitation, I'exploitant doit surveiller ses émissions conformément au plan de surveillance approuvé par le préfet avant le début de l'exploitation.
 Le Préfet peut demander à l'exploitant de modifier sa méthode de surveillance si les méthodes de surveillance ne sont plus conformes au règlement 601/2012 relatif à la surveillance et à la déclaration des émissions de gaz à effet de serre.
 L'exploitant vérifie régulièrement que le plan de surveillance est adapté à la nature et au fonctionnement de l'installation et étudie la nécessité d'une amélioration de la méthode de surveillance. Il modifie le plan de surveillance dans les cas mentionnés à l'article 14 du règlement 601/2012 relatif à la surveillance et à la déclaration des émissions de gaz à effet de serre.
 L'exploitant notifie au préfet toute modification de son plan de surveillance. Les modifications importantes, notamment celles listés à l'article 15 du règlement 601/2012, sont transmises pour approbation au Préfet dans les meilleurs délais. Les autres sont portées à la connaissance du Préfet avant le 31 décembre de l'année.
 
 ## Article 10.5.3. Déclaration des émissions au titre du système d'échanges de quotas d'émissions de gaz à effet de serre
 
-Conformément à l'article R.229-20 du code l'environnement, l'exploitant adresse au plus tard le 28 février de chaque année, la déclaration des émissions de gaz à effet de serre de l'année précédente, vérifiée par un organisme accrédité à cet effet. La déclaration des émissions est vérifiée conformément au règlement 2018/2067 concernant la vérification des données et I'accréditation des vérificateurs conformément à la directive 2003/87/CE. Le rapport du vérificateur est joint à la déclaration.
+Conformément à l'article R.229-20 du code l'environnement, I'exploitant adresse au plus tard le 28 février de chaque année, la déclaration des émissions de gaz à effet de serre de l'année précédente, vérifiée par un organisme accrédité à cet effet. La déclaration des émissions est vérifiée conformément au règlement 2018/2067 concernant la vérification des données et I'accréditation des vérificateurs conformément à la directive 2003/87/CE. Le rapport du vérificateur est joint à la déclaration.
 
 ## Article 10.5.4. Obligations de restitution
 
-Conformément à l'article R.229-21 du code de l'environnement, l'exploitant restitue au plus tard le 30 avril de chaque année un nombre de quotas correspondant aux émissions vérifiées totales de son installation au cours de l'année précédente.
+Conformément à l'article R.229-21 du code de l'environnement, I'exploitant restitue au plus tard le 30 avril de chaque année un nombre de quotas correspondant aux émissions vérifiées totales de son installation au cours de l'année précédente.
 # TITRE 11 - Modalités d'exécution 
 
 ## Article 11.1.1. Frais
@@ -1606,8 +1601,7 @@ En cas de manquement aux prescriptions du présent arrêté, il pourra être fai
 
 ## Article 11.1.3. Diffusion
 
-Une copie du présent arrêté est transmise à la mairie de Bantzenheim pour y être consultée. Un extrait est affiché dans ladite mairie pendant une durée minimum d'un mois ; procèsverbal de l'accomplissement de cette formalité est dressé par le maire de Bantzenheim.
-Cet arrêté est affiché en permanence et de façon visible dans l'installation, par l'exploitant. L'arrêté est publié sur le site internet de la préfecture du Haut-Rhin.
+Une copie du présent arrêté est transmise à la mairie de Bantzenheim pour y être consultée. Un extrait est affiché dans ladite mairie pendant une durée minimum d'un mois ; procèsverbal de l'accomplissement de cette formalité est dressé par le maire de Bantzenheim. Cet arrêté est affiché en permanence et de façon visible dans l'installation, par l'exploitant. L'arrêté est publié sur le site internet de la préfecture du Haut-Rhin.
 
 ## Article 11.1.4. Transmission à l'exploitant
 
@@ -1617,13 +1611,12 @@ Copie du présent arrêté est transmise à l'exploitant qui devra l'avoir en sa
 
 Le secrétaire général de la préfecture du Haut-Rhin, le maire de Bantzenheim et le directeur régional de l'environnement, de l'aménagement et du logement Grand Est chargé de l'inspection des installations, sont chargés, chacun en ce qui le concerne, de veiller à l'exécution du présent arrêté dont une copie est notifiée à la société B+T Energie France Sas à Bantzenheim.
 
-| Á Colmar, le 24 septembre 2021 |
-| :--: |
-| Le préfet, |
-| Pour le préfet et par délégation, |
-| Le secrétaire général, |
-| signé |
-| Jean-Claude GENEY |
+Á Colmar, le 24 septembre 2021
+Le préfet,
+Pour le préfet et par délégation,
+Le secrétaire général,
+signé
+Jean-Claude GENEY
 
 ## Délais et voie de recours
 
@@ -1631,8 +1624,8 @@ Le secrétaire général de la préfecture du Haut-Rhin, le maire de Bantzenheim
 La présente décision peut être déférée au Tribunal Administratif Strasbourg :
 
 - par les pétitionnaires ou exploitants, dans un délai de deux mois à compter du jour où la décision leur a été notifiée ;
-par les tiers, intéressés en raison des inconvénients ou des dangers pour les intérêts mentionnés à l'article L. 181-3, dans un délai de quatre mois à compter de :
-a) l'affichage en mairie dans les conditions prévues au $2^{\circ}$ de l'article R. 181-44 ;
+- par les tiers, intéressés en raison des inconvénients ou des dangers pour les intérêts mentionnés à l'article L. 181-3, dans un délai de quatre mois à compter de :
+a) l'affichage en mairie dans les conditions prévues au $2^{\mathrm{e}}$ de l'article R. 181-44 ;
 b) la publication de la décision sur le site internet de la préfecture prévue au $4^{\circ}$ du même article.
 Le délai court à compter de la dernière formalité accomplie. Si l'affichage constitue cette dernière formalité, le délai court à compter du premier jour d'affichage de la décision.
-Les décisions mentionnées au premier alinéa peuvent faire l'objet d'un recours gracieux ou hiérarchique dans le délai de deux mois. Ce recours administratif prolonge de deux mois les délais mentionnés aux $1^{\circ}$ et $2^{\circ}$.
+Les décisions mentionnées au premier alinéa peuvent faire l'objet d'un recours gracieux ou hiérarchique dans le délai de deux mois. Ce recours administratif prolonge de deux mois les délais mentionnés aux $1^{\mathrm{e}}$ et $2^{\mathrm{e}}$.
