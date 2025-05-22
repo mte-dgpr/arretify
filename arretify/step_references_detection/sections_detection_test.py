@@ -9,7 +9,7 @@ from .sections_detection import parse_section_references
 process_children = make_testing_function_for_children_list(parse_section_references)
 
 
-class TestHandleArticleRange(unittest.TestCase):
+class TestArticleRange(unittest.TestCase):
 
     def test_article_num(self):
         assert process_children("article 4.1.b") == [
@@ -249,7 +249,7 @@ class TestHandleArticleRange(unittest.TestCase):
         ]
 
 
-class TestArticleSingleRegex(unittest.TestCase):
+class TestArticleSingle(unittest.TestCase):
     def test_ambiguous_paragraph_use(self):
         assert process_children("Paragraphe 4.28") == [
             normalized_html_str(
@@ -266,7 +266,7 @@ class TestArticleSingleRegex(unittest.TestCase):
         ]
 
 
-class TestArticlePluralRegex(unittest.TestCase):
+class TestArticlePlural(unittest.TestCase):
 
     def test_article_num(self):
         assert process_children("articles 5.1.9, 9.2.1, 10.2.1 et 10.2.5") == [
@@ -433,82 +433,69 @@ class TestArticlePluralRegex(unittest.TestCase):
         ]
 
 
-class TestParseAlineaRegex(unittest.TestCase):
+class TestAlineaSingle(unittest.TestCase):
 
     def test_alinea_num_before(self):
-        assert process_children("2ème alinéa de l'article 1") == [
+        assert process_children("2ème alinéa") == [
             normalized_html_str(
                 """
             <a
                 class="dsr-section_reference"
                 data-is_resolvable="false"
-                data-uri="dsr://unknown____/article__1__/alinea__2__"
+                data-uri="dsr://unknown____/alinea__2__"
             >
-                2ème alinéa de l'article 1
-            </a>
-            """
-            )
-        ]
-        assert process_children("5° de l'article 5") == [
-            normalized_html_str(
-                """
-            <a
-                class="dsr-section_reference"
-                data-is_resolvable="false"
-                data-uri="dsr://unknown____/article__5__/alinea__5__"
-            >
-                5° de l'article 5
+                2ème alinéa
             </a>
             """
             )
         ]
 
     def test_alinea_num_after(self):
-        assert process_children("alinéa 3 de l'article 2") == [
+        assert process_children("alinéa 3") == [
             normalized_html_str(
                 """
             <a
                 class="dsr-section_reference"
                 data-is_resolvable="false"
-                data-uri="dsr://unknown____/article__2__/alinea__3__"
+                data-uri="dsr://unknown____/alinea__3__"
             >
-                alinéa 3 de l'article 2
+                alinéa 3
             </a>
             """
             )
         ]
-        assert process_children("alinéa second de l'article 3") == [
+        assert process_children("alinéa second") == [
             normalized_html_str(
                 """
             <a
                 class="dsr-section_reference"
                 data-is_resolvable="false"
-                data-uri="dsr://unknown____/article__3__/alinea__2__"
+                data-uri="dsr://unknown____/alinea__2__"
             >
-                alinéa second de l'article 3
+                alinéa second
             </a>
             """
             )
         ]
-        assert process_children("alinéa neuvième de l'article 4") == [
+        assert process_children("alinéa neuvième") == [
             normalized_html_str(
                 """
             <a
                 class="dsr-section_reference"
                 data-is_resolvable="false"
-                data-uri="dsr://unknown____/article__4__/alinea__9__"
+                data-uri="dsr://unknown____/alinea__9__"
             >
-                alinéa neuvième de l'article 4
+                alinéa neuvième
             </a>
             """
             )
         ]
 
 
-class TestParseAlineaMultipleRegex(unittest.TestCase):
+class TestAlineaMultiple(unittest.TestCase):
 
     def test_alinea_list(self):
-        assert process_children("Les paragraphes 3 et 4 de l'article 8.5.1.1") == [
+        assert process_children("Les alinéas 3 et 4") == [
             "Les ",
             normalized_html_str(
                 """
@@ -516,24 +503,72 @@ class TestParseAlineaMultipleRegex(unittest.TestCase):
                     <a
                         class="dsr-section_reference"
                         data-is_resolvable="false"
-                        data-uri="dsr://unknown____/article__8.5.1.1__/alinea__3__"
+                        data-uri="dsr://unknown____/alinea__3__"
                     >
-                        paragraphes 3
+                        alinéas 3
                     </a>
                     et
                     <a
                         class="dsr-section_reference"
                         data-is_resolvable="false"
-                        data-uri="dsr://unknown____/article__8.5.1.1__/alinea__4__"
+                        data-uri="dsr://unknown____/alinea__4__"
                     >
                         4
                     </a>
+                </span>
+                """
+            ),
+        ]
+
+
+class TestUnknownSingle(unittest.TestCase):
+
+    def test_unknown_num(self):
+        assert process_children("paragraphe 3") == [
+            normalized_html_str(
+                """
+                <a
+                    class="dsr-section_reference"
+                    data-is_resolvable="false"
+                    data-uri="dsr://unknown____/unknown__3__"
+                >
+                    paragraphe 3
+                </a>
+                """
+            )
+        ]
+
+
+class TestUnknownMultiple(unittest.TestCase):
+
+    def test_alinea_list(self):
+        assert process_children("Les paragraphes 3è, 5 et quatrième") == [
+            "Les ",
+            normalized_html_str(
+                """
+                <span class="dsr-section_reference_multiple">
                     <a
                         class="dsr-section_reference"
                         data-is_resolvable="false"
-                        data-uri="dsr://unknown____/article__8.5.1.1__"
+                        data-uri="dsr://unknown____/unknown__3__"
                     >
-                        de l\'article 8.5.1.1
+                        paragraphes 3è
+                    </a>
+                    ,
+                    <a
+                        class="dsr-section_reference"
+                        data-is_resolvable="false"
+                        data-uri="dsr://unknown____/unknown__5__"
+                    >
+                        5
+                    </a>
+                    et
+                    <a
+                        class="dsr-section_reference"
+                        data-is_resolvable="false"
+                        data-uri="dsr://unknown____/unknown__4__"
+                    >
+                        quatrième
                     </a>
                 </span>
                 """

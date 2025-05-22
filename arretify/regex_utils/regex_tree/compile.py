@@ -26,7 +26,6 @@ def Literal(
     pattern_string: str, key: str | None = None, settings: Settings | None = None
 ) -> LiteralNode:
     """
-    Create a LiteralNode from a string.
     If a key is provided, the pattern string will be wrapped in a named group with that key.
     """
     settings = settings or Settings()
@@ -47,6 +46,9 @@ def Branching(
     child_or_str_list: List[Node | str],
     settings: Settings | None = None,
 ) -> BranchingNode:
+    """
+    Order of patterns matters, from most specific to less specific.
+    """
     settings = settings or Settings()
     children_list: List[Node] = []
     for child_or_str in child_or_str_list:
