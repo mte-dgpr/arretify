@@ -249,6 +249,23 @@ class TestHandleArticleRange(unittest.TestCase):
         ]
 
 
+class TestArticleSingleRegex(unittest.TestCase):
+    def test_ambiguous_paragraph_use(self):
+        assert process_children("Paragraphe 4.28") == [
+            normalized_html_str(
+                """
+                <a
+                    class="dsr-section_reference"
+                    data-is_resolvable="false"
+                    data-uri="dsr://unknown____/article__4.28__"
+                >
+                    Paragraphe 4.28
+                </a>
+                """
+            )
+        ]
+
+
 class TestArticlePluralRegex(unittest.TestCase):
 
     def test_article_num(self):
@@ -509,7 +526,14 @@ class TestParseAlineaMultipleRegex(unittest.TestCase):
                         data-is_resolvable="false"
                         data-uri="dsr://unknown____/article__8.5.1.1__/alinea__4__"
                     >
-                        4 de l'article 8.5.1.1
+                        4
+                    </a>
+                    <a
+                        class="dsr-section_reference"
+                        data-is_resolvable="false"
+                        data-uri="dsr://unknown____/article__8.5.1.1__"
+                    >
+                        de l\'article 8.5.1.1
                     </a>
                 </span>
                 """

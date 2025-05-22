@@ -45,7 +45,7 @@ DECRET_NODE = regex_tree.Group(
     regex_tree.Sequence(
         [
             r"circulaire\s+",
-            regex_tree.Quantifier(
+            regex_tree.Repeat(
                 regex_tree.Branching(
                     [
                         r"(ministérielle|interministérielle)\s+",
@@ -55,7 +55,7 @@ DECRET_NODE = regex_tree.Group(
                         r"[A-Z]{2,}(/[A-Z]{2,})*\s+",
                     ]
                 ),
-                quantifier="?",
+                quantifier=(0, 1),
             ),
             r"(n\s*°\s*(?P<identifier>[\d\-]+)\s+)?",
             r"du\s+",

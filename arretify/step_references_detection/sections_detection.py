@@ -33,6 +33,7 @@ from arretify.regex_utils import (
     split_string_with_regex_tree,
     iter_regex_tree_match_strings,
     filter_regex_tree_match_children,
+    repeated_with_separator,
 )
 from arretify.law_data.types import (
     Section,
@@ -64,14 +65,44 @@ def parse_section_references(
 
 
 # -------------------- Shared -------------------- #
+# Articles from French law codes such as Code de l'environnement, etc.
+# Examples : "L. 123-4", "R. 123-4", "D. 123-4"
+# REF : https://reflex.sne.fr/codes-officiels
+ARTICLE_ID_FROM_CODE_NODE = regex_tree.Literal(
+    r"(L|R|D)\.?\s*(\d+\s*-\s*)*\d+", key="num_from_code"
+)
+
 # Order of patterns matters, from most specific to less specific.
 ARTICLE_ID_NODE = regex_tree.Group(
     regex_tree.Branching(
         [
-            # REF : https://reflex.sne.fr/codes-officiels
-            r"(?P<num_from_code>(L|R|D)\.?\s*(\d+\s*-\s*)*\d+)",
-            r"(?P<ordinal>" + ORDINAL_PATTERN_S + r")",
+            ARTICLE_ID_FROM_CODE_NODE,
+            regex_tree.Literal(ORDINAL_PATTERN_S, key="ordinal"),
             r"(?P<number>\d+(\.(\d+|[a-zA-Z]+))*\.?)" + EME_PATTERN_S + r"?",
+        ]
+    ),
+    group_name="__article_id",
+)
+
+# Case when an article is ambiguously referred to with the
+# word "paragraphe". In that case we can only infer that it is
+# actually an article we are talking about by looking at the number.
+#
+# Examples :
+# - "paragraphe 1.23", only if in the form X.Y.Z
+# - "paragraphe L.123-4"
+ARTICLE_ID_AMBIGUOUS_NODE = regex_tree.Group(
+    regex_tree.Branching(
+        [
+            ARTICLE_ID_FROM_CODE_NODE,
+            regex_tree.Literal(
+                repeated_with_separator(
+                    r"\d+|[a-zA-Z]+",
+                    separator=r"\.",
+                    quantifier=(2, ...),
+                ),
+                key="number",
+            ),
         ]
     ),
     group_name="__article_id",
@@ -95,6 +126,15 @@ ARTICLE_RANGE_NODE = regex_tree.Sequence(
     [
         ARTICLE_ID_NODE,
         r" à (l\'article )?",
+        ARTICLE_ID_NODE,
+    ]
+)
+
+
+# Order of patterns matters, from most specific to less specific.
+ARTICLE_RANGE_OR_ID_NODE = regex_tree.Branching(
+    [
+        ARTICLE_RANGE_NODE,
         ARTICLE_ID_NODE,
     ]
 )
@@ -219,6 +259,9 @@ def _render_section_reference(
 SECTION_REFERENCE_NODE = regex_tree.Group(
     regex_tree.Branching(
         [
+            # Examples :
+            # - "alinéa 3 de l'article 3"
+            # - "1er paragraphe de l'article 3"
             regex_tree.Sequence(
                 [
                     regex_tree.Branching(
@@ -235,16 +278,27 @@ SECTION_REFERENCE_NODE = regex_tree.Group(
                     ARTICLE_ID_NODE,
                 ]
             ),
+            # Example "article 1 à l'article 3"
             regex_tree.Sequence(
                 [
-                    r"(article|paragraphe)s? ",
+                    r"articles? ",
                     ARTICLE_RANGE_NODE,
                 ]
             ),
+            # Example "article 3"
             regex_tree.Sequence(
                 [
-                    r"(article|paragraphe)s? ",
+                    r"articles? ",
                     ARTICLE_ID_NODE,
+                ]
+            ),
+            # Examples :
+            # - "paragraphe 1.23", only if in the form X.Y.Z
+            # - "paragraphe L.123-4"
+            regex_tree.Sequence(
+                [
+                    r"paragraphes? ",
+                    ARTICLE_ID_AMBIGUOUS_NODE,
                 ]
             ),
         ]
@@ -273,53 +327,28 @@ def _parse_section_references(
 
 
 # -------------------- Multiple articles -------------------- #
-# Example : "Les articles 3 et 4"
+# Examples :
+# - "Les articles 3 et 4"
+# - "Les articles 3, 4 et 5"
+# - "Les articles 3 à 6, 9 et 12 à 14"
 SECTION_REFERENCE_MULTIPLE_ARTICLES_NODE = regex_tree.Group(
     regex_tree.Sequence(
         [
-            regex_tree.Group(
-                regex_tree.Sequence(
-                    [
-                        r"(article|paragraphe)s? ",
-                        # Order of patterns matters, from most specific to less specific.
-                        regex_tree.Branching(
-                            [
-                                ARTICLE_RANGE_NODE,
-                                ARTICLE_ID_NODE,
-                            ]
-                        ),
-                    ]
+            # Positive lookahead so there's a match only
+            # if the strings starts with the word "article".
+            r"(?=articles? )",
+            regex_tree.Repeat(
+                regex_tree.Group(
+                    regex_tree.Sequence(
+                        [
+                            r"(articles? )?",
+                            ARTICLE_RANGE_OR_ID_NODE,
+                        ]
+                    ),
+                    group_name="__section_reference",
                 ),
-                group_name="__section_reference",
-            ),
-            ET_VIRGULE_PATTERN_S,
-            regex_tree.Quantifier(
-                regex_tree.Sequence(
-                    [
-                        regex_tree.Group(
-                            # Order of patterns matters, from most specific to less specific.
-                            regex_tree.Branching(
-                                [
-                                    ARTICLE_RANGE_NODE,
-                                    ARTICLE_ID_NODE,
-                                ]
-                            ),
-                            group_name="__section_reference",
-                        ),
-                        ET_VIRGULE_PATTERN_S,
-                    ]
-                ),
-                "*",
-            ),
-            # Order of patterns matters, from most specific to less specific.
-            regex_tree.Group(
-                regex_tree.Branching(
-                    [
-                        ARTICLE_RANGE_NODE,
-                        ARTICLE_ID_NODE,
-                    ]
-                ),
-                group_name="__section_reference",
+                separator=ET_VIRGULE_PATTERN_S,
+                quantifier=(2, ...),
             ),
         ]
     ),
@@ -360,32 +389,25 @@ def _parse_section_reference_multiple_articles(
 SECTION_REFERENCE_MULTIPLE_ALINEA_NODE = regex_tree.Group(
     regex_tree.Sequence(
         [
-            regex_tree.Group(
-                regex_tree.Sequence(
-                    [
-                        r"(alinéa|paragraphe)s ",
-                        ALINEA_NODE,
-                    ]
-                ),
-                group_name="__section_reference",
-            ),
-            ET_VIRGULE_PATTERN_S,
-            regex_tree.Quantifier(
-                regex_tree.Sequence(
-                    [
-                        regex_tree.Group(
+            # Positive lookahead so there's a match only
+            # if the strings starts with the word "alinéa" or "paragraphe".
+            r"(?=(alinéa|paragraphe)s )",
+            regex_tree.Repeat(
+                regex_tree.Group(
+                    regex_tree.Sequence(
+                        [
+                            r"((alinéa|paragraphe)s )?",
                             ALINEA_NODE,
-                            group_name="__section_reference",
-                        ),
-                        ET_VIRGULE_PATTERN_S,
-                    ]
+                        ]
+                    ),
+                    group_name="__section_reference",
                 ),
-                quantifier="*",
+                separator=ET_VIRGULE_PATTERN_S,
+                quantifier=(1, ...),
             ),
             regex_tree.Group(
                 regex_tree.Sequence(
                     [
-                        ALINEA_NODE,
                         r" (de l\')?articles? ",
                         ARTICLE_ID_NODE,
                     ]

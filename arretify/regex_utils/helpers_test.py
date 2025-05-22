@@ -6,6 +6,8 @@ from .helpers import (
     without_named_groups,
     normalize_string,
     lookup_normalized_version,
+    quantifier_to_string,
+    repeated_with_separator,
 )
 from .types import Settings
 
@@ -80,3 +82,49 @@ class TestLookupNormalizedVersion(unittest.TestCase):
 
         # Assert
         assert result == "Hello"
+
+
+class TestQuantifierMinMaxToString(unittest.TestCase):
+    def test_min_max_to_string(self):
+        # Arrange
+        test_cases = [
+            ((0, 1), "{0,1}"),
+            ((0, ...), "*"),
+            ((1, ...), "+"),
+            ((2, 3), "{2,3}"),
+            ((2, ...), "{2,}"),
+            ((1, 1), "{1}"),
+            ((1, 2), "{1,2}"),
+        ]
+
+        # Act & Assert
+        for quantifier, expected in test_cases:
+            result = quantifier_to_string(quantifier)
+            assert result == expected
+
+
+class TestRepeatedWithSeparator(unittest.TestCase):
+
+    def test_repeated_with_separator(self):
+        # Arrange
+        pattern = r"\w+"
+        separator = ","
+        quantifier = (1, 3)
+
+        # Act
+        result = repeated_with_separator(pattern, separator, quantifier)
+
+        # Assert
+        assert result == r"(\w+)((,)(\w+)){0,2}"
+
+    def test_repeated_with_separator_min_zero(self):
+        # Arrange
+        pattern = r"\w+"
+        separator = ","
+        quantifier = (0, 3)
+
+        # Act
+        result = repeated_with_separator(pattern, separator, quantifier)
+
+        # Assert
+        assert result == r"((\w+)((,)(\w+)){0,2})?"

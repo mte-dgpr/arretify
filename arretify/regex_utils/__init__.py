@@ -18,5 +18,6 @@ from .helpers import (
     remove_accents,
     named_group,
     lookup_normalized_version,
+    repeated_with_separator,
 )
 from .types import Settings
