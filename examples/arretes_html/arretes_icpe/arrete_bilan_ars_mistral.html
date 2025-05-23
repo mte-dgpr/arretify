@@ -1,0 +1,3616 @@
+<!DOCTYPE html>
+<html>
+ <head>
+  <meta charset="utf-8"/>
+  <link href="https://cdn.jsdelivr.net/npm/@gouvfr/dsfr@1.13.0/dist/dsfr.css" rel="stylesheet"/>
+  <style>
+   :root {
+                --spacing-1: 1rem;
+                --spacing-0p5: 0.5rem;
+            }
+
+            header, main, .dsr-appendix {
+                max-width: 800px;
+                margin: auto;
+                padding: var(--spacing-1);
+            }
+
+            blockquote {
+                border-left: 1px solid var(--border-plain-grey);
+                padding-left: var(--spacing-1);
+            }
+
+            th {
+                text-align: left;
+            }
+
+            a.dsr-document_reference, a.dsr-section_reference {
+                color: var(--text-action-high-blue-france);
+            }
+
+            *[data-error_codes] {
+                font-family: monospace;
+                background-color: #ffd0d0 !important;
+            }
+
+            .dsr-alinea::before, .dsr-visa::before, .dsr-motifs::before {
+                color: var(--text-disabled-grey);
+                position: absolute;
+                top: 0;
+                left: -1rem;
+            }
+
+            .dsr-debug_keyword {
+                color: var(--warning-425-625);
+            }
+
+            /**************** HEADER ****************/
+            header {
+                padding-bottom: var(--spacing-1);
+                margin-bottom: var(--spacing-1);
+            }
+
+            .dsr-emblem, .dsr-entity, .dsr-identification, .dsr-arrete_title, .dsr-honorary {
+                padding: var(--spacing-1);
+                background-color: var(--background-alt-grey);
+                text-align: center;
+            }
+
+            .dsr-arrete_title {
+                color: var(--text-title-grey);
+            }
+
+            .dsr-emblem, .dsr-entity, .dsr-identification, .dsr-honorary {
+                color: var(--text-title-blue-france);
+                font-size: 120%;
+            }
+
+            .dsr-visa, .dsr-motifs, .dsr-supplementary_motif_info {
+                position: relative;
+                margin-top: var(--spacing-1);
+                padding-bottom: 0;
+            }
+
+            .dsr-visa::before, .dsr-motifs::before {
+                content: '⮞';
+            }
+
+            header > *:last-child {
+                border-bottom: 1px solid var(--background-action-low-blue-france);
+                padding-bottom: var(--spacing-1);
+            }
+
+            /**************** MAIN CONTENT AND APPENDIX ****************/
+            .dsr-table {
+                font-family: monospace;
+            }
+
+            .dsr-section {
+                padding: var(--spacing-0p5) 0;
+            }
+
+            .dsr-alinea {
+                position: relative;
+                margin-top: var(--spacing-0p5);
+            }
+
+            .dsr-alinea::before {
+                content: '¶';
+            }
+
+            .dsr-alinea img {
+                max-width: 100%;
+            }
+
+            ul, ol { 
+                list-style: none;
+            }
+
+            .dsr-operation {
+                background-color: var(--background-action-low-blue-france);
+            }
+  </style>
+ </head>
+ <body>
+  <header class="dsr-header">
+   <div class="dsr-arrete_title">
+    <h1>
+     ARRETE ARS GRAND EST n 2025-0182 du
+     <time class="dsr-date" datetime="2025-01-13">
+      13 janvier 2025
+     </time>
+     Portant fixation du bilan quantitatif de l'offre de soins pour la période de dépôt des demandes d'autorisation des activités de soins ouverte du
+     <time class="dsr-date" datetime="2025-02-01">
+      1er février 2025
+     </time>
+     au
+     <time class="dsr-date" datetime="2025-04-01">
+      1er avril 2025
+     </time>
+     pour la région Grand Est
+    </h1>
+   </div>
+   <div class="dsr-honorary">
+    <div>
+     La Directrice Générale de l'Agence Régionale de Santé Grand Est - **VU** le Code de la santé publique, et notamment ses articles L 6122-9 et R 6122-30. - **VU** le décret du 21 mai 2024 portant nomination de Mme Christelle RATIGNIER CARBONNEIL en qualité de
+    </div>
+    <div>
+     la directrice Générale de l'Agence Régionale de Santé Grand Est. - **VU** l'ordonnance n° 2018-4 du 3 janvier 2018 relative à la simplification et à la modernisation des régimes d'autorisation des activités de soins et d'équipements matériels lourds. - **VU** le décret n° 2018-117 du 19 février 2018 relatif à la simplification et à la modernisation des régimes d'autorisation des activités de soins et d'équipements matériels lourds. - **VU** l'arrêté ARS Grand Est n° 2023-5462 du 30 octobre 2023 portant adoption des zones du schéma régional de santé donnant lieu à la répartition des activités de soins et des équipements matériels lourds. - **VU** l'arrêté ARS Grand Est n° 2023-5463 du 30 octobre 2023 portant adoption du schéma régional de santé et du programme régional d'accès à la prévention et aux soins des personnes les plus démunies 2023-2028. - **VU** l'arrêté ARS Grand Est n° 2024-4942 du 12 décembre 2024 modifiant l'arrêté ARS Grand Est n° 2024-0255 du 10 janvier 2024 et fixant, pour l'année 2025, le calendrier des périodes de d'fixant le calendrier des périodes de dépôt des demandes d'autorisation ou de renouvellement d'autorisation relevant du schéma régional de santé en vigueur pour la région Grand Est. - **VU** l'arrêté ARS Grand Est n° 2024-5043 du 30 décembre 2024 portant délégation de signature aux Di
+    </div>
+    <div>
+     recteurs, Secrétaire Général et Délégués Territoriaux de l'Agence Régionale de Santé Grand Est.
+    </div>
+   </div>
+   <div class="dsr-arrete_title">
+    <h1>
+     ARRETE
+    </h1>
+   </div>
+  </header>
+  <main class="dsr-main">
+   <section class="dsr-section" data-number="1" data-title="Le bilan quantitatif de l'offre de soins de la région Grand Est est établi, pour la période de dépôt des demandes d'autorisation des activités de soins ouverte du 1er février 2025 au 1er avril 2025, conformément aux tableaux figurant en annexe du présent arrêté, à savoir :" data-type="article">
+    <h2 class="dsr-section_title">
+     Article 1er : Le bilan quantitatif de l'offre de soins de la région Grand Est est établi, pour la période de dépôt des demandes d'autorisation des activités de soins ouverte du 1er février 2025 au 1er avril 2025, conformément aux tableaux figurant en annexe du présent arrêté, à savoir :
+    </h2>
+   </section>
+  </main>
+  <appendix class="dsr-appendix">
+   <section class="dsr-section" data-number="1" data-title="Annexes :" data-type="annexe">
+    <h2 class="dsr-section_title">
+     Annexes :
+    </h2>
+    <div class="dsr-alinea" data-number="1">
+     <ul>
+      <li>
+       - ✓ Partie 1 : Objectifs quantitatifs par zone d'implantation pour le niveau de soins de référence
+      </li>
+      <li>
+       - ✓ Partie 2 : Objectifs quantitatifs par zone d'implantation pour le niveau de soins de recours
+      </li>
+      <li>
+       - ✓ Partie 3 : Objectifs quantitatifs par zone d'implantation pour le niveau de soins régional
+      </li>
+     </ul>
+    </div>
+    <div class="dsr-alinea" data-number="2">
+     <a class="dsr-section_reference" data-is_resolvable="false" data-uri="dsr://unknown____/article__2__">
+      Article 2
+     </a>
+     : La liste des activités de soins concernées est la suivante :
+    </div>
+    <div class="dsr-alinea" data-number="3">
+     Psychiatrie
+    </div>
+    <div class="dsr-alinea" data-number="4">
+     Traitement de l'insuffisance rénale chronique par épuration extrarénale
+    </div>
+    <div class="dsr-alinea" data-number="5">
+     Greffes d'organes et greffes de cellules hématopoïétiques
+    </div>
+    <div class="dsr-alinea" data-number="6">
+     Traitement des grands brulés
+    </div>
+    <div class="dsr-alinea" data-number="7">
+     <a class="dsr-section_reference" data-is_resolvable="false" data-uri="dsr://unknown____/article__3__">
+      Article 3
+     </a>
+     : Conformément aux dispositions de l'
+     <span class="dsr-sections_and_document_references">
+      <a class="dsr-section_reference" data-document_reference="294" data-is_resolvable="false" data-uri="dsr://code_LEGITEXT000006072665___Code%20de%20la%20sant%C3%A9%20publique/article__R6122-30__">
+       article R6122-30
+      </a>
+      du
+      <a class="dsr-document_reference" data-element_id="294" data-is_resolvable="true" data-uri="dsr://code_LEGITEXT000006072665___Code%20de%20la%20sant%C3%A9%20publique" href="https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006072665">
+       Code de la santé publique
+      </a>
+     </span>
+     , ce bilan sera publié au recueil des actes administratifs de la préfecture de la région Grand Est et fera l'objet d'une publication sur le site internet de l'Agence Régionale de Santé Grand Est.
+    </div>
+    <div class="dsr-alinea" data-number="8">
+     <a class="dsr-section_reference" data-is_resolvable="false" data-uri="dsr://unknown____/article__4__">
+      Article 4
+     </a>
+     : La Responsable du Département Stratégie de l'Offre Hospitalière de la Direction de l'Offre Sanitaire de l'Agence Régionale de Santé Grand Est est chargée de l'exécution du
+     <a class="dsr-document_reference" data-is_resolvable="true" data-uri="dsr://self____">
+      présent arrêté
+     </a>
+     .
+    </div>
+    <div class="dsr-alinea" data-number="9">
+     <a class="dsr-section_reference" data-is_resolvable="false" data-uri="dsr://unknown____/article__5__">
+      Article 5
+     </a>
+     :
+     <a class="dsr-document_reference" data-is_resolvable="true" data-uri="dsr://self____">
+      Le présent arrêté
+     </a>
+     peut faire l'objet d'un recours contentieux devant le tribunal administratif compétent dans un délai de deux mois à compter de sa publication. La juridiction peut notamment être saisie via une requête remise ou envoyée au greffe du tribunal administratif ou par l'application Télérecours citoyens accessible à partir du site www.telerecours.fr.
+    </div>
+    <div class="dsr-alinea" data-number="10">
+     Pour la Directrice Générale de l'Agence Régionale de Santé Grand Est, et par délégation, La Directrice de l'Offre Sanitaire
+    </div>
+    <div class="dsr-alinea" data-number="11">
+     Monica BOSI
+    </div>
+   </section>
+   <section class="dsr-section" data-number="2" data-title="ANNEXE " data-type="annexe">
+    <h2 class="dsr-section_title">
+     ANNEXE
+    </h2>
+    <div class="dsr-alinea" data-number="1">
+     Bilan quantitatif de l'offre relatif aux activités de soins par zone d'implantation pour le niveau de soins de référence, pour le niveau de soins de recours et pour le niveau de soins régional
+    </div>
+    <div class="dsr-alinea" data-number="2">
+     Période de dépôt des demandes : du 1er  février 2025 au 1er  avril 2025
+    </div>
+    <div class="dsr-alinea" data-number="3">
+     Sommaire
+    </div>
+    <div class="dsr-alinea" data-number="4">
+     Partie 1 : Objectifs quantifiés par zone d'implantation pour le niveau de soins de référence
+    </div>
+    <div class="dsr-alinea" data-number="5">
+     Zone de référence n¹ Nord Ardennes ..... page 4
+    </div>
+    <div class="dsr-alinea" data-number="6">
+     Zone de référence n² Champagne ..... page 5
+    </div>
+    <div class="dsr-alinea" data-number="7">
+     Zone de référence n3 Aube et Sézannais ..... page 6
+    </div>
+    <div class="dsr-alinea" data-number="8">
+     Zone de référence n4
+     <q>
+      21-52
+     </q>
+     ..... page 7
+    </div>
+    <div class="dsr-alinea" data-number="9">
+     Zone de référence n5 Cœur Grand Est ..... page 8
+    </div>
+    <div class="dsr-alinea" data-number="10">
+     Zone de référence n6 Lorraine Nord ..... page 9
+    </div>
+    <div class="dsr-alinea" data-number="11">
+     Zone de référence n7 Sud Lorraine ..... page 10
+    </div>
+    <div class="dsr-alinea" data-number="12">
+     Zone de référence n8 Vosges ..... page 11
+    </div>
+    <div class="dsr-alinea" data-number="13">
+     Zone de référence n9 Moselle Est ..... page 12
+    </div>
+    <div class="dsr-alinea" data-number="14">
+     Zone de référence n10 Basse Alsace Sud Moselle ..... page 13
+    </div>
+    <div class="dsr-alinea" data-number="15">
+     Zone de référence n11 Centre Alsace ..... page 14
+    </div>
+    <div class="dsr-alinea" data-number="16">
+     Zone de référence n12 Haute Alsace ..... page 15
+    </div>
+    <div class="dsr-alinea" data-number="17">
+     Partie 2 : Objectifs quantifiés par zone d'implantation pour le niveau de soins de recours
+    </div>
+    <div class="dsr-alinea" data-number="18">
+     Zone de recours A Ouest ..... page 17
+    </div>
+    <div class="dsr-alinea" data-number="19">
+     Zone de recours B Centre ..... page 18
+    </div>
+    <div class="dsr-alinea" data-number="20">
+     Zone de recours C Est ..... page 19
+    </div>
+    <div class="dsr-alinea" data-number="21">
+     Partie 3 : Objectifs quantifiés pour la zone d'implantation pour le niveau de soins régional
+    </div>
+    <div class="dsr-alinea" data-number="22">
+     Zone régionale Grand Est ..... page 21
+    </div>
+    <div class="dsr-alinea" data-number="23">
+     Partie 1: Objectifs quantitatifs par zone d'implantation pour le niveau de soins de référence
+    </div>
+    <div class="dsr-alinea" data-number="24">
+     Zone de référence n° 1 Nord Ardennes
+    </div>
+    <div class="dsr-alinea" data-number="25">
+     <table>
+      <thead>
+       <tr>
+        <th style="text-align: left;">
+        </th>
+        <th style="text-align: left;">
+         Au 1er
+         <br/>
+         janvier
+         <br/>
+         2025
+        </th>
+        <th style="text-align: left;">
+         Cible 2028
+         <br/>
+         Minimum
+        </th>
+        <th style="text-align: left;">
+         Cible 2028
+         <br/>
+         Maximum
+        </th>
+        <th style="text-align: left;">
+         Demandes
+         <br/>
+         d'implantations
+         <br/>
+         recevables dans la
+         <br/>
+         fenêtre : oui / non
+        </th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+    <div class="dsr-alinea" data-number="26">
+     Activités de soins - Nombre d'implantations
+    </div>
+    <div class="dsr-alinea" data-number="27">
+     Traitement de l'Insuffisance Rénale Chronique
+    </div>
+    <div class="dsr-alinea" data-number="28">
+     <table>
+      <thead>
+       <tr>
+        <th style="text-align: left;">
+         Hémodialyse en centre pour
+         <br/>
+         adultes
+        </th>
+        <th style="text-align: center;">
+         1
+        </th>
+        <th style="text-align: center;">
+         1
+        </th>
+        <th style="text-align: center;">
+         1
+        </th>
+        <th style="text-align: center;">
+         NON
+        </th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr>
+        <td style="text-align: left;">
+         Dialyse médicalisée
+        </td>
+        <td style="text-align: center;">
+         1
+        </td>
+        <td style="text-align: center;">
+         1
+        </td>
+        <td style="text-align: center;">
+         1
+        </td>
+        <td style="text-align: center;">
+         NON
+        </td>
+       </tr>
+       <tr>
+        <td style="text-align: left;">
+         Autodialyse
+        </td>
+        <td style="text-align: center;">
+         2
+        </td>
+        <td style="text-align: center;">
+         2
+        </td>
+        <td style="text-align: center;">
+         2
+        </td>
+        <td style="text-align: center;">
+         NON
+        </td>
+       </tr>
+       <tr>
+        <td style="text-align: left;">
+         Dialyse à domicile par
+         <br/>
+         hémodialyse ou par dialyse
+         <br/>
+         péritonéale
+        </td>
+        <td style="text-align: center;">
+         2
+        </td>
+        <td style="text-align: center;">
+         2
+        </td>
+        <td style="text-align: center;">
+         2
+        </td>
+        <td style="text-align: center;">
+         NON
+        </td>
+       </tr>
+       <tr>
+        <td style="text-align: left;">
+         Psychiatrie
+        </td>
+        <td style="text-align: center;">
+        </td>
+        <td style="text-align: center;">
+        </td>
+        <td style="text-align: center;">
+        </td>
+        <td style="text-align: center;">
+        </td>
+       </tr>
+       <tr>
+        <td style="text-align: left;">
+         Adultes
+        </td>
+        <td style="text-align: center;">
+         1
+        </td>
+        <td style="text-align: center;">
+         1
+        </td>
+        <td style="text-align: center;">
+         1
+        </td>
+        <td style="text-align: center;">
+         NON
+        </td>
+       </tr>
+       <tr>
+        <td style="text-align: left;">
+         Enfants et adolescents
+        </td>
+        <td style="text-align: center;">
+         2
+        </td>
+        <td style="text-align: center;">
+         2
+        </td>
+        <td style="text-align: center;">
+         2
+        </td>
+        <td style="text-align: center;">
+         NON
+        </td>
+       </tr>
+       <tr>
+        <td style="text-align: left;">
+         Périnatale
+        </td>
+        <td style="text-align: center;">
+         1
+        </td>
+        <td style="text-align: center;">
+         1
+        </td>
+        <td style="text-align: center;">
+         1
+        </td>
+        <td style="text-align: center;">
+         NON
+        </td>
+       </tr>
+       <tr>
+        <td style="text-align: left;">
+         Soins sans consentement
+        </td>
+        <td style="text-align: center;">
+         1
+        </td>
+        <td style="text-align: center;">
+         1
+        </td>
+        <td style="text-align: center;">
+         1
+        </td>
+        <td style="text-align: center;">
+         NON
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+    <div class="dsr-alinea" data-number="29">
+     Zone de référence n° 2 Champagne
+    </div>
+    <div class="dsr-alinea" data-number="30">
+     <span class="dsr-error" data-error_codes="markdown_parsing">
+      |   |       Au  1er        janvier       2025  | Cible 2028
+Minimum | Cible 2028
+Maximum | Demandes d'implantations recevables dans la fenêtre : oui / non  |
+| --- | --- | --- | --- | --- |
+|  |   |   |   |   |
+     </span>
+    </div>
+    <div class="dsr-alinea" data-number="31">
+     Activités de soins - Nombre d'implantations
+    </div>
+    <div class="dsr-alinea" data-number="32">
+     Traitement de l'Insuffisance rénale chronique
+    </div>
+    <div class="dsr-alinea" data-number="33">
+     <table>
+      <thead>
+       <tr>
+        <th>
+         Hémodialyse en centre pour adultes
+        </th>
+        <th>
+         1
+        </th>
+        <th>
+         1
+        </th>
+        <th>
+         1
+        </th>
+        <th>
+         NON
+        </th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr>
+        <td>
+         Dialyse médicalisée
+        </td>
+        <td>
+         2
+        </td>
+        <td>
+         1
+        </td>
+        <td>
+         2
+        </td>
+        <td>
+         NON
+        </td>
+       </tr>
+       <tr>
+        <td>
+         Autodialyse
+        </td>
+        <td>
+         3
+        </td>
+        <td>
+         3
+        </td>
+        <td>
+         3
+        </td>
+        <td>
+         NON
+        </td>
+       </tr>
+       <tr>
+        <td>
+         Dialyse à domicile par hémodialyse ou par dialyse péritonéale
+        </td>
+        <td>
+         3
+        </td>
+        <td>
+         3
+        </td>
+        <td>
+         3
+        </td>
+        <td>
+         NON
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+    <div class="dsr-alinea" data-number="34">
+     Psychiatrie
+    </div>
+    <div class="dsr-alinea" data-number="35">
+     <table>
+      <thead>
+       <tr>
+        <th>
+         Adultes
+        </th>
+        <th>
+         5
+        </th>
+        <th>
+         5
+        </th>
+        <th>
+         5
+        </th>
+        <th>
+         NON
+        </th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr>
+        <td>
+         Enfants et adolescents
+        </td>
+        <td>
+         3
+        </td>
+        <td>
+         4
+        </td>
+        <td>
+         4
+        </td>
+        <td>
+         OUI
+        </td>
+       </tr>
+       <tr>
+        <td>
+         Périnatale
+        </td>
+        <td>
+         2
+        </td>
+        <td>
+         1
+        </td>
+        <td>
+         2
+        </td>
+        <td>
+         NON
+        </td>
+       </tr>
+       <tr>
+        <td>
+         Soins sans consentement
+        </td>
+        <td>
+         2
+        </td>
+        <td>
+         2
+        </td>
+        <td>
+         2
+        </td>
+        <td>
+         NON
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+    <div class="dsr-alinea" data-number="36">
+     Zone de référence n° 3 Aube et Sézannais
+    </div>
+    <div class="dsr-alinea" data-number="37">
+     <table>
+      <thead>
+       <tr>
+        <th style="text-align: left;">
+        </th>
+        <th style="text-align: left;">
+         Au 1er
+         <br/>
+         janvier
+         <br/>
+         2025
+        </th>
+        <th style="text-align: left;">
+         Cible 2028
+         <br/>
+         minimum
+        </th>
+        <th style="text-align: left;">
+         Cible 2028
+         <br/>
+         maximum
+        </th>
+        <th style="text-align: left;">
+         Demandes
+         <br/>
+         d'implantations
+         <br/>
+         recevables dans la
+         <br/>
+         fenêtre :
+         <br/>
+         OUI / NON
+        </th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+    <div class="dsr-alinea" data-number="38">
+     Activités de soins - Nombre d'implantations
+    </div>
+    <div class="dsr-alinea" data-number="39">
+     Traitement de l'Insuffisance rénale chronique
+    </div>
+    <div class="dsr-alinea" data-number="40">
+     <table>
+      <thead>
+       <tr>
+        <th style="text-align: left;">
+         Hémodialyse en centre pour
+         <br/>
+         adultes
+        </th>
+        <th style="text-align: center;">
+         1
+        </th>
+        <th style="text-align: center;">
+         1
+        </th>
+        <th style="text-align: center;">
+         1
+        </th>
+        <th style="text-align: center;">
+         NON
+        </th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr>
+        <td style="text-align: left;">
+         Dialyse médicalisée
+        </td>
+        <td style="text-align: center;">
+         1
+        </td>
+        <td style="text-align: center;">
+         1
+        </td>
+        <td style="text-align: center;">
+         1
+        </td>
+        <td style="text-align: center;">
+         NON
+        </td>
+       </tr>
+       <tr>
+        <td style="text-align: left;">
+         Autodialyse
+        </td>
+        <td style="text-align: center;">
+         2
+        </td>
+        <td style="text-align: center;">
+         2
+        </td>
+        <td style="text-align: center;">
+         2
+        </td>
+        <td style="text-align: center;">
+         NON
+        </td>
+       </tr>
+       <tr>
+        <td style="text-align: left;">
+         Dialyse à domicile par
+         <br/>
+         hémodialyse ou par dialyse
+         <br/>
+         péritonéale
+        </td>
+        <td style="text-align: center;">
+         2
+        </td>
+        <td style="text-align: center;">
+         2
+        </td>
+        <td style="text-align: center;">
+         2
+        </td>
+        <td style="text-align: center;">
+         NON
+        </td>
+       </tr>
+       <tr>
+        <td style="text-align: left;">
+         Psychiatrie
+        </td>
+        <td style="text-align: center;">
+        </td>
+        <td style="text-align: center;">
+        </td>
+        <td style="text-align: center;">
+        </td>
+        <td style="text-align: center;">
+        </td>
+       </tr>
+       <tr>
+        <td style="text-align: left;">
+         Adultes
+        </td>
+        <td style="text-align: center;">
+         3
+        </td>
+        <td style="text-align: center;">
+         3
+        </td>
+        <td style="text-align: center;">
+         3
+        </td>
+        <td style="text-align: center;">
+         NON
+        </td>
+       </tr>
+       <tr>
+        <td style="text-align: left;">
+         Enfants et adolescents
+        </td>
+        <td style="text-align: center;">
+         2
+        </td>
+        <td style="text-align: center;">
+         2
+        </td>
+        <td style="text-align: center;">
+         2
+        </td>
+        <td style="text-align: center;">
+         NON
+        </td>
+       </tr>
+       <tr>
+        <td style="text-align: left;">
+         Périnatale
+        </td>
+        <td style="text-align: center;">
+         1
+        </td>
+        <td style="text-align: center;">
+         1
+        </td>
+        <td style="text-align: center;">
+         1
+        </td>
+        <td style="text-align: center;">
+         NON
+        </td>
+       </tr>
+       <tr>
+        <td style="text-align: left;">
+         Soins sans consentement
+        </td>
+        <td style="text-align: center;">
+         3
+        </td>
+        <td style="text-align: center;">
+         2
+        </td>
+        <td style="text-align: center;">
+         3
+        </td>
+        <td style="text-align: center;">
+         NON
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+    <div class="dsr-alinea" data-number="41">
+     Zone de référence n°4
+     <q>
+      21-52
+     </q>
+    </div>
+    <div class="dsr-alinea" data-number="42">
+     <table>
+      <thead>
+       <tr>
+        <th>
+        </th>
+        <th>
+         Au 1er janvier 2025
+        </th>
+        <th>
+         Cible 2028 Minimum
+        </th>
+        <th>
+         Cible 2028 Maximum
+        </th>
+        <th>
+         Demandes d'implantations recevables dans la fenêtre : OUI / NON
+        </th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+    <div class="dsr-alinea" data-number="43">
+     Activités de soins - Nombre d'implantations
+    </div>
+    <div class="dsr-alinea" data-number="44">
+     Traitement de l'Insuffisance rénale chronique
+    </div>
+    <div class="dsr-alinea" data-number="45">
+     <table>
+      <thead>
+       <tr>
+        <th>
+         Hémodialyse en centre pour adultes
+        </th>
+        <th>
+         1
+        </th>
+        <th>
+         1
+        </th>
+        <th>
+         1
+        </th>
+        <th>
+         NON
+        </th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr>
+        <td>
+         Dialyse médicalisée
+        </td>
+        <td>
+         1
+        </td>
+        <td>
+         1
+        </td>
+        <td>
+         1
+        </td>
+        <td>
+         NON
+        </td>
+       </tr>
+       <tr>
+        <td>
+         Autodialyse
+        </td>
+        <td>
+         1
+        </td>
+        <td>
+         1
+        </td>
+        <td>
+         1
+        </td>
+        <td>
+         NON
+        </td>
+       </tr>
+       <tr>
+        <td>
+         Dialyse à domicile par hémodialyse ou par dialyse péritonéale
+        </td>
+        <td>
+         1
+        </td>
+        <td>
+         1
+        </td>
+        <td>
+         1
+        </td>
+        <td>
+         NON
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+    <div class="dsr-alinea" data-number="46">
+     Psychiatrie
+    </div>
+    <div class="dsr-alinea" data-number="47">
+     <table>
+      <thead>
+       <tr>
+        <th>
+         Adultes
+        </th>
+        <th>
+         1
+        </th>
+        <th>
+         1
+        </th>
+        <th>
+         1
+        </th>
+        <th>
+         NON
+        </th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr>
+        <td>
+         Enfants et adolescents
+        </td>
+        <td>
+         0
+        </td>
+        <td>
+         0
+        </td>
+        <td>
+         1
+        </td>
+        <td>
+         OUI
+        </td>
+       </tr>
+       <tr>
+        <td>
+         Périnatale
+        </td>
+        <td>
+         0
+        </td>
+        <td>
+         0
+        </td>
+        <td>
+         1
+        </td>
+        <td>
+         OUI
+        </td>
+       </tr>
+       <tr>
+        <td>
+         Soins sans consentement
+        </td>
+        <td>
+         1
+        </td>
+        <td>
+         1
+        </td>
+        <td>
+         1
+        </td>
+        <td>
+         NON
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+    <div class="dsr-alinea" data-number="48">
+     Zone de référence n°5 Cœur Grand Est
+    </div>
+    <div class="dsr-alinea" data-number="49">
+     <table>
+      <thead>
+       <tr>
+        <th>
+        </th>
+        <th>
+         Au 1er janvier 2025
+        </th>
+        <th>
+         Cible 2028 Minimum
+        </th>
+        <th>
+         Cible 2028 Maximum
+        </th>
+        <th>
+         Demandes d'implantations recevables dans la fenêtre : OUI / NON
+        </th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+    <div class="dsr-alinea" data-number="50">
+     Activités de soins – Nombre d'implantations
+    </div>
+    <div class="dsr-alinea" data-number="51">
+     Traitement de l'Insuffisance rénale chronique
+    </div>
+    <div class="dsr-alinea" data-number="52">
+     <table>
+      <thead>
+       <tr>
+        <th>
+         Hémodialyse en centre pour adultes
+        </th>
+        <th>
+         1
+        </th>
+        <th>
+         1
+        </th>
+        <th>
+         1
+        </th>
+        <th>
+         NON
+        </th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr>
+        <td>
+         Dialyse médicalisée
+        </td>
+        <td>
+         3
+        </td>
+        <td>
+         3
+        </td>
+        <td>
+         3
+        </td>
+        <td>
+         NON
+        </td>
+       </tr>
+       <tr>
+        <td>
+         Autodialyse
+        </td>
+        <td>
+         4
+        </td>
+        <td>
+         4
+        </td>
+        <td>
+         4
+        </td>
+        <td>
+         NON
+        </td>
+       </tr>
+       <tr>
+        <td>
+         Dialyse à domicile par hémodialyse ou par dialyse péritonéale
+        </td>
+        <td>
+         2
+        </td>
+        <td>
+         2
+        </td>
+        <td>
+         2
+        </td>
+        <td>
+         NON
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+    <div class="dsr-alinea" data-number="53">
+     Psychiatrie
+    </div>
+    <div class="dsr-alinea" data-number="54">
+     <table>
+      <thead>
+       <tr>
+        <th>
+         Adultes
+        </th>
+        <th>
+         5
+        </th>
+        <th>
+         5
+        </th>
+        <th>
+         5
+        </th>
+        <th>
+         NON
+        </th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr>
+        <td>
+         Enfants et adolescents
+        </td>
+        <td>
+         5
+        </td>
+        <td>
+         5
+        </td>
+        <td>
+         5
+        </td>
+        <td>
+         NON
+        </td>
+       </tr>
+       <tr>
+        <td>
+         Périnatale
+        </td>
+        <td>
+         2
+        </td>
+        <td>
+         2
+        </td>
+        <td>
+         2
+        </td>
+        <td>
+         NON
+        </td>
+       </tr>
+       <tr>
+        <td>
+         Soins sans consentement
+        </td>
+        <td>
+         3
+        </td>
+        <td>
+         3
+        </td>
+        <td>
+         3
+        </td>
+        <td>
+         NON
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+    <div class="dsr-alinea" data-number="55">
+     Zone de référence n°6 Lorraine Nord
+    </div>
+    <div class="dsr-alinea" data-number="56">
+     <table>
+      <thead>
+       <tr>
+        <th>
+         Au 1er janvier 2025
+        </th>
+        <th>
+         Cible 2028 Minimum
+        </th>
+        <th>
+         Cible 2028 Maximum
+        </th>
+        <th>
+         Demandes d'implantations recevables dans la fenêtre : OUI / NON
+        </th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+    <div class="dsr-alinea" data-number="57">
+     Activités de soins – Nombre d'implantations
+    </div>
+    <div class="dsr-alinea" data-number="58">
+     Traitement de l'Insuffisance rénale chronique
+    </div>
+    <div class="dsr-alinea" data-number="59">
+     <table>
+      <thead>
+       <tr>
+        <th>
+         Hémodialyse en centre pour adultes
+        </th>
+        <th>
+         4
+        </th>
+        <th>
+         4
+        </th>
+        <th>
+         4
+        </th>
+        <th>
+         NON
+        </th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr>
+        <td>
+         Dialyse médicalisée
+        </td>
+        <td>
+         5
+        </td>
+        <td>
+         5
+        </td>
+        <td>
+         6
+        </td>
+        <td>
+         OUI
+        </td>
+       </tr>
+       <tr>
+        <td>
+         Autodialyse
+        </td>
+        <td>
+         4
+        </td>
+        <td>
+         5
+        </td>
+        <td>
+         6
+        </td>
+        <td>
+         OUI
+        </td>
+       </tr>
+       <tr>
+        <td>
+         Dialyse à domicile par hémodialyse ou par dialyse péritonéale
+        </td>
+        <td>
+         1
+        </td>
+        <td>
+         1
+        </td>
+        <td>
+         1
+        </td>
+        <td>
+         NON
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+    <div class="dsr-alinea" data-number="60">
+     Psychiatrie
+    </div>
+    <div class="dsr-alinea" data-number="61">
+     <table>
+      <thead>
+       <tr>
+        <th>
+         Adultes
+        </th>
+        <th>
+         9
+        </th>
+        <th>
+         11
+        </th>
+        <th>
+         11
+        </th>
+        <th>
+         OUI
+        </th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr>
+        <td>
+         Enfants et adolescents
+        </td>
+        <td>
+         4
+        </td>
+        <td>
+         5
+        </td>
+        <td>
+         5
+        </td>
+        <td>
+         OUI
+        </td>
+       </tr>
+       <tr>
+        <td>
+         Périnatale
+        </td>
+        <td>
+         0
+        </td>
+        <td>
+         1
+        </td>
+        <td>
+         2
+        </td>
+        <td>
+         OUI
+        </td>
+       </tr>
+       <tr>
+        <td>
+         Soins sans consentement
+        </td>
+        <td>
+         5
+        </td>
+        <td>
+         5
+        </td>
+        <td>
+         5
+        </td>
+        <td>
+         NON
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+    <div class="dsr-alinea" data-number="62">
+     Zone de référence n° 7 Sud Lorraine
+    </div>
+    <div class="dsr-alinea" data-number="63">
+     <table>
+      <thead>
+       <tr>
+        <th style="text-align: left;">
+        </th>
+        <th style="text-align: left;">
+         Au 1er
+         <br/>
+         janvier
+         <br/>
+         2025
+        </th>
+        <th style="text-align: left;">
+         Cible 2028
+         <br/>
+         Minimum
+        </th>
+        <th style="text-align: left;">
+         Cible 2028
+         <br/>
+         Maximum
+        </th>
+        <th style="text-align: left;">
+         Demandes
+         <br/>
+         d'implantations
+         <br/>
+         recevables dans la
+         <br/>
+         fenêtre :
+         <br/>
+         OUI / NON
+        </th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+    <div class="dsr-alinea" data-number="64">
+     Activités de soins - Nombre d'implantations
+    </div>
+    <div class="dsr-alinea" data-number="65">
+     Traitement de l'Insuffisance rénale chronique
+    </div>
+    <div class="dsr-alinea" data-number="66">
+     <table>
+      <thead>
+       <tr>
+        <th style="text-align: left;">
+         Hémodialyse en centre pour
+         <br/>
+         adultes
+        </th>
+        <th style="text-align: center;">
+         3
+        </th>
+        <th style="text-align: center;">
+         3
+        </th>
+        <th style="text-align: center;">
+         3
+        </th>
+        <th style="text-align: center;">
+         NON
+        </th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr>
+        <td style="text-align: left;">
+         Dialyse médicalisée
+        </td>
+        <td style="text-align: center;">
+         3
+        </td>
+        <td style="text-align: center;">
+         3
+        </td>
+        <td style="text-align: center;">
+         3
+        </td>
+        <td style="text-align: center;">
+         NON
+        </td>
+       </tr>
+       <tr>
+        <td style="text-align: left;">
+         Autodialyse
+        </td>
+        <td style="text-align: center;">
+         3
+        </td>
+        <td style="text-align: center;">
+         3
+        </td>
+        <td style="text-align: center;">
+         3
+        </td>
+        <td style="text-align: center;">
+         NON
+        </td>
+       </tr>
+       <tr>
+        <td style="text-align: left;">
+         Dialyse à domicile par
+         <br/>
+         hémodialyse ou par dialyse
+         <br/>
+         péritonéale
+        </td>
+        <td style="text-align: center;">
+         1
+        </td>
+        <td style="text-align: center;">
+         1
+        </td>
+        <td style="text-align: center;">
+         1
+        </td>
+        <td style="text-align: center;">
+         NON
+        </td>
+       </tr>
+       <tr>
+        <td style="text-align: left;">
+         Psychiatrie
+        </td>
+        <td style="text-align: center;">
+        </td>
+        <td style="text-align: center;">
+        </td>
+        <td style="text-align: center;">
+        </td>
+        <td style="text-align: center;">
+        </td>
+       </tr>
+       <tr>
+        <td style="text-align: left;">
+         Adultes
+        </td>
+        <td style="text-align: center;">
+         4
+        </td>
+        <td style="text-align: center;">
+         6
+        </td>
+        <td style="text-align: center;">
+         6
+        </td>
+        <td style="text-align: center;">
+         OUI
+        </td>
+       </tr>
+       <tr>
+        <td style="text-align: left;">
+         Enfants et adolescents
+        </td>
+        <td style="text-align: center;">
+         3
+        </td>
+        <td style="text-align: center;">
+         3
+        </td>
+        <td style="text-align: center;">
+         3
+        </td>
+        <td style="text-align: center;">
+         NON
+        </td>
+       </tr>
+       <tr>
+        <td style="text-align: left;">
+         Périnatale
+        </td>
+        <td style="text-align: center;">
+         1
+        </td>
+        <td style="text-align: center;">
+         1
+        </td>
+        <td style="text-align: center;">
+         1
+        </td>
+        <td style="text-align: center;">
+         NON
+        </td>
+       </tr>
+       <tr>
+        <td style="text-align: left;">
+         Soins sans consentement
+        </td>
+        <td style="text-align: center;">
+         2
+        </td>
+        <td style="text-align: center;">
+         2
+        </td>
+        <td style="text-align: center;">
+         2
+        </td>
+        <td style="text-align: center;">
+         NON
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+    <div class="dsr-alinea" data-number="67">
+     Zone de référence n° 8 Vosges
+    </div>
+    <div class="dsr-alinea" data-number="68">
+     <table>
+      <thead>
+       <tr>
+        <th style="text-align: center;">
+        </th>
+        <th style="text-align: center;">
+         Au 1er
+         <br/>
+         janvier
+         <br/>
+         2025
+        </th>
+        <th style="text-align: center;">
+         Cible 2028
+         <br/>
+         Minimum
+        </th>
+        <th style="text-align: center;">
+         Cible 2028
+         <br/>
+         Maximum
+        </th>
+        <th style="text-align: center;">
+         Demandes
+         <br/>
+         d'implantations
+         <br/>
+         recevables dans la
+         <br/>
+         fenêtre :
+         <br/>
+         OUI / NON
+        </th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr>
+        <td style="text-align: center;">
+         Activités de soins - Nombre d'implantations
+        </td>
+        <td style="text-align: center;">
+        </td>
+        <td style="text-align: center;">
+        </td>
+        <td style="text-align: center;">
+        </td>
+        <td style="text-align: center;">
+        </td>
+       </tr>
+       <tr>
+        <td style="text-align: center;">
+         Traitement de l'Insuffisance rénale chronique
+        </td>
+        <td style="text-align: center;">
+        </td>
+        <td style="text-align: center;">
+        </td>
+        <td style="text-align: center;">
+        </td>
+        <td style="text-align: center;">
+        </td>
+       </tr>
+       <tr>
+        <td style="text-align: center;">
+         Hémodialyse en centre pour
+         <br/>
+         adultes
+        </td>
+        <td style="text-align: center;">
+         1
+        </td>
+        <td style="text-align: center;">
+         1
+        </td>
+        <td style="text-align: center;">
+         1
+        </td>
+        <td style="text-align: center;">
+         NON
+        </td>
+       </tr>
+       <tr>
+        <td style="text-align: center;">
+         Dialyse médicalisée
+        </td>
+        <td style="text-align: center;">
+         3
+        </td>
+        <td style="text-align: center;">
+         3
+        </td>
+        <td style="text-align: center;">
+         4
+        </td>
+        <td style="text-align: center;">
+         OUI
+        </td>
+       </tr>
+       <tr>
+        <td style="text-align: center;">
+         Autodialyse
+        </td>
+        <td style="text-align: center;">
+         4
+        </td>
+        <td style="text-align: center;">
+         4
+        </td>
+        <td style="text-align: center;">
+         4
+        </td>
+        <td style="text-align: center;">
+         NON
+        </td>
+       </tr>
+       <tr>
+        <td style="text-align: center;">
+         Dialyse à domicile par
+         <br/>
+         hémodialyse ou par dialyse
+         <br/>
+         péritonéale
+        </td>
+        <td style="text-align: center;">
+         0
+        </td>
+        <td style="text-align: center;">
+         0
+        </td>
+        <td style="text-align: center;">
+         0
+        </td>
+        <td style="text-align: center;">
+         NON
+        </td>
+       </tr>
+       <tr>
+        <td style="text-align: center;">
+         Psychiatrie
+        </td>
+        <td style="text-align: center;">
+        </td>
+        <td style="text-align: center;">
+        </td>
+        <td style="text-align: center;">
+        </td>
+        <td style="text-align: center;">
+        </td>
+       </tr>
+       <tr>
+        <td style="text-align: center;">
+         Adultes
+        </td>
+        <td style="text-align: center;">
+         1
+        </td>
+        <td style="text-align: center;">
+         1
+        </td>
+        <td style="text-align: center;">
+         1
+        </td>
+        <td style="text-align: center;">
+         NON
+        </td>
+       </tr>
+       <tr>
+        <td style="text-align: center;">
+         Enfants et adolescents
+        </td>
+        <td style="text-align: center;">
+         2
+        </td>
+        <td style="text-align: center;">
+         2
+        </td>
+        <td style="text-align: center;">
+         2
+        </td>
+        <td style="text-align: center;">
+         NON
+        </td>
+       </tr>
+       <tr>
+        <td style="text-align: center;">
+         Périnatale
+        </td>
+        <td style="text-align: center;">
+         1
+        </td>
+        <td style="text-align: center;">
+         1
+        </td>
+        <td style="text-align: center;">
+         1
+        </td>
+        <td style="text-align: center;">
+         NON
+        </td>
+       </tr>
+       <tr>
+        <td style="text-align: center;">
+         Soins sans consentement
+        </td>
+        <td style="text-align: center;">
+         1
+        </td>
+        <td style="text-align: center;">
+         1
+        </td>
+        <td style="text-align: center;">
+         1
+        </td>
+        <td style="text-align: center;">
+         NON
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+    <div class="dsr-alinea" data-number="69">
+     Zone de référence n°9 Moselle Est
+    </div>
+    <div class="dsr-alinea" data-number="70">
+     <table>
+      <thead>
+       <tr>
+        <th>
+        </th>
+        <th>
+         Au 1er janvier 2025
+        </th>
+        <th>
+         Cible 2028 Minimum
+        </th>
+        <th>
+         Cible 2028 Maximum
+        </th>
+        <th>
+         Demandes d'implantations recevables dans la fenêtre : OUI / NON
+        </th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+    <div class="dsr-alinea" data-number="71">
+     Activités de soins – Nombre d'implantations
+    </div>
+    <div class="dsr-alinea" data-number="72">
+     Traitement de l'Insuffisance rénale chronique
+    </div>
+    <div class="dsr-alinea" data-number="73">
+     <table>
+      <thead>
+       <tr>
+        <th>
+         Hémodialyse en centre pour adultes
+        </th>
+        <th>
+         1
+        </th>
+        <th>
+         1
+        </th>
+        <th>
+         1
+        </th>
+        <th>
+         NON
+        </th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr>
+        <td>
+         Dialyse médicalisée
+        </td>
+        <td>
+         3
+        </td>
+        <td>
+         3
+        </td>
+        <td>
+         3
+        </td>
+        <td>
+         NON
+        </td>
+       </tr>
+       <tr>
+        <td>
+         Autodialyse
+        </td>
+        <td>
+         2
+        </td>
+        <td>
+         2
+        </td>
+        <td>
+         2
+        </td>
+        <td>
+         NON
+        </td>
+       </tr>
+       <tr>
+        <td>
+         Dialyse à domicile par hémodialyse ou par dialyse péritonéale
+        </td>
+        <td>
+         0
+        </td>
+        <td>
+         0
+        </td>
+        <td>
+         0
+        </td>
+        <td>
+         NON
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+    <div class="dsr-alinea" data-number="74">
+     Psychiatrie
+    </div>
+    <div class="dsr-alinea" data-number="75">
+     <table>
+      <thead>
+       <tr>
+        <th>
+         Adultes
+        </th>
+        <th>
+         3
+        </th>
+        <th>
+         3
+        </th>
+        <th>
+         3
+        </th>
+        <th>
+         NON
+        </th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr>
+        <td>
+         Enfants et adolescents
+        </td>
+        <td>
+         1
+        </td>
+        <td>
+         1
+        </td>
+        <td>
+         1
+        </td>
+        <td>
+         NON
+        </td>
+       </tr>
+       <tr>
+        <td>
+         Périnatale
+        </td>
+        <td>
+         1
+        </td>
+        <td>
+         1
+        </td>
+        <td>
+         1
+        </td>
+        <td>
+         NON
+        </td>
+       </tr>
+       <tr>
+        <td>
+         Soins sans consentement
+        </td>
+        <td>
+         1
+        </td>
+        <td>
+         1
+        </td>
+        <td>
+         1
+        </td>
+        <td>
+         NON
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+    <div class="dsr-alinea" data-number="76">
+     Zone de référence n° 10 - Basse Alsace- Sud Moselle
+    </div>
+    <div class="dsr-alinea" data-number="77">
+     <table>
+      <thead>
+       <tr>
+        <th style="text-align: left;">
+        </th>
+        <th style="text-align: left;">
+         Au 1er
+         <br/>
+         janvier
+         <br/>
+         2025
+        </th>
+        <th style="text-align: left;">
+         Cible 2028
+         <br/>
+         Minimum
+        </th>
+        <th style="text-align: left;">
+         Cible 2028
+         <br/>
+         Maximum
+        </th>
+        <th style="text-align: left;">
+         Demandes
+         <br/>
+         d'implantations
+         <br/>
+         recevables dans la
+         <br/>
+         fenêtre :
+         <br/>
+         OUI / NON
+        </th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+    <div class="dsr-alinea" data-number="78">
+     Activités de soins - Nombre d'implantations
+    </div>
+    <div class="dsr-alinea" data-number="79">
+     Traitement de l'Insuffisance rénale chronique
+    </div>
+    <div class="dsr-alinea" data-number="80">
+     <table>
+      <thead>
+       <tr>
+        <th style="text-align: left;">
+         Hémodialyse en centre pour
+         <br/>
+         adultes
+        </th>
+        <th style="text-align: center;">
+         6
+        </th>
+        <th style="text-align: center;">
+         6
+        </th>
+        <th style="text-align: center;">
+         6
+        </th>
+        <th style="text-align: center;">
+         NON
+        </th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr>
+        <td style="text-align: left;">
+         Dialyse médicalisée
+        </td>
+        <td style="text-align: center;">
+         4
+        </td>
+        <td style="text-align: center;">
+         4
+        </td>
+        <td style="text-align: center;">
+         4
+        </td>
+        <td style="text-align: center;">
+         NON
+        </td>
+       </tr>
+       <tr>
+        <td style="text-align: left;">
+         Autodialyse
+        </td>
+        <td style="text-align: center;">
+         5
+        </td>
+        <td style="text-align: center;">
+         5
+        </td>
+        <td style="text-align: center;">
+         5
+        </td>
+        <td style="text-align: center;">
+         NON
+        </td>
+       </tr>
+       <tr>
+        <td style="text-align: left;">
+         Dialyse à domicile par
+         <br/>
+         hémodialyse ou par dialyse
+         <br/>
+         péritonéale
+        </td>
+        <td style="text-align: center;">
+         3
+        </td>
+        <td style="text-align: center;">
+         3
+        </td>
+        <td style="text-align: center;">
+         3
+        </td>
+        <td style="text-align: center;">
+         NON
+        </td>
+       </tr>
+       <tr>
+        <td style="text-align: left;">
+         Psychiatrie
+        </td>
+        <td style="text-align: center;">
+        </td>
+        <td style="text-align: center;">
+        </td>
+        <td style="text-align: center;">
+        </td>
+        <td style="text-align: center;">
+        </td>
+       </tr>
+       <tr>
+        <td style="text-align: left;">
+         Adultes
+        </td>
+        <td style="text-align: center;">
+         7
+        </td>
+        <td style="text-align: center;">
+         8
+        </td>
+        <td style="text-align: center;">
+         9
+        </td>
+        <td style="text-align: center;">
+         OUI
+        </td>
+       </tr>
+       <tr>
+        <td style="text-align: left;">
+         Enfants et adolescents
+        </td>
+        <td style="text-align: center;">
+         7
+        </td>
+        <td style="text-align: center;">
+         7
+        </td>
+        <td style="text-align: center;">
+         7
+        </td>
+        <td style="text-align: center;">
+         NON
+        </td>
+       </tr>
+       <tr>
+        <td style="text-align: left;">
+         Périnatale
+        </td>
+        <td style="text-align: center;">
+         3
+        </td>
+        <td style="text-align: center;">
+         3
+        </td>
+        <td style="text-align: center;">
+         3
+        </td>
+        <td style="text-align: center;">
+         NON
+        </td>
+       </tr>
+       <tr>
+        <td style="text-align: left;">
+         Soins sans consentement
+        </td>
+        <td style="text-align: center;">
+         5
+        </td>
+        <td style="text-align: center;">
+         5
+        </td>
+        <td style="text-align: center;">
+         8
+        </td>
+        <td style="text-align: center;">
+         OUI
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+    <div class="dsr-alinea" data-number="81">
+     Zone de référence n° 11 Centre Alsace
+    </div>
+    <div class="dsr-alinea" data-number="82">
+     <table>
+      <thead>
+       <tr>
+        <th style="text-align: left;">
+        </th>
+        <th style="text-align: left;">
+         Au 1er
+         <br/>
+         janvier
+         <br/>
+         2025
+        </th>
+        <th style="text-align: left;">
+         Cible 2028
+         <br/>
+         Minimum
+        </th>
+        <th style="text-align: left;">
+         Cible 2028
+         <br/>
+         Maximum
+        </th>
+        <th style="text-align: left;">
+         Demandes
+         <br/>
+         d'implantations
+         <br/>
+         recevables dans la
+         <br/>
+         fenêtre :
+         <br/>
+         OUI / NON
+        </th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+    <div class="dsr-alinea" data-number="83">
+     Activités de soins - Nombre d'implantations
+    </div>
+    <div class="dsr-alinea" data-number="84">
+     Traitement de l'Insuffisance rénale chronique
+    </div>
+    <div class="dsr-alinea" data-number="85">
+     <table>
+      <thead>
+       <tr>
+        <th style="text-align: left;">
+         Hémodialyse en centre pour
+         <br/>
+         adultes
+        </th>
+        <th style="text-align: center;">
+         1
+        </th>
+        <th style="text-align: center;">
+         1
+        </th>
+        <th style="text-align: center;">
+         2
+        </th>
+        <th style="text-align: center;">
+         OUI
+        </th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr>
+        <td style="text-align: left;">
+         Dialyse médicalisée
+        </td>
+        <td style="text-align: center;">
+         2
+        </td>
+        <td style="text-align: center;">
+         2
+        </td>
+        <td style="text-align: center;">
+         2
+        </td>
+        <td style="text-align: center;">
+         NON
+        </td>
+       </tr>
+       <tr>
+        <td style="text-align: left;">
+         Autodialyse
+        </td>
+        <td style="text-align: center;">
+         2
+        </td>
+        <td style="text-align: center;">
+         2
+        </td>
+        <td style="text-align: center;">
+         2
+        </td>
+        <td style="text-align: center;">
+         NON
+        </td>
+       </tr>
+       <tr>
+        <td style="text-align: left;">
+         Dialyse à domicile par
+         <br/>
+         hémodialyse ou par dialyse
+         <br/>
+         péritonéale
+        </td>
+        <td style="text-align: center;">
+         1
+        </td>
+        <td style="text-align: center;">
+         1
+        </td>
+        <td style="text-align: center;">
+         1
+        </td>
+        <td style="text-align: center;">
+         NON
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+    <div class="dsr-alinea" data-number="86">
+     Psychiatrie
+    </div>
+    <div class="dsr-alinea" data-number="87">
+     <table>
+      <thead>
+       <tr>
+        <th style="text-align: left;">
+         Adultes
+        </th>
+        <th style="text-align: center;">
+         3
+        </th>
+        <th style="text-align: center;">
+         3
+        </th>
+        <th style="text-align: center;">
+         3
+        </th>
+        <th style="text-align: center;">
+         NON
+        </th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr>
+        <td style="text-align: left;">
+         Enfants et adolescents
+        </td>
+        <td style="text-align: center;">
+         2
+        </td>
+        <td style="text-align: center;">
+         2
+        </td>
+        <td style="text-align: center;">
+         2
+        </td>
+        <td style="text-align: center;">
+         NON
+        </td>
+       </tr>
+       <tr>
+        <td style="text-align: left;">
+         Périnatale
+        </td>
+        <td style="text-align: center;">
+         0
+        </td>
+        <td style="text-align: center;">
+         1
+        </td>
+        <td style="text-align: center;">
+         1
+        </td>
+        <td style="text-align: center;">
+         OUI
+        </td>
+       </tr>
+       <tr>
+        <td style="text-align: left;">
+         Soins sans consentement
+        </td>
+        <td style="text-align: center;">
+         2
+        </td>
+        <td style="text-align: center;">
+         2
+        </td>
+        <td style="text-align: center;">
+         2
+        </td>
+        <td style="text-align: center;">
+         NON
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+    <div class="dsr-alinea" data-number="88">
+     Zone de référence n°12 - Haute Alsace
+    </div>
+    <div class="dsr-alinea" data-number="89">
+     <table>
+      <thead>
+       <tr>
+        <th>
+        </th>
+        <th>
+         Au 1er janvier 2025
+        </th>
+        <th>
+         Cible 2028 Minimum
+        </th>
+        <th>
+         Cible 2028 Maximum
+        </th>
+        <th>
+         Demandes d'implantations recevables dans la fenêtre : OUI / NON
+        </th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+    <div class="dsr-alinea" data-number="90">
+     Activités de soins – Nombre d'implantations
+    </div>
+    <div class="dsr-alinea" data-number="91">
+     Traitement de l'Insuffisance rénale chronique
+    </div>
+    <div class="dsr-alinea" data-number="92">
+     <table>
+      <thead>
+       <tr>
+        <th>
+         Hémodialyse en centre pour adultes
+        </th>
+        <th>
+         2
+        </th>
+        <th>
+         2
+        </th>
+        <th>
+         2
+        </th>
+        <th>
+         NON
+        </th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr>
+        <td>
+         Dialyse médicalisée
+        </td>
+        <td>
+         3
+        </td>
+        <td>
+         3
+        </td>
+        <td>
+         3
+        </td>
+        <td>
+         NON
+        </td>
+       </tr>
+       <tr>
+        <td>
+         Autodialyse
+        </td>
+        <td>
+         3
+        </td>
+        <td>
+         3
+        </td>
+        <td>
+         3
+        </td>
+        <td>
+         NON
+        </td>
+       </tr>
+       <tr>
+        <td>
+         Dialyse à domicile par hémodialyse ou par dialyse péritonéale
+        </td>
+        <td>
+         1
+        </td>
+        <td>
+         1
+        </td>
+        <td>
+         1
+        </td>
+        <td>
+         NON
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+    <div class="dsr-alinea" data-number="93">
+     Psychiatrie
+    </div>
+    <div class="dsr-alinea" data-number="94">
+     <table>
+      <thead>
+       <tr>
+        <th>
+         Adultes
+        </th>
+        <th>
+         2
+        </th>
+        <th>
+         2
+        </th>
+        <th>
+         2
+        </th>
+        <th>
+         NON
+        </th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr>
+        <td>
+         Enfants et adolescents
+        </td>
+        <td>
+         1
+        </td>
+        <td>
+         1
+        </td>
+        <td>
+         1
+        </td>
+        <td>
+         NON
+        </td>
+       </tr>
+       <tr>
+        <td>
+         Périnatale
+        </td>
+        <td>
+         1
+        </td>
+        <td>
+         1
+        </td>
+        <td>
+         1
+        </td>
+        <td>
+         NON
+        </td>
+       </tr>
+       <tr>
+        <td>
+         Soins sans consentement
+        </td>
+        <td>
+         2
+        </td>
+        <td>
+         2
+        </td>
+        <td>
+         2
+        </td>
+        <td>
+         NON
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+    <div class="dsr-alinea" data-number="95">
+     Partie 2: Objectifs quantitatifs par zone d'implantation pour le niveau de soins de recours
+    </div>
+    <div class="dsr-alinea" data-number="96">
+     Zone de recours A-Ouest
+    </div>
+    <div class="dsr-alinea" data-number="97">
+     <table>
+      <thead>
+       <tr>
+        <th style="text-align: left;">
+        </th>
+        <th style="text-align: center;">
+         Au 1er
+         <br/>
+         janvier
+         <br/>
+         2025
+        </th>
+        <th style="text-align: center;">
+         Cible 2028
+         <br/>
+         Minimum
+        </th>
+        <th style="text-align: center;">
+         Cible 2028
+         <br/>
+         Maximum
+        </th>
+        <th style="text-align: center;">
+         Demandes
+         <br/>
+         d'implantations
+         <br/>
+         recevables dans la
+         <br/>
+         fenêtre :
+         <br/>
+         OUI / NON
+        </th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr>
+        <td style="text-align: left;">
+         Activités de soins - Nombre d'implantations
+        </td>
+        <td style="text-align: center;">
+        </td>
+        <td style="text-align: center;">
+        </td>
+        <td style="text-align: center;">
+        </td>
+        <td style="text-align: center;">
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+    <div class="dsr-alinea" data-number="98">
+     Traitement de l'Insuffisance rénale chronique
+    </div>
+    <div class="dsr-alinea" data-number="99">
+     <table>
+      <thead>
+       <tr>
+        <th style="text-align: left;">
+         Hémodialyse en centre pour
+         <br/>
+         enfants
+        </th>
+        <th style="text-align: center;">
+         1
+        </th>
+        <th style="text-align: center;">
+         1
+        </th>
+        <th style="text-align: center;">
+         1
+        </th>
+        <th style="text-align: center;">
+         NON
+        </th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr>
+        <td style="text-align: left;">
+         Greffes d'organes et greffes de cellules hématopoïétiques
+        </td>
+        <td style="text-align: center;">
+        </td>
+        <td style="text-align: center;">
+        </td>
+        <td style="text-align: center;">
+        </td>
+        <td style="text-align: center;">
+        </td>
+       </tr>
+       <tr>
+        <td style="text-align: left;">
+         Adultes :
+        </td>
+        <td style="text-align: center;">
+        </td>
+        <td style="text-align: center;">
+        </td>
+        <td style="text-align: center;">
+        </td>
+        <td style="text-align: center;">
+        </td>
+       </tr>
+       <tr>
+        <td style="text-align: left;">
+         - Rein
+        </td>
+        <td style="text-align: center;">
+         1
+        </td>
+        <td style="text-align: center;">
+         1
+        </td>
+        <td style="text-align: center;">
+         1
+        </td>
+        <td style="text-align: center;">
+         NON
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+    <div class="dsr-alinea" data-number="100">
+     Zone de recours B-Centre
+    </div>
+    <div class="dsr-alinea" data-number="101">
+     <table>
+      <thead>
+       <tr>
+        <th style="text-align: left;">
+        </th>
+        <th style="text-align: left;">
+         Au 1er
+         <br/>
+         janvier
+         <br/>
+         2025
+        </th>
+        <th style="text-align: left;">
+         Cible 2028
+         <br/>
+         Minimum
+        </th>
+        <th style="text-align: left;">
+         Cible 2028
+         <br/>
+         Maximum
+        </th>
+        <th style="text-align: left;">
+         Demandes
+         <br/>
+         d'implantations
+         <br/>
+         recevables dans la
+         <br/>
+         fenêtre :
+         <br/>
+         OUI / NON
+        </th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+    <div class="dsr-alinea" data-number="102">
+     Activités de soins - Nombre d'implantations
+    </div>
+    <div class="dsr-alinea" data-number="103">
+     Traitement de l'Insuffisance rénale chronique
+    </div>
+    <div class="dsr-alinea" data-number="104">
+     <table>
+      <thead>
+       <tr>
+        <th style="text-align: left;">
+         Hémodialyse en centre pour
+         <br/>
+         enfants
+        </th>
+        <th style="text-align: left;">
+         1
+        </th>
+        <th style="text-align: left;">
+         1
+        </th>
+        <th style="text-align: left;">
+         1
+        </th>
+        <th style="text-align: left;">
+         NON
+        </th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+    <div class="dsr-alinea" data-number="105">
+     Greffes d'organes et greffes de cellules hématopoiétiques
+    </div>
+    <div class="dsr-alinea" data-number="106">
+     <table>
+      <thead>
+       <tr>
+        <th style="text-align: center;">
+         Adultes:
+        </th>
+        <th style="text-align: center;">
+        </th>
+        <th style="text-align: center;">
+        </th>
+        <th style="text-align: center;">
+        </th>
+        <th style="text-align: center;">
+        </th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr>
+        <td style="text-align: center;">
+         - Rein
+        </td>
+        <td style="text-align: center;">
+         1
+        </td>
+        <td style="text-align: center;">
+         1
+        </td>
+        <td style="text-align: center;">
+         1
+        </td>
+        <td style="text-align: center;">
+         NON
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+    <div class="dsr-alinea" data-number="107">
+     Zone de recours C-Est
+    </div>
+    <div class="dsr-alinea" data-number="108">
+     <span class="dsr-error" data-error_codes="markdown_parsing">
+      |   | Au
+     </span>
+    </div>
+    <div class="dsr-alinea" data-number="109">
+     1er  janvier
+    </div>
+    <div class="dsr-alinea" data-number="110">
+     <span class="dsr-error" data-error_codes="markdown_parsing">
+      2025 | Cible 2028
+Minimum | Cible 2028
+Maximum | Demandes d'implantations recevables dans la fenêtre :
+OUI / NON  |
+| --- | --- | --- | --- | --- |
+|  |   |   |   |   |
+     </span>
+    </div>
+    <div class="dsr-alinea" data-number="111">
+     Activités de soins - Nombre d'implantations
+    </div>
+    <div class="dsr-alinea" data-number="112">
+     Traitement de l'Insuffisance rénale chronique
+    </div>
+    <div class="dsr-alinea" data-number="113">
+     <table>
+      <thead>
+       <tr>
+        <th>
+         Hémodialyse en centre pour enfants
+        </th>
+        <th>
+         1
+        </th>
+        <th>
+         1
+        </th>
+        <th>
+         1
+        </th>
+        <th>
+         NON
+        </th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+    <div class="dsr-alinea" data-number="114">
+     Greffes d'organes et greffes de cellules hématopoïétiques
+    </div>
+    <div class="dsr-alinea" data-number="115">
+     <table>
+      <thead>
+       <tr>
+        <th>
+         Adultes :
+        </th>
+        <th>
+        </th>
+        <th>
+        </th>
+        <th>
+        </th>
+        <th>
+        </th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr>
+        <td>
+         Rein
+        </td>
+        <td>
+         1
+        </td>
+        <td>
+         1
+        </td>
+        <td>
+         1
+        </td>
+        <td>
+         NON
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+    <div class="dsr-alinea" data-number="116">
+     Partie 3: Objectifs quantitatifs par zone d'implantation pour le niveau de soins régional
+    </div>
+    <div class="dsr-alinea" data-number="117">
+     Zone régionale Grand-Est
+    </div>
+    <div class="dsr-alinea" data-number="118">
+     <table>
+      <thead>
+       <tr>
+        <th style="text-align: center;">
+        </th>
+        <th style="text-align: center;">
+         Au  1er        janvier       2025
+        </th>
+        <th style="text-align: center;">
+         Cible 2028
+         <br/>
+         Minimum
+        </th>
+        <th style="text-align: center;">
+         Cible 2028
+         <br/>
+         Maximum
+        </th>
+        <th style="text-align: center;">
+         Demandes d'implantations recevables dans la fenêtre :
+         <br/>
+         OUI / NON
+        </th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr>
+        <td style="text-align: center;">
+        </td>
+        <td style="text-align: center;">
+         Activités de soins - Nombre d'implantations
+        </td>
+        <td style="text-align: center;">
+        </td>
+        <td style="text-align: center;">
+        </td>
+        <td style="text-align: center;">
+        </td>
+       </tr>
+       <tr>
+        <td style="text-align: center;">
+        </td>
+        <td style="text-align: center;">
+         Traitement des grands brulés
+        </td>
+        <td style="text-align: center;">
+        </td>
+        <td style="text-align: center;">
+        </td>
+        <td style="text-align: center;">
+        </td>
+       </tr>
+       <tr>
+        <td style="text-align: center;">
+         Adultes
+        </td>
+        <td style="text-align: center;">
+         1
+        </td>
+        <td style="text-align: center;">
+         1
+        </td>
+        <td style="text-align: center;">
+         1
+        </td>
+        <td style="text-align: center;">
+         NON
+        </td>
+       </tr>
+       <tr>
+        <td style="text-align: center;">
+         Enfants
+        </td>
+        <td style="text-align: center;">
+         1
+        </td>
+        <td style="text-align: center;">
+         1
+        </td>
+        <td style="text-align: center;">
+         1
+        </td>
+        <td style="text-align: center;">
+         NON
+        </td>
+       </tr>
+       <tr>
+        <td style="text-align: center;">
+        </td>
+        <td style="text-align: center;">
+         Greffes d'organes et greffes de cellules hématopoïétiques
+        </td>
+        <td style="text-align: center;">
+        </td>
+        <td style="text-align: center;">
+        </td>
+        <td style="text-align: center;">
+        </td>
+       </tr>
+       <tr>
+        <td style="text-align: center;">
+        </td>
+        <td style="text-align: center;">
+         Adultes
+        </td>
+        <td style="text-align: center;">
+        </td>
+        <td style="text-align: center;">
+        </td>
+        <td style="text-align: center;">
+        </td>
+       </tr>
+       <tr>
+        <td style="text-align: center;">
+        </td>
+        <td style="text-align: center;">
+         - Pancréas
+        </td>
+        <td style="text-align: center;">
+         0
+        </td>
+        <td style="text-align: center;">
+         0
+        </td>
+        <td style="text-align: center;">
+         0
+        </td>
+       </tr>
+       <tr>
+        <td style="text-align: center;">
+        </td>
+        <td style="text-align: center;">
+         - Rein-Pancréas
+        </td>
+        <td style="text-align: center;">
+         1
+        </td>
+        <td style="text-align: center;">
+         0
+        </td>
+        <td style="text-align: center;">
+         1
+        </td>
+       </tr>
+       <tr>
+        <td style="text-align: center;">
+        </td>
+        <td style="text-align: center;">
+         - Foie
+        </td>
+        <td style="text-align: center;">
+         1
+        </td>
+        <td style="text-align: center;">
+         1
+        </td>
+        <td style="text-align: center;">
+         1
+        </td>
+       </tr>
+       <tr>
+        <td style="text-align: center;">
+        </td>
+        <td style="text-align: center;">
+         - Intestin
+        </td>
+        <td style="text-align: center;">
+         0
+        </td>
+        <td style="text-align: center;">
+         0
+        </td>
+        <td style="text-align: center;">
+         0
+        </td>
+       </tr>
+       <tr>
+        <td style="text-align: center;">
+        </td>
+        <td style="text-align: center;">
+         - Coeur
+        </td>
+        <td style="text-align: center;">
+         2
+        </td>
+        <td style="text-align: center;">
+         2
+        </td>
+        <td style="text-align: center;">
+         2
+        </td>
+       </tr>
+       <tr>
+        <td style="text-align: center;">
+        </td>
+        <td style="text-align: center;">
+         - Poumon
+        </td>
+        <td style="text-align: center;">
+         1
+        </td>
+        <td style="text-align: center;">
+         1
+        </td>
+        <td style="text-align: center;">
+         1
+        </td>
+       </tr>
+       <tr>
+        <td style="text-align: center;">
+        </td>
+        <td style="text-align: center;">
+         - Cœur-Poumon
+        </td>
+        <td style="text-align: center;">
+         1
+        </td>
+        <td style="text-align: center;">
+         1
+        </td>
+        <td style="text-align: center;">
+         1
+        </td>
+       </tr>
+       <tr>
+        <td style="text-align: center;">
+        </td>
+        <td style="text-align: center;">
+         - Cellules hématopoïetiques allogreffe
+        </td>
+        <td style="text-align: center;">
+         2
+        </td>
+        <td style="text-align: center;">
+         2
+        </td>
+        <td style="text-align: center;">
+         2
+        </td>
+       </tr>
+       <tr>
+        <td style="text-align: center;">
+        </td>
+        <td style="text-align: center;">
+         Enfants
+        </td>
+        <td style="text-align: center;">
+        </td>
+        <td style="text-align: center;">
+        </td>
+        <td style="text-align: center;">
+        </td>
+       </tr>
+       <tr>
+        <td style="text-align: center;">
+        </td>
+        <td style="text-align: center;">
+         - Rein
+        </td>
+        <td style="text-align: center;">
+         3
+        </td>
+        <td style="text-align: center;">
+         2
+        </td>
+        <td style="text-align: center;">
+         3
+        </td>
+       </tr>
+       <tr>
+        <td style="text-align: center;">
+        </td>
+        <td style="text-align: center;">
+         - Pancréas
+        </td>
+        <td style="text-align: center;">
+         0
+        </td>
+        <td style="text-align: center;">
+         0
+        </td>
+        <td style="text-align: center;">
+         0
+        </td>
+       </tr>
+       <tr>
+        <td style="text-align: center;">
+        </td>
+        <td style="text-align: center;">
+         - Rein-Pancréas
+        </td>
+        <td style="text-align: center;">
+         0
+        </td>
+        <td style="text-align: center;">
+         0
+        </td>
+        <td style="text-align: center;">
+         0
+        </td>
+       </tr>
+       <tr>
+        <td style="text-align: center;">
+        </td>
+        <td style="text-align: center;">
+         - Foie
+        </td>
+        <td style="text-align: center;">
+         0
+        </td>
+        <td style="text-align: center;">
+         0
+        </td>
+        <td style="text-align: center;">
+         1
+        </td>
+       </tr>
+       <tr>
+        <td style="text-align: center;">
+        </td>
+        <td style="text-align: center;">
+         - Intestin
+        </td>
+        <td style="text-align: center;">
+         0
+        </td>
+        <td style="text-align: center;">
+         0
+        </td>
+        <td style="text-align: center;">
+         0
+        </td>
+       </tr>
+       <tr>
+        <td style="text-align: center;">
+        </td>
+        <td style="text-align: center;">
+         - Coeur
+        </td>
+        <td style="text-align: center;">
+         0
+        </td>
+        <td style="text-align: center;">
+         0
+        </td>
+        <td style="text-align: center;">
+         1
+        </td>
+       </tr>
+       <tr>
+        <td style="text-align: center;">
+        </td>
+        <td style="text-align: center;">
+         - Poumon
+        </td>
+        <td style="text-align: center;">
+         0
+        </td>
+        <td style="text-align: center;">
+         0
+        </td>
+        <td style="text-align: center;">
+         0
+        </td>
+       </tr>
+       <tr>
+        <td style="text-align: center;">
+        </td>
+        <td style="text-align: center;">
+         - Cœur-Poumon
+        </td>
+        <td style="text-align: center;">
+         0
+        </td>
+        <td style="text-align: center;">
+         0
+        </td>
+        <td style="text-align: center;">
+         0
+        </td>
+       </tr>
+       <tr>
+        <td style="text-align: center;">
+        </td>
+        <td style="text-align: center;">
+         - Cellules hématopoïetiques allogreffe
+        </td>
+        <td style="text-align: center;">
+         2
+        </td>
+        <td style="text-align: center;">
+         2
+        </td>
+        <td style="text-align: center;">
+         2
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+    <div class="dsr-alinea" data-number="119">
+     .
+    </div>
+   </section>
+  </appendix>
+ </body>
+</html>
