@@ -2,19 +2,22 @@ from bs4 import Tag, BeautifulSoup
 from typing import (
     Iterable,
     List,
+    Iterator,
 )
 
 from arretify.types import (
+    ElementGroupId,
     ParsingContext,
     SectionType,
 )
 from arretify.utils.functional import flat_map_string
 from arretify.html_schemas import (
     SECTION_REFERENCE_SCHEMA,
-    SECTION_REFERENCE_MULTIPLE_SCHEMA,
 )
 from arretify.utils.html import (
     make_data_tag,
+    make_group_id,
+    assign_group_id,
     PageElementOrString,
     render_bool_attribute,
 )
@@ -29,6 +32,7 @@ from arretify.parsing_utils.numbering import (
 from arretify.regex_utils import (
     regex_tree,
     map_regex_tree_match,
+    flat_map_regex_tree_match,
     split_string_with_regex_tree,
     iter_regex_tree_match_strings,
     filter_regex_tree_match_children,
@@ -73,13 +77,19 @@ ARTICLE_NUMBER_FROM_CODE_NODE = regex_tree.Literal(
 
 ORDINAL_NUMBER_NODE = regex_tree.Literal(ORDINAL_PATTERN_S, key="ordinal_number")
 
-DOTTED_NUMBER_NODE = regex_tree.Literal(
-    repeated_with_separator(
-        r"\d+|[a-zA-Z]+",
-        separator=r"\.",
-        quantifier=(2, ...),
-    ),
-    key="dotted_number",
+DOTTED_NUMBER_NODE = regex_tree.Sequence(
+    [
+        regex_tree.Literal(
+            repeated_with_separator(
+                r"\d+|[a-zA-Z]+",
+                separator=r"\.",
+                quantifier=(2, ...),
+            ),
+            key="dotted_number",
+        ),
+        # Sometimes there's an added dot at the end.
+        r"\.?",
+    ]
 )
 
 SIMPLE_NUMBER_NODE = regex_tree.Literal(
@@ -218,20 +228,40 @@ def _extract_section(
 def _render_section_reference(
     soup: BeautifulSoup,
     section_reference_match: regex_tree.Match,
+    group_id: ElementGroupId | None = None,
 ) -> Tag:
     document = Document(
         type=DocumentType.unknown,
     )
     section = _extract_section(section_reference_match)
-    return make_data_tag(
+    section_tag = make_data_tag(
         soup,
         SECTION_REFERENCE_SCHEMA,
         data=dict(
             uri=render_uri(document, section),
             is_resolvable=render_bool_attribute(is_resolvable(document, section)),
-            document_reference=None,
+            parent_reference=None,
         ),
         contents=iter_regex_tree_match_strings(section_reference_match),
+    )
+    if group_id is not None:
+        assign_group_id(section_tag, group_id)
+    return section_tag
+
+
+def _render_section_reference_multiple(
+    soup: BeautifulSoup,
+    section_reference_multiple_match: regex_tree.Match,
+) -> Iterator[PageElementOrString]:
+    group_id = make_group_id()
+    return map_regex_tree_match(
+        section_reference_multiple_match.children,
+        lambda section_reference_match: _render_section_reference(
+            soup,
+            section_reference_match,
+            group_id=group_id,
+        ),
+        allowed_group_names=["__section_reference"],
     )
 
 
@@ -406,19 +436,11 @@ def _parse_section_reference_multiple(
     # before parsing each individual arrete reference.
     return flat_map_string(
         children,
-        lambda string: map_regex_tree_match(
+        lambda string: flat_map_regex_tree_match(
             split_string_with_regex_tree(SECTION_REFERENCE_MULTIPLE_NODE, string),
-            lambda section_reference_multiple_match: make_data_tag(
+            lambda section_reference_multiple_match: _render_section_reference_multiple(
                 soup,
-                SECTION_REFERENCE_MULTIPLE_SCHEMA,
-                contents=map_regex_tree_match(
-                    section_reference_multiple_match.children,
-                    lambda section_reference_match: _render_section_reference(
-                        soup,
-                        section_reference_match,
-                    ),
-                    allowed_group_names=["__section_reference"],
-                ),
+                section_reference_multiple_match,
             ),
             allowed_group_names=["__section_reference_multiple"],
         ),

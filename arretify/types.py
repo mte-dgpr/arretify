@@ -39,6 +39,8 @@ class DataElementSchema:
             raise ValueError(f"Invalid name: {self.name}")
         if "element_id" in self.data_keys:
             raise ValueError("element_id is a reserved key")
+        if "group_id" in self.data_keys:
+            raise ValueError("group_id is a reserved key")
 
 
 class SectionType(Enum):
@@ -115,4 +117,9 @@ A unique id assigned to elements in the DOM as `data-element_id` attribute.
 This provides an alternative to referencing an element in the DOM
 using its `id` attribute, because `id` has meaning in HTML which
 we don't want to interfere with.
+"""
+
+ElementGroupId = str
+"""
+A unique id assigned to groups of elements in the DOM as `data-group_id` attribute.
 """

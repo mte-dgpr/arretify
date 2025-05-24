@@ -5,9 +5,11 @@
 from typing import cast
 
 from arretify.types import ParsingContext
-from arretify.utils.html import make_css_class, render_bool_attribute
+from arretify.utils.html import make_css_class, render_bool_attribute, is_tag_and_matches
 from arretify.html_schemas import SECTION_REFERENCE_SCHEMA, DOCUMENT_REFERENCE_SCHEMA
 from arretify.law_data.uri import parse_uri, render_uri, is_resolvable
+from arretify.law_data.types import Document, Section
+from arretify.step_references_detection.match_sections_with_documents import build_reference_tree
 
 
 SECTION_REFERENCE_CSS_CLASS = make_css_class(SECTION_REFERENCE_SCHEMA)
@@ -25,23 +27,25 @@ def add_referenced_document_DEPRECATED(
     """
 
     for section_reference_tag in parsing_context.soup.select(f".{SECTION_REFERENCE_CSS_CLASS}"):
-        document_reference_element_id = section_reference_tag.get("data-document_reference")
-        if not document_reference_element_id:
-            continue
+        reference_branches = build_reference_tree(section_reference_tag)
+        for branch in reference_branches:
+            document: Document | None = None
+            sections: list[Section] = []
+            for reference_tag in branch:
+                if is_tag_and_matches(reference_tag, css_classes_in=[DOCUMENT_REFERENCE_CSS_CLASS]):
+                    if document is not None:
+                        raise ValueError("Multiple document references found in the same branch")
+                    _document, _ = parse_uri(cast(str, reference_tag["data-uri"]))
+                    document = _document
 
-        # Get the document reference tag
-        document_reference_tag = parsing_context.soup.select_one(
-            f'.{DOCUMENT_REFERENCE_CSS_CLASS}[data-element_id="{document_reference_element_id}"]'
-        )
-        if not document_reference_tag:
-            raise ValueError(
-                f"Document reference tag with id {document_reference_element_id} not found"
-            )
+                elif is_tag_and_matches(
+                    reference_tag, css_classes_in=[SECTION_REFERENCE_CSS_CLASS]
+                ):
+                    _, _sections = parse_uri(cast(str, reference_tag["data-uri"]))
+                    sections.append(_sections[-1])
 
-        document, _ = parse_uri(cast(str, document_reference_tag["data-uri"]))
-        _, sections = parse_uri(cast(str, section_reference_tag["data-uri"]))
-
-        section_reference_tag["data-uri"] = render_uri(document, *sections)
-        section_reference_tag["data-is_resolvable"] = render_bool_attribute(
-            is_resolvable(document, *sections)
-        )
+                    if document is not None:
+                        reference_tag["data-uri"] = render_uri(document, *sections)
+                        reference_tag["data-is_resolvable"] = render_bool_attribute(
+                            is_resolvable(document, *sections)
+                        )

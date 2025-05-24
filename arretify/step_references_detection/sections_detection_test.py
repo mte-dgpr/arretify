@@ -4,6 +4,7 @@ from arretify.utils.testing import (
     make_testing_function_for_children_list,
     normalized_html_str,
 )
+from arretify.utils import html
 from .sections_detection import parse_section_references
 
 process_children = make_testing_function_for_children_list(parse_section_references)
@@ -268,168 +269,206 @@ class TestArticleSingle(unittest.TestCase):
 
 class TestArticlePlural(unittest.TestCase):
 
+    def setUp(self):
+        html._GROUP_ID_COUNTER = 0
+
     def test_article_num(self):
         assert process_children("articles 5.1.9, 9.2.1, 10.2.1 et 10.2.5") == [
             normalized_html_str(
                 """
-                <span class="dsr-section_reference_multiple">
-                    <a
-                        class="dsr-section_reference"
-                        data-is_resolvable="false"
-                        data-uri="dsr://unknown____/article__5.1.9__"
-                    >
-                        articles 5.1.9
-                    </a>
-                    ,
-                    <a
-                        class="dsr-section_reference"
-                        data-is_resolvable="false"
-                        data-uri="dsr://unknown____/article__9.2.1__"
-                    >
-                        9.2.1
-                    </a>
-                    ,
-                    <a
-                        class="dsr-section_reference"
-                        data-is_resolvable="false"
-                        data-uri="dsr://unknown____/article__10.2.1__"
-                    >
-                        10.2.1
-                    </a>
-                    et
-                    <a
-                        class="dsr-section_reference"
-                        data-is_resolvable="false"
-                        data-uri="dsr://unknown____/article__10.2.5__"
-                    >
-                        10.2.5
-                    </a>
-                </span>
+                <a
+                    class="dsr-section_reference"
+                    data-group_id="1"
+                    data-is_resolvable="false"
+                    data-uri="dsr://unknown____/article__5.1.9__"
+                >
+                    articles 5.1.9
+                </a>
+            """
+            ),
+            ", ",
+            normalized_html_str(
                 """
-            )
+                <a
+                    class="dsr-section_reference"
+                    data-group_id="1"
+                    data-is_resolvable="false"
+                    data-uri="dsr://unknown____/article__9.2.1__"
+                >
+                    9.2.1
+                </a>
+            """
+            ),
+            ", ",
+            normalized_html_str(
+                """
+                <a
+                    class="dsr-section_reference"
+                    data-group_id="1"
+                    data-is_resolvable="false"
+                    data-uri="dsr://unknown____/article__10.2.1__"
+                >
+                    10.2.1
+                </a>
+            """
+            ),
+            " et ",
+            normalized_html_str(
+                """
+                <a
+                    class="dsr-section_reference"
+                    data-group_id="1"
+                    data-is_resolvable="false"
+                    data-uri="dsr://unknown____/article__10.2.5__"
+                >
+                    10.2.5
+                </a>
+            """
+            ),
         ]
 
     def test_ordinal(self):
         assert process_children("articles premier,9.a") == [
             normalized_html_str(
                 """
-                <span class="dsr-section_reference_multiple">
-                    <a
-                        class="dsr-section_reference"
-                        data-is_resolvable="false"
-                        data-uri="dsr://unknown____/article__1__"
-                    >
-                        articles premier
-                    </a>
-                    ,
-                    <a
-                        class="dsr-section_reference"
-                        data-is_resolvable="false"
-                        data-uri="dsr://unknown____/article__9.a__"
-                    >
-                        9.a
-                    </a>
-                </span>
+                <a
+                    class="dsr-section_reference"
+                    data-group_id="1"
+                    data-is_resolvable="false"
+                    data-uri="dsr://unknown____/article__1__"
+                >
+                    articles premier
+                </a>
+            """
+            ),
+            ",",
+            normalized_html_str(
                 """
-            )
+                <a
+                    class="dsr-section_reference"
+                    data-group_id="1"
+                    data-is_resolvable="false"
+                    data-uri="dsr://unknown____/article__9.a__"
+                >
+                    9.a
+                </a>
+            """
+            ),
         ]
+
         assert process_children("articles premier et second") == [
             normalized_html_str(
                 """
-                <span class="dsr-section_reference_multiple">
-                    <a
-                        class="dsr-section_reference"
-                        data-is_resolvable="false"
-                        data-uri="dsr://unknown____/article__1__"
-                    >
-                        articles premier
-                    </a>
-                    et
-                    <a
-                        class="dsr-section_reference"
-                        data-is_resolvable="false"
-                        data-uri="dsr://unknown____/article__2__"
-                    >
-                        second
-                    </a>
-                </span>
+                <a
+                    class="dsr-section_reference"
+                    data-group_id="2"
+                    data-is_resolvable="false"
+                    data-uri="dsr://unknown____/article__1__"
+                >
+                    articles premier
+                </a>
+            """
+            ),
+            " et ",
+            normalized_html_str(
                 """
-            )
+                <a
+                    class="dsr-section_reference"
+                    data-group_id="2"
+                    data-is_resolvable="false"
+                    data-uri="dsr://unknown____/article__2__"
+                >
+                    second
+                </a>
+            """
+            ),
         ]
 
     def test_article_code(self):
         assert process_children("articles R. 511-9 et L. 111") == [
             normalized_html_str(
                 """
-                <span class="dsr-section_reference_multiple">
-                    <a
-                        class="dsr-section_reference"
-                        data-is_resolvable="false"
-                        data-uri="dsr://unknown____/article__R511-9__"
-                    >
-                        articles R. 511-9
-                    </a>
-                    et
-                    <a
-                        class="dsr-section_reference"
-                        data-is_resolvable="false"
-                        data-uri="dsr://unknown____/article__L111__"
-                    >
-                        L. 111
-                    </a>
-                </span>
+                <a
+                    class="dsr-section_reference"
+                    data-group_id="1"
+                    data-is_resolvable="false"
+                    data-uri="dsr://unknown____/article__R511-9__"
+                >
+                    articles R. 511-9
+                </a>
+            """
+            ),
+            " et ",
+            normalized_html_str(
                 """
-            )
+                <a
+                    class="dsr-section_reference"
+                    data-group_id="1"
+                    data-is_resolvable="false"
+                    data-uri="dsr://unknown____/article__L111__"
+                >
+                    L. 111
+                </a>
+            """
+            ),
         ]
 
     def test_article_range(self):
         assert process_children("articles R. 512 - 74 et R. 512-39-1 à R.512-39-3") == [
             normalized_html_str(
                 """
-                <span class="dsr-section_reference_multiple">
-                    <a
-                        class="dsr-section_reference"
-                        data-is_resolvable="false"
-                        data-uri="dsr://unknown____/article__R512-74__"
-                    >
-                        articles R. 512 - 74
-                    </a>
-                    et
-                    <a
-                        class="dsr-section_reference"
-                        data-is_resolvable="false"
-                        data-uri="dsr://unknown____/article__R512-39-1__R512-39-3"
-                    >
-                        R. 512-39-1 à R.512-39-3
-                    </a>
-                </span>
+                <a
+                    class="dsr-section_reference"
+                    data-group_id="1"
+                    data-is_resolvable="false"
+                    data-uri="dsr://unknown____/article__R512-74__"
+                >
+                    articles R. 512 - 74
+                </a>
+            """
+            ),
+            " et ",
+            normalized_html_str(
                 """
-            )
+                <a
+                    class="dsr-section_reference"
+                    data-group_id="1"
+                    data-is_resolvable="false"
+                    data-uri="dsr://unknown____/article__R512-39-1__R512-39-3"
+                >
+                    R. 512-39-1 à R.512-39-3
+                </a>
+            """
+            ),
         ]
 
     def test_range_first(self):
         assert process_children("articles R.541-49 à R.541-64 et R.541-79") == [
             normalized_html_str(
                 """
-                <span class="dsr-section_reference_multiple">
-                    <a
-                        class="dsr-section_reference"
-                        data-is_resolvable="false"
-                        data-uri="dsr://unknown____/article__R541-49__R541-64"
-                    >
-                        articles R.541-49 à R.541-64
-                    </a>
-                    et
-                    <a
-                        class="dsr-section_reference"
-                        data-is_resolvable="false"
-                        data-uri="dsr://unknown____/article__R541-79__"
-                    >
-                        R.541-79
-                    </a>
-                </span>
+                <a
+                    class="dsr-section_reference"
+                    data-group_id="1"
+                    data-is_resolvable="false"
+                    data-uri="dsr://unknown____/article__R541-49__R541-64"
+                >
+                    articles R.541-49 à R.541-64
+                </a>
+            """
+            ),
+            " et ",
+            normalized_html_str(
                 """
-            )
+                <a
+                    class="dsr-section_reference"
+                    data-group_id="1"
+                    data-is_resolvable="false"
+                    data-uri="dsr://unknown____/article__R541-79__"
+                >
+                    R.541-79
+                </a>
+            """
+            ),
         ]
 
 
@@ -494,29 +533,36 @@ class TestAlineaSingle(unittest.TestCase):
 
 class TestAlineaMultiple(unittest.TestCase):
 
+    def setUp(self):
+        html._GROUP_ID_COUNTER = 0
+
     def test_alinea_list(self):
         assert process_children("Les alinéas 3 et 4") == [
             "Les ",
             normalized_html_str(
                 """
-                <span class="dsr-section_reference_multiple">
-                    <a
-                        class="dsr-section_reference"
-                        data-is_resolvable="false"
-                        data-uri="dsr://unknown____/alinea__3__"
-                    >
-                        alinéas 3
-                    </a>
-                    et
-                    <a
-                        class="dsr-section_reference"
-                        data-is_resolvable="false"
-                        data-uri="dsr://unknown____/alinea__4__"
-                    >
-                        4
-                    </a>
-                </span>
+                <a
+                    class="dsr-section_reference"
+                    data-group_id="1"
+                    data-is_resolvable="false"
+                    data-uri="dsr://unknown____/alinea__3__"
+                >
+                    alinéas 3
+                </a>
+            """
+            ),
+            " et ",
+            normalized_html_str(
                 """
+                <a
+                    class="dsr-section_reference"
+                    data-group_id="1"
+                    data-is_resolvable="false"
+                    data-uri="dsr://unknown____/alinea__4__"
+                >
+                    4
+                </a>
+            """
             ),
         ]
 
@@ -541,36 +587,48 @@ class TestUnknownSingle(unittest.TestCase):
 
 class TestUnknownMultiple(unittest.TestCase):
 
-    def test_alinea_list(self):
+    def setUp(self):
+        html._GROUP_ID_COUNTER = 0
+
+    def test_paragraphe_list(self):
         assert process_children("Les paragraphes 3è, 5 et quatrième") == [
             "Les ",
             normalized_html_str(
                 """
-                <span class="dsr-section_reference_multiple">
-                    <a
-                        class="dsr-section_reference"
-                        data-is_resolvable="false"
-                        data-uri="dsr://unknown____/unknown__3__"
-                    >
-                        paragraphes 3è
-                    </a>
-                    ,
-                    <a
-                        class="dsr-section_reference"
-                        data-is_resolvable="false"
-                        data-uri="dsr://unknown____/unknown__5__"
-                    >
-                        5
-                    </a>
-                    et
-                    <a
-                        class="dsr-section_reference"
-                        data-is_resolvable="false"
-                        data-uri="dsr://unknown____/unknown__4__"
-                    >
-                        quatrième
-                    </a>
-                </span>
+                <a
+                    class="dsr-section_reference"
+                    data-group_id="1"
+                    data-is_resolvable="false"
+                    data-uri="dsr://unknown____/unknown__3__"
+                >
+                    paragraphes 3è
+                </a>
+            """
+            ),
+            ", ",
+            normalized_html_str(
                 """
+                <a
+                    class="dsr-section_reference"
+                    data-group_id="1"
+                    data-is_resolvable="false"
+                    data-uri="dsr://unknown____/unknown__5__"
+                >
+                    5
+                </a>
+            """
+            ),
+            " et ",
+            normalized_html_str(
+                """
+                <a
+                    class="dsr-section_reference"
+                    data-group_id="1"
+                    data-is_resolvable="false"
+                    data-uri="dsr://unknown____/unknown__4__"
+                >
+                    quatrième
+                </a>
+            """
             ),
         ]

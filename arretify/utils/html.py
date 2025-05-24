@@ -1,4 +1,4 @@
-from typing import Dict, List, Iterable, cast
+from typing import Dict, List, Iterable, cast, TypeGuard
 
 from bs4 import BeautifulSoup, Tag
 
@@ -7,31 +7,46 @@ from arretify.types import (
     DataElementSchema,
     PageElementOrString,
     ElementId,
+    ElementGroupId,
 )
 
 
 SHARED_DATA_KEYS = [
     "error_codes",
 ]
-_ID_COUNTER = 0
+_ELEMENT_ID_COUNTER = 0
+_GROUP_ID_COUNTER = 0
 
 
 def make_css_class(schema: DataElementSchema):
     return f"dsr-{schema.name}"
 
 
-def has_css_class(tag: Tag, css_class: str) -> bool:
-    return css_class in tag.get("class", [])
-
-
 def assign_element_id(tag: Tag) -> ElementId:
-    global _ID_COUNTER
+    global _ELEMENT_ID_COUNTER
     if "data-element_id" in tag.attrs:
         return cast(ElementId, tag["data-element_id"])
-    _ID_COUNTER += 1
-    element_id: ElementId = f"{_ID_COUNTER}"
+    _ELEMENT_ID_COUNTER += 1
+    element_id: ElementId = f"{_ELEMENT_ID_COUNTER}"
     tag["data-element_id"] = element_id
     return element_id
+
+
+def assign_group_id(tag: Tag, group_id: ElementGroupId) -> None:
+    tag["data-group_id"] = group_id
+
+
+def make_group_id() -> ElementGroupId:
+    global _GROUP_ID_COUNTER
+    _GROUP_ID_COUNTER += 1
+    return f"{_GROUP_ID_COUNTER}"
+
+
+def get_group_id(tag: Tag) -> ElementGroupId | None:
+    group_id = tag.get("data-group_id")
+    if group_id is not None:
+        return cast(ElementGroupId, group_id)
+    return None
 
 
 def make_data_tag(
@@ -131,3 +146,31 @@ def replace_children(
 ) -> None:
     tag.clear()
     tag.extend(new_children)
+
+
+def is_tag_and_matches(
+    tag: PageElementOrString, css_classes_in: List[str] | None = None
+) -> TypeGuard[Tag]:
+    """
+    Check if a tag has any of the specified CSS classes.
+    """
+    if not isinstance(tag, Tag):
+        return False
+
+    if css_classes_in is not None:
+        actual_css_classes = tag.get_attribute_list("class", [])
+        for css_class in actual_css_classes:
+            # If you set the 'class' on a tag as a string, it seems like you will
+            # get a string back, e.g. :
+            #   tag.class = "my-class my-other-class"
+            #   tag.get_attribute_list("class") -> ["my-class my-other-class"]
+            if " " in css_class:
+                raise RuntimeError(
+                    "CSS class contains spaces. Please use a list of classes instead."
+                )
+        for css_class in css_classes_in:
+            if css_class in actual_css_classes:
+                return True
+        return False
+
+    return True

@@ -131,26 +131,8 @@ DOCUMENT_REFERENCE_SCHEMA = DataElementSchema(
 SECTION_REFERENCE_SCHEMA = DataElementSchema(
     name="section_reference",
     tag_name="a",
-    data_keys=["uri", "is_resolvable", "document_reference"],
+    data_keys=["uri", "is_resolvable", "parent_reference"],
 )
-
-SECTION_REFERENCE_MULTIPLE_SCHEMA = DataElementSchema(
-    name="section_reference_multiple",
-    tag_name="span",
-    data_keys=[],
-)
-"""
-A group of section references to the same document.
-"""
-
-SECTIONS_AND_DOCUMENT_REFERENCES = DataElementSchema(
-    name="sections_and_document_references",
-    tag_name="span",
-    data_keys=[],
-)
-"""
-A group of sections references and their associated document reference.
-"""
 
 DATE_SCHEMA = DataElementSchema(
     name="date",
