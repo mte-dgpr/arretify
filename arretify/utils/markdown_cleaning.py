@@ -215,6 +215,7 @@ def clean_markdown(line: TextSegment) -> TextSegment:
         r"Y̌": "Y",
         r"g̣": "g",
         r"'́p": "p",
+        r"º": "°",
     }
     for wrong, correct in ocr_replacements.items():
         line = apply_to_segment(line, _make_sub_wrong(wrong, correct))

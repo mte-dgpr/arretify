@@ -42,11 +42,15 @@ EMBLEM_PATTERN = PatternProxy(rf"^{join_with_or(EMBLEMS_LIST)}")
 """Detect all sentences starting with French emblems."""
 
 ENTITIES_LIST = [
+    r"gouvernement",
+    r"ministeres?",
     r"prefecture",
     r"sous-prefecture",
     r"secretariat",
     r"sg",
     r"prefete?",
+    r"academie",
+    r"rectorat",
     r"direction",
     r"drire",
     r"deal",
@@ -55,6 +59,7 @@ ENTITIES_LIST = [
     r"section",
     r"pole",
     r"bureau",
+    r"mission",
     r"unite",
     r"installations? classees? pour la protection de l'environnement",
     r"affaires? suivies? par",
@@ -80,12 +85,18 @@ ARRETE_TITLE_PATTERN = PatternProxy(
 """Detect if the sentence starts with "arrete" without ending points for table of contents."""
 
 HONORARIES_LIST = [
+    r"l[ea] presidente?",
+    r"l[ea] ministre",
     r"la prefecture",
     r"l[ea] prefete?",
+    r"commissaire",
+    r"l[ea] rect(eur|rice)",
+    r"recteur",
+    r"l[ea] direct(eur|rice)",
+    r"commandeur",
     r"chevalier",
     r"officier",
-    r"commandeur",
-    r"commissaire",
+    r"chancelier",
 ]
 
 HONORARY_PATTERN = PatternProxy(rf"^{join_with_or(HONORARIES_LIST)}")

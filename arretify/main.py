@@ -9,7 +9,7 @@ from datetime import datetime
 from dotenv import load_dotenv
 
 from .types import SessionContext
-from .settings import APP_ROOT, TEST_DATA_DIR, OCR_FILE_EXTENSION, DEFAULT_ARRETE_TEMPLATE, Settings
+from .settings import APP_ROOT, EXAMPLES_DIR, OCR_FILE_EXTENSION, DEFAULT_ARRETE_TEMPLATE, Settings
 from .step_segmentation import step_segmentation
 from .step_references_detection import step_references_detection
 from .step_references_resolution import (
@@ -32,12 +32,12 @@ def main(args: List[str]) -> None:
         "-i",
         "--input",
         help="Input folder or single file path.",
-        default=TEST_DATA_DIR / "arretes_ocr",
+        default=EXAMPLES_DIR / "arretes_ocr",
     )
     parser.add_option(
         "-o",
         "--output",
-        default=TEST_DATA_DIR / "arretes_html",
+        default=EXAMPLES_DIR / "arretes_html",
     )
     parser.add_option(
         "-v",

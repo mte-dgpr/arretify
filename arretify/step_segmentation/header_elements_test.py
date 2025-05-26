@@ -388,6 +388,36 @@ class TestParseMotifsOrVisas(unittest.TestCase):
         )
         assert _text_segments_to_str(lines) == ["ARRETE"]
 
+    def test_with_whitespace(self):
+        # Arrange
+        lines = initialize_lines(
+            [
+                "V u :",
+                "le Code de l'Environnement,",
+                "la nomenclature des installations classées,",
+                "le dossier déposé à l'appui de sa demande,",
+                "ARRETE",
+            ]
+        )
+
+        # Act
+        soup = BeautifulSoup()
+        header = soup.new_tag("header")
+        lines = _parse_visas_or_motifs(soup, header, lines, "visa")
+
+        # Assert
+        assert str(header) == normalized_html_str(
+            """
+            <header>
+                <div>V u :</div>
+                <div class="dsr-visa">le Code de l'Environnement,</div>
+                <div class="dsr-visa">la nomenclature des installations classées,</div>
+                <div class="dsr-visa">le dossier déposé à l'appui de sa demande,</div>
+            </header>
+            """
+        )
+        assert _text_segments_to_str(lines) == ["ARRETE"]
+
 
 class TestParseTableOfContents(unittest.TestCase):
 

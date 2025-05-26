@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html>
+ <head>
+  <meta charset="utf-8"/>
+  <link href="https://cdn.jsdelivr.net/npm/@gouvfr/dsfr@1.13.0/dist/dsfr.css" rel="stylesheet"/>
+  <style>
+   :root {
+                --spacing-1: 1rem;
+                --spacing-0p5: 0.5rem;
+            }
+
+            header, main, .dsr-appendix {
+                max-width: 800px;
+                margin: auto;
+                padding: var(--spacing-1);
+            }
+
+            blockquote {
+                border-left: 1px solid var(--border-plain-grey);
+                padding-left: var(--spacing-1);
+            }
+
+            th {
+                text-align: left;
+            }
+
+            a.dsr-document_reference, a.dsr-section_reference {
+                color: var(--text-action-high-blue-france);
+            }
+
+            *[data-error_codes] {
+                font-family: monospace;
+                background-color: #ffd0d0 !important;
+            }
+
+            .dsr-alinea::before, .dsr-visa::before, .dsr-motifs::before {
+                color: var(--text-disabled-grey);
+                position: absolute;
+                top: 0;
+                left: -1rem;
+            }
+
+            .dsr-debug_keyword {
+                color: var(--warning-425-625);
+            }
+
+            /**************** HEADER ****************/
+            header {
+                padding-bottom: var(--spacing-1);
+                margin-bottom: var(--spacing-1);
+            }
+
+            .dsr-emblem, .dsr-entity, .dsr-identification, .dsr-arrete_title, .dsr-honorary {
+                padding: var(--spacing-1);
+                background-color: var(--background-alt-grey);
+                text-align: center;
+            }
+
+            .dsr-arrete_title {
+                color: var(--text-title-grey);
+            }
+
+            .dsr-emblem, .dsr-entity, .dsr-identification, .dsr-honorary {
+                color: var(--text-title-blue-france);
+                font-size: 120%;
+            }
+
+            .dsr-visa, .dsr-motifs, .dsr-supplementary_motif_info, .dsr-table_of_contents {
+                position: relative;
+                margin-top: var(--spacing-1);
+                padding-bottom: 0;
+            }
+
+            .dsr-visa::before, .dsr-motifs::before {
+                content: '⮞';
+            }
+
+            header > *:last-child {
+                border-bottom: 1px solid var(--background-action-low-blue-france);
+                padding-bottom: var(--spacing-1);
+            }
+
+            /**************** MAIN CONTENT AND APPENDIX ****************/
+            .dsr-table {
+                font-family: monospace;
+            }
+
+            .dsr-section {
+                padding: var(--spacing-0p5) 0;
+            }
+
+            .dsr-alinea {
+                position: relative;
+                margin-top: var(--spacing-0p5);
+            }
+
+            .dsr-alinea::before {
+                content: '¶';
+            }
+
+            .dsr-alinea img {
+                max-width: 100%;
+            }
+
+            ul, ol { 
+                list-style: none;
+            }
+
+            .dsr-operation {
+                background-color: var(--background-action-low-blue-france);
+            }
+  </style>
+ </head>
+ <body>
+  <header class="dsr-header">
+   <div class="dsr-entity">
+    <div>
+     PRÉFET DE LA RÉGION RÉUNION
+    </div>
+    <div>
+     Direction de l'environnement de l'aménagement et du logement Lénoff
+    </div>
+   </div>
+   <div class="dsr-emblem">
+    <div>
+     Égalité
+    </div>
+    <div>
+     Fraternité
+    </div>
+   </div>
+   <div class="dsr-arrete_title">
+    <h1>
+     Arrêté n° 2025-860 SG/DCL/BU du
+     <time class="dsr-date" datetime="2025-05-20">
+      20 mai 2025
+     </time>
+     prescrivant l'ouverture d'une enquête publique concernant le projet d'élaboration du plan de prévention des risques (PPR) naturels prévisibles relatifs aux aléas « inondation » et « mouvements de terrain » sur la commune de Saint-André.
+    </h1>
+   </div>
+   <div class="dsr-honorary">
+    <div>
+     LE PRÉFET DE LA RÉUNION -
+    </div>
+    <div>
+     Chevalier de la Légion d'honneur -
+    </div>
+    <div>
+     Officier de l'ordre national du Mérite
+    </div>
+   </div>
+   <div class="dsr-visa">
+    VU le
+    <a class="dsr-document_reference" data-is_resolvable="true" data-uri="dsr://code_LEGITEXT000006074220___Code%20de%20l%27environnement" href="https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006074220">
+     code de l'environnement
+    </a>
+    , et notamment ses
+    <a class="dsr-section_reference" data-is_resolvable="false" data-uri="dsr://unknown____/article__L123-1__">
+     articles L.123-1
+    </a>
+    et suivants, R.123-1 et suivants, L.562-1 et suivants ainsi que R.562-1 et suivants ;
+   </div>
+   <div class="dsr-visa">
+    VU le
+    <a class="dsr-document_reference" data-is_resolvable="false" data-uri="dsr://decret___2024-10-31_">
+     décret du
+     <time class="dsr-date" datetime="2024-10-31">
+      31 octobre 2024
+     </time>
+    </a>
+    portant nomination de M. Patrice LATRON en qualité de préfet de la région Réunion, préfet de La Réunion ;
+   </div>
+   <div class="dsr-visa">
+    VU le
+    <a class="dsr-document_reference" data-is_resolvable="false" data-uri="dsr://decret___2023-08-22_">
+     décret du
+     <time class="dsr-date" datetime="2023-08-22">
+      22 août 2023
+     </time>
+    </a>
+    portant nomination de M. Laurent LENOBLE en tant que secrétaire général de la préfecture de La Réunion ;
+   </div>
+   <div class="dsr-visa">
+    VU la décision en date du 10 septembre 2018 de l'Autorité Environnementale de ne pas soumettre, après examen au cas par cas, à évaluation environnementale le projet de révision du plan de prévention des risques d'inondation et de mouvements de terrain de Saint-André ;
+   </div>
+   <div class="dsr-visa">
+    VU l'
+    <a class="dsr-document_reference" data-is_resolvable="false" data-uri="dsr://arrete-prefectoral__2018-2019__">
+     arrêté préfectoral n°2018-2019
+    </a>
+    SG/DCL/BU du 17 octobre 2018 prescrivant la révision du plan de prévention des risques naturels (PPRn) prévisibles sur la commune de Saint-André relatif aux aléas inondation et mouvements de terrain, prorogé par
+    <a class="dsr-document_reference" data-is_resolvable="false" data-uri="dsr://arrete-prefectoral__2021-1946__">
+     arrêté préfectoral n°2021-1946
+    </a>
+    SG/DCL/BU du 28 septembre 2021 ;
+   </div>
+   <div class="dsr-visa">
+    VU la décision n° E25000007/97 du tribunal administratif de Saint-Denis de La Réunion en date du 3 avril 2025 portant nomination du commissaire enquêteur ;
+   </div>
+   <div class="dsr-visa">
+    VU les saisines pour avis la commune de Saint-André, la Communauté Intercommunale de l'Est (CIREST), la Chambre d'Agriculture, la Direction de l'Alimentation, de l'Agriculture et de la Forêt de la Réunion (DAAF) notifiées le 29 juillet 2024 ;
+   </div>
+   <div class="dsr-visa">
+    VU la saisine pour avis du Centre National de la Propriété Forestière (CNPF) et de l'Office Nationale de la Forêt (ONF) notifiées le 30 juillet 2024 ;
+   </div>
+   <div class="dsr-supplementary_motif_info">
+    <div>
+     SUR PROPOSITION de Monsieur le secrétaire général de la préfecture ;
+    </div>
+   </div>
+   <div class="dsr-arrete_title">
+    <h1>
+     ARRÊTE
+    </h1>
+   </div>
+  </header>
+  <main class="dsr-main">
+   <section class="dsr-section" data-number="1" data-title="Objet de l'enquête publique :" data-type="article">
+    <h2 class="dsr-section_title">
+     Article 1er - Objet de l'enquête publique :
+    </h2>
+   </section>
+   <section class="dsr-section" data-number="2" data-title="rue Juliette Dodu - CS 41009" data-type="unknown">
+    <h2 class="dsr-section_title">
+     2 rue Juliette Dodu - CS 41009
+    </h2>
+   </section>
+   <section class="dsr-section" data-number="97743" data-title="Saint-Denis cedex" data-type="unknown">
+    <h2 class="dsr-section_title" data-error_codes="non_contiguous_sections">
+     97743 Saint-Denis cedex
+    </h2>
+    <div class="dsr-alinea" data-number="1">
+     Tél : 02 62 40 26 26 www.reunion.developpement-durable.gouv.fr
+    </div>
+   </section>
+   <section class="dsr-section" data-number="1" data-title="/4" data-type="unknown">
+    <h2 class="dsr-section_title" data-error_codes="non_contiguous_sections">
+     1/4
+    </h2>
+    <div class="dsr-alinea" data-number="1">
+     Il sera procédé à une enquête publique portant sur le projet de Plan de Prévention des Risques naturels (PPR) prévisibles relatifs aux aléas
+     <q>
+      inondation
+     </q>
+     et
+     <q>
+      mouvements de terrain
+     </q>
+     de la commune de SaintAndré.
+    </div>
+    <div class="dsr-alinea" data-number="2">
+     Ce PPR a pour objet de réglementer l'utilisation des sols en tenant compte des niveaux des aléas et des risques identifiés et de la nécessité de ne pas aggraver l'exposition de la population et des biens aux aléas. Cette réglementation va de la possibilité de construire sous certaines conditions, à l'interdiction de construire dans les cas où l'intensité prévisible des risques ou la non aggravation des risques existants le justifie.
+    </div>
+    <div class="dsr-alinea" data-number="3">
+     Il peut aussi définir les mesures de prévention, de protection et de sauvegarde qui incombent aux particuliers ou aux collectivités.
+    </div>
+    <div class="dsr-alinea" data-number="4">
+     Le PPR comprend un rapport de présentation, des cartographies (cartes des aléas, des enjeux et du zonage réglementaire), un règlement et des annexes.
+    </div>
+    <div class="dsr-alinea" data-number="5">
+     La personne responsable du PPR est le préfet de La Réunion, avec l'appui de la Direction de l'Environnement, de l'Aménagement et du Logement de la Réunion (DEAL). Des informations concernant le projet de PPR peuvent être demandées auprès de la DEAL Réunion :
+    </div>
+    <div class="dsr-alinea" data-number="6">
+     DEAL Réunion
+    </div>
+    <div class="dsr-alinea" data-number="7">
+     Service Prévention des Risques Naturels et Routiers
+    </div>
+    <div class="dsr-alinea" data-number="8">
+     Unité Réglementation des Risques naturels et observatoire du Littoral
+    </div>
+   </section>
+   <section class="dsr-section" data-number="2" data-title="rue Juliette Dodu - CS 41009" data-type="unknown">
+    <h2 class="dsr-section_title">
+     2 rue Juliette Dodu - CS 41009
+    </h2>
+   </section>
+   <section class="dsr-section" data-number="97443" data-title="Saint-Denis cedex 9 tel : 0262402851 courriel : jimmy.hoareau@developpement-durable.gouv.fr" data-type="unknown">
+    <h2 class="dsr-section_title" data-error_codes="non_contiguous_sections">
+     97443 Saint-Denis cedex 9 tel : 0262402851 courriel : jimmy.hoareau@developpement-durable.gouv.fr
+    </h2>
+   </section>
+   <section class="dsr-section" data-number="2" data-title="Décision susceptible d'être adoptée au terme de l'enquête publique et personne compétente pour statuer : Au terme de l'enquête publique, le Plan de Prévention des Risques naturels prévisibles relatifs aux aléas «inondation» et «mouvements de terrain» sur la commune de Saint-André, éventuellement modifié, est approuvé par arrêté du préfet de La Réunion." data-type="article">
+    <h2 class="dsr-section_title" data-error_codes="non_contiguous_sections">
+     Article 2 - Décision susceptible d'être adoptée au terme de l'enquête publique et personne compétente pour statuer : Au terme de l'enquête publique, le Plan de Prévention des Risques naturels prévisibles relatifs aux aléas «inondation» et «mouvements de terrain» sur la commune de Saint-André, éventuellement modifié, est approuvé par arrêté du préfet de La Réunion.
+    </h2>
+   </section>
+   <section class="dsr-section" data-number="3" data-title="Commissaire enquêteur : Est désigné en qualité de commissaire enquêteur titulaire, Madame Marie-Claude MAYANDY, retraitée et Madame Claire BAILLIF en qualité de commissaire enquêteur suppléant." data-type="article">
+    <h2 class="dsr-section_title">
+     Article 3 - Commissaire enquêteur : Est désigné en qualité de commissaire enquêteur titulaire, Madame Marie-Claude MAYANDY, retraitée et Madame Claire BAILLIF en qualité de commissaire enquêteur suppléant.
+    </h2>
+   </section>
+   <section class="dsr-section" data-number="4" data-title="Date d'ouverture, durée et modalités de l'enquête publique: L'enquête se déroulera pendant 33 jours consécutifs du 5 juin 2025 au 7 juillet 2025 inclus." data-type="article">
+    <h2 class="dsr-section_title">
+     Article 4 - Date d'ouverture, durée et modalités de l'enquête publique: L'enquête se déroulera pendant 33 jours consécutifs du 5 juin 2025 au 7 juillet 2025 inclus.
+    </h2>
+    <div class="dsr-alinea" data-number="1">
+     Durant toute la durée de l'enquête publique, le dossier d'enquête publique ainsi que des registres d'enquête seront tenus à la disposition du public à l'Hôtel de Ville de Saint-André, siège de l'enquête publique, au Pôle du Service Urbanisme, à la mairie annexe de Champ-Borne, au Pôle Service La Cressonnière, à France Service Rivière du Mât Les Bas et au Centre Social Bras des Chevrettes.
+    </div>
+    <div class="dsr-alinea" data-number="2">
+     Chacun pourra prendre connaissance des documents aux jours et heures habituels d'ouverture des bureaux, et consigner éventuellement ses observations et propositions sur les registres d'enquête ouverts à cet effet par le commissaire enquêteur et lors des permanences du commissaire enquêteur. Les observations et remarques peuvent également être transmises par écrit au commissaire enquêteur au siège de l'enquête publique à l'adresse suivante :
+    </div>
+    <div class="dsr-alinea" data-number="3">
+     Madame le commissaire enquêteur de l'enquête publique relative au projet de PPR
+     <q>
+      inondation
+     </q>
+     et
+     <q>
+      mouvements de terrain
+     </q>
+    </div>
+    <div class="dsr-alinea" data-number="4">
+     Hôtel de ville - Place du 2 décembre - BP 505 - 97440 SAINT-ANDRE
+    </div>
+    <div class="dsr-alinea" data-number="5">
+     Le dossier d'enquête publique sera également mis à la disposition du public pendant la durée de l'enquête publique - du 5 juin 2025 à 00 h 00 (matin) jusqu'au 7 juillet 2025 à minuit (heures de Paris) sur le site internet du registre dématérialisé d'enquête : https://www.registre-dematerialise.fr/6287
+    </div>
+    <div class="dsr-alinea" data-number="6">
+     Un lien vers le site internet du registre dématérialisé sera disponible sur le site internet de la préfecture (www.reunion.gouv.fr).
+    </div>
+    <div class="dsr-alinea" data-number="7">
+     Le public pourra également formuler ses éventuelles observations et propositions, du 5 juin 2025 à 00 h 00 (matin) jusqu'au 7 juillet 2025 à minuit (heures de Paris) :
+    </div>
+    <div class="dsr-alinea" data-number="8">
+     <ul>
+      <li>
+       - sur le registre dématérialisé à la disposition du public sur le site internet suivant : https://www.registre-dematerialise.fr/6287
+      </li>
+      <li>
+       - par courriel électronique à l'adresse suivante : enquete-publique-6287@registre-dematerialise.fr
+      </li>
+     </ul>
+    </div>
+    <div class="dsr-alinea" data-number="9">
+     Conformément aux dispositions des
+     <span class="dsr-sections_and_document_references">
+      <span class="dsr-section_reference_multiple">
+       <a class="dsr-section_reference" data-document_reference="386" data-is_resolvable="true" data-uri="dsr://code_LEGITEXT000006074220___Code%20de%20l%27environnement/article_LEGIARTI000036671123_L123-13__" href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000036671123">
+        articles L. 123-13
+       </a>
+       et
+       <a class="dsr-section_reference" data-document_reference="386" data-is_resolvable="true" data-uri="dsr://code_LEGITEXT000006074220___Code%20de%20l%27environnement/article_LEGIARTI000043743425_R123-13__" href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000043743425">
+        R. 123-13
+       </a>
+      </span>
+      du
+      <a class="dsr-document_reference" data-element_id="386" data-is_resolvable="true" data-uri="dsr://code_LEGITEXT000006074220___Code%20de%20l%27environnement" href="https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006074220">
+       code de l'environnement
+      </a>
+     </span>
+     , les observations et propositions transmises par voie électronique seront accessibles dans les meilleurs délais sur le site internet du registre dématérialisé : https://www.registre-dematerialise.fr/6287
+    </div>
+   </section>
+   <section class="dsr-section" data-number="5" data-title="Permanence du Commissaire enquêteur : Le commissaire enquêteur recevra en personne le public et ses observations éventuelles sur le projet de PPR à l'occasion des permanences qu'il tiendra aux dates, lieux et heures suivants :" data-type="article">
+    <h2 class="dsr-section_title">
+     Article 5 - Permanence du Commissaire enquêteur : Le commissaire enquêteur recevra en personne le public et ses observations éventuelles sur le projet de PPR à l'occasion des permanences qu'il tiendra aux dates, lieux et heures suivants :
+    </h2>
+    <div class="dsr-alinea" data-number="1">
+     <table>
+      <thead>
+       <tr>
+        <th>
+         Hôtel de ville (salle du Conseil)
+        </th>
+        <th>
+        </th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr>
+        <td>
+         Place du 2 décembre
+        </td>
+        <td>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         97440 Saint-André
+        </td>
+        <td>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         jeudi 5 juin 2025
+        </td>
+        <td>
+         8h00-12h00 (ouverture)
+        </td>
+       </tr>
+       <tr>
+        <td>
+         vendredi 13 juin 2025
+        </td>
+        <td>
+         13h-16h
+        </td>
+       </tr>
+       <tr>
+        <td>
+         mercredi 25 juin 2025
+        </td>
+        <td>
+         13h-16h
+        </td>
+       </tr>
+       <tr>
+        <td>
+         mardi 1 juillet 2025
+        </td>
+        <td>
+         08h-12h
+        </td>
+       </tr>
+       <tr>
+        <td>
+         lundi 7 juillet 2025
+        </td>
+        <td>
+         13h-16h (clôture)
+        </td>
+       </tr>
+       <tr>
+        <td>
+         Pôle Service Urbanisme
+        </td>
+        <td>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         ---
+        </td>
+        <td>
+         ---
+        </td>
+       </tr>
+       <tr>
+        <td>
+         480 rue de la Gare bâtiment H
+        </td>
+        <td>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         Domaine de la Vanille - Local 8
+        </td>
+        <td>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         jeudi 5 juin 2025
+        </td>
+        <td>
+         13h-16h
+        </td>
+       </tr>
+       <tr>
+        <td>
+         vendredi 13 juin 2025
+        </td>
+        <td>
+         08h-12h
+        </td>
+       </tr>
+       <tr>
+        <td>
+         mercredi 25 juin 2025
+        </td>
+        <td>
+         08h-12h
+        </td>
+       </tr>
+       <tr>
+        <td>
+         mardi 1 juillet 2025
+        </td>
+        <td>
+         13h-16h
+        </td>
+       </tr>
+       <tr>
+        <td>
+         lundi 7 juillet 2025
+        </td>
+        <td>
+         08h-12h
+        </td>
+       </tr>
+       <tr>
+        <td>
+         Centre Social Bras des Chevrettes
+        </td>
+        <td>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         ---
+        </td>
+        <td>
+         ---
+        </td>
+       </tr>
+       <tr>
+        <td>
+         419 chemin Bras des Chevrettes
+        </td>
+        <td>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         vendredi 6 juin 2025
+        </td>
+        <td>
+         08h-12h
+        </td>
+       </tr>
+       <tr>
+        <td>
+         mercredi 11 juin 2025
+        </td>
+        <td>
+         13h-16h
+        </td>
+       </tr>
+       <tr>
+        <td>
+         lundi 16 juin 2025
+        </td>
+        <td>
+         13h-16h
+        </td>
+       </tr>
+       <tr>
+        <td>
+         mardi 24 juin 2025
+        </td>
+        <td>
+         08h-12h
+        </td>
+       </tr>
+       <tr>
+        <td>
+         Pôle de service La Cressonnière
+        </td>
+        <td>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         ---
+        </td>
+        <td>
+         ---
+        </td>
+       </tr>
+       <tr>
+        <td>
+         rue Gabriel Vayaboury
+        </td>
+        <td>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         mardi 10 juin 2025
+        </td>
+        <td>
+         08h-12h
+        </td>
+       </tr>
+       <tr>
+        <td>
+         jeudi 19 juin 2025
+        </td>
+        <td>
+         08h-12h
+        </td>
+       </tr>
+       <tr>
+        <td>
+         vendredi 27 juin 2025
+        </td>
+        <td>
+         13h-16h
+        </td>
+       </tr>
+       <tr>
+        <td>
+        </td>
+        <td>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         Mairie annexe de Champ-Borne
+        </td>
+        <td>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         ---
+        </td>
+        <td>
+         ---
+        </td>
+       </tr>
+       <tr>
+        <td>
+         route de Champ-Borne
+        </td>
+        <td>
+        </td>
+       </tr>
+       <tr>
+        <td>
+         jeudi 12 juin 2025
+        </td>
+        <td>
+         08h-12h
+        </td>
+       </tr>
+       <tr>
+        <td>
+         mardi 24 juin 2025
+        </td>
+        <td>
+         13h-16h
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+    <div class="dsr-alinea" data-number="2">
+     France Service Rivière du Mât Les Bas 2485 chemin Grand Canal mercredi 11 juin 2025 08h-12h jeudi 19 juin 2025 13h-16h
+    </div>
+   </section>
+   <section class="dsr-section" data-number="6" data-title="Affichage et publicité de l'avis d'enquête : Un avis d'ouverture d'enquête sera publié par le préfet, en caractères apparents dans deux journaux locaux diffusés dans le département, au moins quinze (15) jours avant le début de l'enquête et rappelé dans les huit (8) premiers jours de celle-ci. Cet avis sera aussi publié sur le site internet de la préfecture (www.reunion.gouv.fr) au moins quinze (15) jours avant le début de l'enquête publique." data-type="article">
+    <h2 class="dsr-section_title">
+     ARTICLE 6 - Affichage et publicité de l'avis d'enquête : Un avis d'ouverture d'enquête sera publié par le préfet, en caractères apparents dans deux journaux locaux diffusés dans le département, au moins quinze (15) jours avant le début de l'enquête et rappelé dans les huit (8) premiers jours de celle-ci. Cet avis sera aussi publié sur le site internet de la préfecture (www.reunion.gouv.fr) au moins quinze (15) jours avant le début de l'enquête publique.
+    </h2>
+    <div class="dsr-alinea" data-number="1">
+     Ce même avis sera également publié, quinze (15) jours au moins avant le début de l'enquête et pendant toute la durée de celle-ci, par voie d'affichage ou tous autres procédés, par les soins du maire de Saint-André et certifié par lui.
+    </div>
+    <div class="dsr-alinea" data-number="2">
+     En outre, dans les mêmes conditions de délai et de durée, sauf impossibilité, l'État, maître d'ouvrage du projet, procédera à l'affichage de ce même avis, sur le territoire communal en des lieux visibles de la voie publique.
+    </div>
+   </section>
+   <section class="dsr-section" data-number="7" data-title="Clôture et rapport de l'enquête publique : À l'expiration du délai d'enquête, les registres d'enquête sont mis à disposition du commissaire enquêteur et clos par lui. Dès réception des registres et des documents annexés, le commissaire enquêteur rencontre, dans la huitaine, le responsable du projet de PPR et lui communique les observations écrites et orales consignées dans un procès-verbal de synthèse. Le responsable du projet dispose d'un délai de quinze jours pour produire ses observations éventuelles." data-type="article">
+    <h2 class="dsr-section_title">
+     ARTICLE 7 - Clôture et rapport de l'enquête publique : À l'expiration du délai d'enquête, les registres d'enquête sont mis à disposition du commissaire enquêteur et clos par lui. Dès réception des registres et des documents annexés, le commissaire enquêteur rencontre, dans la huitaine, le responsable du projet de PPR et lui communique les observations écrites et orales consignées dans un procès-verbal de synthèse. Le responsable du projet dispose d'un délai de quinze jours pour produire ses observations éventuelles.
+    </h2>
+    <div class="dsr-alinea" data-number="1">
+     Le commissaire enquêteur transmet l'exemplaire du dossier d'enquête déposé au siège de l'enquête, accompagné des registres et pièces annexées, avec son rapport et ses conclusions motivées (en version papier et dématérialisée) au préfet (DCL/Bureau de l'urbanisme) dans un délai d'un mois à compter de l'expiration du délai d'enquête, sauf demande motivée de prolongation. Une copie du rapport et des conclusions motivées est transmise simultanément au président du tribunal administratif.
+    </div>
+   </section>
+   <section class="dsr-section" data-number="8" data-title="Consultation du rapport et des conclusions du commissaire enquêteur: Dès réception, le rapport et les conclusions motivées du commissaire enquêteur seront:" data-type="article">
+    <h2 class="dsr-section_title">
+     ARTICLE 8 - Consultation du rapport et des conclusions du commissaire enquêteur: Dès réception, le rapport et les conclusions motivées du commissaire enquêteur seront:
+    </h2>
+    <div class="dsr-alinea" data-number="1">
+     <ul>
+      <li>
+       - transmis par le préfet à la mairie de Saint-André pour y être, sans délai, tenus à la disposition du public pendant un an à compter de la date de clôture de l'enquête ;
+      </li>
+      <li>
+       - tenus à la disposition du public pendant un an à compter de la date de clôture de l'enquête à la préfecture de Saint-Denis ainsi que sur le site internet de la préfecture : www.reunion.gouv.fr.
+      </li>
+     </ul>
+    </div>
+   </section>
+   <section class="dsr-section" data-number="9" data-title="Exécution du présent arrêté : Le secrétaire générale de la préfecture, le maire de SaintAndré, le commissaire enquêteur sont chargés, chacun en ce qui le concerne, de l'exécution du présent arrêté." data-type="article">
+    <h2 class="dsr-section_title">
+     ARTICLE 9 - Exécution du présent arrêté : Le secrétaire générale de la préfecture, le maire de SaintAndré, le commissaire enquêteur sont chargés, chacun en ce qui le concerne, de l'exécution du présent arrêté.
+    </h2>
+    <div class="dsr-alinea" data-number="1">
+     SoisurDiefreffe et par déli le cocrétaire géné
+    </div>
+    <div class="dsr-alinea" data-number="2">
+     Le hréfét
+    </div>
+    <div class="dsr-alinea" data-number="3">
+     Laurent Letroble
+    </div>
+    <div class="dsr-alinea" data-number="4">
+     Voies et délais de recours : la présente décision peut faire l'objet d'un recours contentieux devant le tribunal administratif de Saint-Denis dans le délai de deux mois à compter de sa publication.
+    </div>
+    <div class="dsr-alinea" data-number="5">
+     Copie adressée à :
+    </div>
+    <div class="dsr-alinea" data-number="6">
+     <ul>
+      <li>
+       - M. le secrétaire général de la préfecture,
+      </li>
+      <li>
+       - M. le maire de Saint-André,
+      </li>
+      <li>
+       - Mme. le commissaire enquêteur,
+      </li>
+      <li>
+       - Maître d'ouvrage représenté par la DEAL/SPRINR/URRL,
+      </li>
+      <li>
+       - Tribunal administratif de Saint-Denis.
+      </li>
+     </ul>
+    </div>
+   </section>
+  </main>
+ </body>
+</html>

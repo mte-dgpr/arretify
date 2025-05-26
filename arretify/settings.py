@@ -23,7 +23,7 @@ _SETTINGS_ENV_MAP = {
 
 
 APP_ROOT = pathlib.Path(__file__).resolve().parent.parent
-TEST_DATA_DIR = APP_ROOT / "test_data"
+EXAMPLES_DIR = APP_ROOT / "examples"
 DEFAULT_ARRETE_TEMPLATE = open(
     APP_ROOT / "arretify" / "templates" / "arrete.html", "r", encoding="utf-8"
 ).read()
