@@ -14,7 +14,7 @@ from .titles_detection import (
 )
 
 
-class TestCompareLevelList(unittest.TestCase):
+class TestCompareLevelTitles(unittest.TestCase):
 
     def test_hierarchical_title_chapter(self):
         # Arrange
@@ -149,7 +149,7 @@ class TestCompareLevelList(unittest.TestCase):
         assert result is True
 
 
-class TestSectionPattern(unittest.TestCase):
+class TestTitlePattern(unittest.TestCase):
 
     def test_table_description(self):
         text = "(1) à l'exception du monoxyde de carbone."
@@ -171,6 +171,14 @@ class TestSectionPattern(unittest.TestCase):
         text = "27406 LOUVIERS"
         assert not is_title(text)
 
+    def test_toc_no_name(self):
+        text = "1. Titre ..... 5"
+        assert not is_title(text)
+
+    def test_toc(self):
+        text = "Titre 1 - Titre ..... 5"
+        assert not is_title(text)
+
 
 class TestParseTitleInfo(unittest.TestCase):
 
@@ -182,10 +190,10 @@ class TestParseTitleInfo(unittest.TestCase):
         lines = initialize_lines(["TITRE I - Premier titre"])
 
         # Act
-        section_info = parse_title_info(lines[0].contents)
+        title_info = parse_title_info(lines[0].contents)
 
         # Assert
-        assert section_info == TitleInfo(
+        assert title_info == TitleInfo(
             section_type=SectionType.TITRE,
             number="I",
             levels=[1],
@@ -197,10 +205,10 @@ class TestParseTitleInfo(unittest.TestCase):
         lines = initialize_lines(["TITRE 1 - Autre titre"])
 
         # Act
-        section_info = parse_title_info(lines[0].contents)
+        title_info = parse_title_info(lines[0].contents)
 
         # Assert
-        assert section_info == TitleInfo(
+        assert title_info == TitleInfo(
             section_type=SectionType.TITRE,
             number="1",
             levels=[1],
@@ -212,10 +220,10 @@ class TestParseTitleInfo(unittest.TestCase):
         lines = initialize_lines(["CHAPITRE A - Premier chapitre"])
 
         # Act
-        section_info = parse_title_info(lines[0].contents)
+        title_info = parse_title_info(lines[0].contents)
 
         # Assert
-        assert section_info == TitleInfo(
+        assert title_info == TitleInfo(
             section_type=SectionType.CHAPITRE,
             number="A",
             levels=[1],
@@ -227,10 +235,10 @@ class TestParseTitleInfo(unittest.TestCase):
         lines = initialize_lines(["CHAPITRE A. - Premier chapitre"])
 
         # Act
-        section_info = parse_title_info(lines[0].contents)
+        title_info = parse_title_info(lines[0].contents)
 
         # Assert
-        assert section_info == TitleInfo(
+        assert title_info == TitleInfo(
             section_type=SectionType.CHAPITRE,
             number="A",
             levels=[1],
@@ -242,10 +250,10 @@ class TestParseTitleInfo(unittest.TestCase):
         lines = initialize_lines(["ARTICLE 1"])
 
         # Act
-        section_info = parse_title_info(lines[0].contents)
+        title_info = parse_title_info(lines[0].contents)
 
         # Assert
-        assert section_info == TitleInfo(
+        assert title_info == TitleInfo(
             section_type=SectionType.ARTICLE,
             number="1",
             levels=[1],
@@ -256,10 +264,10 @@ class TestParseTitleInfo(unittest.TestCase):
         lines = initialize_lines(["ARTICLE 1er"])
 
         # Act
-        section_info = parse_title_info(lines[0].contents)
+        title_info = parse_title_info(lines[0].contents)
 
         # Assert
-        assert section_info == TitleInfo(
+        assert title_info == TitleInfo(
             section_type=SectionType.ARTICLE,
             number="1",
             levels=[1],
@@ -270,10 +278,10 @@ class TestParseTitleInfo(unittest.TestCase):
         lines = initialize_lines(["ARTICLE 1."])
 
         # Act
-        section_info = parse_title_info(lines[0].contents)
+        title_info = parse_title_info(lines[0].contents)
 
         # Assert
-        assert section_info == TitleInfo(
+        assert title_info == TitleInfo(
             section_type=SectionType.ARTICLE,
             number="1",
             levels=[1],
@@ -284,10 +292,10 @@ class TestParseTitleInfo(unittest.TestCase):
         lines = initialize_lines(["CHAPITRE I.A - Premier chapitre"])
 
         # Act
-        section_info = parse_title_info(lines[0].contents)
+        title_info = parse_title_info(lines[0].contents)
 
         # Assert
-        assert section_info == TitleInfo(
+        assert title_info == TitleInfo(
             section_type=SectionType.CHAPITRE,
             number="I.A",
             levels=[1, 1],
@@ -299,10 +307,10 @@ class TestParseTitleInfo(unittest.TestCase):
         lines = initialize_lines(["CHAPITRE I.A. - Premier chapitre"])
 
         # Act
-        section_info = parse_title_info(lines[0].contents)
+        title_info = parse_title_info(lines[0].contents)
 
         # Assert
-        assert section_info == TitleInfo(
+        assert title_info == TitleInfo(
             section_type=SectionType.CHAPITRE,
             number="I.A",
             levels=[1, 1],
@@ -316,10 +324,10 @@ class TestParseTitleInfo(unittest.TestCase):
         lines = initialize_lines(["CHAPITRE 1.1 Premier chapitre"])
 
         # Act
-        section_info = parse_title_info(lines[0].contents)
+        title_info = parse_title_info(lines[0].contents)
 
         # Assert
-        assert section_info == TitleInfo(
+        assert title_info == TitleInfo(
             section_type=SectionType.CHAPITRE,
             number="1.1",
             levels=[1, 1],
@@ -333,10 +341,10 @@ class TestParseTitleInfo(unittest.TestCase):
         lines = initialize_lines(["ARTICLE 1.1.1 Premier article"])
 
         # Act
-        section_info = parse_title_info(lines[0].contents)
+        title_info = parse_title_info(lines[0].contents)
 
         # Assert
-        assert section_info == TitleInfo(
+        assert title_info == TitleInfo(
             section_type=SectionType.ARTICLE,
             number="1.1.1",
             levels=[1, 1, 1],
@@ -350,10 +358,10 @@ class TestParseTitleInfo(unittest.TestCase):
         lines = initialize_lines(["ARTICLE 1.1.1.1 Premier sous article"])
 
         # Act
-        section_info = parse_title_info(lines[0].contents)
+        title_info = parse_title_info(lines[0].contents)
 
         # Assert
-        assert section_info == TitleInfo(
+        assert title_info == TitleInfo(
             section_type=SectionType.ARTICLE,
             number="1.1.1.1",
             levels=[1, 1, 1, 1],
@@ -367,10 +375,10 @@ class TestParseTitleInfo(unittest.TestCase):
         lines = initialize_lines(["ARTICLE 1.A.3 - Premier article"])
 
         # Act
-        section_info = parse_title_info(lines[0].contents)
+        title_info = parse_title_info(lines[0].contents)
 
         # Assert
-        assert section_info == TitleInfo(
+        assert title_info == TitleInfo(
             section_type=SectionType.ARTICLE,
             number="1.A.3",
             levels=[1, 1, 3],
@@ -384,10 +392,10 @@ class TestParseTitleInfo(unittest.TestCase):
         lines = initialize_lines(["ARTICLE 1.A.3. - Premier article"])
 
         # Act
-        section_info = parse_title_info(lines[0].contents)
+        title_info = parse_title_info(lines[0].contents)
 
         # Assert
-        assert section_info == TitleInfo(
+        assert title_info == TitleInfo(
             section_type=SectionType.ARTICLE,
             number="1.A.3",
             levels=[1, 1, 3],
@@ -399,10 +407,10 @@ class TestParseTitleInfo(unittest.TestCase):
         lines = initialize_lines(["1. TITRE"])
 
         # Act
-        section_info = parse_title_info(lines[0].contents)
+        title_info = parse_title_info(lines[0].contents)
 
         # Assert
-        assert section_info == TitleInfo(
+        assert title_info == TitleInfo(
             section_type=SectionType.UNKNOWN,
             number="1",
             levels=[1],
@@ -414,10 +422,10 @@ class TestParseTitleInfo(unittest.TestCase):
         lines = initialize_lines(["1.1.1 Article"])
 
         # Act
-        section_info = parse_title_info(lines[0].contents)
+        title_info = parse_title_info(lines[0].contents)
 
         # Assert
-        assert section_info == TitleInfo(
+        assert title_info == TitleInfo(
             section_type=SectionType.UNKNOWN,
             number="1.1.1",
             levels=[1, 1, 1],
@@ -429,10 +437,10 @@ class TestParseTitleInfo(unittest.TestCase):
         lines = initialize_lines(["3.1. Sous-article"])
 
         # Act
-        section_info = parse_title_info(lines[0].contents)
+        title_info = parse_title_info(lines[0].contents)
 
         # Assert
-        assert section_info == TitleInfo(
+        assert title_info == TitleInfo(
             section_type=SectionType.UNKNOWN,
             number="3.1",
             levels=[3, 1],
@@ -444,10 +452,10 @@ class TestParseTitleInfo(unittest.TestCase):
         lines = initialize_lines(["1. Liste : a. Point b. Point"])
 
         # Act
-        section_info = parse_title_info(lines[0].contents)
+        title_info = parse_title_info(lines[0].contents)
 
         # Assert
-        assert section_info == TitleInfo(
+        assert title_info == TitleInfo(
             section_type=SectionType.UNKNOWN,
             number="1",
             levels=[1],
@@ -459,10 +467,10 @@ class TestParseTitleInfo(unittest.TestCase):
         lines = initialize_lines(["ARTICLE 6-ARTICLE"])
 
         # Act
-        section_info = parse_title_info(lines[0].contents)
+        title_info = parse_title_info(lines[0].contents)
 
         # Assert
-        assert section_info == TitleInfo(
+        assert title_info == TitleInfo(
             section_type=SectionType.ARTICLE,
             number="6",
             levels=[6],
@@ -474,10 +482,10 @@ class TestParseTitleInfo(unittest.TestCase):
         lines = initialize_lines(["ARTICLE 1erCeci est un titre"])
 
         # Act
-        section_info = parse_title_info(lines[0].contents)
+        title_info = parse_title_info(lines[0].contents)
 
         # Assert
-        assert section_info == TitleInfo(
+        assert title_info == TitleInfo(
             section_type=SectionType.ARTICLE,
             number="1",
             levels=[1],
@@ -489,10 +497,10 @@ class TestParseTitleInfo(unittest.TestCase):
         lines = initialize_lines(["CHAPITRE 5.1CECI EST UN CHAPITRE"])
 
         # Act
-        section_info = parse_title_info(lines[0].contents)
+        title_info = parse_title_info(lines[0].contents)
 
         # Assert
-        assert section_info == TitleInfo(
+        assert title_info == TitleInfo(
             section_type=SectionType.CHAPITRE,
             number="5.1",
             levels=[5, 1],
@@ -504,10 +512,10 @@ class TestParseTitleInfo(unittest.TestCase):
         lines = initialize_lines(["Article premier :"])
 
         # Act
-        section_info = parse_title_info(lines[0].contents)
+        title_info = parse_title_info(lines[0].contents)
 
         # Assert
-        assert section_info == TitleInfo(
+        assert title_info == TitleInfo(
             section_type=SectionType.ARTICLE,
             number="1",
             levels=[1],
@@ -519,10 +527,10 @@ class TestParseTitleInfo(unittest.TestCase):
         lines = initialize_lines(["Article Ier :"])
 
         # Act
-        section_info = parse_title_info(lines[0].contents)
+        title_info = parse_title_info(lines[0].contents)
 
         # Assert
-        assert section_info == TitleInfo(
+        assert title_info == TitleInfo(
             section_type=SectionType.ARTICLE,
             number="I",
             levels=[1],
@@ -534,10 +542,10 @@ class TestParseTitleInfo(unittest.TestCase):
         lines = initialize_lines(["1 Titre"])
 
         # Act
-        section_info = parse_title_info(lines[0].contents)
+        title_info = parse_title_info(lines[0].contents)
 
         # Assert
-        assert section_info == TitleInfo(
+        assert title_info == TitleInfo(
             section_type=SectionType.UNKNOWN,
             number="1",
             levels=[1],
@@ -549,12 +557,27 @@ class TestParseTitleInfo(unittest.TestCase):
         lines = initialize_lines(["1  - Titre"])
 
         # Act
-        section_info = parse_title_info(lines[0].contents)
+        title_info = parse_title_info(lines[0].contents)
 
         # Assert
-        assert section_info == TitleInfo(
+        assert title_info == TitleInfo(
             section_type=SectionType.UNKNOWN,
             number="1",
             levels=[1],
             text="Titre",
+        )
+
+    def test_joined_text(self):
+        # Arrange
+        lines = initialize_lines(["5.1CECI EST UN CHAPITRE"])
+
+        # Act
+        title_info = parse_title_info(lines[0].contents)
+
+        # Assert
+        assert title_info == TitleInfo(
+            section_type=SectionType.UNKNOWN,
+            number="5.1",
+            levels=[5, 1],
+            text="CECI EST UN CHAPITRE",
         )

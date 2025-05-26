@@ -79,12 +79,10 @@ TITLE_NODE = regex_tree.Group(
                 [
                     # Numbering pattern with integer as first number
                     rf"(?P<number>{NUMBERS_PATTERN_S}(?:[.]{NUMBERING_PATTERN_S})*)",
-                    # Mandatory space
-                    r"\s",
                     # Do not catch the optional punctuation
                     r"(?:[.\s\-:]*)",
-                    # Text group without ending punctuation
-                    r"(?P<text>\s*(.+?)(?<![.;:,]))$",
+                    # Text group without ending punctuation or 5 points and numbers (ToC)
+                    r"(?P<text>\s*[A-Za-z](?:(?!\.{5}\s+\d+).)+?(?<![.;:,]))$",
                 ],
                 settings=Settings(ignore_accents=False),
             ),
