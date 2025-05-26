@@ -62,6 +62,7 @@
         "(1985-01-04,  relatif au contrôle des circuits d'élimination des déchets générateurs de nuisances)": "LEGITEXT000006074754",
         "(1980-03-31,  portant réglementation des installations électriques des établissements réglementés au titre de la législation des installations classées)": null,
         "(1993-01-28,  ainsi qu'à la norme NF-C1700)": null,
+        "(2022-04-04,  susvisé est complété comme suit :)": null,
         "(2000-05-10,  relatif à la prévention des accidents majeurs,)": "JORFTEXT000000752492",
         "(2000-03-15,  avec l'indication des éléments suivants pour chaque équipement concerné :)": null
     },
@@ -106,9 +107,21 @@
         "(1995-01-23, title= fixant les prescriptions prévues par l', num=95-79)": "JORFTEXT000000734830",
         "(1988-11-14, title= relatif à la protection des travailleurs dans les établissements mettant en œuvre des courants électriques, num=88-1056)": "JORFTEXT000000866441",
         "(1977-09-21, title= modifié pris pour l'application de la loi 76-663 du 19 juillet 1976 relative aux installations classées, num=77-1133)": "JORFTEXT000000518520",
+        "(2024-10-31, title= du Président de la République nommant Monsieur Charles GIUSTI, préfet de l'Eure, le procès-verbal d'installation de, num=None)": null,
         "(2024-02-14, title= du Président de la République nommant Monsieur Alaric MALVES, secrétaire général de la préfecture de l'Eure,, num=None)": null,
-        "(2005-07-20, title=None, num=2005-829)": "JORFTEXT000000810278",
-        "(2024-10-31, title= du Président de la République nommant Monsieur Charles GIUSTI, préfet de l'Eure, le procès-verbal d'installation de, num=None)": null
+        "(2024-10-31, title= portant nomination de M, num=None)": null,
+        "(2023-08-22, title= portant nomination de M, num=None)": null,
+        "(2007-03-05, title= créant le parc national de la Réunion, num=2007-296)": "JORFTEXT000000644200",
+        "(2024-10-31, title= portant nomination de Monsieur Patrice LATRON en qualité de préfet de la région Réunion, préfet de, num=None)": null,
+        "(2024-11-29, title= portant nomination de Monsieur Vincent BERNARD-LAFOUCRIÈRE en qualité de sous-préfet, directeur de cabinet du préfet de, num=None)": null,
+        "(2024-10-10, title= portant nomination de M, num=None)": null,
+        "(2024-07-08, title= relatif à la composition des chambres d'agriculture et à l'élection de leurs membres, num=2024-817)": "JORFTEXT000049990056",
+        "(2024-05-21, title= portant nomination de Mme Christelle RATIGNIER CARBONNEIL en qualité de la directrice Générale de l'Agence Régionale, num=None)": null,
+        "(2018-02-19, title= relatif à la simplification et à la modernisation des régimes d'autorisation des activités de soins et, num=2018-117)": "JORFTEXT000036624898",
+        "(2004-04-29, title=, modifié, relatif aux pouvoirs des préfets, à l'organisation et à l'action des services de l'État, num=2004-374)": "JORFTEXT000000249712",
+        "(2024-11-06, title= portant nomination de monsieur Vincent LAGOGUEY en qualité de préfet délégué pour la défense et la, num=None)": null,
+        "(2024-10-31, title= du Président de la République nommant Monsieur Charles GIUSTI, préfet de l'Eure,, num=None)": null,
+        "(2005-07-20, title=None, num=2005-829)": "JORFTEXT000000810278"
     },
     "get_circulaire_legifrance_id": {
         "(1986-07-23,  relative aux vibrations mecaniques emises dans l'environnement par les installations classees pour la protection de l'environnement)": "JORFTEXT000000866509",

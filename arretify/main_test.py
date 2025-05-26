@@ -4,14 +4,14 @@ from pathlib import Path
 from tempfile import mkdtemp
 
 from arretify.settings import (
-    TEST_DATA_DIR,
+    EXAMPLES_DIR,
 )
 from arretify.utils import html
 
 from .main import main
 
-ARRETES_OCR_DIR = TEST_DATA_DIR / "arretes_ocr"
-ARRETES_HTML_DIR = TEST_DATA_DIR / "arretes_html"
+ARRETES_OCR_DIR = EXAMPLES_DIR / "arretes_ocr"
+ARRETES_HTML_DIR = EXAMPLES_DIR / "arretes_html"
 
 
 class TestMain(unittest.TestCase):
