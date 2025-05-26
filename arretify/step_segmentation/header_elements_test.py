@@ -10,8 +10,19 @@ from .header_elements import (
     _join_split_pile_with_pattern,
     _parse_visas_or_motifs,
     _parse_arrete_title_info,
+    parse_table_of_contents,
+    HEADER_ELEMENTS_PATTERNS,
 )
 from arretify.utils.testing import normalized_html_str, assert_html_list_equal, normalized_soup
+
+
+class TestArretePattern(unittest.TestCase):
+
+    arrete_pattern = HEADER_ELEMENTS_PATTERNS["arrete_title"]
+
+    def test_arrete_toc(self):
+        text = "Arrêté suite ..... 1"
+        assert not bool(self.arrete_pattern.search(text))
 
 
 class TestJoinSplitPile(unittest.TestCase):
@@ -376,6 +387,109 @@ class TestParseMotifsOrVisas(unittest.TestCase):
             """  # noqa: E501
         )
         assert _text_segments_to_str(lines) == ["ARRETE"]
+
+
+class TestParseTableOfContents(unittest.TestCase):
+
+    def test_sommaire(self):
+        # Arrange
+        lines = initialize_lines(
+            [
+                "Sommaire",
+                "1 Titre ..... 5",
+                "1.1 Chapitre ..... 5",
+                "1.1.1 Article ..... 5",
+                "1 Titre",
+            ]
+        )
+
+        # Act
+        soup = BeautifulSoup()
+        header = soup.new_tag("header")
+        lines = parse_table_of_contents(soup, header, lines)
+
+        # Assert
+        assert str(header) == normalized_html_str(
+            """
+            <header>
+                <div class="dsr-table_of_contents">
+                    <div>Sommaire</div>
+                    <div>1 Titre ..... 5</div>
+                    <div>1.1 Chapitre ..... 5</div>
+                    <div>1.1.1 Article ..... 5</div>
+                </div>
+            </header>
+            """  # noqa: E501
+        )
+        assert _text_segments_to_str(lines) == ["1 Titre"]
+
+    def test_sommaire_with_arrete(self):
+        # Arrange
+        lines = initialize_lines(
+            [
+                "Liste des chapitres",
+                "Arrêté n D3 ..... 1",
+                "TITRE 1 - TITRE ..... 5",
+                "CHAPITRE 1.1 - CHAPITRE ..... 5",
+                "TITRE 1 - TITRE",
+            ]
+        )
+
+        # Act
+        soup = BeautifulSoup()
+        header = soup.new_tag("header")
+        lines = parse_table_of_contents(soup, header, lines)
+
+        # Assert
+        assert str(header) == normalized_html_str(
+            """
+            <header>
+                <div class="dsr-table_of_contents">
+                    <div>Liste des chapitres</div>
+                    <div>Arrêté n D3 ..... 1</div>
+                    <div>TITRE 1 - TITRE ..... 5</div>
+                    <div>CHAPITRE 1.1 - CHAPITRE ..... 5</div>
+                </div>
+            </header>
+            """  # noqa: E501
+        )
+        assert _text_segments_to_str(lines) == ["TITRE 1 - TITRE"]
+
+    def test_sommaire_non_contiguous(self):
+        # Arrange
+        lines = initialize_lines(
+            [
+                "Liste des articles",
+                "TITRE 1 - TITRE ..... 1",
+                "CHAPITRE chapitre ..... 5",
+                "Article 1.1. article ..... 5",
+                "CHAPITRE Autre chapitre ..... 5",
+                "Article 1.1. Autre article ..... 5",
+                "TITRE 1 - Titre",
+            ]
+        )
+
+        # Act
+        soup = BeautifulSoup()
+        header = soup.new_tag("header")
+        lines = parse_table_of_contents(soup, header, lines)
+
+        # Assert
+        assert str(header) == normalized_html_str(
+            """
+            <header>
+                <div class="dsr-table_of_contents">
+                    <div>Liste des articles</div>
+                    <div>TITRE 1 - TITRE ..... 1</div>
+                    <div>CHAPITRE chapitre ..... 5</div>
+                    <div>Article 1.1. article ..... 5</div>
+                    <div>CHAPITRE Autre chapitre ..... 5</div>
+                    <div>Article 1.1. Autre article ..... 5</div>
+                </div>
+            </header>
+            """  # noqa: E501
+        )
+        assert _text_segments_to_str(lines) == ["TITRE 1 - Titre"]
 
 
 def _text_segments_to_str(segments):

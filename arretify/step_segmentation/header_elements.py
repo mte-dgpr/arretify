@@ -1,27 +1,25 @@
-from typing import Callable, Dict, Iterable, List, Literal, Optional
+from typing import Callable, Dict, Iterable, List, Literal
 
 from bs4 import Tag, BeautifulSoup
 
+from arretify.html_schemas import HEADER_ELEMENTS_SCHEMAS
+from arretify.parsing_utils.dates import DATE_NODE, render_date_regex_tree_match
+from arretify.parsing_utils.source_mapping import TextSegments
+from arretify.regex_utils import (
+    map_regex_tree_match,
+    split_string_with_regex_tree,
+    split_string_with_regex,
+    merge_matches_with_siblings,
+    PatternProxy,
+    join_with_or,
+)
+from arretify.utils.functional import flat_map_string
 from arretify.utils.html import (
     make_data_tag,
     PageElementOrString,
     make_new_tag,
     wrap_in_tag,
 )
-from arretify.html_schemas import HEADER_ELEMENTS_SCHEMAS
-from arretify.regex_utils import (
-    split_string_with_regex,
-    merge_matches_with_siblings,
-    PatternProxy,
-    join_with_or,
-)
-from arretify.parsing_utils.source_mapping import TextSegments
-from arretify.regex_utils import (
-    map_regex_tree_match,
-    split_string_with_regex_tree,
-)
-from arretify.parsing_utils.dates import DATE_NODE, render_date_regex_tree_match
-from arretify.utils.functional import flat_map_string
 from arretify.utils.markdown_parsing import (
     is_list,
     is_image,
@@ -76,8 +74,10 @@ IDENTIFICATIONS_LIST = [
 IDENTIFICATION_PATTERN = PatternProxy(rf"^{join_with_or(IDENTIFICATIONS_LIST)}")
 """Detect all references."""
 
-ARRETE_TITLE_PATTERN = PatternProxy(r"^[\s-]*(a\s*r\s*r\s*e\s*t\s*e\s*n?\s*t?)[\s-]*\b")
-"""Detect if the sentence starts with "arrete"."""
+ARRETE_TITLE_PATTERN = PatternProxy(
+    r"^[\s-]*(a\s*r\s*r\s*e\s*t\s*e\s*n?\s*t?)(?![\s-]*(?:.*?\.{5}\s+\d+)$)"
+)
+"""Detect if the sentence starts with "arrete" without ending points for table of contents."""
 
 HONORARIES_LIST = [
     r"la prefecture",
@@ -109,6 +109,17 @@ SUPPLEMENTARY_MOTIF_INFORMATION_PATTERN = PatternProxy(
 )
 """Detect all other information that can be part of the motifs."""
 
+TABLE_OF_CONTENTS_LIST = [
+    r"sommaire",
+    r"table des matieres",
+    r"liste des (chapitres|articles)",
+    # This regex detects any sentence ending with 5 points and numbers
+    r".*?\s+[.]{5}\s+\d+",
+]
+
+TABLE_OF_CONTENTS_PATTERN = PatternProxy(rf"^{join_with_or(TABLE_OF_CONTENTS_LIST)}")
+"""Detect all table of contents starting sentences."""
+
 HEADER_ELEMENTS_PATTERNS: Dict[str, PatternProxy] = {
     "emblem": EMBLEM_PATTERN,
     "entity": ENTITY_PATTERN,
@@ -118,6 +129,7 @@ HEADER_ELEMENTS_PATTERNS: Dict[str, PatternProxy] = {
     "visa": VISA_PATTERN,
     "motif": MOTIF_PATTERN,
     "supplementary_motif_info": SUPPLEMENTARY_MOTIF_INFORMATION_PATTERN,
+    "table_of_contents": TABLE_OF_CONTENTS_PATTERN,
 }
 
 HEADER_ELEMENTS_PROBES: Dict[str, Callable] = {
@@ -131,7 +143,8 @@ HEADER_ELEMENTS_PROBES: Dict[str, Callable] = {
     "supplementary_motif_info": lambda line: bool(
         SUPPLEMENTARY_MOTIF_INFORMATION_PATTERN.match(line)
     ),
-    "ending": is_body_section,
+    "table_of_contents": lambda line: bool(TABLE_OF_CONTENTS_PATTERN.match(line)),
+    "body_section": is_body_section,
 }
 """Header elements probes."""
 
@@ -154,20 +167,13 @@ def _wrap_in_div(soup: BeautifulSoup, lines: TextSegments) -> Tag:
 
 def _join_split_pile_with_pattern(
     pile: List[str],
-    pattern: Optional[PatternProxy] = None,
+    pattern: PatternProxy,
 ) -> List[PageElementOrString]:
-    # Combine all lines of current pile
-    combined_line = " ".join(pile)
-
-    if not pattern:
-        return [combined_line]
-
-    # Split by entity names
     return list(
         merge_matches_with_siblings(
             split_string_with_regex(
                 pattern,
-                combined_line,
+                " ".join(pile),
             ),
             "following",
         )
@@ -195,6 +201,7 @@ def _parse_header_element(
     header: Tag,
     lines: TextSegments,
     header_element_name: str,
+    join_split_with_pattern: bool = True,
 ) -> TextSegments:
     # Process lines
     pile: List[str] = []
@@ -211,15 +218,19 @@ def _parse_header_element(
         else:
             pile.append(lines.pop(0).contents)
 
-    if pile or image_pile:
+    elements: List[PageElementOrString]
+    if join_split_with_pattern:
+        elements = _join_split_pile_with_pattern(pile, header_element_pattern)
+    else:
+        elements = [line for line in pile]
+
+    if elements or image_pile:
 
         # Create header element
         header_element = make_data_tag(
             soup,
             header_element_schema,
-            contents=wrap_in_tag(
-                soup, _join_split_pile_with_pattern(pile, pattern=header_element_pattern), "div"
-            ),
+            contents=wrap_in_tag(soup, elements, "div"),
         )
 
         # Append found images under this header element
@@ -476,4 +487,18 @@ def parse_supplementary_motif_info_element(
         header,
         lines,
         "supplementary_motif_info",
+    )
+
+
+def parse_table_of_contents(
+    soup: BeautifulSoup,
+    header: Tag,
+    lines: TextSegments,
+) -> TextSegments:
+    return _parse_header_element(
+        soup,
+        header,
+        lines,
+        "table_of_contents",
+        join_split_with_pattern=False,
     )

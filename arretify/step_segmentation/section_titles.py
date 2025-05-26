@@ -75,8 +75,8 @@ SECTION_TITLE_NODE = regex_tree.Group(
                     ),
                     # Do not catch the optional punctuation
                     r"(?:[.\s\-:]*)",
-                    # Optional text group
-                    r"(?P<text>\s*(.+))?$",
+                    # Optional text group not ending with 5 points and numbers (ToC)
+                    r"(?P<text>\s*(?:(?!\.{5}\s+\d+).)*)?$",
                 ]
             ),
             # This regex matches section names in arretes such as
@@ -87,11 +87,12 @@ SECTION_TITLE_NODE = regex_tree.Group(
             # Section is split into a numbering pattern and a text group
             regex_tree.Sequence(
                 [
-                    # Numbering pattern with space
-                    # First number must be an integer followed by point
-                    rf"^(?P<number>{NUMBERS}[.](?:{NUMBERING}[.])*{NUMBERING})\s+",
-                    # Text group without ending punctuation
-                    r"(?P<text>\s*(.+?)(?<![.;:,]))$",
+                    # Numbering pattern - only numbers
+                    rf"^(?P<number>{NUMBERS}(?:[.]{NUMBERS})*)",
+                    # Do not catch the optional punctuation
+                    r"(?:[.\s\-:]*)",
+                    # Text group without ending punctuation or 5 points and numbers (ToC)
+                    r"(?P<text>\s*(?:(?!\.{5}\s+\d+).)+?(?<![.;:,]))$",
                 ],
                 settings=Settings(ignore_accents=False),
             ),
@@ -197,24 +198,26 @@ def parse_section_info(line: str) -> SectionInfo:
     # Extract dict
     match_dict = match_pattern.match_dict
 
-    section = BodySection.from_string(match_dict.get("section_name", "unknown"))
-    number = match_dict.get("number", "")
-    text = match_dict.get("text")
+    section_type = BodySection.from_string(match_dict.get("section_name", "unknown"))
+    section_number = match_dict.get("number", "")
+    section_text = match_dict.get("text")
 
-    # Compute levels
-    number = _clean_numbering_match(number)
-    if ORDINAL_PATTERN.match(number):
-        number = str(ordinal_str_to_int(number))
-    if number == "0":
+    # Adjust number
+    section_number = _clean_numbering_match(section_number)
+    if ORDINAL_PATTERN.match(section_number):
+        section_number = str(ordinal_str_to_int(section_number))
+    if section_number == "0":
         _LOGGER.warning(f"Numbering parsing output none for section title: {line}")
         return SectionInfo(type=BodySection.NONE)
-    levels = _number_to_levels(number)
+
+    # Compute section levels
+    section_levels = _number_to_levels(section_number)
 
     section_info = SectionInfo(
-        type=section,
-        number=number,
-        levels=levels,
-        text=text,
+        type=section_type,
+        number=section_number,
+        levels=section_levels,
+        text=section_text,
     )
 
     return section_info
