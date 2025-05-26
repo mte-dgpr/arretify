@@ -11,6 +11,7 @@ from .header_elements import (
     parse_visa_element,
     parse_motif_element,
     parse_supplementary_motif_info_element,
+    parse_table_of_contents,
 )
 from .section_titles import is_body_section
 
@@ -48,5 +49,8 @@ def parse_header(
 
         # Supplementary motif info
         lines = parse_supplementary_motif_info_element(soup, header, lines)
+
+        # Table of contents
+        lines = parse_table_of_contents(soup, header, lines)
 
     return lines

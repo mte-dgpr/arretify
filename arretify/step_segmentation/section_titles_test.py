@@ -381,7 +381,7 @@ class TestSectionValidCases(unittest.TestCase):
 
     def test_simple_title_no_name(self):
         # Arrange
-        lines = initialize_lines(["1. TITRE "])
+        lines = initialize_lines(["1. TITRE"])
 
         # Act
         section_info = parse_section_info(lines[0].contents)
@@ -391,7 +391,7 @@ class TestSectionValidCases(unittest.TestCase):
             type=BodySection.UNKNOWN,
             number="1",
             levels=[1],
-            text="TITRE ",
+            text="TITRE",
         )
 
     def test_hierarchical_title_no_name(self):
@@ -562,6 +562,66 @@ class TestSectionValidCases(unittest.TestCase):
     def test_mister_madam(self):
         # Arrange
         lines = initialize_lines(["M. le Maire de"])
+
+        # Act
+        section_info = parse_section_info(lines[0].contents)
+
+        # Assert
+        assert section_info == SectionInfo(
+            type=BodySection.NONE,
+            number=None,
+            levels=None,
+            text=None,
+        )
+
+    def test_no_point(self):
+        # Arrange
+        lines = initialize_lines(["1 Titre"])
+
+        # Act
+        section_info = parse_section_info(lines[0].contents)
+
+        # Assert
+        assert section_info == SectionInfo(
+            type=BodySection.UNKNOWN,
+            number="1",
+            levels=[1],
+            text="Titre",
+        )
+
+    def test_joined_text(self):
+        # Arrange
+        lines = initialize_lines(["5.1CECI EST UN CHAPITRE"])
+
+        # Act
+        section_info = parse_section_info(lines[0].contents)
+
+        # Assert
+        assert section_info == SectionInfo(
+            type=BodySection.UNKNOWN,
+            number="5.1",
+            levels=[5, 1],
+            text="CECI EST UN CHAPITRE",
+        )
+
+    def test_toc_no_name(self):
+        # Arrange
+        lines = initialize_lines(["1. Titre ..... 5"])
+
+        # Act
+        section_info = parse_section_info(lines[0].contents)
+
+        # Assert
+        assert section_info == SectionInfo(
+            type=BodySection.NONE,
+            number=None,
+            levels=None,
+            text=None,
+        )
+
+    def test_toc(self):
+        # Arrange
+        lines = initialize_lines(["Titre 1 - Titre ..... 5"])
 
         # Act
         section_info = parse_section_info(lines[0].contents)
