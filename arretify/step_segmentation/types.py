@@ -1,33 +1,12 @@
 from dataclasses import dataclass
-from enum import Enum
 from typing import List, Optional
 
-
-class BodySection(Enum):
-    TITRE = "titre"
-    CHAPITRE = "chapitre"
-    ARTICLE = "article"
-    APPENDIX = "annexe"
-    UNKNOWN = "unknown"
-    NONE = "none"
-
-    @classmethod
-    def from_string(cls, section_name):
-        try:
-            return cls(section_name.lower())
-        except ValueError:
-            # For unknown section names return non-section
-            return cls.NONE
+from arretify.types import SectionType
 
 
 @dataclass(frozen=True)
-class SectionInfo:
-    type: BodySection
+class TitleInfo:
+    section_type: SectionType
     number: Optional[str] = None
     levels: Optional[List[int]] = None
     text: Optional[str] = None
-
-
-@dataclass
-class GroupParsingContext:
-    alinea_count: int
