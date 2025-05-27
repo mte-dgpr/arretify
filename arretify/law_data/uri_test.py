@@ -1,7 +1,8 @@
 import unittest
 
+from arretify.types import SectionType
 from .uri import render_uri, parse_uri, _validate_sections
-from .types import DocumentType, Document, SectionType, Section
+from .types import DocumentType, Document, Section
 
 
 class TestRenderUri(unittest.TestCase):
@@ -43,7 +44,7 @@ class TestRenderUri(unittest.TestCase):
                 title="Arrêté préfectoral 123 456",
             ),
             Section(
-                type=SectionType.article,
+                type=SectionType.ARTICLE,
                 start_id="1",
                 start_num="2",
                 end_id="3",
@@ -65,7 +66,7 @@ class TestRenderUri(unittest.TestCase):
                 title="Arrêté préfectoral 123 456",
             ),
             Section(
-                type=SectionType.article,
+                type=SectionType.ARTICLE,
                 start_id="1",
             ),
         )
@@ -114,7 +115,7 @@ class TestParseUri(unittest.TestCase):
         )
         assert sections == [
             Section(
-                type=SectionType.article,
+                type=SectionType.ARTICLE,
                 start_id="1",
                 start_num="2",
                 end_id="3",
@@ -135,7 +136,7 @@ class TestParseUri(unittest.TestCase):
         )
         assert sections == [
             Section(
-                type=SectionType.article,
+                type=SectionType.ARTICLE,
                 start_id="1",
             )
         ]
@@ -150,13 +151,13 @@ class TestValidateSections(unittest.TestCase):
         with self.assertRaises(ValueError) as context:
             _validate_sections(
                 [
-                    Section(type=SectionType.alinea, start_id="1"),
-                    Section(type=SectionType.article, start_id="1"),
+                    Section(type=SectionType.ALINEA, start_id="1"),
+                    Section(type=SectionType.ARTICLE, start_id="1"),
                 ],
             )
         assert (
             str(context.exception)
-            == f'Section type "{SectionType.article}" is not allowed after "{SectionType.alinea}"'
+            == f'Section type "{SectionType.ARTICLE}" is not allowed after "{SectionType.ALINEA}"'
         )
 
     def test_end_only_allowed_for_last_section(self):
@@ -164,11 +165,11 @@ class TestValidateSections(unittest.TestCase):
             _validate_sections(
                 [
                     Section(
-                        type=SectionType.article,
+                        type=SectionType.ARTICLE,
                         start_id="1",
                         end_id="2",
                     ),
-                    Section(type=SectionType.alinea, start_id="1"),
+                    Section(type=SectionType.ALINEA, start_id="1"),
                 ],
             )
         assert str(context.exception) == "End is allowed only for last section"

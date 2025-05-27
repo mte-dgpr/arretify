@@ -5,7 +5,10 @@ from typing import (
     Union,
 )
 
-from arretify.types import ParsingContext
+from arretify.types import (
+    ParsingContext,
+    SectionType,
+)
 from arretify.utils.functional import flat_map_string
 from arretify.html_schemas import (
     SECTION_REFERENCE_SCHEMA,
@@ -18,6 +21,8 @@ from arretify.utils.html import (
 )
 from arretify.parsing_utils.patterns import (
     ET_VIRGULE_PATTERN_S,
+)
+from arretify.parsing_utils.numbering import (
     EME_PATTERN_S,
     ORDINAL_PATTERN_S,
     ordinal_str_to_int,
@@ -31,7 +36,6 @@ from arretify.regex_utils import (
 )
 from arretify.law_data.types import (
     Section,
-    SectionType,
     Document,
     DocumentType,
 )
@@ -167,7 +171,7 @@ def _extract_sections(
 
     sections = [
         Section(
-            type=SectionType.article,
+            type=SectionType.ARTICLE,
             start_num=article_start,
             end_num=article_end,
         )
@@ -176,7 +180,7 @@ def _extract_sections(
     if alinea_start:
         sections.append(
             Section(
-                type=SectionType.alinea,
+                type=SectionType.ALINEA,
                 start_num=alinea_start,
                 end_num=(alinea_end and alinea_end) or None,
             )

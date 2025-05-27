@@ -6,8 +6,7 @@ from arretify.html_schemas import (
 )
 from arretify.utils.html import make_data_tag
 from .header import parse_header
-from .main_content import parse_main_content
-from .appendix import parse_appendix
+from .content import parse_content
 
 
 def parse_arrete(parsing_context: ParsingContext) -> ParsingContext:
@@ -24,11 +23,11 @@ def parse_arrete(parsing_context: ParsingContext) -> ParsingContext:
     if lines:
         main_content = make_data_tag(parsing_context.soup, MAIN_SCHEMA)
         body.append(main_content)
-        lines = parse_main_content(parsing_context.soup, main_content, lines)
+        lines = parse_content(parsing_context.soup, main_content, lines, exit_on_appendix=True)
 
     if lines:
         appendix = make_data_tag(parsing_context.soup, APPENDIX_SCHEMA)
         body.append(appendix)
-        lines = parse_appendix(parsing_context.soup, appendix, lines)
+        lines = parse_content(parsing_context.soup, appendix, lines, exit_on_appendix=False)
 
     return parsing_context

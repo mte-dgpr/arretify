@@ -4,14 +4,12 @@ import logging
 
 from bs4 import Tag
 
-from arretify.types import ParsingContext
-from arretify.law_data.types import (
+from arretify.types import (
+    ParsingContext,
     SectionType,
-    Section,
 )
-from arretify.law_data.uri import (
-    parse_uri,
-)
+from arretify.law_data.types import Section
+from arretify.law_data.uri import parse_uri
 from arretify.law_data.legifrance_constants import (
     get_code_id_with_title,
     get_code_article_id_from_article_num,
@@ -36,7 +34,7 @@ def resolve_code_article_legifrance_id(
 
     resolved_sections: List[Section] = []
     for section in sections:
-        if section.type == SectionType.article:
+        if section.type == SectionType.ARTICLE:
             new_fields: Dict[str, str | None] = dict(
                 start_id=None,
                 end_id=None,

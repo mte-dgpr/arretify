@@ -4,8 +4,8 @@ from typing import (
 )
 import urllib.parse
 
-from arretify.types import URI
-from .types import SectionType, Section, Document, DocumentType
+from arretify.types import URI, SectionType
+from .types import Section, Document, DocumentType
 
 
 _SEPARATOR = "_"

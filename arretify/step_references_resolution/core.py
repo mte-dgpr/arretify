@@ -19,7 +19,6 @@ from arretify.law_data.types import (
     Document,
     DocumentType,
     Section,
-    SectionType,
 )
 from arretify.law_data.uri import (
     is_uri_document_type,
@@ -30,7 +29,7 @@ from arretify.utils.html import (
     make_css_class,
     render_bool_attribute,
 )
-from arretify.types import ExternalURL, ParsingContext
+from arretify.types import ExternalURL, ParsingContext, SectionType
 
 
 SECTION_REFERENCE_CSS_CLASS = make_css_class(SECTION_REFERENCE_SCHEMA)
@@ -61,7 +60,7 @@ def resolve_external_url(
 
         elif (
             sections
-            and sections[0].type == SectionType.article
+            and sections[0].type == SectionType.ARTICLE
             and sections[0].start_id is not None
         ):
             return build_code_article_site_url(sections[0].start_id)
