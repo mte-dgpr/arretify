@@ -46,9 +46,9 @@ TITLE_NODE = regex_tree.Group(
             # Chapitre 1.A
             # Chapitre 1.2 - CHAPITRE
             # Chapitre A. CHAPITRE
-            # Article X.X.X - Article
-            # Article X.X.X
-            # Article X.X.X. - Article.
+            # Article 1.2.3 - Article
+            # Article 1.2.3
+            # Article 1.2.3. - Article.
             # Title is split into a section name, a numbering pattern and an optional text group
             regex_tree.Sequence(
                 [
@@ -73,7 +73,7 @@ TITLE_NODE = regex_tree.Group(
             # 1 TITRE
             # 1.2 - CHAPITRE
             # 1.A. CHAPITRE
-            # 1.X.X - Article
+            # 1.2.3 - Article
             # Title is split into a numbering pattern and a text group
             regex_tree.Sequence(
                 [
