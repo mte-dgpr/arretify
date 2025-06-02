@@ -46,13 +46,16 @@ class DataElementSchema:
 class SectionType(Enum):
     """
     Order in the enum is important. The order is used to determine the hierarchy of the sections.
+    Only the unknown section type can appear in any order.
     """
+
+    UNKNOWN = "unknown"
+    """Unknown section type. Needs context to be resolved"""
 
     ANNEXE = "annexe"
     TITRE = "titre"
     CHAPITRE = "chapitre"
     ARTICLE = "article"
-    UNKNOWN = "unknown"
     ALINEA = "alinea"
 
     @classmethod

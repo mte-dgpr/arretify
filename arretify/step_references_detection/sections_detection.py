@@ -309,7 +309,7 @@ SECTION_REFERENCE_NODE = regex_tree.Group(
             ),
             # -------- Unknown sections -------- #
             # Examples :
-            # - "paragraphe 3"
+            # - "paragraphe 3" -> can actually mean "alinéa 3" or in some cases "article 3"
             regex_tree.Sequence(
                 [
                     regex_tree.Branching(
@@ -353,7 +353,7 @@ SECTION_REFERENCE_MULTIPLE_NODE = regex_tree.Group(
             regex_tree.Sequence(
                 [
                     # Positive lookahead so there's a match only
-                    # if the strings starts with the word "alinéa" or "paragraphe".
+                    # if the strings starts with the word "alinéa".
                     r"(?=alinéas? )",
                     regex_tree.Repeat(
                         regex_tree.Group(
@@ -401,11 +401,10 @@ SECTION_REFERENCE_MULTIPLE_NODE = regex_tree.Group(
             ),
             # Examples :
             # - "Les paragraphes 3 et 4"
-            # - "alinéa 3, alinéa 4 et 5"
             regex_tree.Sequence(
                 [
                     # Positive lookahead so there's a match only
-                    # if the strings starts with the word "alinéa" or "paragraphe".
+                    # if the strings starts with the word "paragraphe".
                     r"(?=paragraphes? )",
                     regex_tree.Repeat(
                         regex_tree.Group(
