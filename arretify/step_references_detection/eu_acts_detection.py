@@ -74,9 +74,9 @@ EU_ACT_NODE = regex_tree.Group(
                     # 1013/2006
                     regex_tree.Sequence(
                         [
-                            regex_tree.Quantifier(
+                            regex_tree.Repeat(
                                 regex_tree.Sequence([r"\(", DOMAIN_NODE, r"\)\s*"]),
-                                quantifier="?",
+                                quantifier=(0, 1),
                             ),
                             r"([nN]°\s*)?",
                             r"(?P<num>[0-9]+)/(?P<year>[0-9]{4}|[0-9]{2})",

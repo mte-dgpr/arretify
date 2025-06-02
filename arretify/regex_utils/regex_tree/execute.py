@@ -3,7 +3,7 @@ from .types import (
     RegexTreeMatch,
     LiteralNode,
     BranchingNode,
-    QuantifierNode,
+    RepeatNode,
     GroupNode,
     SequenceNode,
     RegexTreeMatchFlow,
@@ -71,7 +71,7 @@ def _match_recursive(
         yield safe_group(match, 0)
         return
 
-    elif isinstance(node, QuantifierNode):
+    elif isinstance(node, RepeatNode):
         for str_or_match in split_string_with_regex(node.child.pattern, safe_group(match, 0)):
             if isinstance(str_or_match, str):
                 yield str_or_match

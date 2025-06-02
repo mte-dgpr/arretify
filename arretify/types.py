@@ -39,18 +39,23 @@ class DataElementSchema:
             raise ValueError(f"Invalid name: {self.name}")
         if "element_id" in self.data_keys:
             raise ValueError("element_id is a reserved key")
+        if "group_id" in self.data_keys:
+            raise ValueError("group_id is a reserved key")
 
 
 class SectionType(Enum):
     """
     Order in the enum is important. The order is used to determine the hierarchy of the sections.
+    Only the unknown section type can appear in any order.
     """
+
+    UNKNOWN = "unknown"
+    """Unknown section type. Needs context to be resolved"""
 
     ANNEXE = "annexe"
     TITRE = "titre"
     CHAPITRE = "chapitre"
     ARTICLE = "article"
-    UNKNOWN = "unknown"
     ALINEA = "alinea"
 
     @classmethod
@@ -115,4 +120,9 @@ A unique id assigned to elements in the DOM as `data-element_id` attribute.
 This provides an alternative to referencing an element in the DOM
 using its `id` attribute, because `id` has meaning in HTML which
 we don't want to interfere with.
+"""
+
+ElementGroupId = str
+"""
+A unique id assigned to groups of elements in the DOM as `data-group_id` attribute.
 """

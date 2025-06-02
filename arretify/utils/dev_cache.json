@@ -64,7 +64,11 @@
         "(1993-01-28,  ainsi qu'à la norme NF-C1700)": null,
         "(2022-04-04,  susvisé est complété comme suit :)": null,
         "(2000-05-10,  relatif à la prévention des accidents majeurs,)": "JORFTEXT000000752492",
-        "(2000-03-15,  avec l'indication des éléments suivants pour chaque équipement concerné :)": null
+        "(2000-03-15,  avec l'indication des éléments suivants pour chaque équipement concerné :)": null,
+        "(1998-02-02, , tant que la consommation de solvants est supérieure à 1 tonne par an)": null,
+        "(2010-10-03,  relatif au stockage en réservoirs aériens manufacturés de liquides inflammables exploités dans un stockage soumis à)": "JORFTEXT000023081678",
+        "(2014-05-29,  des produits de décomposition mentionnés au I de l'annexe III de l'arrêté ministériel précité)": null,
+        "(2014-05-29, , des produits de décomposition mentionnés au I de l'annexe III de l'arrêté ministériel précité)": null
     },
     "get_eu_act_url_with_year_and_num": {
         "(directive, 2010, 75)": "https://eur-lex.europa.eu/legal-content/FR/TXT/HTML/?uri=cellar:c7191b72-4e07-4712-86d6-d3ae5e4f0082",
@@ -121,7 +125,10 @@
         "(2004-04-29, title=, modifié, relatif aux pouvoirs des préfets, à l'organisation et à l'action des services de l'État, num=2004-374)": "JORFTEXT000000249712",
         "(2024-11-06, title= portant nomination de monsieur Vincent LAGOGUEY en qualité de préfet délégué pour la défense et la, num=None)": null,
         "(2024-10-31, title= du Président de la République nommant Monsieur Charles GIUSTI, préfet de l'Eure,, num=None)": null,
-        "(2005-07-20, title=None, num=2005-829)": "JORFTEXT000000810278"
+        "(2005-07-20, title=None, num=2005-829)": "JORFTEXT000000810278",
+        "(1977-09-21, title=, la cessation d'activité d'une installation comprend les étapes suivantes, num=77-1133)": "JORFTEXT000000518520",
+        "(2005-07-20, title= relatif à la composition des équipements électriques et électroniques et à l'élimination des déchets issus de, num=2005-829)": "JORFTEXT000000810278",
+        "(2005-05-30, title= relatif au contrôle des circuits de traitement des déchets et concernant les déchets dangereux et les, num=2005-635)": "JORFTEXT000000257088"
     },
     "get_circulaire_legifrance_id": {
         "(1986-07-23,  relative aux vibrations mecaniques emises dans l'environnement par les installations classees pour la protection de l'environnement)": "JORFTEXT000000866509",

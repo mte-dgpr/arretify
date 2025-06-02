@@ -97,12 +97,12 @@ RTL_OPERATION_NODE = regex_tree.Group(
             ),
             # When the string is not ended by a period (.), we consider that
             # there is a right operand.
-            regex_tree.Quantifier(
+            regex_tree.Repeat(
                 regex_tree.Group(
                     r"[^\.]*$",
                     group_name="__has_operand",
                 ),
-                quantifier="*",
+                quantifier=(0, ...),
             ),
         ]
     ),

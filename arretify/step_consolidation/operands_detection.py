@@ -5,26 +5,25 @@ from bs4 import Tag
 
 from arretify.types import ParsingContext
 from arretify.html_schemas import (
-    SECTIONS_AND_DOCUMENT_REFERENCES,
     SECTION_REFERENCE_SCHEMA,
     DOCUMENT_REFERENCE_SCHEMA,
 )
 from arretify.utils.html import (
     make_css_class,
-    has_css_class,
     assign_element_id,
     render_str_list_attribute,
     parse_bool_attribute,
+    is_tag_and_matches,
 )
 from arretify.utils.element_ranges import (
     get_contiguous_elements_left,
     get_contiguous_elements_right,
 )
+from arretify.step_references_detection.match_sections_with_documents import build_reference_tree
 
 
 DOCUMENT_REFERENCE_CLASS = make_css_class(DOCUMENT_REFERENCE_SCHEMA)
 SECTION_REFERENCE_CLASS = make_css_class(SECTION_REFERENCE_SCHEMA)
-SECTIONS_AND_DOCUMENT_REFERENCES_CLASS = make_css_class(SECTIONS_AND_DOCUMENT_REFERENCES)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -43,17 +42,22 @@ def _resolve_rtl_references(operation_tag: Tag) -> None:
     reference_tags: List[Tag] = []
 
     for element in contiguous_elements_left:
-        if isinstance(element, Tag) and has_css_class(
-            element, SECTIONS_AND_DOCUMENT_REFERENCES_CLASS
+        if is_tag_and_matches(
+            element, css_classes_in=[SECTION_REFERENCE_CLASS, DOCUMENT_REFERENCE_CLASS]
         ):
-            reference_tags = element.select(f".{SECTION_REFERENCE_CLASS}")
+            # Take the leaves of the reference tree, i.e. the most
+            # specific reference in a chain of sections.
+            # For example in "l'alinéa 3 de l'article 5 du présent arrêté",
+            # the operation applies to "alinéa 3".
+            reference_tree = build_reference_tree(element)
+            reference_tags = [branch[-1] for branch in reference_tree]
             if len(reference_tags) == 0:
-                raise ValueError("No section reference found in operation")
+                raise ValueError("No section or document reference found in operation")
             break
 
     if len(reference_tags) == 0:
         for element in contiguous_elements_left:
-            if isinstance(element, Tag) and has_css_class(element, DOCUMENT_REFERENCE_CLASS):
+            if is_tag_and_matches(element, css_classes_in=[DOCUMENT_REFERENCE_CLASS]):
                 reference_tags = [element]
                 break
 
