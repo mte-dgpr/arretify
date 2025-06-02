@@ -3,7 +3,8 @@ from dataclasses import replace
 
 from .types import (
     GroupName,
-    QuantifierNode,
+    RepeatNode,
+    QuantifierRange,
     GroupNode,
     SequenceNode,
     BranchingNode,
@@ -13,12 +14,20 @@ from .types import (
 )
 from ..types import Settings
 from ..core import PatternProxy
-from ..helpers import without_named_groups, join_with_or
+from ..helpers import (
+    without_named_groups,
+    join_with_or,
+    quantifier_to_string,
+    repeated_with_separator,
+)
 
 
 def Literal(
     pattern_string: str, key: str | None = None, settings: Settings | None = None
 ) -> LiteralNode:
+    """
+    If a key is provided, the pattern string will be wrapped in a named group with that key.
+    """
     settings = settings or Settings()
     if key is not None:
         pattern_string = f"(?P<{key}>{without_named_groups(pattern_string)})"
@@ -37,6 +46,9 @@ def Branching(
     child_or_str_list: List[Node | str],
     settings: Settings | None = None,
 ) -> BranchingNode:
+    """
+    Order of patterns matters, from most specific to less specific.
+    """
     settings = settings or Settings()
     children_list: List[Node] = []
     for child_or_str in child_or_str_list:
@@ -101,18 +113,31 @@ def Group(
     )
 
 
-def Quantifier(
+def Repeat(
     child_or_str: Union[Node, str],
-    quantifier: str,
+    quantifier: QuantifierRange,
+    separator: str | None = None,
     settings: Settings | None = None,
-) -> QuantifierNode:
+) -> RepeatNode:
     settings = settings or Settings()
     child = _initialize_child(child_or_str, settings)
-    return QuantifierNode(
+
+    if separator:
+        child_pattern_string = without_named_groups(child.pattern.pattern)
+        pattern_string = repeated_with_separator(
+            child_pattern_string,
+            separator,
+            quantifier,
+        )
+    else:
+        quantifier_str = quantifier_to_string(quantifier)
+        pattern_string = f"({without_named_groups(child.pattern.pattern)}){quantifier_str}"
+
+    return RepeatNode(
         id=_get_unique_id(),
         quantifier=quantifier,
         pattern=PatternProxy(
-            f"({without_named_groups(child.pattern.pattern)}){quantifier}",
+            pattern_string,
             settings=settings,
         ),
         child=child,

@@ -1,13 +1,8 @@
 from dataclasses import dataclass
-from typing import (
-    List,
-    Dict,
-    Union,
-    Iterable,
-)
+from typing import List, Dict, Union, Iterable
 
 from ..core import PatternProxy
-from ..types import GroupName, Settings
+from ..types import GroupName, Settings, QuantifierRange
 
 
 NodeMap = Dict[GroupName, "Node"]
@@ -16,7 +11,7 @@ Node = Union[
     "BranchingNode",
     "LiteralNode",
     "GroupNode",
-    "QuantifierNode",
+    "RepeatNode",
 ]
 MatchDict = Dict[str, str]
 
@@ -58,8 +53,8 @@ class GroupNode(BaseNode):
 
 
 @dataclass(frozen=True, repr=False)
-class QuantifierNode(BaseNode):
-    quantifier: str
+class RepeatNode(BaseNode):
+    quantifier: QuantifierRange
     child: Node
 
 

@@ -9,41 +9,64 @@ from .operands_detection import resolve_references_and_operands
 class TestParseOperations(unittest.TestCase):
 
     def setUp(self):
-        html._ID_COUNTER = 0
+        html._ELEMENT_ID_COUNTER = 0
+        html._GROUP_ID_COUNTER = 0
 
     def test_several_references_no_operand(self):
         # Arrange
         parsing_context = create_parsing_context(
             normalized_html_str(
                 """
-            <div class="dsr-alinea">
-                Les
-                <span class="dsr-sections_and_document_references">
-                    <span class="dsr-section_reference_multiple">
-                        <a class="dsr-section_reference">
-                            paragraphes 3
-                        </a>
-                        et
-                        <a class="dsr-section_reference">
-                            4 de l'article 8.5.1.1
-                        </a>
-                    </span>
+                <div class="dsr-alinea">
+                    Les
+                    <a
+                        class="dsr-section_reference"
+                        data-group_id="11"
+                        data-parent_reference="123"
+                    >
+                        paragraphes 3
+                    </a>
+                    et
+                    <a
+                        class="dsr-section_reference"
+                        data-group_id="11"
+                        data-parent_reference="123"
+                    >
+                        4
+                    </a>
                     de l'
-                    <a class="dsr-document_reference">
+                    <a
+                        class="dsr-section_reference"
+                        data-element_id="123"
+                        data-parent_reference="456"
+                    >
+                        article 8.5.1.1
+                    </a>
+                    de l'
+                    <a
+                        class="dsr-document_reference"
+                        data-element_id="456"
+                    >
                         arrêté préfectoral du
                         <time class="dsr-date" datetime="2008-12-10">
                             10 décembre 2008
                         </time>
                     </a>
-                </span>
-                <span class="dsr-operation" data-direction="rtl" data-has_operand="" data-keyword="supprimés" data-operand="" data-operation_type="delete">
-                    sont
-                    <b>
-                        supprimés
-                    </b>
-                </span>
-            </div>
-        """  # noqa: E501
+                    <span
+                        class="dsr-operation"
+                        data-direction="rtl"
+                        data-has_operand=""
+                        data-keyword="supprimés"
+                        data-operand=""
+                        data-operation_type="delete"
+                    >
+                        sont
+                        <b>
+                            supprimés
+                        </b>
+                    </span>
+                </div>
+                """  # noqa: E501
             )
         )
         tag = parsing_context.soup.select_one(".dsr-operation")
@@ -58,32 +81,57 @@ class TestParseOperations(unittest.TestCase):
             """
             <div class="dsr-alinea">
                 Les
-                <span class="dsr-sections_and_document_references">
-                    <span class="dsr-section_reference_multiple">
-                        <a class="dsr-section_reference" data-element_id="1">
-                            paragraphes 3
-                        </a>
-                        et
-                        <a class="dsr-section_reference" data-element_id="2">
-                            4 de l'article 8.5.1.1
-                        </a>
-                    </span>
-                    de l'
-                    <a class="dsr-document_reference">
-                        arrêté préfectoral du
-                        <time class="dsr-date" datetime="2008-12-10">
-                            10 décembre 2008
-                        </time>
-                    </a>
-                </span>
-                <span class="dsr-operation" data-direction="rtl" data-has_operand="" data-keyword="supprimés" data-operand="" data-operation_type="delete" data-references="1,2">
+                <a
+                    class="dsr-section_reference"
+                    data-element_id="1"
+                    data-group_id="11"
+                    data-parent_reference="123"
+                >
+                    paragraphes 3
+                </a>
+                et
+                <a
+                    class="dsr-section_reference"
+                    data-element_id="2"
+                    data-group_id="11"
+                    data-parent_reference="123"
+                >
+                    4
+                </a>
+                de l'
+                <a
+                    class="dsr-section_reference"
+                    data-element_id="123"
+                    data-parent_reference="456"
+                >
+                    article 8.5.1.1
+                </a>
+                de l'
+                <a
+                    class="dsr-document_reference"
+                    data-element_id="456"
+                >
+                    arrêté préfectoral du
+                    <time class="dsr-date" datetime="2008-12-10">
+                        10 décembre 2008
+                    </time>
+                </a>
+                <span
+                    class="dsr-operation"
+                    data-direction="rtl"
+                    data-has_operand=""
+                    data-keyword="supprimés"
+                    data-operand=""
+                    data-operation_type="delete"
+                    data-references="1,2"
+                >
                     sont
                     <b>
                         supprimés
                     </b>
                 </span>
             </div>
-        """  # noqa: E501
+            """  # noqa: E501
         )
 
     def test_one_reference_one_operand(self):
@@ -91,33 +139,44 @@ class TestParseOperations(unittest.TestCase):
         parsing_context = create_parsing_context(
             normalized_html_str(
                 """
-            <div class="dsr-alinea">
-                La dernière phrase de l'
-                <span class="dsr-sections_and_document_references">
-                    <a class="dsr-section_reference">
+                <div class="dsr-alinea">
+                    La dernière phrase de l'
+                    <a
+                        class="dsr-section_reference"
+                        data-parent_reference="123"
+                    >
                         article 8.1.1.2
                     </a>
                     de l'
-                    <a class="dsr-document_reference">
+                    <a
+                        class="dsr-document_reference"
+                        data-element_id="123"
+                    >
                         arrêté préfectoral du
                         <time class="dsr-date" datetime="2008-12-10">
                                 10 décembre 2008
                         </time>
                     </a>
-                </span>
-                <span class="dsr-operation" data-direction="rtl" data-has_operand="true" data-keyword="remplacée" data-operand="2" data-operation_type="replace">
-                    est
-                    <b>
-                        remplacée
-                    </b>
-                    par la disposition suivante :
-                </span>
-                <q>
-                    Un relevé hebdomadaire de chacun des compteurs d'eau est réalisé par l'exploitant
-                </q>
-                .
-            </div>
-            """  # noqa: E501
+                    <span
+                        class="dsr-operation"
+                        data-direction="rtl"
+                        data-has_operand="true"
+                        data-keyword="remplacée"
+                        data-operand=""
+                        data-operation_type="replace"
+                    >
+                        est
+                        <b>
+                            remplacée
+                        </b>
+                        par la disposition suivante :
+                    </span>
+                    <q>
+                        Un relevé hebdomadaire de chacun des compteurs d'eau est réalisé par l'exploitant
+                    </q>
+                    .
+                </div>
+                """  # noqa: E501
             )
         )
         tag = parsing_context.soup.select_one(".dsr-operation")
@@ -130,31 +189,46 @@ class TestParseOperations(unittest.TestCase):
             """
             <div class="dsr-alinea">
                 La dernière phrase de l'
-                <span class="dsr-sections_and_document_references">
-                    <a class="dsr-section_reference" data-element_id="1">
-                        article 8.1.1.2
-                    </a>
-                    de l'
-                    <a class="dsr-document_reference">
-                        arrêté préfectoral du
-                        <time class="dsr-date" datetime="2008-12-10">
-                                10 décembre 2008
-                        </time>
-                    </a>
-                </span>
-                <span class="dsr-operation" data-direction="rtl" data-has_operand="true" data-keyword="remplacée" data-operand="2" data-operation_type="replace" data-references="1">
+                <a
+                    class="dsr-section_reference"
+                    data-element_id="1"
+                    data-parent_reference="123"
+                >
+                    article 8.1.1.2
+                </a>
+                de l'
+                <a
+                    class="dsr-document_reference"
+                    data-element_id="123"
+                >
+                    arrêté préfectoral du
+                    <time class="dsr-date" datetime="2008-12-10">
+                            10 décembre 2008
+                    </time>
+                </a>
+                <span
+                    class="dsr-operation"
+                    data-direction="rtl"
+                    data-has_operand="true"
+                    data-keyword="remplacée"
+                    data-operand="2"
+                    data-operation_type="replace"
+                    data-references="1"
+                >
                     est
                     <b>
                         remplacée
                     </b>
                     par la disposition suivante :
                 </span>
-                <q data-element_id="2">
+                <q
+                    data-element_id="2"
+                >
                     Un relevé hebdomadaire de chacun des compteurs d'eau est réalisé par l'exploitant
                 </q>
                 .
             </div>
-        """  # noqa: E501
+            """  # noqa: E501
         )
 
     def test_with_single_document_reference(self):
@@ -162,23 +236,23 @@ class TestParseOperations(unittest.TestCase):
         parsing_context = create_parsing_context(
             normalized_html_str(
                 """
-            <div class="dsr-alinea">
-                Les prescriptions de l'
-                <a class="dsr-document_reference">
-                    arrêté préfectoral du
-                    <time class="dsr-date" datetime="2008-12-10">
-                            10 décembre 2008
-                    </time>
-                </a>
-                <span class="dsr-operation" data-direction="rtl" data-has_operand="" data-keyword="abrogées" data-operand="" data-operation_type="delete">
-                    sont
-                    <b>
-                        abrogées
-                    </b>
-                    .
-                </span>
-            </div>
-            """  # noqa: E501
+                <div class="dsr-alinea">
+                    Les prescriptions de l'
+                    <a class="dsr-document_reference">
+                        arrêté préfectoral du
+                        <time class="dsr-date" datetime="2008-12-10">
+                                10 décembre 2008
+                        </time>
+                    </a>
+                    <span class="dsr-operation" data-direction="rtl" data-has_operand="" data-keyword="abrogées" data-operand="" data-operation_type="delete">
+                        sont
+                        <b>
+                            abrogées
+                        </b>
+                        .
+                    </span>
+                </div>
+                """  # noqa: E501
             )
         )
         tag = parsing_context.soup.select_one(".dsr-operation")

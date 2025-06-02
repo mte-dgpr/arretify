@@ -96,7 +96,8 @@ def _validate_sections(sections: List[Section]) -> None:
             if section.end_id is not None or section.end_num is not None:
                 raise ValueError("End is allowed only for last section")
 
-        if i > 0:
+        # Unknown section type is allowed at any position
+        if i > 0 and section.type != SectionType.UNKNOWN:
             previous_section = sections[i - 1]
             previous_section_type_index = allowed_section_types.index(previous_section.type)
             section_type_index = allowed_section_types.index(section.type)

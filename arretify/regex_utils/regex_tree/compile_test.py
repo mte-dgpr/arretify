@@ -1,6 +1,6 @@
 import unittest
 
-from .compile import Literal, Group, Quantifier, Branching, Sequence
+from .compile import Literal, Group, Repeat, Branching, Sequence
 from . import compile
 
 
@@ -37,11 +37,25 @@ class TestCompilePattern(unittest.TestCase):
 
     def test_compile_repeat_pattern(self):
         # Arrange
-        node = Quantifier(Literal(pattern_string=r"\w+"), r"+")
+        node = Repeat(Literal(pattern_string=r"\w+"), (1, ...))
 
         # Assert
         assert node.pattern.pattern == r"(\w+)+"
         assert node.child.pattern.pattern == r"\w+"
+
+    def test_compile_repeat_pattern_with_separator(self):
+        # Arrange
+        node = Repeat(Literal(pattern_string=r"\w+"), (1, ...), separator=",")
+
+        # Assert
+        assert node.pattern.pattern == r"(\w+)((,)(\w+))*"
+
+    def test_compile_repeat_pattern_with_separator_and_min_0(self):
+        # Arrange
+        node = Repeat(Literal(pattern_string=r"\w+"), (0, ...), separator=",")
+
+        # Assert
+        assert node.pattern.pattern == r"((\w+)((,)(\w+))*)?"
 
     def test_compile_group_pattern(self):
         # Arrange
@@ -65,9 +79,9 @@ class TestCompilePattern(unittest.TestCase):
                 child2,
             ]
         )
-        quantifier_node = Quantifier(
+        quantifier_node = Repeat(
             child1,
-            r"+",
+            (1, ...),
         )
         branching_node = Branching(
             [

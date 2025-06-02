@@ -128,7 +128,10 @@ def assert_html_list_equal(
     for i, (actual_html, expected_html) in enumerate(
         zip(_normalize_element_list(actual), _normalize_element_list(expected))
     ):
-        assert actual_html == expected_html, f"Elements in position {i} are not equal"
+        assert actual_html == expected_html, (
+            f"Elements in position {i} are not equal :"
+            f"\nACTUAL:\n{actual_html}\nEXPECTED:\n{expected_html}"
+        )
 
 
 def _normalize_element_list(

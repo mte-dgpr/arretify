@@ -4,7 +4,7 @@ from typing import (
     List,
 )
 
-from .types import Settings
+from .types import Settings, PatternString, QuantifierRange
 
 NAMED_GROUP_PATTERN = re.compile(r"\?P\<(?P<name>\w+)\>")
 NAME_WITH_INDEX_PATTERN = re.compile(r"(\w+?)(?P<index>\d+)")
@@ -14,16 +14,34 @@ def sub_with_match(string: str, match: re.Match, group: int | str = 0) -> str:
     return string[: match.start(group)] + string[match.end(group) :]
 
 
-def without_named_groups(pattern_string: str):
+def without_named_groups(pattern_string: str) -> PatternString:
     return NAMED_GROUP_PATTERN.sub("", pattern_string)
 
 
-def join_with_or(pattern_strings: List[str]):
+def join_with_or(pattern_strings: List[str]) -> PatternString:
     return "|".join(pattern_strings)
 
 
-def named_group(pattern_string: str, group_name: str):
+def named_group(pattern_string: str, group_name: str) -> PatternString:
     return f"(?P<{group_name}>{pattern_string})"
+
+
+def repeated_with_separator(
+    pattern_string: str,
+    separator: str,
+    quantifier: QuantifierRange,
+) -> PatternString:
+    quantifier_str = quantifier_to_string(
+        (
+            max(quantifier[0] - 1, 0),
+            max(quantifier[1] - 1, 0) if isinstance(quantifier[1], int) else Ellipsis,
+        )
+    )
+    pattern_string = f"({pattern_string})(({separator})({pattern_string})){quantifier_str}"
+    if quantifier[0] == 0:
+        pattern_string = f"({pattern_string})?"
+
+    return pattern_string
 
 
 def remove_accents(s: str) -> str:
@@ -73,3 +91,27 @@ def normalize_string(string: str, settings: Settings) -> str:
     if settings.normalize_dashes:
         string = normalize_dashes(string)
     return string
+
+
+def quantifier_to_string(quantifier: QuantifierRange) -> str:
+    """
+    Convert a range to a quantifier string.
+    For example, (2, 5) becomes {2,5} and (2, inf) becomes {2,}.
+    """
+    quantifier_min, quantifier_max = quantifier
+    if quantifier_min < 0:
+        raise ValueError("Quantifier min must be >= 0")
+    if quantifier_max is not Ellipsis and quantifier_min > quantifier_max:
+        raise ValueError("Quantifier min must be <= quantifier max")
+
+    if quantifier_max == Ellipsis:
+        if quantifier_min == 0:
+            return "*"
+        elif quantifier_min == 1:
+            return "+"
+        else:
+            return f"{{{quantifier_min},}}"
+    elif quantifier_min == quantifier_max:
+        return f"{{{quantifier_min}}}"
+    else:
+        return f"{{{quantifier_min},{quantifier_max}}}"
