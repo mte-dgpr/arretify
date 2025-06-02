@@ -43,7 +43,6 @@ TITLE_NODE = regex_tree.Group(
             # Titre I - TITRE
             # Titre 1. TITRE
             # Titre 2 TITRE
-            # Chapitre 1.A
             # Chapitre 1.2 - CHAPITRE
             # Chapitre A. CHAPITRE
             # Article 1.2.3 - Article
@@ -54,16 +53,16 @@ TITLE_NODE = regex_tree.Group(
                 [
                     # Section name
                     rf"^(?P<section_name>{join_with_or(SECTION_NAMES)})",
-                    # Mandatory space or punctuation
+                    # Do not catch optional punctuation, assert at least one space
                     # This prevents detecting a word beginning with a section name pattern
                     # as a section name plus numbering
-                    r"[\s\-:]",
+                    r"(?:[.\-:]*\s[.\-:\s]*)",
                     # Numbering pattern
                     regex_tree.Branching(
                         [
                             rf"(?P<number>{ORDINAL_PATTERN_S})",
                             rf"(?P<number>(\d|I|i)){EME_PATTERN_S}",
-                            rf"(?P<number>{NUMBERING_PATTERN_S}(?:[.]{NUMBERING_PATTERN_S})*)",
+                            rf"(?P<number>{NUMBERING_PATTERN_S}(?:[.\-]{NUMBERS_PATTERN_S})*)",
                         ],
                         settings=Settings(ignore_accents=False),
                     ),
@@ -76,21 +75,37 @@ TITLE_NODE = regex_tree.Group(
             # This regex matches section names in arretes such as
             # 1 TITRE
             # 1.2 - CHAPITRE
-            # 1.A. CHAPITRE
             # 1.2.3 - Article
             # Title is split into a numbering pattern and a text group
-            regex_tree.Sequence(
+            regex_tree.Branching(
                 [
-                    # Numbering pattern with integer as first number
-                    rf"(?P<number>{NUMBERS_PATTERN_S}(?:[.]{NUMBERING_PATTERN_S})*)",
-                    # Do not catch the optional punctuation
-                    r"(?:[.\s\-:]*)",
-                    # Text group without ending punctuation or 5 points and numbers (ToC)
-                    r"(?P<text>\s*[A-Za-z](?:(?!\.{5}\s+\d+).)+?(?<![.;:,]))$",
+                    # If several numbers, we do not check the ending punctuation
+                    regex_tree.Sequence(
+                        [
+                            # Numbering pattern with integer as first number
+                            rf"(?P<number>{NUMBERS_PATTERN_S}(?:[.\-]{NUMBERS_PATTERN_S})+)",
+                            # Do not catch punctuation
+                            r"(?:[.\s\-:]*)",
+                            # Text group not ending with 5 points and numbers (ToC)
+                            r"(?P<text>\s*[A-Za-z](?:(?!\.{5}\s+\d+).)+?)$",
+                        ],
+                        settings=Settings(ignore_accents=False),
+                    ),
+                    # If only one number, we check the ending punctuation
+                    regex_tree.Sequence(
+                        [
+                            # Numbering pattern with only one integer
+                            rf"(?P<number>{NUMBERS_PATTERN_S})",
+                            # Do not catch punctuation
+                            r"(?:[.\s\-:]*)",
+                            # Text group without ending punctuation or 5 points and numbers (ToC)
+                            r"(?P<text>\s*[A-Za-z](?:(?!\.{5}\s+\d+).)+?(?<![.;:,]))$",
+                        ],
+                        settings=Settings(ignore_accents=False),
+                    ),
                 ],
-                settings=Settings(ignore_accents=False),
             ),
-        ]
+        ],
     ),
     group_name="title",
 )

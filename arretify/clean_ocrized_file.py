@@ -9,10 +9,7 @@ from arretify.regex_utils import (
 from arretify.types import ParsingContext
 
 
-EMPTY_LINE_PATTERN = PatternProxy(r"^\s*$")
-"""Detect if the sentence is empty or full of whitespaces."""
-
-PUNCTUATION_LINE_PATTERN = PatternProxy(r"^[.,;:!?']+$")
+PUNCTUATION_LINE_PATTERN = PatternProxy(r"^[·.,;:!?'\s\-]*$")
 """Detect if the sentence contains only punctuation."""
 
 FOOTER_PATTERN = PatternProxy(
@@ -39,9 +36,6 @@ def clean_ocrized_file(parsing_context: ParsingContext) -> ParsingContext:
     # Clean input markdown
     lines = [clean_markdown(line) for line in parsing_context.lines]
 
-    # Remove empty lines
-    lines = [line for line in lines if not _is_empty_line(line.contents)]
-
     # Remove punctuation lines
     lines = [line for line in lines if not _is_punctuation_line(line.contents)]
 
@@ -49,10 +43,6 @@ def clean_ocrized_file(parsing_context: ParsingContext) -> ParsingContext:
     lines = [line for line in lines if not _is_footer_line(line.contents)]
 
     return dataclass_replace(parsing_context, lines=lines)
-
-
-def _is_empty_line(line: str) -> bool:
-    return bool(EMPTY_LINE_PATTERN.search(line))
 
 
 def _is_punctuation_line(line: str) -> bool:

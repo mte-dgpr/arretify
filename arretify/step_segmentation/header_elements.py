@@ -423,7 +423,7 @@ def _parse_visas_or_motifs(
                     has_more = False
                     break
                 elif is_image(lines[0].contents):
-                    header.append(parse_markdown_image(lines[0].contents))
+                    header.append(parse_markdown_image(lines.pop(0).contents))
                 else:
                     header.append(_wrap_in_div(soup, [lines.pop(0)]))
 
@@ -436,14 +436,9 @@ def _parse_visas_or_motifs(
             header.append(make_data_tag(soup, header_element_schema, contents=pile))
 
             # Consume lines until we find the next visa, or the beginning of the next header element
-            while True:
-                if not lines or is_next_header_element(lines[0].contents):
-                    has_more = False
-                    break
-                elif is_image(lines[0].contents):
-                    header.append(parse_markdown_image(lines[0].contents))
-                else:
-                    header.append(_wrap_in_div(soup, [lines.pop(0)]))
+            if not lines or is_next_header_element(lines[0].contents):
+                has_more = False
+                break
 
     elif flavor == "bullet_list":
         indentation_0 = list_indentation(lines[0].contents)
@@ -466,7 +461,7 @@ def _parse_visas_or_motifs(
                 elif is_list(lines[0].contents):
                     break
                 elif is_image(lines[0].contents):
-                    header.append(parse_markdown_image(lines[0].contents))
+                    header.append(parse_markdown_image(lines.pop(0).contents))
                 else:
                     header.append(_wrap_in_div(soup, [lines.pop(0)]))
 

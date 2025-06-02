@@ -49,7 +49,7 @@ def ordinal_str_to_int(ordinal: str) -> int:
 
 def str_to_levels(number: str) -> Optional[List[int]]:
 
-    number_split = number.replace(".", " ").split()
+    number_split = number.replace(".", " ").replace("-", " ").split()
     level = len(number_split) - 1
 
     if level < 0:
