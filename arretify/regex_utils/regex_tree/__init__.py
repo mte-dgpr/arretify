@@ -10,7 +10,7 @@ from .compile import (
     Branching,
     Sequence,
     Literal,
-    Quantifier,
+    Repeat,
     Node,
 )
 from .execute import match

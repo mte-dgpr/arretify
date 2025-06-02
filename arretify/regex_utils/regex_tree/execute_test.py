@@ -2,7 +2,7 @@ import unittest
 
 from .execute import match
 from .types import RegexTreeMatch, Settings
-from .compile import Sequence, Branching, Group, Quantifier, Literal
+from .compile import Sequence, Branching, Group, Repeat, Literal
 
 
 class TestSearchCompiledPattern(unittest.TestCase):
@@ -13,7 +13,7 @@ class TestSearchCompiledPattern(unittest.TestCase):
             Sequence(
                 [
                     r"(?P<greetings>Hello|Hi) ",
-                    Quantifier(
+                    Repeat(
                         Sequence(
                             [
                                 Group(
@@ -28,7 +28,7 @@ class TestSearchCompiledPattern(unittest.TestCase):
                                 ",?",
                             ]
                         ),
-                        quantifier="+",
+                        quantifier=(1, ...),
                     ),
                 ]
             ),

@@ -3,7 +3,7 @@ import unittest
 from bs4 import BeautifulSoup
 
 from . import html
-from .html import make_ul, assign_element_id
+from .html import make_ul, assign_element_id, is_tag_and_matches
 
 
 class TestMakeUl(unittest.TestCase):
@@ -41,7 +41,7 @@ class TestMakeUl(unittest.TestCase):
 class TestAssignElementId(unittest.TestCase):
 
     def setUp(self):
-        html._ID_COUNTER = 0
+        html._ELEMENT_ID_COUNTER = 0
 
     def test_simple(self):
         # Arrange
@@ -65,3 +65,42 @@ class TestAssignElementId(unittest.TestCase):
 
         # Assert
         assert tag["data-element_id"] == "42"
+
+
+class TestIsTagAndMatches(unittest.TestCase):
+
+    def test_has_class(self):
+        # Arrange
+        soup = BeautifulSoup("", "html.parser")
+        tag = soup.new_tag("div")
+        tag["class"] = ["test-class"]
+        tag["class"].append("other-class")
+
+        # Act
+        result = is_tag_and_matches(tag, css_classes_in=["test-class"])
+
+        # Assert
+        assert result is True
+
+    def test_does_not_have_class(self):
+        # Arrange
+        soup = BeautifulSoup("", "html.parser")
+        tag = soup.new_tag("div")
+        tag["class"] = ["other-class"]
+        tag["class"].append("another-class")
+
+        # Act
+        result = is_tag_and_matches(tag, css_classes_in=["test-class"])
+
+        # Assert
+        assert result is False
+
+    def test_raise_error_with_invalid_class(self):
+        # Arrange
+        soup = BeautifulSoup("", "html.parser")
+        tag = soup.new_tag("div")
+        tag["class"] = "my-class my-other-class"
+
+        # Act & Assert
+        with self.assertRaises(RuntimeError):
+            is_tag_and_matches(tag, css_classes_in=["my-class"])

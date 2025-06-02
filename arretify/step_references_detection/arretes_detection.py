@@ -80,14 +80,14 @@ ARRETE_NODE = regex_tree.Group(
                 [
                     regex_tree.Sequence(
                         [
-                            regex_tree.Quantifier(
+                            regex_tree.Repeat(
                                 regex_tree.Sequence(
                                     [
                                         IDENTIFIER_NODE,
                                         r"\s",
                                     ]
                                 ),
-                                "?",
+                                quantifier=(0, 1),
                             ),
                             r"(transmis a l\'exploitant par (courrier recommandé|courrier)\s)?",
                             regex_tree.Sequence(
@@ -115,7 +115,7 @@ ARRETE_MULTIPLE_NODE = regex_tree.Group(
     regex_tree.Sequence(
         [
             r"arrêtés ((?P<authority>préfectoraux|ministériels) (modifiés )?)?",
-            regex_tree.Quantifier(
+            regex_tree.Repeat(
                 regex_tree.Sequence(
                     [
                         regex_tree.Group(
@@ -125,14 +125,14 @@ ARRETE_MULTIPLE_NODE = regex_tree.Group(
                                     # catches also dates.
                                     regex_tree.Sequence(
                                         [
-                                            regex_tree.Quantifier(
+                                            regex_tree.Repeat(
                                                 regex_tree.Sequence(
                                                     [
                                                         IDENTIFIER_NODE,
                                                         r"\s",
                                                     ]
                                                 ),
-                                                "?",
+                                                quantifier=(0, 1),
                                             ),
                                             regex_tree.Sequence(
                                                 [
@@ -151,7 +151,7 @@ ARRETE_MULTIPLE_NODE = regex_tree.Group(
                         f"{ET_VIRGULE_PATTERN_S}?",
                     ]
                 ),
-                "{2,}",
+                quantifier=(2, ...),
             ),
         ]
     ),

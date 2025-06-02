@@ -16,7 +16,7 @@ ARRETES_HTML_DIR = EXAMPLES_DIR / "arretes_html"
 
 class TestMain(unittest.TestCase):
     def setUp(self):
-        html._ID_COUNTER = 0
+        html._ELEMENT_ID_COUNTER = 0
 
     def test_parse_arrete_snapshots(self):
         print("Testing snapshots")

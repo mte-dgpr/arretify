@@ -28,7 +28,7 @@ from .self_detection import parse_self_references
 from .eu_acts_detection import (
     parse_eu_acts_references,
 )
-from .match_sections_with_documents import match_sections_with_documents
+from .match_sections_with_documents import match_sections_to_parents
 
 
 ALINEA_CSS_CLASS = make_css_class(ALINEA_SCHEMA)
@@ -58,7 +58,7 @@ def step_references_detection(parsing_context: ParsingContext) -> ParsingContext
         f".{ALINEA_CSS_CLASS}, .{ALINEA_CSS_CLASS} *, .{MOTIF_CSS_CLASS}, .{VISA_CSS_CLASS}"
     ):
         new_children = list(tag.children)
-        new_children = match_sections_with_documents(parsing_context, new_children)
+        new_children = match_sections_to_parents(parsing_context, new_children)
         replace_children(tag, new_children)
 
     return parsing_context
