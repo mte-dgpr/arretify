@@ -53,7 +53,11 @@ TITLE_NODE = regex_tree.Group(
             regex_tree.Sequence(
                 [
                     # Section name
-                    rf"^(?P<section_name>{join_with_or(SECTION_NAMES)})\s*",
+                    rf"^(?P<section_name>{join_with_or(SECTION_NAMES)})",
+                    # Mandatory space or punctuation
+                    # This prevents detecting a word beginning with a section name pattern
+                    # as a section name plus numbering
+                    r"[\s\-:]",
                     # Numbering pattern
                     regex_tree.Branching(
                         [

@@ -581,3 +581,33 @@ class TestParseTitleInfo(unittest.TestCase):
             levels=[5, 1],
             text="CECI EST UN CHAPITRE",
         )
+
+    def test_hyphen_before_numbering(self):
+        # Arrange
+        lines = initialize_lines(["Article - 1.2.3. Article"])
+
+        # Act
+        title_info = parse_title_info(lines[0].contents)
+
+        # Assert
+        assert title_info == TitleInfo(
+            section_type=SectionType.ARTICLE,
+            number="1.2.3",
+            levels=[1, 2, 3],
+            text="Article",
+        )
+
+    def test_hyphen_in_numbering(self):
+        # Arrange
+        lines = initialize_lines(["Article 2-1 Article"])
+
+        # Act
+        title_info = parse_title_info(lines[0].contents)
+
+        # Assert
+        assert title_info == TitleInfo(
+            section_type=SectionType.ARTICLE,
+            number="2-1",
+            levels=[2, 1],
+            text="Article",
+        )

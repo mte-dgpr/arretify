@@ -12,6 +12,9 @@ from arretify.types import ParsingContext
 EMPTY_LINE_PATTERN = PatternProxy(r"^\s*$")
 """Detect if the sentence is empty or full of whitespaces."""
 
+PUNCTUATION_LINE_PATTERN = PatternProxy(r"^[.,;:!?']+$")
+"""Detect if the sentence contains only punctuation."""
+
 FOOTER_PATTERN = PatternProxy(
     join_with_or(
         [
@@ -39,6 +42,9 @@ def clean_ocrized_file(parsing_context: ParsingContext) -> ParsingContext:
     # Remove empty lines
     lines = [line for line in lines if not _is_empty_line(line.contents)]
 
+    # Remove punctuation lines
+    lines = [line for line in lines if not _is_punctuation_line(line.contents)]
+
     # Remove footer lines
     lines = [line for line in lines if not _is_footer_line(line.contents)]
 
@@ -47,6 +53,10 @@ def clean_ocrized_file(parsing_context: ParsingContext) -> ParsingContext:
 
 def _is_empty_line(line: str) -> bool:
     return bool(EMPTY_LINE_PATTERN.search(line))
+
+
+def _is_punctuation_line(line: str) -> bool:
+    return bool(PUNCTUATION_LINE_PATTERN.search(line))
 
 
 def _is_footer_line(line: str) -> bool:
