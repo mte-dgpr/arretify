@@ -20,6 +20,7 @@ from arretify.regex_utils import (
     Settings,
 )
 from arretify.regex_utils.regex_tree.execute import match
+from .document_elements import TABLE_OF_CONTENTS_PAGING_PATTERN_S
 from .types import TitleInfo
 
 
@@ -48,12 +49,11 @@ TITLE_NODE = regex_tree.Group(
             # Article 1.2.3 - Article
             # Article 1.2.3
             # Article 1.2.3. - Article.
-            # Title is split into a section name, a numbering pattern and an optional text group
             regex_tree.Sequence(
                 [
                     # Section name
                     rf"^(?P<section_name>{join_with_or(SECTION_NAMES)})",
-                    # Do not catch optional punctuation, assert at least one space
+                    # Do not catch punctuation, assert at least one space
                     # This prevents detecting a word beginning with a section name pattern
                     # as a section name plus numbering
                     r"(?:[.\-:]*\s[.\-:\s]*)",
@@ -66,44 +66,46 @@ TITLE_NODE = regex_tree.Group(
                         ],
                         settings=Settings(ignore_accents=False),
                     ),
-                    # Do not catch the optional punctuation
+                    # Do not catch the punctuation
                     r"(?:[.\s\-:]*)",
                     # Optional text group not ending with 5 points and numbers (ToC)
-                    r"(?P<text>\s*(?:(?!\.{5}\s+\d+).)*)?$",
+                    rf"(?P<text>\s*(?:(?!{TABLE_OF_CONTENTS_PAGING_PATTERN_S}).)*)?$",
                 ]
             ),
             # This regex matches section names in arretes such as
-            # 1 TITRE
             # 1.2 - CHAPITRE
             # 1.2.3 - Article
-            # Title is split into a numbering pattern and a text group
-            regex_tree.Branching(
+            # 1.2.3. - Article.
+            regex_tree.Sequence(
                 [
-                    # If several numbers, we do not check the ending punctuation
-                    regex_tree.Sequence(
-                        [
-                            # Numbering pattern with integer as first number
-                            rf"(?P<number>{NUMBERS_PATTERN_S}(?:[.\-]{NUMBERS_PATTERN_S})+)",
-                            # Do not catch punctuation
-                            r"(?:[.\s\-:]*)",
-                            # Text group not ending with 5 points and numbers (ToC)
-                            r"(?P<text>\s*[A-Za-z](?:(?!\.{5}\s+\d+).)+?)$",
-                        ],
-                        settings=Settings(ignore_accents=False),
-                    ),
-                    # If only one number, we check the ending punctuation
-                    regex_tree.Sequence(
-                        [
-                            # Numbering pattern with only one integer
-                            rf"(?P<number>{NUMBERS_PATTERN_S})",
-                            # Do not catch punctuation
-                            r"(?:[.\s\-:]*)",
-                            # Text group without ending punctuation or 5 points and numbers (ToC)
-                            r"(?P<text>\s*[A-Za-z](?:(?!\.{5}\s+\d+).)+?(?<![.;:,]))$",
-                        ],
-                        settings=Settings(ignore_accents=False),
+                    # Numbering pattern with integers only
+                    rf"(?P<number>{NUMBERS_PATTERN_S}(?:[.\-]{NUMBERS_PATTERN_S})+)",
+                    # Do not catch punctuation
+                    r"(?:[.\s\-:]*)",
+                    # Text group not ending with 5 points and numbers (ToC)
+                    (
+                        rf"(?P<text>\s*[A-Za-z](?:(?!{TABLE_OF_CONTENTS_PAGING_PATTERN_S})"
+                        rf".)+?)$"
                     ),
                 ],
+                settings=Settings(ignore_accents=False),
+            ),
+            # This regex matches section names in arretes such as
+            # 1 TITRE
+            # 1 - Article
+            regex_tree.Sequence(
+                [
+                    # Numbering pattern with only one integer
+                    rf"(?P<number>{NUMBERS_PATTERN_S})",
+                    # Do not catch punctuation
+                    r"(?:[.\s\-:]*)",
+                    # Text group not ending with punctuation or 5 points and numbers (ToC)
+                    (
+                        rf"(?P<text>\s*[A-Za-z](?:(?!{TABLE_OF_CONTENTS_PAGING_PATTERN_S})"
+                        rf".)+?(?<![.;:,]))$"
+                    ),
+                ],
+                settings=Settings(ignore_accents=False),
             ),
         ],
     ),

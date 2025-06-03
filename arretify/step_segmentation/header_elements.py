@@ -5,11 +5,10 @@ from bs4 import Tag, BeautifulSoup
 from arretify.html_schemas import HEADER_ELEMENTS_SCHEMAS
 from arretify.parsing_utils.dates import DATE_NODE, render_date_regex_tree_match
 from arretify.parsing_utils.source_mapping import TextSegments
+from arretify.parsing_utils.patterns import join_split_pile_with_pattern
 from arretify.regex_utils import (
     map_regex_tree_match,
     split_string_with_regex_tree,
-    split_string_with_regex,
-    merge_matches_with_siblings,
     PatternProxy,
     join_with_or,
 )
@@ -25,6 +24,7 @@ from arretify.utils.markdown_parsing import (
     is_image,
     parse_markdown_image,
 )
+from .document_elements import is_document_element
 from .basic_elements import (
     parse_list,
     list_indentation,
@@ -121,17 +121,6 @@ SUPPLEMENTARY_MOTIF_INFORMATION_PATTERN = PatternProxy(
 )
 """Detect all other information that can be part of the motifs."""
 
-TABLE_OF_CONTENTS_LIST = [
-    r"sommaire",
-    r"table des matieres",
-    r"liste des (chapitres|articles)",
-    # This regex detects any sentence ending with 5 points and numbers
-    r".*?\s+[.]{5}\s+\d+",
-]
-
-TABLE_OF_CONTENTS_PATTERN = PatternProxy(rf"^{join_with_or(TABLE_OF_CONTENTS_LIST)}")
-"""Detect all table of contents starting sentences."""
-
 HEADER_ELEMENTS_PATTERNS: Dict[str, PatternProxy] = {
     "emblem": EMBLEM_PATTERN,
     "entity": ENTITY_PATTERN,
@@ -141,7 +130,6 @@ HEADER_ELEMENTS_PATTERNS: Dict[str, PatternProxy] = {
     "visa": VISA_PATTERN,
     "motif": MOTIF_PATTERN,
     "supplementary_motif_info": SUPPLEMENTARY_MOTIF_INFORMATION_PATTERN,
-    "table_of_contents": TABLE_OF_CONTENTS_PATTERN,
 }
 
 HEADER_ELEMENTS_PROBES: Dict[str, Callable] = {
@@ -155,7 +143,7 @@ HEADER_ELEMENTS_PROBES: Dict[str, Callable] = {
     "supplementary_motif_info": lambda line: bool(
         SUPPLEMENTARY_MOTIF_INFORMATION_PATTERN.match(line)
     ),
-    "table_of_contents": lambda line: bool(TABLE_OF_CONTENTS_PATTERN.match(line)),
+    "document_element": is_document_element,
     "title": is_title,
 }
 """Header elements probes."""
@@ -175,21 +163,6 @@ def _make_probe(header_element_name: str):
 
 def _wrap_in_div(soup: BeautifulSoup, lines: TextSegments) -> Tag:
     return make_new_tag(soup, "div", contents=[line.contents for line in lines])
-
-
-def _join_split_pile_with_pattern(
-    pile: List[str],
-    pattern: PatternProxy,
-) -> List[PageElementOrString]:
-    return list(
-        merge_matches_with_siblings(
-            split_string_with_regex(
-                pattern,
-                " ".join(pile),
-            ),
-            "following",
-        )
-    )
 
 
 def parse_header_beginning(
@@ -232,7 +205,7 @@ def _parse_header_element(
 
     elements: List[PageElementOrString]
     if join_split_with_pattern:
-        elements = _join_split_pile_with_pattern(pile, header_element_pattern)
+        elements = join_split_pile_with_pattern(pile, header_element_pattern)
     else:
         elements = [line for line in pile]
 
@@ -504,18 +477,4 @@ def parse_supplementary_motif_info_element(
         header,
         lines,
         "supplementary_motif_info",
-    )
-
-
-def parse_table_of_contents(
-    soup: BeautifulSoup,
-    header: Tag,
-    lines: TextSegments,
-) -> TextSegments:
-    return _parse_header_element(
-        soup,
-        header,
-        lines,
-        "table_of_contents",
-        join_split_with_pattern=False,
     )

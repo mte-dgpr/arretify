@@ -71,12 +71,6 @@ SUPPLEMENTARY_MOTIF_INFORMATION_SCHEMA = DataElementSchema(
     data_keys=[],
 )
 
-TABLE_OF_CONTENTS_SCHEMA = DataElementSchema(
-    name="table_of_contents",
-    tag_name="div",
-    data_keys=[],
-)
-
 HEADER_ELEMENTS_SCHEMAS: Dict[str, DataElementSchema] = {
     "emblem": EMBLEM_SCHEMA,
     "entity": ENTITY_SCHEMA,
@@ -86,7 +80,6 @@ HEADER_ELEMENTS_SCHEMAS: Dict[str, DataElementSchema] = {
     "visa": VISA_SCHEMA,
     "motif": MOTIF_SCHEMA,
     "supplementary_motif_info": SUPPLEMENTARY_MOTIF_INFORMATION_SCHEMA,
-    "table_of_contents": TABLE_OF_CONTENTS_SCHEMA,
 }
 
 SECTION_SCHEMA = DataElementSchema(
@@ -163,4 +156,16 @@ DEBUG_KEYWORD_SCHEMA = DataElementSchema(
     name="debug_keyword",
     tag_name="span",
     data_keys=["query"],
+)
+
+FOOTER_SCHEMA = DataElementSchema(
+    name="footer",
+    tag_name="div",
+    data_keys=[],
+)
+
+TABLE_OF_CONTENTS_SCHEMA = DataElementSchema(
+    name="table_of_contents",
+    tag_name="div",
+    data_keys=[],
 )

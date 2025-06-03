@@ -1,6 +1,7 @@
 from bs4 import Tag, BeautifulSoup
 
 from arretify.parsing_utils.source_mapping import TextSegments
+from .document_elements import parse_document_elements
 from .header_elements import (
     parse_header_beginning,
     parse_emblem_element,
@@ -11,7 +12,6 @@ from .header_elements import (
     parse_visa_element,
     parse_motif_element,
     parse_supplementary_motif_info_element,
-    parse_table_of_contents,
 )
 from .titles_detection import is_title
 
@@ -25,6 +25,9 @@ def parse_header(
     lines = parse_header_beginning(soup, header, lines)
 
     while lines and not is_title(lines[0].contents):
+
+        # Document elements
+        lines = parse_document_elements(soup, header, lines)
 
         # Emblem
         lines = parse_emblem_element(soup, header, lines)
@@ -49,8 +52,5 @@ def parse_header(
 
         # Supplementary motif info
         lines = parse_supplementary_motif_info_element(soup, header, lines)
-
-        # Table of contents
-        lines = parse_table_of_contents(soup, header, lines)
 
     return lines
