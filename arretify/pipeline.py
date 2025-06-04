@@ -33,9 +33,6 @@ def load_pdf_file(
     input_path: Path,
     arrete_template: str = DEFAULT_ARRETE_TEMPLATE,
 ) -> ParsingContext:
-    """
-    TODO : testing
-    """
     if not input_path.is_file():
         raise ValueError(f"Input path {input_path} is not a file.")
 
@@ -52,9 +49,6 @@ def load_ocr_file(
     input_path: Path,
     arrete_template: str = DEFAULT_ARRETE_TEMPLATE,
 ) -> ParsingContext:
-    """
-    TODO : testing
-    """
     raw_lines: List[str] = []
 
     if not input_path.is_file():
@@ -76,9 +70,6 @@ def load_ocr_pages(
     input_path: Path,
     arrete_template: str = DEFAULT_ARRETE_TEMPLATE,
 ) -> ParsingContext:
-    """
-    TODO : testing
-    """
     raw_lines: List[str] = []
 
     if not input_path.is_dir():
