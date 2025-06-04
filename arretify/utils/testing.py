@@ -92,6 +92,8 @@ def create_parsing_context(
 ) -> ParsingContext:
     return ParsingContext(
         soup=BeautifulSoup(html, features="html.parser"),
+        filename="test-file",
+        pdf=None,
         lines=[],
         settings=create_settings(),
         legifrance_client=None,

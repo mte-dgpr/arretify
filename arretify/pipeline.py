@@ -4,68 +4,97 @@ from pathlib import Path
 from bs4 import BeautifulSoup
 
 from .parsing_utils.source_mapping import initialize_lines
-from .types import ParsingContext, SessionContext, TextSegments
-from .settings import DEFAULT_ARRETE_TEMPLATE
+from .types import ParsingContext, SessionContext
+from .settings import DEFAULT_ARRETE_TEMPLATE, OCR_FILE_EXTENSION
 from .step_segmentation import step_segmentation
 from .clean_ocrized_file import clean_ocrized_file
 
 
-CleaningPipelineStep = Callable[[TextSegments], TextSegments]
-ParsingPipelineStep = Callable[[ParsingContext], ParsingContext]
+PipelineStep = Callable[[ParsingContext], ParsingContext]
 
 
-def ocr_to_html(
-    session_context: SessionContext,
-    lines: TextSegments,
-    arrete_template: str = DEFAULT_ARRETE_TEMPLATE,
-    cleaning_steps: List[CleaningPipelineStep] | None = None,
-    parsing_steps: List[ParsingPipelineStep] | None = None,
+def run_pipeline(
+    parsing_context: ParsingContext,
+    steps: List[PipelineStep] | None = None,
 ) -> ParsingContext:
-    if cleaning_steps is None:
-        cleaning_steps = [
+    if steps is None:
+        steps = [
             clean_ocrized_file,
-        ]
-
-    if parsing_steps is None:
-        parsing_steps = [
             step_segmentation,
         ]
 
-    return execute_parsing_pipeline(
-        ParsingContext.from_session_context(
-            session_context,
-            lines=execute_cleaning_pipeline(
-                lines=lines,
-                steps=cleaning_steps,
-            ),
-            soup=BeautifulSoup(arrete_template, features="html.parser"),
-        ),
-        steps=parsing_steps,
-    )
-
-
-def execute_cleaning_pipeline(
-    lines: TextSegments, steps: List[CleaningPipelineStep]
-) -> TextSegments:
-    for step in steps:
-        lines = step(lines)
-    return lines
-
-
-def execute_parsing_pipeline(
-    parsing_context: ParsingContext, steps: List[ParsingPipelineStep]
-) -> ParsingContext:
     for step in steps:
         parsing_context = step(parsing_context)
     return parsing_context
 
 
-def load_ocr_file(
+def load_pdf_file(
+    session_context: SessionContext,
     input_path: Path,
-) -> TextSegments:
+    arrete_template: str = DEFAULT_ARRETE_TEMPLATE,
+) -> ParsingContext:
+    """
+    TODO : testing
+    """
+    if not input_path.is_file():
+        raise ValueError(f"Input path {input_path} is not a file.")
+
+    return ParsingContext.from_session_context(
+        session_context,
+        filename=input_path.stem,
+        pdf=input_path.read_bytes(),
+        soup=BeautifulSoup(arrete_template, features="html.parser"),
+    )
+
+
+def load_ocr_file(
+    session_context: SessionContext,
+    input_path: Path,
+    arrete_template: str = DEFAULT_ARRETE_TEMPLATE,
+) -> ParsingContext:
+    """
+    TODO : testing
+    """
+    raw_lines: List[str] = []
+
+    if not input_path.is_file():
+        raise ValueError(f"Input path {input_path} is not a file.")
+
     with open(input_path, "r", encoding="utf-8") as f:
         raw_lines = f.readlines()
-    return initialize_lines(raw_lines)
+
+    return ParsingContext.from_session_context(
+        session_context,
+        filename=input_path.stem,
+        lines=initialize_lines(raw_lines),
+        soup=BeautifulSoup(arrete_template, features="html.parser"),
+    )
+
+
+def load_ocr_pages(
+    session_context: SessionContext,
+    input_path: Path,
+    arrete_template: str = DEFAULT_ARRETE_TEMPLATE,
+) -> ParsingContext:
+    """
+    TODO : testing
+    """
+    raw_lines: List[str] = []
+
+    if not input_path.is_dir():
+        raise ValueError(f"Input path {input_path} is not a directory.")
+
+    file_paths = sorted(input_path.glob(f"*{OCR_FILE_EXTENSION}"), key=lambda p: int(p.stem))
+    for file_path in file_paths:
+        with open(file_path, "r", encoding="utf-8") as file:
+            raw_lines.extend(file.readlines())
+
+    return ParsingContext.from_session_context(
+        session_context,
+        filename=input_path.name,
+        lines=initialize_lines(raw_lines),
+        soup=BeautifulSoup(arrete_template, features="html.parser"),
+    )
 
 
 def save_html_file(

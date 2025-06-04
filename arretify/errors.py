@@ -10,7 +10,11 @@ R = TypeVar("R")
 P = ParamSpec("P")
 
 
-class MissingSettingsError(ValueError):
+class SettingsError(ValueError):
+    pass
+
+
+class DependencyError(ImportError):
     pass
 
 

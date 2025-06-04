@@ -42,6 +42,9 @@ dev = [
   "types-beautifulsoup4~=4.12",
   "types-Markdown~=3.7",
 ]
+mistral = [
+  "mistralai~=1.8"
+]
 
 [tool.mypy]
 packages=["arretify"]

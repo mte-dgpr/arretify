@@ -1,15 +1,17 @@
 import sys
-from typing import Iterator, Tuple, List
+from typing import Tuple, List
 from pathlib import Path
 from optparse import OptionParser
 import traceback
 import logging
 from datetime import datetime
+from dataclasses import dataclass, replace as dataclass_replace
 
 from dotenv import load_dotenv
 
-from .types import SessionContext
-from .settings import APP_ROOT, EXAMPLES_DIR, OCR_FILE_EXTENSION, DEFAULT_ARRETE_TEMPLATE, Settings
+from .types import SessionContext, ParsingContext
+from .settings import APP_ROOT, EXAMPLES_DIR, OCR_FILE_EXTENSION, Settings
+from .step_ocr import step_ocr
 from .step_segmentation import step_segmentation
 from .step_references_detection import step_references_detection
 from .step_references_resolution import (
@@ -17,10 +19,12 @@ from .step_references_resolution import (
     step_eurlex_references_resolution,
 )
 from .step_consolidation import step_consolidation
-from .law_data.apis.legifrance import initialize_legifrance_client, MissingSettingsError
+from .law_data.apis.legifrance import initialize_legifrance_client
 from .law_data.apis.eurlex import initialize_eurlex_client
-from .errors import ArretifyError, ErrorCodes
-from .pipeline import ocr_to_html, load_ocr_file, save_html_file, ParsingPipelineStep
+from .law_data.apis.mistral import initialize_mistral_client
+from .errors import ArretifyError, ErrorCodes, DependencyError, SettingsError
+from .pipeline import run_pipeline, load_ocr_file, load_pdf_file, save_html_file, PipelineStep
+from .clean_ocrized_file import clean_ocrized_file
 
 
 _LOGGER = logging.getLogger("arretify")
@@ -48,31 +52,34 @@ def main(args: List[str]) -> None:
     )
     (options, args) = parser.parse_args(args=args)
 
-    # Load environment variables from .env file
+    # ---------------- Initialization ---------------- #
+    # Initialize environment variables before anything else
     load_dotenv()
 
-    # Initialize logging before anything else, so we get all logs
+    # Then initialize logging, so we don't miss any messages
     _initialize_root_logger(_LOGGER, options.verbose)
 
-    # Initialize session context
     session_context = SessionContext(
         settings=Settings.from_env(),
     )
-
-    # Initialize input and output paths
     input_path = Path(options.input)
     output_path = Path(options.output)
+    features = _Features()
+    was_ocr_disabled_warning_given = False
 
-    # Initialize steps
-    parsing_steps: List[ParsingPipelineStep] = [
-        step_segmentation,
-        step_references_detection,
-    ]
+    # Initialize Mistral client
+    try:
+        session_context = initialize_mistral_client(session_context)
+    except (SettingsError, DependencyError):
+        pass
+    else:
+        _LOGGER.info("Mistral OCR is active")
+        features = dataclass_replace(features, ocr=True)
 
-    # Initialize reference resolution steps
+    # Initialize Legifrance client
     try:
         session_context = initialize_legifrance_client(session_context)
-    except MissingSettingsError:
+    except SettingsError:
         _LOGGER.info(
             "Legifrance credentials not provided, skipping Legifrance references resolution"
         )
@@ -81,70 +88,159 @@ def main(args: List[str]) -> None:
             _LOGGER.warning("failed to initialize Legifrance client")
     else:
         _LOGGER.info("Legifrance references resolution is active")
-        parsing_steps.append(step_legifrance_references_resolution)
+        features = dataclass_replace(features, legifrance=True)
 
+    # Initialize Eurlex client
     try:
         session_context = initialize_eurlex_client(session_context)
-    except MissingSettingsError:
+    except SettingsError:
         _LOGGER.info("Eurlex credentials not provided, skipping Eurlex references resolution")
     else:
         _LOGGER.info("Eurlex references resolution is active")
-        parsing_steps.append(step_eurlex_references_resolution)
+        features = dataclass_replace(features, eurlex=True)
 
-    # Add consolidation step
-    parsing_steps.append(step_consolidation)
-
-    # Do the parsing
+    # ---------------- Processing ---------------- #
     if input_path.is_dir():
         if not output_path.is_dir():
             _LOGGER.error(f"Expected output to be a directory, got {output_path}")
 
-        # Sort the files to ensure consistent order (useful for snapshot testing)
-        ocrized_files_walk = sorted(_walk_ocrized_files(input_path), key=lambda x: x[1].name)
-        for i, (relative_root, ocrized_file_path) in enumerate(ocrized_files_walk):
+        all_input_file_paths = _walk_input_dir(input_path)
+        for i, (relative_root, input_file_path) in enumerate(all_input_file_paths):
             output_root = output_path / relative_root
-            # Makes sure output dir exists
             output_root.mkdir(parents=True, exist_ok=True)
-            html_file_path = output_root / f"{ocrized_file_path.stem}.html"
-            _LOGGER.info(f"\n\n[{i + 1}/{len(ocrized_files_walk)}] parsing {ocrized_file_path} ...")
+            html_file_path = output_root / f"{input_file_path.stem}.html"
+
+            _LOGGER.info(
+                f"\n\n[{i + 1}/{len(all_input_file_paths)}] processing {input_file_path} ..."
+            )
+
+            if _is_pdf_path(input_file_path) and features.ocr is False:
+                if not was_ocr_disabled_warning_given:
+                    _ocr_disabled_warning()
+                    was_ocr_disabled_warning_given = True
+
+                _LOGGER.warning(
+                    f"Skipping {input_file_path} because it is a PDF "
+                    "and OCR support is not enabled."
+                )
+                continue
+
             try:
-                save_html_file(
+                _process_file(
+                    session_context,
+                    input_file_path,
                     html_file_path,
-                    ocr_to_html(
-                        session_context,
-                        load_ocr_file(ocrized_file_path),
-                        arrete_template=DEFAULT_ARRETE_TEMPLATE,
-                        parsing_steps=parsing_steps,
-                    ),
+                    features,
                 )
             except Exception:
                 _LOGGER.error(
-                    f"[{i + 1}/{len(ocrized_files_walk)}] FAILED : {ocrized_file_path} ..."
+                    f"[{i + 1}/{len(all_input_file_paths)}] FAILED : {input_file_path} ..."
                 )
                 error_traceback = traceback.format_exc()
                 _LOGGER.error(f"Traceback:\n{error_traceback}")
 
     else:
-        save_html_file(
+        if _is_pdf_path(input_path) and features.ocr is False:
+            _ocr_disabled_warning()
+            _LOGGER.error(
+                f"Failed to process {input_path} because it is a PDF "
+                "and OCR support is not enabled."
+            )
+            sys.exit(1)
+
+        _process_file(
+            session_context,
+            input_path,
             output_path,
-            ocr_to_html(
-                session_context,
-                load_ocr_file(input_path),
-                arrete_template=DEFAULT_ARRETE_TEMPLATE,
-                parsing_steps=parsing_steps,
-            ),
+            features,
         )
 
 
-def _walk_ocrized_files(
+def _walk_input_dir(
     dir_path: Path,
-) -> Iterator[Tuple[Path, Path]]:
+) -> List[Tuple[Path, Path]]:
+    pairs: List[Tuple[Path, Path]] = []
     for root, _, file_names in dir_path.walk():
-        ocrized_file_paths = [
-            root / file_name for file_name in file_names if file_name.endswith(OCR_FILE_EXTENSION)
+        file_paths = [
+            root / file_name
+            for file_name in file_names
+            if _is_ocr_path(Path(file_name)) or _is_pdf_path(Path(file_name))
         ]
-        for ocrized_file_path in ocrized_file_paths:
-            yield root.relative_to(dir_path), ocrized_file_path
+        for file_path in file_paths:
+            pairs.append((root.relative_to(dir_path), file_path))
+
+    # Sort the files to ensure consistent order (useful for snapshot testing)
+    return sorted(pairs, key=lambda x: x[1].name)
+
+
+@dataclass(frozen=True)
+class _Features:
+    ocr: bool = False
+    legifrance: bool = False
+    eurlex: bool = False
+
+
+def _process_file(
+    session_context: SessionContext,
+    input_path: Path,
+    output_path: Path,
+    features: _Features,
+) -> None:
+    pipeline_steps: List[PipelineStep] = [
+        clean_ocrized_file,
+        step_segmentation,
+        step_references_detection,
+    ]
+
+    if features.legifrance:
+        pipeline_steps.append(step_legifrance_references_resolution)
+    if features.eurlex:
+        pipeline_steps.append(step_eurlex_references_resolution)
+    pipeline_steps.append(step_consolidation)
+
+    parsing_context: ParsingContext
+    if _is_pdf_path(input_path):
+        if not features.ocr:
+            raise RuntimeError("OCR is disabled.")
+        pipeline_steps.insert(0, step_ocr)
+        parsing_context = load_pdf_file(
+            session_context,
+            input_path,
+        )
+    elif _is_ocr_path(input_path):
+        parsing_context = load_ocr_file(
+            session_context,
+            input_path,
+        )
+    else:
+        raise ValueError(
+            f"Unsupported file type: {input_path.suffix}. "
+            f"Expected .pdf or .{OCR_FILE_EXTENSION} file."
+        )
+
+    save_html_file(
+        output_path,
+        run_pipeline(
+            parsing_context,
+            pipeline_steps,
+        ),
+    )
+
+
+def _ocr_disabled_warning() -> None:
+    _LOGGER.warning(
+        "To enable OCR processing for pdf input : "
+        "\n- provide MistralAI credentials"
+        "\n- install arretify with : pip install arretify[mistral]"
+    )
+
+
+def _is_pdf_path(file_path: Path) -> bool:
+    return file_path.suffix.lower() == ".pdf"
+
+
+def _is_ocr_path(file_path: Path) -> bool:
+    return file_path.suffix.lower() == OCR_FILE_EXTENSION
 
 
 class _MainLoggingFormatter(logging.Formatter):
