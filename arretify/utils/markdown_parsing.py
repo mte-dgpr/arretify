@@ -37,7 +37,7 @@ def is_table_line(line: str) -> bool:
 
 def is_table_description(line: str, pile: List[PageElementOrString]) -> bool:
     # Sentence starts with any number of * between parentheses or without parentheses
-    match = TABLE_DESCRIPTION_PATTERN.search(line)
+    match = TABLE_DESCRIPTION_PATTERN.match(line)
     if match:
         return True
 
@@ -66,7 +66,7 @@ def is_list(line: str) -> bool:
 
 def is_image(line: str) -> bool:
     """Detect if the sentence starts with an image."""
-    return bool(IMAGE_PATTERN.search(line))
+    return bool(IMAGE_PATTERN.match(line))
 
 
 def parse_markdown_table(elements: List[PageElementOrString]):
