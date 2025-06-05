@@ -25,6 +25,7 @@ from .law_data.apis.mistral import initialize_mistral_client
 from .errors import ArretifyError, ErrorCodes, DependencyError, SettingsError
 from .pipeline import run_pipeline, load_ocr_file, load_pdf_file, save_html_file, PipelineStep
 from .clean_ocrized_file import clean_ocrized_file
+from .utils.files import is_pdf_path, is_ocr_path
 
 
 _LOGGER = logging.getLogger("arretify")
@@ -114,7 +115,7 @@ def main(args: List[str]) -> None:
                 f"\n\n[{i + 1}/{len(all_input_file_paths)}] processing {input_file_path} ..."
             )
 
-            if _is_pdf_path(input_file_path) and features.ocr is False:
+            if is_pdf_path(input_file_path) and features.ocr is False:
                 if not was_ocr_disabled_warning_given:
                     _ocr_disabled_warning()
                     was_ocr_disabled_warning_given = True
@@ -140,7 +141,7 @@ def main(args: List[str]) -> None:
                 _LOGGER.error(f"Traceback:\n{error_traceback}")
 
     else:
-        if _is_pdf_path(input_path) and features.ocr is False:
+        if is_pdf_path(input_path) and features.ocr is False:
             _ocr_disabled_warning()
             _LOGGER.error(
                 f"Failed to process {input_path} because it is a PDF "
@@ -164,7 +165,7 @@ def _walk_input_dir(
         file_paths = [
             root / file_name
             for file_name in file_names
-            if _is_ocr_path(Path(file_name)) or _is_pdf_path(Path(file_name))
+            if is_ocr_path(Path(file_name)) or is_pdf_path(Path(file_name))
         ]
         for file_path in file_paths:
             pairs.append((root.relative_to(dir_path), file_path))
@@ -199,7 +200,7 @@ def _process_file(
     pipeline_steps.append(step_consolidation)
 
     parsing_context: ParsingContext
-    if _is_pdf_path(input_path):
+    if is_pdf_path(input_path):
         if not features.ocr:
             raise RuntimeError("OCR is disabled.")
         pipeline_steps.insert(0, step_ocr)
@@ -207,7 +208,7 @@ def _process_file(
             session_context,
             input_path,
         )
-    elif _is_ocr_path(input_path):
+    elif is_ocr_path(input_path):
         parsing_context = load_ocr_file(
             session_context,
             input_path,
@@ -233,14 +234,6 @@ def _ocr_disabled_warning() -> None:
         "\n- provide MistralAI credentials"
         "\n- install arretify with : pip install arretify[mistral]"
     )
-
-
-def _is_pdf_path(file_path: Path) -> bool:
-    return file_path.suffix.lower() == ".pdf"
-
-
-def _is_ocr_path(file_path: Path) -> bool:
-    return file_path.suffix.lower() == OCR_FILE_EXTENSION
 
 
 class _MainLoggingFormatter(logging.Formatter):
