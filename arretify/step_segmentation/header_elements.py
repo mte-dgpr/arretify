@@ -149,7 +149,7 @@ HEADER_ELEMENTS_PROBES: Dict[str, Callable] = {
 """Header elements probes."""
 
 
-def _make_probe(header_element_name: str):
+def _make_negative_probe(header_element_name: str):
 
     next_probes = [
         value for key, value in HEADER_ELEMENTS_PROBES.items() if key != header_element_name
@@ -170,7 +170,7 @@ def parse_header_beginning(
     header: Tag,
     lines: TextSegments,
 ):
-    is_first_header_element = _make_probe("")
+    is_first_header_element = _make_negative_probe("")
 
     while lines and not is_first_header_element(lines[0].contents):
         if is_image(lines[0].contents):
@@ -188,18 +188,15 @@ def _parse_header_element(
     header_element_name: str,
     join_split_with_pattern: bool = True,
 ) -> TextSegments:
-    # Process lines
     pile: List[str] = []
-    image_pile: List[str] = []
-
-    is_next_header_element = _make_probe(header_element_name)
+    is_next_header_element = _make_negative_probe(header_element_name)
     header_element_pattern = HEADER_ELEMENTS_PATTERNS[header_element_name]
     header_element_schema = HEADER_ELEMENTS_SCHEMAS[header_element_name]
 
     while lines and not is_next_header_element(lines[0].contents):
 
         if is_image(lines[0].contents):
-            image_pile.append(lines.pop(0).contents)
+            header.append(parse_markdown_image(lines.pop(0).contents))
         else:
             pile.append(lines.pop(0).contents)
 
@@ -209,20 +206,13 @@ def _parse_header_element(
     else:
         elements = [line for line in pile]
 
-    if elements or image_pile:
+    if elements:
 
-        # Create header element
         header_element = make_data_tag(
             soup,
             header_element_schema,
             contents=wrap_in_tag(soup, elements, "div"),
         )
-
-        # Append found images under this header element
-        for image_str in image_pile:
-            header_element.append(parse_markdown_image(image_str))
-
-        # Append to the header
         header.append(header_element)
 
     return lines
@@ -289,21 +279,18 @@ def parse_arrete_title_element(
     header: Tag,
     lines: TextSegments,
 ):
-    # Process lines
     pile: List[str] = []
-    image_pile: List[str] = []
     header_element_name = "arrete_title"
-    is_next_header_element = _make_probe(header_element_name)
+    is_next_header_element = _make_negative_probe(header_element_name)
 
     while lines and not is_next_header_element(lines[0].contents):
 
         if is_image(lines[0].contents):
-            image_pile.append(lines.pop(0).contents)
+            header.append(parse_markdown_image(lines.pop(0).contents))
         else:
             pile.append(lines.pop(0).contents)
 
-    # Create header element
-    if pile or image_pile:
+    if pile:
 
         header_element = make_data_tag(
             soup,
@@ -316,12 +303,6 @@ def parse_arrete_title_element(
                 )
             ],
         )
-
-        # Append found images under this header element
-        for image_str in image_pile:
-            header_element.append(parse_markdown_image(image_str))
-
-        # Append to the header
         header.append(header_element)
 
     return lines
@@ -347,7 +328,7 @@ def _parse_visas_or_motifs(
     header_element_name: str,
 ) -> TextSegments:
     pile: List[PageElementOrString]
-    is_next_header_element = _make_probe(header_element_name)
+    is_next_header_element = _make_negative_probe(header_element_name)
 
     if not lines or is_next_header_element(lines[0].contents):
         return lines

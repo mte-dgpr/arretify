@@ -160,7 +160,7 @@ DATE_SCHEMA = DataElementSchema(
     data_keys=[],
 )
 
-# -------------------- Operation schemas -------------------- #
+# -------------------- Operations schemas -------------------- #
 
 OPERATION_SCHEMA = DataElementSchema(
     name="operation",
@@ -175,7 +175,7 @@ OPERATION_SCHEMA = DataElementSchema(
     ],
 )
 
-# -------------------- Error schemas -------------------- #
+# -------------------- Errors schemas -------------------- #
 
 ERROR_SCHEMA = DataElementSchema(
     name="error",

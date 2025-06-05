@@ -59,6 +59,13 @@ DOCUMENT_ELEMENTS_PROBES: Dict[str, Callable] = {
 def _make_positive_probe(document_element_name: Optional[str] = None) -> Callable[[str], bool]:
 
     if document_element_name:
+
+        if document_element_name not in DOCUMENT_ELEMENTS_PROBES:
+            raise ValueError(
+                f"Unknown document element name: {document_element_name}. "
+                f"Available document elements: {list(DOCUMENT_ELEMENTS_PROBES.keys())}."
+            )
+
         return DOCUMENT_ELEMENTS_PROBES[document_element_name]
 
     # If no specific document element is requested, we return a probe that checks for any
@@ -98,12 +105,12 @@ def _parse_document_element(
 
     if pile:
 
-        header_element = make_data_tag(
+        document_element = make_data_tag(
             soup,
             document_element_schema,
             contents=wrap_in_tag(soup, pile, "div"),
         )
-        container.append(header_element)
+        container.append(document_element)
 
     return lines
 
