@@ -17,7 +17,6 @@ from arretify.parsing_utils.numbering import (
 from arretify.regex_utils import (
     regex_tree,
     join_with_or,
-    Settings,
 )
 from arretify.regex_utils.regex_tree.execute import match
 from .document_elements import TABLE_OF_CONTENTS_PAGING_PATTERN_S
@@ -64,7 +63,6 @@ TITLE_NODE = regex_tree.Group(
                             rf"(?P<number>(\d|I|i)){EME_PATTERN_S}",
                             rf"(?P<number>{NUMBERING_PATTERN_S}(?:[.\-]{NUMBERS_PATTERN_S})*)",
                         ],
-                        settings=Settings(ignore_accents=False),
                     ),
                     # Do not catch the punctuation
                     r"(?:[.\s\-:]*)",
@@ -79,7 +77,7 @@ TITLE_NODE = regex_tree.Group(
             regex_tree.Sequence(
                 [
                     # Numbering pattern with at least two numbers
-                    rf"(?P<number>{NUMBERING_PATTERN_S}(?:[.\-]{NUMBERS_PATTERN_S})+)",
+                    rf"^(?P<number>{NUMBERING_PATTERN_S}(?:[.\-]{NUMBERS_PATTERN_S})+)",
                     # Do not catch punctuation
                     r"(?:[.\s\-:]*)",
                     # Text group not ending with 5 points and numbers (ToC)
@@ -88,7 +86,6 @@ TITLE_NODE = regex_tree.Group(
                         rf".)+?)$"
                     ),
                 ],
-                settings=Settings(ignore_accents=False),
             ),
             # This regex matches section names in arretes such as
             # 1 TITRE
@@ -96,16 +93,16 @@ TITLE_NODE = regex_tree.Group(
             regex_tree.Sequence(
                 [
                     # Numbering pattern with only one integer
-                    rf"(?P<number>{NUMBERS_PATTERN_S})",
-                    # Do not catch punctuation
-                    r"(?:[.\s\-:]*)",
+                    rf"^(?P<number>{NUMBERS_PATTERN_S})",
+                    # Do not catch punctuation, assert at least one space
+                    # This prevents detecting a word as a numbering plus text group
+                    r"(?:[.\-:]*\s[.\-:\s]*)",
                     # Text group not ending with punctuation or 5 points and numbers (ToC)
                     (
                         rf"(?P<text>\s*[A-Za-z](?:(?!{TABLE_OF_CONTENTS_PAGING_PATTERN_S})"
                         rf".)+?(?<![.;:,]))$"
                     ),
                 ],
-                settings=Settings(ignore_accents=False),
             ),
         ],
     ),
