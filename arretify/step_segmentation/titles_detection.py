@@ -52,23 +52,42 @@ TITLE_NODE = regex_tree.Group(
                 [
                     # Section name
                     rf"^(?P<section_name>{join_with_or(SECTION_NAMES)})",
-                    # Do not catch punctuation, assert at least one space
-                    # This prevents detecting a word beginning with a section name pattern
-                    # as a section name plus numbering
-                    r"(?:[.\-:]*\s[.\-:\s]*)",
-                    # Numbering pattern, only first can be letter or roman
                     regex_tree.Branching(
                         [
-                            rf"(?P<number>{ORDINAL_PATTERN_S})",
-                            rf"(?P<number>(\d|I|i)){EME_PATTERN_S}",
-                            rf"(?P<number>{NUMBERING_PATTERN_S}(?:[.\-]{NUMBERS_PATTERN_S})*)",
+                            # Title has no numbering
+                            regex_tree.Sequence(
+                                [
+                                    # Do not catch the punctuation
+                                    r"(?:[.\s\-:]*)$",
+                                ]
+                            ),
+                            # Title has numbering
+                            regex_tree.Sequence(
+                                [
+                                    # Do not catch punctuation, assert at least one space
+                                    # This prevents detecting a word beginning with a section name
+                                    # pattern as a section name plus numbering
+                                    r"(?:[.\-:]*\s[.\-:\s]*)",
+                                    # Numbering pattern
+                                    regex_tree.Branching(
+                                        [
+                                            rf"(?P<number>{ORDINAL_PATTERN_S})",
+                                            rf"(?P<number>(\d|I|i)){EME_PATTERN_S}",
+                                            # Only first can be roman or letter
+                                            rf"(?P<number>{NUMBERING_PATTERN_S}"
+                                            rf"(?:[.\-]{NUMBERS_PATTERN_S})*)",
+                                        ],
+                                    ),
+                                    # Do not catch the punctuation
+                                    r"(?:[.\s\-:]*)",
+                                    # Optional text group not ending with 5 points and numbers (ToC)
+                                    r"(?P<text>\s*[A-Za-z]"
+                                    rf"(?:(?!{TABLE_OF_CONTENTS_PAGING_PATTERN_S}).)*)?$",
+                                ]
+                            ),
                         ],
                     ),
-                    # Do not catch the punctuation
-                    r"(?:[.\s\-:]*)",
-                    # Optional text group not ending with 5 points and numbers (ToC)
-                    rf"(?P<text>\s*(?:(?!{TABLE_OF_CONTENTS_PAGING_PATTERN_S}).)*)?$",
-                ]
+                ],
             ),
             # This regex matches section names in arretes such as
             # 1.2 - CHAPITRE
@@ -81,10 +100,7 @@ TITLE_NODE = regex_tree.Group(
                     # Do not catch punctuation
                     r"(?:[.\s\-:]*)",
                     # Text group not ending with 5 points and numbers (ToC)
-                    (
-                        rf"(?P<text>\s*[A-Za-z](?:(?!{TABLE_OF_CONTENTS_PAGING_PATTERN_S})"
-                        rf".)+?)$"
-                    ),
+                    (rf"(?P<text>\s*[A-Za-z](?:(?!{TABLE_OF_CONTENTS_PAGING_PATTERN_S})" r".)+?)$"),
                 ],
             ),
             # This regex matches section names in arretes such as
@@ -100,7 +116,7 @@ TITLE_NODE = regex_tree.Group(
                     # Text group not ending with punctuation or 5 points and numbers (ToC)
                     (
                         rf"(?P<text>\s*[A-Za-z](?:(?!{TABLE_OF_CONTENTS_PAGING_PATTERN_S})"
-                        rf".)+?(?<![.;:,]))$"
+                        r".)+?(?<![.;:,]))$"
                     ),
                 ],
             ),

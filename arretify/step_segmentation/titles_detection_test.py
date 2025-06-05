@@ -582,3 +582,18 @@ class TestParseTitleInfo(unittest.TestCase):
             levels=[2, 1, 1],
             text="Sous-titre",
         )
+
+    def test_appendix(self):
+        # Arrange
+        lines = initialize_lines(["ANNEXE "])
+
+        # Act
+        title_info = parse_title_info(lines[0].contents)
+
+        # Assert
+        assert title_info == TitleInfo(
+            section_type=SectionType.ANNEXE,
+            number="",
+            levels=None,
+            text=None,
+        )
