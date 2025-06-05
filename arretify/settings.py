@@ -13,15 +13,21 @@ SettingsType = TypeVar("SettingsType", bound="Settings")
 
 _LOGGER = logging.getLogger(__name__)
 _SETTINGS_ENV_MAP = {
+    # General settings
     "tmp_dir": "TMP_DIR",
     "env": "ENV",
+    # Settings for clients_api_droit
     "legifrance_client_id": "LEGIFRANCE_CLIENT_ID",
     "legifrance_client_secret": "LEGIFRANCE_CLIENT_SECRET",
     "eurlex_web_service_username": "EURLEX_WEB_SERVICE_USERNAME",
     "eurlex_web_service_password": "EURLEX_WEB_SERVICE_PASSWORD",
+    # Settings for MistralAI
+    "mistral_api_key": "MISTRAL_API_KEY",
+    "mistral_ocr_model": "MISTRAL_OCR_MODEL",
 }
 
 
+# Static settings
 APP_ROOT = pathlib.Path(__file__).resolve().parent.parent
 EXAMPLES_DIR = APP_ROOT / "examples"
 DEFAULT_ARRETE_TEMPLATE = open(
@@ -36,10 +42,42 @@ class Settings(BaseModel):
     tmp_dir: Path = Field(default_factory=lambda: Path(mkdtemp(prefix="arretify-")))
 
     # Settings for clients_api_droit
-    legifrance_client_id: Optional[str] = Field(default=None)
-    legifrance_client_secret: Optional[str] = Field(default=None)
-    eurlex_web_service_username: Optional[str] = Field(default=None)
-    eurlex_web_service_password: Optional[str] = Field(default=None)
+    legifrance_client_id: Optional[str] = Field(
+        default=None,
+        description=(
+            "Client ID for Legifrance API. " "If not set, the client will not be initialized."
+        ),
+    )
+    legifrance_client_secret: Optional[str] = Field(
+        default=None,
+        description=(
+            "Client secret for Legifrance API. " "If not set, the client will not be initialized."
+        ),
+    )
+    eurlex_web_service_username: Optional[str] = Field(
+        default=None,
+        description=(
+            "Username for Eurlex web service. " "If not set, the client will not be initialized."
+        ),
+    )
+    eurlex_web_service_password: Optional[str] = Field(
+        default=None,
+        description=(
+            "Password for Eurlex web service. " "If not set, the client will not be initialized."
+        ),
+    )
+
+    # Settings for MistralAI
+    mistral_api_key: Optional[str] = Field(
+        default=None,
+        description=(
+            "API key for Mistral AI. " "If not set, the Mistral client will not be initialized."
+        ),
+    )
+    mistral_ocr_model: str = Field(
+        default="mistral-ocr-latest",
+        description="Mistral OCR model to use for processing documents.",
+    )
 
     @classmethod
     def from_env(cls: Type[SettingsType], env_map: Dict[str, str] | None = None) -> SettingsType:

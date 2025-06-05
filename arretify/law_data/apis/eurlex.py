@@ -7,7 +7,7 @@ from arretify._vendor.clients_api_droit.clients_api_droit.eurlex import (
     search_act,
 )
 
-from arretify.errors import MissingSettingsError
+from arretify.errors import SettingsError
 from arretify.types import SessionContext
 from arretify.utils.dev_cache import use_dev_cache
 
@@ -20,7 +20,7 @@ def initialize_eurlex_client(session_context: SessionContext) -> SessionContext:
         not session_context.settings.eurlex_web_service_username
         or not session_context.settings.eurlex_web_service_password
     ):
-        raise MissingSettingsError("Eurlex credentials are not provided")
+        raise SettingsError("Eurlex credentials are not provided")
 
     eurlex_settings = EurlexSettings(
         web_service_username=session_context.settings.eurlex_web_service_username,

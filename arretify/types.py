@@ -2,10 +2,12 @@ import re
 from typing import List, Union, Tuple, Optional, Type, TypeVar
 from enum import Enum
 from dataclasses import dataclass, fields
+from uuid import uuid4
 
 from bs4 import BeautifulSoup, PageElement
 from arretify._vendor.clients_api_droit.clients_api_droit.legifrance import LegifranceClient
 from arretify._vendor.clients_api_droit.clients_api_droit.eurlex import EurlexClient
+from arretify._vendor import mistralai
 
 from arretify.settings import Settings
 
@@ -72,6 +74,7 @@ class SessionContext:
     settings: Settings
     legifrance_client: Optional[LegifranceClient] = None
     eurlex_client: Optional[EurlexClient] = None
+    mistral_client: Optional[mistralai.Mistral] = None
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -82,20 +85,43 @@ class ParsingContext(SessionContext):
     and the settings used for parsing.
     """
 
-    lines: TextSegments
+    filename: str
+    """
+    Name of the file being processed (without extension).
+    This is used to identify the parsing context and name the output files.
+    """
+
+    pdf: Optional[bytes]
+    """
+    PDF of the arrêté. This is used for OCR processing.
+    TODO : support for streaming PDF content
+    """
+
+    lines: Optional[TextSegments]
+    """
+    Contents of the markdown pages after OCR processing.
+    TODO : TextSegments should keep track of pages from the original document
+    """
+
     soup: BeautifulSoup
 
     @classmethod
     def from_session_context(
         cls: Type[ParsingContextType],
         session_context: SessionContext,
-        lines: TextSegments,
         soup: BeautifulSoup,
+        filename: str | None = None,
+        pdf: Optional[bytes] = None,
+        lines: TextSegments | None = None,
     ) -> ParsingContextType:
+        if filename is None:
+            filename = str(uuid4())
         return cls(
             **{
                 field.name: getattr(session_context, field.name) for field in fields(SessionContext)
             },
+            filename=filename,
+            pdf=pdf,
             lines=lines,
             soup=soup,
         )
