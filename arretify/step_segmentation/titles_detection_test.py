@@ -172,13 +172,8 @@ class TestTitlePattern(unittest.TestCase):
         text = "A. Chapitre"
         assert not is_title(text)
 
-    def test_roman_hierarchical(self):
-        # TODO: Case to solve
-        text = "II.1.1 - Sous-titre"
-        assert not is_title(text)
-
     def test_more_than_two_numbers(self):
-        text = "27406 LOUVIERS"
+        text = "27406 Code postal"
         assert not is_title(text)
 
     def test_toc_no_name(self):
@@ -571,4 +566,19 @@ class TestParseTitleInfo(unittest.TestCase):
             number="5.3",
             levels=[5, 3],
             text="CECI EST UN CHAPITRE",
+        )
+
+    def test_roman_no_section_name(self):
+        # Arrange
+        lines = initialize_lines(["II.1.1 - Sous-titre"])
+
+        # Act
+        title_info = parse_title_info(lines[0].contents)
+
+        # Assert
+        assert title_info == TitleInfo(
+            section_type=SectionType.UNKNOWN,
+            number="II.1.1",
+            levels=[2, 1, 1],
+            text="Sous-titre",
         )

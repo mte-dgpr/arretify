@@ -57,7 +57,7 @@ TITLE_NODE = regex_tree.Group(
                     # This prevents detecting a word beginning with a section name pattern
                     # as a section name plus numbering
                     r"(?:[.\-:]*\s[.\-:\s]*)",
-                    # Numbering pattern
+                    # Numbering pattern, only first can be letter or roman
                     regex_tree.Branching(
                         [
                             rf"(?P<number>{ORDINAL_PATTERN_S})",
@@ -78,8 +78,8 @@ TITLE_NODE = regex_tree.Group(
             # 1.2.3. - Article.
             regex_tree.Sequence(
                 [
-                    # Numbering pattern with integers only
-                    rf"(?P<number>{NUMBERS_PATTERN_S}(?:[.\-]{NUMBERS_PATTERN_S})+)",
+                    # Numbering pattern with at least two numbers
+                    rf"(?P<number>{NUMBERING_PATTERN_S}(?:[.\-]{NUMBERS_PATTERN_S})+)",
                     # Do not catch punctuation
                     r"(?:[.\s\-:]*)",
                     # Text group not ending with 5 points and numbers (ToC)
