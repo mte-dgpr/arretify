@@ -14,7 +14,7 @@ from arretify._vendor.clients_api_droit.clients_api_droit.legifrance import (
 
 from arretify.types import SessionContext
 from arretify.utils.dev_cache import use_dev_cache
-from arretify.errors import ErrorCodes, catch_and_convert_into_arretify_error, MissingSettingsError
+from arretify.errors import ErrorCodes, catch_and_convert_into_arretify_error, SettingsError
 
 
 @catch_and_convert_into_arretify_error(RequestException, ErrorCodes.law_data_api_error)
@@ -23,7 +23,7 @@ def initialize_legifrance_client(session_context: SessionContext) -> SessionCont
         not session_context.settings.legifrance_client_id
         or not session_context.settings.legifrance_client_secret
     ):
-        raise MissingSettingsError("Legifrance credentials are not provided")
+        raise SettingsError("Legifrance credentials are not provided")
 
     legifrance_settings = LegifranceSettings(
         client_id=session_context.settings.legifrance_client_id,
