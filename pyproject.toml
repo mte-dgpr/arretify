@@ -27,6 +27,9 @@ dependencies = [
   "requests-cache~=1.2",
   "zeep~=4.3",
   "lxml~=5.3",
+
+  # TODO : move this as optional dependency
+  "mistralai~=1.8"
 ]
 
 [project.optional-dependencies]
