@@ -26,6 +26,10 @@ from .types import TitleInfo
 _LOGGER = logging.getLogger(__name__)
 
 
+TITLE_PUNCTUATION_PATTERN_S = r"[.\s\-:]"
+IS_NOT_TABLE_OF_CONTENTS_PAGING = rf"(?!.*{TABLE_OF_CONTENTS_PAGING_PATTERN_S}$)"
+IS_NOT_ENDING_WITH_PUNCTUATION = r"(?!.*[.;:,]$)"
+
 SECTION_NAMES = [
     r"annexe",
     r"titre",
@@ -57,32 +61,28 @@ TITLE_NODE = regex_tree.Group(
                             # Title has no numbering
                             regex_tree.Sequence(
                                 [
-                                    # Do not catch the punctuation
-                                    r"(?:[.\s\-:]*)$",
+                                    # Punctuation before the end of the line
+                                    rf"{TITLE_PUNCTUATION_PATTERN_S}*$",
                                 ]
                             ),
                             # Title has numbering
                             regex_tree.Sequence(
                                 [
-                                    # Do not catch punctuation, assert at least one space
-                                    # This prevents detecting a word beginning with a section name
-                                    # pattern as a section name plus numbering
-                                    r"(?:[.\-:]*\s[.\-:\s]*)",
+                                    # Punctuation between section name and numbering
+                                    rf"\s*{TITLE_PUNCTUATION_PATTERN_S}\s*",
                                     # Numbering pattern
                                     regex_tree.Branching(
                                         [
                                             rf"(?P<number>{ORDINAL_PATTERN_S})",
                                             rf"(?P<number>(\d|I|i)){EME_PATTERN_S}",
-                                            # Only first can be roman or letter
                                             rf"(?P<number>{NUMBERING_PATTERN_S}"
                                             rf"(?:[.\-]{NUMBERS_PATTERN_S})*)",
                                         ],
                                     ),
-                                    # Do not catch the punctuation
-                                    r"(?:[.\s\-:]*)",
-                                    # Optional text group not ending with 5 points and numbers (ToC)
-                                    r"(?P<text>\s*[A-Za-z]"
-                                    rf"(?:(?!{TABLE_OF_CONTENTS_PAGING_PATTERN_S}).)*)?$",
+                                    # Punctuation between numbering and text
+                                    rf"{TITLE_PUNCTUATION_PATTERN_S}*",
+                                    # Text group not ending with table of contents paging
+                                    rf"(?P<text>{IS_NOT_TABLE_OF_CONTENTS_PAGING}.*?)$",
                                 ]
                             ),
                         ],
@@ -97,10 +97,10 @@ TITLE_NODE = regex_tree.Group(
                 [
                     # Numbering pattern with at least two numbers
                     rf"^(?P<number>{NUMBERING_PATTERN_S}(?:[.\-]{NUMBERS_PATTERN_S})+)",
-                    # Do not catch punctuation
-                    r"(?:[.\s\-:]*)",
-                    # Text group not ending with 5 points and numbers (ToC)
-                    (rf"(?P<text>\s*[A-Za-z](?:(?!{TABLE_OF_CONTENTS_PAGING_PATTERN_S})" r".)+?)$"),
+                    # Punctuation between numbering and text
+                    rf"{TITLE_PUNCTUATION_PATTERN_S}*",
+                    # Text group not ending with table of contents paging
+                    rf"(?P<text>{IS_NOT_TABLE_OF_CONTENTS_PAGING}.*?)$",
                 ],
             ),
             # This regex matches section names in arretes such as
@@ -110,14 +110,11 @@ TITLE_NODE = regex_tree.Group(
                 [
                     # Numbering pattern with only one integer
                     rf"^(?P<number>{NUMBERS_PATTERN_S})",
-                    # Do not catch punctuation, assert at least one space
-                    # This prevents detecting a word as a numbering plus text group
-                    r"(?:[.\-:]*\s[.\-:\s]*)",
-                    # Text group not ending with punctuation or 5 points and numbers (ToC)
-                    (
-                        rf"(?P<text>\s*[A-Za-z](?:(?!{TABLE_OF_CONTENTS_PAGING_PATTERN_S})"
-                        r".)+?(?<![.;:,]))$"
-                    ),
+                    # Punctuation between section name and numbering
+                    rf"\s*{TITLE_PUNCTUATION_PATTERN_S}\s*",
+                    # Text group not ending with table of contents paging nor punctuation
+                    rf"(?P<text>{IS_NOT_TABLE_OF_CONTENTS_PAGING}"
+                    rf"{IS_NOT_ENDING_WITH_PUNCTUATION}.*?)$",
                 ],
             ),
         ],

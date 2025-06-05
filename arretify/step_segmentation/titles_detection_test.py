@@ -184,6 +184,10 @@ class TestTitlePattern(unittest.TestCase):
         text = "Titre 1 - Titre ..... 5"
         assert not is_title(text)
 
+    def test_toc_appendix(self):
+        text = "Annexes :"
+        assert not is_title(text)
+
 
 class TestParseTitleInfo(unittest.TestCase):
 
@@ -405,7 +409,7 @@ class TestParseTitleInfo(unittest.TestCase):
 
     def test_ocr_error_eme(self):
         # Arrange
-        lines = initialize_lines(["ARTICLE 1erCeci est un titre"])
+        lines = initialize_lines(["ARTICLE 1erTitre"])
 
         # Act
         title_info = parse_title_info(lines[0].contents)
@@ -415,12 +419,12 @@ class TestParseTitleInfo(unittest.TestCase):
             section_type=SectionType.ARTICLE,
             number="1",
             levels=[1],
-            text="Ceci est un titre",
+            text="Titre",
         )
 
     def test_chapter_joined_text(self):
         # Arrange
-        lines = initialize_lines(["CHAPITRE 5.1CECI EST UN CHAPITRE"])
+        lines = initialize_lines(["CHAPITRE 5.1CHAPITRE"])
 
         # Act
         title_info = parse_title_info(lines[0].contents)
@@ -430,7 +434,7 @@ class TestParseTitleInfo(unittest.TestCase):
             section_type=SectionType.CHAPITRE,
             number="5.1",
             levels=[5, 1],
-            text="CECI EST UN CHAPITRE",
+            text="CHAPITRE",
         )
 
     def test_article_ordinal(self):
@@ -555,7 +559,7 @@ class TestParseTitleInfo(unittest.TestCase):
 
     def test_chapter_no_space(self):
         # Arrange
-        lines = initialize_lines(["5.3CECI EST UN CHAPITRE"])
+        lines = initialize_lines(["5.3CHAPITRE"])
 
         # Act
         title_info = parse_title_info(lines[0].contents)
@@ -565,7 +569,7 @@ class TestParseTitleInfo(unittest.TestCase):
             section_type=SectionType.UNKNOWN,
             number="5.3",
             levels=[5, 3],
-            text="CECI EST UN CHAPITRE",
+            text="CHAPITRE",
         )
 
     def test_roman_no_section_name(self):
@@ -596,4 +600,19 @@ class TestParseTitleInfo(unittest.TestCase):
             number="",
             levels=None,
             text=None,
+        )
+
+    def test_article_no_name_no_space(self):
+        # Arrange
+        lines = initialize_lines(["2-Article"])
+
+        # Act
+        title_info = parse_title_info(lines[0].contents)
+
+        # Assert
+        assert title_info == TitleInfo(
+            section_type=SectionType.UNKNOWN,
+            number="2",
+            levels=[2],
+            text="Article",
         )

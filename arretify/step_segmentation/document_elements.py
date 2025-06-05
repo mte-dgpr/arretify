@@ -1,7 +1,8 @@
-from typing import List
+from typing import Callable, Dict, List, Optional
 
 from bs4 import Tag, BeautifulSoup
 
+from arretify.html_schemas import DOCUMENT_ELEMENTS_SCHEMAS
 from arretify.parsing_utils.source_mapping import TextSegments
 from arretify.regex_utils import (
     PatternProxy,
@@ -13,13 +14,9 @@ from arretify.utils.html import (
     wrap_in_tag,
 )
 from arretify.utils.markdown_parsing import is_image
-from arretify.html_schemas import (
-    FOOTER_SCHEMA,
-    TABLE_OF_CONTENTS_SCHEMA,
-)
 
 
-FOOTERS_LIST = [
+PAGE_FOOTERS_LIST = [
     # "X/Y"
     r"\d+/\d+\s*",
     # "Page X/Y"
@@ -30,11 +27,11 @@ FOOTERS_LIST = [
     r"page\s+\d+",
 ]
 
-FOOTER_PATTERN = PatternProxy(rf"^{join_with_or(FOOTERS_LIST)}")
-"""Detect footer for numbering pages."""
+PAGE_FOOTER_PATTERN = PatternProxy(rf"^{join_with_or(PAGE_FOOTERS_LIST)}")
+"""Detect page footer."""
 
 TABLE_OF_CONTENTS_PAGING_PATTERN_S = r"\.{5}\s+(page\s+)?\d+"
-"""Detect table of contents paging pattern, e.g. "..... page 1" or "..... 1"."""
+"""Detect table of contents paging, e.g. "..... page 1" or "..... 1"."""
 
 TABLE_OF_CONTENTS_LIST = [
     r"sommaire",
@@ -46,75 +43,109 @@ TABLE_OF_CONTENTS_LIST = [
 TABLE_OF_CONTENTS_PATTERN = PatternProxy(rf"^{join_with_or(TABLE_OF_CONTENTS_LIST)}")
 """Detect all table of contents starting sentences."""
 
+DOCUMENT_ELEMENTS_PATTERNS: Dict[str, PatternProxy] = {
+    "page_footer": PAGE_FOOTER_PATTERN,
+    "table_of_contents": TABLE_OF_CONTENTS_PATTERN,
+}
+"""Document elements patterns."""
 
-def _is_footer(line: str) -> bool:
-    """Detect footer for numbering pages."""
-    return bool(FOOTER_PATTERN.match(line))
+DOCUMENT_ELEMENTS_PROBES: Dict[str, Callable] = {
+    "page_footer": lambda line: bool(PAGE_FOOTER_PATTERN.match(line)),
+    "table_of_contents": lambda line: bool(TABLE_OF_CONTENTS_PATTERN.match(line)),
+}
+"""Document elements probes."""
 
 
-def _is_table_of_contents(line: str) -> bool:
-    """Detect if the line is a table of contents."""
-    return bool(TABLE_OF_CONTENTS_PATTERN.match(line))
+def _make_positive_probe(document_element_name: Optional[str] = None) -> Callable[[str], bool]:
+
+    if document_element_name:
+        return DOCUMENT_ELEMENTS_PROBES[document_element_name]
+
+    # If no specific document element is requested, we return a probe that checks for any
+    # document element by checking all patterns
+    def _probe(line: str) -> bool:
+        return any(probe(line) for probe in DOCUMENT_ELEMENTS_PROBES.values())
+
+    return _probe
 
 
 def is_document_element(line: str) -> bool:
-    """Detect if the line is a document element.
-
-    Note: Image strings can be very long, and table of contents pattern look at the end of the
-    sentence. So, we make sure we do not have an image in the line before checking for other
-    document elements.
-    """
-    return not is_image(line) and (_is_footer(line) or _is_table_of_contents(line))
+    """Detect if the line is a document element."""
+    # Image strings can be very long, and table of contents pattern look at the end of the
+    # sentence. So, we make sure we do not have an image in the line before checking for other
+    # document elements
+    return not is_image(line) and _make_positive_probe()(line)
 
 
-def _parse_footer(
+def _parse_document_element(
     soup: BeautifulSoup,
-    content: Tag,
+    container: Tag,
     lines: TextSegments,
+    document_element_name: str,
 ) -> TextSegments:
-    """Parse footer."""
-    while lines and _is_footer(lines[0].contents):
-        footer_element = make_data_tag(soup, FOOTER_SCHEMA, contents=[lines.pop(0).contents])
-        content.append(footer_element)
-
-    return lines
-
-
-def _parse_table_of_contents(
-    soup: BeautifulSoup,
-    tag: Tag,
-    lines: TextSegments,
-) -> TextSegments:
-    """Parse table of contents."""
     pile: List[PageElementOrString] = []
+    is_current_document_element = _make_positive_probe(document_element_name)
+    document_element_schema = DOCUMENT_ELEMENTS_SCHEMAS[document_element_name]
 
-    while lines and _is_table_of_contents(lines[0].contents):
+    # Image strings can be very long, and table of contents pattern look at the end of the
+    # sentence. So, we make sure we do not have an image in the line before checking for other
+    # document elements
+    while (
+        lines and not is_image(lines[0].contents) and is_current_document_element(lines[0].contents)
+    ):
+
         pile.append(lines.pop(0).contents)
 
     if pile:
 
-        toc_element = make_data_tag(
+        header_element = make_data_tag(
             soup,
-            TABLE_OF_CONTENTS_SCHEMA,
+            document_element_schema,
             contents=wrap_in_tag(soup, pile, "div"),
         )
-        tag.append(toc_element)
+        container.append(header_element)
 
     return lines
 
 
+def _parse_page_footer(
+    soup: BeautifulSoup,
+    container: Tag,
+    lines: TextSegments,
+) -> TextSegments:
+    return _parse_document_element(
+        soup,
+        container,
+        lines,
+        "page_footer",
+    )
+
+
+def _parse_table_of_contents(
+    soup: BeautifulSoup,
+    container: Tag,
+    lines: TextSegments,
+) -> TextSegments:
+    return _parse_document_element(
+        soup,
+        container,
+        lines,
+        "table_of_contents",
+    )
+
+
 def parse_document_elements(
     soup: BeautifulSoup,
-    tag: Tag,
+    container: Tag,
     lines: TextSegments,
 ) -> TextSegments:
     """Parse document elements."""
     while lines and is_document_element(lines[0].contents):
 
-        # Footer
-        lines = _parse_footer(soup, tag, lines)
+        # Page footer
+        lines = _parse_page_footer(soup, container, lines)
 
         # Table of contents
-        lines = _parse_table_of_contents(soup, tag, lines)
+        lines = _parse_table_of_contents(soup, container, lines)
 
     return lines

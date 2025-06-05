@@ -7,23 +7,15 @@ from arretify.parsing_utils.source_mapping import (
     text_segments_to_str,
 )
 from arretify.step_segmentation.document_elements import (
-    _is_footer,
-    _parse_footer,
+    _parse_page_footer,
     _parse_table_of_contents,
 )
 from arretify.utils.testing import normalized_html_str
 
 
-class TestFooterPattern(unittest.TestCase):
+class TestParsePageFooter(unittest.TestCase):
 
-    def test_arrete_toc(self):
-        text = "Arrêté suite ..... page 1"
-        assert not _is_footer(text)
-
-
-class TestParseFooter(unittest.TestCase):
-
-    def test_footer(self):
+    def test_page_footer(self):
         # Arrange
         lines = initialize_lines(
             [
@@ -35,13 +27,15 @@ class TestParseFooter(unittest.TestCase):
         # Act
         soup = BeautifulSoup()
         header = soup.new_tag("header")
-        lines = _parse_footer(soup, header, lines)
+        lines = _parse_page_footer(soup, header, lines)
 
         # Assert
         assert str(header) == normalized_html_str(
             """
             <header>
-                <div class="dsr-footer">Page 1/4</div>
+                <div class="dsr-page_footer">
+                    <div>Page 1/4</div>
+                </div>
             </header>
             """  # noqa: E501
         )
