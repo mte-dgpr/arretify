@@ -289,7 +289,7 @@ SECTION_REFERENCE_NODE = regex_tree.Group(
             # Example "article 1 à l'article 3"
             regex_tree.Sequence(
                 [
-                    r"(article|paragraphe)s? ",
+                    r"articles? ",
                     ARTICLE_RANGE_NODE,
                 ]
             ),

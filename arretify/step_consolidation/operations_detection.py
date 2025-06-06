@@ -43,7 +43,7 @@ from arretify.types import (
 )
 from arretify.utils.functional import flat_map_string
 
-from arretify.parsing_utils.patterns import COUNT_PATTERN_S
+from arretify.parsing_utils.numbering import COUNT_PATTERN_S
 
 OPERATION_TYPES_GROUP_NAMES = [
     OperationType.ADD.value,
@@ -101,7 +101,7 @@ RTL_OPERATION_NODE = regex_tree.Group(
                             [
                                 regex_tree.Sequence(
                                     [
-                                        r"créé(e)?s?",
+                                        r"créée?s?",
                                         r"\s",
                                         regex_tree.Branching(
                                             [
@@ -222,7 +222,9 @@ RTL_OPERATION_NODE = regex_tree.Group(
                     ),
                 ]
             ),
-            regex_tree.Quantifier(
+            # When the string is not ended by a period (.), we consider that
+            # there is a right operand.
+            regex_tree.Repeat(
                 regex_tree.Group(
                     r"[^\.]*$",
                     group_name="__has_operand",

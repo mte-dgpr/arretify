@@ -369,12 +369,12 @@ class TestAddOperations(unittest.TestCase):
                 <span class="dsr-operation"
                     data-direction="rtl"
                     data-has_operand="true"
-                    data-keyword="créé deux"
+                    data-keyword="créé deux nouveaux "
                     data-operand=""
                     data-operation_type="add"
                     data-references="">
                     Sous le tableau de la liste des activités autorisées,
-                    il est <b>créé deux</b> nouveaux articles ainsi rédigés :
+                    il est <b>créé deux nouveaux</b> articles ainsi rédigés :
                 </span>
                 """
             )

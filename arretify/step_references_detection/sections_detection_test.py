@@ -608,21 +608,3 @@ class TestUnknownMultiple(unittest.TestCase):
             """
             ),
         ]
-
-
-class TestParagraphReference(unittest.TestCase):
-
-    def test_paragraph_reference(self):
-        assert process_children("Paragraphe 4.28") == [
-            normalized_html_str(
-                """
-                <a
-                    class="dsr-section_reference"
-                    data-is_resolvable="false"
-                    data-uri="dsr://unknown____/article__4.28__"
-                >
-                    Paragraphe 4.28
-                </a>
-                """
-            )
-        ]
