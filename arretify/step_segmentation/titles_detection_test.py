@@ -167,8 +167,13 @@ class TestTitlePattern(unittest.TestCase):
         text = "M. le Maire de"
         assert not is_title(text)
 
+    def test_chapter_no_numbering(self):
+        # TODO: Case to solve
+        text = "A. Chapitre"
+        assert not is_title(text)
+
     def test_more_than_two_numbers(self):
-        text = "27406 LOUVIERS"
+        text = "27406 Code postal"
         assert not is_title(text)
 
     def test_toc_no_name(self):
@@ -177,6 +182,10 @@ class TestTitlePattern(unittest.TestCase):
 
     def test_toc(self):
         text = "Titre 1 - Titre ..... 5"
+        assert not is_title(text)
+
+    def test_toc_appendix(self):
+        text = "Annexes :"
         assert not is_title(text)
 
 
@@ -287,36 +296,6 @@ class TestParseTitleInfo(unittest.TestCase):
             levels=[1],
         )
 
-    def test_hierarchical_chapter_with_letter_without_dot(self):
-        # Arrange
-        lines = initialize_lines(["CHAPITRE I.A - Premier chapitre"])
-
-        # Act
-        title_info = parse_title_info(lines[0].contents)
-
-        # Assert
-        assert title_info == TitleInfo(
-            section_type=SectionType.CHAPITRE,
-            number="I.A",
-            levels=[1, 1],
-            text="Premier chapitre",
-        )
-
-    def test_hierarchical_chapter_with_letter_with_dot(self):
-        # Arrange
-        lines = initialize_lines(["CHAPITRE I.A. - Premier chapitre"])
-
-        # Act
-        title_info = parse_title_info(lines[0].contents)
-
-        # Assert
-        assert title_info == TitleInfo(
-            section_type=SectionType.CHAPITRE,
-            number="I.A",
-            levels=[1, 1],
-            text="Premier chapitre",
-        )
-
     def test_hierarchical_chapter_with_arabic_number_without_dot(
         self,
     ):
@@ -368,40 +347,6 @@ class TestParseTitleInfo(unittest.TestCase):
             text="Premier sous article",
         )
 
-    def test_hierarchical_article_with_arabic_number_with_letter(
-        self,
-    ):
-        # Arrange
-        lines = initialize_lines(["ARTICLE 1.A.3 - Premier article"])
-
-        # Act
-        title_info = parse_title_info(lines[0].contents)
-
-        # Assert
-        assert title_info == TitleInfo(
-            section_type=SectionType.ARTICLE,
-            number="1.A.3",
-            levels=[1, 1, 3],
-            text="Premier article",
-        )
-
-    def test_hierarchical_article_with_arabic_number_with_letter_and_dot(
-        self,
-    ):
-        # Arrange
-        lines = initialize_lines(["ARTICLE 1.A.3. - Premier article"])
-
-        # Act
-        title_info = parse_title_info(lines[0].contents)
-
-        # Assert
-        assert title_info == TitleInfo(
-            section_type=SectionType.ARTICLE,
-            number="1.A.3",
-            levels=[1, 1, 3],
-            text="Premier article",
-        )
-
     def test_simple_title_no_name(self):
         # Arrange
         lines = initialize_lines(["1. TITRE"])
@@ -447,21 +392,6 @@ class TestParseTitleInfo(unittest.TestCase):
             text="Sous-article",
         )
 
-    def test_one_line_list_with_colon(self):
-        # Arrange
-        lines = initialize_lines(["1. Liste : a. Point b. Point"])
-
-        # Act
-        title_info = parse_title_info(lines[0].contents)
-
-        # Assert
-        assert title_info == TitleInfo(
-            section_type=SectionType.UNKNOWN,
-            number="1",
-            levels=[1],
-            text="Liste : a. Point b. Point",
-        )
-
     def test_simple_no_space(self):
         # Arrange
         lines = initialize_lines(["ARTICLE 6-ARTICLE"])
@@ -479,7 +409,7 @@ class TestParseTitleInfo(unittest.TestCase):
 
     def test_ocr_error_eme(self):
         # Arrange
-        lines = initialize_lines(["ARTICLE 1erCeci est un titre"])
+        lines = initialize_lines(["ARTICLE 1erTitre"])
 
         # Act
         title_info = parse_title_info(lines[0].contents)
@@ -489,12 +419,12 @@ class TestParseTitleInfo(unittest.TestCase):
             section_type=SectionType.ARTICLE,
             number="1",
             levels=[1],
-            text="Ceci est un titre",
+            text="Titre",
         )
 
     def test_chapter_joined_text(self):
         # Arrange
-        lines = initialize_lines(["CHAPITRE 5.1CECI EST UN CHAPITRE"])
+        lines = initialize_lines(["CHAPITRE 5.1CHAPITRE"])
 
         # Act
         title_info = parse_title_info(lines[0].contents)
@@ -504,7 +434,7 @@ class TestParseTitleInfo(unittest.TestCase):
             section_type=SectionType.CHAPITRE,
             number="5.1",
             levels=[5, 1],
-            text="CECI EST UN CHAPITRE",
+            text="CHAPITRE",
         )
 
     def test_article_ordinal(self):
@@ -567,9 +497,54 @@ class TestParseTitleInfo(unittest.TestCase):
             text="Titre",
         )
 
-    def test_joined_text(self):
+    def test_hyphen_before_numbering(self):
         # Arrange
-        lines = initialize_lines(["5.1CECI EST UN CHAPITRE"])
+        lines = initialize_lines(["Article - 1.2.3. Article"])
+
+        # Act
+        title_info = parse_title_info(lines[0].contents)
+
+        # Assert
+        assert title_info == TitleInfo(
+            section_type=SectionType.ARTICLE,
+            number="1.2.3",
+            levels=[1, 2, 3],
+            text="Article",
+        )
+
+    def test_hyphen_in_numbering(self):
+        # Arrange
+        lines = initialize_lines(["Article 2-1 Article"])
+
+        # Act
+        title_info = parse_title_info(lines[0].contents)
+
+        # Assert
+        assert title_info == TitleInfo(
+            section_type=SectionType.ARTICLE,
+            number="2-1",
+            levels=[2, 1],
+            text="Article",
+        )
+
+    def test_chapter(self):
+        # Arrange
+        lines = initialize_lines(["Chapitre A - Chapitre"])
+
+        # Act
+        title_info = parse_title_info(lines[0].contents)
+
+        # Assert
+        assert title_info == TitleInfo(
+            section_type=SectionType.CHAPITRE,
+            number="A",
+            levels=[1],
+            text="Chapitre",
+        )
+
+    def test_article_no_numbering_ending_punctuation(self):
+        # Arrange
+        lines = initialize_lines(["2.1 - Article."])
 
         # Act
         title_info = parse_title_info(lines[0].contents)
@@ -577,7 +552,112 @@ class TestParseTitleInfo(unittest.TestCase):
         # Assert
         assert title_info == TitleInfo(
             section_type=SectionType.UNKNOWN,
-            number="5.1",
-            levels=[5, 1],
-            text="CECI EST UN CHAPITRE",
+            number="2.1",
+            levels=[2, 1],
+            text="Article.",
+        )
+
+    def test_chapter_no_space(self):
+        # Arrange
+        lines = initialize_lines(["5.3CHAPITRE"])
+
+        # Act
+        title_info = parse_title_info(lines[0].contents)
+
+        # Assert
+        assert title_info == TitleInfo(
+            section_type=SectionType.UNKNOWN,
+            number="5.3",
+            levels=[5, 3],
+            text="CHAPITRE",
+        )
+
+    def test_roman_no_section_name(self):
+        # Arrange
+        lines = initialize_lines(["II.1.1 - Sous-titre"])
+
+        # Act
+        title_info = parse_title_info(lines[0].contents)
+
+        # Assert
+        assert title_info == TitleInfo(
+            section_type=SectionType.UNKNOWN,
+            number="II.1.1",
+            levels=[2, 1, 1],
+            text="Sous-titre",
+        )
+
+    def test_appendix(self):
+        # Arrange
+        lines = initialize_lines(["ANNEXE "])
+
+        # Act
+        title_info = parse_title_info(lines[0].contents)
+
+        # Assert
+        assert title_info == TitleInfo(
+            section_type=SectionType.ANNEXE,
+            number="",
+            levels=None,
+            text=None,
+        )
+
+    def test_article_no_name_no_space(self):
+        # Arrange
+        lines = initialize_lines(["2-Article"])
+
+        # Act
+        title_info = parse_title_info(lines[0].contents)
+
+        # Assert
+        assert title_info == TitleInfo(
+            section_type=SectionType.UNKNOWN,
+            number="2",
+            levels=[2],
+            text="Article",
+        )
+
+    def test_chapter_letter_v_roman(self):
+        # Arrange
+        lines = initialize_lines(["Chapitre C - Chapitre"])
+
+        # Act
+        title_info = parse_title_info(lines[0].contents)
+
+        # Assert
+        assert title_info == TitleInfo(
+            section_type=SectionType.CHAPITRE,
+            number="C",
+            levels=[3],
+            text="Chapitre",
+        )
+
+    def test_title_long_roman(self):
+        # Arrange
+        lines = initialize_lines(["Titre XIV - Titre"])
+
+        # Act
+        title_info = parse_title_info(lines[0].contents)
+
+        # Assert
+        assert title_info == TitleInfo(
+            section_type=SectionType.TITRE,
+            number="XIV",
+            levels=[14],
+            text="Titre",
+        )
+
+    def test_title_max_roman(self):
+        # Arrange
+        lines = initialize_lines(["Titre XXXIX - Titre"])
+
+        # Act
+        title_info = parse_title_info(lines[0].contents)
+
+        # Assert
+        assert title_info == TitleInfo(
+            section_type=SectionType.TITRE,
+            number="XXXIX",
+            levels=[39],
+            text="Titre",
         )

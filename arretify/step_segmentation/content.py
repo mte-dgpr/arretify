@@ -19,6 +19,10 @@ from arretify.html_schemas import (
 from arretify.parsing_utils.source_mapping import TextSegments
 from arretify.errors import ErrorCodes
 from .basic_elements import parse_basic_elements
+from .document_elements import (
+    is_document_element,
+    parse_document_elements,
+)
 from .titles_detection import (
     is_title,
     parse_title_info,
@@ -136,23 +140,29 @@ def parse_content(
         # Within a section to number alineas
         alinea_count = 0
 
-        # Parse alineas until a new section is detected.
-        # ALINEA : "Constitue un alinéa toute phrase, tout mot, tout ensemble de phrases
-        # ou de mots commençant à la ligne, précédés ou non d’un tiret, d’un point,
-        # d’une numérotation ou de guillemets, sans qu’il y ait lieu d’établir des distinctions
-        # selon la nature du signe placé à la fin de la ligne précédente
-        # (point, deux-points ou point-virgule).
-        # Un tableau constitue un seul alinéa (définition complète dans le guide de légistique)."
-        # REF : https://www.legifrance.gouv.fr/contenu/Media/files/lexique-api-lgf.docx
+        # Parse elements that can be found across the document
         while lines and not is_title(lines[0].contents):
-            alinea_count += 1
-            alinea_element = make_data_tag(
-                soup,
-                ALINEA_SCHEMA,
-                data=dict(number=str(alinea_count)),
-            )
-            section_element.append(alinea_element)
-            parse_basic_elements(soup, alinea_element, lines)
+            lines = parse_document_elements(soup, section_element, lines)
+
+            # Parse alineas until a new section is detected
+            # ALINEA : "Constitue un alinéa toute phrase, tout mot, tout ensemble de phrases ou de
+            # mots commençant à la ligne, précédés ou non d’un tiret, d’un point, d’une
+            # numérotation ou de guillemets, sans qu’il y ait lieu d’établir des distinctions selon
+            # la nature du signe placé à la fin de la ligne précédente (point, deux-points ou
+            # point-virgule). Un tableau constitue un seul alinéa (définition complète dans le
+            # guide de légistique)."
+            # REF : https://www.legifrance.gouv.fr/contenu/Media/files/lexique-api-lgf.docx
+            while lines and not (
+                is_title(lines[0].contents) or is_document_element(lines[0].contents)
+            ):
+                alinea_count += 1
+                alinea_element = make_data_tag(
+                    soup,
+                    ALINEA_SCHEMA,
+                    data=dict(number=str(alinea_count)),
+                )
+                section_element.append(alinea_element)
+                parse_basic_elements(soup, alinea_element, lines)
 
     return lines
 

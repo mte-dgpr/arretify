@@ -24,3 +24,7 @@ def combine_text_segments(combined_contents: str, segments: TextSegments) -> Tex
         start=min(segments, key=lambda segment: segment.start).start,
         end=max(segments, key=lambda segment: segment.end).end,
     )
+
+
+def text_segments_to_str(segments: TextSegments) -> List[str]:
+    return [segment.contents for segment in segments]
