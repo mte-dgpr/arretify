@@ -616,3 +616,48 @@ class TestParseTitleInfo(unittest.TestCase):
             levels=[2],
             text="Article",
         )
+
+    def test_chapter_letter_v_roman(self):
+        # Arrange
+        lines = initialize_lines(["Chapitre C - Chapitre"])
+
+        # Act
+        title_info = parse_title_info(lines[0].contents)
+
+        # Assert
+        assert title_info == TitleInfo(
+            section_type=SectionType.CHAPITRE,
+            number="C",
+            levels=[3],
+            text="Chapitre",
+        )
+
+    def test_title_long_roman(self):
+        # Arrange
+        lines = initialize_lines(["Titre XIV - Titre"])
+
+        # Act
+        title_info = parse_title_info(lines[0].contents)
+
+        # Assert
+        assert title_info == TitleInfo(
+            section_type=SectionType.TITRE,
+            number="XIV",
+            levels=[14],
+            text="Titre",
+        )
+
+    def test_title_max_roman(self):
+        # Arrange
+        lines = initialize_lines(["Titre XXXIX - Titre"])
+
+        # Act
+        title_info = parse_title_info(lines[0].contents)
+
+        # Assert
+        assert title_info == TitleInfo(
+            section_type=SectionType.TITRE,
+            number="XXXIX",
+            levels=[39],
+            text="Titre",
+        )

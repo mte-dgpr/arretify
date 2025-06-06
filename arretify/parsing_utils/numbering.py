@@ -19,7 +19,7 @@ ORDINAL_PATTERN_S = (
 ORDINAL_PATTERN = PatternProxy(ORDINAL_PATTERN_S)
 
 # Roman numerals limited to 39
-ROMAN_NUMERALS_PATTERN_S = r"[IVX]+"
+ROMAN_NUMERALS_PATTERN_S = r"(X{1,3}(IX|IV|V?I{0,3})|IX|IV|V?I{1,3})"
 
 ENDING_ROMAN_NUMERALS_PATTERN = PatternProxy(ROMAN_NUMERALS_PATTERN_S + "$")
 
@@ -33,7 +33,7 @@ ENDING_LETTER_PATTERN = PatternProxy(LETTER_PATTERN_S + "$")
 
 # All types of numbering patterns
 # Order matters: roman numerals, letters, and numbers
-NUMBERING_PATTERN_S = rf"(?:{ROMAN_NUMERALS_PATTERN_S}|{LETTER_PATTERN_S}|{NUMBERS_PATTERN_S})"
+NUMBERING_PATTERN_S = rf"({ROMAN_NUMERALS_PATTERN_S}|{LETTER_PATTERN_S}|{NUMBERS_PATTERN_S})"
 
 
 def ordinal_str_to_int(ordinal: str) -> int:

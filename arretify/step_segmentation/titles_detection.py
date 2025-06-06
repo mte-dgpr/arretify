@@ -29,14 +29,19 @@ _LOGGER = logging.getLogger(__name__)
 TITLE_PUNCTUATION_PATTERN_S = r"[.\s\-:]"
 IS_NOT_TABLE_OF_CONTENTS_PAGING = rf"(?!.*{TABLE_OF_CONTENTS_PAGING_PATTERN_S}$)"
 IS_NOT_ENDING_WITH_PUNCTUATION = r"(?!.*[.;:,]$)"
+NUMBERING_THEN_OPT_NUMBERS_PATTERN_S = rf"{NUMBERING_PATTERN_S}([.\-]{NUMBERS_PATTERN_S})*\.?"
+NUMBERING_THEN_OBL_NUMBERS_PATTERN_S = rf"{NUMBERING_PATTERN_S}([.\-]{NUMBERS_PATTERN_S})+\.?"
 
-SECTION_NAMES = [
+SECTION_NAMES_LIST = [
     r"annexe",
     r"titre",
     r"chapitre",
     r"article",
 ]
+
+SECTION_NAMES_PATTERN_S = rf"{join_with_or(SECTION_NAMES_LIST)}"
 """Detect all section names."""
+
 
 TITLE_NODE = regex_tree.Group(
     regex_tree.Branching(
@@ -55,7 +60,7 @@ TITLE_NODE = regex_tree.Group(
             regex_tree.Sequence(
                 [
                     # Section name
-                    rf"^(?P<section_name>{join_with_or(SECTION_NAMES)})",
+                    rf"^(?P<section_name>{SECTION_NAMES_PATTERN_S})",
                     regex_tree.Branching(
                         [
                             # Title has no numbering
@@ -75,8 +80,7 @@ TITLE_NODE = regex_tree.Group(
                                         [
                                             rf"(?P<number>{ORDINAL_PATTERN_S})",
                                             rf"(?P<number>(\d|I|i)){EME_PATTERN_S}",
-                                            rf"(?P<number>{NUMBERING_PATTERN_S}"
-                                            rf"(?:[.\-]{NUMBERS_PATTERN_S})*)",
+                                            rf"(?P<number>{NUMBERING_THEN_OPT_NUMBERS_PATTERN_S})",
                                         ],
                                     ),
                                     # Punctuation between numbering and text
@@ -96,7 +100,7 @@ TITLE_NODE = regex_tree.Group(
             regex_tree.Sequence(
                 [
                     # Numbering pattern with at least two numbers
-                    rf"^(?P<number>{NUMBERING_PATTERN_S}(?:[.\-]{NUMBERS_PATTERN_S})+)",
+                    rf"(?P<number>{NUMBERING_THEN_OBL_NUMBERS_PATTERN_S})",
                     # Punctuation between numbering and text
                     rf"{TITLE_PUNCTUATION_PATTERN_S}*",
                     # Text group not ending with table of contents paging
@@ -109,7 +113,7 @@ TITLE_NODE = regex_tree.Group(
             regex_tree.Sequence(
                 [
                     # Numbering pattern with only one integer
-                    rf"^(?P<number>{NUMBERS_PATTERN_S})",
+                    rf"^(?P<number>{NUMBERS_PATTERN_S}\.?)",
                     # Punctuation between section name and numbering
                     rf"\s*{TITLE_PUNCTUATION_PATTERN_S}\s*",
                     # Text group not ending with table of contents paging nor punctuation
