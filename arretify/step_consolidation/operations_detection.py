@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import List, Iterator, Dict, Iterable
+from typing import List, Iterator, Iterable
 
 from bs4 import BeautifulSoup
 
@@ -39,6 +39,7 @@ from arretify.types import (
     OperationType,
     PageElementOrString,
     DocumentContext,
+    DataElementDataDict,
 )
 from arretify.utils.functional import flat_map_string
 
@@ -177,7 +178,7 @@ def _render_group_match(
 
 def _extract_operation_data(
     operation_match: regex_tree.Match,
-) -> Dict[str, str | None]:
+) -> DataElementDataDict:
     operation_type_groups = filter_regex_tree_match_children(
         operation_match,
         OPERATION_TYPES_GROUP_NAMES,
