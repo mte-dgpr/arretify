@@ -77,6 +77,7 @@ La librairie utilise les outils suivants :
         --exclude=__init__.py \
         arretify scripts
     ```
+- `licenseheaders` pour la gestion des en-têtes de licence dans les fichiers de code source.
 - `pre-commit` pour la gestion des git pre-commit hooks
 
 Afin d'initialiser les pre-commit hooks dans votre repository, lancer la commande suivante :
