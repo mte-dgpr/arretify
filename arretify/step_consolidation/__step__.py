@@ -48,8 +48,8 @@ def step_consolidation(document_context: DocumentContext) -> DocumentContext:
         f".{ALINEA_CSS_CLASS}, .{ALINEA_CSS_CLASS} *"
     ):
         new_children: List[PageElementOrString] = list(container_tag.children)
-
-        # Parse operations only if there's a document or section reference in the alinea
+        # Parse operations only if there's a document or section reference in the paragraph
+        # Helps avoid many false positives during processing
         document_reference_tags = container_tag.select(
             f".{DOCUMENT_REFERENCE_CSS_CLASS}, .{SECTION_REFERENCE_SCHEMA}"
         )
