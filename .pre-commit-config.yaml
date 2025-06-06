@@ -13,3 +13,25 @@ repos:
     rev: 7.2.0
     hooks:
     -   id: flake8
+  - repo: https://github.com/johann-petrak/licenseheaders
+    rev: 'v0.8.8'
+    hooks:
+        - id: licenseheaders
+          types: ['python']
+          args: [
+            "-x",
+            "./arretify/_vendor/",
+            "-E",
+            ".py",
+            "-t",
+            "./scripts/apache-2.tmpl",
+            "-o",
+            "Direction générale de la prévention des risques (DGPR)",
+            "-y",
+            "2025",
+            "-n",
+            "Arrêtify",
+            "-u",
+            "https://github.com/mte-dgpr/arretify",
+            "-f"
+          ]
