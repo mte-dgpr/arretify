@@ -89,26 +89,6 @@ pre-commit install
 Ainsi avant chaque commit un run des outils de linting sera executé pour vérifier le formattage et les fautes de style.
 
 
-### Debugging
-
-Des outils de debugging sont fournis dans le module `debug.py`
-
-On pourra par exemple vérifier l'exhaustivité du parsing en utilisant la fonction `insert_debug_keywords`, qui permet de vérifier que tous les cas liés au parsing d'un type d'éléments ont été traités.
-
-Par exemple :
-
-```python
-# Parse toutes les références à des articles
-# e.g. article 1.2.3 du code de l'environnement
-new_children = parse_all_article_references(soup, list(container.children))
-
-# Cherche toutes les chaines de caractères 'articles?' qui n'ont pas été
-# traitées et insère un tag pour pouvoir les parcourir et les vérifier manuellement.
-# On pourra ainsi détecter des cas non encore traités par la fonction `parse_all_article_references`
-# et tenter de les intégrer.
-new_children = insert_debug_keywords(soup, new_children, 'articles?')
-```
-
 ### Testing
 
 Pour éxecuter les tests :

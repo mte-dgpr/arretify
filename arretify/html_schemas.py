@@ -200,9 +200,3 @@ ERROR_SCHEMA = DataElementSchema(
     tag_name="span",
     data_keys=[],
 )
-
-DEBUG_KEYWORD_SCHEMA = DataElementSchema(
-    name="debug_keyword",
-    tag_name="span",
-    data_keys=["query"],
-)
