@@ -44,6 +44,7 @@ dev = [
   "types-requests~=2.32",
   "types-beautifulsoup4~=4.12",
   "types-Markdown~=3.7",
+  "licenseheaders~=0.8.8"
 ]
 
 [tool.mypy]
