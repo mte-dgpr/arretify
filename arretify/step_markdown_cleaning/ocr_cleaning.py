@@ -41,10 +41,25 @@ _FRENCH_DICTIONARY = {"vu", "arrete"}
 """Normalized words in the French dictionary that should be recomposed."""
 
 
+_PUNCTUATION_LINE_PATTERN = PatternProxy(r"^[·.,;:!?'\s\-]*$")
+"""Detect if the line contains only punctuation."""
+
+
 # TODO-PROCESS-TAG
-def clean_ocr(line: TextSegment) -> TextSegment:
+def clean_ocr_errors(line: TextSegment) -> TextSegment:
     line = apply_to_segment(line, recompose_words)
     return line
+
+
+def is_useful_line(line: TextSegment) -> bool:
+    return not is_punctuation_line(line.contents)
+
+
+def is_punctuation_line(text: str) -> bool:
+    """
+    Our OCRized file might contain some blank lines or lines that only contain punctuation.
+    """
+    return bool(_PUNCTUATION_LINE_PATTERN.search(text))
 
 
 def recompose_words(text: str) -> str:
