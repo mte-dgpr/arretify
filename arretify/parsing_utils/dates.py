@@ -204,19 +204,29 @@ def render_date_regex_tree_match(soup: BeautifulSoup, regex_tree_match: regex_tr
     data_dict: DataElementDataDict = dict()
 
     try:
-        date_object = date(
-            year=date_dict["year"],
-            month=date_dict["month"],
-            day=date_dict["day"],
+        date_str = render_date_str(
+            date(
+                year=date_dict["year"],
+                month=date_dict["month"],
+                day=date_dict["day"],
+            )
         )
 
     except ValueError:
         data_dict["error_codes"] = render_str_list_attribute([ErrorCodes.non_existant_date.value])
-        date_object = date(
-            year=1,
-            month=1,
-            day=1,
+        date_str = render_date_str(
+            date(
+                year=1,
+                month=1,
+                day=1,
+            )
         )
+        _LOGGER.warning(f"Invalid date {date_dict}, using {date_str} instead")
+        # Date formating requires a 4-digit year, so we pad it with zeros if necessary
+        # This is a workaround for inconsistencies across different platforms :
+        # https://stackoverflow.com/questions/79588208/why-does-strftimey-not-yield-a-4-digit-year-for-dates-1000-ad-in-python
+        if len(date_str) < len("YYYY-MM-DD"):
+            date_str = date_str.rjust(len("YYYY-MM-DD"), "0")
 
     date_container = make_data_tag(
         soup,
@@ -224,5 +234,5 @@ def render_date_regex_tree_match(soup: BeautifulSoup, regex_tree_match: regex_tr
         contents=iter_regex_tree_match_strings(regex_tree_match),
         data=data_dict,
     )
-    date_container["datetime"] = render_date_str(date_object)
+    date_container["datetime"] = date_str
     return date_container
