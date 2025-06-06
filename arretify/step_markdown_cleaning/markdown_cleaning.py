@@ -34,7 +34,7 @@ from arretify.regex_utils import (
 )
 from arretify.parsing_utils.dates import MONTH_POINT_ABBREVIATIONS
 from arretify.regex_utils import regex_tree
-from .markdown_parsing import LIST_PATTERN, BULLETPOINT_PATTERN_S, is_table_line
+from arretify.utils.markdown_parsing import LIST_PATTERN, BULLETPOINT_PATTERN_S, is_table_line
 
 
 LATEX_NODE = LatexNodes2Text(keep_comments=True)

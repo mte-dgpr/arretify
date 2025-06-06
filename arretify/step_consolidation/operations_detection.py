@@ -38,7 +38,7 @@ from arretify.html_schemas import OPERATION_SCHEMA
 from arretify.types import (
     OperationType,
     PageElementOrString,
-    ParsingContext,
+    DocumentContext,
 )
 from arretify.utils.functional import flat_map_string
 
@@ -129,7 +129,7 @@ RTL_OPERATION_NODE = regex_tree.Group(
 
 
 def parse_operations(
-    parsing_context: ParsingContext,
+    document_context: DocumentContext,
     children: Iterable[PageElementOrString],
 ) -> List[PageElementOrString]:
     return list(
@@ -138,11 +138,11 @@ def parse_operations(
             lambda string: map_regex_tree_match(
                 split_string_with_regex_tree(RTL_OPERATION_NODE, string),
                 lambda operation_match: make_data_tag(
-                    parsing_context.soup,
+                    document_context.soup,
                     OPERATION_SCHEMA,
                     contents=flat_map_regex_tree_match(
                         operation_match.children,
-                        lambda group_match: _render_group_match(parsing_context.soup, group_match),
+                        lambda group_match: _render_group_match(document_context.soup, group_match),
                         allowed_group_names=[
                             "__has_operand",
                             *OPERATION_TYPES_GROUP_NAMES,

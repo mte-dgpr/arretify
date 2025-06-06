@@ -21,7 +21,7 @@ import logging
 
 from bs4 import Tag
 
-from arretify.types import ParsingContext
+from arretify.types import DocumentContext
 from arretify.html_schemas import (
     SECTION_REFERENCE_SCHEMA,
     DOCUMENT_REFERENCE_SCHEMA,
@@ -46,7 +46,7 @@ SECTION_REFERENCE_CLASS = make_css_class(SECTION_REFERENCE_SCHEMA)
 _LOGGER = logging.getLogger(__name__)
 
 
-def resolve_references_and_operands(_: ParsingContext, operation_tag: Tag) -> None:
+def resolve_references_and_operands(_: DocumentContext, operation_tag: Tag) -> None:
     if operation_tag["data-direction"] != "rtl":
         raise ValueError("Only right-to-left is supported so far")
     _resolve_rtl_references(operation_tag)

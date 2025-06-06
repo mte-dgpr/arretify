@@ -25,7 +25,7 @@ from arretify.html_schemas import (
     OPERATION_SCHEMA,
     SECTION_REFERENCE_SCHEMA,
 )
-from arretify.types import PageElementOrString, ParsingContext
+from arretify.types import PageElementOrString, DocumentContext
 from arretify.utils.html import make_css_class, replace_children
 
 from .operations_detection import (
@@ -42,9 +42,11 @@ OPERATION_CSS_CLASS = make_css_class(OPERATION_SCHEMA)
 SECTION_REFERENCE_SCHEMA = make_css_class(SECTION_REFERENCE_SCHEMA)
 
 
-def step_consolidation(parsing_context: ParsingContext) -> ParsingContext:
+def step_consolidation(document_context: DocumentContext) -> DocumentContext:
     # Find consolidation operations
-    for container_tag in parsing_context.soup.select(f".{ALINEA_CSS_CLASS}, .{ALINEA_CSS_CLASS} *"):
+    for container_tag in document_context.soup.select(
+        f".{ALINEA_CSS_CLASS}, .{ALINEA_CSS_CLASS} *"
+    ):
         new_children: List[PageElementOrString] = list(container_tag.children)
 
         # Parse operations only if there's a document or section reference in the alinea
@@ -52,12 +54,12 @@ def step_consolidation(parsing_context: ParsingContext) -> ParsingContext:
             f".{DOCUMENT_REFERENCE_CSS_CLASS}, .{SECTION_REFERENCE_SCHEMA}"
         )
         if document_reference_tags:
-            new_children = parse_operations(parsing_context, new_children)
+            new_children = parse_operations(document_context, new_children)
 
         replace_children(container_tag, new_children)
 
     # Resolve operation references and operands
-    for operation_tag in parsing_context.soup.select(f".{OPERATION_CSS_CLASS}"):
-        resolve_references_and_operands(parsing_context, operation_tag)
+    for operation_tag in document_context.soup.select(f".{OPERATION_CSS_CLASS}"):
+        resolve_references_and_operands(document_context, operation_tag)
 
-    return parsing_context
+    return document_context

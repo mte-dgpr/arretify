@@ -25,7 +25,7 @@ from typing import (
 
 from arretify.types import (
     ElementGroupId,
-    ParsingContext,
+    DocumentContext,
     SectionType,
 )
 from arretify.utils.functional import flat_map_string
@@ -74,12 +74,12 @@ SectionNumber = str
 
 
 def parse_section_references(
-    parsing_context: ParsingContext,
+    document_context: DocumentContext,
     children: Iterable[PageElementOrString],
 ) -> List[PageElementOrString]:
     # First check for multiple, cause it is the most exhaustive pattern
-    new_children = list(_parse_section_reference_multiple(parsing_context.soup, children))
-    return list(_parse_section_references(parsing_context.soup, new_children))
+    new_children = list(_parse_section_reference_multiple(document_context.soup, children))
+    return list(_parse_section_references(document_context.soup, new_children))
 
 
 # -------------------- Shared -------------------- #

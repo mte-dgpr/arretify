@@ -23,7 +23,7 @@ import logging
 from bs4 import Tag
 
 from arretify.types import (
-    ParsingContext,
+    DocumentContext,
     SectionType,
 )
 from arretify.law_data.types import Section
@@ -40,7 +40,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 def resolve_code_article_legifrance_id(
-    parsing_context: ParsingContext,
+    document_context: DocumentContext,
     code_article_reference_tag: Tag,
 ) -> None:
     document, sections = parse_uri(cast(str, code_article_reference_tag["data-uri"]))
@@ -86,7 +86,7 @@ def resolve_code_article_legifrance_id(
 
 
 def resolve_code_legifrance_id(
-    parsing_context: ParsingContext,
+    document_context: DocumentContext,
     code_reference_tag: Tag,
 ) -> None:
     document, sections = parse_uri(cast(str, code_reference_tag["data-uri"]))

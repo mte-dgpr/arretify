@@ -30,7 +30,7 @@ from arretify.parsing_utils.dates import (
     DATE_NODE,
     render_date_regex_tree_match,
 )
-from arretify.types import PageElementOrString, ParsingContext
+from arretify.types import PageElementOrString, DocumentContext
 from arretify.utils.functional import flat_map_string
 from arretify.html_schemas import (
     DOCUMENT_REFERENCE_SCHEMA,
@@ -85,7 +85,7 @@ DECRET_NODE = regex_tree.Group(
 
 
 def parse_circulaires_references(
-    parsing_context: ParsingContext,
+    document_context: DocumentContext,
     children: Iterable[PageElementOrString],
 ) -> List[PageElementOrString]:
     return list(
@@ -94,7 +94,7 @@ def parse_circulaires_references(
             lambda string: map_regex_tree_match(
                 split_string_with_regex_tree(DECRET_NODE, string),
                 lambda circulaire_match: _render_circulaire_container(
-                    parsing_context.soup,
+                    document_context.soup,
                     circulaire_match,
                 ),
                 allowed_group_names=["__circulaire"],
