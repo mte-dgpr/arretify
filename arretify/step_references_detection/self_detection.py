@@ -25,7 +25,7 @@ from arretify.regex_utils import (
     split_string_with_regex_tree,
     iter_regex_tree_match_strings,
 )
-from arretify.types import PageElementOrString, ParsingContext
+from arretify.types import PageElementOrString, DocumentContext
 from arretify.utils.functional import flat_map_string
 from arretify.html_schemas import (
     DOCUMENT_REFERENCE_SCHEMA,
@@ -55,7 +55,7 @@ SELF_NODE = regex_tree.Group(
 
 
 def parse_self_references(
-    parsing_context: ParsingContext,
+    document_context: DocumentContext,
     children: Iterable[PageElementOrString],
 ) -> List[PageElementOrString]:
     document = Document(type=DocumentType.self)
@@ -65,7 +65,7 @@ def parse_self_references(
             lambda string: map_regex_tree_match(
                 split_string_with_regex_tree(SELF_NODE, string),
                 lambda self_group_match: make_data_tag(
-                    parsing_context.soup,
+                    document_context.soup,
                     DOCUMENT_REFERENCE_SCHEMA,
                     data=dict(
                         uri=render_uri(document),

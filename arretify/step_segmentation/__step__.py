@@ -16,11 +16,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from arretify.types import ParsingContext
+from arretify.types import DocumentContext
 from .parse_arrete import parse_arrete
 
 
-def step_segmentation(parsing_context: ParsingContext) -> ParsingContext:
-    if not parsing_context.lines:
+def step_segmentation(document_context: DocumentContext) -> DocumentContext:
+    if not document_context.lines:
         raise ValueError("Parsing context does not contain any lines to segment")
-    return parse_arrete(parsing_context)
+    return parse_arrete(document_context)

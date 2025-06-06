@@ -18,7 +18,7 @@
 #
 import unittest
 
-from arretify.utils.testing import normalized_html_str, create_parsing_context
+from arretify.utils.testing import normalized_html_str, create_document_context
 from arretify.utils import html
 
 from .operands_detection import resolve_references_and_operands
@@ -32,7 +32,7 @@ class TestParseOperations(unittest.TestCase):
 
     def test_several_references_no_operand(self):
         # Arrange
-        parsing_context = create_parsing_context(
+        document_context = create_document_context(
             normalized_html_str(
                 """
                 <div class="dsr-alinea">
@@ -87,13 +87,13 @@ class TestParseOperations(unittest.TestCase):
                 """  # noqa: E501
             )
         )
-        tag = parsing_context.soup.select_one(".dsr-operation")
+        tag = document_context.soup.select_one(".dsr-operation")
 
         # Act
-        resolve_references_and_operands(parsing_context, tag)
+        resolve_references_and_operands(document_context, tag)
 
         # Assert
-        assert str(parsing_context.soup) == normalized_html_str(
+        assert str(document_context.soup) == normalized_html_str(
             # Check that element_id was added to both references, and that the references were
             # added to the operation
             """
@@ -154,7 +154,7 @@ class TestParseOperations(unittest.TestCase):
 
     def test_one_reference_one_operand(self):
         # Arrange
-        parsing_context = create_parsing_context(
+        document_context = create_document_context(
             normalized_html_str(
                 """
                 <div class="dsr-alinea">
@@ -197,13 +197,13 @@ class TestParseOperations(unittest.TestCase):
                 """  # noqa: E501
             )
         )
-        tag = parsing_context.soup.select_one(".dsr-operation")
+        tag = document_context.soup.select_one(".dsr-operation")
 
         # Act
-        resolve_references_and_operands(parsing_context, tag)
+        resolve_references_and_operands(document_context, tag)
 
         # Assert
-        assert str(parsing_context.soup) == normalized_html_str(
+        assert str(document_context.soup) == normalized_html_str(
             """
             <div class="dsr-alinea">
                 La dernière phrase de l'
@@ -251,7 +251,7 @@ class TestParseOperations(unittest.TestCase):
 
     def test_with_single_document_reference(self):
         # Arrange
-        parsing_context = create_parsing_context(
+        document_context = create_document_context(
             normalized_html_str(
                 """
                 <div class="dsr-alinea">
@@ -273,13 +273,13 @@ class TestParseOperations(unittest.TestCase):
                 """  # noqa: E501
             )
         )
-        tag = parsing_context.soup.select_one(".dsr-operation")
+        tag = document_context.soup.select_one(".dsr-operation")
 
         # Act
-        resolve_references_and_operands(parsing_context, tag)
+        resolve_references_and_operands(document_context, tag)
 
         # Assert
-        assert str(parsing_context.soup) == normalized_html_str(
+        assert str(document_context.soup) == normalized_html_str(
             """
             <div class="dsr-alinea">
                 Les prescriptions de l'

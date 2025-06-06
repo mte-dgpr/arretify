@@ -27,7 +27,7 @@ from typing import (
     cast,
 )
 
-from arretify.types import ParsingContext
+from arretify.types import DocumentContext
 from arretify.utils.html import (
     PageElementOrString,
     make_data_tag,
@@ -178,12 +178,12 @@ ARRETE_MULTIPLE_NODE = regex_tree.Group(
 
 
 def parse_arretes_references(
-    parsing_context: ParsingContext,
+    document_context: DocumentContext,
     children: Iterable[PageElementOrString],
 ) -> List[PageElementOrString]:
     # First check for multiple, cause it is the most exhaustive pattern
-    new_children = list(_parse_multiple_arretes_references(parsing_context.soup, children))
-    return list(_parse_arretes_references(parsing_context.soup, new_children))
+    new_children = list(_parse_multiple_arretes_references(document_context.soup, children))
+    return list(_parse_arretes_references(document_context.soup, new_children))
 
 
 def _extract_identifier(
