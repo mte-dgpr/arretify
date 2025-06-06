@@ -22,6 +22,7 @@ from dataclasses import replace as dataclass_replace
 from arretify.regex_utils import PatternProxy
 from arretify.types import DocumentContext
 from .markdown_cleaning import clean_markdown
+from .ocr_cleaning import clean_ocr
 
 
 PUNCTUATION_LINE_PATTERN = PatternProxy(r"^[·.,;:!?'\s\-]*$")
@@ -34,6 +35,9 @@ def step_markdown_cleaning(document_context: DocumentContext) -> DocumentContext
 
     # Clean input markdown
     lines = [clean_markdown(line) for line in document_context.lines]
+
+    # Clean common OCR errors
+    lines = [clean_ocr(line) for line in lines]
 
     # Remove punctuation lines
     lines = [line for line in lines if not _is_punctuation_line(line.contents)]

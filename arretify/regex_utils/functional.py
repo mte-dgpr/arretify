@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import Callable, Iterable, Iterator, List, TypeVar
+from typing import Callable, Iterable, Iterator, List, TypeVar, Union
 
 from .types import GroupName
 from .core import MatchFlow, MatchProxy
@@ -29,8 +29,8 @@ R = TypeVar("R")
 
 def map_matches(
     elements: MatchFlow,
-    map_func: Callable[[MatchProxy], PageElementOrString],
-) -> Iterator[PageElementOrString]:
+    map_func: Callable[[MatchProxy], R],
+) -> Iterator[Union[str, R]]:
     for element in elements:
         if isinstance(element, str):
             yield element
