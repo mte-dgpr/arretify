@@ -41,6 +41,8 @@ class ErrorCodes(Enum):
     unbalanced_quote = "unbalanced_quote"
     non_contiguous_titles = "non_contiguous_titles"
     law_data_api_error = "law_data_api_error"
+    non_existant_date = "non_existant_date"
+    """This date is syntactically valid but doesn't exist on the calendar"""
 
 
 class ArretifyError(Exception):

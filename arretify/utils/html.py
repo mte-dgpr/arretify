@@ -16,13 +16,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import Dict, List, Iterable, cast, TypeGuard
+from typing import List, Iterable, cast, TypeGuard
 
 from bs4 import BeautifulSoup, Tag
 
 from arretify.utils.merge import merge_strings
 from arretify.types import (
     DataElementSchema,
+    DataElementDataDict,
     PageElementOrString,
     ElementId,
     ElementGroupId,
@@ -71,7 +72,7 @@ def make_data_tag(
     soup: BeautifulSoup,
     schema: DataElementSchema,
     contents: Iterable[PageElementOrString] | None = None,
-    data: Dict[str, str | None] | None = None,
+    data: DataElementDataDict | None = None,
 ) -> Tag:
     if contents is None:
         contents = []

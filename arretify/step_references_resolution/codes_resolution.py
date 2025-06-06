@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import List, cast, Dict
+from typing import List, cast
 from dataclasses import replace as dataclass_replace
 import logging
 
@@ -25,6 +25,7 @@ from bs4 import Tag
 from arretify.types import (
     DocumentContext,
     SectionType,
+    DataElementDataDict,
 )
 from arretify.law_data.types import Section
 from arretify.law_data.uri import parse_uri
@@ -53,7 +54,7 @@ def resolve_code_article_legifrance_id(
     resolved_sections: List[Section] = []
     for section in sections:
         if section.type == SectionType.ARTICLE:
-            new_fields: Dict[str, str | None] = dict(
+            new_fields: DataElementDataDict = dict(
                 start_id=None,
                 end_id=None,
             )

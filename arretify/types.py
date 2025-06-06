@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 import re
-from typing import List, Union, Tuple, Optional, Type, TypeVar
+from typing import List, Union, Tuple, Optional, Type, TypeVar, Dict
 from enum import Enum
 from dataclasses import dataclass, fields
 from uuid import uuid4
@@ -61,6 +61,9 @@ class DataElementSchema:
             raise ValueError("element_id is a reserved key")
         if "group_id" in self.data_keys:
             raise ValueError("group_id is a reserved key")
+
+
+DataElementDataDict = Dict[str, str | None]
 
 
 class SectionType(Enum):
