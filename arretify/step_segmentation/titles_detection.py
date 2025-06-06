@@ -17,22 +17,31 @@ from arretify.parsing_utils.numbering import (
 from arretify.regex_utils import (
     regex_tree,
     join_with_or,
-    Settings,
 )
 from arretify.regex_utils.regex_tree.execute import match
+from .document_elements import TABLE_OF_CONTENTS_PAGING_PATTERN_S
 from .types import TitleInfo
 
 
 _LOGGER = logging.getLogger(__name__)
 
 
-SECTION_NAMES = [
+TITLE_PUNCTUATION_PATTERN_S = r"[.\s\-:]"
+IS_NOT_TABLE_OF_CONTENTS_PAGING = rf"(?!.*{TABLE_OF_CONTENTS_PAGING_PATTERN_S}$)"
+IS_NOT_ENDING_WITH_PUNCTUATION = r"(?!.*[.;:,]$)"
+NUMBERING_THEN_OPT_NUMBERS_PATTERN_S = rf"{NUMBERING_PATTERN_S}([.\-]{NUMBERS_PATTERN_S})*\.?"
+NUMBERING_THEN_OBL_NUMBERS_PATTERN_S = rf"{NUMBERING_PATTERN_S}([.\-]{NUMBERS_PATTERN_S})+\.?"
+
+SECTION_NAMES_LIST = [
     r"annexe",
     r"titre",
     r"chapitre",
     r"article",
 ]
+
+SECTION_NAMES_PATTERN_S = rf"{join_with_or(SECTION_NAMES_LIST)}"
 """Detect all section names."""
+
 
 TITLE_NODE = regex_tree.Group(
     regex_tree.Branching(
@@ -43,50 +52,76 @@ TITLE_NODE = regex_tree.Group(
             # Titre I - TITRE
             # Titre 1. TITRE
             # Titre 2 TITRE
-            # Chapitre 1.A
             # Chapitre 1.2 - CHAPITRE
             # Chapitre A. CHAPITRE
             # Article 1.2.3 - Article
             # Article 1.2.3
             # Article 1.2.3. - Article.
-            # Title is split into a section name, a numbering pattern and an optional text group
             regex_tree.Sequence(
                 [
                     # Section name
-                    rf"^(?P<section_name>{join_with_or(SECTION_NAMES)})\s*",
-                    # Numbering pattern
+                    rf"^(?P<section_name>{SECTION_NAMES_PATTERN_S})",
                     regex_tree.Branching(
                         [
-                            rf"(?P<number>{ORDINAL_PATTERN_S})",
-                            rf"(?P<number>(\d|I|i)){EME_PATTERN_S}",
-                            rf"(?P<number>{NUMBERING_PATTERN_S}(?:[.]{NUMBERING_PATTERN_S})*)",
+                            # Title has no numbering
+                            regex_tree.Sequence(
+                                [
+                                    # Punctuation before the end of the line
+                                    rf"{TITLE_PUNCTUATION_PATTERN_S}*$",
+                                ]
+                            ),
+                            # Title has numbering
+                            regex_tree.Sequence(
+                                [
+                                    # Punctuation between section name and numbering
+                                    rf"\s*{TITLE_PUNCTUATION_PATTERN_S}\s*",
+                                    # Numbering pattern
+                                    regex_tree.Branching(
+                                        [
+                                            rf"(?P<number>{ORDINAL_PATTERN_S})",
+                                            rf"(?P<number>(\d|I|i)){EME_PATTERN_S}",
+                                            rf"(?P<number>{NUMBERING_THEN_OPT_NUMBERS_PATTERN_S})",
+                                        ],
+                                    ),
+                                    # Punctuation between numbering and text
+                                    rf"{TITLE_PUNCTUATION_PATTERN_S}*",
+                                    # Text group not ending with table of contents paging
+                                    rf"(?P<text>{IS_NOT_TABLE_OF_CONTENTS_PAGING}.*?)$",
+                                ]
+                            ),
                         ],
-                        settings=Settings(ignore_accents=False),
                     ),
-                    # Do not catch the optional punctuation
-                    r"(?:[.\s\-:]*)",
-                    # Optional text group not ending with 5 points and numbers (ToC)
-                    r"(?P<text>\s*(?:(?!\.{5}\s+\d+).)*)?$",
-                ]
+                ],
+            ),
+            # This regex matches section names in arretes such as
+            # 1.2 - CHAPITRE
+            # 1.2.3 - Article
+            # 1.2.3. - Article.
+            regex_tree.Sequence(
+                [
+                    # Numbering pattern with at least two numbers
+                    rf"(?P<number>{NUMBERING_THEN_OBL_NUMBERS_PATTERN_S})",
+                    # Punctuation between numbering and text
+                    rf"{TITLE_PUNCTUATION_PATTERN_S}*",
+                    # Text group not ending with table of contents paging
+                    rf"(?P<text>{IS_NOT_TABLE_OF_CONTENTS_PAGING}.*?)$",
+                ],
             ),
             # This regex matches section names in arretes such as
             # 1 TITRE
-            # 1.2 - CHAPITRE
-            # 1.A. CHAPITRE
-            # 1.2.3 - Article
-            # Title is split into a numbering pattern and a text group
+            # 1 - Article
             regex_tree.Sequence(
                 [
-                    # Numbering pattern with integer as first number
-                    rf"(?P<number>{NUMBERS_PATTERN_S}(?:[.]{NUMBERING_PATTERN_S})*)",
-                    # Do not catch the optional punctuation
-                    r"(?:[.\s\-:]*)",
-                    # Text group without ending punctuation or 5 points and numbers (ToC)
-                    r"(?P<text>\s*[A-Za-z](?:(?!\.{5}\s+\d+).)+?(?<![.;:,]))$",
+                    # Numbering pattern with only one integer
+                    rf"^(?P<number>{NUMBERS_PATTERN_S}\.?)",
+                    # Punctuation between section name and numbering
+                    rf"\s*{TITLE_PUNCTUATION_PATTERN_S}\s*",
+                    # Text group not ending with table of contents paging nor punctuation
+                    rf"(?P<text>{IS_NOT_TABLE_OF_CONTENTS_PAGING}"
+                    rf"{IS_NOT_ENDING_WITH_PUNCTUATION}.*?)$",
                 ],
-                settings=Settings(ignore_accents=False),
             ),
-        ]
+        ],
     ),
     group_name="title",
 )
