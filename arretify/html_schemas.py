@@ -5,6 +5,8 @@ from dataclasses import replace as dataclass_replace
 
 # TODO : custom DTD for automatic validation of generated document
 
+# -------------------- Parts -------------------- #
+
 HEADER_SCHEMA = DataElementSchema(
     name="header",
     tag_name="header",
@@ -22,6 +24,27 @@ APPENDIX_SCHEMA = DataElementSchema(
     tag_name="appendix",
     data_keys=[],
 )
+
+# -------------------- Document schemas -------------------- #
+
+PAGE_FOOTER_SCHEMA = DataElementSchema(
+    name="page_footer",
+    tag_name="div",
+    data_keys=[],
+)
+
+TABLE_OF_CONTENTS_SCHEMA = DataElementSchema(
+    name="table_of_contents",
+    tag_name="div",
+    data_keys=[],
+)
+
+DOCUMENT_ELEMENTS_SCHEMAS: Dict[str, DataElementSchema] = {
+    "page_footer": PAGE_FOOTER_SCHEMA,
+    "table_of_contents": TABLE_OF_CONTENTS_SCHEMA,
+}
+
+# -------------------- Header schemas -------------------- #
 
 EMBLEM_SCHEMA = DataElementSchema(
     name="emblem",
@@ -71,12 +94,6 @@ SUPPLEMENTARY_MOTIF_INFORMATION_SCHEMA = DataElementSchema(
     data_keys=[],
 )
 
-TABLE_OF_CONTENTS_SCHEMA = DataElementSchema(
-    name="table_of_contents",
-    tag_name="div",
-    data_keys=[],
-)
-
 HEADER_ELEMENTS_SCHEMAS: Dict[str, DataElementSchema] = {
     "emblem": EMBLEM_SCHEMA,
     "entity": ENTITY_SCHEMA,
@@ -86,8 +103,9 @@ HEADER_ELEMENTS_SCHEMAS: Dict[str, DataElementSchema] = {
     "visa": VISA_SCHEMA,
     "motif": MOTIF_SCHEMA,
     "supplementary_motif_info": SUPPLEMENTARY_MOTIF_INFORMATION_SCHEMA,
-    "table_of_contents": TABLE_OF_CONTENTS_SCHEMA,
 }
+
+# -------------------- Main and appendix schemas -------------------- #
 
 SECTION_SCHEMA = DataElementSchema(
     name="section",
@@ -122,6 +140,8 @@ ALINEA_SCHEMA = DataElementSchema(
     data_keys=["number"],
 )
 
+# -------------------- References schemas -------------------- #
+
 DOCUMENT_REFERENCE_SCHEMA = DataElementSchema(
     name="document_reference",
     tag_name="a",
@@ -140,11 +160,7 @@ DATE_SCHEMA = DataElementSchema(
     data_keys=[],
 )
 
-ERROR_SCHEMA = DataElementSchema(
-    name="error",
-    tag_name="span",
-    data_keys=[],
-)
+# -------------------- Operations schemas -------------------- #
 
 OPERATION_SCHEMA = DataElementSchema(
     name="operation",
@@ -157,6 +173,14 @@ OPERATION_SCHEMA = DataElementSchema(
         "references",
         "operand",
     ],
+)
+
+# -------------------- Errors schemas -------------------- #
+
+ERROR_SCHEMA = DataElementSchema(
+    name="error",
+    tag_name="span",
+    data_keys=[],
 )
 
 DEBUG_KEYWORD_SCHEMA = DataElementSchema(

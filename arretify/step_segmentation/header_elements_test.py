@@ -2,18 +2,24 @@ import unittest
 
 from bs4 import BeautifulSoup
 
-from arretify.parsing_utils.source_mapping import initialize_lines
+from arretify.parsing_utils.source_mapping import (
+    initialize_lines,
+    text_segments_to_str,
+)
+from arretify.parsing_utils.patterns import join_split_pile_with_pattern
 from .header_elements import (
     ENTITY_PATTERN,
     HONORARY_PATTERN,
     SUPPLEMENTARY_MOTIF_INFORMATION_PATTERN,
-    _join_split_pile_with_pattern,
+    HEADER_ELEMENTS_PATTERNS,
     _parse_visas_or_motifs,
     _parse_arrete_title_info,
-    parse_table_of_contents,
-    HEADER_ELEMENTS_PATTERNS,
 )
-from arretify.utils.testing import normalized_html_str, assert_html_list_equal, normalized_soup
+from arretify.utils.testing import (
+    normalized_html_str,
+    assert_html_list_equal,
+    normalized_soup,
+)
 
 
 class TestArretePattern(unittest.TestCase):
@@ -34,7 +40,7 @@ class TestJoinSplitPile(unittest.TestCase):
                 "ET DE L'ENVIRONNEMENT BUREAU DE L'ENVIRONNEMENT"
             )
         ]
-        assert _join_split_pile_with_pattern(pile, pattern=ENTITY_PATTERN) == [
+        assert join_split_pile_with_pattern(pile, pattern=ENTITY_PATTERN) == [
             "Préfecture du Doubs ",
             "DIRECTION DES COLLECTIVITÉS LOCALES ET DE L'ENVIRONNEMENT ",
             "BUREAU DE L'ENVIRONNEMENT",
@@ -48,7 +54,7 @@ class TestJoinSplitPile(unittest.TestCase):
                 "Officier de l'Ordre National du Mérite"
             )
         ]
-        assert _join_split_pile_with_pattern(pile, pattern=HONORARY_PATTERN) == [
+        assert join_split_pile_with_pattern(pile, pattern=HONORARY_PATTERN) == [
             "Le Préfet du Haut-Rhin",
             "Chevalier de la Légion d'Honneur",
             "Officier de l'Ordre National du Mérite",
@@ -61,7 +67,7 @@ class TestJoinSplitPile(unittest.TestCase):
                 "SUR proposition du secrétaire général de la préfecture du Haut-Rhin ;"
             )
         ]
-        assert _join_split_pile_with_pattern(
+        assert join_split_pile_with_pattern(
             pile, pattern=SUPPLEMENTARY_MOTIF_INFORMATION_PATTERN
         ) == [
             "APRĖS communication du projet d'arrêté à l'exploitant ;",
@@ -141,7 +147,7 @@ class TestParseMotifsOrVisas(unittest.TestCase):
             </header>
             """
         )
-        assert _text_segments_to_str(lines) == ["ARRETE"]
+        assert text_segments_to_str(lines) == ["ARRETE"]
 
     def test_lists_with_keyword_first(self):
         # Arrange
@@ -173,7 +179,7 @@ class TestParseMotifsOrVisas(unittest.TestCase):
             </header>
             """
         )
-        assert _text_segments_to_str(lines) == ["ARRETE"]
+        assert text_segments_to_str(lines) == ["ARRETE"]
 
     def test_lists_with_keyword_in_bullet(self):
         # Arrange
@@ -225,7 +231,7 @@ class TestParseMotifsOrVisas(unittest.TestCase):
             </header>
             """
         )
-        assert _text_segments_to_str(lines) == ["ARRETE"]
+        assert text_segments_to_str(lines) == ["ARRETE"]
 
     def test_lists_with_keyword_in_bullet_next_is_list_too(self):
         # Arrange
@@ -278,7 +284,7 @@ class TestParseMotifsOrVisas(unittest.TestCase):
             </header>
             """
         )
-        assert _text_segments_to_str(lines) == ["ARRETE"]
+        assert text_segments_to_str(lines) == ["ARRETE"]
 
     def test_without_keyword_nor_bullet(self):
         # Arrange
@@ -308,7 +314,7 @@ class TestParseMotifsOrVisas(unittest.TestCase):
             </header>
             """
         )
-        assert _text_segments_to_str(lines) == ["ARRETE"]
+        assert text_segments_to_str(lines) == ["ARRETE"]
 
     def test_with_nested_list(self):
         # Arrange
@@ -346,7 +352,7 @@ class TestParseMotifsOrVisas(unittest.TestCase):
             </header>
             """
         )
-        assert _text_segments_to_str(lines) == ["ARRETE"]
+        assert text_segments_to_str(lines) == ["ARRETE"]
 
     def test_with_nested_list_bullet(self):
         # Arrange
@@ -386,7 +392,7 @@ class TestParseMotifsOrVisas(unittest.TestCase):
             </header>
             """  # noqa: E501
         )
-        assert _text_segments_to_str(lines) == ["ARRETE"]
+        assert text_segments_to_str(lines) == ["ARRETE"]
 
     def test_with_whitespace(self):
         # Arrange
@@ -416,111 +422,4 @@ class TestParseMotifsOrVisas(unittest.TestCase):
             </header>
             """
         )
-        assert _text_segments_to_str(lines) == ["ARRETE"]
-
-
-class TestParseTableOfContents(unittest.TestCase):
-
-    def test_sommaire(self):
-        # Arrange
-        lines = initialize_lines(
-            [
-                "Sommaire",
-                "1 Titre ..... 5",
-                "1.1 Chapitre ..... 5",
-                "1.1.1 Article ..... 5",
-                "1 Titre",
-            ]
-        )
-
-        # Act
-        soup = BeautifulSoup()
-        header = soup.new_tag("header")
-        lines = parse_table_of_contents(soup, header, lines)
-
-        # Assert
-        assert str(header) == normalized_html_str(
-            """
-            <header>
-                <div class="dsr-table_of_contents">
-                    <div>Sommaire</div>
-                    <div>1 Titre ..... 5</div>
-                    <div>1.1 Chapitre ..... 5</div>
-                    <div>1.1.1 Article ..... 5</div>
-                </div>
-            </header>
-            """  # noqa: E501
-        )
-        assert _text_segments_to_str(lines) == ["1 Titre"]
-
-    def test_sommaire_with_arrete(self):
-        # Arrange
-        lines = initialize_lines(
-            [
-                "Liste des chapitres",
-                "Arrêté n D3 ..... 1",
-                "TITRE 1 - TITRE ..... 5",
-                "CHAPITRE 1.1 - CHAPITRE ..... 5",
-                "TITRE 1 - TITRE",
-            ]
-        )
-
-        # Act
-        soup = BeautifulSoup()
-        header = soup.new_tag("header")
-        lines = parse_table_of_contents(soup, header, lines)
-
-        # Assert
-        assert str(header) == normalized_html_str(
-            """
-            <header>
-                <div class="dsr-table_of_contents">
-                    <div>Liste des chapitres</div>
-                    <div>Arrêté n D3 ..... 1</div>
-                    <div>TITRE 1 - TITRE ..... 5</div>
-                    <div>CHAPITRE 1.1 - CHAPITRE ..... 5</div>
-                </div>
-            </header>
-            """  # noqa: E501
-        )
-        assert _text_segments_to_str(lines) == ["TITRE 1 - TITRE"]
-
-    def test_sommaire_non_contiguous(self):
-        # Arrange
-        lines = initialize_lines(
-            [
-                "Liste des articles",
-                "TITRE 1 - TITRE ..... 1",
-                "CHAPITRE chapitre ..... 5",
-                "Article 1.1. article ..... 5",
-                "CHAPITRE Autre chapitre ..... 5",
-                "Article 1.1. Autre article ..... 5",
-                "TITRE 1 - Titre",
-            ]
-        )
-
-        # Act
-        soup = BeautifulSoup()
-        header = soup.new_tag("header")
-        lines = parse_table_of_contents(soup, header, lines)
-
-        # Assert
-        assert str(header) == normalized_html_str(
-            """
-            <header>
-                <div class="dsr-table_of_contents">
-                    <div>Liste des articles</div>
-                    <div>TITRE 1 - TITRE ..... 1</div>
-                    <div>CHAPITRE chapitre ..... 5</div>
-                    <div>Article 1.1. article ..... 5</div>
-                    <div>CHAPITRE Autre chapitre ..... 5</div>
-                    <div>Article 1.1. Autre article ..... 5</div>
-                </div>
-            </header>
-            """  # noqa: E501
-        )
-        assert _text_segments_to_str(lines) == ["TITRE 1 - Titre"]
-
-
-def _text_segments_to_str(segments):
-    return [segment.contents for segment in segments]
+        assert text_segments_to_str(lines) == ["ARRETE"]

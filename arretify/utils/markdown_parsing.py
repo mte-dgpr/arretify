@@ -20,8 +20,11 @@ TABLE_LINE_PATTERN = PatternProxy(r"(\|)")
 TABLE_DESCRIPTION_PATTERN = PatternProxy(r"^(\(\*+\))|^(\*+)")
 """Detect if the line is a table description, i.e. starts with "*" or "(*)"."""
 
-LIST_PATTERN = PatternProxy(r"^(?P<indentation>\s*)(→|-\s|[a-zA-Z1-9][\)°]\s+)")
-"""Detect if the line starts with → or - or a number or letter followed by )."""
+BULLETPOINT_PATTERN_S = r"(\>|→|-|[a-zA-Z1-9][\)°])"
+"""Detect if the line contains a >, →, - or a number or letter followed by ) or °."""
+
+LIST_PATTERN = PatternProxy(rf"^(?P<indentation>\s*){BULLETPOINT_PATTERN_S}\s+")
+"""Detect if the line starts with a bulletpoint with preceding indentation."""
 
 IMAGE_PATTERN = PatternProxy(r"!\[[^\[\]]+\]\([^()]+\)")
 """Detect if the line starts with an image."""
@@ -34,7 +37,7 @@ def is_table_line(line: str) -> bool:
 
 def is_table_description(line: str, pile: List[PageElementOrString]) -> bool:
     # Sentence starts with any number of * between parentheses or without parentheses
-    match = TABLE_DESCRIPTION_PATTERN.search(line)
+    match = TABLE_DESCRIPTION_PATTERN.match(line)
     if match:
         return True
 
@@ -63,7 +66,7 @@ def is_list(line: str) -> bool:
 
 def is_image(line: str) -> bool:
     """Detect if the sentence starts with an image."""
-    return bool(IMAGE_PATTERN.search(line))
+    return bool(IMAGE_PATTERN.match(line))
 
 
 def parse_markdown_table(elements: List[PageElementOrString]):

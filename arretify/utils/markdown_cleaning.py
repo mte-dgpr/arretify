@@ -16,7 +16,7 @@ from arretify.regex_utils import (
 )
 from arretify.parsing_utils.dates import MONTH_POINT_ABBREVIATIONS
 from arretify.regex_utils import regex_tree
-from .markdown_parsing import LIST_PATTERN, is_table_line
+from .markdown_parsing import LIST_PATTERN, BULLETPOINT_PATTERN_S, is_table_line
 
 
 LATEX_NODE = LatexNodes2Text(keep_comments=True)
@@ -165,7 +165,10 @@ def clean_markdown(line: TextSegment) -> TextSegment:
     line = apply_to_segment(line, _make_sub_wrong(r"[\n\r]+$", ""))
 
     # Remove * at the beginning only if matching closing * found
-    matched_em_open = re.search(r"^\s*(?P<em_open>\*+)(?!\s)", line.contents)
+    matched_em_open = re.search(
+        rf"^{BULLETPOINT_PATTERN_S}?\s*(?P<em_open>\*+)(?!\s)",
+        line.contents,
+    )
 
     line_mem: TextSegment
     if matched_em_open:
