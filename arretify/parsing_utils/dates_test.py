@@ -153,6 +153,12 @@ class TestRenderDateRegexTreeMatch(unittest.TestCase):
             '<time class="dsr-date" datetime="2020-07-20">20 JUL 2020</time>',
         ]
 
+    def test_syntactically_valid_but_non_existant_date(self):
+        assert _parsed_elements("31 FEV 2013") == [
+            '<time class="dsr-date" data-error_codes="non_existant_date" datetime="0001-01-01">'
+            "31 FEV 2013</time>",
+        ]
+
 
 def _parsed_elements(string: str) -> list[str]:
     soup = BeautifulSoup(string, features="html.parser")

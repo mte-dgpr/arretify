@@ -24,7 +24,7 @@ from bs4 import (
     Tag,
 )
 
-from arretify.types import SectionType
+from arretify.types import SectionType, DataElementDataDict
 from arretify.utils.html import (
     make_data_tag,
     render_str_list_attribute,
@@ -98,7 +98,7 @@ def parse_content(
         # Add a tag if the titles are not contiguous
         current_title_levels = current_titles_levels.get(new_section_type)
         new_title_levels = title_info.levels
-        title_element_data: Dict[str, str | None] = dict()
+        title_element_data: DataElementDataDict = dict()
 
         if not is_next_title(current_global_levels, current_title_levels, new_title_levels):
 

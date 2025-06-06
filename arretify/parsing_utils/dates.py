@@ -18,12 +18,12 @@
 #
 import logging
 from datetime import date, datetime
-from typing import List
+from typing import List, TypedDict
 
 from bs4 import BeautifulSoup, Tag
 
 from arretify.html_schemas import DATE_SCHEMA
-from arretify.utils.html import make_data_tag
+from arretify.utils.html import make_data_tag, render_str_list_attribute
 from arretify.regex_utils import (
     regex_tree,
     join_with_or,
@@ -32,6 +32,8 @@ from arretify.regex_utils import (
 from arretify.regex_utils.helpers import (
     lookup_normalized_version,
 )
+from arretify.types import DataElementDataDict
+from arretify.errors import ErrorCodes
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -126,7 +128,13 @@ DATE_NODE = regex_tree.Group(
 )
 
 
-def _handle_date_match_dict(match_dict: regex_tree.MatchDict) -> date:
+class _DateDict(TypedDict):
+    day: int
+    month: int
+    year: int
+
+
+def _handle_date_match_dict(match_dict: regex_tree.MatchDict) -> _DateDict:
     if match_dict.get("month_name"):
         month = _get_month_index(match_dict["month_name"], MONTH_NAMES)
     elif match_dict.get("month_point_abbreviation"):
@@ -152,7 +160,7 @@ def _handle_date_match_dict(match_dict: regex_tree.MatchDict) -> date:
     else:
         raise RuntimeError("expected year")
 
-    return date(
+    return dict(
         day=day,
         month=month,
         year=year,
@@ -192,11 +200,29 @@ def parse_date_str(date_str: str) -> date:
 
 
 def render_date_regex_tree_match(soup: BeautifulSoup, regex_tree_match: regex_tree.Match) -> Tag:
-    date_object = _handle_date_match_dict(regex_tree_match.match_dict)
+    date_dict = _handle_date_match_dict(regex_tree_match.match_dict)
+    data_dict: DataElementDataDict = dict()
+
+    try:
+        date_object = date(
+            year=date_dict["year"],
+            month=date_dict["month"],
+            day=date_dict["day"],
+        )
+
+    except ValueError:
+        data_dict["error_codes"] = render_str_list_attribute([ErrorCodes.non_existant_date.value])
+        date_object = date(
+            year=1,
+            month=1,
+            day=1,
+        )
+
     date_container = make_data_tag(
         soup,
         DATE_SCHEMA,
         contents=iter_regex_tree_match_strings(regex_tree_match),
+        data=data_dict,
     )
     date_container["datetime"] = render_date_str(date_object)
     return date_container
