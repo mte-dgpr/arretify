@@ -24,11 +24,11 @@ from bs4 import BeautifulSoup
 from arretify._vendor.clients_api_droit.clients_api_droit.legifrance import LegifranceClient
 from arretify._vendor.clients_api_droit.clients_api_droit.eurlex import EurlexClient
 from arretify.settings import Settings
-from .types import ParsingContext, SessionContext
+from .types import DocumentContext, SessionContext
 
 
-class TestParsingContext(unittest.TestCase):
-    def test_parsing_context_initialization(self):
+class TestDocumentContext(unittest.TestCase):
+    def test_document_context_initialization(self):
         # Arrange
         legifrance_client = mock.Mock(spec=LegifranceClient)
         eurlex_client = mock.Mock(spec=EurlexClient)
@@ -45,13 +45,13 @@ class TestParsingContext(unittest.TestCase):
         )
 
         # Act
-        parsing_context = ParsingContext.from_session_context(
+        document_context = DocumentContext.from_session_context(
             session_context, lines=lines, soup=soup
         )
 
         # Assert
-        assert parsing_context.lines is lines
-        assert parsing_context.soup is soup
-        assert parsing_context.legifrance_client is legifrance_client
-        assert parsing_context.eurlex_client is eurlex_client
-        assert parsing_context.settings is settings
+        assert document_context.lines is lines
+        assert document_context.soup is soup
+        assert document_context.legifrance_client is legifrance_client
+        assert document_context.eurlex_client is eurlex_client
+        assert document_context.settings is settings

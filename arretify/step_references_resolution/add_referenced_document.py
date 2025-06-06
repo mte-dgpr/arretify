@@ -23,7 +23,7 @@
 
 from typing import cast
 
-from arretify.types import ParsingContext
+from arretify.types import DocumentContext
 from arretify.utils.html import make_css_class, render_bool_attribute, is_tag_and_matches
 from arretify.html_schemas import SECTION_REFERENCE_SCHEMA, DOCUMENT_REFERENCE_SCHEMA
 from arretify.law_data.uri import parse_uri, render_uri, is_resolvable
@@ -36,7 +36,7 @@ DOCUMENT_REFERENCE_CSS_CLASS = make_css_class(DOCUMENT_REFERENCE_SCHEMA)
 
 
 def add_referenced_document_DEPRECATED(
-    parsing_context: ParsingContext,
+    document_context: DocumentContext,
 ) -> None:
     """
     This function is deprecated and will be removed in a future version.
@@ -45,7 +45,7 @@ def add_referenced_document_DEPRECATED(
     Eventually section reference will only use element_id to link the document reference.
     """
 
-    for section_reference_tag in parsing_context.soup.select(f".{SECTION_REFERENCE_CSS_CLASS}"):
+    for section_reference_tag in document_context.soup.select(f".{SECTION_REFERENCE_CSS_CLASS}"):
         reference_branches = build_reference_tree(section_reference_tag)
         for branch in reference_branches:
             document: Document | None = None

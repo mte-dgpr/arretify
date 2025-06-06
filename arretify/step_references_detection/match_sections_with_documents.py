@@ -20,7 +20,7 @@ from typing import List, Iterable
 
 from bs4 import Tag
 
-from arretify.types import PageElementOrString, ParsingContext
+from arretify.types import PageElementOrString, DocumentContext
 from arretify.utils.element_ranges import (
     iter_collapsed_range_right,
 )
@@ -61,10 +61,10 @@ CONNECTOR_SECTION_TO_PARENT_NODE = regex_tree.Group(
 
 
 def match_sections_to_parents(
-    parsing_context: ParsingContext,
+    document_context: DocumentContext,
     children: Iterable[PageElementOrString],
 ) -> List[PageElementOrString]:
-    parsing_context.soup
+    document_context.soup
     children = list(children)
     section_references = [
         tag

@@ -27,7 +27,7 @@ from dataclasses import dataclass, replace as dataclass_replace
 
 from dotenv import load_dotenv
 
-from .types import SessionContext, ParsingContext
+from .types import SessionContext, DocumentContext
 from .settings import APP_ROOT, EXAMPLES_DIR, OCR_FILE_EXTENSION, Settings
 from .step_ocr import step_ocr
 from .step_segmentation import step_segmentation
@@ -42,7 +42,7 @@ from .law_data.apis.eurlex import initialize_eurlex_client
 from .law_data.apis.mistral import initialize_mistral_client
 from .errors import ArretifyError, ErrorCodes, DependencyError, SettingsError
 from .pipeline import run_pipeline, load_ocr_file, load_pdf_file, save_html_file, PipelineStep
-from .clean_ocrized_file import clean_ocrized_file
+from .step_markdown_cleaning import step_markdown_cleaning
 from .utils.files import is_pdf_path, is_ocr_path
 
 
@@ -206,7 +206,7 @@ def _process_file(
     features: _Features,
 ) -> None:
     pipeline_steps: List[PipelineStep] = [
-        clean_ocrized_file,
+        step_markdown_cleaning,
         step_segmentation,
         step_references_detection,
     ]
@@ -217,17 +217,17 @@ def _process_file(
         pipeline_steps.append(step_eurlex_references_resolution)
     pipeline_steps.append(step_consolidation)
 
-    parsing_context: ParsingContext
+    document_context: DocumentContext
     if is_pdf_path(input_path):
         if not features.ocr:
             raise RuntimeError("OCR is disabled.")
         pipeline_steps.insert(0, step_ocr)
-        parsing_context = load_pdf_file(
+        document_context = load_pdf_file(
             session_context,
             input_path,
         )
     elif is_ocr_path(input_path):
-        parsing_context = load_ocr_file(
+        document_context = load_ocr_file(
             session_context,
             input_path,
         )
@@ -240,7 +240,7 @@ def _process_file(
     save_html_file(
         output_path,
         run_pipeline(
-            parsing_context,
+            document_context,
             pipeline_steps,
         ),
     )

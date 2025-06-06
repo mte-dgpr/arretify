@@ -20,7 +20,7 @@ from typing import Union, Callable, Type, TypeVar, ParamSpec, Concatenate
 from enum import Enum
 import logging
 
-from arretify.types import ParsingContext
+from arretify.types import DocumentContext
 from functools import wraps
 
 
@@ -75,12 +75,12 @@ def catch_and_log_arretify_error(
     logger: logging.Logger,
 ) -> Callable:
     def decorator(
-        func: Callable[Concatenate[ParsingContext, P], None],
-    ) -> Callable[Concatenate[ParsingContext, P], None]:
+        func: Callable[Concatenate[DocumentContext, P], None],
+    ) -> Callable[Concatenate[DocumentContext, P], None]:
         @wraps(func)
-        def wrapper(parsing_context: ParsingContext, *args: P.args, **kwargs: P.kwargs) -> None:
+        def wrapper(document_context: DocumentContext, *args: P.args, **kwargs: P.kwargs) -> None:
             try:
-                func(parsing_context, *args, **kwargs)
+                func(document_context, *args, **kwargs)
             except ArretifyError as error:
                 logger.warning(
                     f"{error.code.value} - {error}",

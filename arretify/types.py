@@ -31,7 +31,7 @@ from arretify.settings import Settings
 
 
 ELEMENT_NAME_PATTERN = re.compile(r"^[a-z0-9_]+$")
-ParsingContextType = TypeVar("ParsingContextType", bound="ParsingContext")
+DocumentContextType = TypeVar("DocumentContextType", bound="DocumentContext")
 
 LineColumn = Tuple[int, int]
 """Tuple line and column number. Line and column numbers are 0-indexed."""
@@ -96,7 +96,7 @@ class SessionContext:
 
 
 @dataclass(frozen=True, kw_only=True)
-class ParsingContext(SessionContext):
+class DocumentContext(SessionContext):
     """
     Container for parsing context information.
     This includes the lines of text being parsed, the BeautifulSoup object,
@@ -125,13 +125,13 @@ class ParsingContext(SessionContext):
 
     @classmethod
     def from_session_context(
-        cls: Type[ParsingContextType],
+        cls: Type[DocumentContextType],
         session_context: SessionContext,
         soup: BeautifulSoup,
         filename: str | None = None,
         pdf: Optional[bytes] = None,
         lines: TextSegments | None = None,
-    ) -> ParsingContextType:
+    ) -> DocumentContextType:
         if filename is None:
             filename = str(uuid4())
         return cls(
