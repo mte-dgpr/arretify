@@ -23,7 +23,7 @@ from shutil import rmtree
 
 from arretify._vendor import mistralai
 
-from arretify.types import ParsingContext
+from arretify.types import DocumentContext
 from arretify.parsing_utils.source_mapping import initialize_lines
 
 
@@ -31,14 +31,14 @@ _LOGGER = logging.getLogger(__name__)
 
 
 def mistral_ocr(
-    parsing_context: ParsingContext,
+    document_context: DocumentContext,
     replace_images_placeholders: bool = True,
-) -> ParsingContext:
-    if not parsing_context.mistral_client:
+) -> DocumentContext:
+    if not document_context.mistral_client:
         raise ValueError("MistralAI client is not initialized")
 
     # Save the OCR result to a tmp directory
-    pages_ocr_dir = parsing_context.settings.tmp_dir / f"{parsing_context.filename}_ocr"
+    pages_ocr_dir = document_context.settings.tmp_dir / f"{document_context.filename}_ocr"
     if pages_ocr_dir.is_dir():
         rmtree(pages_ocr_dir, ignore_errors=True)
     pages_ocr_dir.mkdir(parents=True, exist_ok=True)
@@ -47,7 +47,7 @@ def mistral_ocr(
     pages_ocr: List[str] = []
     for i, page in enumerate(
         _call_mistral_ocr_api(
-            parsing_context,
+            document_context,
             replace_images_placeholders=replace_images_placeholders,
         )
     ):
@@ -68,43 +68,43 @@ def mistral_ocr(
         _LOGGER.debug(f"Saved OCR page {page_index} to {page_ocr_filepath}")
 
     return dataclass_replace(
-        parsing_context,
+        document_context,
         lines=initialize_lines([line for page_ocr in pages_ocr for line in page_ocr.split("\n")]),
     )
 
 
 def _call_mistral_ocr_api(
-    parsing_context: ParsingContext,
+    document_context: DocumentContext,
     replace_images_placeholders: bool = True,
     max_retries: int = 5,
 ) -> Iterable[mistralai.models.OCRPageObject]:
-    if not parsing_context.mistral_client:
+    if not document_context.mistral_client:
         raise ValueError("MistralAI client is not initialized")
-    if not parsing_context.pdf:
+    if not document_context.pdf:
         raise ValueError("Parsing context does not contain a PDF file")
 
-    _LOGGER.info(f"Starting OCR process with MistralAI for {parsing_context.filename}...")
+    _LOGGER.info(f"Starting OCR process with MistralAI for {document_context.filename}...")
 
     cnt_retries = 0
     while cnt_retries < max_retries:
         try:
             # Upload PDF file to Mistral's OCR service
-            uploaded_file = parsing_context.mistral_client.files.upload(
+            uploaded_file = document_context.mistral_client.files.upload(
                 file={
-                    "file_name": parsing_context.filename,
-                    "content": parsing_context.pdf,
+                    "file_name": document_context.filename,
+                    "content": document_context.pdf,
                 },
                 purpose="ocr",
             )
 
             # Get URL for the uploaded file
-            signed_url = parsing_context.mistral_client.files.get_signed_url(
+            signed_url = document_context.mistral_client.files.get_signed_url(
                 file_id=uploaded_file.id, expiry=1
             )
 
             # Process PDF with OCR including embedded images
-            api_response = parsing_context.mistral_client.ocr.process(
-                model=parsing_context.settings.mistral_ocr_model,
+            api_response = document_context.mistral_client.ocr.process(
+                model=document_context.settings.mistral_ocr_model,
                 document={"type": "document_url", "document_url": signed_url.url},
                 include_image_base64=True,
             )

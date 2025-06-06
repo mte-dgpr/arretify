@@ -35,7 +35,7 @@ from typing import (
     Dict,
 )
 
-from arretify.types import ParsingContext
+from arretify.types import DocumentContext
 
 
 R = TypeVar("R")
@@ -69,26 +69,26 @@ def _ensure_cache() -> CacheDict:
 
 
 def use_dev_cache(
-    func: Callable[Concatenate[ParsingContext, P], R],
-) -> Callable[Concatenate[ParsingContext, P], R]:
+    func: Callable[Concatenate[DocumentContext, P], R],
+) -> Callable[Concatenate[DocumentContext, P], R]:
     @wraps(func)
-    def wrapper(parsing_context: ParsingContext, *args: P.args, **kwargs: P.kwargs) -> R:
-        if parsing_context.settings.env == "development":
+    def wrapper(document_context: DocumentContext, *args: P.args, **kwargs: P.kwargs) -> R:
+        if document_context.settings.env == "development":
             try:
                 return _get_cached_value(func, *args, **kwargs)
             except KeyError as err:
                 _LOGGER.info(f"{err}, calling real API ...")
-                value = func(parsing_context, *args, **kwargs)
+                value = func(document_context, *args, **kwargs)
                 _set_cached_value(func, value, *args, **kwargs)
                 return value
         else:
-            return func(parsing_context, *args, **kwargs)
+            return func(document_context, *args, **kwargs)
 
     return wrapper
 
 
 def _get_cached_value(
-    func: Callable[Concatenate[ParsingContext, P], R], *args: P.args, **kwargs: P.kwargs
+    func: Callable[Concatenate[DocumentContext, P], R], *args: P.args, **kwargs: P.kwargs
 ) -> R:
     cache = _ensure_cache()
     func_key = _get_func_key(func)
@@ -103,7 +103,7 @@ def _get_cached_value(
 
 
 def _set_cached_value(
-    func: Callable[Concatenate[ParsingContext, P], R], value: R, *args: P.args, **kwargs: P.kwargs
+    func: Callable[Concatenate[DocumentContext, P], R], value: R, *args: P.args, **kwargs: P.kwargs
 ) -> None:
     cache = _ensure_cache()
     func_key = _get_func_key(func)
@@ -115,12 +115,12 @@ def _set_cached_value(
         json.dump(cache, f, ensure_ascii=False, indent=4)
 
 
-def _get_func_key(func: Callable[Concatenate[ParsingContext, P], R]) -> str:
+def _get_func_key(func: Callable[Concatenate[DocumentContext, P], R]) -> str:
     return func.__name__
 
 
 def _get_params_key(
-    func: Callable[Concatenate[ParsingContext, P], R], *args: P.args, **kwargs: P.kwargs
+    func: Callable[Concatenate[DocumentContext, P], R], *args: P.args, **kwargs: P.kwargs
 ):
     args_key = ", ".join(str(arg) for arg in args)
     kwargs_key = ", ".join(f"{k}={v}" for k, v in kwargs.items())

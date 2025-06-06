@@ -16,18 +16,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-import logging
-
-from arretify.types import DocumentContext
-from .mistral_ocr import mistral_ocr
-
-
-_LOGGER = logging.getLogger(__name__)
-
-
-def step_ocr(
-    document_context: DocumentContext,
-) -> DocumentContext:
-    if not document_context.pdf:
-        raise ValueError("Parsing context does not contain a PDF file")
-    return mistral_ocr(document_context)
+from .__step__ import step_markdown_cleaning

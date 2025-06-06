@@ -18,54 +18,37 @@
 #
 import unittest
 
-from .markdown_cleaning import clean_markdown
-from .markdown_parsing import is_table_line, is_table_description
 from arretify.parsing_utils.source_mapping import (
     TextSegment,
 )
+from .markdown_cleaning import (
+    clean_markdown,
+    _clean_failed_month_abbreviations,
+)
 
 
-class TestTableDetection(unittest.TestCase):
-
-    TABLE_MD_1 = """Blabla blabla blabla.
-
-| Rubrique | Régime (*) | Libellé de la rubrique (activité) | Nature de l'installation | Volume autorisé |
-|----------|------------|-----------------------------------|-------------------------|-----------------|
-| 2771    | A          | bla | 70 MW |
-| 4511.2  | D          | blo | 117 t |
-
-(*) A (Autorisation) - D (Déclaration)
-
-** Some other description
-
-Volume autorisé : blablabla.
-"""  # noqa: E501
-
-    def test_is_table_line(self):
+class TestCleanFailedMonthAbbreviations(unittest.TestCase):
+    def test_clean_failed_month_abbreviations(self):
         # Arrange
-        lines = self.TABLE_MD_1.split("\n")
+        test_line = "Aux jours du 8 janv, du 6 juill, et du 10 août 2010"
+        expected_line = "Aux jours du 8 janv. du 6 juill. et du 10 août 2010"
+
+        # Act
+        result = _clean_failed_month_abbreviations(test_line)
 
         # Assert
-        for line in lines[0:2]:
-            assert not is_table_line(line)
-        for line in lines[2:6]:
-            assert is_table_line(line)
-        for line in lines[6:]:
-            assert not is_table_line(line)
+        assert result == expected_line
 
-    def test_is_table_description(self):
+    def test_shouldn_match_correct_months(self):
         # Arrange
-        lines = self.TABLE_MD_1.split("\n")
-        pile = lines[2:6]
+        test_line = "Aux jours du 8 janv. du 6 juillet et du 10 août 2010"
+        expected_line = "Aux jours du 8 janv. du 6 juillet et du 10 août 2010"
+
+        # Act
+        result = _clean_failed_month_abbreviations(test_line)
 
         # Assert
-        for line in lines[0:7]:
-            assert not is_table_description(line, pile)
-        assert is_table_description(lines[7], pile)
-        assert not is_table_description(lines[8], pile)
-        assert is_table_description(lines[9], pile)
-        assert not is_table_description(lines[10], pile)
-        assert is_table_description(lines[11], pile)
+        assert result == expected_line
 
 
 class TestCleanMarkdown(unittest.TestCase):

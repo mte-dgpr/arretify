@@ -19,7 +19,7 @@
 from typing import List
 
 
-from arretify.types import PageElementOrString, ParsingContext
+from arretify.types import PageElementOrString, DocumentContext
 from arretify.utils.html import make_css_class, replace_children
 from arretify.html_schemas import (
     ALINEA_SCHEMA,
@@ -54,29 +54,29 @@ MOTIF_CSS_CLASS = make_css_class(MOTIF_SCHEMA)
 VISA_CSS_CLASS = make_css_class(VISA_SCHEMA)
 
 
-def step_references_detection(parsing_context: ParsingContext) -> ParsingContext:
+def step_references_detection(document_context: DocumentContext) -> DocumentContext:
     new_children: List[PageElementOrString]
 
     # Parse documents and sections references
-    for tag in parsing_context.soup.select(
+    for tag in document_context.soup.select(
         f".{ALINEA_CSS_CLASS}, .{ALINEA_CSS_CLASS} *, .{MOTIF_CSS_CLASS}, .{VISA_CSS_CLASS}"
     ):
         new_children = list(tag.children)
-        new_children = parse_arretes_references(parsing_context, new_children)
-        new_children = parse_decrets_references(parsing_context, new_children)
-        new_children = parse_circulaires_references(parsing_context, new_children)
-        new_children = parse_codes_references(parsing_context, new_children)
-        new_children = parse_self_references(parsing_context, new_children)
-        new_children = parse_eu_acts_references(parsing_context, new_children)
-        new_children = parse_section_references(parsing_context, new_children)
+        new_children = parse_arretes_references(document_context, new_children)
+        new_children = parse_decrets_references(document_context, new_children)
+        new_children = parse_circulaires_references(document_context, new_children)
+        new_children = parse_codes_references(document_context, new_children)
+        new_children = parse_self_references(document_context, new_children)
+        new_children = parse_eu_acts_references(document_context, new_children)
+        new_children = parse_section_references(document_context, new_children)
         replace_children(tag, new_children)
 
     # Match sections with documents
-    for tag in parsing_context.soup.select(
+    for tag in document_context.soup.select(
         f".{ALINEA_CSS_CLASS}, .{ALINEA_CSS_CLASS} *, .{MOTIF_CSS_CLASS}, .{VISA_CSS_CLASS}"
     ):
         new_children = list(tag.children)
-        new_children = match_sections_to_parents(parsing_context, new_children)
+        new_children = match_sections_to_parents(document_context, new_children)
         replace_children(tag, new_children)
 
-    return parsing_context
+    return document_context
