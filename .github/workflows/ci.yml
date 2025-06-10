@@ -1,0 +1,59 @@
+name: CI
+
+on:
+  push:    { branches: [main] }
+  pull_request: { branches: [main] }
+
+env:
+  ENV: development
+  LC_ALL: C
+  EURLEX_WEB_SERVICE_PASSWORD: ${{ secrets.EURLEX_WEB_SERVICE_PASSWORD }}
+  EURLEX_WEB_SERVICE_USERNAME: ${{ secrets.EURLEX_WEB_SERVICE_USERNAME }}
+  LEGIFRANCE_CLIENT_ID: ${{ secrets.LEGIFRANCE_CLIENT_ID }}
+  LEGIFRANCE_CLIENT_SECRET: ${{ secrets.LEGIFRANCE_CLIENT_SECRET }}
+
+jobs:
+  test-and-lint:
+    runs-on: ubuntu-latest
+    container: python:3.13
+    strategy:
+      matrix:
+        name: [unit-tests, lint]
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Cache pip
+        uses: actions/cache@v4
+        with:
+          path: .pip-cache
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements*.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Setup Python & dependencies
+        run: |
+          python --version
+          pip install --upgrade pip
+          pip install .[dev]
+
+      - name: Run unit tests
+        if: matrix.name == 'unit-tests'
+        run: |
+          echo "Running unit tests... This will take about 60 seconds."
+          pytest
+
+      - name: Run linters
+        if: matrix.name == 'lint'
+        run: |
+          echo "Linting code... This will take about 10 seconds."
+          mypy
+          black . --check
+          echo "No lint issues found."
