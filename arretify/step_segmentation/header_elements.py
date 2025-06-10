@@ -42,7 +42,7 @@ from arretify.utils.markdown_parsing import (
     is_image,
     parse_markdown_image,
 )
-from .document_elements import is_document_element
+from .document_elements import is_document_element, IS_NOT_TABLE_OF_CONTENTS_PAGING_PATTERN_S
 from .basic_elements import (
     parse_list,
     list_indentation,
@@ -99,7 +99,7 @@ IDENTIFICATION_PATTERN = PatternProxy(rf"^{join_with_or(IDENTIFICATIONS_LIST)}")
 """Detect all references."""
 
 ARRETE_TITLE_PATTERN = PatternProxy(
-    r"^[\s-]*(a\s*r\s*r\s*e\s*t\s*e\s*n?\s*t?)(?![\s-]*(?:.*?\.{5}\s+\d+)$)"
+    r"^\W*(arrete(nt)?)" + IS_NOT_TABLE_OF_CONTENTS_PAGING_PATTERN_S
 )
 """Detect if the sentence starts with "arrete" without ending points for table of contents."""
 
@@ -121,10 +121,10 @@ HONORARIES_LIST = [
 HONORARY_PATTERN = PatternProxy(rf"^{join_with_or(HONORARIES_LIST)}")
 """Detect all honorary titles."""
 
-VISA_PATTERN = PatternProxy(r"^(v\s*u|-\s*v\s*u)(\s*:\s*|\b)(?P<contents>.*)")
+VISA_PATTERN = PatternProxy(r"^\W*vu(\s*:\s*|\b)(?P<contents>.*)")
 """Detect if the sentence starts with "vu"."""
 
-MOTIF_PATTERN = PatternProxy(r"^(considerant|-\s*considerant)(\s*:\s*|\b)(?P<contents>.*)")
+MOTIF_PATTERN = PatternProxy(r"^\W*considerant(\s*:\s*|\b)(?P<contents>.*)")
 """Detect if the sentence starts with "considerant"."""
 
 SUPPLEMENTARY_MOTIF_INFORMATIONS_LIST = [

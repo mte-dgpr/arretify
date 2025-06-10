@@ -20,7 +20,7 @@ from typing import List, Iterable, cast, TypeGuard
 
 from bs4 import BeautifulSoup, Tag
 
-from arretify.utils.merge import merge_strings
+from arretify.utils.merge import merge_strings_ignore_page_elements
 from arretify.types import (
     DataElementSchema,
     DataElementDataDict,
@@ -136,7 +136,7 @@ def make_new_tag(
     if contents is None:
         contents = []
     element = soup.new_tag(tag_name)
-    element.extend(merge_strings(contents))
+    element.extend(merge_strings_ignore_page_elements(contents))
     return element
 
 
