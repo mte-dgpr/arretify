@@ -16,27 +16,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from .split import split_string_with_regex
-from .split_with_regex_tree import split_string_with_regex_tree
-from .functional import (
-    flat_map_regex_tree_match,
-    map_regex_tree_match,
-    map_regex_tree_match_strings,
-    map_matches,
-    iter_regex_tree_match_strings,
-    filter_regex_tree_match_children,
-)
-from .merge import merge_matches_with_siblings
-from . import regex_tree
-from .core import PatternProxy, MatchProxy, safe_group
-from .helpers import (
-    sub_with_match,
-    without_named_groups,
-    join_with_or,
-    remove_accents,
-    named_group,
-    lookup_normalized_version,
-    repeated_with_separator,
-    normalize_string,
-)
-from .types import Settings
+import unittest
+
+from .ocr_cleaning import recompose_words
+
+
+class TestRecomposeWords(unittest.TestCase):
+
+    def test_recompose_words(self):
+        # Arrange
+        text = "V U     hello v u  a r r ê t é bla n O T i n F R E N C H"
+
+        expected = "VU     hello vu  arrêté bla n O T i n F R E N C H"
+
+        # Act
+        result = recompose_words(text)
+
+        # Assert
+        assert result == expected, f"Expected '{expected}', got '{result}'"

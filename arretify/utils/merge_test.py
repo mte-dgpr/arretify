@@ -19,7 +19,7 @@
 import unittest
 import re
 
-from .merge import merge_strings
+from .merge import merge_strings_ignore_page_elements
 
 
 class TestMergeStrings(unittest.TestCase):
@@ -41,7 +41,7 @@ class TestMergeStrings(unittest.TestCase):
         )
 
         # Act
-        result = list(merge_strings(input_gen))
+        result = list(merge_strings_ignore_page_elements(input_gen))
 
         # Assert
         assert result[0] == "abc"
@@ -56,7 +56,7 @@ class TestMergeStrings(unittest.TestCase):
         input_gen = iter(["abc", match_mock, "def"])
 
         # Act
-        result = list(merge_strings(input_gen))
+        result = list(merge_strings_ignore_page_elements(input_gen))
 
         # Assert
         assert result[0] == "abc"
@@ -69,7 +69,7 @@ class TestMergeStrings(unittest.TestCase):
         input_gen = iter(["", match_mock, ""])
 
         # Act
-        result = list(merge_strings(input_gen))
+        result = list(merge_strings_ignore_page_elements(input_gen))
 
         # Assert
         assert result[0] == ""
@@ -83,7 +83,7 @@ class TestMergeStrings(unittest.TestCase):
         input_gen = iter([match_mock1, match_mock2])
 
         # Act
-        result = list(merge_strings(input_gen))
+        result = list(merge_strings_ignore_page_elements(input_gen))
 
         # Assert
         assert result == [match_mock1, match_mock2]

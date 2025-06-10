@@ -19,13 +19,9 @@
 
 from dataclasses import replace as dataclass_replace
 
-from arretify.regex_utils import PatternProxy
 from arretify.types import DocumentContext
 from .markdown_cleaning import clean_markdown
-
-
-PUNCTUATION_LINE_PATTERN = PatternProxy(r"^[·.,;:!?'\s\-]*$")
-"""Detect if the sentence contains only punctuation."""
+from .ocr_cleaning import clean_ocr, is_useful_line
 
 
 def step_markdown_cleaning(document_context: DocumentContext) -> DocumentContext:
@@ -35,11 +31,11 @@ def step_markdown_cleaning(document_context: DocumentContext) -> DocumentContext
     # Clean input markdown
     lines = [clean_markdown(line) for line in document_context.lines]
 
-    # Remove punctuation lines
-    lines = [line for line in lines if not _is_punctuation_line(line.contents)]
+    # TODO-PROCESS-TAG
+    # Remove lines that are not useful
+    lines = [line for line in lines if is_useful_line(line)]
+
+    # Clean common OCR errors
+    lines = [clean_ocr(line) for line in lines]
 
     return dataclass_replace(document_context, lines=lines)
-
-
-def _is_punctuation_line(line: str) -> bool:
-    return bool(PUNCTUATION_LINE_PATTERN.search(line))
