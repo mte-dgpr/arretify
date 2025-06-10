@@ -37,7 +37,7 @@ from arretify.parsing_utils.source_mapping import (
 _DECOMPOSED_WORD_PATTERN = PatternProxy(r"(?=\b)([a-zA-Z]\s)+[a-zA-Z](?=\b)")
 
 
-_FRENCH_DICTIONARY = {"vu", "arrete"}
+_FRENCH_DICTIONARY = {"vu", "arrete", "arretent"}
 """Normalized words in the French dictionary that should be recomposed."""
 
 
@@ -46,7 +46,7 @@ _PUNCTUATION_LINE_PATTERN = PatternProxy(r"^[·.,;:!?'\s\-]*$")
 
 
 # TODO-PROCESS-TAG
-def clean_ocr_errors(line: TextSegment) -> TextSegment:
+def clean_ocr(line: TextSegment) -> TextSegment:
     line = apply_to_segment(line, recompose_words)
     return line
 
@@ -64,9 +64,10 @@ def is_punctuation_line(text: str) -> bool:
 
 def recompose_words(text: str) -> str:
     """
-    OCR often produces words with spaces between letters, such as "v u" or "a r r e t e".
+    When there is large letter spacing in text, OCR often produces results
+    such as "v u" or "a r r e t e".
     This function recomposes such words by removing the spaces, but only if the resulting
-    word is in the French dictionary.
+    word is in our dictionary.
     """
     return merge_strings(
         map_matches(

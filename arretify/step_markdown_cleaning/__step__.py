@@ -21,7 +21,7 @@ from dataclasses import replace as dataclass_replace
 
 from arretify.types import DocumentContext
 from .markdown_cleaning import clean_markdown
-from .ocr_cleaning import clean_ocr_errors, is_useful_line
+from .ocr_cleaning import clean_ocr, is_useful_line
 
 
 def step_markdown_cleaning(document_context: DocumentContext) -> DocumentContext:
@@ -36,6 +36,6 @@ def step_markdown_cleaning(document_context: DocumentContext) -> DocumentContext
     lines = [line for line in lines if is_useful_line(line)]
 
     # Clean common OCR errors
-    lines = [clean_ocr_errors(line) for line in lines]
+    lines = [clean_ocr(line) for line in lines]
 
     return dataclass_replace(document_context, lines=lines)
