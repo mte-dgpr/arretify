@@ -22,12 +22,18 @@ from arretify.types import PageElementOrString
 
 
 def merge_strings(
+    str_gen: Iterable[str],
+) -> str:
+    return "".join(str_gen)
+
+
+def merge_strings_ignore_page_elements(
     str_or_element_gen: Iterable[PageElementOrString],
 ) -> Iterator[PageElementOrString]:
     """
     Example:
         >>> elements = ["Hello-", "world!", Tag(name="p"), "More text"]
-        >>> list(merge_strings(elements))
+        >>> list(merge_strings_ignore_page_elements(elements))
         ['Hello-world!', <p></p>, 'More text']
     """
     accumulator: str | None = None

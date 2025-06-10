@@ -37,7 +37,7 @@ from arretify.regex_utils import (
     join_with_or,
 )
 from arretify.regex_utils.regex_tree.execute import match
-from .document_elements import TABLE_OF_CONTENTS_PAGING_PATTERN_S
+from .document_elements import IS_NOT_TABLE_OF_CONTENTS_PAGING_PATTERN_S
 from .types import TitleInfo
 
 
@@ -45,7 +45,6 @@ _LOGGER = logging.getLogger(__name__)
 
 
 TITLE_PUNCTUATION_PATTERN_S = r"[.\s\-:]"
-IS_NOT_TABLE_OF_CONTENTS_PAGING = rf"(?!.*{TABLE_OF_CONTENTS_PAGING_PATTERN_S}$)"
 IS_NOT_ENDING_WITH_PUNCTUATION = r"(?!.*[.;:,]$)"
 NUMBERING_THEN_OPT_NUMBERS_PATTERN_S = rf"{NUMBERING_PATTERN_S}([.\-]{NUMBERS_PATTERN_S})*\.?"
 NUMBERING_THEN_OBL_NUMBERS_PATTERN_S = rf"{NUMBERING_PATTERN_S}([.\-]{NUMBERS_PATTERN_S})+\.?"
@@ -104,7 +103,7 @@ TITLE_NODE = regex_tree.Group(
                                     # Punctuation between numbering and text
                                     rf"{TITLE_PUNCTUATION_PATTERN_S}*",
                                     # Text group not ending with table of contents paging
-                                    rf"(?P<text>{IS_NOT_TABLE_OF_CONTENTS_PAGING}.*?)$",
+                                    rf"(?P<text>{IS_NOT_TABLE_OF_CONTENTS_PAGING_PATTERN_S}.*?)$",
                                 ]
                             ),
                         ],
@@ -122,7 +121,7 @@ TITLE_NODE = regex_tree.Group(
                     # Punctuation between numbering and text
                     rf"{TITLE_PUNCTUATION_PATTERN_S}*",
                     # Text group not ending with table of contents paging
-                    rf"(?P<text>{IS_NOT_TABLE_OF_CONTENTS_PAGING}.*?)$",
+                    rf"(?P<text>{IS_NOT_TABLE_OF_CONTENTS_PAGING_PATTERN_S}.*?)$",
                 ],
             ),
             # This regex matches section names in arretes such as
@@ -135,7 +134,7 @@ TITLE_NODE = regex_tree.Group(
                     # Punctuation between section name and numbering
                     rf"\s*{TITLE_PUNCTUATION_PATTERN_S}\s*",
                     # Text group not ending with table of contents paging nor punctuation
-                    rf"(?P<text>{IS_NOT_TABLE_OF_CONTENTS_PAGING}"
+                    rf"(?P<text>{IS_NOT_TABLE_OF_CONTENTS_PAGING_PATTERN_S}"
                     rf"{IS_NOT_ENDING_WITH_PUNCTUATION}.*?)$",
                 ],
             ),
