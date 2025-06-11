@@ -4,30 +4,31 @@
 
 <br/>
 
-**Arrêtify** est une librairie Python permettant le traitement automatique des arrêtés préfectoraux français. Elle permet de traduire des arrêtés préfectoraux depuis le format pdf vers des documents de données semi-structurées au format HTML ([un exemple](https://mte-dgpr.github.io/arretify/examples/arretes_html/arretes_icpe/0005801105/2023-03-30_AP_mistral.html), [un autre exemple](https://mte-dgpr.github.io/arretify/examples/arretes_html/arrete_circulation_mistral.html)).
+**Arrêtify** est une librairie Python permettant le traitement automatique des arrêtés préfectoraux français au format HTML ([un exemple](https://mte-dgpr.github.io/arretify/examples/arretes_html/arretes_icpe/0005801105/2023-03-30_AP_mistral.html), [un autre exemple](https://mte-dgpr.github.io/arretify/examples/arretes_html/arrete_circulation_mistral.html)), permettant ainsi des cas d'usages variés tels que RAG, indexation, etc.
 
-Arrêtify features : 
+*ATTENTION : Arrêtify est actuellement en statut **ALPHA** et en phase de développement actif. Nous vous invitons à l'essayer, à nous faire vos retours et accueillons aussi toute contribution. En revanche nous vous déconseillons pour l'instant de l'utiliser en production.*
+
+---
+
+→ Features : 
 - **Ségmentation de l'arrêté** : titre, vu / considérants, articles, annexes, etc.
 - **HTML augmenté** de données supplémentaires : opération de modifications, etc.
 - **Détection de références** : droit français, droit européeen et autres arrêtés préfectoraux
 - **Entièrement modulaire et customizable**
 - **Intégration avec solutions d'OCR** sur étagère : Mistral
 
-Cas d'usage : RAG, indexation, liseuse ergonomique d'arrêtés, etc.
-
-*ATTENTION : Arrêtify est actuellement en statut **ALPHA** et en phase de développement actif. Nous vous invitons à l'essayer, à nous faire vos retour et accueillons aussi toute contribution. En revanche nous vous déconseillons pour l'instant de l'utiliser en production.*
-
+---
 
 ## Démarrage rapide
 
-Installation : 
+**→ Installation** : 
 
 ```python
 # **NOTE**: La librairie sera disponible très prochainement sur PyPI. En attendant, vous pouvez l'installer directement depuis le repo git.
 pip install git+https://github.com/mte-dgpr/arretify.git
 ```
 
-### Avec le CLI
+**→ Utilisation avec le CLI** : 
 
 ```bash
 arretify -i /path/to/ocr.md -o /path/to/output.html
@@ -36,7 +37,7 @@ arretify -i /path/to/ocr.md -o /path/to/output.html
 Pour directement convertir un document pdf, il vous faudra configurer votre clé mistral. [Voir la partie configuration](#configuration).
 
 
-### Avec la librairie
+**→ Utilisation depuis Python** : 
 
 Convertir un document markdown (résultat d'une opération d'OCR) en HTML: 
 
