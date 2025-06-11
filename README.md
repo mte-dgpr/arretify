@@ -1,6 +1,6 @@
 # Arrêtify
 
-<img src="images/cover.svg" style="display:block;margin:auto;width:90%" />
+<img src="images/cover.svg" style="display:block;margin:auto;width:100%" />
 
 <br/>
 
