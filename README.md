@@ -1,12 +1,71 @@
 # Arrêtify
 
-Cette librairie permet la conversion d'arrêtés préfectoraux OCRisées depuis du Markdown vers du HTML.
+<img src="images/cover.svg" style="display:block;margin:auto;width:90%" />
 
-## Setup
+<br/>
+
+**Arrêtify** est une librairie Python permettant le traitement automatique des arrêtés préfectoraux français. Elle permet de traduire des arrêtés préfectoraux depuis le format pdf vers des documents de données semi-structurées au format HTML ([un exemple](https://mte-dgpr.github.io/arretify/examples/arretes_html/arretes_icpe/0005801105/2023-03-30_AP_mistral.html), [un autre exemple](https://mte-dgpr.github.io/arretify/examples/arretes_html/arrete_circulation_mistral.html)).
+
+Arrêtify features : 
+- **Ségmentation de l'arrêté** : titre, vu / considérants, articles, annexes, etc.
+- **HTML augmenté** de données supplémentaires : opération de modifications, etc.
+- **Détection de références** : droit français, droit européeen et autres arrêtés préfectoraux
+- **Entièrement modulaire et customizable**
+- **Intégration avec solutions d'OCR** sur étagère : Mistral
+
+Cas d'usage : RAG, indexation, liseuse ergonomique d'arrêtés, etc.
+
+*ATTENTION : Arrêtify est actuellement en statut **ALPHA** et en phase de développement actif. Nous vous invitons à l'essayer, à nous faire vos retour et accueillons aussi toute contribution. En revanche nous vous déconseillons pour l'instant de l'utiliser en production.*
+
+
+## Démarrage rapide
+
+Installation : 
+
+```python
+# **NOTE**: La librairie sera disponible très prochainement sur PyPI. En attendant, vous pouvez l'installer directement depuis le repo git.
+pip install git+https://github.com/mte-dgpr/arretify.git
+```
+
+### Avec le CLI
+
+```bash
+arretify -i /path/to/ocr.md -o /path/to/output.html
+```
+
+Pour directement convertir un document pdf, il vous faudra configurer votre clé mistral. [Voir la partie configuration](#configuration).
+
+
+### Avec la librairie
+
+Convertir un document markdown (résultat d'une opération d'OCR) en HTML: 
+
+```python
+from pathlib import Path
+from arretify.pipeline import save_html_file, run_pipeline, load_ocr_file
+from arretify.types import SessionContext
+from arretify.settings import Settings
+
+save_html_file(
+    Path('/path/to/output.html'),
+    run_pipeline(
+        load_ocr_file(
+            SessionContext(settings=Settings()),
+            Path('/path/to/ocr.md'),
+        )
+    ),
+)
+```
+
+<a id="configuration"></a>
+## Configuration
 
 La librairie se configure avec des variables d'environnement. Vous pourrez par exemple créer un fichier `.env` avec les variables suivantes : 
 
 ```bash
+# Si vous voulez utiliser Mistral OCR
+MISTRAL_API_KEY ='<MISTRAL_API_KEY>'
+
 # Si vous voulez utiliser la résolution de références 
 # aux textes de droit français.
 LEGIFRANCE_CLIENT_ID = '<LEGIFRANCE_CLIENT_ID>'
@@ -23,7 +82,7 @@ EURLEX_WEB_SERVICE_PASSWORD = '<EURLEX_WEB_SERVICE_PASSWORD>'
 ENV = 'development'
 ```
 
-## Executer le script de parsing
+## CLI
 
 Pour éxecuter le parsing sur un lot de fichiers OCRisés, copier le dossier de fichiers dans un dossier facilement accessible (e.g. `./tmp/arretes_ocr`), et exécuter la commande `main.py`. Par exemple :
 

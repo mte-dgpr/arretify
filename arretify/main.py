@@ -49,6 +49,10 @@ from .utils.files import is_pdf_path, is_ocr_path
 _LOGGER = logging.getLogger("arretify")
 
 
+def main_cli() -> None:
+    main(sys.argv[1:])
+
+
 def main(args: List[str]) -> None:
     parser = OptionParser()
     parser.add_option(
@@ -289,4 +293,4 @@ def _initialize_root_logger(logger: logging.Logger, verbose: bool) -> None:
 
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    main_cli()

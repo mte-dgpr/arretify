@@ -47,6 +47,9 @@ dev = [
   "licenseheaders~=0.8.8"
 ]
 
+[project.scripts]
+arretify = "arretify.main:main_cli"
+
 [tool.mypy]
 packages=["arretify"]
 plugins = ['pydantic.mypy']
