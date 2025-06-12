@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import List, Iterable, cast, TypeGuard
+from typing import List, Iterable, cast, TypeGuard, Literal
 
 from bs4 import BeautifulSoup, Tag
 
@@ -27,44 +27,62 @@ from arretify.types import (
     PageElementOrString,
     ElementId,
     ElementGroupId,
+    IdCounters,
 )
 
 
 SHARED_DATA_KEYS = [
     "error_codes",
 ]
-_ELEMENT_ID_COUNTER = 0
-_GROUP_ID_COUNTER = 0
+
+_Id = str
+_IdName = Literal["element_id", "group_id"]
 
 
 def make_css_class(schema: DataElementSchema):
     return f"dsr-{schema.name}"
 
 
-def assign_element_id(tag: Tag) -> ElementId:
-    global _ELEMENT_ID_COUNTER
-    if "data-element_id" in tag.attrs:
-        return cast(ElementId, tag["data-element_id"])
-    _ELEMENT_ID_COUNTER += 1
-    element_id: ElementId = f"{_ELEMENT_ID_COUNTER}"
-    tag["data-element_id"] = element_id
-    return element_id
+def ensure_element_id(id_counters: IdCounters, tag: Tag) -> ElementId:
+    current_id = _get_id_from_tag(tag, "element_id")
+    if current_id is not None:
+        return cast(ElementId, current_id)
+    return _set_id_to_tag(tag, "element_id", _make_id(id_counters, "element_id"))
 
 
-def assign_group_id(tag: Tag, group_id: ElementGroupId) -> None:
-    tag["data-group_id"] = group_id
+def set_group_id(tag: Tag, group_id: ElementGroupId) -> ElementGroupId:
+    return _set_id_to_tag(tag, "group_id", group_id)
 
 
-def make_group_id() -> ElementGroupId:
-    global _GROUP_ID_COUNTER
-    _GROUP_ID_COUNTER += 1
-    return f"{_GROUP_ID_COUNTER}"
+def make_group_id(id_counters: IdCounters) -> ElementGroupId:
+    return _make_id(id_counters, "group_id")
 
 
 def get_group_id(tag: Tag) -> ElementGroupId | None:
-    group_id = tag.get("data-group_id")
-    if group_id is not None:
-        return cast(ElementGroupId, group_id)
+    return _get_id_from_tag(tag, "group_id")
+
+
+def _make_id(
+    id_counters: IdCounters,
+    name: _IdName,
+) -> _Id:
+    setattr(id_counters, name, getattr(id_counters, name) + 1)
+    return f"{getattr(id_counters, name)}"
+
+
+def _set_id_to_tag(
+    tag: Tag,
+    name: _IdName,
+    id_value: _Id,
+) -> _Id:
+    tag[f"data-{name}"] = id_value
+    return id_value
+
+
+def _get_id_from_tag(tag: Tag, name: _IdName) -> _Id | None:
+    id_value = tag.get(f"data-{name}")
+    if id_value is not None:
+        return cast(_Id, id_value)
     return None
 
 

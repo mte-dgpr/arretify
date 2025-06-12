@@ -19,7 +19,7 @@
 import re
 from typing import List, Union, Tuple, Optional, Type, TypeVar, Dict
 from enum import Enum
-from dataclasses import dataclass, fields
+from dataclasses import dataclass, fields, field
 from uuid import uuid4
 
 from bs4 import BeautifulSoup, PageElement
@@ -98,6 +98,26 @@ class SessionContext:
     mistral_client: Optional[mistralai.Mistral] = None
 
 
+@dataclass
+class IdCounters:
+    """
+    Container for the counters used to assign unique IDs to elements in the DOM.
+    This is used to ensure that each element has a unique ID.
+    """
+
+    element_id: int = 0
+    """
+    Counter for the `data-element_id` attribute.
+    This is used to assign unique IDs to elements in the DOM.
+    """
+
+    group_id: int = 0
+    """
+    Counter for the `data-group_id` attribute.
+    This is used to assign unique IDs to groups of elements in the DOM.
+    """
+
+
 @dataclass(frozen=True, kw_only=True)
 class DocumentContext(SessionContext):
     """
@@ -125,6 +145,8 @@ class DocumentContext(SessionContext):
     """
 
     soup: BeautifulSoup
+
+    id_counters: IdCounters = field(default_factory=IdCounters)
 
     @classmethod
     def from_session_context(

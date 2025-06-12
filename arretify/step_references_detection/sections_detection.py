@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from bs4 import Tag, BeautifulSoup
+from bs4 import Tag
 from typing import (
     Iterable,
     List,
@@ -35,7 +35,7 @@ from arretify.html_schemas import (
 from arretify.utils.html import (
     make_data_tag,
     make_group_id,
-    assign_group_id,
+    set_group_id,
     PageElementOrString,
 )
 from arretify.parsing_utils.patterns import (
@@ -76,8 +76,8 @@ def parse_section_references(
     children: Iterable[PageElementOrString],
 ) -> List[PageElementOrString]:
     # First check for multiple, cause it is the most exhaustive pattern
-    new_children = list(_parse_section_reference_multiple(document_context.soup, children))
-    return list(_parse_section_references(document_context.soup, new_children))
+    new_children = list(_parse_section_reference_multiple(document_context, children))
+    return list(_parse_section_references(document_context, new_children))
 
 
 # -------------------- Shared -------------------- #
@@ -242,7 +242,7 @@ def _extract_section(
 
 
 def _render_section_reference(
-    soup: BeautifulSoup,
+    document_context: DocumentContext,
     section_reference_match: regex_tree.Match,
     group_id: ElementGroupId | None = None,
 ) -> Tag:
@@ -251,7 +251,7 @@ def _render_section_reference(
     )
     section = _extract_section(section_reference_match)
     section_tag = make_data_tag(
-        soup,
+        document_context.soup,
         SECTION_REFERENCE_SCHEMA,
         data=dict(
             uri=render_uri(document, section),
@@ -260,19 +260,19 @@ def _render_section_reference(
         contents=iter_regex_tree_match_strings(section_reference_match),
     )
     if group_id is not None:
-        assign_group_id(section_tag, group_id)
+        set_group_id(section_tag, group_id)
     return section_tag
 
 
 def _render_section_reference_multiple(
-    soup: BeautifulSoup,
+    document_context: DocumentContext,
     section_reference_multiple_match: regex_tree.Match,
 ) -> Iterator[PageElementOrString]:
-    group_id = make_group_id()
+    group_id = make_group_id(document_context.id_counters)
     return map_regex_tree_match(
         section_reference_multiple_match.children,
         lambda section_reference_match: _render_section_reference(
-            soup,
+            document_context,
             section_reference_match,
             group_id=group_id,
         ),
@@ -342,7 +342,7 @@ SECTION_REFERENCE_NODE = regex_tree.Group(
 
 
 def _parse_section_references(
-    soup: BeautifulSoup,
+    document_context: DocumentContext,
     children: Iterable[PageElementOrString],
 ) -> Iterable[PageElementOrString]:
     return flat_map_string(
@@ -350,7 +350,7 @@ def _parse_section_references(
         lambda string: map_regex_tree_match(
             split_string_with_regex_tree(SECTION_REFERENCE_NODE, string),
             lambda section_reference_match: _render_section_reference(
-                soup,
+                document_context,
                 section_reference_match,
             ),
             allowed_group_names=["__section_reference"],
@@ -443,7 +443,7 @@ SECTION_REFERENCE_MULTIPLE_NODE = regex_tree.Group(
 
 
 def _parse_section_reference_multiple(
-    soup: BeautifulSoup,
+    document_context: DocumentContext,
     children: Iterable[PageElementOrString],
 ):
     # For multiple arretes, we need to first parse some of the attributes in common
@@ -453,7 +453,7 @@ def _parse_section_reference_multiple(
         lambda string: flat_map_regex_tree_match(
             split_string_with_regex_tree(SECTION_REFERENCE_MULTIPLE_NODE, string),
             lambda section_reference_multiple_match: _render_section_reference_multiple(
-                soup,
+                document_context,
                 section_reference_multiple_match,
             ),
             allowed_group_names=["__section_reference_multiple"],

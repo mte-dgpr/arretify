@@ -22,7 +22,6 @@ from arretify.utils.testing import (
     make_testing_function_for_children_list,
     normalized_html_str,
 )
-from arretify.utils import html
 from .sections_detection import parse_section_references
 
 process_children = make_testing_function_for_children_list(parse_section_references)
@@ -269,9 +268,6 @@ class TestArticleSingle(unittest.TestCase):
 
 class TestArticlePlural(unittest.TestCase):
 
-    def setUp(self):
-        html._GROUP_ID_COUNTER = 0
-
     def test_article_num(self):
         assert process_children("articles 5.1.9, 9.2.1, 10.2.1 et 10.2.5") == [
             normalized_html_str(
@@ -355,7 +351,7 @@ class TestArticlePlural(unittest.TestCase):
                 """
                 <a
                     class="dsr-section_reference"
-                    data-group_id="2"
+                    data-group_id="1"
                     data-uri="dsr://unknown____/article__1__"
                 >
                     articles premier
@@ -367,7 +363,7 @@ class TestArticlePlural(unittest.TestCase):
                 """
                 <a
                     class="dsr-section_reference"
-                    data-group_id="2"
+                    data-group_id="1"
                     data-uri="dsr://unknown____/article__2__"
                 >
                     second
@@ -515,9 +511,6 @@ class TestAlineaSingle(unittest.TestCase):
 
 class TestAlineaMultiple(unittest.TestCase):
 
-    def setUp(self):
-        html._GROUP_ID_COUNTER = 0
-
     def test_alinea_list(self):
         assert process_children("Les alinéas 3 et 4") == [
             "Les ",
@@ -565,9 +558,6 @@ class TestUnknownSingle(unittest.TestCase):
 
 
 class TestUnknownMultiple(unittest.TestCase):
-
-    def setUp(self):
-        html._GROUP_ID_COUNTER = 0
 
     def test_paragraphe_list(self):
         assert process_children("Les paragraphes 3è, 5 et quatrième") == [
