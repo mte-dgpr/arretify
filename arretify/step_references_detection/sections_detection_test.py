@@ -28,8 +28,7 @@ from .sections_detection import parse_section_references
 process_children = make_testing_function_for_children_list(parse_section_references)
 
 
-class TestArticleRange(unittest.TestCase):
-
+class TestArticleSingle(unittest.TestCase):
     def test_article_num(self):
         assert process_children("article 4.1.b") == [
             normalized_html_str(
@@ -166,6 +165,24 @@ class TestArticleRange(unittest.TestCase):
             )
         ]
 
+    def test_ambiguous_paragraph_use(self):
+        assert process_children("Paragraphe L123") == [
+            normalized_html_str(
+                """
+                <a
+                    class="dsr-section_reference"
+                    data-is_resolvable="false"
+                    data-uri="dsr://unknown____/article__L123__"
+                >
+                    Paragraphe L123
+                </a>
+                """
+            )
+        ]
+
+
+class TestArticleRange(unittest.TestCase):
+
     def test_article_num_range(self):
         assert process_children("articles 3 à 11") == [
             normalized_html_str(
@@ -265,23 +282,6 @@ class TestArticleRange(unittest.TestCase):
                 </a>
                 """
             ),
-        ]
-
-
-class TestArticleSingle(unittest.TestCase):
-    def test_ambiguous_paragraph_use(self):
-        assert process_children("Paragraphe 4.28") == [
-            normalized_html_str(
-                """
-                <a
-                    class="dsr-section_reference"
-                    data-is_resolvable="false"
-                    data-uri="dsr://unknown____/article__4.28__"
-                >
-                    Paragraphe 4.28
-                </a>
-                """
-            )
         ]
 
 
@@ -549,6 +549,39 @@ class TestAlineaSingle(unittest.TestCase):
         ]
 
 
+class TestAlineaRange(unittest.TestCase):
+
+    def test_alinea_num_range(self):
+        assert process_children("alinéas 3 à 5") == [
+            normalized_html_str(
+                """
+                <a
+                    class="dsr-section_reference"
+                    data-is_resolvable="false"
+                    data-uri="dsr://unknown____/alinea__3__5"
+                >
+                    alinéas 3 à 5
+                </a>
+            """
+            )
+        ]
+
+    def test_alinea_num_range_with_ordinal(self):
+        assert process_children("alinéas premier à troisième") == [
+            normalized_html_str(
+                """
+                <a
+                    class="dsr-section_reference"
+                    data-is_resolvable="false"
+                    data-uri="dsr://unknown____/alinea__1__3"
+                >
+                    alinéas premier à troisième
+                </a>
+            """
+            )
+        ]
+
+
 class TestAlineaMultiple(unittest.TestCase):
 
     def setUp(self):
@@ -599,6 +632,40 @@ class TestUnknownSingle(unittest.TestCase):
                     paragraphe 3
                 </a>
                 """
+            )
+        ]
+
+    def test_paragraph_symbol(self):
+        assert process_children("Dans le § a.4") == [
+            "Dans le ",
+            normalized_html_str(
+                """
+                <a
+                    class="dsr-section_reference"
+                    data-is_resolvable="false"
+                    data-uri="dsr://unknown____/unknown__a.4__"
+                >
+                    § a.4
+                </a>
+            """
+            ),
+        ]
+
+
+class TestUnknownRange(unittest.TestCase):
+
+    def test_unknown_num_range(self):
+        assert process_children("paragraphes 3 à 5") == [
+            normalized_html_str(
+                """
+                <a
+                    class="dsr-section_reference"
+                    data-is_resolvable="false"
+                    data-uri="dsr://unknown____/unknown__3__5"
+                >
+                    paragraphes 3 à 5
+                </a>
+            """
             )
         ]
 
