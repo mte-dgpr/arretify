@@ -16,12 +16,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import cast, Dict, Iterator
+from typing import cast, Dict, Iterator, Tuple, List
 
 from bs4 import Tag
 
 from arretify.types import DocumentContext
-from arretify.law_data.types import DocumentType, Section
+from arretify.law_data.types import DocumentType, Section, Document
 from arretify.utils.html import make_css_class, is_tag_and_matches
 from arretify.html_schemas import DOCUMENT_REFERENCE_SCHEMA, SECTION_REFERENCE_SCHEMA
 from arretify.step_references_detection.match_sections_with_documents import (
@@ -61,28 +61,32 @@ def step_legifrance_references_resolution(
 
         if document.type is DocumentType.arrete_ministeriel:
             resolve_arrete_ministeriel_legifrance_id(document_context, document_reference_tag)
-            for section_reference_tag in iter_section_references(document_reference_tag):
+            for dummy in iter_section_references(document_reference_tag):
                 # TODO : needed only so that document uri is copied in sections.
                 # Will be removed when not needed
                 pass
         elif document.type is DocumentType.decret:
             resolve_decret_legifrance_id(document_context, document_reference_tag)
-            for section_reference_tag in iter_section_references(document_reference_tag):
+            for dummy in iter_section_references(document_reference_tag):
                 # TODO : needed only so that document uri is copied in sections.
                 # Will be removed when not needed
                 pass
         elif document.type is DocumentType.circulaire:
             resolve_circulaire_legifrance_id(document_context, document_reference_tag)
-            for section_reference_tag in iter_section_references(document_reference_tag):
+            for dummy in iter_section_references(document_reference_tag):
                 # TODO : needed only so that document uri is copied in sections.
                 # Will be removed when not needed
                 pass
         elif document.type is DocumentType.code:
             resolve_code_legifrance_id(document_context, document_reference_tag)
-            for section_reference_tag in iter_section_references(document_reference_tag):
-                resolve_code_article_legifrance_id(document_context, section_reference_tag)
+            for section_reference_tag, document, sections in iter_section_references(
+                document_reference_tag
+            ):
+                resolve_code_article_legifrance_id(
+                    document_context, section_reference_tag, document, sections
+                )
         else:
-            for section_reference_tag in iter_section_references(document_reference_tag):
+            for dummy in iter_section_references(document_reference_tag):
                 # TODO : needed only so that document uri is copied in sections.
                 # Will be removed when not needed
                 pass
@@ -97,24 +101,24 @@ def step_eurlex_references_resolution(document_context: DocumentContext) -> Docu
 
         if document.type is DocumentType.eu_decision:
             resolve_eu_decision_eurlex_url(document_context, document_reference_tag)
-            for section_reference_tag in iter_section_references(document_reference_tag):
+            for dummy in iter_section_references(document_reference_tag):
                 # TODO : needed only so that document uri is copied in sections.
                 # Will be removed when not needed
                 pass
         elif document.type is DocumentType.eu_regulation:
             resolve_eu_regulation_eurlex_url(document_context, document_reference_tag)
-            for section_reference_tag in iter_section_references(document_reference_tag):
+            for dummy in iter_section_references(document_reference_tag):
                 # TODO : needed only so that document uri is copied in sections.
                 # Will be removed when not needed
                 pass
         elif document.type is DocumentType.eu_directive:
             resolve_eu_directive_eurlex_url(document_context, document_reference_tag)
-            for section_reference_tag in iter_section_references(document_reference_tag):
+            for dummy in iter_section_references(document_reference_tag):
                 # TODO : needed only so that document uri is copied in sections.
                 # Will be removed when not needed
                 pass
         else:
-            for section_reference_tag in iter_section_references(document_reference_tag):
+            for dummy in iter_section_references(document_reference_tag):
                 # TODO : needed only so that document uri is copied in sections.
                 # Will be removed when not needed
                 pass
@@ -130,7 +134,9 @@ def iter_document_references(
         yield document_reference_tag
 
 
-def iter_section_references(document_reference_tag: Tag) -> Iterator[Tag]:
+def iter_section_references(
+    document_reference_tag: Tag,
+) -> Iterator[Tuple[Tag, Document, List[Section]]]:
     _document, _ = parse_uri(cast(str, document_reference_tag["data-uri"]))
     document = _document
     reference_branches = build_reference_tree(document_reference_tag)
@@ -153,4 +159,4 @@ def iter_section_references(document_reference_tag: Tag) -> Iterator[Tag]:
             section_cache[section_uri] = _sections[-1]
             sections.append(section_cache[section_uri])
             section_reference_tag["data-uri"] = render_uri(document, *sections)
-            yield section_reference_tag
+            yield section_reference_tag, document, sections
