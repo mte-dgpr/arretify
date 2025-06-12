@@ -24,16 +24,12 @@ from arretify.utils.testing import (
     make_testing_function_for_children_list,
     normalized_html_str,
 )
-from arretify.utils import html
 from .match_sections_with_documents import match_sections_to_parents, build_reference_tree
 
 process_sections_and_documents = make_testing_function_for_children_list(match_sections_to_parents)
 
 
 class TestConnectParentSections(unittest.TestCase):
-    def setUp(self):
-        html._ELEMENT_ID_COUNTER = 0
-        html._GROUP_ID_COUNTER = 0
 
     def test_single_section_to_section(self):
         assert (

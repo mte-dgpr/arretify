@@ -26,7 +26,7 @@ from arretify.utils.element_ranges import (
 )
 from arretify.utils.html import (
     make_css_class,
-    assign_element_id,
+    ensure_element_id,
     get_group_id,
     is_tag_and_matches,
 )
@@ -86,7 +86,9 @@ def match_sections_to_parents(
             section_references_in_group = [section_reference_tag]
 
         for section_reference_tag in section_references_in_group:
-            document_element_id = assign_element_id(parent_reference_tag)
+            document_element_id = ensure_element_id(
+                document_context.id_counters, parent_reference_tag
+            )
             section_reference_tag["data-parent_reference"] = document_element_id
 
     return children

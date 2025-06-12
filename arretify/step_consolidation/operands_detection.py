@@ -28,7 +28,7 @@ from arretify.html_schemas import (
 )
 from arretify.utils.html import (
     make_css_class,
-    assign_element_id,
+    ensure_element_id,
     render_str_list_attribute,
     parse_bool_attribute,
     is_tag_and_matches,
@@ -46,16 +46,16 @@ SECTION_REFERENCE_CLASS = make_css_class(SECTION_REFERENCE_SCHEMA)
 _LOGGER = logging.getLogger(__name__)
 
 
-def resolve_references_and_operands(_: DocumentContext, operation_tag: Tag) -> None:
+def resolve_references_and_operands(document_context: DocumentContext, operation_tag: Tag) -> None:
     if operation_tag["data-direction"] != "rtl":
         raise ValueError("Only right-to-left is supported so far")
-    _resolve_rtl_references(operation_tag)
+    _resolve_rtl_references(document_context, operation_tag)
     has_operand = parse_bool_attribute(cast(str, operation_tag["data-has_operand"]))
     if has_operand:
-        _resolve_rtl_operand(operation_tag)
+        _resolve_rtl_operand(document_context, operation_tag)
 
 
-def _resolve_rtl_references(operation_tag: Tag) -> None:
+def _resolve_rtl_references(document_context: DocumentContext, operation_tag: Tag) -> None:
     contiguous_elements_left = get_contiguous_elements_left(operation_tag)
     reference_tags: List[Tag] = []
 
@@ -84,11 +84,11 @@ def _resolve_rtl_references(operation_tag: Tag) -> None:
         return
 
     operation_tag["data-references"] = render_str_list_attribute(
-        [assign_element_id(tag) for tag in reference_tags]
+        [ensure_element_id(document_context.id_counters, tag) for tag in reference_tags]
     )
 
 
-def _resolve_rtl_operand(operation_tag: Tag) -> None:
+def _resolve_rtl_operand(document_context: DocumentContext, operation_tag: Tag) -> None:
     operand_tag: Tag | None = None
     for element in get_contiguous_elements_right(operation_tag):
         if isinstance(element, Tag) and element.name in [
@@ -103,5 +103,5 @@ def _resolve_rtl_operand(operation_tag: Tag) -> None:
         _LOGGER.warning("No right operand found for operation")
         return
 
-    element_id = assign_element_id(operand_tag)
+    element_id = ensure_element_id(document_context.id_counters, operand_tag)
     operation_tag["data-operand"] = element_id
