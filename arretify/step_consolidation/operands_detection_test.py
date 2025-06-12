@@ -19,16 +19,11 @@
 import unittest
 
 from arretify.utils.testing import normalized_html_str, create_document_context
-from arretify.utils import html
 
 from .operands_detection import resolve_references_and_operands
 
 
 class TestParseOperations(unittest.TestCase):
-
-    def setUp(self):
-        html._ELEMENT_ID_COUNTER = 0
-        html._GROUP_ID_COUNTER = 0
 
     def test_several_references_no_operand(self):
         # Arrange

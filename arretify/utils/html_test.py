@@ -20,8 +20,8 @@ import unittest
 
 from bs4 import BeautifulSoup
 
-from . import html
-from .html import make_ul, assign_element_id, is_tag_and_matches
+from .html import make_ul, ensure_element_id, is_tag_and_matches
+from arretify.types import IdCounters
 
 
 class TestMakeUl(unittest.TestCase):
@@ -58,16 +58,14 @@ class TestMakeUl(unittest.TestCase):
 
 class TestAssignElementId(unittest.TestCase):
 
-    def setUp(self):
-        html._ELEMENT_ID_COUNTER = 0
-
     def test_simple(self):
         # Arrange
         soup = BeautifulSoup("", "html.parser")
         tag = soup.new_tag("div")
+        id_counters = IdCounters()
 
         # Act
-        assign_element_id(tag)
+        ensure_element_id(id_counters, tag)
 
         # Assert
         assert tag["data-element_id"] == "1"
@@ -76,10 +74,11 @@ class TestAssignElementId(unittest.TestCase):
         # Arrange
         soup = BeautifulSoup("", "html.parser")
         tag = soup.new_tag("div")
+        id_counters = IdCounters()
         tag["data-element_id"] = "42"
 
         # Act
-        assign_element_id(tag)
+        ensure_element_id(id_counters, tag)
 
         # Assert
         assert tag["data-element_id"] == "42"

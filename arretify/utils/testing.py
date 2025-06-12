@@ -106,7 +106,7 @@ def make_testing_function_for_children_list(
 
 
 def create_document_context(
-    html: str,
+    html: str = "",
 ) -> DocumentContext:
     return DocumentContext(
         soup=BeautifulSoup(html, features="html.parser"),
