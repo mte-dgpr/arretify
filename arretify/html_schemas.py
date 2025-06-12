@@ -163,13 +163,13 @@ ALINEA_SCHEMA = DataElementSchema(
 DOCUMENT_REFERENCE_SCHEMA = DataElementSchema(
     name="document_reference",
     tag_name="a",
-    data_keys=["uri", "is_resolvable"],
+    data_keys=["uri"],
 )
 
 SECTION_REFERENCE_SCHEMA = DataElementSchema(
     name="section_reference",
     tag_name="a",
-    data_keys=["uri", "is_resolvable", "parent_reference"],
+    data_keys=["uri", "parent_reference"],
 )
 
 DATE_SCHEMA = DataElementSchema(

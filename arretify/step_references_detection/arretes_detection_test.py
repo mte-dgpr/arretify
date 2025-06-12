@@ -37,7 +37,6 @@ class TestParseArreteReferences(unittest.TestCase):
                 """
                 <a
                     class="dsr-document_reference"
-                    data-is_resolvable="false"
                     data-uri="dsr://arrete-ministeriel___1998-02-02_"
                 >
                     arrêté ministériel du
@@ -61,7 +60,6 @@ class TestParseArreteReferences(unittest.TestCase):
                 """
                 <a
                     class="dsr-document_reference"
-                    data-is_resolvable="false"
                     data-uri="dsr://arrete-ministeriel___2016-05-23_"
                 >
                     arrêté ministériel du
@@ -80,7 +78,6 @@ class TestParseArreteReferences(unittest.TestCase):
                 """
                 <a
                     class="dsr-document_reference"
-                    data-is_resolvable="false"
                     data-uri="dsr://arrete___1998-02-02_"
                 >
                     arrêté du
@@ -106,7 +103,6 @@ class TestParseArretePluralReferences(unittest.TestCase):
                 """
                 <a
                     class="dsr-document_reference"
-                    data-is_resolvable="false"
                     data-uri="dsr://arrete-prefectoral__5213_1988-10-28_"
                 >
                     n° 5213 du
@@ -121,7 +117,6 @@ class TestParseArretePluralReferences(unittest.TestCase):
                 """
                 <a
                     class="dsr-document_reference"
-                    data-is_resolvable="false"
                     data-uri="dsr://arrete-prefectoral__1636_1995-03-24_"
                 >
                     n° 1636 du
@@ -149,7 +144,6 @@ class TestParseArreteReferencesAll(unittest.TestCase):
                 """
                 <a
                     class="dsr-document_reference"
-                    data-is_resolvable="false"
                     data-uri="dsr://arrete-ministeriel___2016-05-23_"
                 >
                     arrêté ministériel du
@@ -164,7 +158,6 @@ class TestParseArreteReferencesAll(unittest.TestCase):
                 """
                 <a
                     class="dsr-document_reference"
-                    data-is_resolvable="false"
                     data-uri="dsr://arrete-prefectoral__1234-567%2F01.__"
                 >
                     arrêté préfectoral n° 1234-567/01.

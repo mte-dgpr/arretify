@@ -40,12 +40,10 @@ from arretify.law_data.types import (
 )
 from arretify.law_data.uri import (
     is_uri_document_type,
-    is_resolvable,
     render_uri,
 )
 from arretify.utils.html import (
     make_css_class,
-    render_bool_attribute,
 )
 from arretify.types import ExternalURL, DocumentContext, SectionType
 
@@ -117,15 +115,10 @@ def resolve_section_references(
 
 
 def update_reference_tag_uri(tag: Tag, document: Document, *sections: Section) -> None:
-    is_document_resolvable = is_resolvable(document, *sections)
     updated_uri = render_uri(document, *sections)
     tag["data-uri"] = updated_uri
-    tag["data-is_resolvable"] = render_bool_attribute(is_document_resolvable)
-
-    if is_document_resolvable:
-        external_url = resolve_external_url(document, *sections)
-        if external_url is None:
-            raise ValueError(f"Could not resolve external url for {document}")
+    external_url = resolve_external_url(document, *sections)
+    if external_url is not None:
         tag["href"] = external_url
 
 

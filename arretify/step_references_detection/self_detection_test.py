@@ -36,7 +36,6 @@ class TestParseSelfReferences(unittest.TestCase):
                 """
             <a
                 class="dsr-document_reference"
-                data-is_resolvable="true"
                 data-uri="dsr://self____"
             >
                 présent arrêté

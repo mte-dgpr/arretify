@@ -103,10 +103,6 @@ def is_uri_document_type(uri: URI, document_type: DocumentType) -> bool:
     return uri.startswith(f"{URI_SCHEME}://{document_type.value}")
 
 
-def is_resolvable(document: Document, *sections: Section) -> bool:
-    return document.is_resolvable and all(section.is_resolvable for section in sections)
-
-
 def _validate_sections(sections: List[Section]) -> None:
     allowed_section_types = list(SectionType)
     for i, section in enumerate(sections):
