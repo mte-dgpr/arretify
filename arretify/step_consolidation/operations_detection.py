@@ -27,6 +27,7 @@ from arretify.regex_utils import (
     map_regex_tree_match,
     iter_regex_tree_match_strings,
     filter_regex_tree_match_children,
+    join_with_or,
 )
 from arretify.utils.html import (
     make_data_tag,
@@ -58,18 +59,24 @@ SECTION_AFTER_OPERATION_A = r"(à|au|à l'|aux)\s"
 SECTION_POSITION_EXPR = r"(au\sdébut|à\sla\sfin|à\sla\ssuite|au\sniveau)"
 TERMS_VARIANTS = rf"{SECTION_AFTER_OPERATION_L}+(termes?|phrases?)"
 DISPOSITION_PATTERN_S = r"les dispositions suivantes"
-EXPR_CONTINUATION = (
-    r"(par\sles\s(suivantes|dispositions|prescriptions)"
-    r"|par\sce\squi\ssuit"
-    r"|comme\ssuit"
-    r"|comme\sprécisé"
-    r"|celles\sdéfinies\spar"
-    r"|par\scelles\srépertoriées"
-    r"|ainsi\squ'il\ssuit"
-    r"|dans\sles\sconditions\ssuivantes"
-    r"|ainsi"
-    r"|par\sle\ssuivant)"
-)
+EXPR_CONTINUATION_LIST = [
+    r"suivant\sles\sdispositions",
+    r"par\sles\s(suivantes|dispositions|prescriptions)",
+    r"par\sce\squi\ssuit",
+    r"comme\sprécisé",
+    r"celles\sdéfinies\spar",
+    r"par\scelles\s(inscrites|répertoriées)",
+    r"ainsi\squ'il\ssuit",
+    r"dans\sles\sconditions\s(suivantes|ci-après)",
+    r"ainsi",
+    r"par\sle\ssuivant",
+    r"de\sla\s(façon|manière)\ssuivante",
+    r"comme\ssui(t|vant)",
+    r"comme\s(indiqué|précisé|ci-après)",
+    rf"selon\s{SECTION_AFTER_OPERATION_L}",
+]
+
+EXPR_CONTINUATION = join_with_or(EXPR_CONTINUATION_LIST)
 
 
 # Operation target(1) operation description(2) operand(3, optional)
@@ -177,32 +184,48 @@ RTL_OPERATION_NODE = regex_tree.Group(
                                 r"modifiée?s?,\scomplétée?s?,?\sou\sannulée?s?",
                                 # Simple regex
                                 r"(abrogée?s?\set\s)?substituée?s?\spar",
-                                r"supprimée?s?\set\sremplacée?s?",
+                                r"supprimée?s?\set(est|sont)?\sremplacée?s?",
                                 r"annulée?s?\set\sremplacée?s?",
                                 r"abrogée?s?\s(et|ou)\sremplacée?s?",
                                 r"modifiée?s?\set\s(remplacée?|complétée?)s?",
                                 r"remplacée?s?\set\scomplétée?s?",
                                 r"modifiée?s?\set\srédigée?s?",
+                                r"modifiée?s?\s(et|ou)\ssupprimée?s?",
                                 regex_tree.Sequence(
                                     [
                                         r"remplacée?s?",
                                         r"\s",
                                         regex_tree.Branching(
                                             [
+                                                r":",
                                                 EXPR_CONTINUATION,
                                                 rf"par\s{TERMS_VARIANTS}",
                                                 rf"par\s{SECTION_AFTER_OPERATION_L}?",
+                                                r"par\scelles\s(inscrites|répertoriées)",
                                             ]
                                         ),
-                                        r"\s",
                                     ]
                                 ),
                                 regex_tree.Sequence(
                                     [
                                         r"modifiée?s?",
                                         r"\s",
-                                        EXPR_CONTINUATION,
-                                        r"\s",
+                                        regex_tree.Branching(
+                                            [
+                                                r":",
+                                                EXPR_CONTINUATION,
+                                                rf"pour\s{SECTION_AFTER_OPERATION_L}",
+                                                r"pour\s(ce\s)?qui\sconcerne",
+                                                (
+                                                    rf"par\s:?celles?\s{SECTION_AFTER_OPERATION_D}?"
+                                                    rf"{SECTION_AFTER_OPERATION_L}?"
+                                                ),
+                                                rf"conformément\s{SECTION_AFTER_OPERATION_A}",
+                                                rf"au\s+niveau\s{SECTION_AFTER_OPERATION_D}",
+                                                r"de\smanière\stemporaire",
+                                            ]
+                                        ),
+                                        r"\s*",
                                     ]
                                 ),
                             ]

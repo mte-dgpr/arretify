@@ -36,7 +36,7 @@ class TestReplaceOperations(unittest.TestCase):
                     class="dsr-operation"
                     data-direction="rtl"
                     data-has_operand="true"
-                    data-keyword="remplacées comme suit "
+                    data-keyword="remplacées comme suit"
                     data-operand=""
                     data-operation_type="replace"
                     data-references=""
