@@ -4,20 +4,34 @@
 
 <br/>
 
-**Arrêtify** est une librairie Python permettant le traitement automatique des arrêtés préfectoraux français au format HTML ([un exemple](https://mte-dgpr.github.io/arretify/examples/arretes_html/arretes_icpe/0005801105/2023-03-30_AP_mistral.html), [un autre exemple](https://mte-dgpr.github.io/arretify/examples/arretes_html/arrete_circulation_mistral.html)), permettant ainsi des cas d'usages variés tels que RAG, indexation, etc.
+**Arrêtify** est une librairie Python permettant la conversion d’arrêtés préfectoraux français en **HTML sémantique**. Le document résultant est structuré au moyen de [classes CSS sémantiques](./arretify/html_schemas.py) (ex. `.arretify-header`, `.arretify-section`, etc.) et enrichi de nombreuses métadonnées (dates, références juridiques, titres d’articles, etc.). 
 
-*ATTENTION : Arrêtify est actuellement en statut **ALPHA** et en phase de développement actif. Nous vous invitons à l'essayer, à nous faire vos retours et accueillons aussi toute contribution. En revanche nous vous déconseillons pour l'instant de l'utiliser en production.*
-
----
-
-→ Features : 
-- **Ségmentation de l'arrêté** : titre, vu / considérants, articles, annexes, etc.
-- **HTML augmenté** de données supplémentaires : opération de modifications, etc.
-- **Détection de références** : droit français, droit européeen et autres arrêtés préfectoraux
-- **Entièrement modulaire et customizable**
-- **Intégration avec solutions d'OCR** sur étagère : Mistral
+*⚠️ Statut : **ALPHA**, développement actif. N’hésitez pas à l’essayer, à nous faire vos retours et à contribuer ! À ce stade, nous déconseillons un usage en production.*
 
 ---
+
+### → Pourquoi du HTML Sémantique ?
+
+* **Data & IA-ready** : accès précis et facile aux données, ouvrant la voie à des cas d'usages variés - indexation, RAG, entrainement, etc.
+* **Web-ready** : affichage direct dans un navigateur, intégration simple à toute stack web ou CMS.
+* **Léger et portable** : un simple fichier HTML encapsule tout le contenu enrichi, sans dépendance serveur.
+
+
+### → Fonctionnalités clés
+
+* **Formats d'entrée** : PDF, Markdown
+* **Intégration OCR** : compatible « out-of-the-box » avec Mistral OCR.
+* **Entièrement modulaire** : collection de steps de traitement qui peuvent être chaînés pour construire un pipeline adapté aux besoins de l'utilisateur.
+* **Enrichissement sémantique** : steps optionnels permettant d'enrichir le HTML en métadonnées : 
+    - *détection de références* - droit français, droit européen, arrêtés connexes
+    - *opérations de modification* - abrogation, modification, d'arrêtés connexes
+
+### → Exemples en ligne
+
+* [Arrêté ICPE](https://mte-dgpr.github.io/arretify/examples/arretes_html/arretes_icpe/0005801105/2023-03-30_AP_mistral.html)
+* [Arrêté de circulation](https://mte-dgpr.github.io/arretify/examples/arretes_html/arrete_circulation_mistral.html)
+
+
 
 ## Démarrage rapide
 
