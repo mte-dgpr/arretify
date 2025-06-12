@@ -36,7 +36,6 @@ class TestResolveDecretLegifranceId(unittest.TestCase):
                 """
             <a
                 class="dsr-document_reference"
-                data-is_resolvable="false"
                 data-uri="dsr://decret___2005-04-20_"
             >
                 décret du
@@ -53,7 +52,6 @@ class TestResolveDecretLegifranceId(unittest.TestCase):
                 """
             <a
                 class="dsr-document_reference"
-                data-is_resolvable="true"
                 data-uri="dsr://decret_JORFTEXT000000259598__2005-04-20_"
                 href="https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000000259598"
             >

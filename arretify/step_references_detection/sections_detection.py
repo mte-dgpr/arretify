@@ -37,7 +37,6 @@ from arretify.utils.html import (
     make_group_id,
     assign_group_id,
     PageElementOrString,
-    render_bool_attribute,
 )
 from arretify.parsing_utils.patterns import (
     ET_VIRGULE_PATTERN_S,
@@ -64,7 +63,6 @@ from arretify.law_data.types import (
 )
 from arretify.law_data.uri import (
     render_uri,
-    is_resolvable,
 )
 
 # TODO :
@@ -257,7 +255,6 @@ def _render_section_reference(
         SECTION_REFERENCE_SCHEMA,
         data=dict(
             uri=render_uri(document, section),
-            is_resolvable=render_bool_attribute(is_resolvable(document, section)),
             parent_reference=None,
         ),
         contents=iter_regex_tree_match_strings(section_reference_match),

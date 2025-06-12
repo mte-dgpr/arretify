@@ -45,11 +45,8 @@ def resolve_code_article_legifrance_id(
     code_article_reference_tag: Tag,
 ) -> None:
     document, sections = parse_uri(cast(str, code_article_reference_tag["data-uri"]))
-    if not document.is_resolvable:
-        return
-
     if document.id is None:
-        raise RuntimeError("Code document id is None")
+        return
 
     resolved_sections: List[Section] = []
     for section in sections:

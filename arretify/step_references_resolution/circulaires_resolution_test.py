@@ -36,7 +36,6 @@ class TestResolveCirculaireLegifranceId(unittest.TestCase):
                 """
             <a
                 class="dsr-document_reference"
-                data-is_resolvable="false"
                 data-uri="dsr://circulaire___1986-07-23_"
             >
                 Circulaire du
@@ -53,7 +52,6 @@ class TestResolveCirculaireLegifranceId(unittest.TestCase):
                 """
             <a
                 class="dsr-document_reference"
-                data-is_resolvable="true"
                 data-uri="dsr://circulaire_JORFTEXT000000866509__1986-07-23_"
                 href="https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000000866509"
             >

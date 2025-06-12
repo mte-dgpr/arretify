@@ -41,7 +41,6 @@ class TestConnectParentSections(unittest.TestCase):
                 """
             <a
                 class="dsr-section_reference"
-                data-is_resolvable="false"
                 data-uri="dsr://unknown____/alinea__2__"
             >
                 2ème alinéa
@@ -49,7 +48,6 @@ class TestConnectParentSections(unittest.TestCase):
             de l'
             <a
                 class="dsr-document_reference"
-                data-is_resolvable="false"
                 data-uri="dsr://unknown____/article__1__"
             >
                 article 1
@@ -62,7 +60,6 @@ class TestConnectParentSections(unittest.TestCase):
                 <a
                     class="dsr-section_reference"
                     data-parent_reference="1"
-                    data-is_resolvable="false"
                     data-uri="dsr://unknown____/alinea__2__"
                 >
                     2ème alinéa
@@ -75,7 +72,6 @@ class TestConnectParentSections(unittest.TestCase):
                 <a
                     class="dsr-document_reference"
                     data-element_id="1"
-                    data-is_resolvable="false"
                     data-uri="dsr://unknown____/article__1__"
                 >
                     article 1
@@ -91,7 +87,6 @@ class TestConnectParentSections(unittest.TestCase):
                 """
                 <a
                     class="dsr-section_reference"
-                    data-is_resolvable="false"
                     data-uri="dsr://unknown____/article__5__"
                 >
                     article 5
@@ -99,7 +94,6 @@ class TestConnectParentSections(unittest.TestCase):
                 de l’
                 <a
                     class="dsr-document_reference"
-                    data-is_resolvable="false"
                     data-uri="dsr://arrete___2016-05-23_"
                 >
                     arrêté du
@@ -115,7 +109,6 @@ class TestConnectParentSections(unittest.TestCase):
                     <a
                         class="dsr-section_reference"
                         data-parent_reference="1"
-                        data-is_resolvable="false"
                         data-uri="dsr://unknown____/article__5__"
                     >
                         article 5
@@ -128,7 +121,6 @@ class TestConnectParentSections(unittest.TestCase):
                     <a
                         class="dsr-document_reference"
                         data-element_id="1"
-                        data-is_resolvable="false"
                         data-uri="dsr://arrete___2016-05-23_"
                     >
                         arrêté du
@@ -148,7 +140,6 @@ class TestConnectParentSections(unittest.TestCase):
                 <a
                     class="dsr-section_reference"
                     data-group_id="111"
-                    data-is_resolvable="false"
                     data-uri="dsr://unknown____/article__R.%20512%20-%2074__"
                 >
                     articles R. 512 - 74
@@ -157,7 +148,6 @@ class TestConnectParentSections(unittest.TestCase):
                 <a
                     class="dsr-section_reference"
                     data-group_id="111"
-                    data-is_resolvable="false"
                     data-uri="dsr://unknown____/article__R.%20512%2039-1__R.512-39-3"
                 >
                     R. 512 39-1 à R.512-39-3
@@ -165,7 +155,6 @@ class TestConnectParentSections(unittest.TestCase):
                 du
                 <a
                     class="dsr-document_reference"
-                    data-is_resolvable="false"
                     data-uri="dsr://code____Code%20de%20l%27environnement"
                 >
                     code de l'environnement
@@ -179,7 +168,6 @@ class TestConnectParentSections(unittest.TestCase):
                         class="dsr-section_reference"
                         data-parent_reference="1"
                         data-group_id="111"
-                        data-is_resolvable="false"
                         data-uri="dsr://unknown____/article__R.%20512%20-%2074__"
                     >
                         articles R. 512 - 74
@@ -193,7 +181,6 @@ class TestConnectParentSections(unittest.TestCase):
                         class="dsr-section_reference"
                         data-parent_reference="1"
                         data-group_id="111"
-                        data-is_resolvable="false"
                         data-uri="dsr://unknown____/article__R.%20512%2039-1__R.512-39-3"
                     >
                         R. 512 39-1 à R.512-39-3
@@ -205,7 +192,6 @@ class TestConnectParentSections(unittest.TestCase):
                     """
                     <a
                         class="dsr-document_reference"
-                        data-is_resolvable="false"
                         data-element_id="1"
                         data-uri="dsr://code____Code%20de%20l%27environnement"
                     >
@@ -222,7 +208,6 @@ class TestConnectParentSections(unittest.TestCase):
                 """
                 <a
                     class="dsr-section_reference"
-                    data-is_resolvable="false"
                     data-uri="dsr://unknown____/alinea__3__"
                 >
                     alinéa 3
@@ -230,7 +215,6 @@ class TestConnectParentSections(unittest.TestCase):
                 de l'
                 <a
                     class="dsr-section_reference"
-                    data-is_resolvable="false"
                     data-uri="dsr://unknown____/article__R121-1__"
                 >
                     article R121-1
@@ -238,7 +222,6 @@ class TestConnectParentSections(unittest.TestCase):
                 du
                 <a
                     class="dsr-document_reference"
-                    data-is_resolvable="false"
                     data-uri="dsr://code____Code%20de%20l%27environnement"
                 >
                     code de l'environnement
@@ -250,7 +233,6 @@ class TestConnectParentSections(unittest.TestCase):
                     """
                     <a
                         class="dsr-section_reference"
-                        data-is_resolvable="false"
                         data-parent_reference="1"
                         data-uri="dsr://unknown____/alinea__3__"
                     >
@@ -264,7 +246,6 @@ class TestConnectParentSections(unittest.TestCase):
                     <a
                         class="dsr-section_reference"
                         data-element_id="1"
-                        data-is_resolvable="false"
                         data-parent_reference="2"
                         data-uri="dsr://unknown____/article__R121-1__"
                     >
@@ -278,7 +259,6 @@ class TestConnectParentSections(unittest.TestCase):
                     <a
                         class="dsr-document_reference"
                         data-element_id="2"
-                        data-is_resolvable="false"
                         data-uri="dsr://code____Code%20de%20l%27environnement"
                     >
                         code de l'environnement

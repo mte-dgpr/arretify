@@ -39,7 +39,6 @@ from arretify.html_schemas import (
 )
 from arretify.utils.html import (
     make_data_tag,
-    render_bool_attribute,
 )
 from arretify.law_data.types import (
     Document,
@@ -47,7 +46,6 @@ from arretify.law_data.types import (
 )
 from arretify.law_data.uri import (
     render_uri,
-    is_resolvable,
 )
 
 
@@ -95,7 +93,6 @@ def _render_code_reference(
         DOCUMENT_REFERENCE_SCHEMA,
         data=dict(
             uri=render_uri(document),
-            is_resolvable=render_bool_attribute(is_resolvable(document)),
         ),
         contents=iter_regex_tree_match_strings(code_group_match),
     )

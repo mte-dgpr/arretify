@@ -75,18 +75,6 @@ class Document:
     title: Optional[str] = None
     """Title of the document or guessed title from parsing the text."""
 
-    @property
-    def is_resolvable(self) -> bool:
-        if self.type == DocumentType.self:
-            return True
-        elif self.type in [
-            DocumentType.unknown,
-            DocumentType.unknown_arrete,
-        ]:
-            return False
-        else:
-            return self.id is not None
-
     def __post_init__(self):
         if self.date:
             if self.type in [
@@ -112,14 +100,3 @@ class Section:
     start_num: Union[str, None] = None
     end_id: Union[str, None] = None
     end_num: Union[str, None] = None
-
-    @property
-    def is_resolvable(self) -> bool:
-        if self.type == SectionType.ARTICLE:
-            if self.start_id is None:
-                return False
-            if self.end_num:
-                return self.end_id is not None
-            return True
-        else:
-            return True

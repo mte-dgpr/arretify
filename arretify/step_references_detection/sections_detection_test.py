@@ -36,7 +36,6 @@ class TestArticleRange(unittest.TestCase):
                 """
                 <a
                     class="dsr-section_reference"
-                    data-is_resolvable="false"
                     data-uri="dsr://unknown____/article__4.1.b__"
                 >
                     article 4.1.b
@@ -49,7 +48,6 @@ class TestArticleRange(unittest.TestCase):
                 """
                 <a
                     class="dsr-section_reference"
-                    data-is_resolvable="false"
                     data-uri="dsr://unknown____/article__8__"
                 >
                     article 8
@@ -62,7 +60,6 @@ class TestArticleRange(unittest.TestCase):
                 """
                 <a
                     class="dsr-section_reference"
-                    data-is_resolvable="false"
                     data-uri="dsr://unknown____/article__1__"
                 >
                     article 1er
@@ -75,7 +72,6 @@ class TestArticleRange(unittest.TestCase):
                 """
                 <a
                     class="dsr-section_reference"
-                    data-is_resolvable="false"
                     data-uri="dsr://unknown____/article__111__"
                 >
                     article 111è
@@ -88,7 +84,6 @@ class TestArticleRange(unittest.TestCase):
                 """
                 <a
                     class="dsr-section_reference"
-                    data-is_resolvable="false"
                     data-uri="dsr://unknown____/article__2__"
                 >
                     article 2ème
@@ -103,7 +98,6 @@ class TestArticleRange(unittest.TestCase):
                 """
                 <a
                     class="dsr-section_reference"
-                    data-is_resolvable="false"
                     data-uri="dsr://unknown____/article__R511-9__"
                 >
                     article R. 511-9
@@ -116,7 +110,6 @@ class TestArticleRange(unittest.TestCase):
                 """
                 <a
                     class="dsr-section_reference"
-                    data-is_resolvable="false"
                     data-uri="dsr://unknown____/article__D12__"
                 >
                     article D.12
@@ -129,7 +122,6 @@ class TestArticleRange(unittest.TestCase):
                 """
                 <a
                     class="dsr-section_reference"
-                    data-is_resolvable="false"
                     data-uri="dsr://unknown____/article__L181-3__"
                 >
                     article L181-3
@@ -144,7 +136,6 @@ class TestArticleRange(unittest.TestCase):
                 """
                 <a
                     class="dsr-section_reference"
-                    data-is_resolvable="false"
                     data-uri="dsr://unknown____/article__1__"
                 >
                     article premier
@@ -157,7 +148,6 @@ class TestArticleRange(unittest.TestCase):
                 """
                 <a
                     class="dsr-section_reference"
-                    data-is_resolvable="false"
                     data-uri="dsr://unknown____/article__4__"
                 >
                     article quatrième
@@ -172,7 +162,6 @@ class TestArticleRange(unittest.TestCase):
                 """
                 <a
                     class="dsr-section_reference"
-                    data-is_resolvable="false"
                     data-uri="dsr://unknown____/article__3__11"
                 >
                     articles 3 à 11
@@ -185,7 +174,6 @@ class TestArticleRange(unittest.TestCase):
                 """
                 <a
                     class="dsr-section_reference"
-                    data-is_resolvable="false"
                     data-uri="dsr://unknown____/article__6.18.1__6.18.7"
                 >
                     articles 6.18.1 à 6.18.7
@@ -198,7 +186,6 @@ class TestArticleRange(unittest.TestCase):
                 """
                 <a
                     class="dsr-section_reference"
-                    data-is_resolvable="false"
                     data-uri="dsr://unknown____/article__6.18.a__6.18.c"
                 >
                     articles 6.18.a à 6.18.c
@@ -214,7 +201,6 @@ class TestArticleRange(unittest.TestCase):
                 """
                 <a
                     class="dsr-section_reference"
-                    data-is_resolvable="false"
                     data-uri="dsr://unknown____/article__1__3"
                 >
                     article premier à l'article troisième
@@ -228,7 +214,6 @@ class TestArticleRange(unittest.TestCase):
                 """
                 <a
                     class="dsr-section_reference"
-                    data-is_resolvable="false"
                     data-uri="dsr://unknown____/article__2__10"
                 >
                     articles second à 10ème
@@ -244,7 +229,6 @@ class TestArticleRange(unittest.TestCase):
                 """
                 <a
                     class="dsr-section_reference"
-                    data-is_resolvable="false"
                     data-uri="dsr://unknown____/article__R511-9__D512"
                 >
                     article R. 511-9 à l'article D.512
@@ -258,7 +242,6 @@ class TestArticleRange(unittest.TestCase):
                 """
                 <a
                     class="dsr-section_reference"
-                    data-is_resolvable="false"
                     data-uri="dsr://unknown____/article__R543-137__R543-151"
                 >
                     article R.543-137 à R.543-151
@@ -275,7 +258,6 @@ class TestArticleSingle(unittest.TestCase):
                 """
                 <a
                     class="dsr-section_reference"
-                    data-is_resolvable="false"
                     data-uri="dsr://unknown____/article__4.28__"
                 >
                     Paragraphe 4.28
@@ -297,7 +279,6 @@ class TestArticlePlural(unittest.TestCase):
                 <a
                     class="dsr-section_reference"
                     data-group_id="1"
-                    data-is_resolvable="false"
                     data-uri="dsr://unknown____/article__5.1.9__"
                 >
                     articles 5.1.9
@@ -310,7 +291,6 @@ class TestArticlePlural(unittest.TestCase):
                 <a
                     class="dsr-section_reference"
                     data-group_id="1"
-                    data-is_resolvable="false"
                     data-uri="dsr://unknown____/article__9.2.1__"
                 >
                     9.2.1
@@ -323,7 +303,6 @@ class TestArticlePlural(unittest.TestCase):
                 <a
                     class="dsr-section_reference"
                     data-group_id="1"
-                    data-is_resolvable="false"
                     data-uri="dsr://unknown____/article__10.2.1__"
                 >
                     10.2.1
@@ -336,7 +315,6 @@ class TestArticlePlural(unittest.TestCase):
                 <a
                     class="dsr-section_reference"
                     data-group_id="1"
-                    data-is_resolvable="false"
                     data-uri="dsr://unknown____/article__10.2.5__"
                 >
                     10.2.5
@@ -352,7 +330,6 @@ class TestArticlePlural(unittest.TestCase):
                 <a
                     class="dsr-section_reference"
                     data-group_id="1"
-                    data-is_resolvable="false"
                     data-uri="dsr://unknown____/article__1__"
                 >
                     articles premier
@@ -365,7 +342,6 @@ class TestArticlePlural(unittest.TestCase):
                 <a
                     class="dsr-section_reference"
                     data-group_id="1"
-                    data-is_resolvable="false"
                     data-uri="dsr://unknown____/article__9.a__"
                 >
                     9.a
@@ -380,7 +356,6 @@ class TestArticlePlural(unittest.TestCase):
                 <a
                     class="dsr-section_reference"
                     data-group_id="2"
-                    data-is_resolvable="false"
                     data-uri="dsr://unknown____/article__1__"
                 >
                     articles premier
@@ -393,7 +368,6 @@ class TestArticlePlural(unittest.TestCase):
                 <a
                     class="dsr-section_reference"
                     data-group_id="2"
-                    data-is_resolvable="false"
                     data-uri="dsr://unknown____/article__2__"
                 >
                     second
@@ -409,7 +383,6 @@ class TestArticlePlural(unittest.TestCase):
                 <a
                     class="dsr-section_reference"
                     data-group_id="1"
-                    data-is_resolvable="false"
                     data-uri="dsr://unknown____/article__R511-9__"
                 >
                     articles R. 511-9
@@ -422,7 +395,6 @@ class TestArticlePlural(unittest.TestCase):
                 <a
                     class="dsr-section_reference"
                     data-group_id="1"
-                    data-is_resolvable="false"
                     data-uri="dsr://unknown____/article__L111__"
                 >
                     L. 111
@@ -438,7 +410,6 @@ class TestArticlePlural(unittest.TestCase):
                 <a
                     class="dsr-section_reference"
                     data-group_id="1"
-                    data-is_resolvable="false"
                     data-uri="dsr://unknown____/article__R512-74__"
                 >
                     articles R. 512 - 74
@@ -451,7 +422,6 @@ class TestArticlePlural(unittest.TestCase):
                 <a
                     class="dsr-section_reference"
                     data-group_id="1"
-                    data-is_resolvable="false"
                     data-uri="dsr://unknown____/article__R512-39-1__R512-39-3"
                 >
                     R. 512-39-1 à R.512-39-3
@@ -467,7 +437,6 @@ class TestArticlePlural(unittest.TestCase):
                 <a
                     class="dsr-section_reference"
                     data-group_id="1"
-                    data-is_resolvable="false"
                     data-uri="dsr://unknown____/article__R541-49__R541-64"
                 >
                     articles R.541-49 à R.541-64
@@ -480,7 +449,6 @@ class TestArticlePlural(unittest.TestCase):
                 <a
                     class="dsr-section_reference"
                     data-group_id="1"
-                    data-is_resolvable="false"
                     data-uri="dsr://unknown____/article__R541-79__"
                 >
                     R.541-79
@@ -498,7 +466,6 @@ class TestAlineaSingle(unittest.TestCase):
                 """
             <a
                 class="dsr-section_reference"
-                data-is_resolvable="false"
                 data-uri="dsr://unknown____/alinea__2__"
             >
                 2ème alinéa
@@ -513,7 +480,6 @@ class TestAlineaSingle(unittest.TestCase):
                 """
             <a
                 class="dsr-section_reference"
-                data-is_resolvable="false"
                 data-uri="dsr://unknown____/alinea__3__"
             >
                 alinéa 3
@@ -526,7 +492,6 @@ class TestAlineaSingle(unittest.TestCase):
                 """
             <a
                 class="dsr-section_reference"
-                data-is_resolvable="false"
                 data-uri="dsr://unknown____/alinea__2__"
             >
                 alinéa second
@@ -539,7 +504,6 @@ class TestAlineaSingle(unittest.TestCase):
                 """
             <a
                 class="dsr-section_reference"
-                data-is_resolvable="false"
                 data-uri="dsr://unknown____/alinea__9__"
             >
                 alinéa neuvième
@@ -562,7 +526,6 @@ class TestAlineaMultiple(unittest.TestCase):
                 <a
                     class="dsr-section_reference"
                     data-group_id="1"
-                    data-is_resolvable="false"
                     data-uri="dsr://unknown____/alinea__3__"
                 >
                     alinéas 3
@@ -575,7 +538,6 @@ class TestAlineaMultiple(unittest.TestCase):
                 <a
                     class="dsr-section_reference"
                     data-group_id="1"
-                    data-is_resolvable="false"
                     data-uri="dsr://unknown____/alinea__4__"
                 >
                     4
@@ -593,7 +555,6 @@ class TestUnknownSingle(unittest.TestCase):
                 """
                 <a
                     class="dsr-section_reference"
-                    data-is_resolvable="false"
                     data-uri="dsr://unknown____/unknown__3__"
                 >
                     paragraphe 3
@@ -616,7 +577,6 @@ class TestUnknownMultiple(unittest.TestCase):
                 <a
                     class="dsr-section_reference"
                     data-group_id="1"
-                    data-is_resolvable="false"
                     data-uri="dsr://unknown____/unknown__3__"
                 >
                     paragraphes 3è
@@ -629,7 +589,6 @@ class TestUnknownMultiple(unittest.TestCase):
                 <a
                     class="dsr-section_reference"
                     data-group_id="1"
-                    data-is_resolvable="false"
                     data-uri="dsr://unknown____/unknown__5__"
                 >
                     5
@@ -642,7 +601,6 @@ class TestUnknownMultiple(unittest.TestCase):
                 <a
                     class="dsr-section_reference"
                     data-group_id="1"
-                    data-is_resolvable="false"
                     data-uri="dsr://unknown____/unknown__4__"
                 >
                     quatrième

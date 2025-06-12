@@ -36,7 +36,6 @@ class TestParseDecretsReferences(unittest.TestCase):
                 """
                 <a
                     class="dsr-document_reference"
-                    data-is_resolvable="false"
                     data-uri="dsr://decret__2005-635_2005-05-30_"
                 >
                     décret n°2005-635 du

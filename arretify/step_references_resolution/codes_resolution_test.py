@@ -40,7 +40,6 @@ class TestResolveSectionsDocuments(unittest.TestCase):
                 """
             <a
                 class="dsr-section_reference"
-                data-is_resolvable="false"
                 data-uri="dsr://code_LEGITEXT000006074220___/article__R541-15__"
             >
                 article R541-15
@@ -51,7 +50,6 @@ class TestResolveSectionsDocuments(unittest.TestCase):
                 """
             <a
                 class="dsr-section_reference"
-                data-is_resolvable="true"
                 data-uri="dsr://code_LEGITEXT000006074220___/article_LEGIARTI000032728274_R541-15__"
                 href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000032728274"
             >
@@ -67,7 +65,6 @@ class TestResolveSectionsDocuments(unittest.TestCase):
                 """
             <a
                 class="dsr-section_reference"
-                data-is_resolvable="false"
                 data-uri="dsr://code_LEGITEXT000006074220___/article__R541-15__R541-20"
             >
                 articles R541-15 à R541-20
@@ -78,7 +75,6 @@ class TestResolveSectionsDocuments(unittest.TestCase):
                 """
             <a
                 class="dsr-section_reference"
-                data-is_resolvable="true"
                 data-uri="dsr://code_LEGITEXT000006074220___/article_LEGIARTI000032728274_R541-15_LEGIARTI000028249688_R541-20"
                 href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000032728274"
             >
@@ -96,7 +92,6 @@ class TestResolveCodeDocuments(unittest.TestCase):
                 """
             <a
                 class="dsr-document_reference"
-                data-is_resolvable="false"
                 data-uri="dsr://code____Code%20de%20l%27environnement"
             >
                 code de l'environnemenent
@@ -107,7 +102,6 @@ class TestResolveCodeDocuments(unittest.TestCase):
                 """
             <a
                 class="dsr-document_reference"
-                data-is_resolvable="true"
                 data-uri="dsr://code_LEGITEXT000006074220___Code%20de%20l%27environnement"
                 href="https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006074220"
             >

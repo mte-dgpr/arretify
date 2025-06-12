@@ -24,9 +24,9 @@
 from typing import cast
 
 from arretify.types import DocumentContext
-from arretify.utils.html import make_css_class, render_bool_attribute, is_tag_and_matches
+from arretify.utils.html import make_css_class, is_tag_and_matches
 from arretify.html_schemas import SECTION_REFERENCE_SCHEMA, DOCUMENT_REFERENCE_SCHEMA
-from arretify.law_data.uri import parse_uri, render_uri, is_resolvable
+from arretify.law_data.uri import parse_uri, render_uri
 from arretify.law_data.types import Document, Section
 from arretify.step_references_detection.match_sections_with_documents import build_reference_tree
 
@@ -65,6 +65,3 @@ def add_referenced_document_DEPRECATED(
 
                     if document is not None:
                         reference_tag["data-uri"] = render_uri(document, *sections)
-                        reference_tag["data-is_resolvable"] = render_bool_attribute(
-                            is_resolvable(document, *sections)
-                        )

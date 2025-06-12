@@ -36,7 +36,6 @@ class TestParseCodesReferences(unittest.TestCase):
                 """
                 <a
                     class="dsr-document_reference"
-                    data-is_resolvable="false"
                     data-uri="dsr://code____Code%20de%20l%27environnement"
                 >
                     code de l’environnement

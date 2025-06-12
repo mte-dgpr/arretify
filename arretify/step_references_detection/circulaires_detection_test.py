@@ -36,7 +36,6 @@ class TestParseCirculairesReferences(unittest.TestCase):
                 """
                 <a
                     class="dsr-document_reference"
-                    data-is_resolvable="false"
                     data-uri="dsr://circulaire___2005-05-30_"
                 >
                     circulaire du
@@ -56,7 +55,6 @@ class TestParseCirculairesReferences(unittest.TestCase):
                 """
                 <a
                     class="dsr-document_reference"
-                    data-is_resolvable="false"
                     data-uri="dsr://circulaire___2005-05-30_"
                 >
                     circulaire ministérielle du
@@ -76,7 +74,6 @@ class TestParseCirculairesReferences(unittest.TestCase):
                 """
                 <a
                     class="dsr-document_reference"
-                    data-is_resolvable="false"
                     data-uri="dsr://circulaire___2005-05-30_"
                 >
                     circulaire DPPR/DE du
@@ -96,7 +93,6 @@ class TestParseCirculairesReferences(unittest.TestCase):
                 """
                 <a
                     class="dsr-document_reference"
-                    data-is_resolvable="false"
                     data-uri="dsr://circulaire__2005-12_2005-05-30_"
                 >
                     circulaire n°2005-12 du

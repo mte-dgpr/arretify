@@ -40,7 +40,6 @@ class TestResolveArreteMinisterielLegifranceId(unittest.TestCase):
                 """
                 <a
                     class="dsr-document_reference"
-                    data-is_resolvable="false"
                     data-uri="dsr://arrete-ministeriel___1998-02-02_"
                 >
                     arrêté ministériel du
@@ -58,7 +57,6 @@ class TestResolveArreteMinisterielLegifranceId(unittest.TestCase):
                 """
             <a
                 class="dsr-document_reference"
-                data-is_resolvable="true"
                 data-uri="dsr://arrete-ministeriel_JORFTEXT000000204891__1998-02-02_"
                 href="https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000000204891"
             >
