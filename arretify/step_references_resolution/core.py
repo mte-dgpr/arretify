@@ -29,10 +29,6 @@ from arretify.regex_utils import (
     PatternProxy,
     safe_group,
 )
-from arretify.html_schemas import (
-    SECTION_REFERENCE_SCHEMA,
-    DOCUMENT_REFERENCE_SCHEMA,
-)
 from arretify.law_data.types import (
     Document,
     DocumentType,
@@ -42,20 +38,12 @@ from arretify.law_data.uri import (
     is_uri_document_type,
     render_uri,
 )
-from arretify.utils.html import (
-    make_css_class,
-)
-from arretify.types import ExternalURL, DocumentContext, SectionType
+from arretify.types import ExternalURL, SectionType
 
 
-SECTION_REFERENCE_CSS_CLASS = make_css_class(SECTION_REFERENCE_SCHEMA)
-DOCUMENT_REFERENCE_CSS_CLASS = make_css_class(DOCUMENT_REFERENCE_SCHEMA)
 # Regex for searching an act with its title.
 # Simply picks the first 3 to 15 words following the document reference.
 TITLE_SAMPLE_PATTERN = PatternProxy(r"^\s*([^\.;\s]+\s+){3,15}([^\.;\s]+)")
-
-
-ReferenceResolutionFunction = Callable[[DocumentContext, Tag], None]
 
 
 def resolve_external_url(
@@ -94,26 +82,6 @@ def resolve_external_url(
     return None
 
 
-def resolve_document_references(
-    document_context: DocumentContext,
-    document_type: DocumentType,
-    reference_resolution_function: ReferenceResolutionFunction,
-):
-    filter_function = _make_reference_filter(document_type, DOCUMENT_REFERENCE_CSS_CLASS)
-    for document_reference_tag in document_context.soup.find_all(filter_function):
-        reference_resolution_function(document_context, document_reference_tag)
-
-
-def resolve_section_references(
-    document_context: DocumentContext,
-    document_type: DocumentType,
-    reference_resolution_function: ReferenceResolutionFunction,
-):
-    filter_function = _make_reference_filter(document_type, SECTION_REFERENCE_CSS_CLASS)
-    for section_reference_tag in document_context.soup.find_all(filter_function):
-        reference_resolution_function(document_context, section_reference_tag)
-
-
 def update_reference_tag_uri(tag: Tag, document: Document, *sections: Section) -> None:
     updated_uri = render_uri(document, *sections)
     tag["data-uri"] = updated_uri
@@ -135,7 +103,7 @@ def get_title_sample_next_sibling(
     return None
 
 
-def _make_reference_filter(
+def make_reference_filter(
     document_type: DocumentType,
     css_class: str,
 ) -> Callable[[Tag], bool]:
