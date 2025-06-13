@@ -16,22 +16,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import cast
 from dataclasses import replace as dataclass_replace
 import logging
 
 from bs4 import Tag
 
 from arretify.types import DocumentContext
-from arretify.law_data.uri import (
-    parse_uri,
-)
-
+from arretify.law_data.types import Document
 from arretify.law_data.apis.eurlex import (
     get_eu_act_url_with_year_and_num,
     ActType,
 )
-from .core import update_reference_tag_uri
+from .core import update_document_reference_tag_href
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -63,7 +59,7 @@ def _resolve_eu_act_eurlex_url(
     act_type: ActType,
     eu_act_reference_tag: Tag,
 ) -> None:
-    document, sections = parse_uri(cast(str, eu_act_reference_tag["data-uri"]))
+    document = Document.from_tag(eu_act_reference_tag)
 
     if document.num is None or document.date is None:
         raise ValueError(f"Could not find num or date for document {document}")
@@ -75,8 +71,7 @@ def _resolve_eu_act_eurlex_url(
         _LOGGER.warning(f"Could not find eurlex url for {act_type} {document.date}/{document.num}")
         return
 
-    update_reference_tag_uri(
+    update_document_reference_tag_href(
         eu_act_reference_tag,
         dataclass_replace(document, id=eurlex_url),
-        *sections,
     )

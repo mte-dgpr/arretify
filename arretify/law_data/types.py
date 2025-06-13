@@ -16,15 +16,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import Union, Optional
+from typing import Union, Optional, cast
 from dataclasses import dataclass
 from enum import Enum
 
-from arretify.types import SectionType
+from bs4 import Tag
+
+from arretify.types import SectionType, DataElementDataDict
 from arretify.parsing_utils.dates import (
     parse_date_str,
     parse_year_str,
 )
+from arretify.utils.html import render_str_list_attribute, parse_str_list_attribute
 
 
 class DocumentType(Enum):
@@ -60,7 +63,7 @@ class DocumentType(Enum):
     """
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, kw_only=True)
 class Document:
     type: DocumentType
     id: Optional[str] = None
@@ -92,11 +95,59 @@ class Document:
                 except ValueError:
                     raise ValueError(f'Invalid date "{self.date}"')
 
+    def get_data_attributes(self) -> DataElementDataDict:
+        """Returns a dictionary of data attributes for this document."""
+        return {
+            "type": self.type.value,
+            "id": self.id,
+            "num": self.num,
+            "date": self.date,
+            "title": self.title,
+        }
 
-@dataclass(frozen=True)
+    @classmethod
+    def from_tag(cls, tag: Tag) -> "Document":
+        return cls(
+            type=DocumentType(tag["data-type"]),
+            id=cast(str | None, tag.get("data-id", None)),
+            num=cast(str | None, tag.get("data-num", None)),
+            date=cast(str | None, tag.get("data-date", None)),
+            title=cast(str | None, tag.get("data-title", None)),
+        )
+
+
+@dataclass(frozen=True, kw_only=True)
 class Section:
     type: SectionType
-    start_id: Union[str, None] = None
     start_num: Union[str, None] = None
-    end_id: Union[str, None] = None
     end_num: Union[str, None] = None
+    start_id: Union[str, None] = None
+    end_id: Union[str, None] = None
+
+    def get_data_attributes(self) -> DataElementDataDict:
+        """Returns a dictionary of data attributes for this section."""
+        id_attr = None
+        if self.start_id or self.end_id:
+            id_attr = render_str_list_attribute([self.start_id or "", self.end_id or ""])
+
+        num_attr = None
+        if self.start_num or self.end_num:
+            num_attr = render_str_list_attribute([self.start_num or "", self.end_num or ""])
+
+        return {
+            "type": self.type.value,
+            "id": id_attr,
+            "num": num_attr,
+        }
+
+    @classmethod
+    def from_tag(cls, tag: Tag) -> "Section":
+        start_num, end_num = parse_str_list_attribute(cast(str, tag.get("data-num", ",")))
+        start_id, end_id = parse_str_list_attribute(cast(str, tag.get("data-id", ",")))
+        return cls(
+            type=SectionType(tag["data-type"]),
+            start_num=start_num or None,
+            start_id=start_id or None,
+            end_num=end_num or None,
+            end_id=end_id or None,
+        )

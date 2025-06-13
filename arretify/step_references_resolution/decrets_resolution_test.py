@@ -36,7 +36,8 @@ class TestResolveDecretLegifranceId(unittest.TestCase):
                 """
             <a
                 class="dsr-document_reference"
-                data-uri="dsr://decret___2005-04-20_"
+                data-date="2005-04-20"
+                data-type="decret"
             >
                 décret du
                 <time class="dsr-date" datetime="2005-04-20">
@@ -52,7 +53,9 @@ class TestResolveDecretLegifranceId(unittest.TestCase):
                 """
             <a
                 class="dsr-document_reference"
-                data-uri="dsr://decret_JORFTEXT000000259598__2005-04-20_"
+                data-date="2005-04-20"
+                data-id="JORFTEXT000000259598"
+                data-type="decret"
                 href="https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000000259598"
             >
                 décret du

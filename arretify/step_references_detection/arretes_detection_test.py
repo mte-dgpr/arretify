@@ -37,7 +37,8 @@ class TestParseArreteReferences(unittest.TestCase):
                 """
                 <a
                     class="dsr-document_reference"
-                    data-uri="dsr://arrete-ministeriel___1998-02-02_"
+                    data-date="1998-02-02"
+                    data-type="arrete-ministeriel"
                 >
                     arrêté ministériel du
                     <time class="dsr-date" datetime="1998-02-02">
@@ -60,7 +61,8 @@ class TestParseArreteReferences(unittest.TestCase):
                 """
                 <a
                     class="dsr-document_reference"
-                    data-uri="dsr://arrete-ministeriel___2016-05-23_"
+                    data-date="2016-05-23"
+                    data-type="arrete-ministeriel"
                 >
                     arrêté ministériel du
                     <time class="dsr-date" datetime="2016-05-23">23 mai 2016</time>
@@ -78,7 +80,8 @@ class TestParseArreteReferences(unittest.TestCase):
                 """
                 <a
                     class="dsr-document_reference"
-                    data-uri="dsr://arrete___1998-02-02_"
+                    data-date="1998-02-02"
+                    data-type="arrete"
                 >
                     arrêté du
                     <time class="dsr-date" datetime="1998-02-02">
@@ -103,7 +106,9 @@ class TestParseArretePluralReferences(unittest.TestCase):
                 """
                 <a
                     class="dsr-document_reference"
-                    data-uri="dsr://arrete-prefectoral__5213_1988-10-28_"
+                    data-date="1988-10-28"
+                    data-num="5213"
+                    data-type="arrete-prefectoral"
                 >
                     n° 5213 du
                     <time class="dsr-date" datetime="1988-10-28">
@@ -117,7 +122,9 @@ class TestParseArretePluralReferences(unittest.TestCase):
                 """
                 <a
                     class="dsr-document_reference"
-                    data-uri="dsr://arrete-prefectoral__1636_1995-03-24_"
+                    data-date="1995-03-24"
+                    data-num="1636"
+                    data-type="arrete-prefectoral"
                 >
                     n° 1636 du
                     <time class="dsr-date" datetime="1995-03-24">
@@ -144,7 +151,8 @@ class TestParseArreteReferencesAll(unittest.TestCase):
                 """
                 <a
                     class="dsr-document_reference"
-                    data-uri="dsr://arrete-ministeriel___2016-05-23_"
+                    data-date="2016-05-23"
+                    data-type="arrete-ministeriel"
                 >
                     arrêté ministériel du
                     <time class="dsr-date" datetime="2016-05-23">
@@ -158,7 +166,8 @@ class TestParseArreteReferencesAll(unittest.TestCase):
                 """
                 <a
                     class="dsr-document_reference"
-                    data-uri="dsr://arrete-prefectoral__1234-567%2F01.__"
+                    data-num="1234-567/01."
+                    data-type="arrete-prefectoral"
                 >
                     arrêté préfectoral n° 1234-567/01.
                 </a>
