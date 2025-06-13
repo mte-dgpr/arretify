@@ -16,7 +16,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import cast, Callable
 
 from bs4 import Tag
 from arretify._vendor.clients_api_droit.clients_api_droit.legifrance import (
@@ -34,10 +33,7 @@ from arretify.law_data.types import (
     DocumentType,
     Section,
 )
-from arretify.law_data.uri import (
-    is_uri_document_type,
-    render_uri,
-)
+from arretify.utils.html import set_data_attributes
 from arretify.types import ExternalURL, SectionType
 
 
@@ -82,9 +78,19 @@ def resolve_external_url(
     return None
 
 
-def update_reference_tag_uri(tag: Tag, document: Document, *sections: Section) -> None:
-    updated_uri = render_uri(document, *sections)
-    tag["data-uri"] = updated_uri
+def update_document_reference_tag_href(tag: Tag, document: Document) -> None:
+    set_data_attributes(tag, document.get_data_attributes())
+    external_url = resolve_external_url(document)
+    if external_url is not None:
+        tag["href"] = external_url
+
+
+def update_section_reference_tag_href(
+    tag: Tag,
+    document: Document,
+    *sections: Section,
+) -> None:
+    set_data_attributes(tag, sections[-1].get_data_attributes())
     external_url = resolve_external_url(document, *sections)
     if external_url is not None:
         tag["href"] = external_url
@@ -101,15 +107,3 @@ def get_title_sample_next_sibling(
     if match:
         return safe_group(match, 0)
     return None
-
-
-def make_reference_filter(
-    document_type: DocumentType,
-    css_class: str,
-) -> Callable[[Tag], bool]:
-    def _filter_function(tag: Tag) -> bool:
-        return css_class in tag.get("class", []) and is_uri_document_type(
-            cast(str, tag.get("data-uri", "")), document_type
-        )
-
-    return _filter_function

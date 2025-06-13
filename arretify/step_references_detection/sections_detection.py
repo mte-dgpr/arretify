@@ -58,11 +58,6 @@ from arretify.regex_utils import (
 )
 from arretify.law_data.types import (
     Section,
-    Document,
-    DocumentType,
-)
-from arretify.law_data.uri import (
-    render_uri,
 )
 
 # TODO :
@@ -246,16 +241,13 @@ def _render_section_reference(
     section_reference_match: regex_tree.Match,
     group_id: ElementGroupId | None = None,
 ) -> Tag:
-    document = Document(
-        type=DocumentType.unknown,
-    )
     section = _extract_section(section_reference_match)
     section_tag = make_data_tag(
         soup,
         SECTION_REFERENCE_SCHEMA,
         data=dict(
-            uri=render_uri(document, section),
             parent_reference=None,
+            **section.get_data_attributes(),
         ),
         contents=iter_regex_tree_match_strings(section_reference_match),
     )

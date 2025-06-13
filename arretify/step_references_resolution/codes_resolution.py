@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import List, cast
+from typing import List
 from dataclasses import replace as dataclass_replace
 import logging
 
@@ -28,13 +28,12 @@ from arretify.types import (
     DataElementDataDict,
 )
 from arretify.law_data.types import Section, Document
-from arretify.law_data.uri import parse_uri
 from arretify.law_data.legifrance_constants import (
     get_code_id_with_title,
     get_code_article_id_from_article_num,
 )
 
-from .core import update_reference_tag_uri
+from .core import update_document_reference_tag_href, update_section_reference_tag_href
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -81,23 +80,25 @@ def resolve_code_article_legifrance_id(
 
         resolved_sections.append(section)
 
-    update_reference_tag_uri(code_article_reference_tag, document, *resolved_sections)
+    update_section_reference_tag_href(
+        code_article_reference_tag,
+        document,
+        *resolved_sections,
+    )
 
 
 def resolve_code_legifrance_id(
     document_context: DocumentContext,
     code_reference_tag: Tag,
 ) -> None:
-    document, sections = parse_uri(cast(str, code_reference_tag["data-uri"]))
-
+    document = Document.from_tag(code_reference_tag)
     if document.title is None:
         raise ValueError("Could not find code title")
     code_id = get_code_id_with_title(document.title)
     if code_id is None:
         raise ValueError(f"Could not find code id for title {document.title}")
 
-    update_reference_tag_uri(
+    update_document_reference_tag_href(
         code_reference_tag,
         dataclass_replace(document, id=code_id),
-        *sections,
     )

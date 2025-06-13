@@ -37,9 +37,6 @@ from arretify.law_data.types import (
     Document,
     DocumentType,
 )
-from arretify.law_data.uri import (
-    render_uri,
-)
 
 
 SELF_NODE = regex_tree.Group(
@@ -65,9 +62,7 @@ def parse_self_references(
                 lambda self_group_match: make_data_tag(
                     document_context.soup,
                     DOCUMENT_REFERENCE_SCHEMA,
-                    data=dict(
-                        uri=render_uri(document),
-                    ),
+                    data=document.get_data_attributes(),
                     contents=iter_regex_tree_match_strings(self_group_match),
                 ),
                 allowed_group_names=["__self"],

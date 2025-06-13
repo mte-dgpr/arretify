@@ -46,9 +46,6 @@ from arretify.law_data.types import (
     Document,
     DocumentType,
 )
-from arretify.law_data.uri import (
-    render_uri,
-)
 from arretify.law_data.eurlex_constants import (
     EU_ACT_DOMAINS,
     EU_ACT_TYPES,
@@ -152,8 +149,6 @@ def _render_eu_act_reference(
     return make_data_tag(
         soup,
         DOCUMENT_REFERENCE_SCHEMA,
-        data=dict(
-            uri=render_uri(document),
-        ),
+        data=document.get_data_attributes(),
         contents=iter_regex_tree_match_strings(eu_act_group_match),
     )

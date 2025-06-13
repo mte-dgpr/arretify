@@ -42,9 +42,6 @@ from arretify.law_data.types import (
     Document,
     DocumentType,
 )
-from arretify.law_data.uri import (
-    render_uri,
-)
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -131,8 +128,6 @@ def _render_circulaire_container(
     return make_data_tag(
         soup,
         DOCUMENT_REFERENCE_SCHEMA,
-        data=dict(
-            uri=render_uri(document),
-        ),
+        data=document.get_data_attributes(),
         contents=circulaire_tag_contents,
     )

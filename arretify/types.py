@@ -150,13 +150,6 @@ class DocumentContext(SessionContext):
 
 PageElementOrString = Union[PageElement, str]
 
-URI = str
-"""
-Custom URIs for references to documents and sections. The format is as follows:
-
-dsr://<type>_<id>_<num>_<date>_<title>/<type>_<start_id>_<start_num>_<end_id>_<end_num>/
-"""
-
 ExternalURL = str
 
 ElementId = str

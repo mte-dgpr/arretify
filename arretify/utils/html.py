@@ -159,6 +159,12 @@ def render_str_list_attribute(value: List[str]) -> str:
     return ",".join(value)
 
 
+def set_data_attributes(tag: Tag, data: DataElementDataDict) -> None:
+    for key, value in data.items():
+        if value is not None:
+            tag[f"data-{key}"] = value
+
+
 def replace_children(
     tag: Tag,
     new_children: Iterable[PageElementOrString],

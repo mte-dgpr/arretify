@@ -46,7 +46,9 @@ class TestResolveEuActUrls(unittest.TestCase):
                 """
             <a
                 class="dsr-document_reference"
-                data-uri="dsr://eu-directive__75_2010_"
+                data-date="2010"
+                data-num="75"
+                data-type="eu-directive"
             >
                 directive 2010/75/UE
             </a>
@@ -56,7 +58,10 @@ class TestResolveEuActUrls(unittest.TestCase):
                 """
             <a
                 class="dsr-document_reference"
-                data-uri="dsr://eu-directive_https%3A%2F%2Feur-lex.europa.eu%2Flegal-content%2FFR%2FTXT%2FHTML%2F%3Furi%3Dcellar%3Ac7191b72-4e07-4712-86d6-d3ae5e4f0082_75_2010_"
+                data-date="2010"
+                data-id="https://eur-lex.europa.eu/legal-content/FR/TXT/HTML/?uri=cellar:c7191b72-4e07-4712-86d6-d3ae5e4f0082"
+                data-num="75"
+                data-type="eu-directive"
                 href="https://eur-lex.europa.eu/legal-content/FR/TXT/HTML/?uri=cellar:c7191b72-4e07-4712-86d6-d3ae5e4f0082"
             >
                 directive 2010/75/UE
@@ -71,7 +76,9 @@ class TestResolveEuActUrls(unittest.TestCase):
                 """
             <a
                 class="dsr-document_reference"
-                data-uri="dsr://eu-decision__2019_2020_"
+                data-date="2020"
+                data-num="2019"
+                data-type="eu-decision"
             >
                 décision 2019/2020/UE
             </a>
@@ -81,7 +88,10 @@ class TestResolveEuActUrls(unittest.TestCase):
                 """
             <a
                 class="dsr-document_reference"
-                data-uri="dsr://eu-decision_https%3A%2F%2Feur-lex.europa.eu%2Flegal-content%2FFR%2FTXT%2FHTML%2F%3Furi%3Dcellar%3A8e42e417-3ab2-11eb-b27b-01aa75ed71a1_2019_2020_"
+                data-date="2020"
+                data-id="https://eur-lex.europa.eu/legal-content/FR/TXT/HTML/?uri=cellar:8e42e417-3ab2-11eb-b27b-01aa75ed71a1"
+                data-num="2019"
+                data-type="eu-decision"
                 href="https://eur-lex.europa.eu/legal-content/FR/TXT/HTML/?uri=cellar:8e42e417-3ab2-11eb-b27b-01aa75ed71a1"
             >
                 décision 2019/2020/UE
@@ -96,7 +106,9 @@ class TestResolveEuActUrls(unittest.TestCase):
                 """
             <a
                 class="dsr-document_reference"
-                data-uri="dsr://eu-regulation__21_2020_"
+                data-date="2020"
+                data-num="21"
+                data-type="eu-regulation"
             >
                 règlement 2020/21/UE
             </a>
@@ -106,7 +118,10 @@ class TestResolveEuActUrls(unittest.TestCase):
                 """
             <a
                 class="dsr-document_reference"
-                data-uri="dsr://eu-regulation_https%3A%2F%2Feur-lex.europa.eu%2Flegal-content%2FFR%2FTXT%2FHTML%2F%3Furi%3Dcellar%3Afa14e336-3777-11ea-ba6e-01aa75ed71a1_21_2020_"
+                data-date="2020"
+                data-id="https://eur-lex.europa.eu/legal-content/FR/TXT/HTML/?uri=cellar:fa14e336-3777-11ea-ba6e-01aa75ed71a1"
+                data-num="21"
+                data-type="eu-regulation"
                 href="https://eur-lex.europa.eu/legal-content/FR/TXT/HTML/?uri=cellar:fa14e336-3777-11ea-ba6e-01aa75ed71a1"
             >
                 règlement 2020/21/UE
