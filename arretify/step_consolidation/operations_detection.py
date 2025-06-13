@@ -208,7 +208,7 @@ RTL_OPERATION_NODE = regex_tree.Group(
                             [
                                 # Simple regex
                                 r"abrogée?s?\set\ssubstituée?s?",
-                                r"supprimée?s?\set(est|sont)?\sremplacée?s?",
+                                r"supprimée?s?\set(\sest|\ssont)?\sremplacée?s?",
                                 r"annulée?s?\set\sremplacée?s?",
                                 r"abrogée?s?\s(et|ou)\sremplacée?s?",
                                 r"modifiée?s?\set\s(remplacée?|complétée?)s?",

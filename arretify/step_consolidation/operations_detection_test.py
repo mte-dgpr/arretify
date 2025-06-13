@@ -246,6 +246,27 @@ class TestReplaceOperations(unittest.TestCase):
             )
         ]
 
+    def test_delete_replace_plural(self):
+        assert process_operations(
+            "Les dispositions de l'article 2.8 - Arrêtés types sont supprimées et sont remplacées"
+            " par celles du tableau suivant :"
+        ) == [
+            normalized_html_str(
+                """
+                <span class="dsr-operation"
+                    data-direction="rtl"
+                    data-has_operand="true"
+                    data-keyword="supprimées et sont remplacées"
+                    data-operand=""
+                    data-operation_type="replace"
+                    data-references="">
+                    Les dispositions de l'article 2.8 - Arrêtés types sont <b>supprimées et sont
+                     remplacées</b> par celles du tableau suivant :
+                </span>
+                """
+            )
+        ]
+
 
 class TestAddOperations(unittest.TestCase):
     def test_add_completed_as_follows(self):
