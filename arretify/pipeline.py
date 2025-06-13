@@ -109,6 +109,7 @@ def load_ocr_pages(
 def save_html_file(
     output_path: Path,
     document_context: DocumentContext,
-) -> None:
+) -> DocumentContext:
     with open(output_path, "w", encoding="utf-8") as f:
         f.write(document_context.soup.prettify())
+    return document_context
