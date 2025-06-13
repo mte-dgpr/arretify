@@ -185,9 +185,9 @@ class TestParseOperations(unittest.TestCase):
                     >
                         est
                         <b>
-                            remplacée
+                            remplacée par la disposition suivante
                         </b>
-                        par la disposition suivante :
+                         :
                     </span>
                     <q>
                         Un relevé hebdomadaire de chacun des compteurs d'eau est réalisé par l'exploitant
@@ -235,9 +235,9 @@ class TestParseOperations(unittest.TestCase):
                 >
                     est
                     <b>
-                        remplacée
+                        remplacée par la disposition suivante
                     </b>
-                    par la disposition suivante :
+                     :
                 </span>
                 <q
                     data-element_id="2"

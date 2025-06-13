@@ -29,7 +29,7 @@ from .patterns import LETTER_PATTERN_S
 # as in "4ᵉ" for "4ème".
 EME_PATTERN_S = r"(er|ème|è|°|ᵉ)"
 
-COUNT_PATTERN_S = r"(deux|trois|quatre|cinq|six|sept|huit|neuf|dix)"
+COUNT_PATTERN_S = r"(un|deux|trois|quatre|cinq|six|sept|huit|neuf|dix)"
 
 ORDINAL_PATTERN_S = (
     r"(premier)|(deuxième|second)|(troisième)|(quatrième)|(cinquième)|(sixième)"

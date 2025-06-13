@@ -36,12 +36,12 @@ class TestReplaceOperations(unittest.TestCase):
                     class="dsr-operation"
                     data-direction="rtl"
                     data-has_operand="true"
-                    data-keyword="remplacées comme suit"
+                    data-keyword="remplacées"
                     data-operand=""
                     data-operation_type="replace"
                     data-references=""
                 >
-                    sont <b>remplacées comme suit</b> :
+                    sont <b>remplacées</b> comme suit :
                 </span>
                 """
             ),
@@ -58,13 +58,13 @@ class TestReplaceOperations(unittest.TestCase):
                     class="dsr-operation"
                     data-direction="rtl"
                     data-has_operand="true"
-                    data-keyword="substitué par"
+                    data-keyword="substitué"
                     data-operand=""
                     data-operation_type="replace"
                     data-references=""
                 >
                     Le deuxième alinéa de l'article 4.3.8 de l'arrêté préfectoral précité
-                    est supprimé. Il est <b>substitué par</b> les alinéas suivants :
+                    est supprimé. Il est <b>substitué</b> par les alinéas suivants :
                 </span>
                 """
             )
@@ -204,6 +204,48 @@ class TestReplaceOperations(unittest.TestCase):
             )
         ]
 
+    def test_modified_simple_disposition(self):
+        assert process_operations(
+            "La dernière phrase de l'article 8.1.1.2 de l'arrêté préfectoral du 10 décembre 2008"
+            " est remplacée par la disposition suivante :"
+        ) == [
+            normalized_html_str(
+                """
+                <span class="dsr-operation"
+                    data-direction="rtl"
+                    data-has_operand="true"
+                    data-keyword="remplacée"
+                    data-operand=""
+                    data-operation_type="replace"
+                    data-references="">
+                    La dernière phrase de l'article 8.1.1.2 de l'arrêté préfectoral du 10 décembre
+                    2008 est <b>remplacée</b> par la disposition suivante :
+                </span>
+                """
+            )
+        ]
+
+    def test_modified_operand(self):
+        assert process_operations(
+            "La dernière phrase de l'article 8.1.1.2 de l'arrêté préfectoral du 10 décembre 2008"
+            " est ainsi modifiée :"
+        ) == [
+            normalized_html_str(
+                """
+                <span class="dsr-operation"
+                    data-direction="rtl"
+                    data-has_operand="true"
+                    data-keyword="modifiée"
+                    data-operand=""
+                    data-operation_type="replace"
+                    data-references="">
+                    La dernière phrase de l'article 8.1.1.2 de l'arrêté préfectoral du 10 décembre
+                    2008 est ainsi <b>modifiée</b> :
+                </span>
+                """
+            )
+        ]
+
 
 class TestAddOperations(unittest.TestCase):
     def test_add_completed_as_follows(self):
@@ -216,13 +258,13 @@ class TestAddOperations(unittest.TestCase):
                     class="dsr-operation"
                     data-direction="rtl"
                     data-has_operand="true"
-                    data-keyword="complété comme suit"
+                    data-keyword="complété"
                     data-operand=""
                     data-operation_type="add"
                     data-references=""
                 >
                     Le paragraphe 4.14 - Postes de chargement -déchargement est
-                    <b>complété comme suit</b> :
+                    <b>complété</b> comme suit :
                 </span>
                 """
             )
@@ -238,12 +280,12 @@ class TestAddOperations(unittest.TestCase):
                     class="dsr-operation"
                     data-direction="rtl"
                     data-has_operand="false"
-                    data-keyword="complété ainsi"
+                    data-keyword="complété"
                     data-operand=""
                     data-operation_type="add"
                     data-references=""
                 >
-                    Le paragraphe 4.19.1 - Réseau d'eau incendie est <b>complété ainsi</b>
+                    Le paragraphe 4.19.1 - Réseau d'eau incendie est <b>complété</b> ainsi
                 </span>
                 """
             )
@@ -260,12 +302,12 @@ class TestAddOperations(unittest.TestCase):
                 <span class="dsr-operation"
                     data-direction="rtl"
                     data-has_operand="false"
-                    data-keyword="complétés d'"
+                    data-keyword="complétés"
                     data-operand=""
                     data-operation_type="add"
                     data-references="">
                     Les prescriptions de l' article 8.3. dispositions spécifiques à l'installation
-                    de combustion de l' arrêté préfectoral du 15 mars 2013 sont <b>complétés d'</b>
+                    de combustion de l' arrêté préfectoral du 15 mars 2013 sont <b>complétés</b> d'
                 </span>
                 """
             ),
@@ -282,12 +324,12 @@ class TestAddOperations(unittest.TestCase):
                     class="dsr-operation"
                     data-direction="rtl"
                     data-has_operand="false"
-                    data-keyword="créé un "
+                    data-keyword="créé"
                     data-operand=""
                     data-operation_type="add"
                     data-references=""
                 >
-                    Il est <b>créé un</b>
+                    Il est <b>créé</b> un
                 </span>
                 """
             ),
@@ -305,12 +347,12 @@ class TestAddOperations(unittest.TestCase):
                 <span class="dsr-operation"
                     data-direction="rtl"
                     data-has_operand="false"
-                    data-keyword="créé en fin de "
+                    data-keyword="créé"
                     data-operand=""
                     data-operation_type="add"
                     data-references="">
                     Un article additionnel 8.2.5 relatif au fonctionnement du casier VIII en mode
-                    bioréacteur est <b>créé en fin de</b>
+                    bioréacteur est <b>créé</b> en fin de
                 </span>
                 """
             ),
@@ -328,11 +370,11 @@ class TestAddOperations(unittest.TestCase):
                 <span class="dsr-operation"
                     data-direction="rtl"
                     data-has_operand="false"
-                    data-keyword="créé un nouveau "
+                    data-keyword="créé"
                     data-operand=""
                     data-operation_type="add"
                     data-references="">
-                    Il est <b>créé un nouveau</b>
+                    Il est <b>créé</b> un nouveau
                 </span>
                 """
             ),
@@ -348,11 +390,11 @@ class TestAddOperations(unittest.TestCase):
                 <span class="dsr-operation"
                     data-direction="rtl"
                     data-has_operand="false"
-                    data-keyword="créé un nouvel "
+                    data-keyword="créé"
                     data-operand=""
                     data-operation_type="add"
                     data-references="">
-                    Il est <b>créé un nouvel</b>
+                    Il est <b>créé</b> un nouvel
                 </span>
                 """
             ),
@@ -369,12 +411,12 @@ class TestAddOperations(unittest.TestCase):
                 <span class="dsr-operation"
                     data-direction="rtl"
                     data-has_operand="true"
-                    data-keyword="créé deux nouveaux "
+                    data-keyword="créé"
                     data-operand=""
                     data-operation_type="add"
                     data-references="">
                     Sous le tableau de la liste des activités autorisées,
-                    il est <b>créé deux nouveaux</b> articles ainsi rédigés :
+                    il est <b>créé</b> deux nouveaux articles ainsi rédigés :
                 </span>
                 """
             )
@@ -455,11 +497,11 @@ class TestAddOperations(unittest.TestCase):
                 <span class="dsr-operation"
                     data-direction="rtl"
                     data-has_operand="false"
-                    data-keyword="inséré au début de "
+                    data-keyword="inséré"
                     data-operand=""
                     data-operation_type="add"
                     data-references="">
-                    2.4.3 Le paragraphe suivant est <b>inséré au début de</b>
+                    2.4.3 Le paragraphe suivant est <b>inséré</b> au début de
                 </span>
                 """
             ),
@@ -476,12 +518,12 @@ class TestAddOperations(unittest.TestCase):
                 <span class="dsr-operation"
                     data-direction="rtl"
                     data-has_operand="true"
-                    data-keyword="insérées les dispositions suivantes"
+                    data-keyword="insérées"
                     data-operand=""
                     data-operation_type="add"
                     data-references="">
                     A la suite du 1er  alinéa de l' article 14.5 de l' arrêté préfectoral
-                    du 18 avril 2005 sont <b>insérées les dispositions suivantes</b> :
+                    du 18 avril 2005 sont <b>insérées</b> les dispositions suivantes :
                 </span>
                 """
             )
@@ -497,12 +539,12 @@ class TestAddOperations(unittest.TestCase):
                 <span class="dsr-operation"
                     data-direction="rtl"
                     data-has_operand="true"
-                    data-keyword="inséré le nouvel"
+                    data-keyword="inséré"
                     data-operand=""
                     data-operation_type="add"
                     data-references="">
                     Après le 4ème alinéa de l'article 4.3.8 de l'arrêté préfectoral précité,
-                    il est <b>inséré le nouvel</b> alinéa suivant :
+                    il est <b>inséré</b> le nouvel alinéa suivant :
                 </span>
                 """
             )
@@ -518,12 +560,12 @@ class TestAddOperations(unittest.TestCase):
                 <span class="dsr-operation"
                     data-direction="rtl"
                     data-has_operand="true"
-                    data-keyword="inséré les deux"
+                    data-keyword="inséré"
                     data-operand=""
                     data-operation_type="add"
                     data-references="">
                     Après lé 6ème alinéa de l'article 4.3.8 de l'arrêté préfectoral précité,
-                      il est <b>inséré les deux</b> nouveaux alinéas suivants :
+                      il est <b>inséré</b> les deux nouveaux alinéas suivants :
                 </span>
                 """
             )
@@ -540,11 +582,11 @@ class TestAddOperations(unittest.TestCase):
                 <span class="dsr-operation"
                     data-direction="rtl"
                     data-has_operand="false"
-                    data-keyword="inséré à la suite de "
+                    data-keyword="inséré"
                     data-operand=""
                     data-operation_type="add"
                     data-references="">
-                    Un article numéroté 7.7.6.3. est <b>inséré à la suite de</b>
+                    Un article numéroté 7.7.6.3. est <b>inséré</b> à la suite de
                 </span>
                 """
             ),
@@ -562,12 +604,12 @@ class TestAddOperations(unittest.TestCase):
                 <span class="dsr-operation"
                     data-direction="rtl"
                     data-has_operand="false"
-                    data-keyword="insérée dans le "
+                    data-keyword="insérée"
                     data-operand=""
                     data-operation_type="add"
                     data-references="">
                     Un article numéroté 12.4.1. intitulé Dispositions spécifiques a l'atelier est
-                      <b>insérée dans le</b>
+                      <b>insérée</b> dans le
                 </span>
                 """
             ),
@@ -583,11 +625,11 @@ class TestAddOperations(unittest.TestCase):
                 <span class="dsr-operation"
                     data-direction="rtl"
                     data-has_operand="true"
-                    data-keyword="inséré et est ainsi rédigé"
+                    data-keyword="inséré"
                     data-operand=""
                     data-operation_type="add"
                     data-references="">
-                    un article numéroté 11.4.5. est <b>inséré et est ainsi rédigé</b> :
+                    un article numéroté 11.4.5. est <b>inséré</b> et est ainsi rédigé :
                 </span>
                 """
             )
@@ -603,12 +645,12 @@ class TestAddOperations(unittest.TestCase):
                 <span class="dsr-operation"
                     data-direction="rtl"
                     data-has_operand="true"
-                    data-keyword="inséré après le "
+                    data-keyword="inséré"
                     data-operand=""
                     data-operation_type="add"
                     data-references="">
                     Un titre 15, intitulé Dispositions particulières - Fabrication de crème
-                    enzymatique est <b>inséré après le</b> titre 14
+                    enzymatique est <b>inséré</b> après le titre 14
                 </span>
                 """
             )
