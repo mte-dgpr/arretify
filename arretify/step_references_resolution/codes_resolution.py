@@ -27,7 +27,7 @@ from arretify.types import (
     SectionType,
     DataElementDataDict,
 )
-from arretify.law_data.types import Section
+from arretify.law_data.types import Section, Document
 from arretify.law_data.uri import parse_uri
 from arretify.law_data.legifrance_constants import (
     get_code_id_with_title,
@@ -43,8 +43,9 @@ _LOGGER = logging.getLogger(__name__)
 def resolve_code_article_legifrance_id(
     document_context: DocumentContext,
     code_article_reference_tag: Tag,
+    document: Document,
+    sections: List[Section],
 ) -> None:
-    document, sections = parse_uri(cast(str, code_article_reference_tag["data-uri"]))
     if document.id is None:
         return
 
