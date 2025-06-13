@@ -27,6 +27,7 @@ from arretify.regex_utils import (
     map_regex_tree_match,
     iter_regex_tree_match_strings,
     filter_regex_tree_match_children,
+    join_with_or,
 )
 from arretify.utils.html import (
     make_data_tag,
@@ -43,6 +44,7 @@ from arretify.types import (
 )
 from arretify.utils.functional import flat_map_string
 
+from arretify.parsing_utils.numbering import COUNT_PATTERN_S
 
 OPERATION_TYPES_GROUP_NAMES = [
     OperationType.ADD.value,
@@ -50,7 +52,42 @@ OPERATION_TYPES_GROUP_NAMES = [
     OperationType.REPLACE.value,
 ]
 
-# Operation `target(1) operation description(2) operand(3, optional)`
+
+SECTION_AFTER_OPERATION_L = r"(le|la|les|l')\s"
+SECTION_AFTER_OPERATION_D = r"(de|du|des|d')\s"
+SECTION_AFTER_OPERATION_A = r"(à|au|à l'|aux)\s"
+SECTION_POSITION_EXPR = r"(au\sdébut|à\sla\sfin|à\sla\ssuite|au\sniveau)"
+
+TERMS_VARIANTS_LIST = [
+    r"termes?",
+    r"phrases?",
+    r"mots?",
+    r"dispositions?(\ssuivantes?)?",
+]
+TERMS_VARIANTS = rf"{SECTION_AFTER_OPERATION_L}({join_with_or(TERMS_VARIANTS_LIST)})"
+
+DISPOSITION_PATTERN_S = r"les dispositions suivantes"
+EXPR_CONTINUATION_LIST = [
+    r"suivant\sles\sdispositions",
+    r"par\sles\s(suivantes|dispositions|prescriptions)",
+    r"par\sce\squi\ssuit",
+    r"comme\sprécisé",
+    r"celles\sdéfinies\spar",
+    r"par\scelles\s(inscrites|répertoriées)",
+    r"ainsi\squ'il\ssuit",
+    r"dans\sles\sconditions\s(suivantes|ci-après)",
+    r"ainsi",
+    r"par\sle\ssuivant",
+    r"de\sla\s(façon|manière)\ssuivante",
+    r"comme\ssui(t|vant)",
+    r"comme\s(indiqué|précisé|ci-après)",
+    rf"selon\s{SECTION_AFTER_OPERATION_L}",
+]
+
+EXPR_CONTINUATION = join_with_or(EXPR_CONTINUATION_LIST)
+
+
+# Operation target(1) operation description(2) operand(3, optional)
 # Example:
 # les dispositions de l'article 8.1.1.1 l'arrêté du 12 mai 2016(1) sont complétées
 # par les dispositions suivantes :(2)
@@ -61,47 +98,185 @@ OPERATION_TYPES_GROUP_NAMES = [
 RTL_OPERATION_NODE = regex_tree.Group(
     regex_tree.Sequence(
         [
-            # Ignore the match if a paragraph break appears left of the operation
             r"^.*",
             regex_tree.Branching(
                 [
-                    r"est\sainsi\s",
-                    r"sont\sainsi\s",
-                    r"est\s",
-                    r"sont\s",
+                    r"est\sainsi",
+                    r"sont\sainsi",
+                    r"est",
+                    r"sont",
                 ]
             ),
+            r"\s",
             regex_tree.Branching(
                 [
+                    # ADD OPERATIONS
+                    regex_tree.Sequence(
+                        [
+                            regex_tree.Group(
+                                r"créée?s?",
+                                group_name=OperationType.ADD.value,
+                            ),
+                            r"\s",
+                            regex_tree.Branching(
+                                [
+                                    r"un\s(nouve(l|au)\s)?",
+                                    rf"{COUNT_PATTERN_S}\s(nouveaux\s)?",
+                                    rf"en fin\s{SECTION_AFTER_OPERATION_D}",
+                                    SECTION_AFTER_OPERATION_A,
+                                    DISPOSITION_PATTERN_S,
+                                ]
+                            ),
+                        ]
+                    ),
+                    regex_tree.Sequence(
+                        [
+                            regex_tree.Group(
+                                r"insérée?s?",
+                                group_name=OperationType.ADD.value,
+                            ),
+                            r"(?!\saux?\srecueils?\sdes\sactes\sadministratifs)",
+                            r"\s",
+                            regex_tree.Branching(
+                                [
+                                    regex_tree.Sequence(
+                                        [
+                                            regex_tree.Branching([r"après", r"dans"]),
+                                            r"\s",
+                                            SECTION_AFTER_OPERATION_L,
+                                        ]
+                                    ),
+                                    regex_tree.Sequence(
+                                        [
+                                            SECTION_POSITION_EXPR,
+                                            r"\s",
+                                            SECTION_AFTER_OPERATION_D,
+                                        ]
+                                    ),
+                                    r"et\s(est|sont)\sainsi\srédigés?",
+                                    r"le nouve(l|au)",
+                                    rf"les\s{COUNT_PATTERN_S}",
+                                    rf"{COUNT_PATTERN_S}\spoints?",
+                                    rf"{SECTION_AFTER_OPERATION_A}",
+                                    DISPOSITION_PATTERN_S,
+                                ]
+                            ),
+                        ]
+                    ),
+                    regex_tree.Sequence(
+                        [
+                            regex_tree.Group(
+                                r"complétée?s?",
+                                group_name=OperationType.ADD.value,
+                            ),
+                            r"[,\s]+",
+                            regex_tree.Branching(
+                                [
+                                    r"à\s(sa|la)\sfin",
+                                    r"comme\ssuit",
+                                    r"ainsi",
+                                    r"par\s",
+                                    r"d'",
+                                ]
+                            ),
+                        ]
+                    ),
                     regex_tree.Group(
                         regex_tree.Branching(
                             [
-                                r"complétée?s?(?:\s+(ainsi\s*[:]?|comme\s+suit[\s:]?))?",
-                                r"complétée?s?",
-                                r"créée?s?",
-                                r"insérée?s?",
-                                r"modifiée?s?\s+par\s+l'ajout",
-                                r"ajouté\s+un\s+paragraphe\s+rédigé\s+ainsi",
+                                r"modifiée?s?\spar\sl'ajout",
                                 r"ajoutée?s?",
                             ]
                         ),
                         group_name=OperationType.ADD.value,
                     ),
+                    # REPLACE OPERATIONS
                     regex_tree.Group(
                         regex_tree.Branching(
                             [
-                                r"substituée?s?",
-                                r"supprimée?s?\s+et\s+remplacée?s?",
-                                r"annulée?s?\s+et\s+remplacée?s?",
-                                r"abrogée?s?\s+et\s+remplacée?s?",
-                                r"modifiée?s?\s+et\s+remplacée?s?",
-                                r"modifiée?s?\s+ou\s+supprimée?s?\s+et\s+remplacée?s?",
-                                r"modifiée?s?",
-                                r"remplacée?s?",
-                            ]
+                                # Table regex
+                                r"modifiée?s?\sou\ssupprimée?s?\set\sremplacée?s?",
+                                r"supprimée?s?,\smodifiée?s?\sou\sajoutée?s?",
+                                r"modifiée?s?,\ssupprimée?s?\sou\scomplétée?s?",
+                                r"modifiée?s?,\scomplétée?s?,?\sou\sannulée?s?",
+                            ],
                         ),
                         group_name=OperationType.REPLACE.value,
                     ),
+                    regex_tree.Group(
+                        regex_tree.Branching(
+                            [
+                                # Simple regex
+                                r"abrogée?s?\set\ssubstituée?s?",
+                                r"supprimée?s?\set(\sest|\ssont)?\sremplacée?s?",
+                                r"annulée?s?\set\sremplacée?s?",
+                                r"abrogée?s?\s(et|ou)\sremplacée?s?",
+                                r"modifiée?s?\set\s(remplacée?|complétée?)s?",
+                                r"remplacée?s?\set\scomplétée?s?",
+                                r"modifiée?s?\set\srédigée?s?",
+                                r"modifiée?s?\s(et|ou)\ssupprimée?s?",
+                            ],
+                        ),
+                        group_name=OperationType.REPLACE.value,
+                    ),
+                    regex_tree.Sequence(
+                        [
+                            regex_tree.Group(
+                                r"substituée?s?",
+                                group_name=OperationType.REPLACE.value,
+                            ),
+                            r"\s",
+                            r"par",
+                        ]
+                    ),
+                    regex_tree.Sequence(
+                        [
+                            regex_tree.Group(
+                                r"remplacée?s?",
+                                group_name=OperationType.REPLACE.value,
+                            ),
+                            r"\s",
+                            regex_tree.Branching(
+                                [
+                                    regex_tree.Group(
+                                        r":$",
+                                        group_name="__has_operand",
+                                    ),
+                                    EXPR_CONTINUATION,
+                                    rf"par\s{TERMS_VARIANTS}",
+                                    rf"par\s{SECTION_AFTER_OPERATION_L}?",
+                                ]
+                            ),
+                        ]
+                    ),
+                    regex_tree.Sequence(
+                        [
+                            regex_tree.Group(
+                                r"modifiée?s?",
+                                group_name=OperationType.REPLACE.value,
+                            ),
+                            r"\s",
+                            regex_tree.Branching(
+                                [
+                                    regex_tree.Group(
+                                        r":$",
+                                        group_name="__has_operand",
+                                    ),
+                                    EXPR_CONTINUATION,
+                                    rf"pour\s{SECTION_AFTER_OPERATION_L}",
+                                    r"pour\s(ce\s)?qui\sconcerne",
+                                    (
+                                        rf"par\s:?celles?\s{SECTION_AFTER_OPERATION_D}?"
+                                        rf"{SECTION_AFTER_OPERATION_L}?"
+                                    ),
+                                    rf"conformément\s{SECTION_AFTER_OPERATION_A}",
+                                    rf"au\sniveau\s{SECTION_AFTER_OPERATION_D}",
+                                    r"de\smanière\stemporaire",
+                                ]
+                            ),
+                        ]
+                    ),
+                    # DELETE OPERATIONS
                     regex_tree.Group(
                         regex_tree.Branching(
                             [
