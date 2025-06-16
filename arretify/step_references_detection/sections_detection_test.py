@@ -34,7 +34,7 @@ class TestArticleSingle(unittest.TestCase):
                 """
                 <a
                     class="dsr-section_reference"
-                    data-num="4.1.b,"
+                    data-start_num="4.1.b"
                     data-type="article"
                 >
                     article 4.1.b
@@ -47,7 +47,7 @@ class TestArticleSingle(unittest.TestCase):
                 """
                 <a
                     class="dsr-section_reference"
-                    data-num="8,"
+                    data-start_num="8"
                     data-type="article"
                 >
                     article 8
@@ -60,7 +60,7 @@ class TestArticleSingle(unittest.TestCase):
                 """
                 <a
                     class="dsr-section_reference"
-                    data-num="1,"
+                    data-start_num="1"
                     data-type="article"
                 >
                     article 1er
@@ -73,7 +73,7 @@ class TestArticleSingle(unittest.TestCase):
                 """
                 <a
                     class="dsr-section_reference"
-                    data-num="111,"
+                    data-start_num="111"
                     data-type="article"
                 >
                     article 111è
@@ -86,7 +86,7 @@ class TestArticleSingle(unittest.TestCase):
                 """
                 <a
                     class="dsr-section_reference"
-                    data-num="2,"
+                    data-start_num="2"
                     data-type="article"
                 >
                     article 2ème
@@ -101,7 +101,7 @@ class TestArticleSingle(unittest.TestCase):
                 """
                 <a
                     class="dsr-section_reference"
-                    data-num="R511-9,"
+                    data-start_num="R511-9"
                     data-type="article"
                 >
                     article R. 511-9
@@ -114,7 +114,7 @@ class TestArticleSingle(unittest.TestCase):
                 """
                 <a
                     class="dsr-section_reference"
-                    data-num="D12,"
+                    data-start_num="D12"
                     data-type="article"
                 >
                     article D.12
@@ -127,7 +127,7 @@ class TestArticleSingle(unittest.TestCase):
                 """
                 <a
                     class="dsr-section_reference"
-                    data-num="L181-3,"
+                    data-start_num="L181-3"
                     data-type="article"
                 >
                     article L181-3
@@ -142,7 +142,7 @@ class TestArticleSingle(unittest.TestCase):
                 """
                 <a
                     class="dsr-section_reference"
-                    data-num="1,"
+                    data-start_num="1"
                     data-type="article"
                 >
                     article premier
@@ -155,7 +155,7 @@ class TestArticleSingle(unittest.TestCase):
                 """
                 <a
                     class="dsr-section_reference"
-                    data-num="4,"
+                    data-start_num="4"
                     data-type="article"
                 >
                     article quatrième
@@ -170,7 +170,7 @@ class TestArticleSingle(unittest.TestCase):
                 """
                 <a
                     class="dsr-section_reference"
-                    data-num="L123,"
+                    data-start_num="L123"
                     data-type="article"
                 >
                     Paragraphe L123
@@ -188,7 +188,8 @@ class TestArticleRange(unittest.TestCase):
                 """
                 <a
                     class="dsr-section_reference"
-                    data-num="3,11"
+                    data-end_num="11"
+                    data-start_num="3"
                     data-type="article"
                 >
                     articles 3 à 11
@@ -201,7 +202,8 @@ class TestArticleRange(unittest.TestCase):
                 """
                 <a
                     class="dsr-section_reference"
-                    data-num="6.18.1,6.18.7"
+                    data-end_num="6.18.7"
+                    data-start_num="6.18.1"
                     data-type="article"
                 >
                     articles 6.18.1 à 6.18.7
@@ -214,7 +216,8 @@ class TestArticleRange(unittest.TestCase):
                 """
                 <a
                     class="dsr-section_reference"
-                    data-num="6.18.a,6.18.c"
+                    data-end_num="6.18.c"
+                    data-start_num="6.18.a"
                     data-type="article"
                 >
                     articles 6.18.a à 6.18.c
@@ -230,7 +233,8 @@ class TestArticleRange(unittest.TestCase):
                 """
                 <a
                     class="dsr-section_reference"
-                    data-num="1,3"
+                    data-end_num="3"
+                    data-start_num="1"
                     data-type="article"
                 >
                     article premier à l'article troisième
@@ -244,7 +248,8 @@ class TestArticleRange(unittest.TestCase):
                 """
                 <a
                     class="dsr-section_reference"
-                    data-num="2,10"
+                    data-end_num="10"
+                    data-start_num="2"
                     data-type="article"
                 >
                     articles second à 10ème
@@ -260,7 +265,8 @@ class TestArticleRange(unittest.TestCase):
                 """
                 <a
                     class="dsr-section_reference"
-                    data-num="R511-9,D512"
+                    data-end_num="D512"
+                    data-start_num="R511-9"
                     data-type="article"
                 >
                     article R. 511-9 à l'article D.512
@@ -274,7 +280,8 @@ class TestArticleRange(unittest.TestCase):
                 """
                 <a
                     class="dsr-section_reference"
-                    data-num="R543-137,R543-151"
+                    data-end_num="R543-151"
+                    data-start_num="R543-137"
                     data-type="article"
                 >
                     article R.543-137 à R.543-151
@@ -293,7 +300,7 @@ class TestArticlePlural(unittest.TestCase):
                 <a
                     class="dsr-section_reference"
                     data-group_id="1"
-                    data-num="5.1.9,"
+                    data-start_num="5.1.9"
                     data-type="article"
                 >
                     articles 5.1.9
@@ -306,7 +313,7 @@ class TestArticlePlural(unittest.TestCase):
                 <a
                     class="dsr-section_reference"
                     data-group_id="1"
-                    data-num="9.2.1,"
+                    data-start_num="9.2.1"
                     data-type="article"
                 >
                     9.2.1
@@ -319,7 +326,7 @@ class TestArticlePlural(unittest.TestCase):
                 <a
                     class="dsr-section_reference"
                     data-group_id="1"
-                    data-num="10.2.1,"
+                    data-start_num="10.2.1"
                     data-type="article"
                 >
                     10.2.1
@@ -332,7 +339,7 @@ class TestArticlePlural(unittest.TestCase):
                 <a
                     class="dsr-section_reference"
                     data-group_id="1"
-                    data-num="10.2.5,"
+                    data-start_num="10.2.5"
                     data-type="article"
                 >
                     10.2.5
@@ -348,7 +355,7 @@ class TestArticlePlural(unittest.TestCase):
                 <a
                     class="dsr-section_reference"
                     data-group_id="1"
-                    data-num="1,"
+                    data-start_num="1"
                     data-type="article"
                 >
                     articles premier
@@ -361,7 +368,7 @@ class TestArticlePlural(unittest.TestCase):
                 <a
                     class="dsr-section_reference"
                     data-group_id="1"
-                    data-num="9.a,"
+                    data-start_num="9.a"
                     data-type="article"
                 >
                     9.a
@@ -376,7 +383,7 @@ class TestArticlePlural(unittest.TestCase):
                 <a
                     class="dsr-section_reference"
                     data-group_id="1"
-                    data-num="1,"
+                    data-start_num="1"
                     data-type="article"
                 >
                     articles premier
@@ -389,7 +396,7 @@ class TestArticlePlural(unittest.TestCase):
                 <a
                     class="dsr-section_reference"
                     data-group_id="1"
-                    data-num="2,"
+                    data-start_num="2"
                     data-type="article"
                 >
                     second
@@ -405,7 +412,7 @@ class TestArticlePlural(unittest.TestCase):
                 <a
                     class="dsr-section_reference"
                     data-group_id="1"
-                    data-num="R511-9,"
+                    data-start_num="R511-9"
                     data-type="article"
                 >
                     articles R. 511-9
@@ -418,7 +425,7 @@ class TestArticlePlural(unittest.TestCase):
                 <a
                     class="dsr-section_reference"
                     data-group_id="1"
-                    data-num="L111,"
+                    data-start_num="L111"
                     data-type="article"
                 >
                     L. 111
@@ -434,7 +441,7 @@ class TestArticlePlural(unittest.TestCase):
                 <a
                     class="dsr-section_reference"
                     data-group_id="1"
-                    data-num="R512-74,"
+                    data-start_num="R512-74"
                     data-type="article"
                 >
                     articles R. 512 - 74
@@ -447,7 +454,8 @@ class TestArticlePlural(unittest.TestCase):
                 <a
                     class="dsr-section_reference"
                     data-group_id="1"
-                    data-num="R512-39-1,R512-39-3"
+                    data-end_num="R512-39-3"
+                    data-start_num="R512-39-1"
                     data-type="article"
                 >
                     R. 512-39-1 à R.512-39-3
@@ -463,7 +471,8 @@ class TestArticlePlural(unittest.TestCase):
                 <a
                     class="dsr-section_reference"
                     data-group_id="1"
-                    data-num="R541-49,R541-64"
+                    data-end_num="R541-64"
+                    data-start_num="R541-49"
                     data-type="article"
                 >
                     articles R.541-49 à R.541-64
@@ -476,7 +485,7 @@ class TestArticlePlural(unittest.TestCase):
                 <a
                     class="dsr-section_reference"
                     data-group_id="1"
-                    data-num="R541-79,"
+                    data-start_num="R541-79"
                     data-type="article"
                 >
                     R.541-79
@@ -494,7 +503,7 @@ class TestAlineaSingle(unittest.TestCase):
                 """
             <a
                 class="dsr-section_reference"
-                data-num="2,"
+                data-start_num="2"
                 data-type="alinea"
             >
                 2ème alinéa
@@ -509,7 +518,7 @@ class TestAlineaSingle(unittest.TestCase):
                 """
             <a
                 class="dsr-section_reference"
-                data-num="3,"
+                data-start_num="3"
                 data-type="alinea"
             >
                 alinéa 3
@@ -522,7 +531,7 @@ class TestAlineaSingle(unittest.TestCase):
                 """
             <a
                 class="dsr-section_reference"
-                data-num="2,"
+                data-start_num="2"
                 data-type="alinea"
             >
                 alinéa second
@@ -535,7 +544,7 @@ class TestAlineaSingle(unittest.TestCase):
                 """
             <a
                 class="dsr-section_reference"
-                data-num="9,"
+                data-start_num="9"
                 data-type="alinea"
             >
                 alinéa neuvième
@@ -553,7 +562,8 @@ class TestAlineaRange(unittest.TestCase):
                 """
                 <a
                     class="dsr-section_reference"
-                    data-num="3,5"
+                    data-end_num="5"
+                    data-start_num="3"
                     data-type="alinea"
                 >
                     alinéas 3 à 5
@@ -568,7 +578,8 @@ class TestAlineaRange(unittest.TestCase):
                 """
                 <a
                     class="dsr-section_reference"
-                    data-num="1,3"
+                    data-end_num="3"
+                    data-start_num="1"
                     data-type="alinea"
                 >
                     alinéas premier à troisième
@@ -588,7 +599,7 @@ class TestAlineaMultiple(unittest.TestCase):
                 <a
                     class="dsr-section_reference"
                     data-group_id="1"
-                    data-num="3,"
+                    data-start_num="3"
                     data-type="alinea"
                 >
                     alinéas 3
@@ -601,7 +612,7 @@ class TestAlineaMultiple(unittest.TestCase):
                 <a
                     class="dsr-section_reference"
                     data-group_id="1"
-                    data-num="4,"
+                    data-start_num="4"
                     data-type="alinea"
                 >
                     4
@@ -619,7 +630,7 @@ class TestUnknownSingle(unittest.TestCase):
                 """
                 <a
                     class="dsr-section_reference"
-                    data-num="3,"
+                    data-start_num="3"
                     data-type="unknown"
                 >
                     paragraphe 3
@@ -635,7 +646,7 @@ class TestUnknownSingle(unittest.TestCase):
                 """
                 <a
                     class="dsr-section_reference"
-                    data-num="a.4,"
+                    data-start_num="a.4"
                     data-type="unknown"
                 >
                     § a.4
@@ -653,7 +664,8 @@ class TestUnknownRange(unittest.TestCase):
                 """
                 <a
                     class="dsr-section_reference"
-                    data-num="3,5"
+                    data-end_num="5"
+                    data-start_num="3"
                     data-type="unknown"
                 >
                     paragraphes 3 à 5
@@ -673,7 +685,7 @@ class TestUnknownMultiple(unittest.TestCase):
                 <a
                     class="dsr-section_reference"
                     data-group_id="1"
-                    data-num="3,"
+                    data-start_num="3"
                     data-type="unknown"
                 >
                     paragraphes 3è
@@ -686,7 +698,7 @@ class TestUnknownMultiple(unittest.TestCase):
                 <a
                     class="dsr-section_reference"
                     data-group_id="1"
-                    data-num="5,"
+                    data-start_num="5"
                     data-type="unknown"
                 >
                     5
@@ -699,7 +711,7 @@ class TestUnknownMultiple(unittest.TestCase):
                 <a
                     class="dsr-section_reference"
                     data-group_id="1"
-                    data-num="4,"
+                    data-start_num="4"
                     data-type="unknown"
                 >
                     quatrième

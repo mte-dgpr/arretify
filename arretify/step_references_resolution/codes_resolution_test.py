@@ -39,7 +39,7 @@ class TestResolveSectionsDocuments(unittest.TestCase):
             """
             <a
                 class="dsr-section_reference"
-                data-num="R541-15"
+                data-start_num="R541-15"
                 data-type="article"
             >
                 article R541-15
@@ -68,8 +68,8 @@ class TestResolveSectionsDocuments(unittest.TestCase):
             """
                 <a
                     class="dsr-section_reference"
-                    data-id="LEGIARTI000032728274,"
-                    data-num="R541-15,"
+                    data-start_id="LEGIARTI000032728274"
+                    data-start_num="R541-15"
                     data-type="article"
                     href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000032728274"
                 >
@@ -84,7 +84,8 @@ class TestResolveSectionsDocuments(unittest.TestCase):
             """
             <a
                 class="dsr-section_reference"
-                data-num="R541-15,R541-20"
+                data-end_num="R541-20"
+                data-start_num="R541-15"
                 data-type="article"
             >
                 articles R541-15 à R541-20
@@ -113,8 +114,10 @@ class TestResolveSectionsDocuments(unittest.TestCase):
             """
             <a
                 class="dsr-section_reference"
-                data-id="LEGIARTI000032728274,LEGIARTI000028249688"
-                data-num="R541-15,R541-20"
+                data-end_id="LEGIARTI000028249688"
+                data-end_num="R541-20"
+                data-start_id="LEGIARTI000032728274"
+                data-start_num="R541-15"
                 data-type="article"
                 href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000032728274"
             >

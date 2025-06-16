@@ -27,7 +27,6 @@ from arretify.parsing_utils.dates import (
     parse_date_str,
     parse_year_str,
 )
-from arretify.utils.html import render_str_list_attribute, parse_str_list_attribute
 
 
 class DocumentType(Enum):
@@ -126,28 +125,20 @@ class Section:
 
     def get_data_attributes(self) -> DataElementDataDict:
         """Returns a dictionary of data attributes for this section."""
-        id_attr = None
-        if self.start_id or self.end_id:
-            id_attr = render_str_list_attribute([self.start_id or "", self.end_id or ""])
-
-        num_attr = None
-        if self.start_num or self.end_num:
-            num_attr = render_str_list_attribute([self.start_num or "", self.end_num or ""])
-
         return {
             "type": self.type.value,
-            "id": id_attr,
-            "num": num_attr,
+            "start_id": self.start_id,
+            "end_id": self.end_id,
+            "start_num": self.start_num,
+            "end_num": self.end_num,
         }
 
     @classmethod
     def from_tag(cls, tag: Tag) -> "Section":
-        start_num, end_num = parse_str_list_attribute(cast(str, tag.get("data-num", ",")))
-        start_id, end_id = parse_str_list_attribute(cast(str, tag.get("data-id", ",")))
         return cls(
             type=SectionType(tag["data-type"]),
-            start_num=start_num or None,
-            start_id=start_id or None,
-            end_num=end_num or None,
-            end_id=end_id or None,
+            start_num=cast(str | None, tag.get("data-start_num", None)),
+            start_id=cast(str | None, tag.get("data-start_id", None)),
+            end_num=cast(str | None, tag.get("data-end_num", None)),
+            end_id=cast(str | None, tag.get("data-end_id", None)),
         )

@@ -175,12 +175,7 @@ DOCUMENT_REFERENCE_SCHEMA = DataElementSchema(
 SECTION_REFERENCE_SCHEMA = DataElementSchema(
     name="section_reference",
     tag_name="a",
-    data_keys=[
-        "parent_reference",
-        "type",
-        "id",
-        "num",
-    ],
+    data_keys=["parent_reference", "type", "start_id", "end_id", "start_num", "end_num"],
 )
 
 DATE_SCHEMA = DataElementSchema(
