@@ -16,11 +16,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import Union, Optional
+from typing import Union, Optional, cast
 from dataclasses import dataclass
 from enum import Enum
 
-from arretify.types import SectionType
+from bs4 import Tag
+
+from arretify.types import SectionType, DataElementDataDict
 from arretify.parsing_utils.dates import (
     parse_date_str,
     parse_year_str,
@@ -60,7 +62,7 @@ class DocumentType(Enum):
     """
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, kw_only=True)
 class Document:
     type: DocumentType
     id: Optional[str] = None
@@ -92,11 +94,51 @@ class Document:
                 except ValueError:
                     raise ValueError(f'Invalid date "{self.date}"')
 
+    def get_data_attributes(self) -> DataElementDataDict:
+        """Returns a dictionary of data attributes for this document."""
+        return {
+            "type": self.type.value,
+            "id": self.id,
+            "num": self.num,
+            "date": self.date,
+            "title": self.title,
+        }
 
-@dataclass(frozen=True)
+    @classmethod
+    def from_tag(cls, tag: Tag) -> "Document":
+        return cls(
+            type=DocumentType(tag["data-type"]),
+            id=cast(str | None, tag.get("data-id", None)),
+            num=cast(str | None, tag.get("data-num", None)),
+            date=cast(str | None, tag.get("data-date", None)),
+            title=cast(str | None, tag.get("data-title", None)),
+        )
+
+
+@dataclass(frozen=True, kw_only=True)
 class Section:
     type: SectionType
-    start_id: Union[str, None] = None
     start_num: Union[str, None] = None
-    end_id: Union[str, None] = None
     end_num: Union[str, None] = None
+    start_id: Union[str, None] = None
+    end_id: Union[str, None] = None
+
+    def get_data_attributes(self) -> DataElementDataDict:
+        """Returns a dictionary of data attributes for this section."""
+        return {
+            "type": self.type.value,
+            "start_id": self.start_id,
+            "end_id": self.end_id,
+            "start_num": self.start_num,
+            "end_num": self.end_num,
+        }
+
+    @classmethod
+    def from_tag(cls, tag: Tag) -> "Section":
+        return cls(
+            type=SectionType(tag["data-type"]),
+            start_num=cast(str | None, tag.get("data-start_num", None)),
+            start_id=cast(str | None, tag.get("data-start_id", None)),
+            end_num=cast(str | None, tag.get("data-end_num", None)),
+            end_id=cast(str | None, tag.get("data-end_id", None)),
+        )

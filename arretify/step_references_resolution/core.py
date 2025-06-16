@@ -16,7 +16,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import cast, Callable
 
 from bs4 import Tag
 from arretify._vendor.clients_api_droit.clients_api_droit.legifrance import (
@@ -25,37 +24,26 @@ from arretify._vendor.clients_api_droit.clients_api_droit.legifrance import (
     build_code_article_site_url,
 )
 
+from arretify.html_schemas import SECTION_REFERENCE_SCHEMA
 from arretify.regex_utils import (
     PatternProxy,
     safe_group,
-)
-from arretify.html_schemas import (
-    SECTION_REFERENCE_SCHEMA,
-    DOCUMENT_REFERENCE_SCHEMA,
 )
 from arretify.law_data.types import (
     Document,
     DocumentType,
     Section,
 )
-from arretify.law_data.uri import (
-    is_uri_document_type,
-    render_uri,
-)
-from arretify.utils.html import (
-    make_css_class,
-)
-from arretify.types import ExternalURL, DocumentContext, SectionType
+from arretify.utils.html import set_data_attributes, make_css_class
+from arretify.types import ExternalURL, SectionType
 
 
-SECTION_REFERENCE_CSS_CLASS = make_css_class(SECTION_REFERENCE_SCHEMA)
-DOCUMENT_REFERENCE_CSS_CLASS = make_css_class(DOCUMENT_REFERENCE_SCHEMA)
 # Regex for searching an act with its title.
 # Simply picks the first 3 to 15 words following the document reference.
 TITLE_SAMPLE_PATTERN = PatternProxy(r"^\s*([^\.;\s]+\s+){3,15}([^\.;\s]+)")
 
 
-ReferenceResolutionFunction = Callable[[DocumentContext, Tag], None]
+SECTION_REFERENCE_CSS_CLASS = make_css_class(SECTION_REFERENCE_SCHEMA)
 
 
 def resolve_external_url(
@@ -94,29 +82,19 @@ def resolve_external_url(
     return None
 
 
-def resolve_document_references(
-    document_context: DocumentContext,
-    document_type: DocumentType,
-    reference_resolution_function: ReferenceResolutionFunction,
-):
-    filter_function = _make_reference_filter(document_type, DOCUMENT_REFERENCE_CSS_CLASS)
-    for document_reference_tag in document_context.soup.find_all(filter_function):
-        reference_resolution_function(document_context, document_reference_tag)
+def update_document_reference_tag_href(tag: Tag, document: Document) -> None:
+    set_data_attributes(tag, document.get_data_attributes())
+    external_url = resolve_external_url(document)
+    if external_url is not None:
+        tag["href"] = external_url
 
 
-def resolve_section_references(
-    document_context: DocumentContext,
-    document_type: DocumentType,
-    reference_resolution_function: ReferenceResolutionFunction,
-):
-    filter_function = _make_reference_filter(document_type, SECTION_REFERENCE_CSS_CLASS)
-    for section_reference_tag in document_context.soup.find_all(filter_function):
-        reference_resolution_function(document_context, section_reference_tag)
-
-
-def update_reference_tag_uri(tag: Tag, document: Document, *sections: Section) -> None:
-    updated_uri = render_uri(document, *sections)
-    tag["data-uri"] = updated_uri
+def update_section_reference_tag_href(
+    tag: Tag,
+    document: Document,
+    *sections: Section,
+) -> None:
+    set_data_attributes(tag, sections[-1].get_data_attributes())
     external_url = resolve_external_url(document, *sections)
     if external_url is not None:
         tag["href"] = external_url
@@ -133,15 +111,3 @@ def get_title_sample_next_sibling(
     if match:
         return safe_group(match, 0)
     return None
-
-
-def _make_reference_filter(
-    document_type: DocumentType,
-    css_class: str,
-) -> Callable[[Tag], bool]:
-    def _filter_function(tag: Tag) -> bool:
-        return css_class in tag.get("class", []) and is_uri_document_type(
-            cast(str, tag.get("data-uri", "")), document_type
-        )
-
-    return _filter_function

@@ -16,13 +16,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from arretify.types import DocumentContext
-from arretify.law_data.types import DocumentType
 
-from .core import (
-    resolve_document_references,
-    resolve_section_references,
-)
+from arretify.types import DocumentContext
+from arretify.law_data.types import DocumentType, Document
+from arretify.utils.html import make_css_class
+from arretify.html_schemas import DOCUMENT_REFERENCE_SCHEMA
+from arretify.utils.references import iter_section_references
 from .codes_resolution import (
     resolve_code_article_legifrance_id,
     resolve_code_legifrance_id,
@@ -41,50 +40,44 @@ from .eu_acts_resolution import (
     resolve_eu_directive_eurlex_url,
     resolve_eu_regulation_eurlex_url,
 )
-from .add_referenced_document import add_referenced_document_DEPRECATED
+
+
+DOCUMENT_REFERENCE_CSS_CLASS = make_css_class(DOCUMENT_REFERENCE_SCHEMA)
 
 
 def step_legifrance_references_resolution(
     document_context: DocumentContext,
 ) -> DocumentContext:
-    # Resolve all document references
-    resolve_document_references(
-        document_context,
-        DocumentType.arrete_ministeriel,
-        resolve_arrete_ministeriel_legifrance_id,
-    )
-    resolve_document_references(document_context, DocumentType.decret, resolve_decret_legifrance_id)
-    resolve_document_references(
-        document_context,
-        DocumentType.circulaire,
-        resolve_circulaire_legifrance_id,
-    )
-    resolve_document_references(document_context, DocumentType.code, resolve_code_legifrance_id)
-
-    # Resolve all section references
-    add_referenced_document_DEPRECATED(document_context)
-    resolve_section_references(
-        document_context, DocumentType.code, resolve_code_article_legifrance_id
-    )
-
+    for document_reference_tag in document_context.soup.select(f".{DOCUMENT_REFERENCE_CSS_CLASS}"):
+        document = Document.from_tag(document_reference_tag)
+        if document.type is DocumentType.arrete_ministeriel:
+            resolve_arrete_ministeriel_legifrance_id(document_context, document_reference_tag)
+        elif document.type is DocumentType.decret:
+            resolve_decret_legifrance_id(document_context, document_reference_tag)
+        elif document.type is DocumentType.circulaire:
+            resolve_circulaire_legifrance_id(document_context, document_reference_tag)
+        elif document.type is DocumentType.code:
+            resolve_code_legifrance_id(document_context, document_reference_tag)
+            for section_reference_tag, document, sections in iter_section_references(
+                document_reference_tag
+            ):
+                resolve_code_article_legifrance_id(
+                    document_context, section_reference_tag, document, sections
+                )
+        else:
+            continue
     return document_context
 
 
 def step_eurlex_references_resolution(document_context: DocumentContext) -> DocumentContext:
-    resolve_document_references(
-        document_context, DocumentType.eu_decision, resolve_eu_decision_eurlex_url
-    )
-    resolve_document_references(
-        document_context,
-        DocumentType.eu_regulation,
-        resolve_eu_regulation_eurlex_url,
-    )
-    resolve_document_references(
-        document_context,
-        DocumentType.eu_directive,
-        resolve_eu_directive_eurlex_url,
-    )
-
-    add_referenced_document_DEPRECATED(document_context)
-
+    for document_reference_tag in document_context.soup.select(f".{DOCUMENT_REFERENCE_CSS_CLASS}"):
+        document = Document.from_tag(document_reference_tag)
+        if document.type is DocumentType.eu_decision:
+            resolve_eu_decision_eurlex_url(document_context, document_reference_tag)
+        elif document.type is DocumentType.eu_regulation:
+            resolve_eu_regulation_eurlex_url(document_context, document_reference_tag)
+        elif document.type is DocumentType.eu_directive:
+            resolve_eu_directive_eurlex_url(document_context, document_reference_tag)
+        else:
+            continue
     return document_context

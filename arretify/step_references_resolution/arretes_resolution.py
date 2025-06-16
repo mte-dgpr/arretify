@@ -16,22 +16,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import cast
 from dataclasses import replace as dataclass_replace
 import logging
 
 from bs4 import Tag
 
 from arretify.types import DocumentContext
-from arretify.law_data.uri import parse_uri
 from arretify.parsing_utils.dates import parse_date_str
-
+from arretify.law_data.types import Document
 from arretify.law_data.apis.legifrance import (
     get_arrete_legifrance_id,
 )
 from arretify.errors import catch_and_log_arretify_error
 from .core import (
-    update_reference_tag_uri,
+    update_document_reference_tag_href,
     get_title_sample_next_sibling,
 )
 
@@ -44,8 +42,7 @@ def resolve_arrete_ministeriel_legifrance_id(
     document_context: DocumentContext,
     document_reference_tag: Tag,
 ) -> None:
-    uri = cast(str, document_reference_tag.get("data-uri"))
-    document, sections = parse_uri(uri)
+    document = Document.from_tag(document_reference_tag)
 
     if document.date is None:
         _LOGGER.warning(f"Arrete ministeriel {document} has no date")
@@ -67,11 +64,7 @@ def resolve_arrete_ministeriel_legifrance_id(
         _LOGGER.warning(f"Could not find legifrance arrete id for " f'date {date_object} "{title}"')
         return
 
-    update_reference_tag_uri(
+    update_document_reference_tag_href(
         document_reference_tag,
-        dataclass_replace(
-            document,
-            id=arrete_id,
-        ),
-        *sections,
+        dataclass_replace(document, id=arrete_id),
     )

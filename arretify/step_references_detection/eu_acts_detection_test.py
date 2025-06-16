@@ -36,7 +36,9 @@ class TestParseEuActsReferences(unittest.TestCase):
                 """
                 <a
                     class="dsr-document_reference"
-                    data-uri="dsr://eu-directive__1013_2006_"
+                    data-date="2006"
+                    data-num="1013"
+                    data-type="eu-directive"
                 >
                     directive (CE) n° 1013/2006
                 </a>
@@ -52,7 +54,9 @@ class TestParseEuActsReferences(unittest.TestCase):
                 """
                 <a
                     class="dsr-document_reference"
-                    data-uri="dsr://eu-directive__75_2010_"
+                    data-date="2010"
+                    data-num="75"
+                    data-type="eu-directive"
                 >
                     directive 2010/75/UE
                 </a>
@@ -68,7 +72,9 @@ class TestParseEuActsReferences(unittest.TestCase):
                 """
                 <a
                     class="dsr-document_reference"
-                    data-uri="dsr://eu-directive__75_1996_"
+                    data-date="1996"
+                    data-num="75"
+                    data-type="eu-directive"
                 >
                     directive 96/75/UE
                 </a>
@@ -84,7 +90,9 @@ class TestParseEuActsReferences(unittest.TestCase):
                 """
                 <a
                     class="dsr-document_reference"
-                    data-uri="dsr://eu-regulation__1013_2006_"
+                    data-date="2006"
+                    data-num="1013"
+                    data-type="eu-regulation"
                 >
                     règlement européen (CE) n° 1013/2006
                 </a>
@@ -100,7 +108,9 @@ class TestParseEuActsReferences(unittest.TestCase):
                 """
                 <a
                     class="dsr-document_reference"
-                    data-uri="dsr://eu-directive__1013_1996_"
+                    data-date="1996"
+                    data-num="1013"
+                    data-type="eu-directive"
                 >
                     directive (CE) n° 1013/96
                 </a>

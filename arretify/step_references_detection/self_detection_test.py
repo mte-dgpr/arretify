@@ -36,7 +36,7 @@ class TestParseSelfReferences(unittest.TestCase):
                 """
             <a
                 class="dsr-document_reference"
-                data-uri="dsr://self____"
+                data-type="self"
             >
                 présent arrêté
             </a>

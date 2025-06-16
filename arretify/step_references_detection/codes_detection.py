@@ -44,9 +44,6 @@ from arretify.law_data.types import (
     Document,
     DocumentType,
 )
-from arretify.law_data.uri import (
-    render_uri,
-)
 
 
 # TODO: Makes parsing very slow, because compiles into a big OR regex.
@@ -91,9 +88,7 @@ def _render_code_reference(
     code_reference_tag = make_data_tag(
         soup,
         DOCUMENT_REFERENCE_SCHEMA,
-        data=dict(
-            uri=render_uri(document),
-        ),
+        data=document.get_data_attributes(),
         contents=iter_regex_tree_match_strings(code_group_match),
     )
     return code_reference_tag

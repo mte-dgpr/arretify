@@ -53,9 +53,6 @@ from arretify.law_data.types import (
     Document,
     DocumentType,
 )
-from arretify.law_data.uri import (
-    render_uri,
-)
 
 Authority = Literal["préfectoral", "ministériel"]
 
@@ -229,9 +226,7 @@ def _render_arrete_container(
     return make_data_tag(
         soup,
         DOCUMENT_REFERENCE_SCHEMA,
-        data=dict(
-            uri=render_uri(document),
-        ),
+        data=document.get_data_attributes(),
         contents=arrete_tag_contents,
     )
 
