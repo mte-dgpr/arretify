@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import List, Iterator, Tuple
+from typing import List, Iterable, Tuple
 
 from bs4 import Tag
 
@@ -28,9 +28,13 @@ from arretify.html_schemas import (
 from arretify.law_data.types import Document, Section
 
 
+ReferenceTree = List[List[Tag]]
+ReferenceTreeTraversal = Iterable[Tuple[Tag, Document, List[Section]]]
+
+
 def build_reference_tree(
     section_reference_tag: Tag,
-) -> List[List[Tag]]:
+) -> ReferenceTree:
     """
     References appear in text as a chain of sub sections of a document,
     For example : "l'alinéa 1 et l'alinéa 2 de l'article 5 du présent arrêté".
@@ -100,12 +104,12 @@ def build_reference_tree(
             raise RuntimeError("Found more than one parent reference tag, which is not expected")
         root_reference_tag = parent_reference_tag_matches[0]
 
-    reference_branches: List[List[Tag]] = [[root_reference_tag]]
+    reference_tree: List[List[Tag]] = [[root_reference_tag]]
     should_continue = True
     while should_continue is True:
         should_continue = False
         new_reference_branches: List[List[Tag]] = []
-        for branch in reference_branches:
+        for branch in reference_tree:
             parent_reference_tag = branch[-1]
             # If the parent reference tag has no data-element_id,
             # it can't be referenced, so can't have children.
@@ -127,30 +131,52 @@ def build_reference_tree(
             should_continue = True
             new_reference_branches.extend([[*branch, child] for child in children_reference_tags])
 
-        reference_branches = new_reference_branches
+        reference_tree = new_reference_branches
 
-    return reference_branches
+    return reference_tree
 
 
-def iter_section_references(
-    document_reference_tag: Tag,
-) -> Iterator[Tuple[Tag, Document, List[Section]]]:
-    document = Document.from_tag(document_reference_tag)
-    reference_branches = build_reference_tree(document_reference_tag)
+def traverse_reference_tree(
+    reference_tree: ReferenceTree,
+) -> ReferenceTreeTraversal:
+    """
+    Traverse the tree of references starting from root (depth-first).
+    Yields tuples of (reference_tag, document, sections).
+
+    Each reference_tag is a section or document reference tag
+    and is yielded only once.
+
+    Example:
+
+    For a single-branch tree of reference tags with one arrêté
+    document and two sub sections (article, alinéa), this function
+    will yield:
+
+        (<arrete_reference_tag>, <arrêté>, [])
+        (<article_reference_tag>, <arrêté>, [<article>])
+        (<alinea_reference_tag>, <arrêté>, [<article>, <alinea>])
+    """
     seen: List[Tag] = []
-    for branch in reference_branches:
+    for branch in reference_tree:
+        document: Document | None = None
         sections: list[Section] = []
-        for section_reference_tag in branch[1:]:
+        for reference_tag in branch:
             if not is_tag_and_matches(
-                section_reference_tag, css_classes_in=[SECTION_REFERENCE_SCHEMA.css_class]
+                reference_tag,
+                css_classes_in=[SECTION_REFERENCE_SCHEMA.css_class, DOCUMENT_REFERENCE_SCHEMA.css_class],
             ):
-                raise ValueError(f"Unexpected tag in reference branch: {section_reference_tag}")
+                raise ValueError(f"Unexpected tag in reference branch: {reference_tag}")
+
+            if is_tag_and_matches(reference_tag, css_classes_in=[SECTION_REFERENCE_SCHEMA.css_class]):
+                sections.append(Section.from_tag(reference_tag))
+            elif is_tag_and_matches(reference_tag, css_classes_in=[DOCUMENT_REFERENCE_SCHEMA.css_class]):
+                document = Document.from_tag(reference_tag)
 
             # Avoid handling the same section multiple times
-            if any([section_reference_tag is other_tag for other_tag in seen]):
-                sections.append(Section.from_tag(section_reference_tag))
+            if any([reference_tag is other_tag for other_tag in seen]):
                 continue
 
-            seen.append(section_reference_tag)
-            sections.append(Section.from_tag(section_reference_tag))
-            yield section_reference_tag, document, sections
+            seen.append(reference_tag)
+            # Send a copy of the sections list otherwise
+            # it will be modified in the next iteration
+            yield reference_tag, document, sections[:]

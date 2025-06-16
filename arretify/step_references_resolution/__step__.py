@@ -20,7 +20,7 @@
 from arretify.types import DocumentContext
 from arretify.law_data.types import DocumentType, Document
 from arretify.html_schemas import DOCUMENT_REFERENCE_SCHEMA
-from arretify.utils.references import iter_section_references
+from arretify.utils.references import traverse_reference_tree, build_reference_tree
 from .codes_resolution import (
     resolve_code_article_legifrance_id,
     resolve_code_legifrance_id,
@@ -56,12 +56,13 @@ def step_legifrance_references_resolution(
             resolve_circulaire_legifrance_id(document_context, document_reference_tag)
         elif document.type is DocumentType.code:
             resolve_code_legifrance_id(document_context, document_reference_tag)
-            for section_reference_tag, document, sections in iter_section_references(
-                document_reference_tag
+            for section_reference_tag, document, sections in traverse_reference_tree(
+                build_reference_tree(document_reference_tag)
             ):
-                resolve_code_article_legifrance_id(
-                    document_context, section_reference_tag, document, sections
-                )
+                if sections:
+                    resolve_code_article_legifrance_id(
+                        document_context, section_reference_tag, document, sections
+                    )
         else:
             continue
     return document_context

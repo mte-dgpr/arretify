@@ -20,11 +20,8 @@ import unittest
 
 from bs4 import BeautifulSoup
 
-from arretify.law_data.types import Document, DocumentType
-from .references import (
-    build_reference_tree,
-    iter_section_references,
-)
+from arretify.law_data.types import Document, DocumentType, SectionType, Section
+from .references import build_reference_tree, traverse_reference_tree, ReferenceTree
 
 
 class TestBuildReferenceTree(unittest.TestCase):
@@ -153,10 +150,7 @@ class TestBuildReferenceTree(unittest.TestCase):
         assert branches[0][0] is branches[1][0]  # Same instance
         assert branches[0][1] is branches[1][1]  # Same instance
 
-
-class TestIterSectionReferences(unittest.TestCase):
-
-    def test_iter_section_references(self):
+    def test_section_reference_as_root(self):
         # Arrange
         soup = BeautifulSoup(
             """
@@ -165,6 +159,41 @@ class TestIterSectionReferences(unittest.TestCase):
                     class="arretify-section_reference"
                     data-element_id="1"
                     data-parent_reference="2"
+                >
+                    Section 1
+                </a>
+                <a
+                    class="arretify-section_reference"
+                    data-element_id="2"
+                >
+                    Parent Document
+                </a>
+            </div>
+            """,
+            features="html.parser",
+        )
+        section_reference_tag = soup.select_one("a[data-element_id='1']")
+
+        # Act
+        branches = build_reference_tree(section_reference_tag)
+
+        # Assert
+        assert len(branches) == 1
+        assert [tag["data-element_id"] for tag in branches[0]] == ["2", "1"]
+
+
+class TestTraverseReferenceTree(unittest.TestCase):
+
+    def test_traverse_section_references(self):
+        # Arrange
+        soup = BeautifulSoup(
+            """
+            <div>
+                <a
+                    class="arretify-section_reference"
+                    data-element_id="1"
+                    data-parent_reference="2"
+                    data-start_num="456"
                     data-type="article"
                 >
                     Section 1
@@ -181,14 +210,72 @@ class TestIterSectionReferences(unittest.TestCase):
             """,
             features="html.parser",
         )
-        section_reference_tag = soup.select_one(".arretify-document_reference")
+        document_reference_tag = soup.select_one(".arretify-document_reference")
+        section_reference_tag = soup.select_one(".arretify-section_reference")
+        reference_tree: ReferenceTree = [[document_reference_tag, section_reference_tag]]
 
         # Act
-        section_references = list(iter_section_references(section_reference_tag))
+        results = list(traverse_reference_tree(reference_tree))
 
         # Assert
-        assert len(section_references) == 1
-        section_reference = section_references[0]
-        assert section_reference[0]["data-element_id"] == "1"
-        assert section_reference[1] == Document(type=DocumentType.unknown_arrete, id="L123")
-        assert len(section_reference[2]) == 1
+        assert len(results) == 2
+
+        document_reference_tag, document, sections = results[0]
+        assert document_reference_tag["data-element_id"] == "2"
+        assert document == Document(type=DocumentType.unknown_arrete, id="L123")
+        assert sections == []
+
+        section_reference_tag, document, sections = results[1]
+        assert section_reference_tag["data-element_id"] == "1"
+        assert document == Document(type=DocumentType.unknown_arrete, id="L123")
+        assert sections == [Section(type=SectionType.ARTICLE, start_num="456")]
+
+    def test_traverse_section_as_root(self):
+        # Arrange
+        soup = BeautifulSoup(
+            """
+            <div>
+                <a
+                    class="arretify-section_reference"
+                    data-element_id="1"
+                    data-parent_reference="2"
+                    data-start_num="456"
+                    data-type="alinea"
+                >
+                    Section 1
+                </a>
+                <a
+                    class="arretify-section_reference"
+                    data-element_id="2"
+                    data-start_num="L123"
+                    data-type="article"
+                >
+                    Parent
+                </a>
+            </div>
+            """,
+            features="html.parser",
+        )
+        section_reference_tag1 = soup.select_one(".arretify-section_reference[data-element_id='1']")
+        section_reference_tag2 = soup.select_one(".arretify-section_reference[data-element_id='2']")
+        reference_tree: ReferenceTree = [[section_reference_tag2, section_reference_tag1]]
+
+        # Act
+        results = list(traverse_reference_tree(reference_tree))
+
+        # Assert
+        assert len(results) == 2
+
+        article_reference_tag, document, sections = results[0]
+        assert article_reference_tag["data-element_id"] == "2"
+        assert document is None
+        assert sections == [Section(type=SectionType.ARTICLE, start_num="L123")]
+
+        alinea_reference_tag, document, sections = results[1]
+        assert alinea_reference_tag["data-element_id"] == "1"
+        assert document is None
+        assert len(sections) == 2
+        assert sections == [
+            Section(type=SectionType.ARTICLE, start_num="L123"),
+            Section(type=SectionType.ALINEA, start_num="456"),
+        ]
