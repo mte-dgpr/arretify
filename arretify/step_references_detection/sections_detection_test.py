@@ -160,7 +160,6 @@ class TestArticleSingle(unittest.TestCase):
                 """
                 <a
                     class="dsr-section_reference"
-                    data-is_resolvable="false"
                     data-uri="dsr://unknown____/article__L123__"
                 >
                     Paragraphe L123
@@ -518,7 +517,6 @@ class TestAlineaRange(unittest.TestCase):
                 """
                 <a
                     class="dsr-section_reference"
-                    data-is_resolvable="false"
                     data-uri="dsr://unknown____/alinea__3__5"
                 >
                     alinéas 3 à 5
@@ -533,7 +531,6 @@ class TestAlineaRange(unittest.TestCase):
                 """
                 <a
                     class="dsr-section_reference"
-                    data-is_resolvable="false"
                     data-uri="dsr://unknown____/alinea__1__3"
                 >
                     alinéas premier à troisième
@@ -597,7 +594,6 @@ class TestUnknownSingle(unittest.TestCase):
                 """
                 <a
                     class="dsr-section_reference"
-                    data-is_resolvable="false"
                     data-uri="dsr://unknown____/unknown__a.4__"
                 >
                     § a.4
@@ -615,7 +611,6 @@ class TestUnknownRange(unittest.TestCase):
                 """
                 <a
                     class="dsr-section_reference"
-                    data-is_resolvable="false"
                     data-uri="dsr://unknown____/unknown__3__5"
                 >
                     paragraphes 3 à 5
