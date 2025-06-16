@@ -24,6 +24,7 @@ from arretify._vendor.clients_api_droit.clients_api_droit.legifrance import (
     build_code_article_site_url,
 )
 
+from arretify.html_schemas import SECTION_REFERENCE_SCHEMA
 from arretify.regex_utils import (
     PatternProxy,
     safe_group,
@@ -33,13 +34,16 @@ from arretify.law_data.types import (
     DocumentType,
     Section,
 )
-from arretify.utils.html import set_data_attributes
+from arretify.utils.html import set_data_attributes, make_css_class
 from arretify.types import ExternalURL, SectionType
 
 
 # Regex for searching an act with its title.
 # Simply picks the first 3 to 15 words following the document reference.
 TITLE_SAMPLE_PATTERN = PatternProxy(r"^\s*([^\.;\s]+\s+){3,15}([^\.;\s]+)")
+
+
+SECTION_REFERENCE_CSS_CLASS = make_css_class(SECTION_REFERENCE_SCHEMA)
 
 
 def resolve_external_url(

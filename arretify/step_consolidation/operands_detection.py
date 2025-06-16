@@ -37,7 +37,7 @@ from arretify.utils.element_ranges import (
     get_contiguous_elements_left,
     get_contiguous_elements_right,
 )
-from arretify.step_references_detection.match_sections_with_documents import build_reference_tree
+from arretify.utils.references import build_reference_tree
 
 
 DOCUMENT_REFERENCE_CLASS = make_css_class(DOCUMENT_REFERENCE_SCHEMA)

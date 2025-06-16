@@ -18,13 +18,11 @@
 #
 import unittest
 
-from bs4 import BeautifulSoup
-
 from arretify.utils.testing import (
     make_testing_function_for_children_list,
     normalized_html_str,
 )
-from .match_sections_with_documents import match_sections_to_parents, build_reference_tree
+from .match_sections_with_documents import match_sections_to_parents
 
 process_match_sections_to_parents = make_testing_function_for_children_list(
     match_sections_to_parents
@@ -245,130 +243,3 @@ class TestConnectParentSections(unittest.TestCase):
                 ),
             ]
         )
-
-
-class TestBuildReferenceTree(unittest.TestCase):
-
-    def test_get_all_branches(self):
-        # Arrange
-        soup = BeautifulSoup(
-            """
-            <div>
-                <a
-                    class="dsr-section_reference"
-                    data-element_id="1"
-                    data-parent_reference="3"
-                >
-                    Section 1.1
-                </a>
-                <a
-                    class="dsr-section_reference"
-                    data-element_id="2"
-                    data-parent_reference="3"
-                >
-                    Section 1.2
-                </a>
-                <a
-                    class="dsr-section_reference"
-                    data-element_id="3"
-                    data-parent_reference="4"
-                >
-                    Section 1
-                </a>
-                <a
-                    class="dsr-document_reference"
-                    data-element_id="4"
-                >
-                    Some Document
-                </a>
-            </div>
-            """,
-            features="html.parser",
-        )
-        section_reference_tag = soup.select_one("a[data-element_id='3']")
-
-        # Act
-        branches = build_reference_tree(section_reference_tag)
-
-        # Assert
-        assert len(branches) == 2
-        assert [tag["data-element_id"] for tag in branches[0]] == ["4", "3", "1"]
-        assert [tag["data-element_id"] for tag in branches[1]] == ["4", "3", "2"]
-
-    def test_leaf_no_element_id(self):
-        # Arrange
-        soup = BeautifulSoup(
-            """
-            <div>
-                <a
-                    id="tag1"
-                    class="dsr-section_reference"
-                    data-parent_reference="1"
-                >
-                    Section 1.1
-                </a>
-                <a
-                    id="tag2"
-                    class="dsr-section_reference"
-                    data-element_id="1"
-                >
-                    Section 1
-                </a>
-            </div>
-            """,
-            features="html.parser",
-        )
-        section_reference_tag = soup.select_one(".dsr-section_reference")
-
-        # Act
-        branches = build_reference_tree(section_reference_tag)
-
-        # Assert
-        assert len(branches) == 1
-        assert [tag["id"] for tag in branches[0]] == ["tag2", "tag1"]
-
-    def test_section_tags_same_instance(self):
-        # Arrange
-        soup = BeautifulSoup(
-            """
-            <div>
-                <a
-                    class="dsr-section_reference"
-                    data-element_id="1"
-                    data-parent_reference="3"
-                >
-                    Section 1.1
-                </a>
-                <a
-                    class="dsr-section_reference"
-                    data-element_id="2"
-                    data-parent_reference="3"
-                >
-                    Section 1.2
-                </a>
-                <a
-                    class="dsr-section_reference"
-                    data-element_id="3"
-                    data-parent_reference="4"
-                >
-                    Section 1
-                </a>
-                <a
-                    class="dsr-document_reference"
-                    data-element_id="4"
-                >
-                    Some Document
-                </a>
-            </div>
-            """,
-            features="html.parser",
-        )
-        section_reference_tag = soup.select_one("a[data-element_id='4']")
-
-        # Act
-        branches = build_reference_tree(section_reference_tag)
-
-        # Assert
-        assert len(branches) == 2
-        assert branches[0][0] is branches[1][0]  # Same instance
-        assert branches[0][1] is branches[1][1]  # Same instance

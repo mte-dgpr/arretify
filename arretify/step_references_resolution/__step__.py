@@ -16,17 +16,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import Iterator, Tuple, List
-
-from bs4 import Tag
 
 from arretify.types import DocumentContext
-from arretify.law_data.types import DocumentType, Section, Document
-from arretify.utils.html import make_css_class, is_tag_and_matches
-from arretify.html_schemas import DOCUMENT_REFERENCE_SCHEMA, SECTION_REFERENCE_SCHEMA
-from arretify.step_references_detection.match_sections_with_documents import (
-    build_reference_tree,
-)
+from arretify.law_data.types import DocumentType, Document
+from arretify.utils.html import make_css_class
+from arretify.html_schemas import DOCUMENT_REFERENCE_SCHEMA
+from arretify.utils.references import iter_section_references
 from .codes_resolution import (
     resolve_code_article_legifrance_id,
     resolve_code_legifrance_id,
@@ -48,13 +43,12 @@ from .eu_acts_resolution import (
 
 
 DOCUMENT_REFERENCE_CSS_CLASS = make_css_class(DOCUMENT_REFERENCE_SCHEMA)
-SECTION_REFERENCE_CSS_CLASS = make_css_class(SECTION_REFERENCE_SCHEMA)
 
 
 def step_legifrance_references_resolution(
     document_context: DocumentContext,
 ) -> DocumentContext:
-    for document_reference_tag in iter_document_references(document_context):
+    for document_reference_tag in document_context.soup.select(f".{DOCUMENT_REFERENCE_CSS_CLASS}"):
         document = Document.from_tag(document_reference_tag)
         if document.type is DocumentType.arrete_ministeriel:
             resolve_arrete_ministeriel_legifrance_id(document_context, document_reference_tag)
@@ -76,7 +70,7 @@ def step_legifrance_references_resolution(
 
 
 def step_eurlex_references_resolution(document_context: DocumentContext) -> DocumentContext:
-    for document_reference_tag in iter_document_references(document_context):
+    for document_reference_tag in document_context.soup.select(f".{DOCUMENT_REFERENCE_CSS_CLASS}"):
         document = Document.from_tag(document_reference_tag)
         if document.type is DocumentType.eu_decision:
             resolve_eu_decision_eurlex_url(document_context, document_reference_tag)
@@ -87,35 +81,3 @@ def step_eurlex_references_resolution(document_context: DocumentContext) -> Docu
         else:
             continue
     return document_context
-
-
-def iter_document_references(
-    document_context: DocumentContext,
-) -> Iterator[Tag]:
-    for document_reference_tag in document_context.soup.select(f".{DOCUMENT_REFERENCE_CSS_CLASS}"):
-        assert isinstance(document_reference_tag, Tag) is True
-        yield document_reference_tag
-
-
-def iter_section_references(
-    document_reference_tag: Tag,
-) -> Iterator[Tuple[Tag, Document, List[Section]]]:
-    document = Document.from_tag(document_reference_tag)
-    reference_branches = build_reference_tree(document_reference_tag)
-    seen: List[Tag] = []
-    for branch in reference_branches:
-        sections: list[Section] = []
-        for section_reference_tag in branch[1:]:
-            if not is_tag_and_matches(
-                section_reference_tag, css_classes_in=[SECTION_REFERENCE_CSS_CLASS]
-            ):
-                raise ValueError(f"Unexpected tag in reference branch: {section_reference_tag}")
-
-            # Avoid handling the same section multiple times
-            if any([section_reference_tag is other_tag for other_tag in seen]):
-                sections.append(Section.from_tag(section_reference_tag))
-                continue
-
-            seen.append(section_reference_tag)
-            sections.append(Section.from_tag(section_reference_tag))
-            yield section_reference_tag, document, sections
