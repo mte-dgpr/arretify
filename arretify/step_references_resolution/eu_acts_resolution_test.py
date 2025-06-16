@@ -45,7 +45,7 @@ class TestResolveEuActUrls(unittest.TestCase):
             process_eu_directive_document_reference(
                 """
             <a
-                class="dsr-document_reference"
+                class="arretify-document_reference"
                 data-date="2010"
                 data-num="75"
                 data-type="eu-directive"
@@ -57,7 +57,7 @@ class TestResolveEuActUrls(unittest.TestCase):
             == normalized_html_str(
                 """
             <a
-                class="dsr-document_reference"
+                class="arretify-document_reference"
                 data-date="2010"
                 data-id="https://eur-lex.europa.eu/legal-content/FR/TXT/HTML/?uri=cellar:c7191b72-4e07-4712-86d6-d3ae5e4f0082"
                 data-num="75"
@@ -75,7 +75,7 @@ class TestResolveEuActUrls(unittest.TestCase):
             process_eu_decision_document_reference(
                 """
             <a
-                class="dsr-document_reference"
+                class="arretify-document_reference"
                 data-date="2020"
                 data-num="2019"
                 data-type="eu-decision"
@@ -87,7 +87,7 @@ class TestResolveEuActUrls(unittest.TestCase):
             == normalized_html_str(
                 """
             <a
-                class="dsr-document_reference"
+                class="arretify-document_reference"
                 data-date="2020"
                 data-id="https://eur-lex.europa.eu/legal-content/FR/TXT/HTML/?uri=cellar:8e42e417-3ab2-11eb-b27b-01aa75ed71a1"
                 data-num="2019"
@@ -105,7 +105,7 @@ class TestResolveEuActUrls(unittest.TestCase):
             process_eu_regulation_document_reference(
                 """
             <a
-                class="dsr-document_reference"
+                class="arretify-document_reference"
                 data-date="2020"
                 data-num="21"
                 data-type="eu-regulation"
@@ -117,7 +117,7 @@ class TestResolveEuActUrls(unittest.TestCase):
             == normalized_html_str(
                 """
             <a
-                class="dsr-document_reference"
+                class="arretify-document_reference"
                 data-date="2020"
                 data-id="https://eur-lex.europa.eu/legal-content/FR/TXT/HTML/?uri=cellar:fa14e336-3777-11ea-ba6e-01aa75ed71a1"
                 data-num="21"

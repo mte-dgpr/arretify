@@ -36,12 +36,12 @@ class TestParseArreteReferences(unittest.TestCase):
             normalized_html_str(
                 """
                 <a
-                    class="dsr-document_reference"
+                    class="arretify-document_reference"
                     data-date="1998-02-02"
                     data-type="arrete-ministeriel"
                 >
                     arrêté ministériel du
-                    <time class="dsr-date" datetime="1998-02-02">
+                    <time class="arretify-date" datetime="1998-02-02">
                         2 février 1998
                     </time>
                 </a>
@@ -60,12 +60,12 @@ class TestParseArreteReferences(unittest.TestCase):
             normalized_html_str(
                 """
                 <a
-                    class="dsr-document_reference"
+                    class="arretify-document_reference"
                     data-date="2016-05-23"
                     data-type="arrete-ministeriel"
                 >
                     arrêté ministériel du
-                    <time class="dsr-date" datetime="2016-05-23">23 mai 2016</time>
+                    <time class="arretify-date" datetime="2016-05-23">23 mai 2016</time>
                     modifiant
                 </a>
             """
@@ -79,12 +79,12 @@ class TestParseArreteReferences(unittest.TestCase):
             normalized_html_str(
                 """
                 <a
-                    class="dsr-document_reference"
+                    class="arretify-document_reference"
                     data-date="1998-02-02"
                     data-type="arrete"
                 >
                     arrêté du
-                    <time class="dsr-date" datetime="1998-02-02">
+                    <time class="arretify-date" datetime="1998-02-02">
                         2 février 1998
                     </time>
                 </a>
@@ -105,13 +105,13 @@ class TestParseArretePluralReferences(unittest.TestCase):
             normalized_html_str(
                 """
                 <a
-                    class="dsr-document_reference"
+                    class="arretify-document_reference"
                     data-date="1988-10-28"
                     data-num="5213"
                     data-type="arrete-prefectoral"
                 >
                     n° 5213 du
-                    <time class="dsr-date" datetime="1988-10-28">
+                    <time class="arretify-date" datetime="1988-10-28">
                         28 octobre 1988
                     </time>
                 </a>
@@ -121,13 +121,13 @@ class TestParseArretePluralReferences(unittest.TestCase):
             normalized_html_str(
                 """
                 <a
-                    class="dsr-document_reference"
+                    class="arretify-document_reference"
                     data-date="1995-03-24"
                     data-num="1636"
                     data-type="arrete-prefectoral"
                 >
                     n° 1636 du
-                    <time class="dsr-date" datetime="1995-03-24">
+                    <time class="arretify-date" datetime="1995-03-24">
                         24/03/95
                     </time>
                 </a>
@@ -150,12 +150,12 @@ class TestParseArreteReferencesAll(unittest.TestCase):
             normalized_html_str(
                 """
                 <a
-                    class="dsr-document_reference"
+                    class="arretify-document_reference"
                     data-date="2016-05-23"
                     data-type="arrete-ministeriel"
                 >
                     arrêté ministériel du
-                    <time class="dsr-date" datetime="2016-05-23">
+                    <time class="arretify-date" datetime="2016-05-23">
                         23 mai 2016
                     </time>
                 </a>
@@ -165,7 +165,7 @@ class TestParseArreteReferencesAll(unittest.TestCase):
             normalized_html_str(
                 """
                 <a
-                    class="dsr-document_reference"
+                    class="arretify-document_reference"
                     data-num="1234-567/01."
                     data-type="arrete-prefectoral"
                 >

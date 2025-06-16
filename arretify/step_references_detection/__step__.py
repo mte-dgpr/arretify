@@ -20,7 +20,7 @@ from typing import List
 
 
 from arretify.types import PageElementOrString, DocumentContext
-from arretify.utils.html import make_css_class, replace_children
+from arretify.utils.html import replace_children
 from arretify.html_schemas import (
     ALINEA_SCHEMA,
     MOTIF_SCHEMA,
@@ -49,17 +49,13 @@ from .eu_acts_detection import (
 from .match_sections_with_documents import match_sections_to_parents
 
 
-ALINEA_CSS_CLASS = make_css_class(ALINEA_SCHEMA)
-MOTIF_CSS_CLASS = make_css_class(MOTIF_SCHEMA)
-VISA_CSS_CLASS = make_css_class(VISA_SCHEMA)
-
-
 def step_references_detection(document_context: DocumentContext) -> DocumentContext:
     new_children: List[PageElementOrString]
 
     # Parse documents and sections references
     for tag in document_context.soup.select(
-        f".{ALINEA_CSS_CLASS}, .{ALINEA_CSS_CLASS} *, .{MOTIF_CSS_CLASS}, .{VISA_CSS_CLASS}"
+        f".{ALINEA_SCHEMA.css_class}, .{ALINEA_SCHEMA.css_class} *"
+        + f", .{MOTIF_SCHEMA.css_class}, .{VISA_SCHEMA.css_class}"
     ):
         new_children = list(tag.children)
         new_children = parse_arretes_references(document_context, new_children)
@@ -73,7 +69,8 @@ def step_references_detection(document_context: DocumentContext) -> DocumentCont
 
     # Match sections with documents
     for tag in document_context.soup.select(
-        f".{ALINEA_CSS_CLASS}, .{ALINEA_CSS_CLASS} *, .{MOTIF_CSS_CLASS}, .{VISA_CSS_CLASS}"
+        f".{ALINEA_SCHEMA.css_class}, .{ALINEA_SCHEMA.css_class} *"
+        + f", .{MOTIF_SCHEMA.css_class}, .{VISA_SCHEMA.css_class}"
     ):
         new_children = list(tag.children)
         new_children = match_sections_to_parents(document_context, new_children)

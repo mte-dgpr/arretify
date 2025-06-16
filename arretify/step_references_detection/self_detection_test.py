@@ -35,7 +35,7 @@ class TestParseSelfReferences(unittest.TestCase):
             normalized_html_str(
                 """
             <a
-                class="dsr-document_reference"
+                class="arretify-document_reference"
                 data-type="self"
             >
                 présent arrêté

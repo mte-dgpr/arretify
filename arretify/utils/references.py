@@ -20,16 +20,12 @@ from typing import List, Iterator, Tuple
 
 from bs4 import Tag
 
-from arretify.utils.html import is_tag_and_matches, make_css_class
+from arretify.utils.html import is_tag_and_matches
 from arretify.html_schemas import (
     DOCUMENT_REFERENCE_SCHEMA,
     SECTION_REFERENCE_SCHEMA,
 )
 from arretify.law_data.types import Document, Section
-
-
-DOCUMENT_REFERENCE_CSS_CLASS = make_css_class(DOCUMENT_REFERENCE_SCHEMA)
-SECTION_REFERENCE_CSS_CLASS = make_css_class(SECTION_REFERENCE_SCHEMA)
 
 
 def build_reference_tree(
@@ -87,8 +83,8 @@ def build_reference_tree(
         if is_tag_and_matches(
             tag,
             css_classes_in=[
-                DOCUMENT_REFERENCE_CSS_CLASS,
-                SECTION_REFERENCE_CSS_CLASS,
+                DOCUMENT_REFERENCE_SCHEMA.css_class,
+                SECTION_REFERENCE_SCHEMA.css_class,
             ],
         )
     ]
@@ -146,7 +142,7 @@ def iter_section_references(
         sections: list[Section] = []
         for section_reference_tag in branch[1:]:
             if not is_tag_and_matches(
-                section_reference_tag, css_classes_in=[SECTION_REFERENCE_CSS_CLASS]
+                section_reference_tag, css_classes_in=[SECTION_REFERENCE_SCHEMA.css_class]
             ):
                 raise ValueError(f"Unexpected tag in reference branch: {section_reference_tag}")
 

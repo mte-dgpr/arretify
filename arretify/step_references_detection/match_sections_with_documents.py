@@ -25,7 +25,6 @@ from arretify.utils.element_ranges import (
     iter_collapsed_range_right,
 )
 from arretify.utils.html import (
-    make_css_class,
     ensure_element_id,
     get_group_id,
     is_tag_and_matches,
@@ -35,9 +34,6 @@ from arretify.html_schemas import (
     DOCUMENT_REFERENCE_SCHEMA,
 )
 from arretify.regex_utils import regex_tree
-
-SECTION_REFERENCE_CSS_CLASS = make_css_class(SECTION_REFERENCE_SCHEMA)
-DOCUMENT_REFERENCE_CSS_CLASS = make_css_class(DOCUMENT_REFERENCE_SCHEMA)
 
 
 CONNECTOR_SECTION_TO_PARENT_NODE = regex_tree.Group(
@@ -69,7 +65,7 @@ def match_sections_to_parents(
     section_references = [
         tag
         for tag in children
-        if is_tag_and_matches(tag, css_classes_in=[SECTION_REFERENCE_CSS_CLASS])
+        if is_tag_and_matches(tag, css_classes_in=[SECTION_REFERENCE_SCHEMA.css_class])
     ]
 
     for section_reference_tag in section_references:
@@ -104,13 +100,13 @@ def _search_parent_reference_tag(
     For example, with :
 
         <a
-            class="dsr-section_reference"
+            class="arretify-section_reference"
         >
             l'article 5
         </a>
         du
         <a
-            class="dsr-section_reference"
+            class="arretify-section_reference"
         >
             présent arrêté
         </a>
@@ -128,7 +124,10 @@ def _search_parent_reference_tag(
             parent_reference_tag = element_range[2]
             if not is_tag_and_matches(
                 parent_reference_tag,
-                css_classes_in=[DOCUMENT_REFERENCE_CSS_CLASS, SECTION_REFERENCE_CSS_CLASS],
+                css_classes_in=[
+                    DOCUMENT_REFERENCE_SCHEMA.css_class,
+                    SECTION_REFERENCE_SCHEMA.css_class,
+                ],
             ):
                 return None
 

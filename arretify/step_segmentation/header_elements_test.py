@@ -111,7 +111,7 @@ class TestParseArreteTitleInfo(unittest.TestCase):
                 "Arrêté du ",
                 normalized_html_str(
                     """
-                    <time class="dsr-date" datetime="2023-02-22">
+                    <time class="arretify-date" datetime="2023-02-22">
                         22 fevrier 2023
                     </time>
                 """
@@ -154,11 +154,11 @@ class TestParseMotifsOrVisas(unittest.TestCase):
         assert str(header) == normalized_html_str(
             """
             <header>
-                <div class="dsr-visa">
+                <div class="arretify-visa">
                     Vu le code de l'environnement, et notamment ses titres 1er
                     et 4 des parties réglementaires et législatives du livre V ;
                 </div>
-                <div class="dsr-visa">
+                <div class="arretify-visa">
                     Vu la nomenclature des installations classées codifiée
                     à l'annexe de l'article R511-9 du code de l'environnement ;
                 </div>
@@ -188,10 +188,10 @@ class TestParseMotifsOrVisas(unittest.TestCase):
             """
             <header>
                 <div>VU</div>
-                <div class="dsr-visa">
+                <div class="arretify-visa">
                     - le titre premier du livre V du code de l'environnement ;
                 </div>
-                <div class="dsr-visa">
+                <div class="arretify-visa">
                     - le décret n° 77-1133 du 21 septembre 1977 et notamment ses articles 17 et 20 ;
                 </div>
             </header>
@@ -231,14 +231,14 @@ class TestParseMotifsOrVisas(unittest.TestCase):
         assert str(header) == normalized_html_str(
             """
             <header>
-                <div class="dsr-motifs">
+                <div class="arretify-motifs">
                     - Considérant qu’aux termes de l’article L. 512-1 du code de l’environnement
                     relatif aux installations classées pour la protection de l’environnement,
                     l’autorisation ne peut être accordée que si les dangers ou inconvénients
                     de l’installation peuvent être prévenus par des mesures que spécifie
                     l’arrêté préfectoral ;
                 </div>
-                <div class="dsr-motifs">
+                <div class="arretify-motifs">
                     - Considérant que les conditions d’aménagement et d’exploitation, telles
                     qu’elles sont définies par le présent arrêté, permettent de prévenir
                     les dangers et inconvénients de l’installation pour les intérêts mentionnés
@@ -284,14 +284,14 @@ class TestParseMotifsOrVisas(unittest.TestCase):
             """
             <header>
                 <div>CONSIDÉRANT :</div>
-                <div class="dsr-motifs">
+                <div class="arretify-motifs">
                     - qu’aux termes de l’article L. 512-1 du code de l’environnement relatif
                     aux installations classées pour la protection de l’environnement,
                     l’autorisation ne peut être accordée que si les dangers ou inconvénients
                     de l’installation peuvent être prévenus par des mesures que spécifie
                     l’arrêté préfectoral ;
                 </div>
-                <div class="dsr-motifs">
+                <div class="arretify-motifs">
                     - que les conditions d’aménagement et d’exploitation, telles qu’elles sont
                     définies par le présent arrêté, permettent de prévenir les dangers et
                     inconvénients de l’installation pour les intérêts mentionnés
@@ -326,9 +326,9 @@ class TestParseMotifsOrVisas(unittest.TestCase):
             """
             <header>
                 <div>VU</div>
-                <div class="dsr-visa">le Code de l'Environnement,</div>
-                <div class="dsr-visa">la nomenclature des installations classées,</div>
-                <div class="dsr-visa">le dossier déposé à l'appui de sa demande,</div>
+                <div class="arretify-visa">le Code de l'Environnement,</div>
+                <div class="arretify-visa">la nomenclature des installations classées,</div>
+                <div class="arretify-visa">le dossier déposé à l'appui de sa demande,</div>
             </header>
             """
         )
@@ -358,7 +358,7 @@ class TestParseMotifsOrVisas(unittest.TestCase):
             """
             <header>
                 <div>VU</div>
-                <div class="dsr-visa">
+                <div class="arretify-visa">
                     l'avis des directeurs départementaux des services consultés :
                     <ul>
                         <li>- territoires et de la mer,</li>
@@ -366,7 +366,7 @@ class TestParseMotifsOrVisas(unittest.TestCase):
                         <li>- incendie et secours,</li>
                     </ul>
                 </div>
-                <div class="dsr-visa">la nomenclature des installations classées,</div>
+                <div class="arretify-visa">la nomenclature des installations classées,</div>
             </header>
             """
         )
@@ -398,7 +398,7 @@ class TestParseMotifsOrVisas(unittest.TestCase):
             """
             <header>
                 <div>VU</div>
-                <div class="dsr-visa">
+                <div class="arretify-visa">
                     - les avis :
                     <ul>
                         <li>- de la Direction Départementale de l’Equipement en date du 3 octobre 2000,</li>
@@ -406,7 +406,7 @@ class TestParseMotifsOrVisas(unittest.TestCase):
                         du 6 octobre 2000,</li>
                     </ul>
                 </div>
-                <div class="dsr-visa">- la nomenclature des installations classées,</div>
+                <div class="arretify-visa">- la nomenclature des installations classées,</div>
             </header>
             """  # noqa: E501
         )
@@ -434,9 +434,9 @@ class TestParseMotifsOrVisas(unittest.TestCase):
             """
             <header>
                 <div>V u :</div>
-                <div class="dsr-visa">le Code de l'Environnement,</div>
-                <div class="dsr-visa">la nomenclature des installations classées,</div>
-                <div class="dsr-visa">le dossier déposé à l'appui de sa demande,</div>
+                <div class="arretify-visa">le Code de l'Environnement,</div>
+                <div class="arretify-visa">la nomenclature des installations classées,</div>
+                <div class="arretify-visa">le dossier déposé à l'appui de sa demande,</div>
             </header>
             """
         )

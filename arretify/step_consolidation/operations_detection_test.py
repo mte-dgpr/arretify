@@ -33,7 +33,7 @@ class TestReplaceOperations(unittest.TestCase):
             normalized_html_str(
                 """
                 <span
-                    class="dsr-operation"
+                    class="arretify-operation"
                     data-direction="rtl"
                     data-has_operand="true"
                     data-keyword="remplacées"
@@ -55,7 +55,7 @@ class TestReplaceOperations(unittest.TestCase):
             normalized_html_str(
                 """
                 <span
-                    class="dsr-operation"
+                    class="arretify-operation"
                     data-direction="rtl"
                     data-has_operand="true"
                     data-keyword="substitué"
@@ -78,7 +78,7 @@ class TestReplaceOperations(unittest.TestCase):
             normalized_html_str(
                 """
                 <span
-                    class="dsr-operation"
+                    class="arretify-operation"
                     data-direction="rtl"
                     data-has_operand="true"
                     data-keyword="annulées et remplacées"
@@ -100,7 +100,7 @@ class TestReplaceOperations(unittest.TestCase):
             normalized_html_str(
                 """
                 <span
-                    class="dsr-operation"
+                    class="arretify-operation"
                     data-direction="rtl"
                     data-has_operand="true"
                     data-keyword="abrogées et remplacées"
@@ -122,7 +122,7 @@ class TestReplaceOperations(unittest.TestCase):
             normalized_html_str(
                 """
                 <span
-                    class="dsr-operation"
+                    class="arretify-operation"
                     data-direction="rtl"
                     data-has_operand="true"
                     data-keyword="supprimé et remplacé"
@@ -145,7 +145,7 @@ class TestReplaceOperations(unittest.TestCase):
             normalized_html_str(
                 """
                 <span
-                    class="dsr-operation"
+                    class="arretify-operation"
                     data-direction="rtl"
                     data-has_operand="true"
                     data-keyword="modifié et remplacé"
@@ -167,7 +167,7 @@ class TestReplaceOperations(unittest.TestCase):
         ) == [
             normalized_html_str(
                 """
-                <span class="dsr-operation"
+                <span class="arretify-operation"
                     data-direction="rtl"
                     data-has_operand="true"
                     data-keyword="modifié et complété"
@@ -189,7 +189,7 @@ class TestReplaceOperations(unittest.TestCase):
         ) == [
             normalized_html_str(
                 """
-                <span class="dsr-operation"
+                <span class="arretify-operation"
                     data-direction="rtl"
                     data-has_operand="true"
                     data-keyword="modifiées, complétées, ou annulées"
@@ -211,7 +211,7 @@ class TestReplaceOperations(unittest.TestCase):
         ) == [
             normalized_html_str(
                 """
-                <span class="dsr-operation"
+                <span class="arretify-operation"
                     data-direction="rtl"
                     data-has_operand="true"
                     data-keyword="remplacée"
@@ -232,7 +232,7 @@ class TestReplaceOperations(unittest.TestCase):
         ) == [
             normalized_html_str(
                 """
-                <span class="dsr-operation"
+                <span class="arretify-operation"
                     data-direction="rtl"
                     data-has_operand="true"
                     data-keyword="modifiée"
@@ -253,7 +253,7 @@ class TestReplaceOperations(unittest.TestCase):
         ) == [
             normalized_html_str(
                 """
-                <span class="dsr-operation"
+                <span class="arretify-operation"
                     data-direction="rtl"
                     data-has_operand="true"
                     data-keyword="supprimées et sont remplacées"
@@ -276,7 +276,7 @@ class TestAddOperations(unittest.TestCase):
             normalized_html_str(
                 """
                 <span
-                    class="dsr-operation"
+                    class="arretify-operation"
                     data-direction="rtl"
                     data-has_operand="true"
                     data-keyword="complété"
@@ -298,7 +298,7 @@ class TestAddOperations(unittest.TestCase):
             normalized_html_str(
                 """
                 <span
-                    class="dsr-operation"
+                    class="arretify-operation"
                     data-direction="rtl"
                     data-has_operand="false"
                     data-keyword="complété"
@@ -320,7 +320,7 @@ class TestAddOperations(unittest.TestCase):
         ) == [
             normalized_html_str(
                 """
-                <span class="dsr-operation"
+                <span class="arretify-operation"
                     data-direction="rtl"
                     data-has_operand="false"
                     data-keyword="complétés"
@@ -342,7 +342,7 @@ class TestAddOperations(unittest.TestCase):
             normalized_html_str(
                 """
                 <span
-                    class="dsr-operation"
+                    class="arretify-operation"
                     data-direction="rtl"
                     data-has_operand="false"
                     data-keyword="créé"
@@ -365,7 +365,7 @@ class TestAddOperations(unittest.TestCase):
         ) == [
             normalized_html_str(
                 """
-                <span class="dsr-operation"
+                <span class="arretify-operation"
                     data-direction="rtl"
                     data-has_operand="false"
                     data-keyword="créé"
@@ -388,7 +388,7 @@ class TestAddOperations(unittest.TestCase):
         ) == [
             normalized_html_str(
                 """
-                <span class="dsr-operation"
+                <span class="arretify-operation"
                     data-direction="rtl"
                     data-has_operand="false"
                     data-keyword="créé"
@@ -408,7 +408,7 @@ class TestAddOperations(unittest.TestCase):
         ) == [
             normalized_html_str(
                 """
-                <span class="dsr-operation"
+                <span class="arretify-operation"
                     data-direction="rtl"
                     data-has_operand="false"
                     data-keyword="créé"
@@ -429,7 +429,7 @@ class TestAddOperations(unittest.TestCase):
         ) == [
             normalized_html_str(
                 """
-                <span class="dsr-operation"
+                <span class="arretify-operation"
                     data-direction="rtl"
                     data-has_operand="true"
                     data-keyword="créé"
@@ -451,7 +451,7 @@ class TestAddOperations(unittest.TestCase):
             normalized_html_str(
                 """
                 <span
-                    class="dsr-operation"
+                    class="arretify-operation"
                     data-direction="rtl"
                     data-has_operand="true"
                     data-keyword="ajouté"
@@ -471,7 +471,7 @@ class TestAddOperations(unittest.TestCase):
             normalized_html_str(
                 """
                 <span
-                    class="dsr-operation"
+                    class="arretify-operation"
                     data-direction="rtl"
                     data-has_operand="true"
                     data-keyword="ajouté"
@@ -493,7 +493,7 @@ class TestAddOperations(unittest.TestCase):
             normalized_html_str(
                 """
                 <span
-                    class="dsr-operation"
+                    class="arretify-operation"
                     data-direction="rtl"
                     data-has_operand="true"
                     data-keyword="modifié par l'ajout"
@@ -515,7 +515,7 @@ class TestAddOperations(unittest.TestCase):
         ) == [
             normalized_html_str(
                 """
-                <span class="dsr-operation"
+                <span class="arretify-operation"
                     data-direction="rtl"
                     data-has_operand="false"
                     data-keyword="inséré"
@@ -536,7 +536,7 @@ class TestAddOperations(unittest.TestCase):
         ) == [
             normalized_html_str(
                 """
-                <span class="dsr-operation"
+                <span class="arretify-operation"
                     data-direction="rtl"
                     data-has_operand="true"
                     data-keyword="insérées"
@@ -557,7 +557,7 @@ class TestAddOperations(unittest.TestCase):
         ) == [
             normalized_html_str(
                 """
-                <span class="dsr-operation"
+                <span class="arretify-operation"
                     data-direction="rtl"
                     data-has_operand="true"
                     data-keyword="inséré"
@@ -578,7 +578,7 @@ class TestAddOperations(unittest.TestCase):
         ) == [
             normalized_html_str(
                 """
-                <span class="dsr-operation"
+                <span class="arretify-operation"
                     data-direction="rtl"
                     data-has_operand="true"
                     data-keyword="inséré"
@@ -600,7 +600,7 @@ class TestAddOperations(unittest.TestCase):
         ) == [
             normalized_html_str(
                 """
-                <span class="dsr-operation"
+                <span class="arretify-operation"
                     data-direction="rtl"
                     data-has_operand="false"
                     data-keyword="inséré"
@@ -622,7 +622,7 @@ class TestAddOperations(unittest.TestCase):
         ) == [
             normalized_html_str(
                 """
-                <span class="dsr-operation"
+                <span class="arretify-operation"
                     data-direction="rtl"
                     data-has_operand="false"
                     data-keyword="insérée"
@@ -643,7 +643,7 @@ class TestAddOperations(unittest.TestCase):
         ) == [
             normalized_html_str(
                 """
-                <span class="dsr-operation"
+                <span class="arretify-operation"
                     data-direction="rtl"
                     data-has_operand="true"
                     data-keyword="inséré"
@@ -663,7 +663,7 @@ class TestAddOperations(unittest.TestCase):
         ) == [
             normalized_html_str(
                 """
-                <span class="dsr-operation"
+                <span class="arretify-operation"
                     data-direction="rtl"
                     data-has_operand="true"
                     data-keyword="inséré"
@@ -686,7 +686,7 @@ class TestDeleteOperations(unittest.TestCase):
             normalized_html_str(
                 """
                 <span
-                    class="dsr-operation"
+                    class="arretify-operation"
                     data-direction="rtl"
                     data-has_operand="false"
                     data-keyword="abrogé"
@@ -710,7 +710,7 @@ class TestDeleteOperations(unittest.TestCase):
             normalized_html_str(
                 """
                 <span
-                    class="dsr-operation"
+                    class="arretify-operation"
                     data-direction="rtl"
                     data-has_operand="false"
                     data-keyword="supprimé"
@@ -733,7 +733,7 @@ class TestDeleteOperations(unittest.TestCase):
             normalized_html_str(
                 """
                 <span
-                    class="dsr-operation"
+                    class="arretify-operation"
                     data-direction="rtl"
                     data-has_operand="false"
                     data-keyword="annulé"

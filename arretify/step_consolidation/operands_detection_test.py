@@ -30,10 +30,10 @@ class TestParseOperations(unittest.TestCase):
         document_context = create_document_context(
             normalized_html_str(
                 """
-                <div class="dsr-alinea">
+                <div class="arretify-alinea">
                     Les
                     <a
-                        class="dsr-section_reference"
+                        class="arretify-section_reference"
                         data-group_id="11"
                         data-parent_reference="123"
                     >
@@ -41,7 +41,7 @@ class TestParseOperations(unittest.TestCase):
                     </a>
                     et
                     <a
-                        class="dsr-section_reference"
+                        class="arretify-section_reference"
                         data-group_id="11"
                         data-parent_reference="123"
                     >
@@ -49,7 +49,7 @@ class TestParseOperations(unittest.TestCase):
                     </a>
                     de l'
                     <a
-                        class="dsr-section_reference"
+                        class="arretify-section_reference"
                         data-element_id="123"
                         data-parent_reference="456"
                     >
@@ -57,16 +57,16 @@ class TestParseOperations(unittest.TestCase):
                     </a>
                     de l'
                     <a
-                        class="dsr-document_reference"
+                        class="arretify-document_reference"
                         data-element_id="456"
                     >
                         arrêté préfectoral du
-                        <time class="dsr-date" datetime="2008-12-10">
+                        <time class="arretify-date" datetime="2008-12-10">
                             10 décembre 2008
                         </time>
                     </a>
                     <span
-                        class="dsr-operation"
+                        class="arretify-operation"
                         data-direction="rtl"
                         data-has_operand=""
                         data-keyword="supprimés"
@@ -82,7 +82,7 @@ class TestParseOperations(unittest.TestCase):
                 """  # noqa: E501
             )
         )
-        tag = document_context.soup.select_one(".dsr-operation")
+        tag = document_context.soup.select_one(".arretify-operation")
 
         # Act
         resolve_references_and_operands(document_context, tag)
@@ -92,10 +92,10 @@ class TestParseOperations(unittest.TestCase):
             # Check that element_id was added to both references, and that the references were
             # added to the operation
             """
-            <div class="dsr-alinea">
+            <div class="arretify-alinea">
                 Les
                 <a
-                    class="dsr-section_reference"
+                    class="arretify-section_reference"
                     data-element_id="1"
                     data-group_id="11"
                     data-parent_reference="123"
@@ -104,7 +104,7 @@ class TestParseOperations(unittest.TestCase):
                 </a>
                 et
                 <a
-                    class="dsr-section_reference"
+                    class="arretify-section_reference"
                     data-element_id="2"
                     data-group_id="11"
                     data-parent_reference="123"
@@ -113,7 +113,7 @@ class TestParseOperations(unittest.TestCase):
                 </a>
                 de l'
                 <a
-                    class="dsr-section_reference"
+                    class="arretify-section_reference"
                     data-element_id="123"
                     data-parent_reference="456"
                 >
@@ -121,16 +121,16 @@ class TestParseOperations(unittest.TestCase):
                 </a>
                 de l'
                 <a
-                    class="dsr-document_reference"
+                    class="arretify-document_reference"
                     data-element_id="456"
                 >
                     arrêté préfectoral du
-                    <time class="dsr-date" datetime="2008-12-10">
+                    <time class="arretify-date" datetime="2008-12-10">
                         10 décembre 2008
                     </time>
                 </a>
                 <span
-                    class="dsr-operation"
+                    class="arretify-operation"
                     data-direction="rtl"
                     data-has_operand=""
                     data-keyword="supprimés"
@@ -152,26 +152,26 @@ class TestParseOperations(unittest.TestCase):
         document_context = create_document_context(
             normalized_html_str(
                 """
-                <div class="dsr-alinea">
+                <div class="arretify-alinea">
                     La dernière phrase de l'
                     <a
-                        class="dsr-section_reference"
+                        class="arretify-section_reference"
                         data-parent_reference="123"
                     >
                         article 8.1.1.2
                     </a>
                     de l'
                     <a
-                        class="dsr-document_reference"
+                        class="arretify-document_reference"
                         data-element_id="123"
                     >
                         arrêté préfectoral du
-                        <time class="dsr-date" datetime="2008-12-10">
+                        <time class="arretify-date" datetime="2008-12-10">
                                 10 décembre 2008
                         </time>
                     </a>
                     <span
-                        class="dsr-operation"
+                        class="arretify-operation"
                         data-direction="rtl"
                         data-has_operand="true"
                         data-keyword="remplacée"
@@ -192,7 +192,7 @@ class TestParseOperations(unittest.TestCase):
                 """  # noqa: E501
             )
         )
-        tag = document_context.soup.select_one(".dsr-operation")
+        tag = document_context.soup.select_one(".arretify-operation")
 
         # Act
         resolve_references_and_operands(document_context, tag)
@@ -200,10 +200,10 @@ class TestParseOperations(unittest.TestCase):
         # Assert
         assert str(document_context.soup) == normalized_html_str(
             """
-            <div class="dsr-alinea">
+            <div class="arretify-alinea">
                 La dernière phrase de l'
                 <a
-                    class="dsr-section_reference"
+                    class="arretify-section_reference"
                     data-element_id="1"
                     data-parent_reference="123"
                 >
@@ -211,16 +211,16 @@ class TestParseOperations(unittest.TestCase):
                 </a>
                 de l'
                 <a
-                    class="dsr-document_reference"
+                    class="arretify-document_reference"
                     data-element_id="123"
                 >
                     arrêté préfectoral du
-                    <time class="dsr-date" datetime="2008-12-10">
+                    <time class="arretify-date" datetime="2008-12-10">
                             10 décembre 2008
                     </time>
                 </a>
                 <span
-                    class="dsr-operation"
+                    class="arretify-operation"
                     data-direction="rtl"
                     data-has_operand="true"
                     data-keyword="remplacée"
@@ -249,15 +249,15 @@ class TestParseOperations(unittest.TestCase):
         document_context = create_document_context(
             normalized_html_str(
                 """
-                <div class="dsr-alinea">
+                <div class="arretify-alinea">
                     Les prescriptions de l'
-                    <a class="dsr-document_reference">
+                    <a class="arretify-document_reference">
                         arrêté préfectoral du
-                        <time class="dsr-date" datetime="2008-12-10">
+                        <time class="arretify-date" datetime="2008-12-10">
                                 10 décembre 2008
                         </time>
                     </a>
-                    <span class="dsr-operation" data-direction="rtl" data-has_operand="" data-keyword="abrogées" data-operand="" data-operation_type="delete">
+                    <span class="arretify-operation" data-direction="rtl" data-has_operand="" data-keyword="abrogées" data-operand="" data-operation_type="delete">
                         sont
                         <b>
                             abrogées
@@ -268,7 +268,7 @@ class TestParseOperations(unittest.TestCase):
                 """  # noqa: E501
             )
         )
-        tag = document_context.soup.select_one(".dsr-operation")
+        tag = document_context.soup.select_one(".arretify-operation")
 
         # Act
         resolve_references_and_operands(document_context, tag)
@@ -276,15 +276,15 @@ class TestParseOperations(unittest.TestCase):
         # Assert
         assert str(document_context.soup) == normalized_html_str(
             """
-            <div class="dsr-alinea">
+            <div class="arretify-alinea">
                 Les prescriptions de l'
-                <a class="dsr-document_reference" data-element_id="1">
+                <a class="arretify-document_reference" data-element_id="1">
                     arrêté préfectoral du
-                    <time class="dsr-date" datetime="2008-12-10">
+                    <time class="arretify-date" datetime="2008-12-10">
                             10 décembre 2008
                     </time>
                 </a>
-                <span class="dsr-operation" data-direction="rtl" data-has_operand="" data-keyword="abrogées" data-operand="" data-operation_type="delete" data-references="1">
+                <span class="arretify-operation" data-direction="rtl" data-has_operand="" data-keyword="abrogées" data-operand="" data-operation_type="delete" data-references="1">
                     sont
                     <b>
                         abrogées

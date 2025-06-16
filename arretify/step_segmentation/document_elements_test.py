@@ -1,3 +1,21 @@
+#
+# Copyright (c) 2025 Direction générale de la prévention des risques (DGPR).
+#
+# This file is part of Arrêtify.
+# See https://github.com/mte-dgpr/arretify for further info.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
 import unittest
 
 from bs4 import BeautifulSoup
@@ -33,7 +51,7 @@ class TestParsePageFooter(unittest.TestCase):
         assert str(header) == normalized_html_str(
             """
             <header>
-                <div class="dsr-page_footer">
+                <div class="arretify-page_footer">
                     <div>Page 1/4</div>
                 </div>
             </header>
@@ -65,7 +83,7 @@ class TestParseTableOfContents(unittest.TestCase):
         assert str(header) == normalized_html_str(
             """
             <header>
-                <div class="dsr-table_of_contents">
+                <div class="arretify-table_of_contents">
                     <div>Sommaire</div>
                     <div>1 Titre ..... 5</div>
                     <div>1.1 Chapitre ..... 5</div>
@@ -97,7 +115,7 @@ class TestParseTableOfContents(unittest.TestCase):
         assert str(header) == normalized_html_str(
             """
             <header>
-                <div class="dsr-table_of_contents">
+                <div class="arretify-table_of_contents">
                     <div>Liste des chapitres</div>
                     <div>Arrêté n D3 ..... 1</div>
                     <div>TITRE 1 - TITRE ..... 5</div>
@@ -131,7 +149,7 @@ class TestParseTableOfContents(unittest.TestCase):
         assert str(header) == normalized_html_str(
             """
             <header>
-                <div class="dsr-table_of_contents">
+                <div class="arretify-table_of_contents">
                     <div>Liste des articles</div>
                     <div>TITRE 1 - TITRE ..... 1</div>
                     <div>CHAPITRE chapitre ..... 5</div>
@@ -164,7 +182,7 @@ class TestParseTableOfContents(unittest.TestCase):
         assert str(header) == normalized_html_str(
             """
             <header>
-                <div class="dsr-table_of_contents">
+                <div class="arretify-table_of_contents">
                     <div>Liste des articles</div>
                     <div>TITRE 1 - TITRE ..... page 1</div>
                     <div>CHAPITRE chapitre ..... page 5</div>

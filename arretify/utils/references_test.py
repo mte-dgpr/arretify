@@ -35,28 +35,28 @@ class TestBuildReferenceTree(unittest.TestCase):
             """
             <div>
                 <a
-                    class="dsr-section_reference"
+                    class="arretify-section_reference"
                     data-element_id="1"
                     data-parent_reference="3"
                 >
                     Section 1.1
                 </a>
                 <a
-                    class="dsr-section_reference"
+                    class="arretify-section_reference"
                     data-element_id="2"
                     data-parent_reference="3"
                 >
                     Section 1.2
                 </a>
                 <a
-                    class="dsr-section_reference"
+                    class="arretify-section_reference"
                     data-element_id="3"
                     data-parent_reference="4"
                 >
                     Section 1
                 </a>
                 <a
-                    class="dsr-document_reference"
+                    class="arretify-document_reference"
                     data-element_id="4"
                 >
                     Some Document
@@ -82,14 +82,14 @@ class TestBuildReferenceTree(unittest.TestCase):
             <div>
                 <a
                     id="tag1"
-                    class="dsr-section_reference"
+                    class="arretify-section_reference"
                     data-parent_reference="1"
                 >
                     Section 1.1
                 </a>
                 <a
                     id="tag2"
-                    class="dsr-section_reference"
+                    class="arretify-section_reference"
                     data-element_id="1"
                 >
                     Section 1
@@ -98,7 +98,7 @@ class TestBuildReferenceTree(unittest.TestCase):
             """,
             features="html.parser",
         )
-        section_reference_tag = soup.select_one(".dsr-section_reference")
+        section_reference_tag = soup.select_one(".arretify-section_reference")
 
         # Act
         branches = build_reference_tree(section_reference_tag)
@@ -113,28 +113,28 @@ class TestBuildReferenceTree(unittest.TestCase):
             """
             <div>
                 <a
-                    class="dsr-section_reference"
+                    class="arretify-section_reference"
                     data-element_id="1"
                     data-parent_reference="3"
                 >
                     Section 1.1
                 </a>
                 <a
-                    class="dsr-section_reference"
+                    class="arretify-section_reference"
                     data-element_id="2"
                     data-parent_reference="3"
                 >
                     Section 1.2
                 </a>
                 <a
-                    class="dsr-section_reference"
+                    class="arretify-section_reference"
                     data-element_id="3"
                     data-parent_reference="4"
                 >
                     Section 1
                 </a>
                 <a
-                    class="dsr-document_reference"
+                    class="arretify-document_reference"
                     data-element_id="4"
                 >
                     Some Document
@@ -162,7 +162,7 @@ class TestIterSectionReferences(unittest.TestCase):
             """
             <div>
                 <a
-                    class="dsr-section_reference"
+                    class="arretify-section_reference"
                     data-element_id="1"
                     data-parent_reference="2"
                     data-type="article"
@@ -170,7 +170,7 @@ class TestIterSectionReferences(unittest.TestCase):
                     Section 1
                 </a>
                 <a
-                    class="dsr-document_reference"
+                    class="arretify-document_reference"
                     data-element_id="2"
                     data-id="L123"
                     data-type="arrete"
@@ -181,7 +181,7 @@ class TestIterSectionReferences(unittest.TestCase):
             """,
             features="html.parser",
         )
-        section_reference_tag = soup.select_one(".dsr-document_reference")
+        section_reference_tag = soup.select_one(".arretify-document_reference")
 
         # Act
         section_references = list(iter_section_references(section_reference_tag))

@@ -36,13 +36,13 @@ class TestConnectParentSections(unittest.TestCase):
             process_match_sections_to_parents(
                 """
             <a
-                class="dsr-section_reference"
+                class="arretify-section_reference"
             >
                 2ème alinéa
             </a>
             de l'
             <a
-                class="dsr-document_reference"
+                class="arretify-document_reference"
             >
                 article 1
             </a>
@@ -52,7 +52,7 @@ class TestConnectParentSections(unittest.TestCase):
                 normalized_html_str(
                     """
                 <a
-                    class="dsr-section_reference"
+                    class="arretify-section_reference"
                     data-parent_reference="1"
                 >
                     2ème alinéa
@@ -63,7 +63,7 @@ class TestConnectParentSections(unittest.TestCase):
                 normalized_html_str(
                     """
                 <a
-                    class="dsr-document_reference"
+                    class="arretify-document_reference"
                     data-element_id="1"
                 >
                     article 1
@@ -78,16 +78,16 @@ class TestConnectParentSections(unittest.TestCase):
             process_match_sections_to_parents(
                 """
                 <a
-                    class="dsr-section_reference"
+                    class="arretify-section_reference"
                 >
                     article 5
                 </a>
                 de l’
                 <a
-                    class="dsr-document_reference"
+                    class="arretify-document_reference"
                 >
                     arrêté du
-                    <time class="dsr-date" datetime="2016-05-23">
+                    <time class="arretify-date" datetime="2016-05-23">
                         23 mai 2016
                     </time>
                 </a>
@@ -97,7 +97,7 @@ class TestConnectParentSections(unittest.TestCase):
                 normalized_html_str(
                     """
                     <a
-                        class="dsr-section_reference"
+                        class="arretify-section_reference"
                         data-parent_reference="1"
                     >
                         article 5
@@ -108,11 +108,11 @@ class TestConnectParentSections(unittest.TestCase):
                 normalized_html_str(
                     """
                     <a
-                        class="dsr-document_reference"
+                        class="arretify-document_reference"
                         data-element_id="1"
                     >
                         arrêté du
-                        <time class="dsr-date" datetime="2016-05-23">
+                        <time class="arretify-date" datetime="2016-05-23">
                             23 mai 2016
                         </time>
                     </a>
@@ -126,21 +126,21 @@ class TestConnectParentSections(unittest.TestCase):
             process_match_sections_to_parents(
                 """
                 <a
-                    class="dsr-section_reference"
+                    class="arretify-section_reference"
                     data-group_id="111"
                 >
                     articles R. 512 - 74
                 </a>
                 et
                 <a
-                    class="dsr-section_reference"
+                    class="arretify-section_reference"
                     data-group_id="111"
                 >
                     R. 512 39-1 à R.512-39-3
                 </a>
                 du
                 <a
-                    class="dsr-document_reference"
+                    class="arretify-document_reference"
                 >
                     code de l'environnement
                 </a>
@@ -150,7 +150,7 @@ class TestConnectParentSections(unittest.TestCase):
                 normalized_html_str(
                     """
                     <a
-                        class="dsr-section_reference"
+                        class="arretify-section_reference"
                         data-parent_reference="1"
                         data-group_id="111"
                     >
@@ -162,7 +162,7 @@ class TestConnectParentSections(unittest.TestCase):
                 normalized_html_str(
                     """
                     <a
-                        class="dsr-section_reference"
+                        class="arretify-section_reference"
                         data-parent_reference="1"
                         data-group_id="111"
                     >
@@ -174,7 +174,7 @@ class TestConnectParentSections(unittest.TestCase):
                 normalized_html_str(
                     """
                     <a
-                        class="dsr-document_reference"
+                        class="arretify-document_reference"
                         data-element_id="1"
                     >
                         code de l'environnement
@@ -189,19 +189,19 @@ class TestConnectParentSections(unittest.TestCase):
             process_match_sections_to_parents(
                 """
                 <a
-                    class="dsr-section_reference"
+                    class="arretify-section_reference"
                 >
                     alinéa 3
                 </a>
                 de l'
                 <a
-                    class="dsr-section_reference"
+                    class="arretify-section_reference"
                 >
                     article R121-1
                 </a>
                 du
                 <a
-                    class="dsr-document_reference"
+                    class="arretify-document_reference"
                 >
                     code de l'environnement
                 </a>
@@ -211,7 +211,7 @@ class TestConnectParentSections(unittest.TestCase):
                 normalized_html_str(
                     """
                     <a
-                        class="dsr-section_reference"
+                        class="arretify-section_reference"
                         data-parent_reference="1"
                     >
                         alinéa 3
@@ -222,7 +222,7 @@ class TestConnectParentSections(unittest.TestCase):
                 normalized_html_str(
                     """
                     <a
-                        class="dsr-section_reference"
+                        class="arretify-section_reference"
                         data-element_id="1"
                         data-parent_reference="2"
                     >
@@ -234,7 +234,7 @@ class TestConnectParentSections(unittest.TestCase):
                 normalized_html_str(
                     """
                     <a
-                        class="dsr-document_reference"
+                        class="arretify-document_reference"
                         data-element_id="2"
                     >
                         code de l'environnement
