@@ -35,12 +35,12 @@ class TestParseCirculairesReferences(unittest.TestCase):
             normalized_html_str(
                 """
                 <a
-                    class="dsr-document_reference"
+                    class="arretify-document_reference"
                     data-date="2005-05-30"
                     data-type="circulaire"
                 >
                     circulaire du
-                    <time class="dsr-date" datetime="2005-05-30">
+                    <time class="arretify-date" datetime="2005-05-30">
                         30 mai 2005
                     </time>
                 </a>
@@ -55,12 +55,12 @@ class TestParseCirculairesReferences(unittest.TestCase):
             normalized_html_str(
                 """
                 <a
-                    class="dsr-document_reference"
+                    class="arretify-document_reference"
                     data-date="2005-05-30"
                     data-type="circulaire"
                 >
                     circulaire ministérielle du
-                    <time class="dsr-date" datetime="2005-05-30">
+                    <time class="arretify-date" datetime="2005-05-30">
                         30 mai 2005
                     </time>
                 </a>
@@ -75,12 +75,12 @@ class TestParseCirculairesReferences(unittest.TestCase):
             normalized_html_str(
                 """
                 <a
-                    class="dsr-document_reference"
+                    class="arretify-document_reference"
                     data-date="2005-05-30"
                     data-type="circulaire"
                 >
                     circulaire DPPR/DE du
-                    <time class="dsr-date" datetime="2005-05-30">
+                    <time class="arretify-date" datetime="2005-05-30">
                         30 mai 2005
                     </time>
                 </a>
@@ -95,13 +95,13 @@ class TestParseCirculairesReferences(unittest.TestCase):
             normalized_html_str(
                 """
                 <a
-                    class="dsr-document_reference"
+                    class="arretify-document_reference"
                     data-date="2005-05-30"
                     data-num="2005-12"
                     data-type="circulaire"
                 >
                     circulaire n°2005-12 du
-                    <time class="dsr-date" datetime="2005-05-30">
+                    <time class="arretify-date" datetime="2005-05-30">
                         30 mai 2005
                     </time>
                 </a>

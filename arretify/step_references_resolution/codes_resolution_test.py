@@ -38,7 +38,7 @@ class TestResolveSectionsDocuments(unittest.TestCase):
         document_context = create_document_context(
             """
             <a
-                class="dsr-section_reference"
+                class="arretify-section_reference"
                 data-start_num="R541-15"
                 data-type="article"
             >
@@ -46,7 +46,7 @@ class TestResolveSectionsDocuments(unittest.TestCase):
             </a>
         """
         )
-        section_reference_tag = document_context.soup.select_one(".dsr-section_reference")
+        section_reference_tag = document_context.soup.select_one(".arretify-section_reference")
         document = Document(
             type=DocumentType.code,
             id="LEGITEXT000006074220",
@@ -67,7 +67,7 @@ class TestResolveSectionsDocuments(unittest.TestCase):
         assert normalized_html_str(str(document_context.soup)) == normalized_html_str(
             """
                 <a
-                    class="dsr-section_reference"
+                    class="arretify-section_reference"
                     data-start_id="LEGIARTI000032728274"
                     data-start_num="R541-15"
                     data-type="article"
@@ -83,7 +83,7 @@ class TestResolveSectionsDocuments(unittest.TestCase):
         document_context = create_document_context(
             """
             <a
-                class="dsr-section_reference"
+                class="arretify-section_reference"
                 data-end_num="R541-20"
                 data-start_num="R541-15"
                 data-type="article"
@@ -92,7 +92,7 @@ class TestResolveSectionsDocuments(unittest.TestCase):
             </a>
         """
         )
-        section_reference_tag = document_context.soup.select_one(".dsr-section_reference")
+        section_reference_tag = document_context.soup.select_one(".arretify-section_reference")
         document = Document(
             type=DocumentType.code,
             id="LEGITEXT000006074220",
@@ -113,7 +113,7 @@ class TestResolveSectionsDocuments(unittest.TestCase):
         assert normalized_html_str(str(document_context.soup)) == normalized_html_str(
             """
             <a
-                class="dsr-section_reference"
+                class="arretify-section_reference"
                 data-end_id="LEGIARTI000028249688"
                 data-end_num="R541-20"
                 data-start_id="LEGIARTI000032728274"
@@ -133,7 +133,7 @@ class TestResolveCodeDocuments(unittest.TestCase):
             process_code_document_reference(
                 """
             <a
-                class="dsr-document_reference"
+                class="arretify-document_reference"
                 data-title="Code de l'environnement"
                 data-type="code"
             >
@@ -144,7 +144,7 @@ class TestResolveCodeDocuments(unittest.TestCase):
             == normalized_html_str(
                 """
             <a
-                class="dsr-document_reference"
+                class="arretify-document_reference"
                 data-id="LEGITEXT000006074220"
                 data-title="Code de l'environnement"
                 data-type="code"

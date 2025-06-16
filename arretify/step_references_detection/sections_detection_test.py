@@ -33,7 +33,7 @@ class TestArticleSingle(unittest.TestCase):
             normalized_html_str(
                 """
                 <a
-                    class="dsr-section_reference"
+                    class="arretify-section_reference"
                     data-start_num="4.1.b"
                     data-type="article"
                 >
@@ -46,7 +46,7 @@ class TestArticleSingle(unittest.TestCase):
             normalized_html_str(
                 """
                 <a
-                    class="dsr-section_reference"
+                    class="arretify-section_reference"
                     data-start_num="8"
                     data-type="article"
                 >
@@ -59,7 +59,7 @@ class TestArticleSingle(unittest.TestCase):
             normalized_html_str(
                 """
                 <a
-                    class="dsr-section_reference"
+                    class="arretify-section_reference"
                     data-start_num="1"
                     data-type="article"
                 >
@@ -72,7 +72,7 @@ class TestArticleSingle(unittest.TestCase):
             normalized_html_str(
                 """
                 <a
-                    class="dsr-section_reference"
+                    class="arretify-section_reference"
                     data-start_num="111"
                     data-type="article"
                 >
@@ -85,7 +85,7 @@ class TestArticleSingle(unittest.TestCase):
             normalized_html_str(
                 """
                 <a
-                    class="dsr-section_reference"
+                    class="arretify-section_reference"
                     data-start_num="2"
                     data-type="article"
                 >
@@ -100,7 +100,7 @@ class TestArticleSingle(unittest.TestCase):
             normalized_html_str(
                 """
                 <a
-                    class="dsr-section_reference"
+                    class="arretify-section_reference"
                     data-start_num="R511-9"
                     data-type="article"
                 >
@@ -113,7 +113,7 @@ class TestArticleSingle(unittest.TestCase):
             normalized_html_str(
                 """
                 <a
-                    class="dsr-section_reference"
+                    class="arretify-section_reference"
                     data-start_num="D12"
                     data-type="article"
                 >
@@ -126,7 +126,7 @@ class TestArticleSingle(unittest.TestCase):
             normalized_html_str(
                 """
                 <a
-                    class="dsr-section_reference"
+                    class="arretify-section_reference"
                     data-start_num="L181-3"
                     data-type="article"
                 >
@@ -141,7 +141,7 @@ class TestArticleSingle(unittest.TestCase):
             normalized_html_str(
                 """
                 <a
-                    class="dsr-section_reference"
+                    class="arretify-section_reference"
                     data-start_num="1"
                     data-type="article"
                 >
@@ -154,7 +154,7 @@ class TestArticleSingle(unittest.TestCase):
             normalized_html_str(
                 """
                 <a
-                    class="dsr-section_reference"
+                    class="arretify-section_reference"
                     data-start_num="4"
                     data-type="article"
                 >
@@ -169,7 +169,7 @@ class TestArticleSingle(unittest.TestCase):
             normalized_html_str(
                 """
                 <a
-                    class="dsr-section_reference"
+                    class="arretify-section_reference"
                     data-start_num="L123"
                     data-type="article"
                 >
@@ -187,7 +187,7 @@ class TestArticleRange(unittest.TestCase):
             normalized_html_str(
                 """
                 <a
-                    class="dsr-section_reference"
+                    class="arretify-section_reference"
                     data-end_num="11"
                     data-start_num="3"
                     data-type="article"
@@ -201,7 +201,7 @@ class TestArticleRange(unittest.TestCase):
             normalized_html_str(
                 """
                 <a
-                    class="dsr-section_reference"
+                    class="arretify-section_reference"
                     data-end_num="6.18.7"
                     data-start_num="6.18.1"
                     data-type="article"
@@ -215,7 +215,7 @@ class TestArticleRange(unittest.TestCase):
             normalized_html_str(
                 """
                 <a
-                    class="dsr-section_reference"
+                    class="arretify-section_reference"
                     data-end_num="6.18.c"
                     data-start_num="6.18.a"
                     data-type="article"
@@ -232,7 +232,7 @@ class TestArticleRange(unittest.TestCase):
             normalized_html_str(
                 """
                 <a
-                    class="dsr-section_reference"
+                    class="arretify-section_reference"
                     data-end_num="3"
                     data-start_num="1"
                     data-type="article"
@@ -247,7 +247,7 @@ class TestArticleRange(unittest.TestCase):
             normalized_html_str(
                 """
                 <a
-                    class="dsr-section_reference"
+                    class="arretify-section_reference"
                     data-end_num="10"
                     data-start_num="2"
                     data-type="article"
@@ -264,7 +264,7 @@ class TestArticleRange(unittest.TestCase):
             normalized_html_str(
                 """
                 <a
-                    class="dsr-section_reference"
+                    class="arretify-section_reference"
                     data-end_num="D512"
                     data-start_num="R511-9"
                     data-type="article"
@@ -279,7 +279,7 @@ class TestArticleRange(unittest.TestCase):
             normalized_html_str(
                 """
                 <a
-                    class="dsr-section_reference"
+                    class="arretify-section_reference"
                     data-end_num="R543-151"
                     data-start_num="R543-137"
                     data-type="article"
@@ -298,7 +298,7 @@ class TestArticlePlural(unittest.TestCase):
             normalized_html_str(
                 """
                 <a
-                    class="dsr-section_reference"
+                    class="arretify-section_reference"
                     data-group_id="1"
                     data-start_num="5.1.9"
                     data-type="article"
@@ -311,7 +311,7 @@ class TestArticlePlural(unittest.TestCase):
             normalized_html_str(
                 """
                 <a
-                    class="dsr-section_reference"
+                    class="arretify-section_reference"
                     data-group_id="1"
                     data-start_num="9.2.1"
                     data-type="article"
@@ -324,7 +324,7 @@ class TestArticlePlural(unittest.TestCase):
             normalized_html_str(
                 """
                 <a
-                    class="dsr-section_reference"
+                    class="arretify-section_reference"
                     data-group_id="1"
                     data-start_num="10.2.1"
                     data-type="article"
@@ -337,7 +337,7 @@ class TestArticlePlural(unittest.TestCase):
             normalized_html_str(
                 """
                 <a
-                    class="dsr-section_reference"
+                    class="arretify-section_reference"
                     data-group_id="1"
                     data-start_num="10.2.5"
                     data-type="article"
@@ -353,7 +353,7 @@ class TestArticlePlural(unittest.TestCase):
             normalized_html_str(
                 """
                 <a
-                    class="dsr-section_reference"
+                    class="arretify-section_reference"
                     data-group_id="1"
                     data-start_num="1"
                     data-type="article"
@@ -366,7 +366,7 @@ class TestArticlePlural(unittest.TestCase):
             normalized_html_str(
                 """
                 <a
-                    class="dsr-section_reference"
+                    class="arretify-section_reference"
                     data-group_id="1"
                     data-start_num="9.a"
                     data-type="article"
@@ -381,7 +381,7 @@ class TestArticlePlural(unittest.TestCase):
             normalized_html_str(
                 """
                 <a
-                    class="dsr-section_reference"
+                    class="arretify-section_reference"
                     data-group_id="1"
                     data-start_num="1"
                     data-type="article"
@@ -394,7 +394,7 @@ class TestArticlePlural(unittest.TestCase):
             normalized_html_str(
                 """
                 <a
-                    class="dsr-section_reference"
+                    class="arretify-section_reference"
                     data-group_id="1"
                     data-start_num="2"
                     data-type="article"
@@ -410,7 +410,7 @@ class TestArticlePlural(unittest.TestCase):
             normalized_html_str(
                 """
                 <a
-                    class="dsr-section_reference"
+                    class="arretify-section_reference"
                     data-group_id="1"
                     data-start_num="R511-9"
                     data-type="article"
@@ -423,7 +423,7 @@ class TestArticlePlural(unittest.TestCase):
             normalized_html_str(
                 """
                 <a
-                    class="dsr-section_reference"
+                    class="arretify-section_reference"
                     data-group_id="1"
                     data-start_num="L111"
                     data-type="article"
@@ -439,7 +439,7 @@ class TestArticlePlural(unittest.TestCase):
             normalized_html_str(
                 """
                 <a
-                    class="dsr-section_reference"
+                    class="arretify-section_reference"
                     data-group_id="1"
                     data-start_num="R512-74"
                     data-type="article"
@@ -452,7 +452,7 @@ class TestArticlePlural(unittest.TestCase):
             normalized_html_str(
                 """
                 <a
-                    class="dsr-section_reference"
+                    class="arretify-section_reference"
                     data-group_id="1"
                     data-end_num="R512-39-3"
                     data-start_num="R512-39-1"
@@ -469,7 +469,7 @@ class TestArticlePlural(unittest.TestCase):
             normalized_html_str(
                 """
                 <a
-                    class="dsr-section_reference"
+                    class="arretify-section_reference"
                     data-group_id="1"
                     data-end_num="R541-64"
                     data-start_num="R541-49"
@@ -483,7 +483,7 @@ class TestArticlePlural(unittest.TestCase):
             normalized_html_str(
                 """
                 <a
-                    class="dsr-section_reference"
+                    class="arretify-section_reference"
                     data-group_id="1"
                     data-start_num="R541-79"
                     data-type="article"
@@ -502,7 +502,7 @@ class TestAlineaSingle(unittest.TestCase):
             normalized_html_str(
                 """
             <a
-                class="dsr-section_reference"
+                class="arretify-section_reference"
                 data-start_num="2"
                 data-type="alinea"
             >
@@ -517,7 +517,7 @@ class TestAlineaSingle(unittest.TestCase):
             normalized_html_str(
                 """
             <a
-                class="dsr-section_reference"
+                class="arretify-section_reference"
                 data-start_num="3"
                 data-type="alinea"
             >
@@ -530,7 +530,7 @@ class TestAlineaSingle(unittest.TestCase):
             normalized_html_str(
                 """
             <a
-                class="dsr-section_reference"
+                class="arretify-section_reference"
                 data-start_num="2"
                 data-type="alinea"
             >
@@ -543,7 +543,7 @@ class TestAlineaSingle(unittest.TestCase):
             normalized_html_str(
                 """
             <a
-                class="dsr-section_reference"
+                class="arretify-section_reference"
                 data-start_num="9"
                 data-type="alinea"
             >
@@ -561,7 +561,7 @@ class TestAlineaRange(unittest.TestCase):
             normalized_html_str(
                 """
                 <a
-                    class="dsr-section_reference"
+                    class="arretify-section_reference"
                     data-end_num="5"
                     data-start_num="3"
                     data-type="alinea"
@@ -577,7 +577,7 @@ class TestAlineaRange(unittest.TestCase):
             normalized_html_str(
                 """
                 <a
-                    class="dsr-section_reference"
+                    class="arretify-section_reference"
                     data-end_num="3"
                     data-start_num="1"
                     data-type="alinea"
@@ -597,7 +597,7 @@ class TestAlineaMultiple(unittest.TestCase):
             normalized_html_str(
                 """
                 <a
-                    class="dsr-section_reference"
+                    class="arretify-section_reference"
                     data-group_id="1"
                     data-start_num="3"
                     data-type="alinea"
@@ -610,7 +610,7 @@ class TestAlineaMultiple(unittest.TestCase):
             normalized_html_str(
                 """
                 <a
-                    class="dsr-section_reference"
+                    class="arretify-section_reference"
                     data-group_id="1"
                     data-start_num="4"
                     data-type="alinea"
@@ -629,7 +629,7 @@ class TestUnknownSingle(unittest.TestCase):
             normalized_html_str(
                 """
                 <a
-                    class="dsr-section_reference"
+                    class="arretify-section_reference"
                     data-start_num="3"
                     data-type="unknown"
                 >
@@ -645,7 +645,7 @@ class TestUnknownSingle(unittest.TestCase):
             normalized_html_str(
                 """
                 <a
-                    class="dsr-section_reference"
+                    class="arretify-section_reference"
                     data-start_num="a.4"
                     data-type="unknown"
                 >
@@ -663,7 +663,7 @@ class TestUnknownRange(unittest.TestCase):
             normalized_html_str(
                 """
                 <a
-                    class="dsr-section_reference"
+                    class="arretify-section_reference"
                     data-end_num="5"
                     data-start_num="3"
                     data-type="unknown"
@@ -683,7 +683,7 @@ class TestUnknownMultiple(unittest.TestCase):
             normalized_html_str(
                 """
                 <a
-                    class="dsr-section_reference"
+                    class="arretify-section_reference"
                     data-group_id="1"
                     data-start_num="3"
                     data-type="unknown"
@@ -696,7 +696,7 @@ class TestUnknownMultiple(unittest.TestCase):
             normalized_html_str(
                 """
                 <a
-                    class="dsr-section_reference"
+                    class="arretify-section_reference"
                     data-group_id="1"
                     data-start_num="5"
                     data-type="unknown"
@@ -709,7 +709,7 @@ class TestUnknownMultiple(unittest.TestCase):
             normalized_html_str(
                 """
                 <a
-                    class="dsr-section_reference"
+                    class="arretify-section_reference"
                     data-group_id="1"
                     data-start_num="4"
                     data-type="unknown"

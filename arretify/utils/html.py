@@ -39,10 +39,6 @@ _Id = str
 _IdName = Literal["element_id", "group_id"]
 
 
-def make_css_class(schema: DataElementSchema):
-    return f"dsr-{schema.name}"
-
-
 def ensure_element_id(id_counters: IdCounters, tag: Tag) -> ElementId:
     current_id = _get_id_from_tag(tag, "element_id")
     if current_id is not None:
@@ -97,7 +93,7 @@ def make_data_tag(
     if data is None:
         data = {}
     element = make_new_tag(soup, schema.tag_name, contents=contents)
-    element["class"] = [make_css_class(schema)]
+    element["class"] = schema.css_class
     for key in schema.data_keys:
         try:
             data_value = data[key]

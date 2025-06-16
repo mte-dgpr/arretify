@@ -35,7 +35,7 @@ class TestParseEuActsReferences(unittest.TestCase):
             normalized_html_str(
                 """
                 <a
-                    class="dsr-document_reference"
+                    class="arretify-document_reference"
                     data-date="2006"
                     data-num="1013"
                     data-type="eu-directive"
@@ -53,7 +53,7 @@ class TestParseEuActsReferences(unittest.TestCase):
             normalized_html_str(
                 """
                 <a
-                    class="dsr-document_reference"
+                    class="arretify-document_reference"
                     data-date="2010"
                     data-num="75"
                     data-type="eu-directive"
@@ -71,7 +71,7 @@ class TestParseEuActsReferences(unittest.TestCase):
             normalized_html_str(
                 """
                 <a
-                    class="dsr-document_reference"
+                    class="arretify-document_reference"
                     data-date="1996"
                     data-num="75"
                     data-type="eu-directive"
@@ -89,7 +89,7 @@ class TestParseEuActsReferences(unittest.TestCase):
             normalized_html_str(
                 """
                 <a
-                    class="dsr-document_reference"
+                    class="arretify-document_reference"
                     data-date="2006"
                     data-num="1013"
                     data-type="eu-regulation"
@@ -107,7 +107,7 @@ class TestParseEuActsReferences(unittest.TestCase):
             normalized_html_str(
                 """
                 <a
-                    class="dsr-document_reference"
+                    class="arretify-document_reference"
                     data-date="1996"
                     data-num="1013"
                     data-type="eu-directive"

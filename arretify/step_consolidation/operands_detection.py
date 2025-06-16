@@ -27,7 +27,6 @@ from arretify.html_schemas import (
     DOCUMENT_REFERENCE_SCHEMA,
 )
 from arretify.utils.html import (
-    make_css_class,
     ensure_element_id,
     render_str_list_attribute,
     parse_bool_attribute,
@@ -39,9 +38,6 @@ from arretify.utils.element_ranges import (
 )
 from arretify.utils.references import build_reference_tree
 
-
-DOCUMENT_REFERENCE_CLASS = make_css_class(DOCUMENT_REFERENCE_SCHEMA)
-SECTION_REFERENCE_CLASS = make_css_class(SECTION_REFERENCE_SCHEMA)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -61,7 +57,11 @@ def _resolve_rtl_references(document_context: DocumentContext, operation_tag: Ta
 
     for element in contiguous_elements_left:
         if is_tag_and_matches(
-            element, css_classes_in=[SECTION_REFERENCE_CLASS, DOCUMENT_REFERENCE_CLASS]
+            element,
+            css_classes_in=[
+                SECTION_REFERENCE_SCHEMA.css_class,
+                DOCUMENT_REFERENCE_SCHEMA.css_class,
+            ],
         ):
             # Take the leaves of the reference tree, i.e. the most
             # specific reference in a chain of sections.
@@ -75,7 +75,7 @@ def _resolve_rtl_references(document_context: DocumentContext, operation_tag: Ta
 
     if len(reference_tags) == 0:
         for element in contiguous_elements_left:
-            if is_tag_and_matches(element, css_classes_in=[DOCUMENT_REFERENCE_CLASS]):
+            if is_tag_and_matches(element, css_classes_in=[DOCUMENT_REFERENCE_SCHEMA.css_class]):
                 reference_tags = [element]
                 break
 

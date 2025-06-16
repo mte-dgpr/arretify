@@ -61,63 +61,63 @@ class TestRenderDateRegexTreeMatch(unittest.TestCase):
 
     def test_with_alinea(self):
         assert _parsed_elements("24/03/95") == [
-            '<time class="dsr-date" datetime="1995-03-24">24/03/95</time>'
+            '<time class="arretify-date" datetime="1995-03-24">24/03/95</time>'
         ]
 
     def test_date1_valid_cases(self):
         assert _parsed_elements("1er janvier 2023") == [
-            '<time class="dsr-date" datetime="2023-01-01">1er janvier 2023</time>'
+            '<time class="arretify-date" datetime="2023-01-01">1er janvier 2023</time>'
         ]
         assert _parsed_elements("15 février 2020") == [
-            '<time class="dsr-date" datetime="2020-02-15">15 février 2020</time>'
+            '<time class="arretify-date" datetime="2020-02-15">15 février 2020</time>'
         ]
         assert _parsed_elements("3 mars 99") == [
-            '<time class="dsr-date" datetime="1999-03-03">3 mars 99</time>'
+            '<time class="arretify-date" datetime="1999-03-03">3 mars 99</time>'
         ]
         assert _parsed_elements("10 octobre 2000") == [
-            '<time class="dsr-date" datetime="2000-10-10">10 octobre 2000</time>'
+            '<time class="arretify-date" datetime="2000-10-10">10 octobre 2000</time>'
         ]
         assert _parsed_elements("1er décembre 1999") == [
-            '<time class="dsr-date" datetime="1999-12-01">1er décembre 1999</time>'
+            '<time class="arretify-date" datetime="1999-12-01">1er décembre 1999</time>'
         ]
         assert _parsed_elements("1 janvier 20") == [
-            '<time class="dsr-date" datetime="2020-01-01">1 janvier 20</time>'
+            '<time class="arretify-date" datetime="2020-01-01">1 janvier 20</time>'
         ]
 
     def test_date_without_accents_valid_cases(self):
         assert _parsed_elements("15 fevrier 2020") == [
-            '<time class="dsr-date" datetime="2020-02-15">15 fevrier 2020</time>'
+            '<time class="arretify-date" datetime="2020-02-15">15 fevrier 2020</time>'
         ]
         assert _parsed_elements("15 aout 2020") == [
-            '<time class="dsr-date" datetime="2020-08-15">15 aout 2020</time>'
+            '<time class="arretify-date" datetime="2020-08-15">15 aout 2020</time>'
         ]
         assert _parsed_elements("15 decembre 2020") == [
-            '<time class="dsr-date" datetime="2020-12-15">15 decembre 2020</time>'
+            '<time class="arretify-date" datetime="2020-12-15">15 decembre 2020</time>'
         ]
 
     def test_date2_valid_cases(self):
         assert _parsed_elements("15/02/2023") == [
-            '<time class="dsr-date" datetime="2023-02-15">15/02/2023</time>'
+            '<time class="arretify-date" datetime="2023-02-15">15/02/2023</time>'
         ]
         assert _parsed_elements("03/03/99") == [
-            '<time class="dsr-date" datetime="1999-03-03">03/03/99</time>'
+            '<time class="arretify-date" datetime="1999-03-03">03/03/99</time>'
         ]
         assert _parsed_elements("10/10/2000") == [
-            '<time class="dsr-date" datetime="2000-10-10">10/10/2000</time>'
+            '<time class="arretify-date" datetime="2000-10-10">10/10/2000</time>'
         ]
         assert _parsed_elements("01/12/1999") == [
-            '<time class="dsr-date" datetime="1999-12-01">01/12/1999</time>'
+            '<time class="arretify-date" datetime="1999-12-01">01/12/1999</time>'
         ]
         assert _parsed_elements("31/01/1990") == [
-            '<time class="dsr-date" datetime="1990-01-31">31/01/1990</time>'
+            '<time class="arretify-date" datetime="1990-01-31">31/01/1990</time>'
         ]
 
     def test_edge_cases(self):
         assert _parsed_elements("1er janvier 00") == [
-            '<time class="dsr-date" datetime="2000-01-01">1er janvier 00</time>'
+            '<time class="arretify-date" datetime="2000-01-01">1er janvier 00</time>'
         ]
         assert _parsed_elements("1 janvier 99") == [
-            '<time class="dsr-date" datetime="1999-01-01">1 janvier 99</time>'
+            '<time class="arretify-date" datetime="1999-01-01">1 janvier 99</time>'
         ]
 
     def test_date_invalid_cases(self):
@@ -131,31 +131,32 @@ class TestRenderDateRegexTreeMatch(unittest.TestCase):
 
     def test_date1_and_date2_end_characters_cases(self):
         assert _parsed_elements("1er janvier 2023. Bla") == [
-            '<time class="dsr-date" datetime="2023-01-01">1er janvier 2023</time>',
+            '<time class="arretify-date" datetime="2023-01-01">1er janvier 2023</time>',
             ". Bla",
         ]
         assert _parsed_elements("15 février 2020 ") == [
-            '<time class="dsr-date" datetime="2020-02-15">15 février 2020</time>',
+            '<time class="arretify-date" datetime="2020-02-15">15 février 2020</time>',
             " ",
         ]
         assert _parsed_elements("15/02/2023)") == [
-            '<time class="dsr-date" datetime="2023-02-15">15/02/2023</time>',
+            '<time class="arretify-date" datetime="2023-02-15">15/02/2023</time>',
             ")",
         ]
 
     def test_abbreviation_month(self):
         assert _parsed_elements("20 AVR. 2020") == [
-            '<time class="dsr-date" datetime="2020-04-20">20 AVR. 2020</time>',
+            '<time class="arretify-date" datetime="2020-04-20">20 AVR. 2020</time>',
         ]
 
     def test_3_chars_month(self):
         assert _parsed_elements("20 JUL 2020") == [
-            '<time class="dsr-date" datetime="2020-07-20">20 JUL 2020</time>',
+            '<time class="arretify-date" datetime="2020-07-20">20 JUL 2020</time>',
         ]
 
     def test_syntactically_valid_but_non_existant_date(self):
         assert _parsed_elements("31 FEV 2013") == [
-            '<time class="dsr-date" data-error_codes="non_existant_date" datetime="0001-01-01">'
+            '<time class="arretify-date"'
+            ' data-error_codes="non_existant_date" datetime="0001-01-01">'
             "31 FEV 2013</time>",
         ]
 
