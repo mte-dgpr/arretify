@@ -56,12 +56,17 @@ def step_legifrance_references_resolution(
             resolve_circulaire_legifrance_id(document_context, document_reference_tag)
         elif document.type is DocumentType.code:
             resolve_code_legifrance_id(document_context, document_reference_tag)
-            for section_reference_tag, _, sections in build_and_traverse_reference_tree(
-                document_reference_tag
-            ):
+            for (
+                section_reference_tag,
+                resolved_document,
+                sections,
+            ) in build_and_traverse_reference_tree(document_reference_tag):
+                # We assume document is not None here, since built the tree from
+                # a document reference tag.
+                assert resolved_document is not None
                 if sections:
                     resolve_code_article_legifrance_id(
-                        document_context, section_reference_tag, document, sections
+                        document_context, section_reference_tag, resolved_document, sections
                     )
         else:
             continue
