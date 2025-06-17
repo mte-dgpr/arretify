@@ -29,7 +29,28 @@ from arretify.law_data.types import Document, Section
 
 
 ReferenceTree = List[List[Tag]]
-ReferenceTreeTraversal = Iterable[Tuple[Tag, Document, List[Section]]]
+ReferenceTreeTraversal = Iterable[Tuple[Tag, Document | None, List[Section]]]
+
+
+def build_and_traverse_reference_tree(
+    section_reference_tag: Tag,
+) -> ReferenceTreeTraversal:
+    """
+    Traverse the reference tree formed by a chain of connected
+    sections and document references.
+
+    For example :
+
+    with "l'alinéa 1 et l'alinéa 2 de l'article 5 du présent arrêté"
+
+    This function will yield :
+    (<Tag: présent arrêté>, <Document: présent arrêté>, [])
+    (<Tag: article 5>, <Document: présent arrêté>, [<Section: article 5>])
+    (<Tag: alinéa 1>, <Document: présent arrêté>, [<Section: article 5>, <Section: alinéa 1>])
+    (<Tag: alinéa 2>, <Document: présent arrêté>, [<Section: article 5>, <Section: alinéa 2>])
+    """
+    reference_tree = build_reference_tree(section_reference_tag)
+    return traverse_reference_tree(reference_tree)
 
 
 def build_reference_tree(
@@ -39,9 +60,9 @@ def build_reference_tree(
     References appear in text as a chain of sub sections of a document,
     For example : "l'alinéa 1 et l'alinéa 2 de l'article 5 du présent arrêté".
 
-    We parse each one of these sections individually to a section reference tag, and then connect
-    each section to its parent through the `data-parent_reference` attribute.
-    For example :
+    We parse each one of these sections individually and store them in a section
+    reference tag, and then connect each section to its parent through the
+    `data-parent_reference` attribute. For example :
 
         l'
         <a
@@ -76,8 +97,8 @@ def build_reference_tree(
 
     With the example above, this function would return the following:
         [
-            [<présent arrêté>, <article 5>, <alinéa 1>],
-            [<présent arrêté>, <article 5>, <alinéa 2>],
+            [<Tag: présent arrêté>, <Tag: article 5>, <Tag: alinéa 1>],
+            [<Tag: présent arrêté>, <Tag: article 5>, <Tag: alinéa 2>],
         ]
     """
     assert section_reference_tag.parent is not None, "section_reference_tag has no parent"
@@ -140,21 +161,7 @@ def traverse_reference_tree(
     reference_tree: ReferenceTree,
 ) -> ReferenceTreeTraversal:
     """
-    Traverse the tree of references starting from root (depth-first).
-    Yields tuples of (reference_tag, document, sections).
-
-    Each reference_tag is a section or document reference tag
-    and is yielded only once.
-
-    Example:
-
-    For a single-branch tree of reference tags with one arrêté
-    document and two sub sections (article, alinéa), this function
-    will yield:
-
-        (<arrete_reference_tag>, <arrêté>, [])
-        (<article_reference_tag>, <arrêté>, [<article>])
-        (<alinea_reference_tag>, <arrêté>, [<article>, <alinea>])
+    Function allowing to traverse a reference tree (depth-first).
     """
     seen: List[Tag] = []
     for branch in reference_tree:
@@ -163,13 +170,20 @@ def traverse_reference_tree(
         for reference_tag in branch:
             if not is_tag_and_matches(
                 reference_tag,
-                css_classes_in=[SECTION_REFERENCE_SCHEMA.css_class, DOCUMENT_REFERENCE_SCHEMA.css_class],
+                css_classes_in=[
+                    SECTION_REFERENCE_SCHEMA.css_class,
+                    DOCUMENT_REFERENCE_SCHEMA.css_class,
+                ],
             ):
                 raise ValueError(f"Unexpected tag in reference branch: {reference_tag}")
 
-            if is_tag_and_matches(reference_tag, css_classes_in=[SECTION_REFERENCE_SCHEMA.css_class]):
+            if is_tag_and_matches(
+                reference_tag, css_classes_in=[SECTION_REFERENCE_SCHEMA.css_class]
+            ):
                 sections.append(Section.from_tag(reference_tag))
-            elif is_tag_and_matches(reference_tag, css_classes_in=[DOCUMENT_REFERENCE_SCHEMA.css_class]):
+            elif is_tag_and_matches(
+                reference_tag, css_classes_in=[DOCUMENT_REFERENCE_SCHEMA.css_class]
+            ):
                 document = Document.from_tag(reference_tag)
 
             # Avoid handling the same section multiple times

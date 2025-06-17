@@ -25,8 +25,7 @@ from bs4 import Tag
 from arretify.types import DocumentContext
 from arretify.law_data.types import SectionType
 from arretify.utils.references import (
-    traverse_reference_tree,
-    build_reference_tree,
+    build_and_traverse_reference_tree,
     ReferenceTreeTraversal,
 )
 from arretify.utils.html import set_data_attributes
@@ -44,14 +43,14 @@ def resolve_unknown_sections(
             # Skip already processed tags
             continue
 
-        reference_tree_traversal = list(
-            traverse_reference_tree(build_reference_tree(reference_tag))
-        )
+        reference_tree_traversal = list(build_and_traverse_reference_tree(reference_tag))
         resolve_unknown_sections_in_tree(
             document_context,
             reference_tree_traversal,
         )
         processed.extend((tag for tag, _, __ in reference_tree_traversal))
+
+    return document_context
 
 
 def resolve_unknown_sections_in_tree(
@@ -76,6 +75,8 @@ def resolve_unknown_sections_in_tree(
                 # If the parent section is also unknown, we cannot resolve it
                 continue
 
+            # In the section type hierarchy, alineas represent the deepest
+            # type just below articles
             if parent_section.type == SectionType.ARTICLE:
                 current_section = dataclass_replace(
                     current_section,
@@ -88,6 +89,9 @@ def resolve_unknown_sections_in_tree(
                 # If there is no document, we cannot resolve the section
                 continue
 
+            # When unknown is the sole section reference from a document,
+            # it should be present in the document as a section title,
+            # which means it is at least an article
             current_section = dataclass_replace(
                 current_section,
                 type=SectionType.ARTICLE,

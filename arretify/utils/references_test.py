@@ -21,7 +21,7 @@ import unittest
 from bs4 import BeautifulSoup
 
 from arretify.law_data.types import Document, DocumentType, SectionType, Section
-from .references import build_reference_tree, traverse_reference_tree, ReferenceTree
+from .references import build_reference_tree, traverse_reference_tree
 
 
 class TestBuildReferenceTree(unittest.TestCase):
@@ -212,7 +212,7 @@ class TestTraverseReferenceTree(unittest.TestCase):
         )
         document_reference_tag = soup.select_one(".arretify-document_reference")
         section_reference_tag = soup.select_one(".arretify-section_reference")
-        reference_tree: ReferenceTree = [[document_reference_tag, section_reference_tag]]
+        reference_tree = [[document_reference_tag, section_reference_tag]]
 
         # Act
         results = list(traverse_reference_tree(reference_tree))
@@ -258,7 +258,7 @@ class TestTraverseReferenceTree(unittest.TestCase):
         )
         section_reference_tag1 = soup.select_one(".arretify-section_reference[data-element_id='1']")
         section_reference_tag2 = soup.select_one(".arretify-section_reference[data-element_id='2']")
-        reference_tree: ReferenceTree = [[section_reference_tag2, section_reference_tag1]]
+        reference_tree = [[section_reference_tag2, section_reference_tag1]]
 
         # Act
         results = list(traverse_reference_tree(reference_tree))

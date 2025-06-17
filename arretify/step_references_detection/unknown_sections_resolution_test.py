@@ -19,7 +19,7 @@
 import unittest
 
 from arretify.utils.testing import create_document_context
-from arretify.utils.references import build_reference_tree, traverse_reference_tree
+from arretify.utils.references import build_and_traverse_reference_tree
 from arretify.law_data.types import Section, SectionType
 from .unknown_sections_resolution import resolve_unknown_sections_in_tree, resolve_unknown_sections
 
@@ -119,8 +119,8 @@ class TestResolveUnknownSectionsInTree(unittest.TestCase):
             """
         )
         reference_tree_traversal = list(
-            traverse_reference_tree(
-                build_reference_tree(document_context.soup.select_one(".arretify-document_reference"))
+            build_and_traverse_reference_tree(
+                document_context.soup.select_one(".arretify-document_reference")
             )
         )
 
@@ -159,10 +159,8 @@ class TestResolveUnknownSectionsInTree(unittest.TestCase):
             """
         )
         reference_tree_traversal = list(
-            traverse_reference_tree(
-                build_reference_tree(
-                    document_context.soup.select_one(".arretify-section_reference[data-element_id='1']")
-                )
+            build_and_traverse_reference_tree(
+                document_context.soup.select_one(".arretify-section_reference[data-element_id='1']")
             )
         )
 
