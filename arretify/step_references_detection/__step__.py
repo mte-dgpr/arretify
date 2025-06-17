@@ -47,6 +47,9 @@ from .eu_acts_detection import (
     parse_eu_acts_references,
 )
 from .match_sections_with_documents import match_sections_to_parents
+from .unknown_sections_resolution import (
+    resolve_unknown_sections,
+)
 
 
 def step_references_detection(document_context: DocumentContext) -> DocumentContext:
@@ -75,5 +78,7 @@ def step_references_detection(document_context: DocumentContext) -> DocumentCont
         new_children = list(tag.children)
         new_children = match_sections_to_parents(document_context, new_children)
         replace_children(tag, new_children)
+
+    resolve_unknown_sections(document_context)
 
     return document_context
