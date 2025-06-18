@@ -25,9 +25,7 @@ from arretify.utils.testing import make_testing_function_for_children_list
 from .unknown_sections_resolution import resolve_unknown_sections, remove_misdetected_sections
 
 
-test_remove_misdetected_sections = make_testing_function_for_children_list(
-    remove_misdetected_sections
-)
+remove_misdetected_sections_ = make_testing_function_for_children_list(remove_misdetected_sections)
 
 
 class TestResolveUnknownSections(unittest.TestCase):
@@ -113,9 +111,9 @@ class TestResolveUnknownSections(unittest.TestCase):
 
 class TestRemoveMisdetectedSections(unittest.TestCase):
 
-    def test_remove_misdetected_sections(self):
+    def test_appendix_all_alone(self):
         assert (
-            test_remove_misdetected_sections(
+            remove_misdetected_sections_(
                 """
             à l'
             <a
