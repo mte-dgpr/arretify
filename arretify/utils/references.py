@@ -16,9 +16,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import List, Iterable, Tuple
+from typing import List, Iterable, Tuple, Iterator
 
-from bs4 import Tag
+from bs4 import BeautifulSoup, Tag
 
 from arretify.utils.html import is_tag_and_matches
 from arretify.html_schemas import (
@@ -194,3 +194,18 @@ def traverse_reference_tree(
             # Send a copy of the sections list otherwise
             # it will be modified in the next iteration
             yield reference_tag, document, sections[:]
+
+
+def iter_reference_trees(soup: BeautifulSoup) -> Iterator[ReferenceTree]:
+    processed: List[Tag] = []
+    for reference_tag in soup.select(
+        f".{DOCUMENT_REFERENCE_SCHEMA.css_class}, .{SECTION_REFERENCE_SCHEMA.css_class}"
+    ):
+        if reference_tag in processed:
+            # Skip already processed tags
+            continue
+
+        reference_tree = build_reference_tree(reference_tag)
+        yield reference_tree
+
+        processed.extend((tag for tag, _, __ in traverse_reference_tree(reference_tree)))

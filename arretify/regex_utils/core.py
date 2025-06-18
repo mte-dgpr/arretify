@@ -71,6 +71,12 @@ class PatternProxy:
         return value
 
     def match(self, string: str) -> Union["MatchProxy", None]:
+        if self.pattern_string.startswith("(?<="):
+            # Positive lookbehind assertion, is not supported by `re.match`
+            # since it requires the match to start at the beginning of the string.
+            raise NotImplementedError(
+                "Lookbehind assertions are not supported by PatternProxy.match"
+            )
         match = self._pattern.match(normalize_string(string, self._settings_for_normalization))
         if match:
             return MatchProxy(string, match)

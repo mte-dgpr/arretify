@@ -94,12 +94,12 @@ def make_testing_function_for_single_tag(
 def make_testing_function_for_children_list(
     process_function: Callable[
         [DocumentContext, Iterable[PageElementOrString]],
-        List[PageElementOrString],
+        Iterable[PageElementOrString],
     ],
 ) -> Callable[[str], str]:
     def _testing_function(string: str):
         document_context = create_document_context(normalized_html_str(string))
-        elements = process_function(document_context, document_context.soup.children)
+        elements = list(process_function(document_context, document_context.soup.children))
         return _normalize_element_list(elements)
 
     return _testing_function

@@ -719,3 +719,52 @@ class TestUnknownMultiple(unittest.TestCase):
             """
             ),
         ]
+
+
+class TestAppendixSingle(unittest.TestCase):
+
+    def test_appendix_num(self):
+        assert process_children("annexe 1") == [
+            normalized_html_str(
+                """
+                <a
+                    class="arretify-section_reference"
+                    data-start_num="1"
+                    data-type="annexe"
+                >
+                    annexe 1
+                </a>
+                """
+            )
+        ]
+
+    def test_appendix_roman(self):
+        assert process_children("annexe IV") == [
+            normalized_html_str(
+                """
+                <a
+                    class="arretify-section_reference"
+                    data-start_num="4"
+                    data-type="annexe"
+                >
+                    annexe IV
+                </a>
+                """
+            )
+        ]
+
+    def test_appendix_no_number(self):
+        assert process_children("en annexe de blabla") == [
+            "en ",
+            normalized_html_str(
+                """
+                <a
+                    class="arretify-section_reference"
+                    data-type="annexe"
+                >
+                    annexe
+                </a>
+                """
+            ),
+            " de blabla",
+        ]

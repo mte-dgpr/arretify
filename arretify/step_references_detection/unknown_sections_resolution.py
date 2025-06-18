@@ -17,47 +17,25 @@
 # limitations under the License.
 #
 
-from typing import List
+from typing import Iterator, Iterable
 from dataclasses import replace as dataclass_replace
 
-from bs4 import Tag
-
-from arretify.types import DocumentContext
-from arretify.law_data.types import SectionType
+from arretify.types import DocumentContext, PageElementOrString
+from arretify.law_data.types import SectionType, Section
 from arretify.utils.references import (
-    build_and_traverse_reference_tree,
-    ReferenceTreeTraversal,
+    traverse_reference_tree,
+    build_reference_tree,
+    ReferenceTree,
 )
-from arretify.utils.html import set_data_attributes
-from arretify.html_schemas import DOCUMENT_REFERENCE_SCHEMA, SECTION_REFERENCE_SCHEMA
+from arretify.utils.html import set_data_attributes, is_tag_and_matches
+from arretify.html_schemas import SECTION_REFERENCE_SCHEMA
 
 
 def resolve_unknown_sections(
     document_context: DocumentContext,
-) -> DocumentContext:
-    processed: List[Tag] = []
-    for reference_tag in document_context.soup.select(
-        f".{DOCUMENT_REFERENCE_SCHEMA.css_class}, .{SECTION_REFERENCE_SCHEMA.css_class}"
-    ):
-        if reference_tag in processed:
-            # Skip already processed tags
-            continue
-
-        reference_tree_traversal = list(build_and_traverse_reference_tree(reference_tag))
-        resolve_unknown_sections_in_tree(
-            document_context,
-            reference_tree_traversal,
-        )
-        processed.extend((tag for tag, _, __ in reference_tree_traversal))
-
-    return document_context
-
-
-def resolve_unknown_sections_in_tree(
-    document_context: DocumentContext,
-    reference_tree_traversal: ReferenceTreeTraversal,
+    reference_tree: ReferenceTree,
 ) -> None:
-    for reference_tag, document, sections in reference_tree_traversal:
+    for reference_tag, document, sections in traverse_reference_tree(reference_tree):
         if not sections:
             # Current is not a section, so we skip it
             continue
@@ -101,3 +79,33 @@ def resolve_unknown_sections_in_tree(
             reference_tag,
             current_section.get_data_attributes(),
         )
+
+
+def remove_misdetected_sections(
+    document_context: DocumentContext,
+    children: Iterable[PageElementOrString],
+) -> Iterator[PageElementOrString]:
+    for section_reference_tag in children:
+        if not is_tag_and_matches(
+            section_reference_tag, css_classes_in=[SECTION_REFERENCE_SCHEMA.css_class]
+        ):
+            yield section_reference_tag
+            continue
+
+        section = Section.from_tag(section_reference_tag)
+        if section.type is SectionType.ANNEXE:
+            reference_tree = build_reference_tree(section_reference_tag)
+            # If section is an appendix, but with no detected number or id,
+            # and that furthermore it is not connected to a chain of other
+            # references (sections or documents), such as "en annexe du présent arrêté",
+            # we can assume it is a misdetected section.
+            if (
+                section.start_num is None
+                and section.start_id is None
+                and len(reference_tree) == 1
+                and len(reference_tree[0]) == 1
+            ):
+                yield from section_reference_tag.children
+                continue
+
+        yield section_reference_tag

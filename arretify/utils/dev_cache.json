@@ -73,7 +73,9 @@
         "(2009-11-19,  relatif aux prescriptions générales applicables aux installations classées soumises à déclaration sous la rubrique $\\mathrm{n}^{\\circ} 4735$)": null,
         "(2008-12-19,  relatif aux prescriptions générales applicables aux installations classées soumises à déclaration sous la rubrique $n^{\\circ} 1434$)": null,
         "(2009-11-19,  relatif aux prescriptions générales applicables aux installations classées soumises à déclaration sous la rubrique $n^{\\circ} 4735$)": null,
-        "(2003-09-11,  portant application du décret $n^{\\circ} 96-102$ du 02 février 1996 et fixant les prescriptions générales applicables)": null
+        "(2003-09-11,  portant application du décret $n^{\\circ} 96-102$ du 02 février 1996 et fixant les prescriptions générales applicables)": null,
+        "(2014-05-29,  des produits de décomposition mentionnés au I de l')": null,
+        "(2014-05-29, , des produits de décomposition mentionnés au I de l')": null
     },
     "get_eu_act_url_with_year_and_num": {
         "(directive, 2010, 75)": "https://eur-lex.europa.eu/legal-content/FR/TXT/HTML/?uri=cellar:c7191b72-4e07-4712-86d6-d3ae5e4f0082",
@@ -162,6 +164,7 @@
         "(2007-05-07,  définissant les « normes de qualité environnementale provisoires(NQEp) » et les objectifs nationaux de réduction des)": null,
         "(2007-05-07, ) et de la directive fitte de la DCE adoptée le 20 octobre 2008 (anthracène et)": null,
         "(2005-09-29,  relative aux critères d'appréciation de la démarche de maîtrise des risques d'accidents susceptibles de survenir dans)": null,
-        "(2010-05-10,  récapitulant les règles méthodologiques applicables aux études de dangers, à l'appropriation de la démarche de réduction)": null
+        "(2010-05-10,  récapitulant les règles méthodologiques applicables aux études de dangers, à l'appropriation de la démarche de réduction)": null,
+        "(2007-05-07, ), concentrations définies dans le tableau de l')": null
     }
 }

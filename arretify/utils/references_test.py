@@ -21,7 +21,7 @@ import unittest
 from bs4 import BeautifulSoup
 
 from arretify.law_data.types import Document, DocumentType, SectionType, Section
-from .references import build_reference_tree, traverse_reference_tree
+from .references import build_reference_tree, traverse_reference_tree, iter_reference_trees
 
 
 class TestBuildReferenceTree(unittest.TestCase):
@@ -279,3 +279,58 @@ class TestTraverseReferenceTree(unittest.TestCase):
             Section(type=SectionType.ARTICLE, start_num="L123"),
             Section(type=SectionType.ALINEA, start_num="456"),
         ]
+
+
+class TestIterReferenceTrees(unittest.TestCase):
+
+    def test_several_reference_trees(self):
+        # Arrange
+        soup = BeautifulSoup(
+            """
+            <div>
+                <a
+                    class="arretify-section_reference"
+                    data-element_id="1"
+                    data-parent_reference="2"
+                    data-type="article"
+                >
+                    Section 1
+                </a>
+                <a
+                    class="arretify-document_reference"
+                    data-element_id="2"
+                    data-type="arrete"
+                >
+                    Parent Document
+                </a>
+                <a
+                    class="arretify-section_reference"
+                    data-element_id="3"
+                    data-parent_reference="4"
+                    data-type="article"
+                >
+                    Section 2
+                </a>
+                <a
+                    class="arretify-document_reference"
+                    data-element_id="4"
+                    data-type="arrete"
+                >
+                    Another Document
+                </a>
+            </div>
+            """,
+            features="html.parser",
+        )
+
+        # Act
+        reference_trees = list(iter_reference_trees(soup))
+
+        # Assert
+        assert len(reference_trees) == 2
+
+        assert len(reference_trees[0]) == 1
+        assert [tag["data-element_id"] for tag in reference_trees[0][0]] == ["2", "1"]
+
+        assert len(reference_trees[1]) == 1
+        assert [tag["data-element_id"] for tag in reference_trees[1][0]] == ["4", "3"]

@@ -54,6 +54,15 @@ class TestPatternProxy(unittest.TestCase):
         # Assert
         assert result is None
 
+    def test_match_with_positive_lookbehind(self):
+        # Arrange
+        pattern_string = r"(?<=abc)\d+"
+        pattern_proxy = PatternProxy(pattern_string)
+        test_string = "abc123"
+        # Assert
+        with self.assertRaises(NotImplementedError):
+            pattern_proxy.match(test_string)
+
     def test_search_success(self):
         # Arrange
         test_string = "abc123"

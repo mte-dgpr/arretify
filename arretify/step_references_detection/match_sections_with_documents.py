@@ -40,7 +40,7 @@ CONNECTOR_SECTION_TO_PARENT_NODE = regex_tree.Group(
     regex_tree.Sequence(
         [
             # Allows a maximum of 3 random words before the connector
-            r"^(\s*[^\.\s]+){0,3}\s*",
+            r"^(\s*[^.,;\s]+){0,3}\s*",
             regex_tree.Branching(
                 [
                     r"du",

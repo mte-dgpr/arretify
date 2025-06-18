@@ -28,6 +28,7 @@ from arretify.types import (
     DocumentContext,
     SectionType,
 )
+from arretify.parsing_utils.numbering import ROMAN_NUMERALS_PATTERN_S
 from arretify.utils.functional import flat_map_string
 from arretify.html_schemas import (
     SECTION_REFERENCE_SCHEMA,
@@ -45,6 +46,7 @@ from arretify.parsing_utils.numbering import (
     EME_PATTERN_S,
     ORDINAL_PATTERN_S,
     ordinal_str_to_int,
+    roman_str_to_int,
 )
 from arretify.regex_utils import (
     regex_tree,
@@ -107,6 +109,10 @@ SIMPLE_NUMBER_NODE = regex_tree.Literal(
     named_group(r"\d+", "simple_number") + EME_PATTERN_S + r"?",
 )
 
+ROMAN_NUMBER_NODE = regex_tree.Literal(
+    named_group(ROMAN_NUMERALS_PATTERN_S, "roman_number") + EME_PATTERN_S + r"?",
+)
+
 ARTICLE_NUMBER_NODE = regex_tree.Group(
     regex_tree.Branching(
         [
@@ -159,6 +165,18 @@ UNKNOWN_SECTION_NUMBER_NODE = regex_tree.Group(
 )
 
 
+APPENDIX_NUMBER_NODE = regex_tree.Group(
+    regex_tree.Branching(
+        [
+            DOTTED_NUMBER_NODE,
+            ROMAN_NUMBER_NODE,
+            SIMPLE_NUMBER_NODE,
+        ]
+    ),
+    group_name="__appendix_number",
+)
+
+
 ARTICLE_RANGE_NODE = regex_tree.Sequence(
     [
         ARTICLE_NUMBER_NODE,
@@ -203,6 +221,10 @@ def _extract_section_number(match: regex_tree.Match) -> SectionNumber:
     if simple_number:
         return simple_number
 
+    roman_number = match.match_dict.get("roman_number")
+    if roman_number:
+        return str(roman_str_to_int(roman_number))
+
     raise RuntimeError("No section number found")
 
 
@@ -216,12 +238,24 @@ def _extract_section(
     unknown_section_matches = filter_regex_tree_match_children(
         section_reference_match, ["__unknown_section_number"]
     )
+    appendix_matches = filter_regex_tree_match_children(
+        section_reference_match, ["__appendix_number"]
+    )
+    appendix_no_number_matches = filter_regex_tree_match_children(
+        section_reference_match, ["__appendix_no_number"]
+    )
 
     if (
         sum(
             [
                 bool(matches)
-                for matches in [article_matches, alinea_matches, unknown_section_matches]
+                for matches in [
+                    article_matches,
+                    alinea_matches,
+                    unknown_section_matches,
+                    appendix_matches,
+                    appendix_no_number_matches,
+                ]
             ]
         )
         > 1
@@ -237,12 +271,21 @@ def _extract_section(
     elif len(unknown_section_matches) in [1, 2]:
         section_matches = unknown_section_matches
         section_type = SectionType.UNKNOWN
+    elif len(appendix_matches) in [1, 2]:
+        section_matches = appendix_matches
+        section_type = SectionType.ANNEXE
+    elif len(appendix_no_number_matches) in [1, 2]:
+        return Section(
+            type=SectionType.ANNEXE,
+            start_num=None,
+            end_num=None,
+        )
     else:
         raise RuntimeError(
             f"Invalid number of matches : {len(article_matches)}, {len(alinea_matches)}"
         )
 
-    section_start: SectionNumber | None = _extract_section_number(section_matches[0])
+    section_start: SectionNumber = _extract_section_number(section_matches[0])
     section_end: SectionNumber | None = None
     if len(section_matches) == 2:
         section_end = _extract_section_number(section_matches[1])
@@ -361,6 +404,19 @@ SECTION_REFERENCE_NODE = regex_tree.Group(
                     ),
                 ]
             ),
+            # -------- Appendices -------- #
+            # Examples :
+            # - "annexe 1"
+            regex_tree.Sequence(
+                [
+                    r"annexes? ",
+                    APPENDIX_NUMBER_NODE,
+                ]
+            ),
+            # Examples :
+            # - "à l'annexe"
+            # - "en annexe"
+            regex_tree.Group(r"annexes?", group_name="__appendix_no_number"),
         ]
     ),
     group_name="__section_reference",
