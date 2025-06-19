@@ -17,8 +17,9 @@
 # limitations under the License.
 #
 import logging
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
+import spacy
 
 from arretify.types import SectionType
 from arretify.parsing_utils.patterns import LEADING_TRAILING_PUNCTUATION_PATTERN
@@ -41,6 +42,8 @@ from .types import TitleInfo
 
 
 _LOGGER = logging.getLogger(__name__)
+
+SPACY_MODEL = spacy.load("fr_core_news_sm")
 
 
 TITLE_PUNCTUATION_PATTERN_S = r"[.\s\-:]"
@@ -142,6 +145,36 @@ TITLE_NODE = regex_tree.Group(
 )
 
 
+def _split_line_based_on_first_verb(line: Optional[str]) -> Tuple[Optional[str], Optional[str]]:
+
+    # Nothing to split
+    if not line:
+        return None, None
+
+    # Initialize alinea text
+    alinea_text = None
+
+    # Convert full line to spacy text
+    spacy_text = SPACY_MODEL(line)
+
+    text_is_alinea = "VERB" in set(token.pos_ for token in spacy_text)
+
+    if text_is_alinea:
+        _LOGGER.info("WE HAVE AN ALINEA IN TITLE")
+        _LOGGER.info(line)
+        for token in spacy_text:
+            _LOGGER.info(f"Mot: {token.text}, POS: {token.pos_}")
+        # Create new line to process
+        # TODO: workaround for line numbering as it changes for all following lines
+        alinea_text = line
+        # Remove text from title contents
+        title_text = None
+    else:
+        title_text = line
+
+    return title_text, alinea_text
+
+
 def parse_title_info(line: str) -> TitleInfo:
     # Detect pattern
     match_pattern = regex_tree_match([line], TITLE_NODE)
@@ -162,11 +195,14 @@ def parse_title_info(line: str) -> TitleInfo:
         number = str(ordinal_str_to_int(number))
     levels = str_to_levels(number)
 
+    # If the title contains an alinea, break it down in two lines
+    title_text, alinea_text = _split_line_based_on_first_verb(text)
+
     title_info = TitleInfo(
         section_type=section_type,
         number=number,
         levels=levels,
-        text=text,
+        text=title_text,
     )
 
     return title_info

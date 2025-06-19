@@ -21,6 +21,7 @@ dependencies = [
   "roman~=5.0",
   "pylatexenc~=2.10",
   "pydantic~=2.11",
+  "spacy~=3.8.7",
 
   # from _vendor.clients_api_droit
   "requests~=2.32",
