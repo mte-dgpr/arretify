@@ -43,7 +43,7 @@ from .types import TitleInfo
 
 _LOGGER = logging.getLogger(__name__)
 
-SPACY_MODEL = spacy.load("fr_core_news_sm")
+SPACY_MODEL = spacy.load("fr_dep_news_trf")
 
 
 TITLE_PUNCTUATION_PATTERN_S = r"[.\s\-:]"
@@ -153,24 +153,44 @@ def _split_line_based_on_first_verb(line: Optional[str]) -> Tuple[Optional[str],
 
     # Initialize alinea text
     alinea_text = None
+    title_sentences = []
 
-    # Convert full line to spacy text
-    spacy_text = SPACY_MODEL(line)
+    # Split sentences
+    sentences = line.split(":")
 
-    text_is_alinea = "VERB" in set(token.pos_ for token in spacy_text)
+    for i, sentence in enumerate(sentences):
 
-    if text_is_alinea:
-        _LOGGER.info("WE HAVE AN ALINEA IN TITLE")
-        _LOGGER.info(line)
-        for token in spacy_text:
-            _LOGGER.info(f"Mot: {token.text}, POS: {token.pos_}")
-        # Create new line to process
-        # TODO: workaround for line numbering as it changes for all following lines
-        alinea_text = line
-        # Remove text from title contents
-        title_text = None
+        # POS tagging
+        if sentence.strip():
+
+            spacy_sentence = SPACY_MODEL(sentence)
+
+            # If a sentence contains a verb in finite form, not capitalized, then all
+            # following text will be comprised in a new alinea distinct from the title
+            for token in spacy_sentence:
+
+                verb_condition = token.pos_ in {"AUX", "VERB"}
+                morph_condition = token.morph.get("VerbForm", default=None) == ["Fin"]
+                not_cap_condition = all(c == "x" for c in token.shape_)
+
+                if verb_condition and morph_condition and not_cap_condition:
+
+                    _LOGGER.info(f"INFO - Split alinea contents in line: {line}")
+                    # Add all following sentences to alinea
+                    alinea_text = ":".join(sentences[i:])
+                    # Remove text from title contents
+                    title_text = line.replace(alinea_text, "")
+
+                    break
+
+        # All this content is still part of the title
+        if not alinea_text:
+            title_sentences.append(sentence)
+
+    if len(title_sentences) > 0:
+        title_text = ":".join(title_sentences)
     else:
-        title_text = line
+        title_text = None
 
     return title_text, alinea_text
 

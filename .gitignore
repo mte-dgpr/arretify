@@ -1,7 +1,7 @@
 tmp
 test_data/arretes_html/dsfr
 test_data/arretes_html/styles.css
-venv
+venv*
 data
 données de test
 .env
