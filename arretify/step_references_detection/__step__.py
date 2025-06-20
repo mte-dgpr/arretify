@@ -26,6 +26,8 @@ from arretify.html_schemas import (
     MOTIF_SCHEMA,
     VISA_SCHEMA,
 )
+from arretify.utils.references import iter_reference_trees
+from arretify.utils.merge import merge_strings_ignore_page_elements
 
 from .sections_detection import (
     parse_section_references,
@@ -49,6 +51,13 @@ from .eu_acts_detection import (
 from .match_sections_with_documents import match_sections_to_parents
 from .unknown_sections_resolution import (
     resolve_unknown_sections,
+    remove_misdetected_sections,
+)
+
+
+REFERENCES_CONTAINER_SELECTOR = (
+    f".{ALINEA_SCHEMA.css_class}, .{ALINEA_SCHEMA.css_class} *"
+    + f", .{MOTIF_SCHEMA.css_class}, .{VISA_SCHEMA.css_class}"
 )
 
 
@@ -56,10 +65,7 @@ def step_references_detection(document_context: DocumentContext) -> DocumentCont
     new_children: List[PageElementOrString]
 
     # Parse documents and sections references
-    for tag in document_context.soup.select(
-        f".{ALINEA_SCHEMA.css_class}, .{ALINEA_SCHEMA.css_class} *"
-        + f", .{MOTIF_SCHEMA.css_class}, .{VISA_SCHEMA.css_class}"
-    ):
+    for tag in document_context.soup.select(REFERENCES_CONTAINER_SELECTOR):
         new_children = list(tag.children)
         new_children = parse_arretes_references(document_context, new_children)
         new_children = parse_decrets_references(document_context, new_children)
@@ -71,14 +77,25 @@ def step_references_detection(document_context: DocumentContext) -> DocumentCont
         replace_children(tag, new_children)
 
     # Match sections with documents
-    for tag in document_context.soup.select(
-        f".{ALINEA_SCHEMA.css_class}, .{ALINEA_SCHEMA.css_class} *"
-        + f", .{MOTIF_SCHEMA.css_class}, .{VISA_SCHEMA.css_class}"
-    ):
+    for tag in document_context.soup.select(REFERENCES_CONTAINER_SELECTOR):
         new_children = list(tag.children)
         new_children = match_sections_to_parents(document_context, new_children)
         replace_children(tag, new_children)
 
-    resolve_unknown_sections(document_context)
+    for reference_tree in iter_reference_trees(document_context.soup):
+        resolve_unknown_sections(
+            document_context,
+            reference_tree,
+        )
+
+    # Cleaning steps
+    for tag in document_context.soup.select(REFERENCES_CONTAINER_SELECTOR):
+        new_children = list(tag.children)
+        new_children = list(
+            merge_strings_ignore_page_elements(
+                remove_misdetected_sections(document_context, new_children)
+            )
+        )
+        replace_children(tag, new_children)
 
     return document_context

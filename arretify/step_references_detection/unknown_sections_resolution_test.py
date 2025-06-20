@@ -19,78 +19,16 @@
 import unittest
 
 from arretify.utils.testing import create_document_context
-from arretify.utils.references import build_and_traverse_reference_tree
+from arretify.utils.references import build_reference_tree
 from arretify.law_data.types import Section, SectionType
-from .unknown_sections_resolution import resolve_unknown_sections_in_tree, resolve_unknown_sections
+from arretify.utils.testing import make_testing_function_for_children_list
+from .unknown_sections_resolution import resolve_unknown_sections, remove_misdetected_sections
+
+
+remove_misdetected_sections_ = make_testing_function_for_children_list(remove_misdetected_sections)
 
 
 class TestResolveUnknownSections(unittest.TestCase):
-    def test_resolve_several_unknown_sections(self):
-        # Arrange
-        document_context = create_document_context(
-            """
-            <div>
-                <a
-                    class="arretify-section_reference"
-                    data-element_id="1"
-                    data-parent_reference="2"
-                    data-start_num="123"
-                    data-type="unknown"
-                >
-                    Paragraphe 123
-                </a>
-                de l'
-                <a
-                    class="arretify-document_reference"
-                    data-element_id="2"
-                    data-num="456"
-                    data-type="arrete"
-                >
-                    arrêté n° 456
-                </a>
-
-                et
-
-                <a
-                    class="arretify-section_reference"
-                    data-element_id="3"
-                    data-parent_reference="4"
-                    data-start_num="789"
-                    data-type="unknown"
-                >
-                    Paragraphe 789
-                </a>
-                de l'
-                <a
-                    class="arretify-document_reference"
-                    data-element_id="4"
-                    data-num="456"
-                    data-type="arrete"
-                >
-                    arrêté n° 456
-                </a>
-            </div>
-            """
-        )
-
-        # Act
-        resolve_unknown_sections(document_context)
-
-        # Assert
-        section_reference_tag1 = document_context.soup.select_one(
-            ".arretify-section_reference[data-element_id='1']"
-        )
-        section = Section.from_tag(section_reference_tag1)
-        assert section.type == SectionType.ARTICLE
-
-        section_reference_tag2 = document_context.soup.select_one(
-            ".arretify-section_reference[data-element_id='3']"
-        )
-        section = Section.from_tag(section_reference_tag2)
-        assert section.type == SectionType.ARTICLE
-
-
-class TestResolveUnknownSectionsInTree(unittest.TestCase):
 
     def test_resolve_unknown_section_of_document(self):
         # Arrange
@@ -118,14 +56,12 @@ class TestResolveUnknownSectionsInTree(unittest.TestCase):
             </div>
             """
         )
-        reference_tree_traversal = list(
-            build_and_traverse_reference_tree(
-                document_context.soup.select_one(".arretify-document_reference")
-            )
+        reference_tree = build_reference_tree(
+            document_context.soup.select_one(".arretify-document_reference")
         )
 
         # Act
-        resolve_unknown_sections_in_tree(document_context, reference_tree_traversal)
+        resolve_unknown_sections(document_context, reference_tree)
 
         # Assert
         section_reference_tag = document_context.soup.select_one(".arretify-section_reference")
@@ -158,14 +94,12 @@ class TestResolveUnknownSectionsInTree(unittest.TestCase):
             </div>
             """
         )
-        reference_tree_traversal = list(
-            build_and_traverse_reference_tree(
-                document_context.soup.select_one(".arretify-section_reference[data-element_id='1']")
-            )
+        reference_tree = build_reference_tree(
+            document_context.soup.select_one(".arretify-section_reference[data-element_id='1']")
         )
 
         # Act
-        resolve_unknown_sections_in_tree(document_context, reference_tree_traversal)
+        resolve_unknown_sections(document_context, reference_tree)
 
         # Assert
         section_reference_tag = document_context.soup.select_one(
@@ -173,3 +107,24 @@ class TestResolveUnknownSectionsInTree(unittest.TestCase):
         )
         section = Section.from_tag(section_reference_tag)
         assert section.type == SectionType.ALINEA
+
+
+class TestRemoveMisdetectedSections(unittest.TestCase):
+
+    def test_appendix_all_alone(self):
+        assert (
+            remove_misdetected_sections_(
+                """
+            à l'
+            <a
+                class="arretify-section_reference"
+                data-element_id="1"
+                data-type="annexe"
+            >
+                annexe
+            </a>
+            de la mairie
+            """
+            )
+            == ["à l' ", "annexe", " de la mairie"]
+        )

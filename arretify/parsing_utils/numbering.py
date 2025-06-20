@@ -68,6 +68,10 @@ def ordinal_str_to_int(ordinal: str) -> int:
     raise RuntimeError(f"Ordinal not found {ordinal}")
 
 
+def roman_str_to_int(roman_str: str) -> int:
+    return roman.fromRoman(roman_str)
+
+
 def str_to_levels(number: str) -> Optional[List[int]]:
 
     number_split = number.replace(".", " ").replace("-", " ").split()
@@ -83,7 +87,7 @@ def str_to_levels(number: str) -> Optional[List[int]]:
         cur_char = number_split[level - i]
 
         if ENDING_ROMAN_NUMERALS_PATTERN.match(cur_char):
-            cur_number = roman.fromRoman(cur_char)
+            cur_number = roman_str_to_int(cur_char)
         elif ENDING_LETTER_PATTERN.match(cur_char):
             cur_number = ord(cur_char.lower()) - 96
         elif ENDING_NUMBERS_PATTERN.match(cur_char):
