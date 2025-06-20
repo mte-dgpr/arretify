@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Iterator
 import logging
 
 from bs4 import (
@@ -24,7 +24,7 @@ from bs4 import (
     Tag,
 )
 
-from arretify.types import SectionType, DataElementDataDict
+from arretify.types import SectionType, DataElementDataDict, PageElementOrString
 from arretify.utils.html import (
     make_data_tag,
     render_str_list_attribute,
@@ -36,7 +36,7 @@ from arretify.html_schemas import (
 )
 from arretify.parsing_utils.source_mapping import TextSegments
 from arretify.errors import ErrorCodes
-from .basic_elements import parse_basic_elements
+from .basic_elements import parse_basic_elements, render_basic_elements, _parse_inline_quotes
 from .document_elements import (
     is_document_element,
     parse_document_elements,
@@ -46,6 +46,7 @@ from .titles_detection import (
     parse_title_info,
     is_next_title,
 )
+from .core import Element, ElementFlow
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -162,25 +163,20 @@ def parse_content(
         while lines and not is_title(lines[0].contents):
             lines = parse_document_elements(soup, section_element, lines)
 
-            # Parse alineas until a new section is detected
-            # ALINEA : "Constitue un alinéa toute phrase, tout mot, tout ensemble de phrases ou de
-            # mots commençant à la ligne, précédés ou non d’un tiret, d’un point, d’une
-            # numérotation ou de guillemets, sans qu’il y ait lieu d’établir des distinctions selon
-            # la nature du signe placé à la fin de la ligne précédente (point, deux-points ou
-            # point-virgule). Un tableau constitue un seul alinéa (définition complète dans le
-            # guide de légistique)."
-            # REF : https://www.legifrance.gouv.fr/contenu/Media/files/lexique-api-lgf.docx
+            section_pile: TextSegments = []
             while lines and not (
                 is_title(lines[0].contents) or is_document_element(lines[0].contents)
             ):
+                section_pile.append(lines.pop(0))
+
+            element_flow = parse_basic_elements(section_pile)
+            element_flow = parse_alineas(element_flow)
+
+            for alinea_element in element_flow:
+                assert isinstance(alinea_element, Element)
+                assert alinea_element.name == "alinea"
                 alinea_count += 1
-                alinea_element = make_data_tag(
-                    soup,
-                    ALINEA_SCHEMA,
-                    data=dict(number=str(alinea_count)),
-                )
-                section_element.append(alinea_element)
-                parse_basic_elements(soup, alinea_element, lines)
+                section_element.append(render_alinea(soup, alinea_element, alinea_count))
 
     return lines
 
@@ -189,3 +185,59 @@ def _get_downstream_sections_types(section_type):
     ordered_sections_types = [section_type for section_type in SectionType]
     section_index = ordered_sections_types.index(section_type)
     return ordered_sections_types[section_index + 1 :]
+
+
+# Parse alineas until a new section is detected
+# ALINEA : "Constitue un alinéa toute phrase, tout mot, tout ensemble de phrases ou de
+# mots commençant à la ligne, précédés ou non d’un tiret, d’un point, d’une
+# numérotation ou de guillemets, sans qu’il y ait lieu d’établir des distinctions selon
+# la nature du signe placé à la fin de la ligne précédente (point, deux-points ou
+# point-virgule). Un tableau constitue un seul alinéa (définition complète dans le
+# guide de légistique)."
+# REF : https://www.legifrance.gouv.fr/contenu/Media/files/lexique-api-lgf.docx
+def parse_alineas(
+    element_flow_: ElementFlow,
+) -> Iterator[Element]:
+    element_flow = list(element_flow_)
+    while element_flow:
+        element_or_text_segments = element_flow.pop(0)
+        if isinstance(element_or_text_segments, Element):
+            contents: List[Element | TextSegments] = [element_or_text_segments]
+            if element_or_text_segments.name == "table":
+                while (
+                    element_flow
+                    and isinstance(element_flow[0], Element)
+                    and element_flow[0].name == "table_description"
+                ):
+                    contents.append(element_flow.pop(0))
+
+            yield Element(
+                name="alinea",
+                contents=contents,
+            )
+        else:
+            for line in element_or_text_segments:
+                yield Element(name="alinea", contents=[[line]])
+
+
+def render_alinea(
+    soup: BeautifulSoup,
+    element: Element,
+    alinea_number: int,
+) -> Tag:
+    contents: List[PageElementOrString] = []
+    for element_or_text_segments in element.contents:
+        if isinstance(element_or_text_segments, Element):
+            contents.extend(render_basic_elements(soup, element_or_text_segments))
+        else:
+            assert (
+                len(element_or_text_segments) == 1
+            ), "Alinea element should contain exactly one TextSegments"
+            contents.extend(_parse_inline_quotes(soup, element_or_text_segments[0].contents))
+
+    return make_data_tag(
+        soup,
+        ALINEA_SCHEMA,
+        data=dict(number=str(alinea_number)),
+        contents=contents,
+    )
