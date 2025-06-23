@@ -16,66 +16,64 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-import unittest
 
 from bs4 import BeautifulSoup
 
 from arretify.parsing_utils.source_mapping import initialize_lines
 from arretify.types import TextSegment, TextSegments
 from arretify.parsing_utils.source_mapping import apply_to_segment
-from .basic_elements import parse_basic_elements
 from .core import Element
 
 
-class TestParseBasicElements(unittest.TestCase):
+# class TestParseBasicElements(unittest.TestCase):
 
-    def test_all_elements(self):
-        # Arrange
-        lines = initialize_lines(
-            [
-                # Table
-                "| Polluant | Concentration maximale en mg/l |",
-                "|---------|---------------------------------|",
-                "| MES     | 35                               |",
-                # List
-                "- Item 1",
-                "- Item 2",
-                "- Item 3",
-                # Blockquote
-                '"bla bla',
-                'blo blo "haha"',
-                'bli bli"',
-                # Image
-                "![Image description](http://example.com/image.jpg)",
-                # Other text
-                "This is a simple text line.",
-            ]
-        )
+#     def test_all_elements(self):
+#         # Arrange
+#         lines = initialize_lines(
+#             [
+#                 # Table
+#                 "| Polluant | Concentration maximale en mg/l |",
+#                 "|---------|---------------------------------|",
+#                 "| MES     | 35                               |",
+#                 # List
+#                 "- Item 1",
+#                 "- Item 2",
+#                 "- Item 3",
+#                 # Blockquote
+#                 '"bla bla',
+#                 'blo blo "haha"',
+#                 'bli bli"',
+#                 # Image
+#                 "![Image description](http://example.com/image.jpg)",
+#                 # Other text
+#                 "This is a simple text line.",
+#             ]
+#         )
 
-        # Act
-        result = list(parse_basic_elements(lines))
+#         # Act
+#         result = list(parse_basic_elements(lines))
 
-        # Assert
-        assert len(result) == 5
+#         # Assert
+#         assert len(result) == 5
 
-        assert isinstance(result[0], Element)
-        assert result[0].name == "table"
-        assert result[0].contents == [lines[0:3]]
+#         assert isinstance(result[0], Element)
+#         assert result[0].name == "table"
+#         assert result[0].contents == [lines[0:3]]
 
-        assert isinstance(result[1], Element)
-        assert result[1].name == "list"
-        assert result[1].contents == [lines[3:6]]
+#         assert isinstance(result[1], Element)
+#         assert result[1].name == "list"
+#         assert result[1].contents == [lines[3:6]]
 
-        assert isinstance(result[2], Element)
-        assert result[2].name == "blockquote"
-        assert result[2].contents == [lines[6:9]]
+#         assert isinstance(result[2], Element)
+#         assert result[2].name == "blockquote"
+#         assert result[2].contents == [lines[6:9]]
 
-        assert isinstance(result[3], Element)
-        assert result[3].name == "image"
-        assert result[3].contents == [lines[9:10]]
+#         assert isinstance(result[3], Element)
+#         assert result[3].name == "image"
+#         assert result[3].contents == [lines[9:10]]
 
-        assert isinstance(result[4], list)
-        assert result[4] == lines[10:11]  # Remaining text line
+#         assert isinstance(result[4], list)
+#         assert result[4] == lines[10:11]  # Remaining text line
 
 
 # from .basic_elements import (

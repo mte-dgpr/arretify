@@ -24,7 +24,7 @@ from arretify.html_schemas import (
 )
 from arretify.utils.html import make_data_tag
 from .header import parse_header
-from .content import parse_content
+from .content import parse_content_DEPRECATED
 
 
 def parse_arrete(document_context: DocumentContext) -> DocumentContext:
@@ -41,11 +41,15 @@ def parse_arrete(document_context: DocumentContext) -> DocumentContext:
     if lines:
         main_content = make_data_tag(document_context.soup, MAIN_SCHEMA)
         body.append(main_content)
-        lines = parse_content(document_context.soup, main_content, lines, exit_on_appendix=True)
+        lines = parse_content_DEPRECATED(
+            document_context.soup, main_content, lines, exit_on_appendix=True
+        )
 
     if lines:
         appendix = make_data_tag(document_context.soup, APPENDIX_SCHEMA)
         body.append(appendix)
-        lines = parse_content(document_context.soup, appendix, lines, exit_on_appendix=False)
+        lines = parse_content_DEPRECATED(
+            document_context.soup, appendix, lines, exit_on_appendix=False
+        )
 
     return document_context

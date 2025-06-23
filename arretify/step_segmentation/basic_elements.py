@@ -19,7 +19,7 @@
 from typing import List, Tuple, Iterable
 import logging
 
-from bs4 import BeautifulSoup, Tag
+from bs4 import BeautifulSoup
 
 from arretify.utils.html import (
     PageElementOrString,
@@ -98,18 +98,6 @@ def is_blockquote_end(line: str) -> bool:
     return bool(BLOCKQUOTE_END_PATTERN.search(line))
 
 
-def parse_basic_elements_DEPRECATED(
-    soup: BeautifulSoup,
-    lines: TextSegments,
-) -> Iterable[PageElementOrString]:
-    for element_or_text_segments in parse_basic_elements(lines):
-        if isinstance(element_or_text_segments, Element):
-            yield from render_basic_elements(soup, element_or_text_segments)
-        else:
-            for line in element_or_text_segments:
-                yield from _parse_inline_quotes(soup, lines.pop(0).contents)
-
-
 def parse_list_DEPRECATED(
     soup: BeautifulSoup, lines: TextSegments
 ) -> Tuple[TextSegments, PageElementOrString]:
@@ -133,22 +121,10 @@ def parse_list_DEPRECATED(
     return lines, make_ul(soup, list_pile)
 
 
-def parse_basic_elements(
-    lines: TextSegments,
-    should_parse_blockquotes: bool = True,
-) -> ElementFlow:
-    element_flow: ElementFlow = [lines]
-    if should_parse_blockquotes:
-        element_flow = flat_map_element_flow(element_flow, parse_blockquotes)
-    element_flow = flat_map_element_flow(element_flow, parse_tables)
-    element_flow = flat_map_element_flow(element_flow, parse_lists)
-    element_flow = flat_map_element_flow(element_flow, parse_images)
-    yield from element_flow
-
-
 def parse_images(
     lines: TextSegments,
 ) -> ElementFlow:
+    lines = list(lines)
     pile: TextSegments = []
     while lines:
         while lines and not is_image(lines[0].contents):
@@ -169,6 +145,7 @@ def parse_images(
 def parse_lists(
     lines: TextSegments,
 ) -> ElementFlow:
+    lines = list(lines)
     pile: TextSegments = []
 
     while lines:
@@ -188,6 +165,7 @@ def parse_lists(
 def parse_tables(
     lines: TextSegments,
 ) -> ElementFlow:
+    lines = list(lines)
     pile: TextSegments = []
     table_pile: TextSegments = []
 
@@ -215,6 +193,7 @@ def parse_tables(
 def parse_blockquotes(
     lines: TextSegments,
 ) -> ElementFlow:
+    lines = list(lines)
     pile: TextSegments = []
     while lines:
         while lines and not is_blockquote_start(lines[0].contents):
@@ -258,9 +237,12 @@ def parse_blockquotes(
         )
 
         if quotes_depth_count == 0:
+            contents = flat_map_element_flow([pile], parse_tables)
+            contents = flat_map_element_flow(contents, parse_lists)
+            contents = flat_map_element_flow(contents, parse_images)
             yield Element(
                 name="blockquote",
-                contents=list(parse_basic_elements(pile, should_parse_blockquotes=False)),
+                contents=list(contents),
             )
         else:
             yield Element(
@@ -304,10 +286,10 @@ def render_basic_elements(
     elif element.name == "error":
         yield from render_error(soup, element)
     else:
-        raise ValueError(
-            f"Unknown element name '{element.name}' in render_basic_elements. "
-            f"Expected one of: 'list', 'table', 'table_description', 'blockquote', 'image', 'error'."
-        )
+        import pdb
+
+        pdb.set_trace()
+        raise ValueError(f"Unknown element name '{element.name}' in render_basic_elements.")
 
 
 def render_table(
@@ -340,6 +322,7 @@ def _render_list(
     soup: BeautifulSoup,
     lines: TextSegments,
 ) -> Tuple[TextSegments, PageElementOrString]:
+    lines = list(lines)
     list_pile: List[PageElementOrString] = []
     ref_indentation = list_indentation(lines[0].contents)
 
