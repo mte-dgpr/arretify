@@ -16,7 +16,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import Callable, Dict, List, Optional, Iterable
 
 from bs4 import Tag, BeautifulSoup
 
@@ -34,7 +33,7 @@ from arretify.utils.html import (
 from arretify.types import PageElementOrString
 from arretify.utils.markdown_parsing import is_image
 
-from .core import ElementFlow, Element, assert_single_text_segments, flat_map_element_flow, is_element
+from .core import NodeFlow, Node, assert_single_text_segments, flat_map_node_flow, is_node
 
 
 PAGE_FOOTERS_LIST = [
@@ -85,7 +84,7 @@ def is_document_element_DEPRECATED(line: str) -> bool:
 
 def parse_table_of_contents(
     lines: TextSegments,
-) -> ElementFlow:
+) -> NodeFlow:
     lines = list(lines)
     pile: TextSegments = []
     while lines:
@@ -98,13 +97,13 @@ def parse_table_of_contents(
         while lines and any(is_table_of_contents(lines[i].contents) for i in range(3)):
             pile.append(lines.pop(0))
         if pile:
-            yield Element(name="table_of_contents", contents=[pile])
+            yield Node(type="table_of_contents", children=[pile])
             pile = []
 
 
 def parse_parse_page_footer(
     lines: TextSegments,
-) -> ElementFlow:
+) -> NodeFlow:
     lines = list(lines)
     pile: TextSegments = []
 
@@ -118,15 +117,15 @@ def parse_parse_page_footer(
         while lines and is_page_footer(lines[0].contents):
             pile.append(lines.pop(0))
         if pile:
-            yield Element(name="page_footer", contents=[pile])
+            yield Node(type="page_footer", children=[pile])
             pile = []
 
 
 def render_table_of_contents(
     soup: BeautifulSoup,
-    element: Element,
+    node: Node,
 ) -> PageElementOrString:
-    text_segments = assert_single_text_segments(element)
+    text_segments = assert_single_text_segments(node)
     return make_data_tag(
         soup,
         TABLE_OF_CONTENTS_SCHEMA,
@@ -136,9 +135,9 @@ def render_table_of_contents(
 
 def render_page_footer(
     soup: BeautifulSoup,
-    element: Element,
+    node: Node,
 ) -> PageElementOrString:
-    text_segments = assert_single_text_segments(element)
+    text_segments = assert_single_text_segments(node)
     return make_data_tag(
         soup,
         PAGE_FOOTER_SCHEMA,

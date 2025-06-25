@@ -50,13 +50,18 @@ from .titles_detection import (
     is_next_title,
 )
 from .core import (
-    Element,
-    ElementFlow,
-    is_element,
+    Node,
+    NodeFlow,
+    is_node,
     assert_single_text_segment,
-    flat_map_element_flow,
+    flat_map_node_flow,
 )
-from .document_elements import parse_parse_page_footer, parse_table_of_contents, render_page_footer, render_table_of_contents
+from .document_elements import (
+    parse_parse_page_footer,
+    parse_table_of_contents,
+    render_page_footer,
+    render_table_of_contents,
+)
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -99,55 +104,55 @@ def _get_downstream_sections_types(section_type):
 
 def parse_content(
     lines: TextSegments,
-) -> ElementFlow:
-    element_flow: ElementFlow = [lines]
-    # Image strings can be very long, and table of contents pattern look 
-    # at the end of the sentence. 
+) -> NodeFlow:
+    node_flow: NodeFlow = [lines]
+    # Image strings can be very long, and table of contents pattern look
+    # at the end of the sentence.
     # So, we make sure we parse images before table of contents.
-    element_flow = flat_map_element_flow(
-        element_flow,
+    node_flow = flat_map_node_flow(
+        node_flow,
         parse_images,
     )
-    element_flow = flat_map_element_flow(
-        element_flow,
+    node_flow = flat_map_node_flow(
+        node_flow,
         parse_parse_page_footer,
     )
-    element_flow = flat_map_element_flow(
-        element_flow,
+    node_flow = flat_map_node_flow(
+        node_flow,
         parse_table_of_contents,
     )
-    element_flow = flat_map_element_flow(
-        element_flow,
+    node_flow = flat_map_node_flow(
+        node_flow,
         parse_blockquotes,
     )
-    element_flow = parse_section_titles(element_flow)
-    element_flow = parse_sections(element_flow)
-    yield from element_flow
+    node_flow = parse_section_titles(node_flow)
+    node_flow = parse_sections(node_flow)
+    yield from node_flow
 
 
 def render_content(
     soup: BeautifulSoup,
-    element_flow: ElementFlow,
+    node_flow: NodeFlow,
 ) -> Tag:
     content = soup.new_tag("div")
-    for element in element_flow:
-        if is_element(element, name="section"):
-            content.append(render_section(soup, element))
-        elif is_element(element):
-            raise ValueError(f"Unexpected element {element.name} in content")
+    for node in node_flow:
+        if is_node(node, type_in=["section"]):
+            content.append(render_section(soup, node))
+        elif is_node(node):
+            raise ValueError(f"Unexpected node {node.type} in content")
         else:
-            content.append(soup.new_tag("div", contents=element))
+            content.append(soup.new_tag("div", contents=node))
     return content
 
 
 def parse_section_titles(
-    element_flow_: ElementFlow,
-) -> ElementFlow:
-    element_flow = list(element_flow_)
+    node_flow_: NodeFlow,
+) -> NodeFlow:
+    node_flow = list(node_flow_)
 
     # First collect all section titles in output_flow.
-    output_flow = flat_map_element_flow(element_flow, _create_section_title_elements)
-    section_titles: List[Element] = [e for e in output_flow if is_element(e, name="section_title")]
+    output_flow = flat_map_node_flow(node_flow, _create_section_title_nodes)
+    section_titles: List[Node] = [e for e in output_flow if is_node(e, type_in=["section_title"])]
 
     # Ancestry order from root to the current section in the parsing context
     sections: int = 1
@@ -226,9 +231,9 @@ def parse_section_titles(
     yield from output_flow
 
 
-def _create_section_title_elements(
+def _create_section_title_nodes(
     lines: TextSegments,
-) -> ElementFlow:
+) -> NodeFlow:
     lines = list(lines)
     pile: TextSegments = []
     while lines:
@@ -239,123 +244,119 @@ def _create_section_title_elements(
             pile = []
 
         if lines:
-            section_title = Element(name="section_title", contents=[[lines.pop(0)]])
+            section_title = Node(type="section_title", children=[[lines.pop(0)]])
             yield section_title
 
 
 def parse_sections(
-    element_flow_: ElementFlow,
+    node_flow_: NodeFlow,
     level: int = 0,
-) -> ElementFlow:
-    element_flow = list(element_flow_)
-    pile: List[Element | TextSegments] = []
+) -> NodeFlow:
+    node_flow = list(node_flow_)
+    pile: List[Node | TextSegments] = []
 
     # 1. If there is content before the first sub-section title, we parse it as
     # alineas in the current section.
     pile = []
-    while element_flow and not is_element(element_flow[0], name="section_title"):
-        pile.append(element_flow.pop(0))
+    while node_flow and not is_node(node_flow[0], type_in=["section_title"]):
+        pile.append(node_flow.pop(0))
     if pile:
         yield from parse_alineas(pile)
 
     # 2. If there are sections at deeper levels we parse them first, by calling
     # the function recursively.
     pile = []
-    while element_flow:
-        if is_element(element_flow[0], name="section_title"):
-            if element_flow[0].data["level"] == level:
+    while node_flow:
+        if is_node(node_flow[0], type_in=["section_title"]):
+            if node_flow[0].data["level"] == level:
                 break
-            elif element_flow[0].data["level"] > level:
-                pile.append(element_flow.pop(0))
+            elif node_flow[0].data["level"] > level:
+                pile.append(node_flow.pop(0))
             else:
                 raise RuntimeError(
-                    f"Unexpected section title level {element_flow[0].data['level']} "
+                    f"Unexpected section title level {node_flow[0].data['level']} "
                     f"at level {level}"
                 )
         else:
-            pile.append(element_flow.pop(0))
+            pile.append(node_flow.pop(0))
     if pile:
         yield from parse_sections(pile, level=level + 1)
 
     # 3. Finally parse sections at current level
     pile = []
-    while element_flow:
+    while node_flow:
         # Add section title to the pile
-        pile.append(element_flow.pop(0))
+        pile.append(node_flow.pop(0))
 
         # Fill-in the pile until we find next section title
         # of the same level
-        while element_flow:
-            if is_element(element_flow[0], name="section_title"):
-                if element_flow[0].data["level"] == level:
+        while node_flow:
+            if is_node(node_flow[0], type_in=["section_title"]):
+                if node_flow[0].data["level"] == level:
                     break
-                elif element_flow[0].data["level"] < level:
+                elif node_flow[0].data["level"] < level:
                     raise RuntimeError(
-                        f"Unexpected section title level {element_flow[0].data['level']} "
+                        f"Unexpected section title level {node_flow[0].data['level']} "
                     )
-            pile.append(element_flow.pop(0))
+            pile.append(node_flow.pop(0))
 
         if pile:
-            section_title, section_content = pile[0], pile[1:]
-            yield Element(
-                name="section",
-                contents=[section_title] + list(parse_sections(section_content, level=level + 1)),
+            section_title, section_children = pile[0], pile[1:]
+            yield Node(
+                type="section",
+                children=[section_title] + list(parse_sections(section_children, level=level + 1)),
             )
             pile = []
 
 
 def render_section_title(
     soup: BeautifulSoup,
-    element: Element,
+    node: Node,
 ) -> Tag:
-    if not is_element(element, name="section_title"):
-        raise ValueError("Element must be a section title")
+    if not is_node(node, type_in=["section_title"]):
+        raise ValueError("Node must be a section title")
 
     data: DataElementDataDict = dict()
-    if 'error_codes' in element.data:
-        data["error_codes"] = render_str_list_attribute(
-            element.data["error_codes"]
-        )
+    if "error_codes" in node.data:
+        data["error_codes"] = render_str_list_attribute(node.data["error_codes"])
 
     return make_data_tag(
         soup,
-        SECTION_TITLE_SCHEMAS[element.data["level"]],
-        contents=[assert_single_text_segment(element).contents],
+        SECTION_TITLE_SCHEMAS[node.data["level"]],
+        contents=[assert_single_text_segment(node).contents],
         data=data,
     )
 
 
 def render_section(
     soup: BeautifulSoup,
-    element: Element,
+    node: Node,
 ) -> Tag:
-    if not is_element(element, name="section"):
-        raise ValueError("Element must be a section")
+    if not is_node(node, type_in=["section"]):
+        raise ValueError("Node must be a section")
 
-    assert is_element(
-        element.contents[0], name="section_title"
-    ), "First element must be a section title"
-    section_title: Element = element.contents[0]
+    assert is_node(
+        node.children[0], type_in=["section_title"]
+    ), "First node must be a section title"
+    section_title: Node = node.children[0]
 
     contents: List[PageElementOrString] = []
-    for element_or_text_segments in element.contents:
-        if is_element(element_or_text_segments, name="section_title"):
-            contents.append(render_section_title(soup, element_or_text_segments))
-        elif is_element(element_or_text_segments, name="section"):
-            contents.append(render_section(soup, element_or_text_segments))
-        elif is_element(element_or_text_segments, name="alinea"):
-            contents.append(render_alinea(soup, element_or_text_segments))
-        elif is_element(element_or_text_segments, name="page_footer"):
-            contents.append(render_page_footer(soup, element_or_text_segments))
-        elif is_element(element_or_text_segments, name="table_of_contents"):
-            contents.append(render_table_of_contents(soup, element_or_text_segments))
-        elif is_element(element_or_text_segments):
-            raise ValueError(
-                f"Unexpected element {element_or_text_segments.name} in section contents"
-            )
+    for node_or_text_segments in node.children:
+        if is_node(node_or_text_segments, type_in=["section_title"]):
+            contents.append(render_section_title(soup, node_or_text_segments))
+        elif is_node(node_or_text_segments, type_in=["section"]):
+            contents.append(render_section(soup, node_or_text_segments))
+        elif is_node(node_or_text_segments, type_in=["alinea"]):
+            contents.append(render_alinea(soup, node_or_text_segments))
+        elif is_node(node_or_text_segments, type_in=["page_footer"]):
+            contents.append(render_page_footer(soup, node_or_text_segments))
+        elif is_node(node_or_text_segments, type_in=["table_of_contents"]):
+            contents.append(render_table_of_contents(soup, node_or_text_segments))
+        elif is_node(node_or_text_segments):
+            raise ValueError(f"Unexpected node {node_or_text_segments.type} in section contents")
         else:
-            assert not isinstance(element_or_text_segments, Element)
-            contents.extend(t.contents for t in element_or_text_segments)
+            assert not isinstance(node_or_text_segments, Node)
+            contents.extend(t.contents for t in node_or_text_segments)
 
     return make_data_tag(
         soup,
@@ -378,57 +379,54 @@ def render_section(
 # guide de légistique)."
 # REF : https://www.legifrance.gouv.fr/contenu/Media/files/lexique-api-lgf.docx
 def parse_alineas(
-    element_flow_: ElementFlow,
-) -> Iterator[Element]:
-    element_flow_ = list(element_flow_)
+    node_flow_: NodeFlow,
+) -> Iterator[Node]:
+    node_flow_ = list(node_flow_)
     alinea_count = 1
 
-    element_flow_ = flat_map_element_flow(
-        element_flow_,
+    node_flow_ = flat_map_node_flow(
+        node_flow_,
         parse_tables,
     )
-    element_flow_ = flat_map_element_flow(
-        element_flow_,
+    node_flow_ = flat_map_node_flow(
+        node_flow_,
         parse_lists,
     )
-    element_flow_ = flat_map_element_flow(
-        element_flow_,
+    node_flow_ = flat_map_node_flow(
+        node_flow_,
         parse_images,
     )
-    element_flow = list(element_flow_)
+    node_flow = list(node_flow_)
 
-    while element_flow:
-        element_or_text_segments = element_flow.pop(0)
-        if is_element(element_or_text_segments, name="page_footer"):
-            yield element_or_text_segments
+    while node_flow:
+        node_or_text_segments = node_flow.pop(0)
+        if is_node(node_or_text_segments, type_in=["page_footer", "table_of_contents"]):
+            yield node_or_text_segments
 
-        elif is_element(element_or_text_segments, name="table_of_contents"):
-            yield element_or_text_segments
-
-        elif isinstance(element_or_text_segments, Element):
-            contents: List[Element | TextSegments] = [element_or_text_segments]
-            if element_or_text_segments.name == "table":
+        elif isinstance(node_or_text_segments, Node):
+            children: List[Node | TextSegments] = [node_or_text_segments]
+            if node_or_text_segments.type == "table":
                 while (
-                    element_flow
-                    and isinstance(element_flow[0], Element)
-                    and element_flow[0].name == "table_description"
+                    node_flow
+                    and isinstance(node_flow[0], Node)
+                    and node_flow[0].type == "table_description"
                 ):
-                    contents.append(element_flow.pop(0))
+                    children.append(node_flow.pop(0))
 
-            yield Element(
-                name="alinea",
-                contents=contents,
+            yield Node(
+                type="alinea",
+                children=children,
                 data=dict(
                     number=str(alinea_count),
                 ),
             )
             alinea_count += 1
-        
+
         else:
-            for line in element_or_text_segments:
-                yield Element(
-                    name="alinea",
-                    contents=[[line]],
+            for line in node_or_text_segments:
+                yield Node(
+                    type="alinea",
+                    children=[[line]],
                     data=dict(
                         number=str(alinea_count),
                     ),
@@ -438,21 +436,21 @@ def parse_alineas(
 
 def render_alinea(
     soup: BeautifulSoup,
-    element: Element,
+    node: Node,
 ) -> Tag:
     contents: List[PageElementOrString] = []
-    for element_or_text_segments in element.contents:
-        if isinstance(element_or_text_segments, Element):
-            contents.extend(render_basic_elements(soup, element_or_text_segments))
+    for node_or_text_segments in node.children:
+        if isinstance(node_or_text_segments, Node):
+            contents.extend(render_basic_elements(soup, node_or_text_segments))
         else:
             assert (
-                len(element_or_text_segments) == 1
-            ), "Alinea element should contain exactly one TextSegments"
-            contents.extend(_parse_inline_quotes(soup, element_or_text_segments[0].contents))
+                len(node_or_text_segments) == 1
+            ), "Alinea node should contain exactly one TextSegments"
+            contents.extend(_parse_inline_quotes(soup, node_or_text_segments[0].contents))
 
     return make_data_tag(
         soup,
         ALINEA_SCHEMA,
-        data=dict(number=str(element.data["number"])),
+        data=dict(number=str(node.data["number"])),
         contents=contents,
     )

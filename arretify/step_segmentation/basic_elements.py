@@ -50,9 +50,9 @@ from arretify.parsing_utils.source_mapping import (
     apply_to_segment,
 )
 from .core import (
-    Element,
-    ElementFlow,
-    flat_map_element_flow,
+    Node,
+    NodeFlow,
+    flat_map_node_flow,
     assert_single_text_segments,
     assert_single_text_segment,
 )
@@ -124,7 +124,7 @@ def parse_list_DEPRECATED(
 
 def parse_images(
     lines: TextSegments,
-) -> ElementFlow:
+) -> NodeFlow:
     lines = list(lines)
     pile: TextSegments = []
     while lines:
@@ -135,7 +135,7 @@ def parse_images(
             pile = []
 
         if lines:
-            yield Element(name="image", contents=[[lines.pop(0)]])
+            yield Node(type="image", children=[[lines.pop(0)]])
 
 
 # TODO : deal with case :
@@ -145,7 +145,7 @@ def parse_images(
 # - bli
 def parse_lists(
     lines: TextSegments,
-) -> ElementFlow:
+) -> NodeFlow:
     lines = list(lines)
     pile: TextSegments = []
 
@@ -159,13 +159,13 @@ def parse_lists(
         while lines and is_list(lines[0].contents):
             pile.append(lines.pop(0))
         if pile:
-            yield Element(name="list", contents=[pile])
+            yield Node(type="list", children=[pile])
             pile = []
 
 
 def parse_tables(
     lines: TextSegments,
-) -> ElementFlow:
+) -> NodeFlow:
     lines = list(lines)
     pile: TextSegments = []
     table_pile: TextSegments = []
@@ -181,19 +181,19 @@ def parse_tables(
         while lines and is_table_line(lines[0].contents):
             pile.append(lines.pop(0))
         if pile:
-            yield Element(name="table", contents=[pile])
+            yield Node(type="table", children=[pile])
 
         table_pile = pile
         pile = []
         while lines and is_table_description(lines[0].contents, [t.contents for t in table_pile]):
             pile.append(lines.pop(0))
         if pile:
-            yield Element(name="table_description", contents=[pile])
+            yield Node(type="table_description", children=[pile])
 
 
 def parse_blockquotes(
     lines: TextSegments,
-) -> ElementFlow:
+) -> NodeFlow:
     lines = list(lines)
     pile: TextSegments = []
     while lines:
@@ -239,18 +239,18 @@ def parse_blockquotes(
         )
 
         if quotes_depth_count == 0:
-            contents = flat_map_element_flow([pile], parse_tables)
-            contents = flat_map_element_flow(contents, parse_lists)
-            contents = flat_map_element_flow(contents, parse_images)
-            yield Element(
-                name="blockquote",
-                contents=list(contents),
+            children = flat_map_node_flow([pile], parse_tables)
+            children = flat_map_node_flow(children, parse_lists)
+            children = flat_map_node_flow(children, parse_images)
+            yield Node(
+                type="blockquote",
+                children=list(children),
             )
             pile = []
         else:
-            yield Element(
-                name="error",
-                contents=[[pile[0]]],
+            yield Node(
+                type="error",
+                children=[[pile[0]]],
                 data=dict(error_codes=[ErrorCodes.unbalanced_quote.value]),
             )
             _LOGGER.warning(f"Found unbalanced quote starting {opening_quote_start}")
@@ -280,40 +280,40 @@ def parse_list(
 
 def render_basic_elements(
     soup: BeautifulSoup,
-    element: Element,
+    node: Node,
 ) -> Iterable[PageElementOrString]:
-    if element.name == "list":
-        yield from render_list(soup, element)
-    elif element.name == "table":
-        yield from render_table(soup, element)
-    elif element.name == "table_description":
-        yield from render_table_description(soup, element)
-    elif element.name == "blockquote":
-        yield from render_blockquote(soup, element)
-    elif element.name == "table_of_contents":
-        yield render_table_of_contents(soup, element)
-    elif element.name == "page_footer":
-        yield render_page_footer(soup, element)
-    elif element.name == "image":
-        yield from render_image(soup, element)
-    elif element.name == "error":
-        yield from render_error(soup, element)
+    if node.type == "list":
+        yield from render_list(soup, node)
+    elif node.type == "table":
+        yield from render_table(soup, node)
+    elif node.type == "table_description":
+        yield from render_table_description(soup, node)
+    elif node.type == "blockquote":
+        yield from render_blockquote(soup, node)
+    elif node.type == "table_of_contents":
+        yield render_table_of_contents(soup, node)
+    elif node.type == "page_footer":
+        yield render_page_footer(soup, node)
+    elif node.type == "image":
+        yield from render_image(soup, node)
+    elif node.type == "error":
+        yield from render_error(soup, node)
     else:
-        raise ValueError(f"Unknown element name '{element.name}' in render_basic_elements.")
+        raise ValueError(f"Unknown node type '{node.type}' in render_basic_elements.")
 
 
 def render_table(
     soup: BeautifulSoup,
-    element: Element,
+    node: Node,
 ) -> Iterable[PageElementOrString]:
-    yield parse_markdown_table([t.contents for t in assert_single_text_segments(element)])
+    yield parse_markdown_table([t.contents for t in assert_single_text_segments(node)])
 
 
 def render_table_description(
     soup: BeautifulSoup,
-    element: Element,
+    node: Node,
 ) -> Iterable[PageElementOrString]:
-    text_segments = assert_single_text_segments(element)
+    text_segments = assert_single_text_segments(node)
     for line in text_segments:
         yield soup.new_tag("br")
         yield line.contents
@@ -321,9 +321,9 @@ def render_table_description(
 
 def render_list(
     soup: BeautifulSoup,
-    element: Element,
+    node: Node,
 ) -> Iterable[PageElementOrString]:
-    lines, ul = _render_list(soup, assert_single_text_segments(element))
+    lines, ul = _render_list(soup, assert_single_text_segments(node))
     assert len(lines) == 0, "Expected all lines to be consumed in list rendering"
     yield ul
 
@@ -355,14 +355,14 @@ def _render_list(
 
 def render_blockquote(
     soup: BeautifulSoup,
-    element: Element,
+    node: Node,
 ) -> Iterable[PageElementOrString]:
     tag = soup.new_tag("blockquote")
-    for element_or_text_segments in element.contents:
-        if isinstance(element_or_text_segments, Element):
-            tag.extend(render_basic_elements(soup, element_or_text_segments))
+    for node_or_text_segments in node.children:
+        if isinstance(node_or_text_segments, Node):
+            tag.extend(render_basic_elements(soup, node_or_text_segments))
         else:
-            for line in element_or_text_segments:
+            for line in node_or_text_segments:
                 # Parse inline quotes in the line
                 # and add them as <q> tags
                 tag.append(
@@ -376,17 +376,17 @@ def render_blockquote(
 
 def render_image(
     soup: BeautifulSoup,
-    element: Element,
+    node: Node,
 ) -> Iterable[PageElementOrString]:
-    yield parse_markdown_image(assert_single_text_segment(element).contents)
+    yield parse_markdown_image(assert_single_text_segment(node).contents)
 
 
 # TODO : parametrize the error codes
 def render_error(
     soup: BeautifulSoup,
-    element: Element,
+    node: Node,
 ) -> Iterable[PageElementOrString]:
-    text_segment = assert_single_text_segment(element)
+    text_segment = assert_single_text_segment(node)
     yield make_data_tag(
         soup,
         ERROR_SCHEMA,

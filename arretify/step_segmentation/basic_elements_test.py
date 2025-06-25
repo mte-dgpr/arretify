@@ -22,7 +22,7 @@ from bs4 import BeautifulSoup
 from arretify.parsing_utils.source_mapping import initialize_lines
 from arretify.types import TextSegment, TextSegments
 from arretify.parsing_utils.source_mapping import apply_to_segment
-from .core import Element
+from .core import Node
 
 
 # class TestParseBasicElements(unittest.TestCase):
@@ -56,19 +56,19 @@ from .core import Element
 #         # Assert
 #         assert len(result) == 5
 
-#         assert isinstance(result[0], Element)
+#         assert isinstance(result[0], Node)
 #         assert result[0].name == "table"
 #         assert result[0].contents == [lines[0:3]]
 
-#         assert isinstance(result[1], Element)
+#         assert isinstance(result[1], Node)
 #         assert result[1].name == "list"
 #         assert result[1].contents == [lines[3:6]]
 
-#         assert isinstance(result[2], Element)
+#         assert isinstance(result[2], Node)
 #         assert result[2].name == "blockquote"
 #         assert result[2].contents == [lines[6:9]]
 
-#         assert isinstance(result[3], Element)
+#         assert isinstance(result[3], Node)
 #         assert result[3].name == "image"
 #         assert result[3].contents == [lines[9:10]]
 
@@ -114,7 +114,7 @@ from .core import Element
 #         with self.assertRaises(ValueError) as context:
 #             list_indentation(line)
 #         assert (
-#             str(context.exception) == "Expected line to be a list element"
+#             str(context.exception) == "Expected line to be a list node"
 #         ), "Should raise ValueError for non-list lines"
 
 
@@ -141,7 +141,7 @@ from .core import Element
 
 #         # Assert
 #         assert [line.contents for line in remaining_lines] == ["END"]
-#         assert [str(element) for element in elements] == [
+#         assert [str(node) for element in elements] == [
 #             (
 #                 "<table>\n"
 #                 "<thead>\n"
