@@ -24,9 +24,10 @@ from bs4 import (
     Tag,
 )
 
-from arretify.types import SectionType, PageElementOrString
+from arretify.types import SectionType, PageElementOrString, DataElementDataDict
 from arretify.utils.html import (
     make_data_tag,
+    render_str_list_attribute,
 )
 from arretify.html_schemas import (
     SECTION_SCHEMA,
@@ -34,6 +35,7 @@ from arretify.html_schemas import (
     ALINEA_SCHEMA,
 )
 from arretify.parsing_utils.source_mapping import TextSegments
+from arretify.errors import ErrorCodes
 from .basic_elements import (
     render_basic_elements,
     _parse_inline_quotes,
@@ -54,6 +56,7 @@ from .core import (
     assert_single_text_segment,
     flat_map_element_flow,
 )
+from .document_elements import parse_parse_page_footer, parse_table_of_contents, render_page_footer, render_table_of_contents
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -82,7 +85,8 @@ def parse_content_DEPRECATED(
     else:
         pile = lines
 
-    rendered_content = render_content(soup, parse_content(pile))
+    parsed_content = list(parse_content(pile))
+    rendered_content = render_content(soup, parsed_content)
     content.extend(list(rendered_content.children))
     return lines
 
@@ -97,18 +101,26 @@ def parse_content(
     lines: TextSegments,
 ) -> ElementFlow:
     element_flow: ElementFlow = [lines]
-    # element_flow = flat_map_element_flow(
-    #     element_flow,
-    #     parse_document_elements,
-    # )
+    # Image strings can be very long, and table of contents pattern look 
+    # at the end of the sentence. 
+    # So, we make sure we parse images before table of contents.
+    element_flow = flat_map_element_flow(
+        element_flow,
+        parse_images,
+    )
+    element_flow = flat_map_element_flow(
+        element_flow,
+        parse_parse_page_footer,
+    )
+    element_flow = flat_map_element_flow(
+        element_flow,
+        parse_table_of_contents,
+    )
     element_flow = flat_map_element_flow(
         element_flow,
         parse_blockquotes,
     )
-    element_flow = flat_map_element_flow(
-        element_flow,
-        parse_section_titles,
-    )
+    element_flow = parse_section_titles(element_flow)
     element_flow = parse_sections(element_flow)
     yield from element_flow
 
@@ -129,27 +141,16 @@ def render_content(
 
 
 def parse_section_titles(
-    lines: TextSegments,
+    element_flow_: ElementFlow,
 ) -> ElementFlow:
-    lines = lines[:]
-    pile: TextSegments = []
-    section_titles: List[Element] = []
-    output_flow: List[Element | TextSegments] = []
+    element_flow = list(element_flow_)
 
-    while lines:
-        while lines and not is_title(lines[0].contents):
-            pile.append(lines.pop(0))
-        if pile:
-            output_flow.append(pile)
-            pile = []
-
-        if lines:
-            section_title = Element(name="section_title", contents=[[lines.pop(0)]])
-            section_titles.append(section_title)
-            output_flow.append(section_title)
+    # First collect all section titles in output_flow.
+    output_flow = flat_map_element_flow(element_flow, _create_section_title_elements)
+    section_titles: List[Element] = [e for e in output_flow if is_element(e, name="section_title")]
 
     # Ancestry order from root to the current section in the parsing context
-    sections: int = 1  # [content]
+    sections: int = 1
 
     # List of integers from previous section title
     current_global_levels: Optional[List[int]] = None
@@ -167,6 +168,7 @@ def parse_section_titles(
 
     for section_title in section_titles:
         title_text = assert_single_text_segment(section_title).contents
+        data_extra: Dict = dict()
 
         # Parse title info
         title_info = parse_title_info(title_text)
@@ -177,15 +179,11 @@ def parse_section_titles(
         new_title_levels = title_info.levels
 
         if not is_next_title(current_global_levels, current_title_levels, new_title_levels):
-
             _LOGGER.warning(
                 f"Detected title of levels {new_title_levels} after current global levels"
                 f" {current_global_levels} and current section levels {current_title_levels}"
             )
-
-            # title_element_data["error_codes"] = render_str_list_attribute(
-            #     [ErrorCodes.non_contiguous_titles.value]
-            # )
+            data_extra["error_codes"] = [ErrorCodes.non_contiguous_titles.value]
 
         current_global_levels = new_title_levels
         current_titles_levels[new_section_type] = new_title_levels
@@ -202,13 +200,13 @@ def parse_section_titles(
         elif new_schema_level - current_schema_level <= 0:
             # Empty the ancestry tree until we reach the right ancestor
             while new_schema_level - current_schema_level <= 0:
-                sections -= 1  # sections.pop()
-                current_schema_level = sections - 2  # len(sections) - 2
+                sections -= 1
+                current_schema_level = sections - 2
         else:
             raise RuntimeError(f"unexpected title {title_text}, current level {sections}")
 
-        sections += 1  # sections.append(section_element)
-        current_schema_level = sections - 2  # len(sections) - 2
+        sections += 1
+        current_schema_level = sections - 2
 
         downstream_sections_types = _get_downstream_sections_types(new_section_type)
         for downstream_section_type in downstream_sections_types:
@@ -223,8 +221,26 @@ def parse_section_titles(
             number=title_info.number,
             title=title_info.text,
         )
+        section_title.data.update(data_extra)
 
     yield from output_flow
+
+
+def _create_section_title_elements(
+    lines: TextSegments,
+) -> ElementFlow:
+    lines = list(lines)
+    pile: TextSegments = []
+    while lines:
+        while lines and not is_title(lines[0].contents):
+            pile.append(lines.pop(0))
+        if pile:
+            yield pile
+            pile = []
+
+        if lines:
+            section_title = Element(name="section_title", contents=[[lines.pop(0)]])
+            yield section_title
 
 
 def parse_sections(
@@ -234,34 +250,34 @@ def parse_sections(
     element_flow = list(element_flow_)
     pile: List[Element | TextSegments] = []
 
-    # We start by finding the first sub-section title at the
-    # current level.
+    # 1. If there is content before the first sub-section title, we parse it as
+    # alineas in the current section.
     pile = []
-    has_sub_sections = False
+    while element_flow and not is_element(element_flow[0], name="section_title"):
+        pile.append(element_flow.pop(0))
+    if pile:
+        yield from parse_alineas(pile)
+
+    # 2. If there are sections at deeper levels we parse them first, by calling
+    # the function recursively.
+    pile = []
     while element_flow:
         if is_element(element_flow[0], name="section_title"):
             if element_flow[0].data["level"] == level:
                 break
             elif element_flow[0].data["level"] > level:
-                has_sub_sections = True
+                pile.append(element_flow.pop(0))
             else:
                 raise RuntimeError(
                     f"Unexpected section title level {element_flow[0].data['level']} "
                     f"at level {level}"
                 )
-        pile.append(element_flow.pop(0))
-
-    # Special case : we have no section title at the current level (*),
-    # but we do have sections at deeper level (**).
-    if not element_flow and has_sub_sections:  # (*)  # (**)
+        else:
+            pile.append(element_flow.pop(0))
+    if pile:
         yield from parse_sections(pile, level=level + 1)
-        return
 
-    # If there is content before the first sub-section title, we parse it as
-    # alineas in the current section.
-    elif pile:
-        yield from parse_alineas(pile)
-
+    # 3. Finally parse sections at current level
     pile = []
     while element_flow:
         # Add section title to the pile
@@ -283,7 +299,7 @@ def parse_sections(
             section_title, section_content = pile[0], pile[1:]
             yield Element(
                 name="section",
-                contents=[section_title] + list(parse_sections(section_content, level + 1)),
+                contents=[section_title] + list(parse_sections(section_content, level=level + 1)),
             )
             pile = []
 
@@ -295,11 +311,17 @@ def render_section_title(
     if not is_element(element, name="section_title"):
         raise ValueError("Element must be a section title")
 
+    data: DataElementDataDict = dict()
+    if 'error_codes' in element.data:
+        data["error_codes"] = render_str_list_attribute(
+            element.data["error_codes"]
+        )
+
     return make_data_tag(
         soup,
         SECTION_TITLE_SCHEMAS[element.data["level"]],
-        # TODO : data error codes
         contents=[assert_single_text_segment(element).contents],
+        data=data,
     )
 
 
@@ -323,6 +345,10 @@ def render_section(
             contents.append(render_section(soup, element_or_text_segments))
         elif is_element(element_or_text_segments, name="alinea"):
             contents.append(render_alinea(soup, element_or_text_segments))
+        elif is_element(element_or_text_segments, name="page_footer"):
+            contents.append(render_page_footer(soup, element_or_text_segments))
+        elif is_element(element_or_text_segments, name="table_of_contents"):
+            contents.append(render_table_of_contents(soup, element_or_text_segments))
         elif is_element(element_or_text_segments):
             raise ValueError(
                 f"Unexpected element {element_or_text_segments.name} in section contents"
@@ -373,7 +399,13 @@ def parse_alineas(
 
     while element_flow:
         element_or_text_segments = element_flow.pop(0)
-        if isinstance(element_or_text_segments, Element):
+        if is_element(element_or_text_segments, name="page_footer"):
+            yield element_or_text_segments
+
+        elif is_element(element_or_text_segments, name="table_of_contents"):
+            yield element_or_text_segments
+
+        elif isinstance(element_or_text_segments, Element):
             contents: List[Element | TextSegments] = [element_or_text_segments]
             if element_or_text_segments.name == "table":
                 while (
@@ -391,6 +423,7 @@ def parse_alineas(
                 ),
             )
             alinea_count += 1
+        
         else:
             for line in element_or_text_segments:
                 yield Element(

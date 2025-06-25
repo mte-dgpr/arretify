@@ -42,7 +42,8 @@ from arretify.utils.markdown_parsing import (
     is_image,
     parse_markdown_image,
 )
-from .document_elements import is_document_element, IS_NOT_TABLE_OF_CONTENTS_PAGING_PATTERN_S
+from .document_elements import IS_NOT_TABLE_OF_CONTENTS_PAGING_PATTERN_S
+from .document_elements_DEPRECATED import is_document_element
 from .basic_elements import (
     parse_list_DEPRECATED,
     list_indentation,

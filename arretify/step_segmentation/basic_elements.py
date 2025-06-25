@@ -56,6 +56,7 @@ from .core import (
     assert_single_text_segments,
     assert_single_text_segment,
 )
+from .document_elements import render_table_of_contents, render_page_footer
 
 
 LEADING_WHITESPACES_PATTERN = PatternProxy(r"^\s+")
@@ -206,7 +207,8 @@ def parse_blockquotes(
             break
 
         # At this point, we know that the first line is a blockquote start
-        lines[0].start
+        opening_quote_start = lines[0].start
+
         # Remove opening quote
         # TODO-PROCESS-TAG
         lines[0] = apply_to_segment(
@@ -244,12 +246,19 @@ def parse_blockquotes(
                 name="blockquote",
                 contents=list(contents),
             )
+            pile = []
         else:
             yield Element(
                 name="error",
                 contents=[[pile[0]]],
+                data=dict(error_codes=[ErrorCodes.unbalanced_quote.value]),
             )
-            yield pile[1:]
+            _LOGGER.warning(f"Found unbalanced quote starting {opening_quote_start}")
+
+            # Put back all the lines except the one raising the error into the pile
+            while len(pile) > 1:
+                lines.append(pile.pop(1))
+            pile = []
 
 
 def _parse_inline_quotes(soup: BeautifulSoup, string: str) -> Iterable[PageElementOrString]:
@@ -281,14 +290,15 @@ def render_basic_elements(
         yield from render_table_description(soup, element)
     elif element.name == "blockquote":
         yield from render_blockquote(soup, element)
+    elif element.name == "table_of_contents":
+        yield render_table_of_contents(soup, element)
+    elif element.name == "page_footer":
+        yield render_page_footer(soup, element)
     elif element.name == "image":
         yield from render_image(soup, element)
     elif element.name == "error":
         yield from render_error(soup, element)
     else:
-        import pdb
-
-        pdb.set_trace()
         raise ValueError(f"Unknown element name '{element.name}' in render_basic_elements.")
 
 

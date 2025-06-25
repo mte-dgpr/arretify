@@ -16,11 +16,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import Callable, Dict, List, Optional
+from typing import Callable, Dict, List, Optional, Iterable
 
 from bs4 import Tag, BeautifulSoup
 
-from arretify.html_schemas import DOCUMENT_ELEMENTS_SCHEMAS
+from arretify.html_schemas import PAGE_FOOTER_SCHEMA, TABLE_OF_CONTENTS_SCHEMA
 from arretify.parsing_utils.source_mapping import TextSegments
 from arretify.regex_utils import (
     PatternProxy,
@@ -31,7 +31,10 @@ from arretify.utils.html import (
     make_data_tag,
     wrap_in_tag,
 )
+from arretify.types import PageElementOrString
 from arretify.utils.markdown_parsing import is_image
+
+from .core import ElementFlow, Element, assert_single_text_segments, flat_map_element_flow, is_element
 
 
 PAGE_FOOTERS_LIST = [
@@ -63,116 +66,81 @@ TABLE_OF_CONTENTS_LIST = [
 TABLE_OF_CONTENTS_PATTERN = PatternProxy(rf"^{join_with_or(TABLE_OF_CONTENTS_LIST)}")
 """Detect all table of contents starting sentences."""
 
-DOCUMENT_ELEMENTS_PATTERNS: Dict[str, PatternProxy] = {
-    "page_footer": PAGE_FOOTER_PATTERN,
-    "table_of_contents": TABLE_OF_CONTENTS_PATTERN,
-}
-"""Document elements patterns."""
 
-DOCUMENT_ELEMENTS_PROBES: Dict[str, Callable] = {
-    "page_footer": lambda line: bool(PAGE_FOOTER_PATTERN.match(line)),
-    "table_of_contents": lambda line: bool(TABLE_OF_CONTENTS_PATTERN.match(line)),
-}
-"""Document elements probes."""
+def is_table_of_contents(line: str) -> bool:
+    return bool(TABLE_OF_CONTENTS_PATTERN.match(line))
 
 
-def _make_positive_probe(document_element_name: Optional[str] = None) -> Callable[[str], bool]:
-
-    if document_element_name:
-
-        if document_element_name not in DOCUMENT_ELEMENTS_PROBES:
-            raise ValueError(
-                f"Unknown document element name: {document_element_name}. "
-                f"Available document elements: {list(DOCUMENT_ELEMENTS_PROBES.keys())}."
-            )
-
-        return DOCUMENT_ELEMENTS_PROBES[document_element_name]
-
-    # If no specific document element is requested, we return a probe that checks for any
-    # document element by checking all patterns
-    def _probe(line: str) -> bool:
-        return any(probe(line) for probe in DOCUMENT_ELEMENTS_PROBES.values())
-
-    return _probe
+def is_page_footer(line: str) -> bool:
+    return bool(PAGE_FOOTER_PATTERN.match(line))
 
 
-def is_document_element(line: str) -> bool:
+def is_document_element_DEPRECATED(line: str) -> bool:
     """Detect if the line is a document element."""
     # Image strings can be very long, and table of contents pattern look at the end of the
     # sentence. So, we make sure we do not have an image in the line before checking for other
     # document elements
-    return not is_image(line) and _make_positive_probe()(line)
+    return not is_image(line) and (is_table_of_contents(line) or is_page_footer(line))
 
 
-def _parse_document_element(
-    soup: BeautifulSoup,
-    container: Tag,
+def parse_table_of_contents(
     lines: TextSegments,
-    document_element_name: str,
-) -> TextSegments:
-    pile: List[PageElementOrString] = []
-    is_current_document_element = _make_positive_probe(document_element_name)
-    document_element_schema = DOCUMENT_ELEMENTS_SCHEMAS[document_element_name]
+) -> ElementFlow:
+    lines = list(lines)
+    pile: TextSegments = []
+    while lines:
+        while lines and not is_table_of_contents(lines[0].contents):
+            pile.append(lines.pop(0))
+        if pile:
+            yield pile
+            pile = []
 
-    # Image strings can be very long, and table of contents pattern look at the end of the
-    # sentence. So, we make sure we do not have an image in the line before checking for other
-    # document elements
-    while (
-        lines and not is_image(lines[0].contents) and is_current_document_element(lines[0].contents)
-    ):
-
-        pile.append(lines.pop(0).contents)
-
-    if pile:
-
-        document_element = make_data_tag(
-            soup,
-            document_element_schema,
-            contents=wrap_in_tag(soup, pile, "div"),
-        )
-        container.append(document_element)
-
-    return lines
+        while lines and any(is_table_of_contents(lines[i].contents) for i in range(3)):
+            pile.append(lines.pop(0))
+        if pile:
+            yield Element(name="table_of_contents", contents=[pile])
+            pile = []
 
 
-def _parse_page_footer(
-    soup: BeautifulSoup,
-    container: Tag,
+def parse_parse_page_footer(
     lines: TextSegments,
-) -> TextSegments:
-    return _parse_document_element(
+) -> ElementFlow:
+    lines = list(lines)
+    pile: TextSegments = []
+
+    while lines:
+        while lines and not is_page_footer(lines[0].contents):
+            pile.append(lines.pop(0))
+        if pile:
+            yield pile
+            pile = []
+
+        while lines and is_page_footer(lines[0].contents):
+            pile.append(lines.pop(0))
+        if pile:
+            yield Element(name="page_footer", contents=[pile])
+            pile = []
+
+
+def render_table_of_contents(
+    soup: BeautifulSoup,
+    element: Element,
+) -> PageElementOrString:
+    text_segments = assert_single_text_segments(element)
+    return make_data_tag(
         soup,
-        container,
-        lines,
-        "page_footer",
+        TABLE_OF_CONTENTS_SCHEMA,
+        contents=wrap_in_tag(soup, [t.contents for t in text_segments], "div"),
     )
 
 
-def _parse_table_of_contents(
+def render_page_footer(
     soup: BeautifulSoup,
-    container: Tag,
-    lines: TextSegments,
-) -> TextSegments:
-    return _parse_document_element(
+    element: Element,
+) -> PageElementOrString:
+    text_segments = assert_single_text_segments(element)
+    return make_data_tag(
         soup,
-        container,
-        lines,
-        "table_of_contents",
+        PAGE_FOOTER_SCHEMA,
+        contents=wrap_in_tag(soup, [t.contents for t in text_segments], "div"),
     )
-
-
-def parse_document_elements(
-    soup: BeautifulSoup,
-    container: Tag,
-    lines: TextSegments,
-) -> TextSegments:
-    """Parse document elements."""
-    while lines and is_document_element(lines[0].contents):
-
-        # Page footer
-        lines = _parse_page_footer(soup, container, lines)
-
-        # Table of contents
-        lines = _parse_table_of_contents(soup, container, lines)
-
-    return lines
