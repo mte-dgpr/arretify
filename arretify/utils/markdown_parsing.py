@@ -50,6 +50,7 @@ IMAGE_PATTERN = PatternProxy(r"!\[[^\[\]]+\]\([^()]+\)")
 
 def is_table_line(line: str) -> bool:
     """Detect if the line contains a table, i.e. any "|" character."""
+    # TODO : Make regex more selective
     return bool(re.search(r"(\|)", line, re.IGNORECASE))
 
 

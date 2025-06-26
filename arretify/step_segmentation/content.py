@@ -38,7 +38,7 @@ from arretify.parsing_utils.source_mapping import TextSegments
 from arretify.errors import ErrorCodes
 from .basic_elements import (
     render_basic_elements,
-    _parse_inline_quotes,
+    render_inline_quotes,
     parse_tables,
     parse_lists,
     parse_images,
@@ -55,6 +55,9 @@ from .core import (
     is_node,
     assert_single_text_segment,
     flat_map_node_flow,
+    map_splitted_text_segments,
+    split_text_segments,
+    make_single_line_splitter,
 )
 from .document_elements import (
     parse_parse_page_footer,
@@ -73,6 +76,10 @@ def parse_content_DEPRECATED(
     lines: TextSegments,
     exit_on_appendix: bool = True,
 ) -> TextSegments:
+    """
+    DEPRECATED : kept only for compatibility with old segmentation code.
+    Should be removed once migration is complete.
+    """
     pile: TextSegments = []
 
     if exit_on_appendix:
@@ -234,18 +241,16 @@ def parse_section_titles(
 def _create_section_title_nodes(
     lines: TextSegments,
 ) -> NodeFlow:
-    lines = list(lines)
-    pile: TextSegments = []
-    while lines:
-        while lines and not is_title(lines[0].contents):
-            pile.append(lines.pop(0))
-        if pile:
-            yield pile
-            pile = []
-
-        if lines:
-            section_title = Node(type="section_title", children=[[lines.pop(0)]])
-            yield section_title
+    return map_splitted_text_segments(
+        split_text_segments(
+            lines,
+            make_single_line_splitter(lambda t: is_title(t.contents)),
+        ),
+        lambda text_segments: Node(
+            type="section_title",
+            children=[text_segments],
+        ),
+    )
 
 
 def parse_sections(
@@ -446,7 +451,7 @@ def render_alinea(
             assert (
                 len(node_or_text_segments) == 1
             ), "Alinea node should contain exactly one TextSegments"
-            contents.extend(_parse_inline_quotes(soup, node_or_text_segments[0].contents))
+            contents.extend(render_inline_quotes(soup, node_or_text_segments[0].contents))
 
     return make_data_tag(
         soup,

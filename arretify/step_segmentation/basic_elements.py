@@ -55,6 +55,11 @@ from .core import (
     flat_map_node_flow,
     assert_single_text_segments,
     assert_single_text_segment,
+    split_text_segments,
+    make_single_line_splitter,
+    make_while_splitter,
+    map_splitted_text_segments,
+    split_before_match,
 )
 from .document_elements import render_table_of_contents, render_page_footer
 
@@ -102,6 +107,10 @@ def is_blockquote_end(line: str) -> bool:
 def parse_list_DEPRECATED(
     soup: BeautifulSoup, lines: TextSegments
 ) -> Tuple[TextSegments, PageElementOrString]:
+    """
+    DEPRECATED : kept only for compatibility with old segmentation code.
+    Should be removed once migration is complete.
+    """
     list_pile: List[PageElementOrString] = []
     ref_indentation = list_indentation(lines[0].contents)
 
@@ -125,17 +134,13 @@ def parse_list_DEPRECATED(
 def parse_images(
     lines: TextSegments,
 ) -> NodeFlow:
-    lines = list(lines)
-    pile: TextSegments = []
-    while lines:
-        while lines and not is_image(lines[0].contents):
-            pile.append(lines.pop(0))
-        if pile:
-            yield pile
-            pile = []
-
-        if lines:
-            yield Node(type="image", children=[[lines.pop(0)]])
+    return map_splitted_text_segments(
+        split_text_segments(
+            lines,
+            make_single_line_splitter(lambda t: is_image(t.contents)),
+        ),
+        lambda text_segments: Node(type="image", children=[text_segments]),
+    )
 
 
 # TODO : deal with case :
@@ -146,49 +151,32 @@ def parse_images(
 def parse_lists(
     lines: TextSegments,
 ) -> NodeFlow:
-    lines = list(lines)
-    pile: TextSegments = []
-
-    while lines:
-        while lines and not is_list(lines[0].contents):
-            pile.append(lines.pop(0))
-        if pile:
-            yield pile
-            pile = []
-
-        while lines and is_list(lines[0].contents):
-            pile.append(lines.pop(0))
-        if pile:
-            yield Node(type="list", children=[pile])
-            pile = []
+    return map_splitted_text_segments(
+        split_text_segments(
+            lines,
+            make_while_splitter(lambda t: is_list(t.contents)),
+        ),
+        lambda text_segments: Node(type="list", children=[text_segments]),
+    )
 
 
 def parse_tables(
     lines: TextSegments,
 ) -> NodeFlow:
     lines = list(lines)
-    pile: TextSegments = []
-    table_pile: TextSegments = []
-
     while lines:
-        pile = []
-        while lines and not is_table_line(lines[0].contents):
-            pile.append(lines.pop(0))
+        pile, lines = split_before_match(lines, lambda t: is_table_line(t.contents))
         if pile:
             yield pile
 
-        pile = []
-        while lines and is_table_line(lines[0].contents):
-            pile.append(lines.pop(0))
+        pile, lines = split_before_match(lines, lambda t: not is_table_line(t.contents))
         if pile:
             yield Node(type="table", children=[pile])
-
-        table_pile = pile
-        pile = []
-        while lines and is_table_description(lines[0].contents, [t.contents for t in table_pile]):
-            pile.append(lines.pop(0))
-        if pile:
-            yield Node(type="table_description", children=[pile])
+            pile, lines = split_before_match(
+                lines, lambda t: not is_table_description(t.contents, [t.contents for t in pile])
+            )
+            if pile:
+                yield Node(type="table_description", children=[pile])
 
 
 def parse_blockquotes(
@@ -197,8 +185,7 @@ def parse_blockquotes(
     lines = list(lines)
     pile: TextSegments = []
     while lines:
-        while lines and not is_blockquote_start(lines[0].contents):
-            pile.append(lines.pop(0))
+        pile, lines = split_before_match(lines, lambda t: is_blockquote_start(t.contents))
         if pile:
             yield pile
             pile = []
@@ -261,7 +248,7 @@ def parse_blockquotes(
             pile = []
 
 
-def _parse_inline_quotes(soup: BeautifulSoup, string: str) -> Iterable[PageElementOrString]:
+def render_inline_quotes(soup: BeautifulSoup, string: str) -> Iterable[PageElementOrString]:
     return map_matches(
         split_string_with_regex(INLINE_QUOTE_PATTERN, string),
         lambda inline_quote_match: make_new_tag(
@@ -366,11 +353,8 @@ def render_blockquote(
                 # Parse inline quotes in the line
                 # and add them as <q> tags
                 tag.append(
-                    make_new_tag(soup, "p", contents=_parse_inline_quotes(soup, line.contents))
+                    make_new_tag(soup, "p", contents=render_inline_quotes(soup, line.contents))
                 )
-            # children = _parse_all_inline_elements(soup, lines.pop(0).contents)
-            # container.extend(render_default(children))
-            # yield lines.pop(0)
     yield tag
 
 

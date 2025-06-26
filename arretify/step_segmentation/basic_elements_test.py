@@ -16,313 +16,314 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+import unittest
 
 from bs4 import BeautifulSoup
 
-from arretify.parsing_utils.source_mapping import initialize_lines
-from arretify.types import TextSegment, TextSegments
-from arretify.parsing_utils.source_mapping import apply_to_segment
 from .core import Node
+from .basic_elements import (
+    list_indentation,
+    parse_lists,
+    parse_tables,
+    parse_blockquotes,
+    render_inline_quotes,
+)
+from .testing import assert_node_flows_equal, _l
 
 
-# class TestParseBasicElements(unittest.TestCase):
+class TestListIndentation(unittest.TestCase):
 
-#     def test_all_elements(self):
-#         # Arrange
-#         lines = initialize_lines(
-#             [
-#                 # Table
-#                 "| Polluant | Concentration maximale en mg/l |",
-#                 "|---------|---------------------------------|",
-#                 "| MES     | 35                               |",
-#                 # List
-#                 "- Item 1",
-#                 "- Item 2",
-#                 "- Item 3",
-#                 # Blockquote
-#                 '"bla bla',
-#                 'blo blo "haha"',
-#                 'bli bli"',
-#                 # Image
-#                 "![Image description](http://example.com/image.jpg)",
-#                 # Other text
-#                 "This is a simple text line.",
-#             ]
-#         )
+    def test_correct_indentation(self):
+        # Arrange
+        line = "    - Item in list"
 
-#         # Act
-#         result = list(parse_basic_elements(lines))
+        # Act
+        result = list_indentation(line)
 
-#         # Assert
-#         assert len(result) == 5
+        # Assert
+        assert result == 4, "Should return the correct indentation level"
 
-#         assert isinstance(result[0], Node)
-#         assert result[0].name == "table"
-#         assert result[0].contents == [lines[0:3]]
+    def test_no_indentation(self):
+        # Arrange
+        line = "- Item in list"
 
-#         assert isinstance(result[1], Node)
-#         assert result[1].name == "list"
-#         assert result[1].contents == [lines[3:6]]
+        # Act
+        result = list_indentation(line)
 
-#         assert isinstance(result[2], Node)
-#         assert result[2].name == "blockquote"
-#         assert result[2].contents == [lines[6:9]]
+        # Assert
+        assert result == 0, "Should return zero for no indentation"
 
-#         assert isinstance(result[3], Node)
-#         assert result[3].name == "image"
-#         assert result[3].contents == [lines[9:10]]
+    def test_not_a_list_element(self):
+        # Arrange
+        line = "This is not a list item"
 
-#         assert isinstance(result[4], list)
-#         assert result[4] == lines[10:11]  # Remaining text line
+        # Act / Assert
+        with self.assertRaises(ValueError) as context:
+            list_indentation(line)
+        assert (
+            str(context.exception) == "Expected line to be a list element"
+        ), "Should raise ValueError for non-list lines"
 
 
-# from .basic_elements import (
-#     list_indentation,
-#     parse_list,
-#     parse_table,
-#     parse_blockquote,
-#     _parse_inline_quotes,
-# )
+class TestParseTables(unittest.TestCase):
 
-# class TestListIndentation(unittest.TestCase):
+    def test_simple_table(self):
+        # Arrange
+        lines = _l(
+            "| Polluant | Concentration maximale en mg/l |",
+            "|---------|---------------------------------|",
+            "| MES     | 35                               |",
+            "| DCO     | 125                              |",
+            "| Hydrocarbures totaux | 10                             |",
+            "END",
+        )
 
-#     def test_correct_indentation(self):
-#         # Arrange
-#         line = "    - Item in list"
+        # Act
+        node_flow = parse_tables(lines)
 
-#         # Act
-#         result = list_indentation(line)
+        # Assert
+        assert_node_flows_equal(
+            node_flow,
+            [
+                Node(
+                    type="table",
+                    children=[
+                        _l(
+                            "| Polluant | Concentration maximale en mg/l |",
+                            "|---------|---------------------------------|",
+                            "| MES     | 35                               |",
+                            "| DCO     | 125                              |",
+                            "| Hydrocarbures totaux | 10                             |",
+                        )
+                    ],
+                ),
+                _l("END"),
+            ],
+        )
 
-#         # Assert
-#         assert result == 4, "Should return the correct indentation level"
+    def test_table_description(self):
+        # Arrange
+        lines = _l(
+            "| Polluant | Concentration maximale en mg/l |",
+            "|---------|---------------------------------|",
+            "| MES     | 35                               |",
+            "(*) bla bla",
+            "END",
+        )
 
-#     def test_no_indentation(self):
-#         # Arrange
-#         line = "- Item in list"
+        # Act
+        node_flow = parse_tables(lines)
 
-#         # Act
-#         result = list_indentation(line)
-
-#         # Assert
-#         assert result == 0, "Should return zero for no indentation"
-
-#     def test_not_a_list_element(self):
-#         # Arrange
-#         line = "This is not a list item"
-
-#         # Act / Assert
-#         with self.assertRaises(ValueError) as context:
-#             list_indentation(line)
-#         assert (
-#             str(context.exception) == "Expected line to be a list node"
-#         ), "Should raise ValueError for non-list lines"
-
-
-# class TestParseTable(unittest.TestCase):
-
-#     def setUp(self):
-#         self.soup = BeautifulSoup("", "html.parser")
-
-#     def test_simple_table(self):
-#         # Arrange
-#         lines = initialize_lines(
-#             [
-#                 "| Polluant | Concentration maximale en mg/l |",
-#                 "|---------|---------------------------------|",
-#                 "| MES     | 35                               |",
-#                 "| DCO     | 125                              |",
-#                 "| Hydrocarbures totaux | 10                             |",
-#                 "END",
-#             ]
-#         )
-
-#         # Act
-#         remaining_lines, elements = parse_table(self.soup, lines)
-
-#         # Assert
-#         assert [line.contents for line in remaining_lines] == ["END"]
-#         assert [str(node) for element in elements] == [
-#             (
-#                 "<table>\n"
-#                 "<thead>\n"
-#                 "<tr>\n"
-#                 "<th>Polluant</th>\n"
-#                 "<th>Concentration maximale en mg/l</th>\n"
-#                 "</tr>\n"
-#                 "</thead>\n"
-#                 "<tbody>\n"
-#                 "<tr>\n"
-#                 "<td>MES</td>\n"
-#                 "<td>35</td>\n"
-#                 "</tr>\n"
-#                 "<tr>\n"
-#                 "<td>DCO</td>\n"
-#                 "<td>125</td>\n"
-#                 "</tr>\n"
-#                 "<tr>\n"
-#                 "<td>Hydrocarbures totaux</td>\n"
-#                 "<td>10</td>\n"
-#                 "</tr>\n"
-#                 "</tbody>\n"
-#                 "</table>"
-#             )
-#         ]
+        # Assert
+        assert_node_flows_equal(
+            node_flow,
+            [
+                Node(
+                    type="table",
+                    children=[
+                        _l(
+                            "| Polluant | Concentration maximale en mg/l |",
+                            "|---------|---------------------------------|",
+                            "| MES     | 35                               |",
+                        ),
+                    ],
+                ),
+                Node(
+                    type="table_description",
+                    children=[
+                        _l("(*) bla bla"),
+                    ],
+                ),
+                _l("END"),
+            ],
+        )
 
 
-# class TestParseList(unittest.TestCase):
+class TestParseList(unittest.TestCase):
 
-#     def setUp(self):
-#         self.soup = BeautifulSoup("", "html.parser")
+    def test_simple_list(self):
+        # Arrange
+        lines = _l("- Item 1", "- Item 2", "- Item 3", "END")
 
-#     def test_simple_list(self):
-#         # Arrange
-#         lines = initialize_lines(["- Item 1", "- Item 2", "- Item 3", "END"])
+        # Act
+        node_flow = parse_lists(lines)
 
-#         # Act
-#         remaining_lines, ul = parse_list(self.soup, lines)
+        # Assert
+        assert_node_flows_equal(
+            node_flow,
+            [
+                Node(
+                    type="list",
+                    children=[
+                        _l("- Item 1", "- Item 2", "- Item 3"),
+                    ],
+                ),
+                _l("END"),
+            ],
+        )
 
-#         # Assert
-#         assert [line.contents for line in remaining_lines] == ["END"]
-#         assert str(ul) == "<ul><li>- Item 1</li><li>- Item 2</li><li>- Item 3</li></ul>"
+    def test_nested_list(self):
+        # Arrange
+        lines = _l(
+            "- Item 1",
+            "  - Subitem 1.1",
+            "  - Subitem 1.2",
+            "- Item 2",
+        )
 
-#     def test_nested_list(self):
-#         # Arrange
-#         lines = initialize_lines(
-#             [
-#                 "- Item 1",
-#                 "  - Subitem 1.1",
-#                 "  - Subitem 1.2",
-#                 "- Item 2",
-#             ]
-#         )
+        # Act
+        node_flow = parse_lists(lines)
 
-#         # Act
-#         remaining_lines, ul = parse_list(self.soup, lines)
-
-#         # Assert
-#         assert remaining_lines == [], "All lines should be parsed into the list"
-#         assert str(ul) == (
-#             "<ul>"
-#             "<li>- Item 1"
-#             "<ul><li>- Subitem 1.1</li><li>- Subitem 1.2</li></ul>"
-#             "</li>"
-#             "<li>- Item 2</li>"
-#             "</ul>"
-#         )
-
-
-# class TestParseBlockQuote(unittest.TestCase):
-
-#     def setUp(self):
-#         self.soup = BeautifulSoup("", "html.parser")
-
-#     def test_blockquote_nested_list(self):
-#         # Arrange
-#         lines = initialize_lines(
-#             [
-#                 '"bla bla',
-#                 "blo blo :",
-#                 "- Item 1",
-#                 '- Item 2"',
-#                 "END",
-#             ]
-#         )
-
-#         # Act
-#         remaining_lines, blockquote = parse_blockquote(self.soup, lines)
-
-#         # Assert
-#         assert [line.contents for line in remaining_lines] == ["END"]
-#         assert str(blockquote) == (
-#             "<blockquote>"
-#             "<p>bla bla</p>"
-#             "<p>blo blo :</p>"
-#             "<ul><li>- Item 1</li><li>- Item 2</li></ul>"
-#             "</blockquote>"
-#         )
-
-#     def test_blockquote_one_liner_nested_blockquote(self):
-#         # Arrange
-#         lines = initialize_lines(
-#             [
-#                 '"bla bla',
-#                 '"blo blo"',
-#                 'bli bli"',
-#                 "END",
-#             ]
-#         )
-
-#         # Act
-#         remaining_lines, blockquote = parse_blockquote(self.soup, lines)
-
-#         # Assert
-#         assert [line.contents for line in remaining_lines] == ["END"]
-#         assert str(blockquote) == (
-#             "<blockquote>"
-#             "<p>bla bla</p>"
-#             "<blockquote>"
-#             "<p>blo blo</p>"
-#             "</blockquote>"
-#             "<p>bli bli</p>"
-#             "</blockquote>"
-#         )
-
-#     def test_blockquote_nested_inline_quote(self):
-#         # Arrange
-#         lines = initialize_lines(
-#             [
-#                 '"bla bla',
-#                 'blo blo "haha"',
-#                 'bli bli"',
-#                 "END",
-#             ]
-#         )
-
-#         # Act
-#         remaining_lines, blockquote = parse_blockquote(self.soup, lines)
-
-#         # Assert
-#         assert [line.contents for line in remaining_lines] == ["END"]
-#         assert str(blockquote) == (
-#             "<blockquote>"
-#             "<p>bla bla</p>"
-#             "<p>blo blo <q>haha</q></p>"
-#             "<p>bli bli</p>"
-#             "</blockquote>"
-#         )
-
-#     def test_blockquote_one_line(self):
-#         # Arrange
-#         lines = initialize_lines(
-#             [
-#                 '"bla bla"',
-#                 "END",
-#             ]
-#         )
-
-#         # Act
-#         remaining_lines, blockquote = parse_blockquote(self.soup, lines)
-
-#         # Assert
-#         assert [line.contents for line in remaining_lines] == ["END"]
-#         assert str(blockquote) == ("<blockquote>" "<p>bla bla</p>" "</blockquote>")
+        # Assert
+        print(node_flow)
+        assert_node_flows_equal(
+            node_flow,
+            [
+                Node(
+                    type="list",
+                    children=[_l("- Item 1", "  - Subitem 1.1", "  - Subitem 1.2", "- Item 2")],
+                ),
+            ],
+        )
 
 
-# class TestParseInlineQuotes(unittest.TestCase):
+class TestParseBlockQuote(unittest.TestCase):
 
-#     def setUp(self):
-#         self.soup = BeautifulSoup("", "html.parser")
+    def test_blockquote_nested_list(self):
+        # Arrange
+        lines = _l(
+            '"bla bla',
+            "blo blo :",
+            "- Item 1",
+            '- Item 2"',
+            "END",
+        )
 
-#     def test_inline_quote(self):
-#         # Arrange
-#         line = 'bla bla "haha" bli bli'
+        # Act
+        node_flow = parse_blockquotes(lines)
 
-#         # Act
-#         result = _parse_inline_quotes(self.soup, line)
+        # Assert
+        assert_node_flows_equal(
+            node_flow,
+            [
+                Node(
+                    type="blockquote",
+                    children=[
+                        _l(
+                            "bla bla",
+                            "blo blo :",
+                        ),
+                        Node(
+                            type="list",
+                            children=[
+                                _l(
+                                    "- Item 1",
+                                    "- Item 2",
+                                ),
+                            ],
+                        ),
+                    ],
+                ),
+                _l("END"),
+            ],
+        )
 
-#         # Assert
-#         assert [str(element) for element in result] == [
-#             "bla bla ",
-#             "<q>haha</q>",
-#             " bli bli",
-#         ]
+    def test_blockquote_one_liner_nested_blockquote(self):
+        # Arrange
+        lines = _l(
+            '"bla bla',
+            '"blo blo"',
+            'bli bli"',
+            "END",
+        )
+
+        # Act
+        node_flow = parse_blockquotes(lines)
+
+        # Assert
+        assert_node_flows_equal(
+            node_flow,
+            [
+                Node(
+                    type="blockquote",
+                    children=[
+                        _l("bla bla", '"blo blo"', "bli bli"),
+                    ],
+                ),
+                _l("END"),
+            ],
+        )
+
+    def test_blockquote_nested_inline_quote(self):
+        # Arrange
+        lines = _l(
+            '"bla bla',
+            'blo blo "haha"',
+            'bli bli"',
+            "END",
+        )
+
+        # Act
+        node_flow = parse_blockquotes(lines)
+
+        # Assert
+        assert_node_flows_equal(
+            node_flow,
+            [
+                Node(
+                    type="blockquote",
+                    children=[
+                        _l(
+                            "bla bla",
+                            'blo blo "haha"',
+                            "bli bli",
+                        )
+                    ],
+                ),
+                _l("END"),
+            ],
+        )
+
+    def test_blockquote_one_line(self):
+        # Arrange
+        lines = _l(
+            '"bla bla"',
+            "END",
+        )
+
+        # Act
+        node_flow = parse_blockquotes(lines)
+
+        # Assert
+        assert_node_flows_equal(
+            node_flow,
+            [
+                Node(
+                    type="blockquote",
+                    children=[
+                        _l("bla bla"),
+                    ],
+                ),
+                _l("END"),
+            ],
+        )
+
+
+class TestParseInlineQuotes(unittest.TestCase):
+
+    def setUp(self):
+        self.soup = BeautifulSoup("", "html.parser")
+
+    def test_inline_quote(self):
+        # Arrange
+        line = 'bla bla "haha" bli bli'
+
+        # Act
+        result = render_inline_quotes(self.soup, line)
+
+        # Assert
+        assert [str(element) for element in result] == [
+            "bla bla ",
+            "<q>haha</q>",
+            " bli bli",
+        ]

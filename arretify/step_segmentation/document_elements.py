@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 
-from bs4 import Tag, BeautifulSoup
+from bs4 import BeautifulSoup
 
 from arretify.html_schemas import PAGE_FOOTER_SCHEMA, TABLE_OF_CONTENTS_SCHEMA
 from arretify.parsing_utils.source_mapping import TextSegments
@@ -30,10 +30,8 @@ from arretify.utils.html import (
     make_data_tag,
     wrap_in_tag,
 )
-from arretify.types import PageElementOrString
-from arretify.utils.markdown_parsing import is_image
 
-from .core import NodeFlow, Node, assert_single_text_segments, flat_map_node_flow, is_node
+from .core import NodeFlow, Node, assert_single_text_segments
 
 
 PAGE_FOOTERS_LIST = [
@@ -72,14 +70,6 @@ def is_table_of_contents(line: str) -> bool:
 
 def is_page_footer(line: str) -> bool:
     return bool(PAGE_FOOTER_PATTERN.match(line))
-
-
-def is_document_element_DEPRECATED(line: str) -> bool:
-    """Detect if the line is a document element."""
-    # Image strings can be very long, and table of contents pattern look at the end of the
-    # sentence. So, we make sure we do not have an image in the line before checking for other
-    # document elements
-    return not is_image(line) and (is_table_of_contents(line) or is_page_footer(line))
 
 
 def parse_table_of_contents(

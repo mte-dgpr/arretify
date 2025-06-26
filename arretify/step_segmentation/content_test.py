@@ -18,30 +18,34 @@
 #
 import unittest
 
-from arretify.parsing_utils.source_mapping import initialize_lines
-from arretify.types import TextSegments, TextSegment
 from .content import parse_section_titles, parse_sections
-from .core import Node, NodeFlow, is_node
+from .core import Node
+from .testing import (
+    assert_node_flows_equal,
+    _l,
+)
 
 
 class TestParseSectionTitles(unittest.TestCase):
 
     def test_parse_section_titles(self):
         # Arrange
-        lines = _l(
-            "Titre I - Introduction",
-            "1. Contexte",
-            "bla bla bla",
-            "2. Objectifs",
-            "blo blo blo",
-            "bli bli bli",
-            "Titre II - Méthodologie",
-            "blu blu blu",
-            "ble ble ble",
-        )
+        node_flow = [
+            _l(
+                "Titre I - Introduction",
+                "1. Contexte",
+                "bla bla bla",
+                "2. Objectifs",
+                "blo blo blo",
+                "bli bli bli",
+                "Titre II - Méthodologie",
+                "blu blu blu",
+                "ble ble ble",
+            )
+        ]
 
         # Act
-        result = list(parse_section_titles(lines))
+        result = list(parse_section_titles(node_flow))
 
         # Assert
         assert_node_flows_equal(
@@ -417,37 +421,3 @@ class TestParseSections(unittest.TestCase):
                 ),
             ],
         )
-
-
-def assert_node_flows_equal(actual: NodeFlow, expected: NodeFlow, path=""):
-    actual = list(actual)
-    expected = list(expected)
-    assert len(actual) == len(
-        expected
-    ), f"[{path}] Expected {len(expected)} nodes, got {len(actual)}"
-    for i, (a, e) in enumerate(zip(actual, expected)):
-        child_path = f"{path}/{i}"
-        if is_node(e):
-            assert is_node(a, type_in=[e.type]), f"[{child_path}] Expected {e}, got {a}"
-            # Test data only if defined is test expectations
-            if e.data:
-                assert a.data == e.data, f"[{child_path}] Expected {e.data}, got {a.data}"
-            assert_node_flows_equal(a.children, e.children, path=child_path)
-        else:
-            assert isinstance(a, list), f"[{child_path}] Expected TextSegments, got {a}"
-            assert isinstance(e, list)
-            assert line_column_to_zero(a) == line_column_to_zero(
-                e
-            ), f"[{child_path}] Expected {e}, got {a}"
-
-
-def line_column_to_zero(lines: TextSegments) -> TextSegments:
-    return [TextSegment(contents=t.contents, start=(0, 0), end=(0, 0)) for t in lines]
-
-
-def assert_text_segments_equal(actual: TextSegments, expected: TextSegments):
-    assert len(actual) == len(expected), f"Expected {len(expected)} segments, got {len(actual)}"
-
-
-def _l(*raw_lines: str):
-    return initialize_lines(list(raw_lines))

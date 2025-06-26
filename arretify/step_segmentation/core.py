@@ -16,17 +16,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import Callable, Iterable, List, TypeGuard, Dict, Any
+from typing import Callable, Iterable, List, TypeGuard, Dict, Any, Tuple, Iterator
 from dataclasses import dataclass, field
 
-from arretify.types import TextSegments, TextSegment, DataElementDataDict
+from arretify.types import TextSegments, TextSegment
 
 
 NodeFlow = Iterable[TextSegments | "Node"]
+Split = Tuple[TextSegments, TextSegments, TextSegments]
+Splitter = Callable[[TextSegments], Split | None]
+Probe = Callable[[TextSegment], bool]
 
 
 @dataclass(frozen=True)
 class Node:
+    """
+    Node for representing our segmented arrêté as a tree structure.
+    """
+
     type: str
     children: List[TextSegments | "Node"]
     data: Dict[str, Any] = field(default_factory=dict)
@@ -38,15 +45,91 @@ class Node:
 
 
 def flat_map_node_flow(
-    nodes: NodeFlow,
+    node_flow: NodeFlow,
     map_func: Callable[[TextSegments], NodeFlow],
 ) -> List[TextSegments | Node]:
     output: List[TextSegments | Node] = []
-    for node in nodes:
-        if isinstance(node, Node):
-            output.append(node)
+    for node_or_text_segments in node_flow:
+        if isinstance(node_or_text_segments, Node):
+            output.append(node_or_text_segments)
         else:
-            output.extend(map_func(node))
+            output.extend(map_func(node_or_text_segments))
+    return output
+
+
+def split_text_segments(
+    lines: TextSegments,
+    splitter: Splitter,
+) -> Iterator[Tuple[bool, TextSegments]]:
+    lines = list(lines)
+    while lines:
+        result = splitter(lines)
+        if result is None:
+            yield (False, lines)
+            break
+        before, match, after = result
+
+        if before:
+            yield (False, before)
+        yield (True, match)
+        lines = after
+
+
+def make_single_line_splitter(
+    is_matching: Probe,
+) -> Splitter:
+    def _splitter(lines: TextSegments) -> Split | None:
+        before, after = split_before_match(lines, is_matching)
+        if after:
+            return before, [after[0]], after[1:]
+        return None
+
+    return _splitter
+
+
+def make_while_splitter(
+    is_matching: Probe,
+) -> Splitter:
+    def _splitter(lines: TextSegments) -> Split | None:
+        before, after = split_before_match(lines, is_matching)
+        if not after:
+            return None
+        match, after = split_before_match(after, lambda t: not is_matching(t))
+        return before, match, after
+
+    return _splitter
+
+
+def split_before_match(
+    lines: TextSegments,
+    is_matching: Probe,
+) -> Tuple[TextSegments, TextSegments]:
+    """
+    Split the lines into two parts, by using the `is_matching` function.
+
+    Examples :
+
+    lines = initialize_lines(["a", "b", "c"])
+    split_before_match(lines, lambda x: x.contents == "b") -> (["a"], ["b", "c"])
+    split_before_match(lines, lambda x: x.contents == "d") -> (["a", "b", "c"], [])
+    split_before_match(lines, lambda x: x.contents == "a") -> ([], ["a", "b", "c"])
+    """
+    i = 0
+    while i < len(lines) and not is_matching(lines[i]):
+        i += 1
+    return lines[:i], lines[i:]
+
+
+def map_splitted_text_segments(
+    input_flow: Iterable[Tuple[bool, TextSegments]],
+    map_func: Callable[[TextSegments], Node],
+) -> List[TextSegments | Node]:
+    output: List[TextSegments | Node] = []
+    for is_match, text_segments in input_flow:
+        if is_match:
+            output.append(map_func(text_segments))
+        else:
+            output.append(text_segments)
     return output
 
 
