@@ -31,7 +31,7 @@ from arretify.utils.html import (
     wrap_in_tag,
 )
 
-from .core import NodeFlow, Node, assert_single_text_segments
+from .core import NodeFlow, Node, assert_single_text_segments, split_before_match
 
 
 PAGE_FOOTERS_LIST = [
@@ -78,12 +78,23 @@ def parse_table_of_contents(
     lines = list(lines)
     pile: TextSegments = []
     while lines:
-        while lines and not is_table_of_contents(lines[0].contents):
-            pile.append(lines.pop(0))
+        pile, lines = split_before_match(
+            lines,
+            lambda t: is_table_of_contents(t.contents),
+        )
         if pile:
             yield pile
-            pile = []
 
+        # Instead of checking just the first line, we check the next few lines.
+        # This allows to deal with case when TOC contains lines that are not
+        # easily recognizable as TOC, e.g.:
+        #
+        #   Title 1
+        #       article 1.1 ..... page 1
+        #       article 1.2 ..... page 2
+        #   Title 2
+        #       article 2.1 ..... page 3
+        pile = []
         while lines and any(is_table_of_contents(lines[i].contents) for i in range(3)):
             pile.append(lines.pop(0))
         if pile:
