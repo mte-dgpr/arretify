@@ -17,9 +17,11 @@
 # limitations under the License.
 #
 import logging
+from typing import Callable
+from pathlib import Path
 
 from arretify.types import DocumentContext
-from .mistral_ocr import mistral_ocr
+from .mistral_ocr import mistral_ocr, default_ocr_pages_dir
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -27,7 +29,13 @@ _LOGGER = logging.getLogger(__name__)
 
 def step_ocr(
     document_context: DocumentContext,
+    replace_images_placeholders: bool = True,
+    ocr_pages_dir_factory: Callable[[DocumentContext], Path] | None = default_ocr_pages_dir,
 ) -> DocumentContext:
     if not document_context.pdf:
         raise ValueError("Parsing context does not contain a PDF file")
-    return mistral_ocr(document_context)
+    return mistral_ocr(
+        document_context,
+        replace_images_placeholders=replace_images_placeholders,
+        ocr_pages_dir_factory=ocr_pages_dir_factory,
+    )
