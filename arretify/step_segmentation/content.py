@@ -257,19 +257,61 @@ def parse_sections(
     node_flow_: NodeFlow,
     level: int = 0,
 ) -> NodeFlow:
+    """
+    Takes an input flow with already parsed section titles, and recursively
+    creates sections that groups the section titles and their content together.
+
+    For example, given the following input flow:
+
+    <Title 1>
+    <Title 1.1>
+    <Content 1.1>
+    <Title 2>
+    <Content 2>
+
+    the output will be:
+    <Section 1>
+        <Title 1>
+
+        <Section 1.1>
+            <Title 1.1>
+            <Content 1.1>
+        </Section 1.1>
+    </Section 1>
+
+    <Section 2>
+        <Title 2>
+        <Content 2>
+    </Section 2>
+    """
     node_flow = list(node_flow_)
     pile: List[Node | TextSegments] = []
 
-    # 1. If there is content before the first sub-section title, we parse it as
-    # alineas in the current section.
+    # 1. First, parse content encountered before the first sub-section title
+    #
+    # This is useful in 2 cases :
+    # - when we have reached the leaf section level, and we need
+    #       to parse alineas
+    # - when there is content before the first section title (this is a special
+    #       case and rarely happens).
     pile = []
     while node_flow and not is_node(node_flow[0], type_in=["section_title"]):
         pile.append(node_flow.pop(0))
     if pile:
         yield from parse_alineas(pile)
 
-    # 2. If there are sections at deeper levels we parse them first, by calling
-    # the function recursively.
+    # 2. Second, we parse sections at deeper levels than the current `level`.
+    #
+    # This is useful in 2 cases :
+    # - when there is no title at the current level, and we simply need to
+    #       go deeper in the hierarchy
+    # - when there is a missing section title at the current level,
+    #       e.g. if the flow looks like this (Title 1 is missing) :
+    #       <Title 1.1>
+    #       <Title 1.2>
+    #       <Title 2>
+    #       <Title 2.1>
+    #       <Title 3>
     pile = []
     while node_flow:
         if is_node(node_flow[0], type_in=["section_title"]):
