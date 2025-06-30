@@ -19,7 +19,7 @@
 from bs4 import Tag, BeautifulSoup
 
 from arretify.parsing_utils.source_mapping import TextSegments
-from .document_elements import (
+from .document_elements_DEPRECATED import (
     is_document_element,
     parse_document_elements,
 )

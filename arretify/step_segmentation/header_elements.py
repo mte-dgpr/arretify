@@ -42,9 +42,10 @@ from arretify.utils.markdown_parsing import (
     is_image,
     parse_markdown_image,
 )
-from .document_elements import is_document_element, IS_NOT_TABLE_OF_CONTENTS_PAGING_PATTERN_S
+from .document_elements import IS_NOT_TABLE_OF_CONTENTS_PAGING_PATTERN_S
+from .document_elements_DEPRECATED import is_document_element
 from .basic_elements import (
-    parse_list,
+    parse_list_DEPRECATED,
     list_indentation,
 )
 from .titles_detection import is_title
@@ -380,7 +381,7 @@ def _parse_visas_or_motifs(
                 and is_list(lines[0].contents)
                 and not header_element_pattern.match(lines[0].contents)
             ):
-                lines, ul_element = parse_list(soup, lines)
+                lines, ul_element = parse_list_DEPRECATED(soup, lines)
                 pile.append(ul_element)
             header.append(make_data_tag(soup, header_element_schema, contents=pile))
 
@@ -403,7 +404,7 @@ def _parse_visas_or_motifs(
         while has_more:
             pile = [lines.pop(0).contents]
             while lines and is_list(lines[0].contents):
-                lines, ul_element = parse_list(soup, lines)
+                lines, ul_element = parse_list_DEPRECATED(soup, lines)
                 pile.append(ul_element)
             header.append(make_data_tag(soup, header_element_schema, contents=pile))
 
@@ -421,7 +422,7 @@ def _parse_visas_or_motifs(
                 and is_list(lines[0].contents)
                 and list_indentation(lines[0].contents) > indentation_0
             ):
-                lines, ul_element = parse_list(soup, lines)
+                lines, ul_element = parse_list_DEPRECATED(soup, lines)
                 pile.append(ul_element)
             header.append(make_data_tag(soup, header_element_schema, contents=pile))
 

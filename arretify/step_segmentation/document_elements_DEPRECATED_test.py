@@ -24,7 +24,7 @@ from arretify.parsing_utils.source_mapping import (
     initialize_lines,
     text_segments_to_str,
 )
-from arretify.step_segmentation.document_elements import (
+from arretify.step_segmentation.document_elements_DEPRECATED import (
     _parse_page_footer,
     _parse_table_of_contents,
 )

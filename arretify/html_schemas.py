@@ -57,11 +57,6 @@ TABLE_OF_CONTENTS_SCHEMA = DataElementSchema(
     data_keys=[],
 )
 
-DOCUMENT_ELEMENTS_SCHEMAS: Dict[str, DataElementSchema] = {
-    "page_footer": PAGE_FOOTER_SCHEMA,
-    "table_of_contents": TABLE_OF_CONTENTS_SCHEMA,
-}
-
 # -------------------- Header schemas -------------------- #
 
 EMBLEM_SCHEMA = DataElementSchema(

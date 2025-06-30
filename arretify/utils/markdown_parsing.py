@@ -20,7 +20,7 @@ import re
 from typing import List, cast
 
 import markdown
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, Tag
 
 from arretify.errors import ErrorCodes
 from arretify.utils.html import (
@@ -50,6 +50,7 @@ IMAGE_PATTERN = PatternProxy(r"!\[[^\[\]]+\]\([^()]+\)")
 
 def is_table_line(line: str) -> bool:
     """Detect if the line contains a table, i.e. any "|" character."""
+    # TODO : Make regex more selective
     return bool(re.search(r"(\|)", line, re.IGNORECASE))
 
 
@@ -87,7 +88,7 @@ def is_image(line: str) -> bool:
     return bool(IMAGE_PATTERN.match(line))
 
 
-def parse_markdown_table(elements: List[PageElementOrString]):
+def parse_markdown_table(elements: List[PageElementOrString]) -> Tag:
     if [element for element in elements if not isinstance(element, str)]:
         raise ValueError("got unexpected non-string element to parse markdown from")
 
@@ -108,7 +109,7 @@ def parse_markdown_table(elements: List[PageElementOrString]):
     return table_element
 
 
-def parse_markdown_image(element: PageElementOrString):
+def parse_markdown_image(element: PageElementOrString) -> Tag:
     if not isinstance(element, str):
         raise ValueError("got unexpected non-string element to parse markdown from")
 
