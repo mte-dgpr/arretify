@@ -221,6 +221,7 @@ class TestParseSections(unittest.TestCase):
                     ],
                 ),
             ],
+            ignore_data_if_omitted=True,
         )
 
     def test_parse_sections_contents(self):
@@ -278,6 +279,7 @@ class TestParseSections(unittest.TestCase):
                     ],
                 ),
             ],
+            ignore_data_if_omitted=True,
         )
 
     def test_parse_sections_missing_level(self):
@@ -325,6 +327,7 @@ class TestParseSections(unittest.TestCase):
                     ],
                 ),
             ],
+            ignore_data_if_omitted=True,
         )
 
     def test_parse_missing_title_current_level(self):
@@ -420,4 +423,5 @@ class TestParseSections(unittest.TestCase):
                     ],
                 ),
             ],
+            ignore_data_if_omitted=True,
         )

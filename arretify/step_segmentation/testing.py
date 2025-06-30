@@ -21,7 +21,9 @@ from arretify.types import TextSegment, TextSegments
 from .core import NodeFlow, is_node
 
 
-def assert_node_flows_equal(actual: NodeFlow, expected: NodeFlow, path=""):
+def assert_node_flows_equal(
+    actual: NodeFlow, expected: NodeFlow, ignore_data_if_omitted: bool = False, path=""
+):
     actual = list(actual)
     expected = list(expected)
     assert len(actual) == len(
@@ -31,10 +33,16 @@ def assert_node_flows_equal(actual: NodeFlow, expected: NodeFlow, path=""):
         child_path = f"{path}/{i}"
         if is_node(e):
             assert is_node(a, type_in=[e.type]), f"[{child_path}] Expected {e}, got {a}"
-            # Test data only if defined is test expectations
-            if e.data:
+            # if `ignore_data_if_omitted` is True, test data only
+            # if defined is test expectations.
+            if ignore_data_if_omitted is False or e.data:
                 assert a.data == e.data, f"[{child_path}] Expected {e.data}, got {a.data}"
-            assert_node_flows_equal(a.children, e.children, path=child_path)
+            assert_node_flows_equal(
+                a.children,
+                e.children,
+                path=child_path,
+                ignore_data_if_omitted=ignore_data_if_omitted,
+            )
         else:
             assert isinstance(a, list), f"[{child_path}] Expected TextSegments, got {a}"
             assert isinstance(e, list)
