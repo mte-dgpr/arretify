@@ -147,16 +147,17 @@ TITLE_NODE = regex_tree.Group(
 
 def _split_line_based_on_first_verb(line: Optional[str]) -> Tuple[Optional[str], Optional[str]]:
 
+    # Initialize alinea text
+    title_text = None
+    alinea_text = None
+
     # Nothing to split
     if not line:
-        return None, None
-
-    # Initialize alinea text
-    alinea_text = None
-    title_sentences = []
+        return title_text, alinea_text
 
     # Split sentences
     sentences = line.split(":")
+    title_sentences = []
 
     for i, sentence in enumerate(sentences):
 
@@ -189,8 +190,6 @@ def _split_line_based_on_first_verb(line: Optional[str]) -> Tuple[Optional[str],
 
     if len(title_sentences) > 0:
         title_text = ":".join(title_sentences)
-    else:
-        title_text = None
 
     return title_text, alinea_text
 
@@ -222,7 +221,8 @@ def parse_title_info(line: str) -> TitleInfo:
         section_type=section_type,
         number=number,
         levels=levels,
-        text=title_text,
+        title_text=title_text,
+        alinea_text=alinea_text,
     )
 
     return title_info

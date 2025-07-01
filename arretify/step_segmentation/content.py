@@ -109,6 +109,36 @@ def render_content(
     return content
 
 
+def split_section_titles(lines: TextSegments) -> TextSegments:
+
+    lines = list(lines)
+
+    for i, line in enumerate(lines):
+
+        if is_title(line.contents):
+
+            # Parse title info
+            title_info = parse_title_info(line.contents)
+
+            # If the section title contains alinea text, add it to the list
+            if title_info.alinea_text:
+
+                # TODO: fix insertion of alinea text
+                # Insert alinea text after section title
+                lines.insert(
+                    i + 1,
+                    TextSegment((0, 0), (0, len(title_info.alinea_text)), title_info.alinea_text),
+                )
+
+                # Remove alinea text from title contents
+                title_contents = line.contents.replace(title_info.alinea_text, "")
+                lines[i] = TextSegment(
+                    (lines[i].start[0], 0), (lines[i].end[0], len(title_contents)), title_contents
+                )
+
+    return lines
+
+
 def parse_section_titles(
     elements: List[NodeOrText],
 ) -> List[NodeOrText]:
@@ -186,7 +216,7 @@ def parse_section_titles(
             type=new_section_type.value,
             level=new_schema_level,
             number=title_info.number,
-            title=title_info.text,
+            title=title_info.title_text,
         )
         section_title.data.update(data_extra)
 
