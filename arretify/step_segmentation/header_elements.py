@@ -237,7 +237,7 @@ def _parse_header_element(
     return lines
 
 
-def parse_emblem_element(
+def parse_emblem_element_DEPRECATED(
     soup: BeautifulSoup,
     header: Tag,
     lines: TextSegments,

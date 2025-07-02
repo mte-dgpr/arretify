@@ -89,9 +89,13 @@ def make_single_line_splitter(
 
 def make_while_splitter(
     is_matching: Probe,
+    start_is_matching: Probe | None = None,
 ) -> Splitter:
+    if start_is_matching is None:
+        start_is_matching = is_matching
+
     def _splitter(lines: TextSegments) -> Split | None:
-        before, after = split_before_match(lines, is_matching)
+        before, after = split_before_match(lines, start_is_matching)
         if not after:
             return None
         match, after = split_before_match(after, lambda t: not is_matching(t))

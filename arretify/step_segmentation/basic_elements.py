@@ -259,12 +259,6 @@ def render_inline_quotes(soup: BeautifulSoup, string: str) -> Iterable[PageEleme
     )
 
 
-def parse_list(
-    soup: BeautifulSoup, lines: TextSegments
-) -> Tuple[TextSegments, PageElementOrString]:
-    return (lines, "bla")
-
-
 def render_basic_elements(
     soup: BeautifulSoup,
     node: Node,

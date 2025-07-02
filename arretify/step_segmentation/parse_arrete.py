@@ -23,7 +23,7 @@ from arretify.html_schemas import (
     APPENDIX_SCHEMA,
 )
 from arretify.utils.html import make_data_tag
-from .header import parse_header
+from .header import parse_header_DEPRECATED
 from .content import parse_content_DEPRECATED
 
 
@@ -36,7 +36,7 @@ def parse_arrete(document_context: DocumentContext) -> DocumentContext:
     if lines:
         header = make_data_tag(document_context.soup, HEADER_SCHEMA)
         body.append(header)
-        lines = parse_header(document_context.soup, header, lines)
+        lines = parse_header_DEPRECATED(document_context.soup, header, lines)
 
     if lines:
         main_content = make_data_tag(document_context.soup, MAIN_SCHEMA)
