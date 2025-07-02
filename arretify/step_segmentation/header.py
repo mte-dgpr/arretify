@@ -252,125 +252,132 @@ def parse_header_DEPRECATED(
     return lines
 
 
-def parse_emblem_element(
+def _parse_header_element(
     lines: TextSegments,
+    node_pattern: PatternProxy,
+    node_type: str,
 ) -> NodeFlow:
+    """
+    Generic function to parse header elements.
+    It uses a simple regex pattern to detect the element start, 
+    and then gathers all following lines while the pattern still matches.
+    """
     lines = list(lines)
     return map_splitted_text_segments(
         split_text_segments(
             lines,
             make_while_splitter(
-                lambda t: _is_nothing_else_than("emblem", t),
-                start_is_matching=lambda t: bool(EMBLEM_PATTERN.match(t.contents)),
+                lambda t: bool(node_pattern.match(t.contents)),
             ),
         ),
         lambda text_segments: Node(
-            type="emblem",
+            type=node_type,
             children=[text_segments],
         ),
     )
 
 
-def parse_entity_element(
+def _parse_header_element_fuzzy(
     lines: TextSegments,
+    node_pattern: PatternProxy,
+    node_type: str,
 ) -> NodeFlow:
+    """
+    Generic function to parse header elements with a fuzzy match.
+    It uses a regex pattern to find the start of the element,
+    and then gathers all following lines that do not match another element.
+    """
     lines = list(lines)
     return map_splitted_text_segments(
         split_text_segments(
             lines,
             make_while_splitter(
-                lambda t: _is_nothing_else_than("entity", t),
-                start_is_matching=lambda t: bool(ENTITY_PATTERN.match(t.contents)),
+                lambda t: _is_nothing_else_than(node_type, t),
+                start_is_matching=lambda t: bool(node_pattern.match(t.contents)),
             ),
         ),
         lambda text_segments: Node(
-            type="entity",
+            type=node_type,
             children=[text_segments],
         ),
+    )
+
+
+def parse_emblem_element(
+    lines: TextSegments,
+) -> NodeFlow:
+    return _parse_header_element(lines, EMBLEM_PATTERN, "emblem")
+
+
+def parse_entity_element(
+    lines: TextSegments,
+) -> NodeFlow:
+    return _parse_header_element_fuzzy(
+        lines,
+        ENTITY_PATTERN,
+        "entity",
     )
 
 
 def parse_identification_element(
     lines: TextSegments,
 ) -> NodeFlow:
-    lines = list(lines)
-    return map_splitted_text_segments(
-        split_text_segments(
-            lines,
-            make_while_splitter(
-                lambda t: _is_nothing_else_than("identification", t),
-                start_is_matching=lambda t: bool(IDENTIFICATION_PATTERN.match(t.contents)),
-            ),
-        ),
-        lambda text_segments: Node(
-            type="identification",
-            children=[text_segments],
-        ),
-    )
+    return _parse_header_element(lines, IDENTIFICATION_PATTERN, "identification")
 
 
 def parse_arrete_title_element(
     lines: TextSegments,
 ) -> NodeFlow:
-    lines = list(lines)
-    return map_splitted_text_segments(
-        split_text_segments(
-            lines,
-            make_while_splitter(
-                lambda t: _is_nothing_else_than("arrete_title", t),
-                start_is_matching=lambda t: bool(ARRETE_TITLE_PATTERN.match(t.contents)),
-            ),
-        ),
-        lambda text_segments: Node(
-            type="arrete_title",
-            children=[text_segments],
-        ),
+    return _parse_header_element_fuzzy(
+        lines,
+        ARRETE_TITLE_PATTERN,
+        "arrete_title",
     )
 
 
 def parse_honorary_element(
     lines: TextSegments,
 ) -> NodeFlow:
-    lines = list(lines)
-    return map_splitted_text_segments(
-        split_text_segments(
-            lines,
-            make_while_splitter(lambda t: bool(HONORARY_PATTERN.match(t.contents))),
-        ),
-        lambda text_segments: Node(
-            type="honorary",
-            children=[text_segments],
-        ),
+    return _parse_header_element(lines, HONORARY_PATTERN, "honorary")
+
+
+def parse_supplementary_motif_info_element(
+    lines: TextSegments,
+) -> NodeFlow:
+    return _parse_header_element_fuzzy(
+        lines,
+        SUPPLEMENTARY_MOTIF_INFORMATION_PATTERN,
+        "supplementary_motif_info",
     )
 
 
 def parse_visa_and_motif_elements(
     node_flow: NodeFlow,
 ) -> NodeFlow:
-    node_flow = list(_create_visa_or_motif_nodes(node_flow, "visa", VISA_PATTERN))
-    node_flow = list(_create_visa_or_motif_nodes(node_flow, "motif", MOTIF_PATTERN))
+    node_flow = list(_parse_visa_and_motif_elements_pass1(node_flow, "visa", VISA_PATTERN))
+    node_flow = list(_parse_visa_and_motif_elements_pass1(node_flow, "motif", MOTIF_PATTERN))
     node_flow = list(
-        _parse_visas_or_motifs_first_pass(
+        _parse_visa_and_motif_elements_pass2(
             node_flow,
             node_type="visa",
             node_pattern=VISA_PATTERN,
         )
     )
     node_flow = list(
-        _parse_visas_or_motifs_merge_lists(
+        _parse_visa_and_motif_elements_pass3(
             node_flow,
             node_type="visa",
         )
     )
     node_flow = list(
-        _parse_visas_or_motifs_first_pass(
+        _parse_visa_and_motif_elements_pass2(
             node_flow,
             node_type="motif",
             node_pattern=MOTIF_PATTERN,
         )
     )
     node_flow = list(
-        _parse_visas_or_motifs_merge_lists(
+        _parse_visa_and_motif_elements_pass3(
             node_flow,
             node_type="motif",
         )
@@ -378,11 +385,17 @@ def parse_visa_and_motif_elements(
     return node_flow
 
 
-def _create_visa_or_motif_nodes(
+def _parse_visa_and_motif_elements_pass1(
     node_flow: NodeFlow,
     node_type: Literal["visa", "motif"],
     node_pattern: PatternProxy,
 ) -> NodeFlow:
+    """
+    Pass 1 of parsing visa and motif elements.
+    This pass splits the node flow into segments based on the node pattern.
+    It creates nodes of type 'visa' or 'motif' for each segment that matches 
+    the pattern.
+    """
     node_flow = list(node_flow)
     node_flow = flat_map_node_flow(
         node_flow,
@@ -397,6 +410,13 @@ def _create_visa_or_motif_nodes(
             ),
         ),
     )
+
+    # Visas or motifs that are in form :
+    # - Vu blabla
+    # - Vu bloblo
+    # Should have been parsed into list nodes.
+    # Therefore, we must convert list nodes that contain visas and motifs
+    # into visa or motif nodes.
     for node_or_text_segments in node_flow:
         if is_node(node_or_text_segments, type_in=["list"]):
             lines = assert_single_text_segments(node_or_text_segments)
@@ -412,28 +432,41 @@ def _create_visa_or_motif_nodes(
             yield node_or_text_segments
 
 
-def _parse_visas_or_motifs_first_pass(
+def _parse_visa_and_motif_elements_pass2(
     node_flow: NodeFlow,
     node_type: Literal["visa", "motif"],
     node_pattern: PatternProxy,
 ) -> NodeFlow:
+    """
+    Pass 2 of parsing visa and motif elements.
+    This pass processes the node flow to find the first node of type 
+    'visa' or 'motif'. Once found, it decides between one of the several
+    types of variants for formatting the visas or motifs, and normalizes
+    the node flow accordingly.
+    """
     next_node: Node | TextSegments
     node_flow = list(node_flow)
+
+    # Skip nodes until we find the first node of type 'visa' or 'motif'.
     while node_flow and not is_node(node_flow[0], type_in=[node_type]):
         yield node_flow.pop(0)
     if not node_flow:
         return
-
-    # simple : "Vu blabla" ou "- vu blabla"
-    # bullet_list : "- vu blabla" ou "Vu \n - blabla"
-    # list : "Vu:\n blabla"
     first_node = node_flow.pop(0)
     assert is_node(first_node, type_in=[node_type])
-    section_match = node_pattern.match(assert_single_text_segment(first_node).contents)
 
-    if section_match and section_match.group("contents"):
+    
+    first_node_match = node_pattern.match(assert_single_text_segment(first_node).contents)
+    # 1. Variant "simple" : 
+    #   Vu que blabla
+    #   Vu que bloblo
+    if first_node_match and first_node_match.group("contents"):
         yield first_node
 
+    # 2. Variant "explicit list" : 
+    #   Vu :
+    #   - blabla
+    #   - bloblo
     elif node_flow and is_node(node_flow[0], type_in=["list"]):
         # Add the "Vu :" to the header
         yield from first_node.children
@@ -452,6 +485,10 @@ def _parse_visas_or_motifs_first_pass(
             else:
                 break
 
+    # 3. Variant "implicit list" (no explicit bullets) : 
+    #   Vu :
+    #   blabla
+    #   bloblo
     else:
         # Add the "Vu :" to the header
         yield from first_node.children
@@ -473,10 +510,16 @@ def _parse_visas_or_motifs_first_pass(
     yield from node_flow
 
 
-def _parse_visas_or_motifs_merge_lists(
+def _parse_visa_and_motif_elements_pass3(
     node_flow: NodeFlow,
     node_type: Literal["visa", "motif"],
 ) -> NodeFlow:
+    """
+    Pass 3 of parsing visa and motif elements.
+    Merges the nodes of type 'visa' or 'motif' with the next node
+    if the next node is a list. This is done to ensure that the
+    visa or motif node contains all its children.
+    """
     node_flow = list(node_flow)
     while node_flow:
         node_or_text_segments = node_flow.pop(0)
@@ -486,27 +529,6 @@ def _parse_visas_or_motifs_merge_lists(
             yield node_or_text_segments
         else:
             yield node_or_text_segments
-
-
-def parse_supplementary_motif_info_element(
-    lines: TextSegments,
-) -> NodeFlow:
-    lines = list(lines)
-    return map_splitted_text_segments(
-        split_text_segments(
-            lines,
-            make_while_splitter(
-                lambda t: _is_nothing_else_than("supplementary_motif_info", t),
-                start_is_matching=lambda t: bool(
-                    SUPPLEMENTARY_MOTIF_INFORMATION_PATTERN.match(t.contents)
-                ),
-            ),
-        ),
-        lambda text_segments: Node(
-            type="supplementary_motif_info",
-            children=[text_segments],
-        ),
-    )
 
 
 def render_header(
@@ -521,6 +543,8 @@ def render_header(
             content.append(render_visa_motif(soup, node))
         elif is_node(node, type_in=["honorary"]):
             content.append(render_honorary(soup, node))
+        elif is_node(node, type_in=["supplementary_motif_info"]):
+            content.append(render_supplementary_motif_info_element(soup, node))
         elif is_node(node, type_in=list(HEADER_ELEMENTS_SCHEMAS.keys())):
             content.append(render_header_elements(soup, node))
         elif is_node(node, type_in=["table_of_contents"]):
@@ -553,6 +577,18 @@ def render_header_elements(
         soup,
         HEADER_ELEMENTS_SCHEMAS[node.type],
         contents=wrap_in_tag(soup, elements, "div"),
+    )
+
+
+def render_supplementary_motif_info_element(
+    soup: BeautifulSoup,
+    node: Node,
+) -> Tag:
+    lines = assert_single_text_segments(node)
+    return make_data_tag(
+        soup,
+        SUPPLEMENTARY_MOTIF_INFORMATION_SCHEMA,
+        contents=wrap_in_tag(soup, [t.contents for t in lines], "div"),
     )
 
 

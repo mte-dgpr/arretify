@@ -145,6 +145,8 @@ def render_content(
     for node in node_flow:
         if is_node(node, type_in=["section"]):
             content.append(render_section(soup, node))
+        elif is_node(node, type_in=["table_of_contents"]):
+            content.append(render_table_of_contents(soup, node))
         elif is_node(node):
             raise ValueError(f"Unexpected node {node.type} in content")
         else:
