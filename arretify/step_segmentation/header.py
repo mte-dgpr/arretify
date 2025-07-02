@@ -22,7 +22,6 @@ from bs4 import Tag, BeautifulSoup
 
 from arretify.utils.functional import flat_map_string
 from arretify.parsing_utils.dates import DATE_NODE, render_date_regex_tree_match
-from arretify.regex_utils import PatternProxy, join_with_or
 from arretify.utils.html import wrap_in_tag, make_data_tag, make_new_tag
 from arretify.types import TextSegments, TextSegment, PageElementOrString
 from arretify.parsing_utils.patterns import join_split_pile_with_pattern
@@ -49,21 +48,17 @@ from .core import (
     split_text_segments,
     make_while_splitter,
     map_splitted_text_segments,
-    split_before_match,
     is_node,
     assert_single_text_segments,
     make_single_line_splitter,
     assert_single_text_segment,
 )
 from .document_elements import (
-    parse_parse_page_footer,
-    parse_table_of_contents,
     render_page_footer,
     render_table_of_contents,
 )
-from .basic_elements import parse_images, parse_lists, render_image, render_list
+from .basic_elements import parse_lists, render_image, render_list
 from .document_elements import IS_NOT_TABLE_OF_CONTENTS_PAGING_PATTERN_S
-from .titles_detection import is_title
 
 
 EMBLEMS_LIST = [
@@ -191,21 +186,8 @@ def _is_nothing_else_than(name: str, t: TextSegment) -> bool:
 
 
 def parse_header(
-    lines: TextSegments,
+    node_flow: NodeFlow,
 ) -> NodeFlow:
-    node_flow: NodeFlow = [lines]
-    node_flow = flat_map_node_flow(
-        node_flow,
-        parse_table_of_contents,
-    )
-    node_flow = flat_map_node_flow(
-        node_flow,
-        parse_images,
-    )
-    node_flow = flat_map_node_flow(
-        node_flow,
-        parse_parse_page_footer,
-    )
     node_flow = flat_map_node_flow(
         node_flow,
         parse_emblem_element,
@@ -238,20 +220,6 @@ def parse_header(
     return node_flow
 
 
-def parse_header_DEPRECATED(
-    soup: BeautifulSoup,
-    header: Tag,
-    lines: TextSegments,
-) -> TextSegments:
-    pile: TextSegments = []
-    while lines and not is_title(lines[0].contents):
-        pile.append(lines.pop(0))
-    parsed_content = list(parse_header(pile))
-    rendered_content = render_header(soup, parsed_content)
-    header.extend(list(rendered_content.children))
-    return lines
-
-
 def _parse_header_element(
     lines: TextSegments,
     node_pattern: PatternProxy,
@@ -259,7 +227,7 @@ def _parse_header_element(
 ) -> NodeFlow:
     """
     Generic function to parse header elements.
-    It uses a simple regex pattern to detect the element start, 
+    It uses a simple regex pattern to detect the element start,
     and then gathers all following lines while the pattern still matches.
     """
     lines = list(lines)
@@ -393,7 +361,7 @@ def _parse_visa_and_motif_elements_pass1(
     """
     Pass 1 of parsing visa and motif elements.
     This pass splits the node flow into segments based on the node pattern.
-    It creates nodes of type 'visa' or 'motif' for each segment that matches 
+    It creates nodes of type 'visa' or 'motif' for each segment that matches
     the pattern.
     """
     node_flow = list(node_flow)
@@ -439,7 +407,7 @@ def _parse_visa_and_motif_elements_pass2(
 ) -> NodeFlow:
     """
     Pass 2 of parsing visa and motif elements.
-    This pass processes the node flow to find the first node of type 
+    This pass processes the node flow to find the first node of type
     'visa' or 'motif'. Once found, it decides between one of the several
     types of variants for formatting the visas or motifs, and normalizes
     the node flow accordingly.
@@ -455,15 +423,14 @@ def _parse_visa_and_motif_elements_pass2(
     first_node = node_flow.pop(0)
     assert is_node(first_node, type_in=[node_type])
 
-    
     first_node_match = node_pattern.match(assert_single_text_segment(first_node).contents)
-    # 1. Variant "simple" : 
+    # 1. Variant "simple" :
     #   Vu que blabla
     #   Vu que bloblo
     if first_node_match and first_node_match.group("contents"):
         yield first_node
 
-    # 2. Variant "explicit list" : 
+    # 2. Variant "explicit list" :
     #   Vu :
     #   - blabla
     #   - bloblo
@@ -485,7 +452,7 @@ def _parse_visa_and_motif_elements_pass2(
             else:
                 break
 
-    # 3. Variant "implicit list" (no explicit bullets) : 
+    # 3. Variant "implicit list" (no explicit bullets) :
     #   Vu :
     #   blabla
     #   bloblo

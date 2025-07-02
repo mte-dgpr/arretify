@@ -60,47 +60,12 @@ from .core import (
     make_single_line_splitter,
 )
 from .document_elements import (
-    parse_parse_page_footer,
-    parse_table_of_contents,
     render_page_footer,
     render_table_of_contents,
 )
 
 
 _LOGGER = logging.getLogger(__name__)
-
-
-def parse_content_DEPRECATED(
-    soup: BeautifulSoup,
-    content: Tag,
-    lines: TextSegments,
-    exit_on_appendix: bool = True,
-) -> TextSegments:
-    """
-    DEPRECATED : kept only for compatibility with old segmentation code.
-    Should be removed once migration is complete.
-    """
-    pile: TextSegments = []
-
-    if exit_on_appendix:
-        while lines:
-            if is_title(lines[0].contents):
-                # Parse title info
-                title_info = parse_title_info(lines[0].contents)
-                new_section_type = title_info.section_type
-
-                # Appendix is considered as a different part of the document
-                if new_section_type == SectionType.ANNEXE:
-                    break
-
-            pile.append(lines.pop(0))
-    else:
-        pile = lines
-
-    parsed_content = list(parse_content(pile))
-    rendered_content = render_content(soup, parsed_content)
-    content.extend(list(rendered_content.children))
-    return lines
 
 
 def _get_downstream_sections_types(section_type):
@@ -110,24 +75,8 @@ def _get_downstream_sections_types(section_type):
 
 
 def parse_content(
-    lines: TextSegments,
+    node_flow: NodeFlow,
 ) -> NodeFlow:
-    node_flow: NodeFlow = [lines]
-    # Image strings can be very long, and table of contents pattern look
-    # at the end of the sentence.
-    # So, we make sure we parse images before table of contents.
-    node_flow = flat_map_node_flow(
-        node_flow,
-        parse_images,
-    )
-    node_flow = flat_map_node_flow(
-        node_flow,
-        parse_parse_page_footer,
-    )
-    node_flow = flat_map_node_flow(
-        node_flow,
-        parse_table_of_contents,
-    )
     node_flow = flat_map_node_flow(
         node_flow,
         parse_blockquotes,

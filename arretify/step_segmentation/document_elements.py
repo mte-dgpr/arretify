@@ -102,7 +102,7 @@ def parse_table_of_contents(
             pile = []
 
 
-def parse_parse_page_footer(
+def parse_page_footer(
     lines: TextSegments,
 ) -> NodeFlow:
     lines = list(lines)
