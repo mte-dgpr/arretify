@@ -104,33 +104,6 @@ def is_blockquote_end(line: str) -> bool:
     return bool(BLOCKQUOTE_END_PATTERN.search(line))
 
 
-def parse_list_DEPRECATED(
-    soup: BeautifulSoup, lines: TextSegments
-) -> Tuple[TextSegments, PageElementOrString]:
-    """
-    DEPRECATED : kept only for compatibility with old segmentation code.
-    Should be removed once migration is complete.
-    """
-    list_pile: List[PageElementOrString] = []
-    ref_indentation = list_indentation(lines[0].contents)
-
-    while lines and is_list(lines[0].contents):
-        current_indentation = list_indentation(lines[0].contents)
-        if current_indentation == ref_indentation:
-            line = apply_to_segment(lines.pop(0), _clean_leading_whitespaces)
-            list_pile.append(line.contents)
-
-        elif current_indentation > ref_indentation:
-            lines, nested_ul = parse_list_DEPRECATED(soup, lines)
-            li = make_li(soup, [list_pile.pop(), nested_ul])
-            list_pile.append(li)
-
-        else:
-            break
-
-    return lines, make_ul(soup, list_pile)
-
-
 def parse_images(
     lines: TextSegments,
 ) -> NodeFlow:
