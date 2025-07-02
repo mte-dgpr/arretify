@@ -52,7 +52,7 @@ from arretify.parsing_utils.source_mapping import (
 from .core import (
     Node,
     NodeFlow,
-    flat_map_node_flow,
+    chain_flat_map_node_flow,
     assert_single_text_segments,
     assert_single_text_segment,
     split_text_segments,
@@ -136,7 +136,6 @@ def parse_lists(
 def parse_tables(
     lines: TextSegments,
 ) -> NodeFlow:
-    lines = list(lines)
     while lines:
         pile, lines = split_before_match(lines, lambda t: is_table_line(t.contents))
         if pile:
@@ -155,7 +154,6 @@ def parse_tables(
 def parse_blockquotes(
     lines: TextSegments,
 ) -> NodeFlow:
-    lines = list(lines)
     pile: TextSegments = []
     while lines:
         pile, lines = split_before_match(lines, lambda t: is_blockquote_start(t.contents))
@@ -199,12 +197,10 @@ def parse_blockquotes(
         )
 
         if quotes_depth_count == 0:
-            children = flat_map_node_flow([pile], parse_tables)
-            children = flat_map_node_flow(children, parse_lists)
-            children = flat_map_node_flow(children, parse_images)
+            node_flow = chain_flat_map_node_flow([pile], [parse_tables, parse_lists, parse_images])
             yield Node(
                 type="blockquote",
-                children=list(children),
+                children=list(node_flow),
             )
             pile = []
         else:

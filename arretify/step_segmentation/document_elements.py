@@ -75,7 +75,6 @@ def is_page_footer(line: str) -> bool:
 def parse_table_of_contents(
     lines: TextSegments,
 ) -> NodeFlow:
-    lines = list(lines)
     pile: TextSegments = []
     while lines:
         pile, lines = split_before_match(

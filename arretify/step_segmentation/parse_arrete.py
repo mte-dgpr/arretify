@@ -28,7 +28,15 @@ from arretify.utils.html import make_data_tag
 from .header import parse_header, render_header
 from .titles_detection import is_title, parse_title_info
 from .content import parse_content, render_content
-from .core import split_before_match, flat_map_node_flow, NodeFlow, is_node, Node, Probe
+from .core import (
+    split_before_match,
+    chain_flat_map_node_flow,
+    NodeFlow,
+    NodeList,
+    is_node,
+    Node,
+    Probe,
+)
 from .basic_elements import parse_images
 from .document_elements import parse_page_footer, parse_table_of_contents
 
@@ -45,17 +53,9 @@ def parse_arrete(document_context: DocumentContext) -> DocumentContext:
     # Image strings can be very long, and table of contents pattern look
     # at the end of the sentence.
     # So, we make sure we parse images before table of contents.
-    node_flow = flat_map_node_flow(
+    node_flow = chain_flat_map_node_flow(
         node_flow,
-        parse_images,
-    )
-    node_flow = flat_map_node_flow(
-        node_flow,
-        parse_page_footer,
-    )
-    node_flow = flat_map_node_flow(
-        node_flow,
-        parse_table_of_contents,
+        [parse_images, parse_page_footer, parse_table_of_contents],
     )
 
     # Header
@@ -98,19 +98,19 @@ def _split_node_flow(
     node_flow: NodeFlow,
     is_matching: Probe,
 ) -> Tuple[NodeFlow, NodeFlow]:
-    node_flow_ = list(node_flow)
+    node_list: NodeList = list(node_flow)
     node_flow_pile: List[Node | TextSegments] = []
-    while node_flow_:
-        if is_node(node_flow_[0]):
-            node_flow_pile.append(node_flow_.pop(0))
+    while node_list:
+        if is_node(node_list[0]):
+            node_flow_pile.append(node_list.pop(0))
         else:
-            assert isinstance(node_flow_[0], list)
-            before, after = split_before_match(node_flow_[0], is_matching)
+            assert isinstance(node_list[0], list)
+            before, after = split_before_match(node_list[0], is_matching)
             if after:
-                node_flow_.pop(0)
+                node_list.pop(0)
                 node_flow_pile.append(before)
-                node_flow_.insert(0, after)
+                node_list.insert(0, after)
                 break
             else:
-                node_flow_pile.append(node_flow_.pop(0))
-    return node_flow_pile, node_flow_
+                node_flow_pile.append(node_list.pop(0))
+    return node_flow_pile, node_list

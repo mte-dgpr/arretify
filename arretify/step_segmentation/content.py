@@ -52,9 +52,11 @@ from .titles_detection import (
 from .core import (
     Node,
     NodeFlow,
+    NodeList,
     is_node,
     assert_single_text_segment,
     flat_map_node_flow,
+    chain_flat_map_node_flow,
     map_splitted_text_segments,
     split_text_segments,
     make_single_line_splitter,
@@ -104,13 +106,11 @@ def render_content(
 
 
 def parse_section_titles(
-    node_flow_: NodeFlow,
+    node_flow: NodeFlow,
 ) -> NodeFlow:
-    node_flow = list(node_flow_)
-
     # First collect all section titles in output_flow.
-    output_flow = flat_map_node_flow(node_flow, _create_section_title_nodes)
-    section_titles: List[Node] = [e for e in output_flow if is_node(e, type_in=["section_title"])]
+    node_list = flat_map_node_flow(node_flow, _create_section_title_nodes)
+    section_titles: List[Node] = [e for e in node_list if is_node(e, type_in=["section_title"])]
 
     # Ancestry order from root to the current section in the parsing context
     sections: int = 1
@@ -186,7 +186,7 @@ def parse_section_titles(
         )
         section_title.data.update(data_extra)
 
-    yield from output_flow
+    yield from node_list
 
 
 def _create_section_title_nodes(
@@ -205,7 +205,7 @@ def _create_section_title_nodes(
 
 
 def parse_sections(
-    node_flow_: NodeFlow,
+    node_flow: NodeFlow,
     level: int = 0,
 ) -> NodeFlow:
     """
@@ -235,7 +235,7 @@ def parse_sections(
         <Content 2>
     </Section 2>
     """
-    node_flow = list(node_flow_)
+    node_list: NodeList = list(node_flow)
     pile: List[Node | TextSegments] = []
 
     # 1. First, parse content encountered before the first sub-section title
@@ -246,8 +246,8 @@ def parse_sections(
     # - when there is content before the first section title (this is a special
     #       case and rarely happens).
     pile = []
-    while node_flow and not is_node(node_flow[0], type_in=["section_title"]):
-        pile.append(node_flow.pop(0))
+    while node_list and not is_node(node_list[0], type_in=["section_title"]):
+        pile.append(node_list.pop(0))
     if pile:
         yield from parse_alineas(pile)
 
@@ -264,39 +264,39 @@ def parse_sections(
     #       <Title 2.1>
     #       <Title 3>
     pile = []
-    while node_flow:
-        if is_node(node_flow[0], type_in=["section_title"]):
-            if node_flow[0].data["level"] == level:
+    while node_list:
+        if is_node(node_list[0], type_in=["section_title"]):
+            if node_list[0].data["level"] == level:
                 break
-            elif node_flow[0].data["level"] > level:
-                pile.append(node_flow.pop(0))
+            elif node_list[0].data["level"] > level:
+                pile.append(node_list.pop(0))
             else:
                 raise RuntimeError(
-                    f"Unexpected section title level {node_flow[0].data['level']} "
+                    f"Unexpected section title level {node_list[0].data['level']} "
                     f"at level {level}"
                 )
         else:
-            pile.append(node_flow.pop(0))
+            pile.append(node_list.pop(0))
     if pile:
         yield from parse_sections(pile, level=level + 1)
 
     # 3. Finally parse sections at current level
     pile = []
-    while node_flow:
+    while node_list:
         # Add section title to the pile
-        pile.append(node_flow.pop(0))
+        pile.append(node_list.pop(0))
 
         # Fill-in the pile until we find next section title
         # of the same level
-        while node_flow:
-            if is_node(node_flow[0], type_in=["section_title"]):
-                if node_flow[0].data["level"] == level:
+        while node_list:
+            if is_node(node_list[0], type_in=["section_title"]):
+                if node_list[0].data["level"] == level:
                     break
-                elif node_flow[0].data["level"] < level:
+                elif node_list[0].data["level"] < level:
                     raise RuntimeError(
-                        f"Unexpected section title level {node_flow[0].data['level']} "
+                        f"Unexpected section title level {node_list[0].data['level']} "
                     )
-            pile.append(node_flow.pop(0))
+            pile.append(node_list.pop(0))
 
         if pile:
             section_title, section_children = pile[0], pile[1:]
@@ -377,27 +377,17 @@ def render_section(
 # guide de légistique)."
 # REF : https://www.legifrance.gouv.fr/contenu/Media/files/lexique-api-lgf.docx
 def parse_alineas(
-    node_flow_: NodeFlow,
+    node_flow: NodeFlow,
 ) -> Iterator[Node]:
-    node_flow_ = list(node_flow_)
     alinea_count = 1
 
-    node_flow_ = flat_map_node_flow(
-        node_flow_,
-        parse_tables,
+    node_list: NodeList = chain_flat_map_node_flow(
+        node_flow,
+        [parse_tables, parse_lists, parse_images],
     )
-    node_flow_ = flat_map_node_flow(
-        node_flow_,
-        parse_lists,
-    )
-    node_flow_ = flat_map_node_flow(
-        node_flow_,
-        parse_images,
-    )
-    node_flow = list(node_flow_)
 
-    while node_flow:
-        node_or_text_segments = node_flow.pop(0)
+    while node_list:
+        node_or_text_segments = node_list.pop(0)
         if is_node(node_or_text_segments, type_in=["page_footer", "table_of_contents"]):
             yield node_or_text_segments
 
@@ -405,11 +395,11 @@ def parse_alineas(
             children: List[Node | TextSegments] = [node_or_text_segments]
             if node_or_text_segments.type == "table":
                 while (
-                    node_flow
-                    and isinstance(node_flow[0], Node)
-                    and node_flow[0].type == "table_description"
+                    node_list
+                    and isinstance(node_list[0], Node)
+                    and node_list[0].type == "table_description"
                 ):
-                    children.append(node_flow.pop(0))
+                    children.append(node_list.pop(0))
 
             yield Node(
                 type="alinea",

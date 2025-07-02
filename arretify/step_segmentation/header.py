@@ -43,8 +43,10 @@ from arretify.regex_utils import (
 )
 from .core import (
     NodeFlow,
+    NodeList,
     Node,
     flat_map_node_flow,
+    chain_flat_map_node_flow,
     split_text_segments,
     make_while_splitter,
     map_splitted_text_segments,
@@ -188,33 +190,17 @@ def _is_nothing_else_than(name: str, t: TextSegment) -> bool:
 def parse_header(
     node_flow: NodeFlow,
 ) -> NodeFlow:
-    node_flow = flat_map_node_flow(
+    node_flow = chain_flat_map_node_flow(
         node_flow,
-        parse_emblem_element,
-    )
-    node_flow = flat_map_node_flow(
-        node_flow,
-        parse_entity_element,
-    )
-    node_flow = flat_map_node_flow(
-        node_flow,
-        parse_identification_element,
-    )
-    node_flow = flat_map_node_flow(
-        node_flow,
-        parse_arrete_title_element,
-    )
-    node_flow = flat_map_node_flow(
-        node_flow,
-        parse_honorary_element,
-    )
-    node_flow = flat_map_node_flow(
-        node_flow,
-        parse_supplementary_motif_info_element,
-    )
-    node_flow = flat_map_node_flow(
-        node_flow,
-        parse_lists,
+        [
+            parse_emblem_element,
+            parse_entity_element,
+            parse_identification_element,
+            parse_arrete_title_element,
+            parse_honorary_element,
+            parse_supplementary_motif_info_element,
+            parse_lists,
+        ],
     )
     node_flow = parse_visa_and_motif_elements(node_flow)
     return node_flow
@@ -230,7 +216,6 @@ def _parse_header_element(
     It uses a simple regex pattern to detect the element start,
     and then gathers all following lines while the pattern still matches.
     """
-    lines = list(lines)
     return map_splitted_text_segments(
         split_text_segments(
             lines,
@@ -255,7 +240,6 @@ def _parse_header_element_fuzzy(
     It uses a regex pattern to find the start of the element,
     and then gathers all following lines that do not match another element.
     """
-    lines = list(lines)
     return map_splitted_text_segments(
         split_text_segments(
             lines,
@@ -364,7 +348,6 @@ def _parse_visa_and_motif_elements_pass1(
     It creates nodes of type 'visa' or 'motif' for each segment that matches
     the pattern.
     """
-    node_flow = list(node_flow)
     node_flow = flat_map_node_flow(
         node_flow,
         lambda lines: map_splitted_text_segments(
@@ -413,14 +396,14 @@ def _parse_visa_and_motif_elements_pass2(
     the node flow accordingly.
     """
     next_node: Node | TextSegments
-    node_flow = list(node_flow)
+    node_list: NodeList = list(node_flow)
 
     # Skip nodes until we find the first node of type 'visa' or 'motif'.
-    while node_flow and not is_node(node_flow[0], type_in=[node_type]):
-        yield node_flow.pop(0)
-    if not node_flow:
+    while node_list and not is_node(node_list[0], type_in=[node_type]):
+        yield node_list.pop(0)
+    if not node_list:
         return
-    first_node = node_flow.pop(0)
+    first_node = node_list.pop(0)
     assert is_node(first_node, type_in=[node_type])
 
     first_node_match = node_pattern.match(assert_single_text_segment(first_node).contents)
@@ -434,16 +417,16 @@ def _parse_visa_and_motif_elements_pass2(
     #   Vu :
     #   - blabla
     #   - bloblo
-    elif node_flow and is_node(node_flow[0], type_in=["list"]):
+    elif node_list and is_node(node_list[0], type_in=["list"]):
         # Add the "Vu :" to the header
         yield from first_node.children
-        while node_flow:
-            next_node = node_flow[0]
+        while node_list:
+            next_node = node_list[0]
             if is_node(next_node, type_in=["page_footer"]) or isinstance(next_node, list):
-                yield node_flow.pop(0)
+                yield node_list.pop(0)
 
             elif is_node(next_node, type_in=["list"]):
-                node_flow.pop(0)
+                node_list.pop(0)
                 for line in assert_single_text_segments(next_node):
                     yield Node(
                         type=node_type,
@@ -459,13 +442,13 @@ def _parse_visa_and_motif_elements_pass2(
     else:
         # Add the "Vu :" to the header
         yield from first_node.children
-        while node_flow:
-            next_node = node_flow[0]
+        while node_list:
+            next_node = node_list[0]
             if is_node(next_node, type_in=["page_footer", "list"]):
-                yield node_flow.pop(0)
+                yield node_list.pop(0)
 
             elif isinstance(next_node, list):
-                node_flow.pop(0)
+                node_list.pop(0)
                 for line in next_node:
                     yield Node(
                         type=node_type,
@@ -474,7 +457,7 @@ def _parse_visa_and_motif_elements_pass2(
             else:
                 break
 
-    yield from node_flow
+    yield from node_list
 
 
 def _parse_visa_and_motif_elements_pass3(
@@ -487,12 +470,12 @@ def _parse_visa_and_motif_elements_pass3(
     if the next node is a list. This is done to ensure that the
     visa or motif node contains all its children.
     """
-    node_flow = list(node_flow)
-    while node_flow:
-        node_or_text_segments = node_flow.pop(0)
+    node_list: NodeList = list(node_flow)
+    while node_list:
+        node_or_text_segments = node_list.pop(0)
         if is_node(node_or_text_segments, type_in=[node_type]):
-            if node_flow and is_node(node_flow[0], type_in=["list"]):
-                node_or_text_segments.children.append(node_flow.pop(0))
+            if node_list and is_node(node_list[0], type_in=["list"]):
+                node_or_text_segments.children.append(node_list.pop(0))
             yield node_or_text_segments
         else:
             yield node_or_text_segments
