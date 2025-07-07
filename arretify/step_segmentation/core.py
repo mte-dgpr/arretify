@@ -47,14 +47,14 @@ class Node:
 
 def flat_map_node_flow(
     node_flow: NodeFlow,
-    map_functions: Callable[[TextSegments], NodeFlow],
+    map_function: Callable[[TextSegments], NodeFlow],
 ) -> NodeList:
     output: NodeList = []
     for node_or_text_segments in node_flow:
         if isinstance(node_or_text_segments, Node):
             output.append(node_or_text_segments)
         else:
-            output.extend(map_functions(node_or_text_segments))
+            output.extend(map_function(node_or_text_segments))
     return output
 
 

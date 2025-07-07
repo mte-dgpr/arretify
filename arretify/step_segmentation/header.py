@@ -16,14 +16,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import List, Dict, Literal
+from typing import List, Dict, Literal, cast
 
 from bs4 import Tag, BeautifulSoup
 
 from arretify.utils.functional import flat_map_string
 from arretify.parsing_utils.dates import DATE_NODE, render_date_regex_tree_match
 from arretify.utils.html import wrap_in_tag, make_data_tag, make_new_tag
-from arretify.types import TextSegments, TextSegment, PageElementOrString
+from arretify.types import TextSegments, TextSegment, PageElementOrString, DataElementSchema
 from arretify.parsing_utils.patterns import join_split_pile_with_pattern
 from arretify.html_schemas import (
     EMBLEM_SCHEMA,
@@ -134,9 +134,6 @@ HONORARIES_LIST = [
 HONORARY_PATTERN = PatternProxy(rf"^\W*({join_with_or(HONORARIES_LIST)})")
 """Detect all honorary titles."""
 
-HONORARY_SPLIT_PATTERN = PatternProxy(join_with_or(HONORARIES_LIST))
-"""Pattern to split honorary titles into separate elements."""
-
 VISA_PATTERN = PatternProxy(r"^\W*vu(\s*:\s*|\b)(?P<contents>.*)")
 """Detect if the sentence starts with "vu"."""
 
@@ -155,19 +152,24 @@ SUPPLEMENTARY_MOTIF_INFORMATION_PATTERN = PatternProxy(
 )
 """Detect all other information that can be part of the motifs."""
 
-HEADER_ELEMENTS_PATTERNS: Dict[str, PatternProxy] = {
-    "emblem": EMBLEM_PATTERN,
-    "entity": ENTITY_PATTERN,
-    "identification": IDENTIFICATION_PATTERN,
-    "arrete_title": ARRETE_TITLE_PATTERN,
-    "honorary": HONORARY_PATTERN,
-    "visa": VISA_PATTERN,
-    "motif": MOTIF_PATTERN,
-    "supplementary_motif_info": SUPPLEMENTARY_MOTIF_INFORMATION_PATTERN,
-}
+HEADER_ELEMENTS_PATTERNS: Dict[str, PatternProxy] = dict(
+    emblem=EMBLEM_PATTERN,
+    entity=ENTITY_PATTERN,
+    identification=IDENTIFICATION_PATTERN,
+    arrete_title=ARRETE_TITLE_PATTERN,
+    honorary=HONORARY_PATTERN,
+    visa=VISA_PATTERN,
+    motif=MOTIF_PATTERN,
+    supplementary_motif_info=SUPPLEMENTARY_MOTIF_INFORMATION_PATTERN,
+)
 
+HEADER_ELEMENTS_RENDER_PATTERNS: Dict[str, PatternProxy | None] = dict(
+    HEADER_ELEMENTS_PATTERNS,
+    honorary=PatternProxy(join_with_or(HONORARIES_LIST)),
+    supplementary_motif_info=None,
+)
 
-HEADER_ELEMENTS_SCHEMAS = dict(
+HEADER_ELEMENTS_SCHEMAS: Dict[str, DataElementSchema] = dict(
     emblem=EMBLEM_SCHEMA,
     entity=ENTITY_SCHEMA,
     identification=IDENTIFICATION_SCHEMA,
@@ -199,6 +201,12 @@ def parse_header(
             parse_arrete_title_element,
             parse_honorary_element,
             parse_supplementary_motif_info_element,
+            # We need to run list parsing here :
+            # - after header elements, because some of them
+            #       might contain lists which we don't want captured.
+            #
+            # - before visas and motifs, because they use list Nodes
+            #       to build lists of visas / motifs
             parse_lists,
         ],
     )
@@ -296,7 +304,7 @@ def parse_honorary_element(
 def parse_supplementary_motif_info_element(
     lines: TextSegments,
 ) -> NodeFlow:
-    return _parse_header_element_fuzzy(
+    return _parse_header_element(
         lines,
         SUPPLEMENTARY_MOTIF_INFORMATION_PATTERN,
         "supplementary_motif_info",
@@ -491,10 +499,8 @@ def render_header(
             content.append(rendre_arrete_title(soup, node))
         elif is_node(node, type_in=["visa", "motif"]):
             content.append(render_visa_motif(soup, node))
-        elif is_node(node, type_in=["honorary"]):
-            content.append(render_honorary(soup, node))
-        elif is_node(node, type_in=["supplementary_motif_info"]):
-            content.append(render_supplementary_motif_info_element(soup, node))
+        # All header elements other than the ones above
+        # are treated in a generic way.
         elif is_node(node, type_in=list(HEADER_ELEMENTS_SCHEMAS.keys())):
             content.append(render_header_elements(soup, node))
         elif is_node(node, type_in=["table_of_contents"]):
@@ -519,38 +525,14 @@ def render_header_elements(
     node: Node,
 ) -> Tag:
     lines = assert_single_text_segments(node)
-    elements: List[PageElementOrString]
-    elements = join_split_pile_with_pattern(
-        [t.contents for t in lines], HEADER_ELEMENTS_PATTERNS[node.type]
-    )
+    elements_str: List[str] = [t.contents for t in lines]
+    elements: List[PageElementOrString] = cast(List[PageElementOrString], elements_str)
+    pattern = HEADER_ELEMENTS_RENDER_PATTERNS[node.type]
+    if pattern is not None:
+        elements = join_split_pile_with_pattern(elements_str, pattern)
     return make_data_tag(
         soup,
         HEADER_ELEMENTS_SCHEMAS[node.type],
-        contents=wrap_in_tag(soup, elements, "div"),
-    )
-
-
-def render_supplementary_motif_info_element(
-    soup: BeautifulSoup,
-    node: Node,
-) -> Tag:
-    lines = assert_single_text_segments(node)
-    return make_data_tag(
-        soup,
-        SUPPLEMENTARY_MOTIF_INFORMATION_SCHEMA,
-        contents=wrap_in_tag(soup, [t.contents for t in lines], "div"),
-    )
-
-
-def render_honorary(
-    soup: BeautifulSoup,
-    node: Node,
-) -> Tag:
-    lines = assert_single_text_segments(node)
-    elements = join_split_pile_with_pattern([t.contents for t in lines], HONORARY_SPLIT_PATTERN)
-    return make_data_tag(
-        soup,
-        HONORARY_SCHEMA,
         contents=wrap_in_tag(soup, elements, "div"),
     )
 
