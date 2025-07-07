@@ -23,6 +23,7 @@ from arretify.types import TextSegments, TextSegment
 
 
 NodeFlow = Iterable[TextSegments | "Node"]
+NodeList = List[TextSegments | "Node"]
 Split = Tuple[TextSegments, TextSegments, TextSegments]
 Splitter = Callable[[TextSegments], Split | None]
 Probe = Callable[[TextSegment], bool]
@@ -35,7 +36,7 @@ class Node:
     """
 
     type: str
-    children: List[TextSegments | "Node"]
+    children: NodeList
     data: Dict[str, Any] = field(default_factory=dict)
 
     def __post_init__(self):
@@ -46,15 +47,24 @@ class Node:
 
 def flat_map_node_flow(
     node_flow: NodeFlow,
-    map_func: Callable[[TextSegments], NodeFlow],
-) -> List[TextSegments | Node]:
-    output: List[TextSegments | Node] = []
+    map_function: Callable[[TextSegments], NodeFlow],
+) -> NodeList:
+    output: NodeList = []
     for node_or_text_segments in node_flow:
         if isinstance(node_or_text_segments, Node):
             output.append(node_or_text_segments)
         else:
-            output.extend(map_func(node_or_text_segments))
+            output.extend(map_function(node_or_text_segments))
     return output
+
+
+def chain_flat_map_node_flow(
+    node_flow: NodeFlow,
+    map_functions: List[Callable[[TextSegments], NodeFlow]],
+) -> NodeList:
+    for map_function in map_functions:
+        node_flow = flat_map_node_flow(node_flow, map_function)
+    return list(node_flow)
 
 
 def split_text_segments(
@@ -89,9 +99,13 @@ def make_single_line_splitter(
 
 def make_while_splitter(
     is_matching: Probe,
+    start_is_matching: Probe | None = None,
 ) -> Splitter:
+    if start_is_matching is None:
+        start_is_matching = is_matching
+
     def _splitter(lines: TextSegments) -> Split | None:
-        before, after = split_before_match(lines, is_matching)
+        before, after = split_before_match(lines, start_is_matching)
         if not after:
             return None
         match, after = split_before_match(after, lambda t: not is_matching(t))
@@ -123,8 +137,8 @@ def split_before_match(
 def map_splitted_text_segments(
     input_flow: Iterable[Tuple[bool, TextSegments]],
     map_func: Callable[[TextSegments], Node],
-) -> List[TextSegments | Node]:
-    output: List[TextSegments | Node] = []
+) -> NodeList:
+    output: NodeList = []
     for is_match, text_segments in input_flow:
         if is_match:
             output.append(map_func(text_segments))

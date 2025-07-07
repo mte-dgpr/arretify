@@ -52,7 +52,7 @@ from arretify.parsing_utils.source_mapping import (
 from .core import (
     Node,
     NodeFlow,
-    flat_map_node_flow,
+    chain_flat_map_node_flow,
     assert_single_text_segments,
     assert_single_text_segment,
     split_text_segments,
@@ -104,33 +104,6 @@ def is_blockquote_end(line: str) -> bool:
     return bool(BLOCKQUOTE_END_PATTERN.search(line))
 
 
-def parse_list_DEPRECATED(
-    soup: BeautifulSoup, lines: TextSegments
-) -> Tuple[TextSegments, PageElementOrString]:
-    """
-    DEPRECATED : kept only for compatibility with old segmentation code.
-    Should be removed once migration is complete.
-    """
-    list_pile: List[PageElementOrString] = []
-    ref_indentation = list_indentation(lines[0].contents)
-
-    while lines and is_list(lines[0].contents):
-        current_indentation = list_indentation(lines[0].contents)
-        if current_indentation == ref_indentation:
-            line = apply_to_segment(lines.pop(0), _clean_leading_whitespaces)
-            list_pile.append(line.contents)
-
-        elif current_indentation > ref_indentation:
-            lines, nested_ul = parse_list_DEPRECATED(soup, lines)
-            li = make_li(soup, [list_pile.pop(), nested_ul])
-            list_pile.append(li)
-
-        else:
-            break
-
-    return lines, make_ul(soup, list_pile)
-
-
 def parse_images(
     lines: TextSegments,
 ) -> NodeFlow:
@@ -163,7 +136,6 @@ def parse_lists(
 def parse_tables(
     lines: TextSegments,
 ) -> NodeFlow:
-    lines = list(lines)
     while lines:
         pile, lines = split_before_match(lines, lambda t: is_table_line(t.contents))
         if pile:
@@ -182,7 +154,6 @@ def parse_tables(
 def parse_blockquotes(
     lines: TextSegments,
 ) -> NodeFlow:
-    lines = list(lines)
     pile: TextSegments = []
     while lines:
         pile, lines = split_before_match(lines, lambda t: is_blockquote_start(t.contents))
@@ -226,12 +197,10 @@ def parse_blockquotes(
         )
 
         if quotes_depth_count == 0:
-            children = flat_map_node_flow([pile], parse_tables)
-            children = flat_map_node_flow(children, parse_lists)
-            children = flat_map_node_flow(children, parse_images)
+            node_flow = chain_flat_map_node_flow([pile], [parse_tables, parse_lists, parse_images])
             yield Node(
                 type="blockquote",
-                children=list(children),
+                children=list(node_flow),
             )
             pile = []
         else:
@@ -257,12 +226,6 @@ def render_inline_quotes(soup: BeautifulSoup, string: str) -> Iterable[PageEleme
             contents=[str(inline_quote_match.group("quoted"))],
         ),
     )
-
-
-def parse_list(
-    soup: BeautifulSoup, lines: TextSegments
-) -> Tuple[TextSegments, PageElementOrString]:
-    return (lines, "bla")
 
 
 def render_basic_elements(
