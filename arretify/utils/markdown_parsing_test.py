@@ -19,9 +19,6 @@
 import unittest
 
 from .markdown_parsing import is_table_line, is_table_description
-from arretify.parsing_utils.source_mapping import (
-    TextSegment,
-)
 
 
 class TestTableDetection(unittest.TestCase):
@@ -65,7 +62,3 @@ Volume autorisé : blablabla.
         assert is_table_description(lines[9], pile)
         assert not is_table_description(lines[10], pile)
         assert is_table_description(lines[11], pile)
-
-
-def _make_text_segment(string: str) -> TextSegment:
-    return TextSegment(contents=string, start=(0, 0), end=(0, 0))

@@ -123,7 +123,7 @@ def split_before_match(
 
     Examples :
 
-    lines = initialize_lines(["a", "b", "c"])
+    lines = initialize_page("a\nb\nc", 0)
     split_before_match(lines, lambda x: x.contents == "b") -> (["a"], ["b", "c"])
     split_before_match(lines, lambda x: x.contents == "d") -> (["a", "b", "c"], [])
     split_before_match(lines, lambda x: x.contents == "a") -> ([], ["a", "b", "c"])

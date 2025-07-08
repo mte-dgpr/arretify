@@ -57,6 +57,7 @@ from .core import (
 )
 from .document_elements import (
     render_page_footer,
+    render_page_separator,
     render_table_of_contents,
 )
 from .basic_elements import parse_lists, render_image, render_list
@@ -505,6 +506,8 @@ def render_header(
             content.append(render_header_elements(soup, node))
         elif is_node(node, type_in=["table_of_contents"]):
             content.append(render_table_of_contents(soup, node))
+        elif is_node(node, type_in=["page_separator"]):
+            content.append(render_page_separator(soup, node))
         elif is_node(node, type_in=["page_footer"]):
             content.append(render_page_footer(soup, node))
         elif is_node(node, type_in=["image"]):

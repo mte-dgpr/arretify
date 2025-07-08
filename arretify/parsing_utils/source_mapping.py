@@ -17,30 +17,29 @@
 # limitations under the License.
 #
 from typing import List, Callable
+from dataclasses import replace as dataclass_replace
 
 
 from arretify.types import TextSegments, TextSegment
 
 
-def initialize_lines(lines: List[str]) -> TextSegments:
+def initialize_page(page_text: str, page_index: int) -> TextSegments:
     return [
-        TextSegment(contents=line, start=(i, 0), end=(i, len(line))) for i, line in enumerate(lines)
+        TextSegment(contents=line, start=(page_index, i, 0), end=(page_index, i, len(line)))
+        for i, line in enumerate(page_text.split("\n"))
+    ]
+
+
+def initialize_pages(page_texts: List[str]) -> TextSegments:
+    return [
+        line for i, page_text in enumerate(page_texts) for line in initialize_page(page_text, i)
     ]
 
 
 def apply_to_segment(segment: TextSegment, func: Callable[[str], str]) -> TextSegment:
-    return TextSegment(
+    return dataclass_replace(
+        segment,
         contents=func(segment.contents),
-        start=segment.start,
-        end=segment.end,
-    )
-
-
-def combine_text_segments(combined_contents: str, segments: TextSegments) -> TextSegment:
-    return TextSegment(
-        contents=combined_contents,
-        start=min(segments, key=lambda segment: segment.start).start,
-        end=max(segments, key=lambda segment: segment.end).end,
     )
 
 

@@ -27,3 +27,9 @@ def is_pdf_path(file_path: Path) -> bool:
 
 def is_ocr_path(file_path: Path) -> bool:
     return file_path.suffix.lower() == OCR_FILE_EXTENSION
+
+
+def is_ocr_pages_dir(file_path: Path) -> bool:
+    return file_path.is_dir() and all(
+        child.is_file() and is_ocr_path(child) for child in file_path.iterdir()
+    )

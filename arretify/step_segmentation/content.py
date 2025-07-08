@@ -64,6 +64,7 @@ from .core import (
 from .document_elements import (
     render_page_footer,
     render_table_of_contents,
+    render_page_separator,
 )
 
 
@@ -350,6 +351,8 @@ def render_section(
             contents.append(render_page_footer(soup, node_or_text_segments))
         elif is_node(node_or_text_segments, type_in=["table_of_contents"]):
             contents.append(render_table_of_contents(soup, node_or_text_segments))
+        elif is_node(node_or_text_segments, type_in=["page_separator"]):
+            contents.append(render_page_separator(soup, node_or_text_segments))
         elif is_node(node_or_text_segments):
             raise ValueError(f"Unexpected node {node_or_text_segments.type} in section contents")
         else:
@@ -388,7 +391,9 @@ def parse_alineas(
 
     while node_list:
         node_or_text_segments = node_list.pop(0)
-        if is_node(node_or_text_segments, type_in=["page_footer", "table_of_contents"]):
+        if is_node(
+            node_or_text_segments, type_in=["page_footer", "table_of_contents", "page_separator"]
+        ):
             yield node_or_text_segments
 
         elif isinstance(node_or_text_segments, Node):

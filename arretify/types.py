@@ -33,14 +33,14 @@ from arretify.settings import Settings
 ELEMENT_NAME_PATTERN = re.compile(r"^[a-z0-9_]+$")
 DocumentContextType = TypeVar("DocumentContextType", bound="DocumentContext")
 
-LineColumn = Tuple[int, int]
-"""Tuple line and column number. Line and column numbers are 0-indexed."""
+PageLineColumn = Tuple[int, int, int]
+"""Tuple page, line and column number. All values are 0-indexed."""
 
 
 @dataclass(frozen=True)
 class TextSegment:
-    start: LineColumn
-    end: LineColumn
+    start: PageLineColumn
+    end: PageLineColumn
     contents: str
 
 

@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 import sys
-from typing import Tuple, List
+from typing import List
 from pathlib import Path
 from optparse import OptionParser
 import traceback
@@ -41,9 +41,16 @@ from .law_data.apis.legifrance import initialize_legifrance_client
 from .law_data.apis.eurlex import initialize_eurlex_client
 from .law_data.apis.mistral import initialize_mistral_client
 from .errors import ArretifyError, ErrorCodes, DependencyError, SettingsError
-from .pipeline import run_pipeline, load_ocr_file, load_pdf_file, save_html_file, PipelineStep
+from .pipeline import (
+    run_pipeline,
+    load_ocr_file,
+    load_ocr_pages,
+    load_pdf_file,
+    save_html_file,
+    PipelineStep,
+)
 from .step_markdown_cleaning import step_markdown_cleaning
-from .utils.files import is_pdf_path, is_ocr_path
+from .utils.files import is_pdf_path, is_ocr_path, is_ocr_pages_dir
 
 
 _LOGGER = logging.getLogger("arretify")
@@ -73,6 +80,14 @@ def main(args: List[str]) -> None:
         default=False,
         help="Enable verbose logging.",
     )
+    parser.add_option(
+        "-r",
+        "--recursive",
+        action="store_true",
+        default=False,
+        help="Search for input files in all sub-directories.",
+    )
+
     (options, args) = parser.parse_args(args=args)
 
     # ---------------- Initialization ---------------- #
@@ -85,8 +100,9 @@ def main(args: List[str]) -> None:
     session_context = SessionContext(
         settings=Settings.from_env(),
     )
-    input_path = Path(options.input)
-    output_path = Path(options.output)
+    root_input_path = Path(options.input)
+    root_output_path = Path(options.output)
+    is_recursive = options.recursive
     features = _Features()
     was_ocr_disabled_warning_given = False
 
@@ -123,77 +139,87 @@ def main(args: List[str]) -> None:
         features = dataclass_replace(features, eurlex=True)
 
     # ---------------- Processing ---------------- #
-    if input_path.is_dir():
-        if not output_path.is_dir():
-            _LOGGER.error(f"Expected output to be a directory, got {output_path}")
+    if root_input_path.is_dir() and is_recursive:
+        if not root_output_path.is_dir():
+            _LOGGER.error(f"Expected output to be a directory, got {root_output_path}")
 
-        all_input_file_paths = _walk_input_dir(input_path)
-        for i, (relative_root, input_file_path) in enumerate(all_input_file_paths):
-            output_root = output_path / relative_root
-            output_root.mkdir(parents=True, exist_ok=True)
-            html_file_path = output_root / f"{input_file_path.stem}.html"
+        all_input_file_paths = _walk_input_dir(root_input_path)
+        for i, input_path in enumerate(all_input_file_paths):
+            output_dir = root_output_path / input_path.parent.relative_to(root_input_path)
+            output_dir.mkdir(parents=True, exist_ok=True)
+            output_path = output_dir / f"{input_path.stem}.html"
 
-            _LOGGER.info(
-                f"\n\n[{i + 1}/{len(all_input_file_paths)}] processing {input_file_path} ..."
-            )
+            _LOGGER.info(f"\n\n[{i + 1}/{len(all_input_file_paths)}] processing {input_path} ...")
 
-            if is_pdf_path(input_file_path) and features.ocr is False:
+            if is_pdf_path(input_path) and features.ocr is False:
                 if not was_ocr_disabled_warning_given:
                     _ocr_disabled_warning()
                     was_ocr_disabled_warning_given = True
 
                 _LOGGER.warning(
-                    f"Skipping {input_file_path} because it is a PDF "
-                    "and OCR support is not enabled."
+                    f"Skipping {input_path} because it is a PDF " "and OCR support is not enabled."
                 )
                 continue
 
             try:
                 _process_file(
                     session_context,
-                    input_file_path,
-                    html_file_path,
+                    input_path,
+                    output_path,
                     features,
                 )
             except Exception:
-                _LOGGER.error(
-                    f"[{i + 1}/{len(all_input_file_paths)}] FAILED : {input_file_path} ..."
-                )
+                _LOGGER.error(f"[{i + 1}/{len(all_input_file_paths)}] FAILED : {input_path} ...")
                 error_traceback = traceback.format_exc()
                 _LOGGER.error(f"Traceback:\n{error_traceback}")
 
     else:
-        if is_pdf_path(input_path) and features.ocr is False:
+        if is_pdf_path(root_input_path) and features.ocr is False:
             _ocr_disabled_warning()
             _LOGGER.error(
-                f"Failed to process {input_path} because it is a PDF "
+                f"Failed to process {root_input_path} because it is a PDF "
                 "and OCR support is not enabled."
             )
             sys.exit(1)
 
         _process_file(
             session_context,
-            input_path,
-            output_path,
+            root_input_path,
+            root_output_path,
             features,
         )
 
 
 def _walk_input_dir(
-    dir_path: Path,
-) -> List[Tuple[Path, Path]]:
-    pairs: List[Tuple[Path, Path]] = []
-    for root, _, file_names in dir_path.walk():
-        file_paths = [
-            root / file_name
-            for file_name in file_names
-            if is_ocr_path(Path(file_name)) or is_pdf_path(Path(file_name))
-        ]
-        for file_path in file_paths:
-            pairs.append((root.relative_to(dir_path), file_path))
+    root_dir_path: Path,
+) -> List[Path]:
+    paths: List[Path] = []
+    for dir_path, sub_dir_names, file_names in root_dir_path.walk():
+        # If we have entered a subdirectory that contains OCR pages,
+        # we do not want to process it again.
+        if dir_path not in paths:
+            paths.extend(
+                [
+                    dir_path / file_name
+                    for file_name in file_names
+                    if is_ocr_path(dir_path / file_name)
+                ]
+            )
+
+        paths.extend(
+            [dir_path / file_name for file_name in file_names if is_pdf_path(dir_path / file_name)]
+        )
+
+        paths.extend(
+            [
+                dir_path / sub_dir_name
+                for sub_dir_name in sub_dir_names
+                if is_ocr_pages_dir(dir_path / sub_dir_name)
+            ]
+        )
 
     # Sort the files to ensure consistent order (useful for snapshot testing)
-    return sorted(pairs, key=lambda x: x[1].name)
+    return sorted(paths, key=lambda p: str(p))
 
 
 @dataclass(frozen=True)
@@ -232,6 +258,11 @@ def _process_file(
         )
     elif is_ocr_path(input_path):
         document_context = load_ocr_file(
+            session_context,
+            input_path,
+        )
+    elif is_ocr_pages_dir(input_path):
+        document_context = load_ocr_pages(
             session_context,
             input_path,
         )

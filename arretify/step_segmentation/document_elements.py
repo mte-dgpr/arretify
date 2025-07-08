@@ -19,7 +19,11 @@
 
 from bs4 import BeautifulSoup
 
-from arretify.html_schemas import PAGE_FOOTER_SCHEMA, TABLE_OF_CONTENTS_SCHEMA
+from arretify.html_schemas import (
+    PAGE_FOOTER_SCHEMA,
+    TABLE_OF_CONTENTS_SCHEMA,
+    PAGE_SEPARATOR_SCHEMA,
+)
 from arretify.parsing_utils.source_mapping import TextSegments
 from arretify.regex_utils import (
     PatternProxy,
@@ -121,6 +125,24 @@ def parse_page_footer(
             pile = []
 
 
+def add_page_separators(
+    lines: TextSegments,
+) -> NodeFlow:
+    current_page = -1
+    lines = list(lines)
+    while lines:
+        page_lines, lines = split_before_match(lines, lambda t: t.start[0] != current_page)
+        if page_lines:
+            yield page_lines
+        if lines:
+            current_page = lines[0].start[0]
+            yield Node(
+                type="page_separator",
+                data=dict(page_index=current_page),
+                children=[],
+            )
+
+
 def render_table_of_contents(
     soup: BeautifulSoup,
     node: Node,
@@ -142,4 +164,15 @@ def render_page_footer(
         soup,
         PAGE_FOOTER_SCHEMA,
         contents=wrap_in_tag(soup, [t.contents for t in text_segments], "div"),
+    )
+
+
+def render_page_separator(
+    soup: BeautifulSoup,
+    node: Node,
+) -> PageElementOrString:
+    return make_data_tag(
+        soup,
+        PAGE_SEPARATOR_SCHEMA,
+        data=dict(page_index=node.data["page_index"]),
     )

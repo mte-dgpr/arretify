@@ -49,12 +49,12 @@ def parse_arrete(document_context: DocumentContext) -> DocumentContext:
     assert lines
 
     node_flow: NodeFlow = [lines]
-
-    # Image strings can be very long, and table of contents pattern look
-    # at the end of the sentence.
-    # So, we make sure we parse images before table of contents.
+    # Add basic document elements
     node_flow = chain_flat_map_node_flow(
         node_flow,
+        # Image strings can be very long, and table of contents pattern look
+        # at the end of the sentence.
+        # So, we make sure we parse images before table of contents.
         [parse_images, parse_page_footer, parse_table_of_contents],
     )
 

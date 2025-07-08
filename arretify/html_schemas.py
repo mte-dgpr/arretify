@@ -21,7 +21,6 @@ from typing import Dict
 from .types import DataElementSchema
 from dataclasses import replace as dataclass_replace
 
-# TODO : custom DTD for automatic validation of generated document
 
 # -------------------- Parts -------------------- #
 
@@ -49,6 +48,12 @@ PAGE_FOOTER_SCHEMA = DataElementSchema(
     name="page_footer",
     tag_name="div",
     data_keys=[],
+)
+
+PAGE_SEPARATOR_SCHEMA = DataElementSchema(
+    name="page_separator",
+    tag_name="a",
+    data_keys=["page_index"],
 )
 
 TABLE_OF_CONTENTS_SCHEMA = DataElementSchema(

@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from arretify.parsing_utils.source_mapping import initialize_lines
+from arretify.parsing_utils.source_mapping import initialize_page
 from arretify.types import TextSegment, TextSegments
 from .core import NodeFlow, is_node
 
@@ -52,8 +52,8 @@ def assert_node_flows_equal(
 
 
 def _line_column_to_zero(lines: TextSegments) -> TextSegments:
-    return [TextSegment(contents=t.contents, start=(0, 0), end=(0, 0)) for t in lines]
+    return [TextSegment(contents=t.contents, start=(0, 0, 0), end=(0, 0, 0)) for t in lines]
 
 
-def _l(*raw_lines: str):
-    return initialize_lines(list(raw_lines))
+def _l(*raw_lines: str, page_index: int = 0) -> TextSegments:
+    return initialize_page("\n".join(raw_lines), page_index)
