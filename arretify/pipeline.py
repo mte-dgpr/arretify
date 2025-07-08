@@ -106,6 +106,23 @@ def load_ocr_pages(
     )
 
 
+def load_html_file(
+    session_context: SessionContext,
+    input_path: Path,
+) -> DocumentContext:
+    if not input_path.is_file():
+        raise ValueError(f"Input path {input_path} is not a file.")
+
+    with open(input_path, "r", encoding="utf-8") as f:
+        html_content = f.read()
+    soup = BeautifulSoup(html_content, features="html.parser")
+    return DocumentContext.from_session_context(
+        session_context,
+        filename=input_path.stem,
+        soup=soup,
+    )
+
+
 def save_html_file(
     output_path: Path,
     document_context: DocumentContext,

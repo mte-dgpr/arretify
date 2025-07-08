@@ -17,9 +17,10 @@
 # limitations under the License.
 #
 import logging
-from typing import List, Iterable
+from typing import List, Iterable, Callable
 from dataclasses import replace as dataclass_replace
 from shutil import rmtree
+from pathlib import Path
 
 from arretify._vendor import mistralai
 
@@ -32,19 +33,17 @@ _LOGGER = logging.getLogger(__name__)
 
 def mistral_ocr(
     document_context: DocumentContext,
-    replace_images_placeholders: bool = True,
+    replace_images_placeholders: bool,
+    ocr_pages_dir_factory: Callable[[DocumentContext], Path] | None,
 ) -> DocumentContext:
     if not document_context.mistral_client:
         raise ValueError("MistralAI client is not initialized")
 
-    # Save the OCR result to a tmp directory
-    pages_ocr_dir = document_context.settings.tmp_dir / f"{document_context.filename}_ocr"
-    if pages_ocr_dir.is_dir():
-        rmtree(pages_ocr_dir, ignore_errors=True)
-    pages_ocr_dir.mkdir(parents=True, exist_ok=True)
-    _LOGGER.info(f"Created OCR pages dir : {pages_ocr_dir}")
+    ocr_pages_dir: Path | None = None
+    if callable(ocr_pages_dir_factory):
+        ocr_pages_dir = ocr_pages_dir_factory(document_context)
 
-    pages_ocr: List[str] = []
+    ocr_pages: List[str] = []
     for i, page in enumerate(
         _call_mistral_ocr_api(
             document_context,
@@ -60,16 +59,17 @@ def mistral_ocr(
                     f"![{image.id}]({image.image_base64})",
                 )
 
-        pages_ocr.append(page_ocr)
+        ocr_pages.append(page_ocr)
         page_index = i + 1
-        page_ocr_filepath = pages_ocr_dir / f"{page_index}.md"
-        with open(page_ocr_filepath, "w", encoding="utf-8") as f:
-            f.write(page_ocr)
-        _LOGGER.debug(f"Saved OCR page {page_index} to {page_ocr_filepath}")
+        if ocr_pages_dir is not None:
+            page_ocr_filepath = ocr_pages_dir / f"{page_index}.md"
+            with open(page_ocr_filepath, "w", encoding="utf-8") as f:
+                f.write(page_ocr)
+            _LOGGER.debug(f"Saved OCR page {page_index} to {page_ocr_filepath}")
 
     return dataclass_replace(
         document_context,
-        lines=initialize_lines([line for page_ocr in pages_ocr for line in page_ocr.split("\n")]),
+        lines=initialize_lines([line for page_ocr in ocr_pages for line in page_ocr.split("\n")]),
     )
 
 
@@ -120,3 +120,12 @@ def _call_mistral_ocr_api(
         raise ValueError("OCR failed: max retries reached!")
 
     return api_response.pages
+
+
+def default_ocr_pages_dir(document_context: DocumentContext) -> Path:
+    ocr_pages_dir = document_context.settings.tmp_dir / f"{document_context.filename}_ocr"
+    if ocr_pages_dir.is_dir():
+        rmtree(ocr_pages_dir, ignore_errors=True)
+    ocr_pages_dir.mkdir(parents=True, exist_ok=True)
+    _LOGGER.info(f"Created OCR pages dir : {ocr_pages_dir}")
+    return ocr_pages_dir
