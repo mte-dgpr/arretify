@@ -18,7 +18,7 @@
 #
 import unittest
 
-from .markdown_parsing import is_table_line, is_table_description
+from .markdown_parsing import TABLE_LINE_PATTERN, is_table_description
 
 
 class TestTableDetection(unittest.TestCase):
@@ -37,17 +37,24 @@ class TestTableDetection(unittest.TestCase):
 Volume autorisé : blablabla.
 """  # noqa: E501
 
-    def test_is_table_line(self):
+    def test_table_line_pattern(self):
         # Arrange
         lines = self.TABLE_MD_1.split("\n")
 
         # Assert
         for line in lines[0:2]:
-            assert not is_table_line(line)
+            assert not bool(TABLE_LINE_PATTERN.match(line))
         for line in lines[2:6]:
-            assert is_table_line(line)
+            assert bool(TABLE_LINE_PATTERN.match(line))
         for line in lines[6:]:
-            assert not is_table_line(line)
+            assert not bool(TABLE_LINE_PATTERN.match(line))
+
+    def test_table_line_pattern_single_column(self):
+        # Arrange
+        line = "| Column |"
+
+        # Assert
+        assert bool(TABLE_LINE_PATTERN.match(line))
 
     def test_is_table_description(self):
         # Arrange

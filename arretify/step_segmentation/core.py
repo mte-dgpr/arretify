@@ -19,6 +19,7 @@
 from typing import (
     Callable,
     List,
+    Iterable,
     TypeGuard,
     Dict,
     Any,
@@ -33,29 +34,70 @@ from dataclasses import dataclass, field
 
 from arretify.types import TextSegment
 from arretify.utils.functional import iter_func_to_list
+from arretify.regex_utils import PatternProxy, regex_tree
+from arretify.regex_utils.regex_tree.execute import match
 
 
 INLINE_NODE_TYPES = ["page_separator", "page_footer"]
 
 
-T = TypeVar("T")
+T1 = TypeVar("T1")
+T2 = TypeVar("T2")
+
+
+Split = Tuple[List[T1], T2, List[T1]]
+"""
+Generic type alias representing a raw search & split operation on a list of elements.
+It is subscribed like so `Split[ElementType, MatchType]`
+It represents a tuple `(before, match, after)` where:
+- `before` is of type `List[ElementType]` and represents a
+    list of elements before the match.
+- `match` is of type `MatchType` and represents the matched element.
+- `after` is of type `List[ElementType]` and represents a
+    list of elements after the match.
+"""
+
+Splitter = Callable[[List[T1]], Split[T1, T2] | None]
+"""
+Generic type alias for a function that takes a list of elements,
+and returns a raw split result or None if no match is found.
+It is subscribed like so `Splitter[ElementType, MatchType]`
+"""
 
 
 @dataclass(frozen=True)
-class SplitMatch(Generic[T]):
-    element: T
+class SplitMatch(Generic[T1]):
+    value: T1
 
 
 @dataclass(frozen=True)
-class SplitNotAMatch(Generic[T]):
-    element: T
+class SplitNotAMatch(Generic[T1]):
+    value: T1
 
+
+Splitted = Iterable[SplitNotAMatch[List[T1]] | SplitMatch[T2]]
+"""
+Generic type alias for an iterable of split results.
+
+It is subscribed like so `Splitted[ElementType, MatchType]`
+It represents an iterable of either:
+- `SplitNotAMatch[List[ElementType]]` which contains a list of elements that did not match.
+- `SplitMatch[MatchType]` which contains the matched element.
+
+This is useful for processing a list of elements and tagging as matches or non-matches
+in a generic manner. This enables proper typing and handling of the results like so :
+
+```
+if isinstance(splitted_element, SplitMatch):
+    splitted_element.value  # This is of type MatchType
+elif isinstance(splitted_element, SplitNotAMatch):
+    splitted_element.value  # This is of type List[ElementType]
+```
+"""
+
+Probe = Callable[[T1], bool]
 
 NodeOrText = Union[TextSegment, "Node"]
-Split = Tuple[List[NodeOrText], T, List[NodeOrText]]
-Splitter = Callable[[List[NodeOrText]], Split[T] | None]
-Splitted = SplitMatch[T] | SplitNotAMatch[List[NodeOrText]]
-Probe = Callable[[TextSegment], bool]
 
 
 @dataclass(frozen=True)
@@ -100,9 +142,9 @@ def chain_flat_map_node_list(
 
 @iter_func_to_list
 def split_text_segments(
-    input_list: List[NodeOrText],
-    splitter: Splitter[T],
-) -> Iterator[Splitted[T]]:
+    input_list: List[T1],
+    splitter: Splitter[T1, T2],
+) -> Splitted[T1, T2]:
     # Here we make a copy, because we don't know
     # if the splitter will modify the input_list.
     input_list = list(input_list)
@@ -119,25 +161,25 @@ def split_text_segments(
 
 
 def make_single_line_splitter(
-    is_matching: Probe,
+    is_matching: Probe[T1],
 ) -> Splitter:
-    def _splitter(input_list: List[NodeOrText]) -> Split | None:
+    def _splitter(input_list: List[T1]) -> Split[T1, List[T1]] | None:
         before, after = split_before_match(input_list, is_matching)
         if after:
-            return before, [after[0]], after[1:]
+            return (before, [after[0]], after[1:])
         return None
 
     return _splitter
 
 
 def make_while_splitter(
-    is_matching: Probe,
-    start_is_matching: Probe | None = None,
-) -> Splitter:
+    is_matching: Probe[T1],
+    start_is_matching: Probe[T1] | None = None,
+) -> Splitter[T1, List[T1]]:
     if start_is_matching is None:
         start_is_matching = is_matching
 
-    def _splitter(input_list: List[NodeOrText]) -> Split | None:
+    def _splitter(input_list: List[T1]) -> Split[T1, List[T1]] | None:
         before, after = split_before_match(input_list, start_is_matching)
         if not after:
             return None
@@ -149,7 +191,7 @@ def make_while_splitter(
 
 def text_segment_group_splitter(
     input_list: List[NodeOrText],
-) -> Split[List[TextSegment]] | None:
+) -> Split[NodeOrText, List[TextSegment]] | None:
     input_list = list(input_list)
     before: List[NodeOrText] = []
     match: List[TextSegment] = []
@@ -167,23 +209,23 @@ def text_segment_group_splitter(
 
 
 def split_before_match(
-    input_list: List[NodeOrText],
-    is_matching: Probe,
-) -> Tuple[List[NodeOrText], List[NodeOrText]]:
+    input_list: List[T1],
+    is_matching: Probe[T1],
+) -> Tuple[List[T1], List[T1]]:
     """
-    Split the lines into two parts, by using the `is_matching` function.
+    Split the input list into two parts, by using the `is_matching` function.
 
     Examples :
 
-    lines = initialize_page("a\nb\nc", 0)
-    split_before_match(lines, lambda x: x.contents == "b") -> (["a"], ["b", "c"])
-    split_before_match(lines, lambda x: x.contents == "d") -> (["a", "b", "c"], [])
-    split_before_match(lines, lambda x: x.contents == "a") -> ([], ["a", "b", "c"])
+    strings = ["a", "b", "c"]
+    split_before_match(strings, lambda s: s == "b") -> (["a"], ["b", "c"])
+    split_before_match(strings, lambda s: s == "d") -> (["a", "b", "c"], [])
+    split_before_match(strings, lambda s: s == "a") -> ([], ["a", "b", "c"])
     """
     i = 0
     while i < len(input_list):
         element = input_list[i]
-        if isinstance(element, TextSegment) and is_matching(element):
+        if is_matching(element):
             break
         i += 1
     return input_list[:i], input_list[i:]
@@ -191,26 +233,26 @@ def split_before_match(
 
 @iter_func_to_list
 def map_splitted_text_segments(
-    splitted_list: List[Splitted[T]],
-    map_func: Callable[[T], Node],
-) -> Iterator[NodeOrText]:
-    for splitted in splitted_list:
-        if isinstance(splitted, SplitMatch):
-            yield map_func(splitted.element)
+    splitted_list: Splitted[T1, T2],
+    map_func: Callable[[T2], T1],
+) -> Iterator[T1]:
+    for splitted_element in splitted_list:
+        if isinstance(splitted_element, SplitMatch):
+            yield map_func(splitted_element.value)
         else:
-            yield from splitted.element
+            yield from splitted_element.value
 
 
 @iter_func_to_list
 def flat_map_splitted_text_segments(
-    splitted_list: List[Splitted[T]],
-    map_func: Callable[[T], List[NodeOrText]],
-) -> Iterator[NodeOrText]:
-    for splitted in splitted_list:
-        if isinstance(splitted, SplitMatch):
-            yield from map_func(splitted.element)
+    splitted_list: Splitted[T1, T2],
+    map_func: Callable[[T2], List[T1]],
+) -> Iterator[T1]:
+    for splitted_element in splitted_list:
+        if isinstance(splitted_element, SplitMatch):
+            yield from map_func(splitted_element.value)
         else:
-            yield from splitted.element
+            yield from splitted_element.value
 
 
 def is_node(node: Node | TextSegment, type_in: List[str] | None = None) -> TypeGuard[Node]:
@@ -223,6 +265,9 @@ def is_node(node: Node | TextSegment, type_in: List[str] | None = None) -> TypeG
 
 
 def assert_single_text_segment(node: Node) -> TextSegment:
+    """
+    Assert that the node contains exactly one TextSegment.
+    """
     assert len(node.children) == 1 and isinstance(
         node.children[0], TextSegment
     ), f"Node '{node.type}' must contain exactly one TextSegment"
@@ -239,3 +284,39 @@ def assert_all_text_segments(
         isinstance(child, TextSegment) for child in node.children
     ), f"Node '{node.type}' must contain only TextSegment"
     return cast(List[TextSegment], node.children)
+
+
+def make_text_segment_probe_from_pattern(
+    pattern: PatternProxy, negate: bool = False, use_search: bool = False
+) -> Probe[NodeOrText]:
+    """
+    Create a probe function that checks if the contents of a TextSegment
+    match a given pattern.
+    """
+
+    def probe(element: NodeOrText) -> bool:
+        if not isinstance(element, TextSegment):
+            return False
+        if use_search is False:
+            match = pattern.match(element.contents)
+        else:
+            match = pattern.search(element.contents)
+        return not match if negate else bool(match)
+
+    return probe
+
+
+def make_text_segment_probe_from_regex_tree(
+    regex_tree_node: regex_tree.GroupNode,
+) -> Probe[NodeOrText]:
+    """
+    Create a probe function that checks if the contents of a TextSegment
+    match a given regex tree.
+    """
+
+    def probe(element: NodeOrText) -> bool:
+        if isinstance(element, TextSegment):
+            return bool(match(regex_tree_node, element.contents))
+        return False
+
+    return probe

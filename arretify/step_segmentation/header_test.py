@@ -24,7 +24,6 @@ from arretify.utils.testing import normalized_html_str
 from .header import (
     parse_visa_and_motif_elements,
     render_header_element,
-    EMBLEM_PATTERN,
     _parse_header_element,
     _parse_header_element_fuzzy,
 )
@@ -400,7 +399,7 @@ class TestParseHeaderElement(unittest.TestCase):
         )
 
         # Act
-        elements = _parse_header_element(elements, EMBLEM_PATTERN, "emblem")
+        elements = _parse_header_element(elements, "emblem")
 
         # Assert
         assert_elements_equal(
@@ -420,25 +419,24 @@ class TestParseHeaderElement(unittest.TestCase):
     def test_parse_header_element_fuzzy(self):
         # Arrange
         elements = _l(
-            "liberté",
-            "egalitre",
-            "praternité",
+            "prefecture de la région",
+            "basée à Naboo",
+            # Arrete title : should not be included in the entity
             "Arrêté du 1er janvier 2020",
         )
 
         # Act
-        elements = _parse_header_element_fuzzy(elements, EMBLEM_PATTERN, "emblem")
+        elements = _parse_header_element_fuzzy(elements, "entity")
 
         # Assert
         assert_elements_equal(
             elements,
             [
                 Node(
-                    type="emblem",
+                    type="entity",
                     children=_l(
-                        "liberté",
-                        "egalitre",
-                        "praternité",
+                        "prefecture de la région",
+                        "basée à Naboo",
                     ),
                 ),
                 *_l(

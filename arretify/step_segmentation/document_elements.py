@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import List, cast, Iterator
+from typing import List, Iterator
 
 from bs4 import BeautifulSoup, Tag
 
@@ -47,6 +47,7 @@ from .core import (
     split_text_segments,
     map_splitted_text_segments,
     make_while_splitter,
+    make_text_segment_probe_from_pattern,
 )
 
 
@@ -80,12 +81,8 @@ TABLE_OF_CONTENTS_PATTERN = PatternProxy(rf"^{join_with_or(TABLE_OF_CONTENTS_LIS
 """Detect all table of contents starting sentences."""
 
 
-def is_table_of_contents(line: str) -> bool:
-    return bool(TABLE_OF_CONTENTS_PATTERN.match(line))
-
-
-def is_page_footer(line: str) -> bool:
-    return bool(PAGE_FOOTER_PATTERN.match(line))
+_is_table_of_contents = make_text_segment_probe_from_pattern(TABLE_OF_CONTENTS_PATTERN)
+_is_page_footer = make_text_segment_probe_from_pattern(PAGE_FOOTER_PATTERN)
 
 
 def parse_tables_of_contents(
@@ -97,9 +94,11 @@ def parse_tables_of_contents(
     )
 
 
-def _table_of_contents_splitter(input_list: List[NodeOrText]) -> Split[List[NodeOrText]] | None:
+def _table_of_contents_splitter(
+    input_list: List[NodeOrText],
+) -> Split[NodeOrText, List[NodeOrText]] | None:
     pile: List[NodeOrText] = []
-    before, after = split_before_match(input_list, lambda t: is_table_of_contents(t.contents))
+    before, after = split_before_match(input_list, _is_table_of_contents)
     while after:
         # Instead of checking just the first line, we check the next few lines.
         # This allows to deal with case when TOC contains lines that are not
@@ -113,11 +112,7 @@ def _table_of_contents_splitter(input_list: List[NodeOrText]) -> Split[List[Node
         #
         # Aditionnally, this takes in nodes such as `page_separator` that might appear
         # between text segments.
-        if any(
-            isinstance(after[i], TextSegment)
-            and is_table_of_contents(cast(TextSegment, after[i]).contents)
-            for i in range(min(3, len(after)))
-        ):
+        if any(_is_table_of_contents(after[i]) for i in range(min(3, len(after)))):
             pile.append(after.pop(0))
         elif is_node(after[0], type_in=["page_separator"]):
             pile.append(after.pop(0))
@@ -135,7 +130,7 @@ def parse_page_footers(
     return map_splitted_text_segments(
         split_text_segments(
             elements,
-            make_while_splitter(lambda t: is_page_footer(t.contents)),
+            make_while_splitter(_is_page_footer),
         ),
         lambda pile: Node(type="page_footer", children=pile),
     )

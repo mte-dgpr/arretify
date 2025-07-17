@@ -29,11 +29,17 @@ from arretify.utils.html import (
     render_str_list_attribute,
 )
 from arretify.html_schemas import ERROR_SCHEMA
-from arretify.regex_utils import PatternProxy
+from arretify.regex_utils import PatternProxy, repeated_with_separator
 
 
-TABLE_LINE_PATTERN = PatternProxy(r"(\|)")
-"""Detect if the line contains a table, i.e. any "|" character."""
+TABLE_LINE_PATTERN = PatternProxy(
+    r"^\|" + repeated_with_separator(r"[^|\n]+", r"\|", (1, ...)) + r"\|$"
+)
+"""
+Detect a markdown table line.
+This pattern ensures that the line starts and ends with a pipe
+and contains at least one cell in between.
+"""
 
 TABLE_HEADER_SEPARATOR_PATTERN = PatternProxy(r"^\s*[-:|]+\s*$")
 """Detect if the line is a table header separator, i.e. contains only - or : or |."""
@@ -49,16 +55,6 @@ LIST_PATTERN = PatternProxy(rf"^(?P<indentation>\s*){BULLETPOINT_PATTERN_S}\s+")
 
 IMAGE_PATTERN = PatternProxy(r"!\[[^\[\]]+\]\([^()]+\)")
 """Detect if the line starts with an image."""
-
-
-def is_table_line(line: str) -> bool:
-    """Detect if the line contains a table, i.e. any "|" character."""
-    # TODO : Make regex more selective
-    return bool(re.search(r"(\|)", line, re.IGNORECASE))
-
-
-def is_table_header_separator(line: str) -> bool:
-    return bool(TABLE_HEADER_SEPARATOR_PATTERN.match(line))
 
 
 def is_table_description(line: str, pile: List[PageElementOrString]) -> bool:
@@ -83,16 +79,6 @@ def is_table_description(line: str, pile: List[PageElementOrString]) -> bool:
             if re.match(rf".*{re.escape(column_name)} :", line, re.IGNORECASE):
                 return True
     return False
-
-
-def is_list(line: str) -> bool:
-    """Detect if the sentence is a list element."""
-    return bool(LIST_PATTERN.match(line))
-
-
-def is_image(line: str) -> bool:
-    """Detect if the sentence starts with an image."""
-    return bool(IMAGE_PATTERN.match(line))
 
 
 def parse_markdown_table(lines: List[str]) -> Tag:

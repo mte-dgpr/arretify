@@ -55,6 +55,8 @@ from .core import (
     assert_single_text_segment,
     assert_all_text_segments,
     text_segment_group_splitter,
+    make_text_segment_probe_from_pattern,
+    Probe,
 )
 from .document_elements import (
     render_page_footer,
@@ -182,9 +184,33 @@ HEADER_ELEMENTS_SCHEMAS: Dict[str, DataElementSchema] = dict(
     supplementary_motif_info=SUPPLEMENTARY_MOTIF_INFORMATION_SCHEMA,
 )
 
+HEADER_ELEMENTS_PROBES: Dict[str, Probe[NodeOrText]] = dict(
+    emblem=make_text_segment_probe_from_pattern(EMBLEM_PATTERN),
+    identification=make_text_segment_probe_from_pattern(IDENTIFICATION_PATTERN),
+    honorary=make_text_segment_probe_from_pattern(HONORARY_PATTERN),
+    supplementary_motif_info=make_text_segment_probe_from_pattern(
+        SUPPLEMENTARY_MOTIF_INFORMATION_PATTERN
+    ),
+)
 
-def _is_nothing_else_than(name: str, t: TextSegment) -> bool:
-    return not any(
+HEADER_ELEMENTS_FUZZY_PROBES: Dict[str, Probe[NodeOrText]] = dict(
+    entity=make_text_segment_probe_from_pattern(ENTITY_PATTERN),
+    arrete_title=make_text_segment_probe_from_pattern(ARRETE_TITLE_PATTERN),
+)
+
+VISA_MOTIFS_PATTERNS: Dict[str, PatternProxy] = dict(
+    visa=VISA_PATTERN,
+    motif=MOTIF_PATTERN,
+)
+
+VISA_MOTIFS_PROBES: Dict[str, Probe[NodeOrText]] = dict(
+    visa=make_text_segment_probe_from_pattern(VISA_PATTERN),
+    motif=make_text_segment_probe_from_pattern(MOTIF_PATTERN),
+)
+
+
+def _is_nothing_else_than(name: str, t: NodeOrText) -> bool:
+    return isinstance(t, TextSegment) and not any(
         bool(HEADER_ELEMENTS_PATTERNS[other_name].match(t.contents))
         for other_name in HEADER_ELEMENTS_PATTERNS
         if other_name != name
@@ -218,7 +244,6 @@ def parse_header(
 
 def _parse_header_element(
     elements: List[NodeOrText],
-    node_pattern: PatternProxy,
     node_type: str,
 ) -> List[NodeOrText]:
     """
@@ -229,9 +254,7 @@ def _parse_header_element(
     return map_splitted_text_segments(
         split_text_segments(
             elements,
-            make_while_splitter(
-                lambda t: bool(node_pattern.match(t.contents)),
-            ),
+            make_while_splitter(HEADER_ELEMENTS_PROBES[node_type]),
         ),
         lambda text_segments: Node(
             type=node_type,
@@ -242,7 +265,6 @@ def _parse_header_element(
 
 def _parse_header_element_fuzzy(
     elements: List[NodeOrText],
-    node_pattern: PatternProxy,
     node_type: str,
 ) -> List[NodeOrText]:
     """
@@ -255,7 +277,7 @@ def _parse_header_element_fuzzy(
             elements,
             make_while_splitter(
                 lambda t: _is_nothing_else_than(node_type, t),
-                start_is_matching=lambda t: bool(node_pattern.match(t.contents)),
+                start_is_matching=HEADER_ELEMENTS_FUZZY_PROBES[node_type],
             ),
         ),
         lambda text_segments: Node(
@@ -268,7 +290,7 @@ def _parse_header_element_fuzzy(
 def parse_emblem_element(
     elements: List[NodeOrText],
 ) -> List[NodeOrText]:
-    return _parse_header_element(elements, EMBLEM_PATTERN, "emblem")
+    return _parse_header_element(elements, "emblem")
 
 
 def parse_entity_element(
@@ -276,7 +298,6 @@ def parse_entity_element(
 ) -> List[NodeOrText]:
     return _parse_header_element_fuzzy(
         elements,
-        ENTITY_PATTERN,
         "entity",
     )
 
@@ -284,7 +305,7 @@ def parse_entity_element(
 def parse_identification_element(
     elements: List[NodeOrText],
 ) -> List[NodeOrText]:
-    return _parse_header_element(elements, IDENTIFICATION_PATTERN, "identification")
+    return _parse_header_element(elements, "identification")
 
 
 def parse_arrete_title_element(
@@ -292,7 +313,6 @@ def parse_arrete_title_element(
 ) -> List[NodeOrText]:
     return _parse_header_element_fuzzy(
         elements,
-        ARRETE_TITLE_PATTERN,
         "arrete_title",
     )
 
@@ -300,7 +320,7 @@ def parse_arrete_title_element(
 def parse_honorary_element(
     elements: List[NodeOrText],
 ) -> List[NodeOrText]:
-    return _parse_header_element(elements, HONORARY_PATTERN, "honorary")
+    return _parse_header_element(elements, "honorary")
 
 
 def parse_supplementary_motif_info_element(
@@ -308,7 +328,6 @@ def parse_supplementary_motif_info_element(
 ) -> List[NodeOrText]:
     return _parse_header_element(
         elements,
-        SUPPLEMENTARY_MOTIF_INFORMATION_PATTERN,
         "supplementary_motif_info",
     )
 
@@ -316,12 +335,11 @@ def parse_supplementary_motif_info_element(
 def parse_visa_and_motif_elements(
     elements: List[NodeOrText],
 ) -> List[NodeOrText]:
-    elements = _parse_visa_and_motif_elements_pass1(elements, "visa", VISA_PATTERN)
-    elements = _parse_visa_and_motif_elements_pass1(elements, "motif", MOTIF_PATTERN)
+    elements = _parse_visa_and_motif_elements_pass1(elements, "visa")
+    elements = _parse_visa_and_motif_elements_pass1(elements, "motif")
     elements = _parse_visa_and_motif_elements_pass2(
         elements,
         node_type="visa",
-        node_pattern=VISA_PATTERN,
     )
     elements = _parse_visa_and_motif_elements_pass3(
         elements,
@@ -330,7 +348,6 @@ def parse_visa_and_motif_elements(
     elements = _parse_visa_and_motif_elements_pass2(
         elements,
         node_type="motif",
-        node_pattern=MOTIF_PATTERN,
     )
     elements = _parse_visa_and_motif_elements_pass3(
         elements,
@@ -343,7 +360,6 @@ def parse_visa_and_motif_elements(
 def _parse_visa_and_motif_elements_pass1(
     elements: List[NodeOrText],
     node_type: Literal["visa", "motif"],
-    node_pattern: PatternProxy,
 ) -> Iterator[NodeOrText]:
     """
     Pass 1 of parsing visa and motif elements.
@@ -356,7 +372,7 @@ def _parse_visa_and_motif_elements_pass1(
         lambda elements: map_splitted_text_segments(
             split_text_segments(
                 elements,
-                make_single_line_splitter(lambda t: bool(node_pattern.match(t.contents))),
+                make_single_line_splitter(VISA_MOTIFS_PROBES[node_type]),
             ),
             lambda text_segments: Node(
                 type=node_type,
@@ -375,8 +391,8 @@ def _parse_visa_and_motif_elements_pass1(
         is_list_of_visas_or_motifs = False
         if is_node(element, type_in=["list"]):
             text_segments = [child for child in element.children if isinstance(child, TextSegment)]
-            is_list_of_visas_or_motifs = len(text_segments) > 0 and bool(
-                node_pattern.match(text_segments[0].contents)
+            is_list_of_visas_or_motifs = len(text_segments) > 0 and VISA_MOTIFS_PROBES[node_type](
+                text_segments[0]
             )
 
         if is_list_of_visas_or_motifs:
@@ -399,7 +415,6 @@ def _parse_visa_and_motif_elements_pass1(
 def _parse_visa_and_motif_elements_pass2(
     elements: List[NodeOrText],
     node_type: Literal["visa", "motif"],
-    node_pattern: PatternProxy,
 ) -> Iterator[NodeOrText]:
     """
     Pass 2 of parsing visa and motif elements.
@@ -419,7 +434,9 @@ def _parse_visa_and_motif_elements_pass2(
     first_node = elements.pop(0)
     assert is_node(first_node, type_in=[node_type])
 
-    first_node_match = node_pattern.match(assert_single_text_segment(first_node).contents)
+    first_node_match = VISA_MOTIFS_PATTERNS[node_type].match(
+        assert_single_text_segment(first_node).contents
+    )
     # 1. Variant "simple" :
     #   Vu que blabla
     #   Vu que bloblo
@@ -536,22 +553,22 @@ def render_header_element(
     elements: List[PageElementOrString] = []
     pattern = HEADER_ELEMENTS_RENDER_PATTERNS[node.type]
 
-    for splitted in split_text_segments(
+    for splitted_element in split_text_segments(
         node.children,
         text_segment_group_splitter,
     ):
-        if isinstance(splitted, SplitMatch):
-            strings = [t.contents for t in splitted.element]
+        if isinstance(splitted_element, SplitMatch):
+            strings = [t.contents for t in splitted_element.value]
             if pattern is not None:
                 elements.extend(join_split_pile_with_pattern(strings, pattern))
             else:
                 elements.extend(strings)
 
-        elif is_node(cast(Node, splitted.element), type_in=["page_separator"]):
-            elements.append(render_page_separator(soup, cast(Node, splitted.element)))
+        elif is_node(cast(Node, splitted_element.value), type_in=["page_separator"]):
+            elements.append(render_page_separator(soup, cast(Node, splitted_element.value)))
 
         else:
-            raise ValueError(f"Unexpected element {splitted.element} in header elements")
+            raise ValueError(f"Unexpected element {splitted_element.value} in header elements")
 
     return make_data_tag(
         soup,

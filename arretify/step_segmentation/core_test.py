@@ -18,6 +18,8 @@
 #
 import unittest
 
+from arretify.types import TextSegment
+from arretify.regex_utils import PatternProxy
 from .core import (
     split_text_segments,
     make_single_line_splitter,
@@ -27,6 +29,7 @@ from .core import (
     SplitMatch,
     SplitNotAMatch,
     Node,
+    make_text_segment_probe_from_pattern,
 )
 from .testing import _l, assert_elements_equal
 
@@ -41,8 +44,8 @@ class TestSplitBeforeMatch(unittest.TestCase):
             Node(type="blo", children=[]),
         ]
 
-        def is_matching(line):
-            return line.contents == "d"
+        def is_matching(element):
+            return isinstance(element, TextSegment) and element.contents == "d"
 
         # Act
         before, after = split_before_match(node_list, is_matching)
@@ -55,8 +58,8 @@ class TestSplitBeforeMatch(unittest.TestCase):
         # Arrange
         node_list = _l("match", "b", "c")
 
-        def is_matching(line):
-            return line.contents == "match"
+        def is_matching(element):
+            return isinstance(element, TextSegment) and element.contents == "match"
 
         # Act
         before, after = split_before_match(node_list, is_matching)
@@ -73,8 +76,8 @@ class TestSplitBeforeMatch(unittest.TestCase):
             Node(type="blo", children=[]),
         ]
 
-        def is_matching(line):
-            return line.contents == "match"
+        def is_matching(element):
+            return isinstance(element, TextSegment) and element.contents == "match"
 
         # Act
         before, after = split_before_match(node_list, is_matching)
@@ -87,8 +90,8 @@ class TestSplitBeforeMatch(unittest.TestCase):
         # Arrange
         node_list = _l("a", "b", "match")
 
-        def is_matching(line):
-            return line.contents == "match"
+        def is_matching(element):
+            return isinstance(element, TextSegment) and element.contents == "match"
 
         # Act
         before, after = split_before_match(node_list, is_matching)
@@ -269,3 +272,44 @@ class TestTextSegmentGroupSplitter(unittest.TestCase):
         assert_elements_equal(before, [Node(type="node1", children=[])])
         assert_elements_equal(match, _l("line1", "line2", "line3"))
         assert_elements_equal(after, [Node(type="node2", children=[])])
+
+
+class TestMakeTextSegmentProbeFromPattern(unittest.TestCase):
+
+    def test_pattern_match(self):
+        # Arrange
+        pattern = PatternProxy(r"^match")
+        probe = make_text_segment_probe_from_pattern(pattern)
+        lines = _l("match this")
+
+        # Act
+        result = probe(lines[0])
+
+        # Assert
+        assert result is True
+
+    def test_pattern_no_match(self):
+        # Arrange
+        pattern = PatternProxy(r"^match")
+        probe = make_text_segment_probe_from_pattern(pattern)
+        lines = _l("no match here")
+
+        # Act
+        result = probe(lines[0])
+
+        # Assert
+        assert result is False
+
+    def test_negate(self):
+        # Arrange
+        pattern = PatternProxy(r"^match")
+        probe = make_text_segment_probe_from_pattern(pattern, negate=True)
+        lines = _l("no match here", "match this")
+
+        # Act
+        result1 = probe(lines[0])
+        result2 = probe(lines[1])
+
+        # Assert
+        assert result1 is True
+        assert result2 is False

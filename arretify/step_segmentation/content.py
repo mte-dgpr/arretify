@@ -45,9 +45,9 @@ from .basic_elements import (
     parse_blockquotes,
 )
 from .titles_detection import (
-    is_title,
     parse_title_info,
     is_next_title,
+    TITLE_NODE,
 )
 from .core import (
     Node,
@@ -59,6 +59,7 @@ from .core import (
     map_splitted_text_segments,
     split_text_segments,
     make_single_line_splitter,
+    make_text_segment_probe_from_regex_tree,
 )
 from .document_elements import (
     render_page_footer,
@@ -68,6 +69,11 @@ from .document_elements import (
 
 
 _LOGGER = logging.getLogger(__name__)
+
+
+_is_title = make_text_segment_probe_from_regex_tree(
+    TITLE_NODE,
+)
 
 
 def _get_downstream_sections_types(section_type):
@@ -195,7 +201,7 @@ def _create_section_title_nodes(
     return map_splitted_text_segments(
         split_text_segments(
             elements,
-            make_single_line_splitter(lambda t: is_title(t.contents)),
+            make_single_line_splitter(_is_title),
         ),
         lambda text_segments: Node(
             type="section_title",

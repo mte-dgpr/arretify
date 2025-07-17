@@ -144,10 +144,6 @@ TITLE_NODE = regex_tree.Group(
 )
 
 
-def is_title(line: str) -> bool:
-    return bool(match(TITLE_NODE, line))
-
-
 def parse_title_info(line: str) -> TitleInfo:
 
     # Detect pattern

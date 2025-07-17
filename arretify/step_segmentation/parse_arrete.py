@@ -26,12 +26,14 @@ from arretify.html_schemas import (
 )
 from arretify.utils.html import make_data_tag
 from .header import parse_header, render_header
-from .titles_detection import is_title, parse_title_info
+from .titles_detection import TITLE_NODE, parse_title_info
 from .content import parse_content, render_content
 from .core import (
     split_before_match,
     chain_flat_map_node_list,
     NodeOrText,
+    Node,
+    make_text_segment_probe_from_regex_tree,
 )
 from .basic_elements import parse_images
 from .document_elements import parse_page_footers, parse_tables_of_contents
@@ -55,14 +57,14 @@ def parse_arrete(document_context: DocumentContext) -> DocumentContext:
     )
 
     # Header
-    pile, elements = split_before_match(elements, lambda t: is_title(t.contents))
+    pile, elements = split_before_match(elements, _is_title)
     header = make_data_tag(document_context.soup, HEADER_SCHEMA)
     body.append(header)
     rendered_header = render_header(document_context.soup, list(parse_header(pile)))
     header.extend(list(rendered_header.children))
 
     # Main content
-    pile, elements = split_before_match(elements, lambda t: _is_appendix(t.contents))
+    pile, elements = split_before_match(elements, _is_appendix)
     main_content = make_data_tag(document_context.soup, MAIN_SCHEMA)
     body.append(main_content)
     rendered_content = render_content(document_context.soup, list(parse_content(pile)))
@@ -78,10 +80,18 @@ def parse_arrete(document_context: DocumentContext) -> DocumentContext:
     return document_context
 
 
-def _is_appendix(line: str) -> bool:
-    if is_title(line):
+_is_title = make_text_segment_probe_from_regex_tree(
+    TITLE_NODE,
+)
+
+
+def _is_appendix(line: NodeOrText) -> bool:
+    if isinstance(line, Node):
+        return False
+
+    if _is_title(line):
         # Parse title info
-        title_info = parse_title_info(line)
+        title_info = parse_title_info(line.contents)
         new_section_type = title_info.section_type
 
         # Appendix is considered as a different part of the document

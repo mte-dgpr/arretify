@@ -30,11 +30,10 @@ from arretify.utils.html import (
     render_str_list_attribute,
 )
 from arretify.utils.markdown_parsing import (
-    is_table_line,
-    is_table_header_separator,
     is_table_description,
-    is_list,
-    is_image,
+    TABLE_HEADER_SEPARATOR_PATTERN,
+    TABLE_LINE_PATTERN,
+    IMAGE_PATTERN,
     LIST_PATTERN,
     parse_markdown_table,
     parse_markdown_image,
@@ -62,6 +61,7 @@ from .core import (
     split_before_match,
     is_node,
     assert_single_text_segment,
+    make_text_segment_probe_from_pattern,
 )
 from .document_elements import render_table_of_contents, render_page_footer, render_page_separator
 
@@ -88,6 +88,14 @@ DOUBLE_QUOTE_PATTERN = PatternProxy(r'"')
 _LOGGER = logging.getLogger(__name__)
 
 
+_is_table = make_text_segment_probe_from_pattern(TABLE_LINE_PATTERN)
+_is_not_table = make_text_segment_probe_from_pattern(TABLE_LINE_PATTERN, negate=True)
+_is_image = make_text_segment_probe_from_pattern(IMAGE_PATTERN)
+_is_list = make_text_segment_probe_from_pattern(LIST_PATTERN)
+_is_blockquote_start = make_text_segment_probe_from_pattern(BLOCKQUOTE_START_PATTERN)
+_is_blockquote_end = make_text_segment_probe_from_pattern(BLOCKQUOTE_END_PATTERN, use_search=True)
+
+
 def list_indentation(line: str) -> int:
     list_match = LIST_PATTERN.match(line)
     if not list_match:
@@ -101,21 +109,13 @@ def _clean_leading_whitespaces(line: str) -> str:
     return LEADING_WHITESPACES_PATTERN.sub("", line)
 
 
-def is_blockquote_start(line: str) -> bool:
-    return bool(BLOCKQUOTE_START_PATTERN.search(line))
-
-
-def is_blockquote_end(line: str) -> bool:
-    return bool(BLOCKQUOTE_END_PATTERN.search(line))
-
-
 def parse_images(
     input_list: List[NodeOrText],
 ) -> List[NodeOrText]:
     return map_splitted_text_segments(
         split_text_segments(
             input_list,
-            make_single_line_splitter(lambda t: is_image(t.contents)),
+            make_single_line_splitter(_is_image),
         ),
         lambda pile: Node(type="image", children=pile),
     )
@@ -132,7 +132,7 @@ def parse_lists(
     return map_splitted_text_segments(
         split_text_segments(
             input_list,
-            make_while_splitter(lambda t: is_list(t.contents)),
+            make_while_splitter(_is_list),
         ),
         lambda pile: Node(type="list", children=pile),
     )
@@ -155,9 +155,9 @@ def _make_table_nodes(match: _TableSplitterMatch) -> Iterator[NodeOrText]:
         yield Node(type="table_description", children=table_description_pile)
 
 
-def _table_splitter(input_list: List[NodeOrText]) -> Split[_TableSplitterMatch] | None:
-    before, input_list = split_before_match(input_list, lambda t: is_table_line(t.contents))
-    table_pile, input_list = split_before_match(input_list, lambda t: not is_table_line(t.contents))
+def _table_splitter(input_list: List[NodeOrText]) -> Split[NodeOrText, _TableSplitterMatch] | None:
+    before, input_list = split_before_match(input_list, _is_table)
+    table_pile, input_list = split_before_match(input_list, _is_not_table)
     if table_pile:
         table_lines: List[TextSegment] = []
         for element in table_pile:
@@ -165,7 +165,8 @@ def _table_splitter(input_list: List[NodeOrText]) -> Split[_TableSplitterMatch] 
                 table_lines.append(element)
         table_description_pile, input_list = split_before_match(
             input_list,
-            lambda t: not is_table_description(t.contents, [t.contents for t in table_lines]),
+            lambda t: isinstance(t, TextSegment)
+            and not is_table_description(t.contents, [t.contents for t in table_lines]),
         )
         return before, (table_pile, table_description_pile), input_list
     else:
@@ -200,8 +201,10 @@ def _make_blockquote_node(match: _BlockquoteSplitterMatch) -> Node:
         )
 
 
-def _blockquote_splitter(input_list: List[NodeOrText]) -> Split[_BlockquoteSplitterMatch] | None:
-    before, input_list = split_before_match(input_list, lambda t: is_blockquote_start(t.contents))
+def _blockquote_splitter(
+    input_list: List[NodeOrText],
+) -> Split[NodeOrText, _BlockquoteSplitterMatch] | None:
+    before, input_list = split_before_match(input_list, _is_blockquote_start)
 
     if not input_list:
         return None
@@ -229,9 +232,9 @@ def _blockquote_splitter(input_list: List[NodeOrText]) -> Split[_BlockquoteSplit
         if len(double_quotes_matches) % 2 == 0:
             pass
         else:
-            if is_blockquote_start(element.contents):
+            if _is_blockquote_start(element):
                 quotes_depth_count += 1
-            if is_blockquote_end(element.contents):
+            if _is_blockquote_end(element):
                 quotes_depth_count -= 1
             if quotes_depth_count <= 0:
                 # Remove the end quote
@@ -294,7 +297,7 @@ def render_table(
     for element in node.children:
         if isinstance(element, TextSegment):
             pile.append(element.contents)
-            if is_table_header_separator(element.contents):
+            if bool(TABLE_HEADER_SEPARATOR_PATTERN.match(element.contents)):
                 has_table_header = True
         elif is_node(element, type_in=["page_separator"]):
             table_tag = parse_markdown_table(pile)
