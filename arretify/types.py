@@ -44,9 +44,6 @@ class TextSegment:
     contents: str
 
 
-TextSegments = List[TextSegment]
-
-
 @dataclass(frozen=True, kw_only=True)
 class DataElementSchema:
     name: str
@@ -146,10 +143,9 @@ class DocumentContext(SessionContext):
     TODO : support for streaming PDF content
     """
 
-    lines: Optional[TextSegments]
+    lines: Optional[List[TextSegment]] = None
     """
     Contents of the markdown pages after OCR processing.
-    TODO : TextSegments should keep track of pages from the original document
     """
 
     soup: BeautifulSoup
@@ -163,7 +159,7 @@ class DocumentContext(SessionContext):
         soup: BeautifulSoup,
         filename: str | None = None,
         pdf: Optional[bytes] = None,
-        lines: TextSegments | None = None,
+        lines: List[TextSegment] | None = None,
     ) -> DocumentContextType:
         if filename is None:
             filename = str(uuid4())

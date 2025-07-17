@@ -20,17 +20,17 @@ from typing import List, Callable
 from dataclasses import replace as dataclass_replace
 
 
-from arretify.types import TextSegments, TextSegment
+from arretify.types import TextSegment
 
 
-def initialize_page(page_text: str, page_index: int) -> TextSegments:
+def initialize_page(page_text: str, page_index: int) -> List[TextSegment]:
     return [
         TextSegment(contents=line, start=(page_index, i, 0), end=(page_index, i, len(line)))
         for i, line in enumerate(page_text.split("\n"))
     ]
 
 
-def initialize_pages(page_texts: List[str]) -> TextSegments:
+def initialize_pages(page_texts: List[str]) -> List[TextSegment]:
     return [
         line for i, page_text in enumerate(page_texts) for line in initialize_page(page_text, i)
     ]
@@ -43,5 +43,5 @@ def apply_to_segment(segment: TextSegment, func: Callable[[str], str]) -> TextSe
     )
 
 
-def text_segments_to_str(segments: TextSegments) -> List[str]:
+def text_segments_to_str(segments: List[TextSegment]) -> List[str]:
     return [segment.contents for segment in segments]

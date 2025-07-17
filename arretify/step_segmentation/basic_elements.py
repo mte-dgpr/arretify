@@ -16,21 +16,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import List, Tuple, Iterable
+from typing import List, Tuple, Iterable, Iterator
 import logging
 
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, Tag
 
+from arretify.types import TextSegment
+from arretify.utils.functional import iter_func_to_list
 from arretify.utils.html import (
     PageElementOrString,
-    make_ul,
-    make_li,
     make_new_tag,
     make_data_tag,
     render_str_list_attribute,
 )
 from arretify.utils.markdown_parsing import (
     is_table_line,
+    is_table_header_separator,
     is_table_description,
     is_list,
     is_image,
@@ -46,22 +47,26 @@ from arretify.html_schemas import ERROR_SCHEMA
 from arretify.regex_utils import split_string_with_regex
 from arretify.regex_utils import map_matches
 from arretify.parsing_utils.source_mapping import (
-    TextSegments,
     apply_to_segment,
 )
 from .core import (
     Node,
-    NodeFlow,
-    chain_flat_map_node_flow,
-    assert_single_text_segments,
-    assert_single_text_segment,
+    NodeOrText,
+    Split,
+    chain_flat_map_node_list,
     split_text_segments,
     make_single_line_splitter,
     make_while_splitter,
     map_splitted_text_segments,
+    flat_map_splitted_text_segments,
     split_before_match,
+    is_node,
+    assert_single_text_segment,
 )
-from .document_elements import render_table_of_contents, render_page_footer
+from .document_elements import render_table_of_contents, render_page_footer, render_page_separator
+
+_TableSplitterMatch = Tuple[List[NodeOrText], List[NodeOrText]]
+_BlockquoteSplitterMatch = Tuple[List[NodeOrText], ErrorCodes | None]
 
 
 LEADING_WHITESPACES_PATTERN = PatternProxy(r"^\s+")
@@ -105,14 +110,14 @@ def is_blockquote_end(line: str) -> bool:
 
 
 def parse_images(
-    lines: TextSegments,
-) -> NodeFlow:
+    input_list: List[NodeOrText],
+) -> List[NodeOrText]:
     return map_splitted_text_segments(
         split_text_segments(
-            lines,
+            input_list,
             make_single_line_splitter(lambda t: is_image(t.contents)),
         ),
-        lambda text_segments: Node(type="image", children=[text_segments]),
+        lambda pile: Node(type="image", children=pile),
     )
 
 
@@ -122,99 +127,126 @@ def parse_images(
 #     hellu
 # - bli
 def parse_lists(
-    lines: TextSegments,
-) -> NodeFlow:
+    input_list: List[NodeOrText],
+) -> List[NodeOrText]:
     return map_splitted_text_segments(
         split_text_segments(
-            lines,
+            input_list,
             make_while_splitter(lambda t: is_list(t.contents)),
         ),
-        lambda text_segments: Node(type="list", children=[text_segments]),
+        lambda pile: Node(type="list", children=pile),
     )
 
 
 def parse_tables(
-    lines: TextSegments,
-) -> NodeFlow:
-    while lines:
-        pile, lines = split_before_match(lines, lambda t: is_table_line(t.contents))
-        if pile:
-            yield pile
+    input_list: List[NodeOrText],
+) -> List[NodeOrText]:
+    return flat_map_splitted_text_segments(
+        split_text_segments(input_list, _table_splitter),
+        _make_table_nodes,
+    )
 
-        pile, lines = split_before_match(lines, lambda t: not is_table_line(t.contents))
-        if pile:
-            yield Node(type="table", children=[pile])
-            pile, lines = split_before_match(
-                lines, lambda t: not is_table_description(t.contents, [t.contents for t in pile])
-            )
-            if pile:
-                yield Node(type="table_description", children=[pile])
+
+@iter_func_to_list
+def _make_table_nodes(match: _TableSplitterMatch) -> Iterator[NodeOrText]:
+    table_pile, table_description_pile = match
+    yield Node(type="table", children=table_pile)
+    if table_description_pile:
+        yield Node(type="table_description", children=table_description_pile)
+
+
+def _table_splitter(input_list: List[NodeOrText]) -> Split[_TableSplitterMatch] | None:
+    before, input_list = split_before_match(input_list, lambda t: is_table_line(t.contents))
+    table_pile, input_list = split_before_match(input_list, lambda t: not is_table_line(t.contents))
+    if table_pile:
+        table_lines: List[TextSegment] = []
+        for element in table_pile:
+            if isinstance(element, TextSegment):
+                table_lines.append(element)
+        table_description_pile, input_list = split_before_match(
+            input_list,
+            lambda t: not is_table_description(t.contents, [t.contents for t in table_lines]),
+        )
+        return before, (table_pile, table_description_pile), input_list
+    else:
+        return None
 
 
 def parse_blockquotes(
-    lines: TextSegments,
-) -> NodeFlow:
-    pile: TextSegments = []
-    while lines:
-        pile, lines = split_before_match(lines, lambda t: is_blockquote_start(t.contents))
-        if pile:
-            yield pile
-            pile = []
+    input_list: List[NodeOrText],
+) -> List[NodeOrText]:
+    return map_splitted_text_segments(
+        split_text_segments(
+            input_list,
+            _blockquote_splitter,
+        ),
+        _make_blockquote_node,
+    )
 
-        if not lines:
-            break
 
-        # At this point, we know that the first line is a blockquote start
-        opening_quote_start = lines[0].start
-
-        # Remove opening quote
-        # TODO-PROCESS-TAG
-        lines[0] = apply_to_segment(
-            lines[0],
-            lambda string: BLOCKQUOTE_START_PATTERN.sub("", string),
+def _make_blockquote_node(match: _BlockquoteSplitterMatch) -> Node:
+    pile, error_code = match
+    if error_code is None:
+        elements = chain_flat_map_node_list(pile, [parse_tables, parse_lists, parse_images])
+        return Node(
+            type="blockquote",
+            children=list(elements),
         )
-        quotes_depth_count = 1
-
-        while lines and quotes_depth_count > 0:
-            # Ignore case when the line contains a balanced number of quotes.
-            # In that case, no need to increment or decrement as this will
-            # be handled recursively.
-            double_quotes_matches = list(DOUBLE_QUOTE_PATTERN.finditer(lines[0].contents))
-            if len(double_quotes_matches) % 2 == 0:
-                pass
-            else:
-                if is_blockquote_start(lines[0].contents):
-                    quotes_depth_count += 1
-                if is_blockquote_end(lines[0].contents):
-                    quotes_depth_count -= 1
-            pile.append(lines.pop(0))
-
-        # Remove the end quote
-        # TODO-PROCESS-TAG
-        pile[-1] = apply_to_segment(
-            pile[-1],
-            lambda string: BLOCKQUOTE_END_PATTERN.sub("", string),
+    else:
+        return Node(
+            type="error",
+            children=pile,
+            data=dict(error_codes=[error_code.value]),
         )
 
-        if quotes_depth_count == 0:
-            node_flow = chain_flat_map_node_flow([pile], [parse_tables, parse_lists, parse_images])
-            yield Node(
-                type="blockquote",
-                children=list(node_flow),
-            )
-            pile = []
+
+def _blockquote_splitter(input_list: List[NodeOrText]) -> Split[_BlockquoteSplitterMatch] | None:
+    before, input_list = split_before_match(input_list, lambda t: is_blockquote_start(t.contents))
+
+    if not input_list:
+        return None
+
+    # At this point, we know that the first element is a blockquote start
+    assert isinstance(input_list[0], TextSegment)
+    opening_quote_start = input_list[0].start
+
+    # Remove opening quote
+    # TODO-PROCESS-TAG
+    input_list[0] = apply_to_segment(
+        input_list[0],
+        lambda string: BLOCKQUOTE_START_PATTERN.sub("", string),
+    )
+    quotes_depth_count = 1
+
+    for i, element in enumerate(input_list):
+        if not isinstance(element, TextSegment):
+            continue
+
+        # Ignore case when the line contains a balanced number of quotes.
+        # In that case, no need to increment or decrement as this will
+        # be handled recursively.
+        double_quotes_matches = list(DOUBLE_QUOTE_PATTERN.finditer(element.contents))
+        if len(double_quotes_matches) % 2 == 0:
+            pass
         else:
-            yield Node(
-                type="error",
-                children=[[pile[0]]],
-                data=dict(error_codes=[ErrorCodes.unbalanced_quote.value]),
-            )
-            _LOGGER.warning(f"Found unbalanced quote starting {opening_quote_start}")
+            if is_blockquote_start(element.contents):
+                quotes_depth_count += 1
+            if is_blockquote_end(element.contents):
+                quotes_depth_count -= 1
+            if quotes_depth_count <= 0:
+                # Remove the end quote
+                # TODO-PROCESS-TAG
+                input_list[i] = apply_to_segment(
+                    element,
+                    lambda string: BLOCKQUOTE_END_PATTERN.sub("", string),
+                )
+                break
 
-            # Put back all the lines except the one raising the error into the pile
-            while len(pile) > 1:
-                lines.append(pile.pop(1))
-            pile = []
+    if quotes_depth_count == 0:
+        return before, (input_list[: i + 1], None), input_list[i + 1 :]
+    else:
+        _LOGGER.warning(f"Found unbalanced quote starting {opening_quote_start}")
+        return before, (input_list[0:1], ErrorCodes.unbalanced_quote), input_list[1:]
 
 
 def render_inline_quotes(soup: BeautifulSoup, string: str) -> Iterable[PageElementOrString]:
@@ -233,9 +265,9 @@ def render_basic_elements(
     node: Node,
 ) -> Iterable[PageElementOrString]:
     if node.type == "list":
-        yield from render_list(soup, node)
+        yield render_list(soup, node)
     elif node.type == "table":
-        yield from render_table(soup, node)
+        yield render_table(soup, node)
     elif node.type == "table_description":
         yield from render_table_description(soup, node)
     elif node.type == "blockquote":
@@ -245,9 +277,9 @@ def render_basic_elements(
     elif node.type == "page_footer":
         yield render_page_footer(soup, node)
     elif node.type == "image":
-        yield from render_image(soup, node)
+        yield render_image(soup, node)
     elif node.type == "error":
-        yield from render_error(soup, node)
+        yield render_error(soup, node)
     else:
         raise ValueError(f"Unknown node type '{node.type}' in render_basic_elements.")
 
@@ -255,52 +287,94 @@ def render_basic_elements(
 def render_table(
     soup: BeautifulSoup,
     node: Node,
-) -> Iterable[PageElementOrString]:
-    yield parse_markdown_table([t.contents for t in assert_single_text_segments(node)])
+) -> Tag:
+    pile: List[str] = []
+    has_table_header = False
+    inline_nodes: List[Tuple[int, Node]] = []
+    for element in node.children:
+        if isinstance(element, TextSegment):
+            pile.append(element.contents)
+            if is_table_header_separator(element.contents):
+                has_table_header = True
+        elif is_node(element, type_in=["page_separator"]):
+            table_tag = parse_markdown_table(pile)
+            # Get the right table row for inserting the inline node.
+            # If the table has a header, the `pile` contains a header
+            # separation line (e.g. "|---|---|---|"), which is not
+            # counting as a row in the final html table tag.
+            row_index = len(pile) - 1 - int(has_table_header)
+            inline_nodes.append((row_index, element))
+        else:
+            raise ValueError(f"Unexpected element type {type(element)} in table rendering.")
+
+    table_tag = parse_markdown_table(pile)
+    # Insert inline nodes in their corresponding table rows.
+    table_rows = table_tag.find_all("tr")
+    for row_index, inline_node in inline_nodes:
+        if row_index < len(table_rows) and row_index >= 0:
+            table_rows[row_index].select("td, th")[-1].append(
+                render_page_separator(soup, inline_node)
+            )
+        else:
+            raise ValueError(f"Invalid index {row_index} in table rendering. ")
+
+    return table_tag
 
 
 def render_table_description(
     soup: BeautifulSoup,
     node: Node,
 ) -> Iterable[PageElementOrString]:
-    text_segments = assert_single_text_segments(node)
-    for line in text_segments:
-        yield soup.new_tag("br")
-        yield line.contents
+    for element in node.children:
+        if isinstance(element, TextSegment):
+            yield soup.new_tag("br")
+            yield element.contents
+        elif is_node(element, type_in=["page_separator"]):
+            yield render_page_separator(soup, element)
+        else:
+            raise ValueError(
+                f"Unexpected element type {type(element)} in table description rendering."
+            )
 
 
 def render_list(
     soup: BeautifulSoup,
     node: Node,
-) -> Iterable[PageElementOrString]:
-    lines, ul = _render_list(soup, assert_single_text_segments(node))
-    assert len(lines) == 0, "Expected all lines to be consumed in list rendering"
-    yield ul
+) -> Tag:
+    elements, ul = _render_list(soup, node.children)
+    assert len(elements) == 0, "Expected all lines to be consumed in list rendering"
+    return ul
 
 
 def _render_list(
     soup: BeautifulSoup,
-    lines: TextSegments,
-) -> Tuple[TextSegments, PageElementOrString]:
-    lines = list(lines)
-    list_pile: List[PageElementOrString] = []
-    ref_indentation = list_indentation(lines[0].contents)
+    elements: List[NodeOrText],
+) -> Tuple[List[NodeOrText], Tag]:
+    elements = list(elements)
+    list_pile: List[Tag] = []
+    assert isinstance(elements[0], TextSegment)
+    ref_indentation = list_indentation(elements[0].contents)
 
-    while lines and is_list(lines[0].contents):
-        current_indentation = list_indentation(lines[0].contents)
+    while elements:
+        element = elements[0]
+        current_indentation = list_indentation(element.contents)
         if current_indentation == ref_indentation:
-            line = apply_to_segment(lines.pop(0), _clean_leading_whitespaces)
-            list_pile.append(line.contents)
+            line = apply_to_segment(element, _clean_leading_whitespaces)
+            elements.pop(0)
+            list_pile.append(make_new_tag(soup, "li", contents=line.contents))
 
         elif current_indentation > ref_indentation:
-            lines, nested_ul = _render_list(soup, lines)
-            li = make_li(soup, [list_pile.pop(), nested_ul])
-            list_pile.append(li)
+            elements, nested_ul = _render_list(soup, elements)
+            list_pile[-1].append(nested_ul)
 
         else:
             break
 
-    return lines, make_ul(soup, list_pile)
+        if elements and is_node(elements[0], type_in=["page_separator"]):
+            list_pile[-1].append(render_page_separator(soup, elements[0]))
+            elements.pop(0)
+
+    return elements, make_new_tag(soup, "ul", contents=list_pile)
 
 
 def render_blockquote(
@@ -308,35 +382,32 @@ def render_blockquote(
     node: Node,
 ) -> Iterable[PageElementOrString]:
     tag = soup.new_tag("blockquote")
-    for node_or_text_segments in node.children:
-        if isinstance(node_or_text_segments, Node):
-            tag.extend(render_basic_elements(soup, node_or_text_segments))
+    for element in node.children:
+        if isinstance(element, Node):
+            tag.extend(render_basic_elements(soup, element))
         else:
-            for line in node_or_text_segments:
-                # Parse inline quotes in the line
-                # and add them as <q> tags
-                tag.append(
-                    make_new_tag(soup, "p", contents=render_inline_quotes(soup, line.contents))
-                )
+            # Parse inline quotes in the line
+            # and add them as <q> tags
+            tag.append(
+                make_new_tag(soup, "p", contents=render_inline_quotes(soup, element.contents))
+            )
     yield tag
 
 
 def render_image(
     soup: BeautifulSoup,
     node: Node,
-) -> Iterable[PageElementOrString]:
-    yield parse_markdown_image(assert_single_text_segment(node).contents)
+) -> Tag:
+    return parse_markdown_image(assert_single_text_segment(node).contents)
 
 
-# TODO : parametrize the error codes
 def render_error(
     soup: BeautifulSoup,
     node: Node,
-) -> Iterable[PageElementOrString]:
-    text_segment = assert_single_text_segment(node)
-    yield make_data_tag(
+) -> Tag:
+    return make_data_tag(
         soup,
         ERROR_SCHEMA,
-        data=dict(error_codes=render_str_list_attribute([ErrorCodes.unbalanced_quote.value])),
-        contents=[text_segment.contents],
+        data=dict(error_codes=render_str_list_attribute(node.data["error_codes"])),
+        contents=[assert_single_text_segment(node).contents],
     )

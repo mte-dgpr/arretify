@@ -23,134 +23,146 @@ from .core import (
     make_single_line_splitter,
     make_while_splitter,
     split_before_match,
+    text_segment_group_splitter,
+    SplitMatch,
+    SplitNotAMatch,
+    Node,
 )
-from .testing import _l
+from .testing import _l, assert_elements_equal
 
 
 class TestSplitBeforeMatch(unittest.TestCase):
 
     def test_no_match(self):
         # Arrange
-        lines = _l("a", "b", "c")
+        node_list = [
+            Node(type="bla", children=[]),
+            *_l("a", "b", "c"),
+            Node(type="blo", children=[]),
+        ]
 
         def is_matching(line):
             return line.contents == "d"
 
         # Act
-        before, after = split_before_match(lines, is_matching)
+        before, after = split_before_match(node_list, is_matching)
 
         # Assert
-        assert before == lines
-        assert after == []
+        assert_elements_equal(before, node_list)
+        assert_elements_equal(after, [])
 
     def test_match_first_line(self):
         # Arrange
-        lines = _l("match", "b", "c")
+        node_list = _l("match", "b", "c")
 
         def is_matching(line):
             return line.contents == "match"
 
         # Act
-        before, after = split_before_match(lines, is_matching)
+        before, after = split_before_match(node_list, is_matching)
 
         # Assert
-        assert before == []
-        assert after == lines[0:]
+        assert_elements_equal(before, [])
+        assert_elements_equal(after, _l("match", "b", "c"))
 
     def test_match_middle_line(self):
         # Arrange
-        lines = _l("a", "match", "c")
+        node_list = [
+            Node(type="bla", children=[]),
+            *_l("a", "match", "c"),
+            Node(type="blo", children=[]),
+        ]
 
         def is_matching(line):
             return line.contents == "match"
 
         # Act
-        before, after = split_before_match(lines, is_matching)
+        before, after = split_before_match(node_list, is_matching)
 
         # Assert
-        assert before == lines[:1]
-        assert after == lines[1:]
+        assert_elements_equal(before, [Node(type="bla", children=[]), *_l("a")])
+        assert_elements_equal(after, [*_l("match", "c"), Node(type="blo", children=[])])
 
     def test_match_last_line(self):
         # Arrange
-        lines = _l("a", "b", "match")
+        node_list = _l("a", "b", "match")
 
         def is_matching(line):
             return line.contents == "match"
 
         # Act
-        before, after = split_before_match(lines, is_matching)
+        before, after = split_before_match(node_list, is_matching)
 
         # Assert
-        assert before == lines[:2]
-        assert after == lines[2:3]
+        assert_elements_equal(before, _l("a", "b"))
+        assert_elements_equal(after, _l("match"))
 
 
 class TestSplitTextSegments(unittest.TestCase):
 
     def test_no_matches(self):
         # Arrange
-        lines = _l("a", "b", "c")
+        elements = _l("a", "b", "c")
 
-        def splitter(lines):
+        def splitter(elements):
             return None
 
         # Act
-        result = list(split_text_segments(lines, splitter))
+        result = list(split_text_segments(elements, splitter))
 
         # Assert
-        assert result == [(False, lines)]
+        assert result == [SplitNotAMatch(elements)]
 
     def test_all_match_start(self):
         # Arrange
-        lines = _l("start1", "start2")
+        elements = _l("start1", "start2")
 
-        def splitter(lines):
-            return ([], lines, [])
+        def splitter(elements):
+            return ([], elements, [])
 
         # Act
-        result = list(split_text_segments(lines, splitter))
+        result = list(split_text_segments(elements, splitter))
 
         # Assert
-        assert result == [(True, lines)]
+        assert result == [SplitMatch(elements)]
 
     def test_mixed_match(self):
         # Arrange
-        lines = _l("a", "b", "c", "d", "e", "f", "g")
+        elements = _l("a", "b", "c", "d", "e", "f", "g")
 
-        def splitter(lines):
+        def splitter(elements):
             return (
-                (lines[0:1], lines[1:3], lines[3:]) if len(lines) >= 3 else None
+                (elements[0:1], elements[1:3], elements[3:]) if len(elements) >= 3 else None
             )  # Matches [b, c] and [e, f]
 
         # Act
-        result = list(split_text_segments(lines, splitter))
+        result = list(split_text_segments(elements, splitter))
 
         # Assert
         expected = [
-            (False, lines[:1]),  # 'a' does not match
-            (True, lines[1:3]),  # 'b', 'c' matches
-            (False, lines[3:4]),  # 'd' does not match
-            (True, lines[4:6]),  # 'e', 'f' matches
-            (False, lines[6:]),  # 'g' does not match
+            SplitNotAMatch(elements[:1]),  # 'a' does not match
+            SplitMatch(elements[1:3]),  # 'b', 'c' matches
+            SplitNotAMatch(elements[3:4]),  # 'd' does not match
+            SplitMatch(elements[4:6]),  # 'e', 'f' matches
+            SplitNotAMatch(elements[6:]),  # 'g' does not match
         ]
         assert result == expected
 
     def test_contiguous_matching_segments(self):
         # Arrange
-        lines = _l("start1", "start2", "start3")
+        elements = _l("start1", "start2", "start3")
 
-        def splitter(lines):
-            return ([], lines[0:1], lines[1:])
+        def splitter(elements):
+            return ([], elements[0:1], elements[1:])
 
         # Act
-        result = list(split_text_segments(lines, splitter))
+        result = list(split_text_segments(elements, splitter))
 
         # Assert
         expected = [
-            (True, lines[0:1]),
-            (True, lines[1:2]),
-            (True, lines[2:3]),
+            SplitMatch(elements[0:1]),
+            SplitMatch(elements[1:2]),
+            SplitMatch(elements[2:3]),
         ]
         assert result == expected
 
@@ -160,32 +172,32 @@ class TestMakeSingleLineMatcher(unittest.TestCase):
     def test_match_found(self):
         # Arrange
         splitter = make_single_line_splitter(lambda line: line.contents == "match")
-        lines = _l("no match", "match", "no match")
+        elements = _l("no match", "match", "no match")
 
         # Act
-        result = splitter(lines)
+        result = splitter(elements)
 
         # Assert
-        assert result == (lines[:1], lines[1:2], lines[2:])
+        assert result == (elements[:1], elements[1:2], elements[2:])
 
     def test_match_found_first_line(self):
         # Arrange
         splitter = make_single_line_splitter(lambda line: line.contents == "match")
-        lines = _l("match", "no match", "no match")
+        elements = _l("match", "no match", "no match")
 
         # Act
-        result = splitter(lines)
+        result = splitter(elements)
 
         # Assert
-        assert result == (lines[:0], lines[0:1], lines[1:])
+        assert result == (elements[:0], elements[0:1], elements[1:])
 
     def test_no_match(self):
         # Arrange
         splitter = make_single_line_splitter(lambda line: line.contents == "match")
-        lines = _l("no match", "also no match")
+        elements = _l("no match", "also no match")
 
         # Act
-        result = splitter(lines)
+        result = splitter(elements)
 
         # Assert
         assert result is None
@@ -196,43 +208,64 @@ class TestMakeWhileMatcher(unittest.TestCase):
     def test_match_found(self):
         # Arrange
         splitter = make_while_splitter(lambda line: line.contents.startswith("match"))
-        lines = _l("no match", "match1", "match2", "no match", "match3")
+        elements = _l("no match", "match1", "match2", "no match", "match3")
 
         # Act
-        result = splitter(lines)
+        result = splitter(elements)
 
         # Assert
-        assert result == (lines[:1], lines[1:3], lines[3:])
+        assert result == (elements[:1], elements[1:3], elements[3:])
 
     def test_match_found_first_line(self):
         # Arrange
         splitter = make_while_splitter(lambda line: line.contents.startswith("match"))
-        lines = _l("match1", "match2", "no match", "match3")
+        elements = _l("match1", "match2", "no match", "match3")
 
         # Act
-        result = splitter(lines)
+        result = splitter(elements)
 
         # Assert
-        assert result == (lines[:0], lines[0:2], lines[2:])
+        assert result == (elements[:0], elements[0:2], elements[2:])
 
     def test_match_found_last_line(self):
         # Arrange
         splitter = make_while_splitter(lambda line: line.contents.startswith("match"))
-        lines = _l("no match", "match1", "match2")
+        elements = _l("no match", "match1", "match2")
 
         # Act
-        result = splitter(lines)
+        result = splitter(elements)
 
         # Assert
-        assert result == (lines[:1], lines[1:3], [])
+        assert result == (elements[:1], elements[1:3], [])
 
     def test_no_match(self):
         # Arrange
         splitter = make_while_splitter(lambda line: line.contents.startswith("match"))
-        lines = _l("no match", "also no match")
+        elements = _l("no match", "also no match")
 
         # Act
-        result = splitter(lines)
+        result = splitter(elements)
 
         # Assert
         assert result is None
+
+
+class TestTextSegmentGroupSplitter(unittest.TestCase):
+
+    def test_single_text_segment(self):
+        # Arrange
+        input_list = [
+            Node(type="node1", children=[]),
+            *_l("line1", "line2", "line3"),
+            Node(type="node2", children=[]),
+        ]
+
+        # Act
+        result = text_segment_group_splitter(input_list)
+
+        # Assert
+        assert result is not None
+        before, match, after = result
+        assert_elements_equal(before, [Node(type="node1", children=[])])
+        assert_elements_equal(match, _l("line1", "line2", "line3"))
+        assert_elements_equal(after, [Node(type="node2", children=[])])

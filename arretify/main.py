@@ -267,10 +267,15 @@ def _process_file(
             input_path,
         )
     else:
-        raise ValueError(
-            f"Unsupported file type: {input_path.suffix}. "
-            f"Expected .pdf or .{OCR_FILE_EXTENSION} file."
-        )
+        if input_path.is_file():
+            raise ValueError(
+                f'Unsupported file "{input_path}", ' f"expected .pdf or .{OCR_FILE_EXTENSION} file."
+            )
+        else:
+            raise ValueError(
+                f'Unsupported directory "{input_path}", '
+                f"use -r or --recursive to process all files in subdirectories."
+            )
 
     save_html_file(
         output_path,

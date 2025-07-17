@@ -19,8 +19,8 @@
 import unittest
 
 from .core import Node
-from .document_elements import add_page_separators
-from .testing import _l, assert_node_flows_equal
+from .document_elements import add_page_separators, parse_tables_of_contents
+from .testing import _l, assert_elements_equal
 
 
 class TestAddPageSeparators(unittest.TestCase):
@@ -45,17 +45,45 @@ class TestAddPageSeparators(unittest.TestCase):
         )
 
         # Act
-        node_flow = list(add_page_separators(lines))
+        result = list(add_page_separators(lines))
 
         # Assert
-        assert_node_flows_equal(
-            node_flow,
+        assert_elements_equal(
+            result,
             [
                 Node(type="page_separator", data=dict(page_index=0), children=[]),
-                _l("Line 1", "Line 2", "Line 3"),
+                *_l("Line 1", "Line 2", "Line 3"),
                 Node(type="page_separator", data=dict(page_index=1), children=[]),
-                _l("Line 4", "Line 5"),
+                *_l("Line 4", "Line 5"),
                 Node(type="page_separator", data=dict(page_index=2), children=[]),
-                _l("Line 6"),
+                *_l("Line 6"),
+            ],
+        )
+
+
+class TestParseTablesOfContents(unittest.TestCase):
+
+    def test_parse_tables_of_contents(self):
+        # Arrange
+        lines = _l("Line 1", "Sommaire", "bla ..... page 1", "blo ..... page 2", "Line 2")
+
+        # Act
+        elements = list(parse_tables_of_contents(lines))
+
+        # Assert
+        assert_elements_equal(
+            elements,
+            [
+                *_l("Line 1"),
+                Node(
+                    type="table_of_contents",
+                    data=dict(),
+                    children=_l(
+                        "Sommaire",
+                        "bla ..... page 1",
+                        "blo ..... page 2",
+                    ),
+                ),
+                *_l("Line 2"),
             ],
         )

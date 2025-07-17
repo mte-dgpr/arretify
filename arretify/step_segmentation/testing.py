@@ -16,16 +16,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+from typing import List
+
 from arretify.parsing_utils.source_mapping import initialize_page
-from arretify.types import TextSegment, TextSegments
-from .core import NodeFlow, is_node
+from arretify.types import TextSegment
+from .core import NodeOrText, is_node
 
 
-def assert_node_flows_equal(
-    actual: NodeFlow, expected: NodeFlow, ignore_data_if_omitted: bool = False, path=""
+def assert_elements_equal(
+    actual: List[NodeOrText],
+    expected: List[NodeOrText],
+    ignore_data_if_omitted: bool = False,
+    path="",
 ):
-    actual = list(actual)
-    expected = list(expected)
     assert len(actual) == len(
         expected
     ), f"[{path}] Expected {[type(el) for el in expected]} nodes, got {[type(el) for el in actual]}"
@@ -37,23 +40,23 @@ def assert_node_flows_equal(
             # if defined is test expectations.
             if ignore_data_if_omitted is False or e.data:
                 assert a.data == e.data, f"[{child_path}] Expected {e.data}, got {a.data}"
-            assert_node_flows_equal(
+            assert_elements_equal(
                 a.children,
                 e.children,
                 path=child_path,
                 ignore_data_if_omitted=ignore_data_if_omitted,
             )
         else:
-            assert isinstance(a, list), f"[{child_path}] Expected TextSegments, got {a}"
-            assert isinstance(e, list)
+            assert isinstance(a, TextSegment), f"[{child_path}] Expected TextSegment, got {a}"
+            assert isinstance(e, TextSegment)
             assert _line_column_to_zero(a) == _line_column_to_zero(
                 e
             ), f"[{child_path}] Expected {e}, got {a}"
 
 
-def _line_column_to_zero(lines: TextSegments) -> TextSegments:
-    return [TextSegment(contents=t.contents, start=(0, 0, 0), end=(0, 0, 0)) for t in lines]
+def _line_column_to_zero(text_segment: TextSegment) -> TextSegment:
+    return TextSegment(contents=text_segment.contents, start=(0, 0, 0), end=(0, 0, 0))
 
 
-def _l(*raw_lines: str, page_index: int = 0) -> TextSegments:
+def _l(*raw_lines: str, page_index: int = 0) -> List[TextSegment]:
     return initialize_page("\n".join(raw_lines), page_index)

@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 import re
-from typing import List, cast
+from typing import List
 
 import markdown
 from bs4 import BeautifulSoup, Tag
@@ -34,6 +34,9 @@ from arretify.regex_utils import PatternProxy
 
 TABLE_LINE_PATTERN = PatternProxy(r"(\|)")
 """Detect if the line contains a table, i.e. any "|" character."""
+
+TABLE_HEADER_SEPARATOR_PATTERN = PatternProxy(r"^\s*[-:|]+\s*$")
+"""Detect if the line is a table header separator, i.e. contains only - or : or |."""
 
 TABLE_DESCRIPTION_PATTERN = PatternProxy(r"^(\(\*+\))|^(\*+)")
 """Detect if the line is a table description, i.e. starts with "*" or "(*)"."""
@@ -52,6 +55,10 @@ def is_table_line(line: str) -> bool:
     """Detect if the line contains a table, i.e. any "|" character."""
     # TODO : Make regex more selective
     return bool(re.search(r"(\|)", line, re.IGNORECASE))
+
+
+def is_table_header_separator(line: str) -> bool:
+    return bool(TABLE_HEADER_SEPARATOR_PATTERN.match(line))
 
 
 def is_table_description(line: str, pile: List[PageElementOrString]) -> bool:
@@ -88,11 +95,8 @@ def is_image(line: str) -> bool:
     return bool(IMAGE_PATTERN.match(line))
 
 
-def parse_markdown_table(elements: List[PageElementOrString]) -> Tag:
-    if [element for element in elements if not isinstance(element, str)]:
-        raise ValueError("got unexpected non-string element to parse markdown from")
-
-    markdown_str = "\n".join(cast(List[str], elements))
+def parse_markdown_table(lines: List[str]) -> Tag:
+    markdown_str = "\n".join(lines)
     html_str = markdown.markdown(markdown_str, extensions=["tables"])
     soup = BeautifulSoup(html_str, features="html.parser")
     table_result = soup.select("table")
@@ -109,12 +113,8 @@ def parse_markdown_table(elements: List[PageElementOrString]) -> Tag:
     return table_element
 
 
-def parse_markdown_image(element: PageElementOrString) -> Tag:
-    if not isinstance(element, str):
-        raise ValueError("got unexpected non-string element to parse markdown from")
-
-    html_str = markdown.markdown(element)
+def parse_markdown_image(line: str) -> Tag:
+    html_str = markdown.markdown(line)
     soup = BeautifulSoup(html_str, features="html.parser")
     image_element = soup.select("img")[0]
-
     return image_element

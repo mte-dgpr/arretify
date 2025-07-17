@@ -27,8 +27,12 @@ from .basic_elements import (
     parse_tables,
     parse_blockquotes,
     render_inline_quotes,
+    render_table,
+    render_table_description,
+    render_list,
 )
-from .testing import assert_node_flows_equal, _l
+from .testing import assert_elements_equal, _l
+from arretify.utils.testing import normalized_html_str, assert_html_list_equal
 
 
 class TestListIndentation(unittest.TestCase):
@@ -69,7 +73,7 @@ class TestParseTables(unittest.TestCase):
 
     def test_simple_table(self):
         # Arrange
-        lines = _l(
+        elements = _l(
             "| Polluant | Concentration maximale en mg/l |",
             "|---------|---------------------------------|",
             "| MES     | 35                               |",
@@ -79,62 +83,57 @@ class TestParseTables(unittest.TestCase):
         )
 
         # Act
-        node_flow = parse_tables(lines)
+        elements = parse_tables(elements)
 
         # Assert
-        assert_node_flows_equal(
-            node_flow,
+        assert_elements_equal(
+            elements,
             [
                 Node(
                     type="table",
-                    children=[
-                        _l(
-                            "| Polluant | Concentration maximale en mg/l |",
-                            "|---------|---------------------------------|",
-                            "| MES     | 35                               |",
-                            "| DCO     | 125                              |",
-                            "| Hydrocarbures totaux | 10                             |",
-                        )
-                    ],
+                    children=_l(
+                        "| Polluant | Concentration maximale en mg/l |",
+                        "|---------|---------------------------------|",
+                        "| MES     | 35                               |",
+                        "| DCO     | 125                              |",
+                        "| Hydrocarbures totaux | 10                             |",
+                    ),
                 ),
-                _l("END"),
+                *_l("END"),
             ],
         )
 
     def test_table_description(self):
         # Arrange
-        lines = _l(
+        elements = _l(
             "| Polluant | Concentration maximale en mg/l |",
             "|---------|---------------------------------|",
             "| MES     | 35                               |",
             "(*) bla bla",
+            "Polluant : Matières en suspension (MES)",
             "END",
         )
 
         # Act
-        node_flow = parse_tables(lines)
+        result = parse_tables(elements)
 
         # Assert
-        assert_node_flows_equal(
-            node_flow,
+        assert_elements_equal(
+            result,
             [
                 Node(
                     type="table",
-                    children=[
-                        _l(
-                            "| Polluant | Concentration maximale en mg/l |",
-                            "|---------|---------------------------------|",
-                            "| MES     | 35                               |",
-                        ),
-                    ],
+                    children=_l(
+                        "| Polluant | Concentration maximale en mg/l |",
+                        "|---------|---------------------------------|",
+                        "| MES     | 35                               |",
+                    ),
                 ),
                 Node(
                     type="table_description",
-                    children=[
-                        _l("(*) bla bla"),
-                    ],
+                    children=_l("(*) bla bla", "Polluant : Matières en suspension (MES)"),
                 ),
-                _l("END"),
+                *_l("END"),
             ],
         )
 
@@ -143,28 +142,26 @@ class TestParseList(unittest.TestCase):
 
     def test_simple_list(self):
         # Arrange
-        lines = _l("- Item 1", "- Item 2", "- Item 3", "END")
+        elements = _l("- Item 1", "- Item 2", "- Item 3", "END")
 
         # Act
-        node_flow = parse_lists(lines)
+        result = parse_lists(elements)
 
         # Assert
-        assert_node_flows_equal(
-            node_flow,
+        assert_elements_equal(
+            result,
             [
                 Node(
                     type="list",
-                    children=[
-                        _l("- Item 1", "- Item 2", "- Item 3"),
-                    ],
+                    children=_l("- Item 1", "- Item 2", "- Item 3"),
                 ),
-                _l("END"),
+                *_l("END"),
             ],
         )
 
     def test_nested_list(self):
         # Arrange
-        lines = _l(
+        elements = _l(
             "- Item 1",
             "  - Subitem 1.1",
             "  - Subitem 1.2",
@@ -172,16 +169,15 @@ class TestParseList(unittest.TestCase):
         )
 
         # Act
-        node_flow = parse_lists(lines)
+        result = parse_lists(elements)
 
         # Assert
-        print(node_flow)
-        assert_node_flows_equal(
-            node_flow,
+        assert_elements_equal(
+            result,
             [
                 Node(
                     type="list",
-                    children=[_l("- Item 1", "  - Subitem 1.1", "  - Subitem 1.2", "- Item 2")],
+                    children=_l("- Item 1", "  - Subitem 1.1", "  - Subitem 1.2", "- Item 2"),
                 ),
             ],
         )
@@ -200,37 +196,35 @@ class TestParseBlockQuote(unittest.TestCase):
         )
 
         # Act
-        node_flow = parse_blockquotes(lines)
+        result = parse_blockquotes(lines)
 
         # Assert
-        assert_node_flows_equal(
-            node_flow,
+        assert_elements_equal(
+            result,
             [
                 Node(
                     type="blockquote",
                     children=[
-                        _l(
+                        *_l(
                             "bla bla",
                             "blo blo :",
                         ),
                         Node(
                             type="list",
-                            children=[
-                                _l(
-                                    "- Item 1",
-                                    "- Item 2",
-                                ),
-                            ],
+                            children=_l(
+                                "- Item 1",
+                                "- Item 2",
+                            ),
                         ),
                     ],
                 ),
-                _l("END"),
+                *_l("END"),
             ],
         )
 
     def test_blockquote_one_liner_nested_blockquote(self):
         # Arrange
-        lines = _l(
+        elements = _l(
             '"bla bla',
             '"blo blo"',
             'bli bli"',
@@ -238,25 +232,23 @@ class TestParseBlockQuote(unittest.TestCase):
         )
 
         # Act
-        node_flow = parse_blockquotes(lines)
+        result = parse_blockquotes(elements)
 
         # Assert
-        assert_node_flows_equal(
-            node_flow,
+        assert_elements_equal(
+            result,
             [
                 Node(
                     type="blockquote",
-                    children=[
-                        _l("bla bla", '"blo blo"', "bli bli"),
-                    ],
+                    children=_l("bla bla", '"blo blo"', "bli bli"),
                 ),
-                _l("END"),
+                *_l("END"),
             ],
         )
 
     def test_blockquote_nested_inline_quote(self):
         # Arrange
-        lines = _l(
+        elements = _l(
             '"bla bla',
             'blo blo "haha"',
             'bli bli"',
@@ -264,47 +256,43 @@ class TestParseBlockQuote(unittest.TestCase):
         )
 
         # Act
-        node_flow = parse_blockquotes(lines)
+        result = parse_blockquotes(elements)
 
         # Assert
-        assert_node_flows_equal(
-            node_flow,
+        assert_elements_equal(
+            result,
             [
                 Node(
                     type="blockquote",
-                    children=[
-                        _l(
-                            "bla bla",
-                            'blo blo "haha"',
-                            "bli bli",
-                        )
-                    ],
+                    children=_l(
+                        "bla bla",
+                        'blo blo "haha"',
+                        "bli bli",
+                    ),
                 ),
-                _l("END"),
+                *_l("END"),
             ],
         )
 
     def test_blockquote_one_line(self):
         # Arrange
-        lines = _l(
+        elements = _l(
             '"bla bla"',
             "END",
         )
 
         # Act
-        node_flow = parse_blockquotes(lines)
+        result = parse_blockquotes(elements)
 
         # Assert
-        assert_node_flows_equal(
-            node_flow,
+        assert_elements_equal(
+            result,
             [
                 Node(
                     type="blockquote",
-                    children=[
-                        _l("bla bla"),
-                    ],
+                    children=_l("bla bla"),
                 ),
-                _l("END"),
+                *_l("END"),
             ],
         )
 
@@ -327,3 +315,157 @@ class TestParseInlineQuotes(unittest.TestCase):
             "<q>haha</q>",
             " bli bli",
         ]
+
+
+class TestRenderTable(unittest.TestCase):
+
+    def setUp(self):
+        self.soup = BeautifulSoup("", "html.parser")
+
+    def test_render_table_with_page_separators(self):
+        # Arrange
+        node = Node(
+            type="table",
+            children=[
+                *_l("| Column 1 | Column 2 |", "|----------|----------|"),
+                Node(
+                    type="page_separator",
+                    children=[],
+                    data=dict(page_index=1),
+                ),
+                *_l(
+                    "| Row 1    | Data 1   |",
+                ),
+                Node(
+                    type="page_separator",
+                    children=[],
+                    data=dict(page_index=2),
+                ),
+                *_l(
+                    "| Row 2    | Data 2   |",
+                ),
+            ],
+        )
+
+        # Act
+        table_tag = render_table(self.soup, node)
+
+        # Assert
+        assert normalized_html_str(str(table_tag)) == normalized_html_str(
+            """
+            <table>
+                <thead>
+                    <tr>
+                        <th>Column 1</th>
+                        <th>Column 2<a class="arretify-page_separator" data-page_index="1"></a></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Row 1</td>
+                        <td>Data 1<a class="arretify-page_separator" data-page_index="2"></a></td>
+                    </tr>
+                    <tr>
+                        <td>Row 2</td>
+                        <td>Data 2</td>
+                    </tr>
+                </tbody>
+            </table>
+            """
+        )
+
+
+class TestRenderTableDescription(unittest.TestCase):
+
+    def setUp(self):
+        self.soup = BeautifulSoup("", "html.parser")
+
+    def test_render_table_description_with_page_separators(self):
+        # Arrange
+        node = Node(
+            type="table_description",
+            children=[
+                *_l("This is a description of the table."),
+                Node(
+                    type="page_separator",
+                    children=[],
+                    data=dict(page_index=1),
+                ),
+                *_l("This is another part of the description."),
+            ],
+        )
+
+        # Act
+        table_description_elements = list(render_table_description(self.soup, node))
+
+        # Assert
+        assert_html_list_equal(
+            table_description_elements,
+            [
+                "<br/>",
+                "This is a description of the table.",
+                '<a class="arretify-page_separator" data-page_index="1"></a>',
+                "<br/>",
+                "This is another part of the description.",
+            ],
+        )
+
+
+class TestRenderList(unittest.TestCase):
+    def setUp(self):
+        self.soup = BeautifulSoup("", "html.parser")
+
+    def test_render_list_with_page_separator(self):
+        # Arrange
+        node = Node(
+            type="list",
+            children=[
+                *_l("- Item 1"),
+                Node(
+                    type="page_separator",
+                    children=[],
+                    data=dict(page_index=1),
+                ),
+                *_l("- Item 2"),
+            ],
+        )
+
+        # Act
+        list_tag = render_list(self.soup, node)
+
+        # Assert
+        assert normalized_html_str(str(list_tag)) == normalized_html_str(
+            """
+            <ul>
+                <li>- Item 1<a class="arretify-page_separator" data-page_index="1"></a></li>
+                <li>- Item 2</li>
+            </ul>
+            """
+        )
+
+    def test_render_nested_list(self):
+        # Arrange
+        node = Node(
+            type="list",
+            children=[
+                *_l("- Item 1", "  - Subitem 1.1", "  - Subitem 1.2", "- Item 2"),
+            ],
+        )
+
+        # Act
+        list_tag = render_list(self.soup, node)
+
+        # Assert
+        assert normalized_html_str(str(list_tag)) == normalized_html_str(
+            """
+            <ul>
+                <li>- Item 1
+                    <ul>
+                        <li>- Subitem 1.1</li>
+                        <li>- Subitem 1.2</li>
+                    </ul>
+                </li>
+                <li>- Item 2</li>
+            </ul>
+            """
+        )
