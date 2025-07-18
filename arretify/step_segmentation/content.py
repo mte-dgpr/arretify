@@ -29,7 +29,7 @@ from arretify.utils.html import (
     make_data_tag,
     render_str_list_attribute,
 )
-from arretify.utils.functional import iter_func_to_list
+from arretify.utils.functional import iter_func_to_list, chain_functions
 from arretify.html_schemas import (
     SECTION_SCHEMA,
     SECTION_TITLE_SCHEMAS,
@@ -54,11 +54,9 @@ from .core import (
     NodeOrText,
     is_node,
     assert_single_text_segment,
-    flat_map_node_list,
-    chain_flat_map_node_list,
-    map_splitted_text_segments,
+    map_splitted_elements,
     split_elements,
-    make_text_segment_single_line_splitter,
+    make_single_line_splitter_for_text_segments,
     make_probe_from_regex_tree,
 )
 from .document_elements import (
@@ -85,10 +83,7 @@ def _get_downstream_sections_types(section_type):
 def parse_content(
     elements: List[NodeOrText],
 ) -> List[NodeOrText]:
-    elements = flat_map_node_list(
-        elements,
-        parse_blockquotes,
-    )
+    elements = parse_blockquotes(elements)
     elements = parse_section_titles(elements)
     elements = parse_sections(elements)
     return elements
@@ -115,7 +110,7 @@ def parse_section_titles(
     elements: List[NodeOrText],
 ) -> List[NodeOrText]:
     # First collect all section titles in output_flow.
-    node_list = flat_map_node_list(elements, _create_section_title_nodes)
+    node_list = _create_section_title_nodes(elements)
     section_titles: List[Node] = [e for e in node_list if is_node(e, type_in=["section_title"])]
 
     # Ancestry order from root to the current section in the parsing context
@@ -198,10 +193,10 @@ def parse_section_titles(
 def _create_section_title_nodes(
     elements: List[NodeOrText],
 ) -> List[NodeOrText]:
-    return map_splitted_text_segments(
+    return map_splitted_elements(
         split_elements(
             elements,
-            make_text_segment_single_line_splitter(_is_title),
+            make_single_line_splitter_for_text_segments(_is_title),
         ),
         lambda text_segments: Node(
             type="section_title",
@@ -389,7 +384,7 @@ def parse_alineas(
     elements: List[NodeOrText],
 ) -> Iterator[NodeOrText]:
     alinea_count = 1
-    elements = chain_flat_map_node_list(
+    elements = chain_functions(
         elements,
         [parse_tables, parse_lists, parse_images],
     )

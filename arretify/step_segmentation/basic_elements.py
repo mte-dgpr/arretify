@@ -22,7 +22,7 @@ import logging
 from bs4 import BeautifulSoup, Tag
 
 from arretify.types import TextSegment
-from arretify.utils.functional import iter_func_to_list
+from arretify.utils.functional import iter_func_to_list, chain_functions
 from arretify.utils.html import (
     PageElementOrString,
     make_new_tag,
@@ -52,20 +52,19 @@ from .core import (
     Probe,
     Node,
     NodeOrText,
-    Split,
-    chain_flat_map_node_list,
+    RawSplit,
     split_elements,
-    make_text_segment_single_line_splitter,
-    make_text_segment_while_splitter,
-    map_splitted_text_segments,
-    flat_map_splitted_text_segments,
+    make_single_line_splitter_for_text_segments,
+    make_while_splitter_for_text_segments,
+    map_splitted_elements,
+    flat_map_splitted_elements,
     split_before_match,
     is_node,
     assert_single_text_segment,
     make_probe_from_pattern_proxy,
-    make_negated_probe,
-    make_text_segment_probe,
-    make_pass_through_probe_for_inline_nodes,
+    negate,
+    reject_if_not_text_segment,
+    pick_if_inline_node_followed_by_match,
 )
 from .document_elements import render_table_of_contents, render_page_footer, render_page_separator
 
@@ -80,24 +79,25 @@ A match for the table splitter, in the form `(<table_elements>, <table_descripti
 """
 
 _is_table = make_probe_from_pattern_proxy(TABLE_LINE_PATTERN)
-_is_table_start = make_text_segment_probe(_is_table)
-_is_table_end = make_negated_probe(make_pass_through_probe_for_inline_nodes(_is_table))
+_is_table_start = reject_if_not_text_segment(_is_table)
+_is_table_end = negate(pick_if_inline_node_followed_by_match(reject_if_not_text_segment(_is_table)))
 
 
 def _make_table_description_end_probe(table_lines: List[TextSegment]) -> Probe[NodeOrText]:
-    def _is_table_description(elements: List[TextSegment], index: int) -> bool:
+    def _is_table_description(elements: List[NodeOrText], index: int) -> bool:
         element = elements[index]
+        assert isinstance(element, TextSegment)
         if is_table_description(element.contents, [t.contents for t in table_lines]):
             return True
         return False
 
-    return make_negated_probe(make_text_segment_probe(_is_table_description))
+    return negate(reject_if_not_text_segment(_is_table_description))
 
 
 def parse_tables(
     input_list: List[NodeOrText],
 ) -> List[NodeOrText]:
-    return flat_map_splitted_text_segments(
+    return flat_map_splitted_elements(
         split_elements(input_list, _table_splitter),
         _make_table_nodes,
     )
@@ -111,7 +111,9 @@ def _make_table_nodes(match: _TableSplitterMatch) -> Iterator[NodeOrText]:
         yield Node(type="table_description", children=table_description_pile)
 
 
-def _table_splitter(input_list: List[NodeOrText]) -> Split[NodeOrText, _TableSplitterMatch] | None:
+def _table_splitter(
+    input_list: List[NodeOrText],
+) -> RawSplit[NodeOrText, _TableSplitterMatch] | None:
     before, input_list = split_before_match(input_list, _is_table_start)
     table_pile, input_list = split_before_match(input_list, _is_table_end)
 
@@ -213,10 +215,10 @@ def _clean_leading_whitespaces(line: str) -> str:
 def parse_lists(
     input_list: List[NodeOrText],
 ) -> List[NodeOrText]:
-    return map_splitted_text_segments(
+    return map_splitted_elements(
         split_elements(
             input_list,
-            make_text_segment_while_splitter(_is_list),
+            make_while_splitter_for_text_segments(_is_list, _is_list),
         ),
         lambda pile: Node(type="list", children=pile),
     )
@@ -287,14 +289,14 @@ DOUBLE_QUOTE_PATTERN = PatternProxy(r'"')
 
 
 _is_blockquote_start = make_probe_from_pattern_proxy(BLOCKQUOTE_START_PATTERN)
-_is_blockquote_start_text_segment = make_text_segment_probe(_is_blockquote_start)
+_is_blockquote_start_text_segment = reject_if_not_text_segment(_is_blockquote_start)
 _is_blockquote_end = make_probe_from_pattern_proxy(BLOCKQUOTE_END_PATTERN, use_search=True)
 
 
 def parse_blockquotes(
     input_list: List[NodeOrText],
 ) -> List[NodeOrText]:
-    return map_splitted_text_segments(
+    return map_splitted_elements(
         split_elements(
             input_list,
             _blockquote_splitter,
@@ -306,7 +308,7 @@ def parse_blockquotes(
 def _make_blockquote_node(match: _BlockquoteSplitterMatch) -> Node:
     pile, error_code = match
     if error_code is None:
-        elements = chain_flat_map_node_list(pile, [parse_tables, parse_lists, parse_images])
+        elements = chain_functions(pile, [parse_tables, parse_lists, parse_images])
         return Node(
             type="blockquote",
             children=list(elements),
@@ -321,7 +323,7 @@ def _make_blockquote_node(match: _BlockquoteSplitterMatch) -> Node:
 
 def _blockquote_splitter(
     input_list: List[NodeOrText],
-) -> Split[NodeOrText, _BlockquoteSplitterMatch] | None:
+) -> RawSplit[NodeOrText, _BlockquoteSplitterMatch] | None:
     before, input_list = split_before_match(input_list, _is_blockquote_start_text_segment)
 
     if not input_list:
@@ -395,10 +397,10 @@ _is_image = make_probe_from_pattern_proxy(IMAGE_PATTERN)
 def parse_images(
     input_list: List[NodeOrText],
 ) -> List[NodeOrText]:
-    return map_splitted_text_segments(
+    return map_splitted_elements(
         split_elements(
             input_list,
-            make_text_segment_single_line_splitter(_is_image),
+            make_single_line_splitter_for_text_segments(_is_image),
         ),
         lambda pile: Node(type="image", children=pile),
     )

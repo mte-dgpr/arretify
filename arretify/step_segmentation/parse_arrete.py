@@ -25,16 +25,15 @@ from arretify.html_schemas import (
     APPENDIX_SCHEMA,
 )
 from arretify.utils.html import make_data_tag
+from arretify.utils.functional import chain_functions
 from .header import parse_header, render_header
 from .titles_detection import TITLE_NODE, parse_title_info
 from .content import parse_content, render_content
 from .core import (
     split_before_match,
-    chain_flat_map_node_list,
     NodeOrText,
-    Node,
     make_probe_from_regex_tree,
-    make_text_segment_probe,
+    reject_if_not_text_segment,
 )
 from .basic_elements import parse_images
 from .document_elements import parse_page_footers, parse_tables_of_contents, add_page_separators
@@ -43,11 +42,12 @@ from .document_elements import parse_page_footers, parse_tables_of_contents, add
 _is_title = make_probe_from_regex_tree(
     TITLE_NODE,
 )
-_is_title_text_segment = make_text_segment_probe(_is_title)
+_is_title_text_segment = reject_if_not_text_segment(_is_title)
 
 
-def _is_appendix(elements: List[TextSegment], index: int) -> bool:
+def _is_appendix(elements: List[NodeOrText], index: int) -> bool:
     element = elements[index]
+    assert isinstance(element, TextSegment)
     if _is_title(elements, index):
         # Parse title info
         title_info = parse_title_info(element.contents)
@@ -59,7 +59,7 @@ def _is_appendix(elements: List[TextSegment], index: int) -> bool:
     return False
 
 
-_is_appendix_text_segment = make_text_segment_probe(_is_appendix)
+_is_appendix_text_segment = reject_if_not_text_segment(_is_appendix)
 
 
 def parse_arrete(document_context: DocumentContext) -> DocumentContext:
@@ -71,7 +71,7 @@ def parse_arrete(document_context: DocumentContext) -> DocumentContext:
 
     elements: List[NodeOrText] = cast(List[NodeOrText], lines)
     # Add basic document elements
-    elements = chain_flat_map_node_list(
+    elements = chain_functions(
         elements,
         # Image strings can be very long, and table of contents pattern look
         # at the end of the sentence.

@@ -16,8 +16,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import Iterable, Iterator, Union, Callable, TypeVar, ParamSpec
-from functools import wraps
+from typing import Iterable, Iterator, Union, Callable, TypeVar, ParamSpec, List
+from functools import wraps, reduce
 
 
 P = TypeVar("P")
@@ -60,3 +60,24 @@ def iter_func_to_list(func: Callable[T, Iterable[P]]) -> Callable[T, list[P]]:
         return list(func(*args, **kwargs))
 
     return wrapped
+
+
+def chain_functions(
+    elements: P,
+    functions: List[Callable[[P], P]],
+) -> P:
+    """
+    Chains a list of functions to be applied sequentially to an initial value.
+    Each function in the list takes the output of the previous function as input.
+    Example:
+        >>> def add_one(x): return x + 1
+        >>> def multiply_by_two(x): return x * 2
+        >>> functions = [add_one, multiply_by_two]
+        >>> chain_functions(3, functions)
+        8
+    """
+    return reduce(
+        lambda elements, func: func(elements),
+        functions,
+        elements,
+    )
