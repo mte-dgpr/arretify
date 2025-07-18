@@ -69,7 +69,7 @@ def mistral_ocr(
 
     return dataclass_replace(
         document_context,
-        lines=initialize_pages(pages_ocr),
+        lines=initialize_pages(ocr_pages),
     )
 
 

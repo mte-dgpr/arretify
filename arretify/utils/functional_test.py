@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 import unittest
-from .functional import flat_map_string
+from .functional import flat_map_string, chain_functions
 
 
 class TestFlatMapString(unittest.TestCase):
@@ -39,3 +39,19 @@ class TestFlatMapString(unittest.TestCase):
             "WORLD",
             2,
         ], "Should apply the map function to string elements"
+
+
+class TestChainFunctions(unittest.TestCase):
+
+    def test_chain_functions(self):
+        # Arrange
+        def add_one(x):
+            return x + 1
+
+        def multiply_by_two(x):
+            return x * 2
+
+        functions = [add_one, multiply_by_two]
+
+        # Assert
+        assert chain_functions(3, functions) == 8

@@ -44,8 +44,8 @@ from .core import (
     split_before_match,
     NodeOrText,
     split_elements,
-    map_splitted_text_segments,
-    make_text_segment_while_splitter,
+    map_splitted_elements,
+    make_while_splitter_for_text_segments,
     make_probe_from_pattern_proxy,
 )
 
@@ -87,19 +87,19 @@ _is_page_footer = make_probe_from_pattern_proxy(PAGE_FOOTER_PATTERN)
 def parse_tables_of_contents(
     elements: List[NodeOrText],
 ) -> List[NodeOrText]:
-    return map_splitted_text_segments(
+    return map_splitted_elements(
         split_elements(
             elements,
-            make_text_segment_while_splitter(
-                _table_of_contents_while_probe,
-                start_is_matching=_is_table_of_contents,
+            make_while_splitter_for_text_segments(
+                _is_table_of_contents,
+                _table_of_contents_while_condition,
             ),
         ),
         lambda pile: Node(type="table_of_contents", children=pile),
     )
 
 
-def _table_of_contents_while_probe(elements: List[NodeOrText], index: int) -> bool:
+def _table_of_contents_while_condition(elements: List[NodeOrText], index: int) -> bool:
     # Instead of checking just the first line, we check the next few lines.
     # This allows to deal with case when TOC contains lines that are not
     # easily recognizable as TOC, e.g.:
@@ -124,10 +124,10 @@ def _table_of_contents_while_probe(elements: List[NodeOrText], index: int) -> bo
 def parse_page_footers(
     elements: List[NodeOrText],
 ) -> List[NodeOrText]:
-    return map_splitted_text_segments(
+    return map_splitted_elements(
         split_elements(
             elements,
-            make_text_segment_while_splitter(_is_page_footer),
+            make_while_splitter_for_text_segments(_is_page_footer, _is_page_footer),
         ),
         lambda pile: Node(type="page_footer", children=pile),
     )

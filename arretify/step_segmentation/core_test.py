@@ -24,10 +24,11 @@ from .core import (
     split_elements,
     make_single_line_splitter,
     make_while_splitter,
-    make_text_segment_while_splitter,
-    make_negated_probe,
+    make_while_splitter_for_text_segments,
+    negate,
+    reject_if_not_text_segment,
     split_before_match,
-    text_segment_group_splitter,
+    group_text_segments_splitter,
     SplitMatch,
     SplitNotAMatch,
     Node,
@@ -218,8 +219,15 @@ class TestMakeWhileSplitter(unittest.TestCase):
 
     def test_match_found(self):
         # Arrange
+        def start_condition(elements, index):
+            return elements[index].contents.startswith("match1")
+
+        def while_condition(elements, index):
+            return elements[index].contents.startswith("match")
+
         splitter = make_while_splitter(
-            lambda elements, index: elements[index].contents.startswith("match")
+            start_condition,
+            while_condition,
         )
         elements = _l("no match", "match1", "match2", "no match", "match3")
 
@@ -231,8 +239,15 @@ class TestMakeWhileSplitter(unittest.TestCase):
 
     def test_match_found_first_line(self):
         # Arrange
+        def start_condition(elements, index):
+            return elements[index].contents.startswith("match1")
+
+        def while_condition(elements, index):
+            return elements[index].contents.startswith("match")
+
         splitter = make_while_splitter(
-            lambda elements, index: elements[index].contents.startswith("match")
+            start_condition,
+            while_condition,
         )
         elements = _l("match1", "match2", "no match", "match3")
 
@@ -244,8 +259,15 @@ class TestMakeWhileSplitter(unittest.TestCase):
 
     def test_match_found_last_line(self):
         # Arrange
+        def start_condition(elements, index):
+            return elements[index].contents.startswith("match1")
+
+        def while_condition(elements, index):
+            return elements[index].contents.startswith("match")
+
         splitter = make_while_splitter(
-            lambda elements, index: elements[index].contents.startswith("match")
+            start_condition,
+            while_condition,
         )
         elements = _l("no match", "match1", "match2")
 
@@ -257,8 +279,15 @@ class TestMakeWhileSplitter(unittest.TestCase):
 
     def test_no_match(self):
         # Arrange
+        def start_condition(elements, index):
+            return elements[index].contents.startswith("match1")
+
+        def while_condition(elements, index):
+            return elements[index].contents.startswith("match")
+
         splitter = make_while_splitter(
-            lambda elements, index: elements[index].contents.startswith("match")
+            start_condition,
+            while_condition,
         )
         elements = _l("no match", "also no match")
 
@@ -273,9 +302,7 @@ class TestMakeNegatedProbe(unittest.TestCase):
 
     def test_negated_probe(self):
         # Arrange
-        probe = make_negated_probe(
-            lambda elements, index: elements[index].contents.startswith("match")
-        )
+        probe = negate(lambda elements, index: elements[index].contents.startswith("match"))
         elements = _l("no match", "also no match", "match this")
 
         # Assert
@@ -288,8 +315,12 @@ class TestMakeTextSegmentWhileSplitter(unittest.TestCase):
 
     def test_rejects_non_text_segments(self):
         # Arrange
-        splitter = make_text_segment_while_splitter(
-            lambda elements, index: elements[index].contents.startswith("match")
+        def probe(elements, index):
+            return elements[index].contents.startswith("match")
+
+        splitter = make_while_splitter_for_text_segments(
+            probe,
+            probe,
         )
         elements = [
             Node(type="non_text", children=[]),
@@ -305,8 +336,12 @@ class TestMakeTextSegmentWhileSplitter(unittest.TestCase):
 
     def test_match_found(self):
         # Arrange
-        splitter = make_text_segment_while_splitter(
-            lambda elements, index: elements[index].contents.startswith("match")
+        def probe(elements, index):
+            return elements[index].contents.startswith("match")
+
+        splitter = make_while_splitter_for_text_segments(
+            probe,
+            probe,
         )
         elements = _l("no match", "match this", "match that", "no match")
 
@@ -318,9 +353,15 @@ class TestMakeTextSegmentWhileSplitter(unittest.TestCase):
 
     def test_start_is_matching_argument(self):
         # Arrange
-        splitter = make_text_segment_while_splitter(
-            lambda elements, index: elements[index].contents.startswith("match"),
-            start_is_matching=lambda elements, index: elements[index].contents == "match this",
+        def start_condition(elements, index):
+            return elements[index].contents == "match this"
+
+        def while_condition(elements, index):
+            return elements[index].contents.startswith("match")
+
+        splitter = make_while_splitter_for_text_segments(
+            start_condition,
+            while_condition,
         )
         elements = [
             Node(type="some_node", children=[]),
@@ -335,9 +376,10 @@ class TestMakeTextSegmentWhileSplitter(unittest.TestCase):
 
     def test_not_interrupted_by_inline_node(self):
         # Arrange
-        splitter = make_text_segment_while_splitter(
-            lambda elements, index: elements[index].contents.startswith("match")
-        )
+        def probe(elements, index):
+            return elements[index].contents.startswith("match")
+
+        splitter = make_while_splitter_for_text_segments(probe, probe)
         elements = [
             *_l("match this"),
             Node(type="page_separator", children=[]),
@@ -362,7 +404,7 @@ class TestTextSegmentGroupSplitter(unittest.TestCase):
         ]
 
         # Act
-        result = text_segment_group_splitter(input_list)
+        result = group_text_segments_splitter(input_list)
 
         # Assert
         assert result is not None
@@ -397,3 +439,27 @@ class TestMakeTextSegmentProbeFromPattern(unittest.TestCase):
 
         # Assert
         assert result is False
+
+
+class TestPickTextSegments(unittest.TestCase):
+
+    def test_simple(self):
+        # Arrange
+        elements = [
+            *_l("text1"),
+            Node(type="some_node", children=[]),
+            *_l("text2", "text3"),
+        ]
+
+        def probe(elements, index):
+            return elements[index].contents.startswith("text")
+
+        # Act
+        text_segments_probe = reject_if_not_text_segment(probe)
+
+        # Assert
+        assert text_segments_probe(elements, 0) is True
+        # If reject_if_not_text_segment not used, this should raise an error
+        assert text_segments_probe(elements, 1) is False
+        assert text_segments_probe(elements, 2) is True
+        assert text_segments_probe(elements, 3) is True

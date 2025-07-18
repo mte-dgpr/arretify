@@ -20,7 +20,7 @@ from typing import List, Dict, Literal, cast, Iterator
 
 from bs4 import Tag, BeautifulSoup
 
-from arretify.utils.functional import iter_func_to_list
+from arretify.utils.functional import iter_func_to_list, chain_functions
 from arretify.parsing_utils.dates import DATE_NODE, render_date_regex_tree_match
 from arretify.utils.html import wrap_in_tag, make_data_tag, make_new_tag
 from arretify.types import TextSegment, PageElementOrString, DataElementSchema
@@ -44,17 +44,15 @@ from arretify.regex_utils import (
 from .core import (
     Node,
     NodeOrText,
-    flat_map_node_list,
-    chain_flat_map_node_list,
     split_elements,
     SplitMatch,
-    make_text_segment_while_splitter,
-    map_splitted_text_segments,
+    make_while_splitter_for_text_segments,
+    map_splitted_elements,
     is_node,
-    make_text_segment_single_line_splitter,
+    make_single_line_splitter_for_text_segments,
     assert_single_text_segment,
     assert_all_text_segments,
-    text_segment_group_splitter,
+    group_text_segments_splitter,
     make_probe_from_pattern_proxy,
     Probe,
     INLINE_NODE_TYPES,
@@ -219,7 +217,7 @@ def _is_nothing_else_than(name: str, t: NodeOrText) -> bool:
 def parse_header(
     elements: List[NodeOrText],
 ) -> List[NodeOrText]:
-    elements = chain_flat_map_node_list(
+    elements = chain_functions(
         elements,
         [
             parse_emblem_element,
@@ -250,10 +248,12 @@ def _parse_header_element(
     It uses a simple regex pattern to detect the element start,
     and then gathers all following lines while the pattern still matches.
     """
-    return map_splitted_text_segments(
+    return map_splitted_elements(
         split_elements(
             elements,
-            make_text_segment_while_splitter(HEADER_ELEMENTS_PROBES[node_type]),
+            make_while_splitter_for_text_segments(
+                HEADER_ELEMENTS_PROBES[node_type], HEADER_ELEMENTS_PROBES[node_type]
+            ),
         ),
         lambda text_segments: Node(
             type=node_type,
@@ -271,12 +271,12 @@ def _parse_header_element_fuzzy(
     It uses a regex pattern to find the start of the element,
     and then gathers all following lines that do not match another element.
     """
-    return map_splitted_text_segments(
+    return map_splitted_elements(
         split_elements(
             elements,
-            make_text_segment_while_splitter(
+            make_while_splitter_for_text_segments(
+                HEADER_ELEMENTS_FUZZY_PROBES[node_type],
                 lambda elements, index: _is_nothing_else_than(node_type, elements[index]),
-                start_is_matching=HEADER_ELEMENTS_FUZZY_PROBES[node_type],
             ),
         ),
         lambda text_segments: Node(
@@ -366,17 +366,14 @@ def _parse_visa_and_motif_elements_pass1(
     It creates nodes of type 'visa' or 'motif' for each segment that matches
     the pattern.
     """
-    elements = flat_map_node_list(
-        elements,
-        lambda elements: map_splitted_text_segments(
-            split_elements(
-                elements,
-                make_text_segment_single_line_splitter(VISA_MOTIFS_PROBES[node_type]),
-            ),
-            lambda text_segments: Node(
-                type=node_type,
-                children=text_segments,
-            ),
+    elements = map_splitted_elements(
+        split_elements(
+            elements,
+            make_single_line_splitter_for_text_segments(VISA_MOTIFS_PROBES[node_type]),
+        ),
+        lambda text_segments: Node(
+            type=node_type,
+            children=text_segments,
         ),
     )
 
@@ -515,7 +512,8 @@ def _parse_visa_and_motif_elements_pass3(
         if is_node(element, type_in=[node_type]):
             inline_nodes_pile: List[Node] = []
             while elements and is_node(elements[0], type_in=INLINE_NODE_TYPES):
-                inline_nodes_pile.append(elements.pop(0))
+                inline_nodes_pile.append(elements[0])
+                elements.pop(0)
 
             if elements and is_node(elements[0], type_in=["list"]):
                 if inline_nodes_pile:
@@ -573,7 +571,7 @@ def render_header_element(
 
     for splitted_element in split_elements(
         node.children,
-        text_segment_group_splitter,
+        group_text_segments_splitter,
     ):
         if isinstance(splitted_element, SplitMatch):
             strings = [t.contents for t in splitted_element.value]
