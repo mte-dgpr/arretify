@@ -48,15 +48,16 @@ from .core import (
     chain_flat_map_node_list,
     split_text_segments,
     SplitMatch,
-    make_while_splitter,
+    make_text_segment_while_splitter,
     map_splitted_text_segments,
     is_node,
-    make_single_line_splitter,
+    make_text_segment_single_line_splitter,
     assert_single_text_segment,
     assert_all_text_segments,
     text_segment_group_splitter,
-    make_text_segment_probe_from_pattern,
+    make_probe_from_pattern_proxy,
     Probe,
+    INLINE_NODE_TYPES,
 )
 from .document_elements import (
     render_page_footer,
@@ -185,17 +186,15 @@ HEADER_ELEMENTS_SCHEMAS: Dict[str, DataElementSchema] = dict(
 )
 
 HEADER_ELEMENTS_PROBES: Dict[str, Probe[NodeOrText]] = dict(
-    emblem=make_text_segment_probe_from_pattern(EMBLEM_PATTERN),
-    identification=make_text_segment_probe_from_pattern(IDENTIFICATION_PATTERN),
-    honorary=make_text_segment_probe_from_pattern(HONORARY_PATTERN),
-    supplementary_motif_info=make_text_segment_probe_from_pattern(
-        SUPPLEMENTARY_MOTIF_INFORMATION_PATTERN
-    ),
+    emblem=make_probe_from_pattern_proxy(EMBLEM_PATTERN),
+    identification=make_probe_from_pattern_proxy(IDENTIFICATION_PATTERN),
+    honorary=make_probe_from_pattern_proxy(HONORARY_PATTERN),
+    supplementary_motif_info=make_probe_from_pattern_proxy(SUPPLEMENTARY_MOTIF_INFORMATION_PATTERN),
 )
 
 HEADER_ELEMENTS_FUZZY_PROBES: Dict[str, Probe[NodeOrText]] = dict(
-    entity=make_text_segment_probe_from_pattern(ENTITY_PATTERN),
-    arrete_title=make_text_segment_probe_from_pattern(ARRETE_TITLE_PATTERN),
+    entity=make_probe_from_pattern_proxy(ENTITY_PATTERN),
+    arrete_title=make_probe_from_pattern_proxy(ARRETE_TITLE_PATTERN),
 )
 
 VISA_MOTIFS_PATTERNS: Dict[str, PatternProxy] = dict(
@@ -204,8 +203,8 @@ VISA_MOTIFS_PATTERNS: Dict[str, PatternProxy] = dict(
 )
 
 VISA_MOTIFS_PROBES: Dict[str, Probe[NodeOrText]] = dict(
-    visa=make_text_segment_probe_from_pattern(VISA_PATTERN),
-    motif=make_text_segment_probe_from_pattern(MOTIF_PATTERN),
+    visa=make_probe_from_pattern_proxy(VISA_PATTERN),
+    motif=make_probe_from_pattern_proxy(MOTIF_PATTERN),
 )
 
 
@@ -254,7 +253,7 @@ def _parse_header_element(
     return map_splitted_text_segments(
         split_text_segments(
             elements,
-            make_while_splitter(HEADER_ELEMENTS_PROBES[node_type]),
+            make_text_segment_while_splitter(HEADER_ELEMENTS_PROBES[node_type]),
         ),
         lambda text_segments: Node(
             type=node_type,
@@ -275,8 +274,8 @@ def _parse_header_element_fuzzy(
     return map_splitted_text_segments(
         split_text_segments(
             elements,
-            make_while_splitter(
-                lambda t: _is_nothing_else_than(node_type, t),
+            make_text_segment_while_splitter(
+                lambda elements, index: _is_nothing_else_than(node_type, elements[index]),
                 start_is_matching=HEADER_ELEMENTS_FUZZY_PROBES[node_type],
             ),
         ),
@@ -372,7 +371,7 @@ def _parse_visa_and_motif_elements_pass1(
         lambda elements: map_splitted_text_segments(
             split_text_segments(
                 elements,
-                make_single_line_splitter(VISA_MOTIFS_PROBES[node_type]),
+                make_text_segment_single_line_splitter(VISA_MOTIFS_PROBES[node_type]),
             ),
             lambda text_segments: Node(
                 type=node_type,
@@ -390,9 +389,11 @@ def _parse_visa_and_motif_elements_pass1(
     for element in elements:
         is_list_of_visas_or_motifs = False
         if is_node(element, type_in=["list"]):
-            text_segments = [child for child in element.children if isinstance(child, TextSegment)]
+            text_segments: List[NodeOrText] = [
+                child for child in element.children if isinstance(child, TextSegment)
+            ]
             is_list_of_visas_or_motifs = len(text_segments) > 0 and VISA_MOTIFS_PROBES[node_type](
-                text_segments[0]
+                text_segments, 0
             )
 
         if is_list_of_visas_or_motifs:
@@ -441,6 +442,8 @@ def _parse_visa_and_motif_elements_pass2(
     #   Vu que blabla
     #   Vu que bloblo
     if first_node_match and first_node_match.group("contents"):
+        # Here we yield only the first node, since
+        # the rest of the elements will be yielded below.
         yield first_node
 
     # 2. Variant "explicit list" :
@@ -451,13 +454,13 @@ def _parse_visa_and_motif_elements_pass2(
         # Add the "Vu :" to the header
         yield from first_node.children
         while elements:
-            next_node = elements[0]
-            if is_node(next_node, type_in=["page_footer"]) or isinstance(next_node, TextSegment):
+            element = elements[0]
+            if is_node(element, type_in=INLINE_NODE_TYPES) or isinstance(element, TextSegment):
                 yield elements.pop(0)
 
-            elif is_node(next_node, type_in=["list"]):
+            elif is_node(element, type_in=["list"]):
                 elements.pop(0)
-                for list_item_element in next_node.children:
+                for list_item_element in element.children:
                     if is_node(list_item_element):
                         yield list_item_element
                     elif isinstance(list_item_element, TextSegment):
@@ -477,7 +480,10 @@ def _parse_visa_and_motif_elements_pass2(
         yield from first_node.children
         while elements:
             element = elements[0]
-            if is_node(element, type_in=["page_footer", "list"]):
+
+            # Lists will be handled in the next pass and appended to the visa or motif node
+            # if applicable.
+            if is_node(element, type_in=["list", *INLINE_NODE_TYPES]):
                 yield elements.pop(0)
 
             elif isinstance(element, TextSegment):
@@ -503,12 +509,24 @@ def _parse_visa_and_motif_elements_pass3(
     visa or motif node contains all its children.
     """
     elements = list(elements)
+
     while elements:
         element = elements.pop(0)
         if is_node(element, type_in=[node_type]):
+            inline_nodes_pile: List[Node] = []
+            while elements and is_node(elements[0], type_in=INLINE_NODE_TYPES):
+                inline_nodes_pile.append(elements.pop(0))
+
             if elements and is_node(elements[0], type_in=["list"]):
+                if inline_nodes_pile:
+                    element.children.extend(inline_nodes_pile)
                 element.children.append(elements.pop(0))
-            yield element
+                yield element
+
+            else:
+                yield element
+                yield from inline_nodes_pile
+
         else:
             yield element
 
@@ -586,6 +604,8 @@ def render_visa_motif(
     for element in node.children:
         if is_node(element, type_in=["list"]):
             elements.append(render_list(soup, element))
+        elif is_node(element, type_in=["page_separator"]):
+            elements.append(render_page_separator(soup, element))
         elif isinstance(element, TextSegment):
             elements.append(element.contents)
         else:

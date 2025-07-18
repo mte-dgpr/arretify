@@ -44,6 +44,21 @@
                 color: var(--warning-425-625);
             }
 
+            .arretify-visual_page_separator {
+                position: absolute;
+                left: 0;
+                width: 100vw;
+                height: 0.3em;
+                background-color: var(--grey-950-100);
+                z-index: -1;
+            }
+
+            a.arretify-visual_page_separator > span {
+                position: absolute;
+                font-size: 75%;
+                color: var(--grey-625-425);
+            }
+
             /**************** HEADER ****************/
             header {
                 padding-bottom: var(--spacing-1);
@@ -110,9 +125,42 @@
                 background-color: var(--background-action-low-blue-france);
             }
   </style>
+  <script>
+   window.onload = function() {
+                const pageSeparators = Array.from(document.querySelectorAll('.arretify-page_separator'))
+                
+                const refreshPageSeparator = () => {
+                    document.querySelectorAll('.arretify-visual_page_separator')
+                        .forEach((visualPageSeparator) => visualPageSeparator.remove())
+                    pageSeparators.slice(1).forEach(function(pageSeparator) {
+                        const boundingBox = pageSeparator.getBoundingClientRect()
+                        const position = getPositionRelativeToDocument(pageSeparator)
+                        const pageIndex = parseInt(pageSeparator.dataset.page_index, 10)
+                        const visualPageSeparator = document.createElement('a')
+                        visualPageSeparator.classList.add('arretify-visual_page_separator')
+                        visualPageSeparator.style.top = `${position.top + boundingBox.height}px`
+                        visualPageSeparator.innerHTML = `<span>↓ page ${pageIndex + 1}</span>`
+                        document.body.appendChild(visualPageSeparator)
+                    })
+                }
+
+                refreshPageSeparator()
+                window.addEventListener('resize', refreshPageSeparator)
+            }
+
+            const getPositionRelativeToDocument = (el) => {
+                const rect = el.getBoundingClientRect()
+                return {
+                    left: rect.left + window.scrollX,
+                    top: rect.top + window.scrollY,
+                }
+            }
+  </script>
  </head>
  <body>
   <header class="arretify-header">
+   <a class="arretify-page_separator" data-page_index="0">
+   </a>
    <div class="arretify-entity">
     <div>
      PRÉFET DU HAUT-RHIN
@@ -211,6 +259,8 @@
     </a>
     du Conseil ;
    </div>
+   <a class="arretify-page_separator" data-page_index="1">
+   </a>
    <div class="arretify-visa">
     VU l'
     <a class="arretify-document_reference" data-date="2016-05-23" data-id="JORFTEXT000032575814" data-type="arrete-ministeriel" href="https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000032575814">
@@ -292,6 +342,8 @@
    <div class="arretify-visa">
     VU les remarques formulées par l'exploitant sur le projet d'arrêté préfectoral transmises à l'inspection des installations classées par courrier électronique du 27 octobre 2010;
    </div>
+   <a class="arretify-page_separator" data-page_index="2">
+   </a>
    <div class="arretify-visa">
     VU la transmission du projet d'
     <a class="arretify-document_reference" data-date="2022-10-19" data-type="arrete-prefectoral">
@@ -394,6 +446,8 @@
    <div class="arretify-motifs">
     CONSIDÉRANT que la demande d'augmentation du tonnage de 10000 tonnes à 15000
    </div>
+   <a class="arretify-page_separator" data-page_index="3">
+   </a>
    <div>
     tonnes à partir duquel l'exploitant soumet au préfet sa prestation de service en réponse au SIVOM correspond à environ 8 jours supplémentaires sur les 16 initialement prévus, ne remet pas en cause le principe de contrôle par l'autorité administrative tel que prévu par l'arrêté d'autorisation initial du 20 avril 2020 susvisé ;
    </div>
@@ -540,6 +594,8 @@
          </td>
          <td style="text-align: center;">
           26,2 t / h  au    maximum   22,9 t / h  en    moyenne
+          <a class="arretify-page_separator" data-page_index="4">
+          </a>
          </td>
         </tr>
         <tr>
@@ -699,6 +755,8 @@
      </a>
      sont à la charge de l'exploitant.
     </div>
+    <a class="arretify-page_separator" data-page_index="5">
+    </a>
    </section>
    <section class="arretify-section" data-number="5" data-title="Sanctions " data-type="article">
     <h2 class="arretify-section_title">

@@ -294,3 +294,79 @@ class TestParseOperations(unittest.TestCase):
             </div>
             """  # noqa: E501
         )
+
+    def test_with_inline_node_between_operands(self):
+        # Arrange
+        document_context = create_document_context(
+            normalized_html_str(
+                """
+                <div class="arretify-alinea">
+                    Les dispositions de l'
+                    <a class="arretify-document_reference">
+                        arrêté préfectoral du
+                        <time class="arretify-date" datetime="2008-12-10">
+                                10 décembre 2008
+                        </time>
+                    </a>
+                    <a class="arretify-page_separator"></a>
+                    <span
+                        class="arretify-operation"
+                        data-direction="rtl"
+                        data-has_operand="true"
+                        data-keyword="remplacées"
+                        data-operand=""
+                        data-operation_type="replace"
+                    >
+                        sont
+                        <b>
+                            remplacées
+                        </b>
+                        par la disposition suivante :
+                    </span>
+                    <a class="arretify-page_separator"></a>
+                    <q>
+                        Un relevé hebdomadaire de chacun des compteurs d'eau est réalisé par l'exploitant
+                    </q>
+                </div>
+                """  # noqa: E501
+            )
+        )
+        tag = document_context.soup.select_one(".arretify-operation")
+
+        # Act
+        resolve_references_and_operands(document_context, tag)
+
+        # Assert
+        assert str(document_context.soup) == normalized_html_str(
+            """
+            <div class="arretify-alinea">
+                Les dispositions de l'
+                <a class="arretify-document_reference" data-element_id="1">
+                    arrêté préfectoral du
+                    <time class="arretify-date" datetime="2008-12-10">
+                            10 décembre 2008
+                    </time>
+                </a>
+                <a class="arretify-page_separator"></a>
+                <span
+                    class="arretify-operation"
+                    data-direction="rtl"
+                    data-has_operand="true"
+                    data-keyword="remplacées"
+                    data-operand="2"
+                    data-operation_type="replace"
+                    data-references="1"
+                >
+                    sont
+                    <b>
+                        remplacées
+                    </b>
+                    par la disposition suivante :
+                </span>
+                <a class="arretify-page_separator"></a>
+                <q data-element_id="2">
+                    Un relevé hebdomadaire de chacun des compteurs d'eau est réalisé par l'exploitant
+                </q>
+            </div>
+            """  # noqa: E501
+        )

@@ -18,7 +18,7 @@
 #
 from typing import List, cast
 
-from arretify.types import DocumentContext, SectionType
+from arretify.types import DocumentContext, SectionType, TextSegment
 from arretify.html_schemas import (
     HEADER_SCHEMA,
     MAIN_SCHEMA,
@@ -33,10 +33,33 @@ from .core import (
     chain_flat_map_node_list,
     NodeOrText,
     Node,
-    make_text_segment_probe_from_regex_tree,
+    make_probe_from_regex_tree,
+    make_text_segment_probe,
 )
 from .basic_elements import parse_images
-from .document_elements import parse_page_footers, parse_tables_of_contents
+from .document_elements import parse_page_footers, parse_tables_of_contents, add_page_separators
+
+
+_is_title = make_probe_from_regex_tree(
+    TITLE_NODE,
+)
+_is_title_text_segment = make_text_segment_probe(_is_title)
+
+
+def _is_appendix(elements: List[TextSegment], index: int) -> bool:
+    element = elements[index]
+    if _is_title(elements, index):
+        # Parse title info
+        title_info = parse_title_info(element.contents)
+        new_section_type = title_info.section_type
+
+        # Appendix is considered as a different part of the document
+        if new_section_type == SectionType.ANNEXE:
+            return True
+    return False
+
+
+_is_appendix_text_segment = make_text_segment_probe(_is_appendix)
 
 
 def parse_arrete(document_context: DocumentContext) -> DocumentContext:
@@ -53,18 +76,18 @@ def parse_arrete(document_context: DocumentContext) -> DocumentContext:
         # Image strings can be very long, and table of contents pattern look
         # at the end of the sentence.
         # So, we make sure we parse images before table of contents.
-        [parse_images, parse_page_footers, parse_tables_of_contents],
+        [add_page_separators, parse_images, parse_page_footers, parse_tables_of_contents],
     )
 
     # Header
-    pile, elements = split_before_match(elements, _is_title)
+    pile, elements = split_before_match(elements, _is_title_text_segment)
     header = make_data_tag(document_context.soup, HEADER_SCHEMA)
     body.append(header)
     rendered_header = render_header(document_context.soup, list(parse_header(pile)))
     header.extend(list(rendered_header.children))
 
     # Main content
-    pile, elements = split_before_match(elements, _is_appendix)
+    pile, elements = split_before_match(elements, _is_appendix_text_segment)
     main_content = make_data_tag(document_context.soup, MAIN_SCHEMA)
     body.append(main_content)
     rendered_content = render_content(document_context.soup, list(parse_content(pile)))
@@ -78,23 +101,3 @@ def parse_arrete(document_context: DocumentContext) -> DocumentContext:
         appendix.extend(list(rendered_appendix.children))
 
     return document_context
-
-
-_is_title = make_text_segment_probe_from_regex_tree(
-    TITLE_NODE,
-)
-
-
-def _is_appendix(line: NodeOrText) -> bool:
-    if isinstance(line, Node):
-        return False
-
-    if _is_title(line):
-        # Parse title info
-        title_info = parse_title_info(line.contents)
-        new_section_type = title_info.section_type
-
-        # Appendix is considered as a different part of the document
-        if new_section_type == SectionType.ANNEXE:
-            return True
-    return False

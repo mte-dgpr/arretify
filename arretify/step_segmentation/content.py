@@ -58,8 +58,8 @@ from .core import (
     chain_flat_map_node_list,
     map_splitted_text_segments,
     split_text_segments,
-    make_single_line_splitter,
-    make_text_segment_probe_from_regex_tree,
+    make_text_segment_single_line_splitter,
+    make_probe_from_regex_tree,
 )
 from .document_elements import (
     render_page_footer,
@@ -71,7 +71,7 @@ from .document_elements import (
 _LOGGER = logging.getLogger(__name__)
 
 
-_is_title = make_text_segment_probe_from_regex_tree(
+_is_title = make_probe_from_regex_tree(
     TITLE_NODE,
 )
 
@@ -201,7 +201,7 @@ def _create_section_title_nodes(
     return map_splitted_text_segments(
         split_text_segments(
             elements,
-            make_single_line_splitter(_is_title),
+            make_text_segment_single_line_splitter(_is_title),
         ),
         lambda text_segments: Node(
             type="section_title",

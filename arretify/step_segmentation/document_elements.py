@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import List, Iterator
+from typing import List, Iterator, cast
 
 from bs4 import BeautifulSoup, Tag
 
@@ -46,8 +46,8 @@ from .core import (
     NodeOrText,
     split_text_segments,
     map_splitted_text_segments,
-    make_while_splitter,
-    make_text_segment_probe_from_pattern,
+    make_text_segment_while_splitter,
+    make_probe_from_pattern_proxy,
 )
 
 
@@ -81,47 +81,45 @@ TABLE_OF_CONTENTS_PATTERN = PatternProxy(rf"^{join_with_or(TABLE_OF_CONTENTS_LIS
 """Detect all table of contents starting sentences."""
 
 
-_is_table_of_contents = make_text_segment_probe_from_pattern(TABLE_OF_CONTENTS_PATTERN)
-_is_page_footer = make_text_segment_probe_from_pattern(PAGE_FOOTER_PATTERN)
+_is_table_of_contents = make_probe_from_pattern_proxy(TABLE_OF_CONTENTS_PATTERN)
+_is_page_footer = make_probe_from_pattern_proxy(PAGE_FOOTER_PATTERN)
 
 
 def parse_tables_of_contents(
     elements: List[NodeOrText],
 ) -> List[NodeOrText]:
     return map_splitted_text_segments(
-        split_text_segments(elements, _table_of_contents_splitter),
+        split_text_segments(
+            elements,
+            make_text_segment_while_splitter(
+                _table_of_contents_while_probe,
+                start_is_matching=_is_table_of_contents,
+            ),
+        ),
         lambda pile: Node(type="table_of_contents", children=pile),
     )
 
 
-def _table_of_contents_splitter(
-    input_list: List[NodeOrText],
-) -> Split[NodeOrText, List[NodeOrText]] | None:
-    pile: List[NodeOrText] = []
-    before, after = split_before_match(input_list, _is_table_of_contents)
-    while after:
-        # Instead of checking just the first line, we check the next few lines.
-        # This allows to deal with case when TOC contains lines that are not
-        # easily recognizable as TOC, e.g.:
-        #
-        #   Title 1
-        #       article 1.1 ..... page 1
-        #       article 1.2 ..... page 2
-        #   Title 2
-        #       article 2.1 ..... page 3
-        #
-        # Aditionnally, this takes in nodes such as `page_separator` that might appear
-        # between text segments.
-        if any(_is_table_of_contents(after[i]) for i in range(min(3, len(after)))):
-            pile.append(after.pop(0))
-        elif is_node(after[0], type_in=["page_separator"]):
-            pile.append(after.pop(0))
-        else:
-            break
-    if pile:
-        return (before, pile, after)
-    else:
-        return None
+def _table_of_contents_while_probe(elements: List[NodeOrText], index: int) -> bool:
+    # Instead of checking just the first line, we check the next few lines.
+    # This allows to deal with case when TOC contains lines that are not
+    # easily recognizable as TOC, e.g.:
+    #
+    #   Title 1
+    #       article 1.1 ..... page 1
+    #       article 1.2 ..... page 2
+    #   Title 2
+    #       article 2.1 ..... page 3
+    #
+    # Aditionnally, this takes in nodes such as `page_separator` that might appear
+    # between text segments.
+    next_elements = elements[index : index + 3]
+    if any(
+        isinstance(next_elements[i], TextSegment) and _is_table_of_contents(next_elements, i)
+        for i in range(len(next_elements))
+    ):
+        return True
+    return False
 
 
 def parse_page_footers(
@@ -130,7 +128,7 @@ def parse_page_footers(
     return map_splitted_text_segments(
         split_text_segments(
             elements,
-            make_while_splitter(_is_page_footer),
+            make_text_segment_while_splitter(_is_page_footer),
         ),
         lambda pile: Node(type="page_footer", children=pile),
     )
@@ -144,7 +142,8 @@ def add_page_separators(
     while elements:
         page_lines, elements = split_before_match(
             elements,
-            lambda element: isinstance(element, TextSegment) and element.start[0] != current_page,
+            lambda elements, index: isinstance(elements[index], TextSegment)
+            and cast(TextSegment, elements[index]).start[0] != current_page,
         )
         if page_lines:
             yield from page_lines

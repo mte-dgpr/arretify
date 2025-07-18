@@ -44,6 +44,21 @@
                 color: var(--warning-425-625);
             }
 
+            .arretify-visual_page_separator {
+                position: absolute;
+                left: 0;
+                width: 100vw;
+                height: 0.3em;
+                background-color: var(--grey-950-100);
+                z-index: -1;
+            }
+
+            a.arretify-visual_page_separator > span {
+                position: absolute;
+                font-size: 75%;
+                color: var(--grey-625-425);
+            }
+
             /**************** HEADER ****************/
             header {
                 padding-bottom: var(--spacing-1);
@@ -110,9 +125,42 @@
                 background-color: var(--background-action-low-blue-france);
             }
   </style>
+  <script>
+   window.onload = function() {
+                const pageSeparators = Array.from(document.querySelectorAll('.arretify-page_separator'))
+                
+                const refreshPageSeparator = () => {
+                    document.querySelectorAll('.arretify-visual_page_separator')
+                        .forEach((visualPageSeparator) => visualPageSeparator.remove())
+                    pageSeparators.slice(1).forEach(function(pageSeparator) {
+                        const boundingBox = pageSeparator.getBoundingClientRect()
+                        const position = getPositionRelativeToDocument(pageSeparator)
+                        const pageIndex = parseInt(pageSeparator.dataset.page_index, 10)
+                        const visualPageSeparator = document.createElement('a')
+                        visualPageSeparator.classList.add('arretify-visual_page_separator')
+                        visualPageSeparator.style.top = `${position.top + boundingBox.height}px`
+                        visualPageSeparator.innerHTML = `<span>↓ page ${pageIndex + 1}</span>`
+                        document.body.appendChild(visualPageSeparator)
+                    })
+                }
+
+                refreshPageSeparator()
+                window.addEventListener('resize', refreshPageSeparator)
+            }
+
+            const getPositionRelativeToDocument = (el) => {
+                const rect = el.getBoundingClientRect()
+                return {
+                    left: rect.left + window.scrollX,
+                    top: rect.top + window.scrollY,
+                }
+            }
+  </script>
  </head>
  <body>
   <header class="arretify-header">
+   <a class="arretify-page_separator" data-page_index="0">
+   </a>
    <div class="arretify-entity">
     <div>
      PRÉFET  DE LA SEINE-  MARITIME  Liberté  Egalité  Prateraité
@@ -260,6 +308,8 @@
    <div>
     www.weine-maritime.cz/us/
    </div>
+   <a class="arretify-page_separator" data-page_index="1">
+   </a>
    <div class="arretify-visa">
     Vu l'
     <a class="arretify-document_reference" data-date="2001-07-26" data-type="arrete-ministeriel">
@@ -430,6 +480,8 @@
    <div class="arretify-visa">
     Vu le dossier de porter à connaissance déposé le 06 novembre 2020 par la société ORIL Industrie relatif au projet d'augmentation de la capacité de micronisation sur le site de BACLAIR ;
    </div>
+   <a class="arretify-page_separator" data-page_index="2">
+   </a>
    <div class="arretify-visa">
     Vu le dossier de porter à connaissance du 27 janvier 2022 présenté par la société ORIL Industrie relatif au projet de transfert de la ligne de Carbanine brute du site de BOLBEC vers le site de BACLAIR ;
    </div>
@@ -521,6 +573,8 @@
     </a>
     , I'autorisation ne peut être accordée que si les dangers ou inconvénients de l'installation peuvent être prévenus par des mesures que spécifie l'arrêté préfectoral ;
    </div>
+   <a class="arretify-page_separator" data-page_index="3">
+   </a>
    <div class="arretify-motifs">
     que les mesures imposées à l'exploitant tiennent compte des résultats des consultations menées en application des
     <a class="arretify-section_reference" data-end_num="R181-32" data-start_num="R181-18" data-type="article">
@@ -646,6 +700,8 @@
      ARRÊTE
     </h1>
    </div>
+   <a class="arretify-page_separator" data-page_index="4">
+   </a>
    <div class="arretify-table_of_contents">
     <div>
      SOMMAIRE
@@ -1131,6 +1187,8 @@
      9.8 Exécution ..... 67
     </div>
    </div>
+   <a class="arretify-page_separator" data-page_index="7">
+   </a>
   </header>
   <main class="arretify-main">
    <section class="arretify-section" data-number="1" data-title="PORTÉE DE L'AUTORISATION ET CONDITIONS GÉNÉRALES " data-type="unknown">
@@ -1323,6 +1381,8 @@
           </time>
          </a>
          relatif aux prescriptions générales applicables aux installations classées soumises à déclaration sous la rubrique n° 1434;
+         <a class="arretify-page_separator" data-page_index="8">
+         </a>
         </li>
         <li>
          - l'
@@ -1530,6 +1590,8 @@
        </li>
       </ul>
      </div>
+     <a class="arretify-page_separator" data-page_index="9">
+     </a>
     </section>
     <section class="arretify-section" data-number="1.3" data-title="Nature des installations " data-type="unknown">
      <h3 class="arretify-section_title">
@@ -1762,6 +1824,8 @@
          </td>
          <td style="text-align: center;">
           A
+          <a class="arretify-page_separator" data-page_index="10">
+          </a>
          </td>
         </tr>
         <tr>
@@ -2082,6 +2146,8 @@
        </a>
        .
       </div>
+      <a class="arretify-page_separator" data-page_index="11">
+      </a>
       <div class="arretify-alinea" data-number="3">
        Dans ce cadre, l'exploitant remet au préfet, en trois exemplaires, le dossier de réexamen prévu par I'
        <a class="arretify-section_reference" data-parent_reference="20" data-start_id="LEGIARTI000034661547" data-start_num="R515-71" data-type="article" href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000034661547">
@@ -2239,6 +2305,8 @@
        </q>
        s'applique indépendamment à chacune des parties
       </div>
+      <a class="arretify-page_separator" data-page_index="12">
+      </a>
       <section class="arretify-section" data-number="1.5.1.1" data-title="Mesures générales " data-type="unknown">
        <h5 class="arretify-section_title">
         1.5.1.1 Mesures générales
@@ -2383,6 +2451,8 @@
         </li>
        </ul>
       </div>
+      <a class="arretify-page_separator" data-page_index="13">
+      </a>
      </section>
     </section>
     <section class="arretify-section" data-number="1.7" data-title="Documents tenus à la disposition de l'inspection " data-type="unknown">
@@ -2511,6 +2581,8 @@
        </li>
       </ul>
      </div>
+     <a class="arretify-page_separator" data-page_index="14">
+     </a>
      <div class="arretify-alinea" data-number="5">
       L'ensemble des contrôles, vérifications, les opérations d'entretien menés sont notés sur un ou des registres spécifiques tenus à la disposition de l'inspection des installations classées.
      </div>
@@ -2571,6 +2643,8 @@
      <div class="arretify-alinea" data-number="2">
       Ce rapport est complété dans les trois mois suivant l'incident/accident : il comporte notamment l'analyse des causes profondes et - pour les incidents dont la criticité dépasse le seuil correspondant fixé dans la procédure d'enquête et analyse des incidents de l'exploitant - la modélisation de cette analyse avec arbre des causes, la cotation échelle BARPI ainsi que les enseignements tirés et le plan d'action à plus long terme.
      </div>
+     <a class="arretify-page_separator" data-page_index="15">
+     </a>
     </section>
    </section>
    <section class="arretify-section" data-number="2" data-title="PROTECTION DE LA QUALITÉ DE L'AIR " data-type="unknown">
@@ -2588,6 +2662,8 @@
       <h4 class="arretify-section_title">
        2.1.1 Conduits et installations raccordées
       </h4>
+      <a class="arretify-page_separator" data-page_index="16">
+      </a>
       <div class="arretify-alinea" data-number="1">
        <table>
         <thead>
@@ -2910,6 +2986,8 @@
           </td>
           <td style="text-align: center;">
            Torchère permettant de réguler les excès de biogaz produit par l'unité de méthanisation et de pression dans la tuyauterie
+           <a class="arretify-page_separator" data-page_index="17">
+           </a>
           </td>
          </tr>
          <tr>
@@ -3422,6 +3500,8 @@
         </li>
        </ul>
       </div>
+      <a class="arretify-page_separator" data-page_index="18">
+      </a>
       <div class="arretify-alinea" data-number="5">
        Si une indisponibilité est susceptible de conduire à un dépassement des valeurs limites imposées, l'exploitant doit prendre les dispositions nécessaires pour réduire la pollution émise en réduisant ou en arrêtant les installations concernées.
       </div>
@@ -3469,6 +3549,8 @@
       <div class="arretify-alinea" data-number="17">
        Les points de rejet sont aménagés de manière à être aisément accessibles et permettre des interventions en toute sécurité. Toutes les dispositions sont également prises pour faciliter l'intervention d'organismes extérieurs à la demande de l'inspection des installations classées.
       </div>
+      <a class="arretify-page_separator" data-page_index="19">
+      </a>
      </section>
      <section class="arretify-section" data-number="2.2.2" data-title="Valeurs limites des concentrations dans les rejets atmosphériques / Valeurs limites des flux de polluants rejetés" data-type="unknown">
       <h4 class="arretify-section_title">
@@ -3776,6 +3858,8 @@
            </td>
            <td style="text-align: center;">
             100 g / h
+            <a class="arretify-page_separator" data-page_index="20">
+            </a>
            </td>
           </tr>
           <tr>
@@ -4056,6 +4140,8 @@
       <div class="arretify-alinea" data-number="1">
        Les dispositions nécessaires sont prises pour que l'établissement ne soit pas à l'origine de gaz odorants, susceptibles d'incommoder le voisinage, de nuire à la santé ou à la sécurité publique.
       </div>
+      <a class="arretify-page_separator" data-page_index="21">
+      </a>
       <div class="arretify-alinea" data-number="2">
        Les dispositions nécessaires sont prises pour éviter en toute circonstance, l'apparition de conditions anaérobies dans des bassins de stockage ou de traitement ou dans des canaux à ciel ouvert. Les bassins, canaux, stockage et traitement des boues susceptibles d'émettre des odeurs sont couverts autant que possible et si besoin ventilés.
       </div>
@@ -4136,6 +4222,8 @@
       <div class="arretify-alinea" data-number="2">
        Les mesures (prélèvement et analyse) des émissions dans l'air sont effectuées au moins une fois par an par un organisme ou laboratoire agréé ou, s'il n'existe pas d'agrément pour le paramètre mesuré, par un organisme ou laboratoire accrédité par le Comité français d'accréditation ou par un organisme signataire de l'accord multilatéral pris dans le cadre de la Coordination européenne des organismes d'accréditation.
       </div>
+      <a class="arretify-page_separator" data-page_index="22">
+      </a>
       <div class="arretify-alinea" data-number="3">
        La fréquence de ces mesures est a minima :
       </div>
@@ -4457,6 +4545,8 @@
         </li>
         <li>
          - les véhicules sortant de l'installation n'entraînent pas de dépôt de poussière ou de boue sur les voies de circulation. Pour cela des dispositions telles que le lavage des roues des véhicules sont prévues en cas de besoin,
+         <a class="arretify-page_separator" data-page_index="23">
+         </a>
         </li>
         <li>
          - les surfaces où cela est possible sont engazonnées,
@@ -4491,6 +4581,8 @@
       <div class="arretify-alinea" data-number="9">
        Les abords de l'installation, placés sous le contrôle de l'exploitant sont aménagés et maintenus en bon état de propreté (peinture,...). Les émissaires de rejet et leur périphérie font l'objet d'un soin particulier (plantations, engazonnement,...).
       </div>
+      <a class="arretify-page_separator" data-page_index="24">
+      </a>
      </section>
     </section>
    </section>
@@ -4617,6 +4709,8 @@
       <div class="arretify-alinea" data-number="4">
        Les effluents aqueux rejetés par les installations ne sont pas susceptibles de dégrader les réseaux d'égouts ou de dégager des produits toxiques ou inflammables dans ces égouts, éventuellement par mélange avec d'autres effluents.
       </div>
+      <a class="arretify-page_separator" data-page_index="25">
+      </a>
       <div class="arretify-alinea" data-number="5">
        Les collecteurs véhiculant des eaux polluées par des liquides inflammables ou susceptibles de l'être, sont équipés d'une protection efficace contre le danger de propagation de flamme.
       </div>
@@ -4688,6 +4782,8 @@
         </li>
        </ul>
       </div>
+      <a class="arretify-page_separator" data-page_index="26">
+      </a>
       <div class="arretify-alinea" data-number="22">
        Ces dispositifs de traitement sont entretenus par l'exploitant conformément à un protocole d'entretien. Les opérations de contrôle et de nettoyage des équipements sont effectués à une fréquence adaptée.
       </div>
@@ -4788,6 +4884,8 @@
             Conditions de raccordement
            </td>
            <td style="text-align: center;">
+            <a class="arretify-page_separator" data-page_index="27">
+            </a>
            </td>
           </tr>
           <tr>
@@ -4963,6 +5061,8 @@
        <div class="arretify-alinea" data-number="7">
         Toute anomalie empêchant le transfert des effluents traités par la conduite d'évitement engendre une alarme reportée en salle de contrôle ou au poste de garde. Une consigne définit l'organisation permettant la gestion des défaillances du dispositif de transfert dans la conduite d'évitement (stockage des effluents traités temporaire sur le site, responsabilité spécifique d'ORIL Industrie, modalités et délais d'intervention pour dépannage, etc.).
        </div>
+       <a class="arretify-page_separator" data-page_index="28">
+       </a>
        <div class="arretify-alinea" data-number="8">
         Les réseaux de collecte des effluents générés par l'établissement aboutissent aux points de rejet qui présentent les caractéristiques suivantes :
        </div>
@@ -5157,6 +5257,8 @@
        <div class="arretify-alinea" data-number="24">
         Autorisation
        </div>
+       <a class="arretify-page_separator" data-page_index="29">
+       </a>
        <div class="arretify-alinea" data-number="25">
         <table>
          <thead>
@@ -5367,6 +5469,8 @@
         <div class="arretify-alinea" data-number="1">
          Les systèmes permettant le prélèvement continu sont proportionnels au débit sur une durée de 24 h , disposent d'enregistrement et permettent la conservation des échantillons à une température de 4° C.
         </div>
+        <a class="arretify-page_separator" data-page_index="30">
+        </a>
        </section>
       </section>
      </section>
@@ -5581,6 +5685,8 @@
          </li>
         </ul>
        </div>
+       <a class="arretify-page_separator" data-page_index="31">
+       </a>
       </section>
       <section class="arretify-section" data-number="3.3.1.2" data-title="Après le démarrage des installations de l'unité GF3" data-type="unknown">
        <h5 class="arretify-section_title">
@@ -5761,6 +5867,8 @@
          </q>
          .
         </div>
+        <a class="arretify-page_separator" data-page_index="32">
+        </a>
         <div class="arretify-alinea" data-number="2">
          Les effluents aqueux sortant des installations de traitement de l'atelier GF3 respectent les valeurs limites d'émission suivantes:
         </div>
@@ -6016,6 +6124,8 @@
        <div class="arretify-alinea" data-number="7">
         L'ensemble de ces bassins et le réseau des eaux pluviales ont été dimensionnés pour recevoir l'ensemble des eaux pluviales véhiculées sur le site.
        </div>
+       <a class="arretify-page_separator" data-page_index="33">
+       </a>
       </section>
       <section class="arretify-section" data-number="3.3.1.5" data-title="Eaux pluviales non polluées " data-type="unknown">
        <h5 class="arretify-section_title">
@@ -6233,6 +6343,8 @@
           </td>
           <td style="text-align: center;">
            Hebdomadaire
+           <a class="arretify-page_separator" data-page_index="34">
+           </a>
           </td>
          </tr>
          <tr>
@@ -6383,6 +6495,8 @@
        <div class="arretify-alinea" data-number="6">
         L'entretien et la cessation d'utilisation des ouvrages se font conformément à la norme en vigueur (NF X 10-999 ou équivalente).
        </div>
+       <a class="arretify-page_separator" data-page_index="35">
+       </a>
       </section>
       <section class="arretify-section" data-number="3.5.2.4" data-title="Programme de surveillance " data-type="unknown">
        <h5 class="arretify-section_title">
@@ -6599,6 +6713,8 @@
          </li>
         </ul>
        </div>
+       <a class="arretify-page_separator" data-page_index="36">
+       </a>
        <div class="arretify-alinea" data-number="11">
         Une surveillance périodique de la qualité des sols (prélèvements et analyses) est effectuée au moins tous les dix ans.
        </div>
@@ -6653,6 +6769,8 @@
         </li>
        </ul>
       </div>
+      <a class="arretify-page_separator" data-page_index="37">
+      </a>
      </section>
     </section>
    </section>
@@ -6748,6 +6866,8 @@
       <div class="arretify-alinea" data-number="2">
        Une gestion simple et différenciée est appliquée sur les différents espaces.
       </div>
+      <a class="arretify-page_separator" data-page_index="38">
+      </a>
      </section>
     </section>
     <section class="arretify-section" data-number="2.3" data-title="Dispositif de lutte contre les espèces exotiques envahissantes (actions préventives et curatives)" data-type="unknown">
@@ -6808,6 +6928,8 @@
      <div class="arretify-alinea" data-number="1">
       Avant le 31 décembre de chaque année, l'exploitant adresse à l'inspection des installations classées le bilan commenté de la mise en œuvre des mesures compensatoires et de leur suivi. Il tient à la disposition de l'inspection des installations classées tous les éléments de preuve de la mise en œuvre des mesures compensatoires.
      </div>
+     <a class="arretify-page_separator" data-page_index="39">
+     </a>
     </section>
    </section>
    <section class="arretify-section" data-number="5" data-title="PROTECTION DU CADRE DE VIE " data-type="unknown">
@@ -6980,6 +7102,8 @@
         </tbody>
        </table>
       </div>
+      <a class="arretify-page_separator" data-page_index="40">
+      </a>
      </section>
      <section class="arretify-section" data-number="5.1.7" data-title="Mesures de réduction des émissions sonores " data-type="unknown">
       <h4 class="arretify-section_title">
@@ -7019,6 +7143,8 @@
        </a>
        relative aux vibrations mécaniques émises dans l'environnement par les installations classées.
       </div>
+      <a class="arretify-page_separator" data-page_index="41">
+      </a>
      </section>
     </section>
    </section>
@@ -7086,6 +7212,8 @@
      <div class="arretify-alinea" data-number="16">
       L'exploitant tient à la disposition de l'inspection des installations classées, les bilans réguliers établis relativement aux procédures de gestion du retour d'expérience.
      </div>
+     <a class="arretify-page_separator" data-page_index="42">
+     </a>
     </section>
     <section class="arretify-section" data-number="6.2" data-title="Réexamen quinquennal de l'étude de dangers " data-type="unknown">
      <h3 class="arretify-section_title">
@@ -7238,6 +7366,8 @@
       <div class="arretify-alinea" data-number="1">
        L'exploitant fixe les règles de circulation applicables à l'intérieur de l'établissement. Les règles sont portées à la connaissance des intéressés par une signalisation adaptée et une information appropriée.
       </div>
+      <a class="arretify-page_separator" data-page_index="43">
+      </a>
       <div class="arretify-alinea" data-number="2">
        Les voies de circulation et d'accès sont notamment délimitées, maintenues en constant état de propreté et dégagées de tout objet susceptible de gêner le passage. Ces voies sont aménagées pour que les engins des services d'incendie puissent évoluer sans difficulté.
       </div>
@@ -7347,6 +7477,8 @@
        </a>
        et que le procédé est maintenu dans les limites de sûreté définies par l'exploitant
       </div>
+      <a class="arretify-page_separator" data-page_index="44">
+      </a>
       <div class="arretify-alinea" data-number="3">
        ou dans les modes opératoires.
       </div>
@@ -7448,6 +7580,8 @@
         </li>
         <li>
          - les risques associés sur les installations du site ;
+         <a class="arretify-page_separator" data-page_index="45">
+         </a>
         </li>
         <li>
          - les actions correctives à mener le cas échéant pour assurer la sécurité des installations, assorties d'un délai de réalisation.
@@ -7514,6 +7648,8 @@
       <div class="arretify-alinea" data-number="7">
        Pour les unités GF2 et GF3, il y a redondance des capteurs de mesure jugés nécessaires pour la sécurité lors de l'étude des dangers. Ces organes de sécurité sont indépendants de ceux assurant la conduite des procédés, ils font l'objet d'étalonnages réguliers.
       </div>
+      <a class="arretify-page_separator" data-page_index="46">
+      </a>
       <div class="arretify-alinea" data-number="8">
        Les zones à risques sont définies.
       </div>
@@ -7611,6 +7747,8 @@
       <div class="arretify-alinea" data-number="7">
        Les groupes froids produisant l'eau glycolée disposent d'alarmes en cas de défaillance ou de température du fluide trop importante afin de détecter tout dysfonctionnement au plus tôt.
       </div>
+      <a class="arretify-page_separator" data-page_index="47">
+      </a>
       <div class="arretify-alinea" data-number="8">
        L'exploitant rédige une liste des mesures de maîtrise des risques (MMR) identifiées dans son étude de dangers et les opérations de maintenance qu'il y apporte. Cette liste est tenue à disposition de l'inspection des installations classées et fait l'objet d'un suivi rigoureux.
       </div>
@@ -7711,6 +7849,8 @@
      <div class="arretify-alinea" data-number="4">
       Cette formation comporte notamment :
      </div>
+     <a class="arretify-page_separator" data-page_index="48">
+     </a>
      <div class="arretify-alinea" data-number="5">
       <ul>
        <li>
@@ -7815,6 +7955,8 @@
       <div class="arretify-alinea" data-number="1">
        Matières dangereuses: substances ou mélanges visés par les rubriques 4 X X X et 1436 ainsi que les déchets présentant des propriétés équivalentes
       </div>
+      <a class="arretify-page_separator" data-page_index="49">
+      </a>
       <div class="arretify-alinea" data-number="2">
        A.-Les tuyauteries et capacités sont étanches et résistent à l'action physique et chimique des produits qu'elles sont susceptibles de contenir.
       </div>
@@ -7912,6 +8054,8 @@
       <div class="arretify-alinea" data-number="2">
        Les vérifications, les opérations d'entretien et de vidange des rétentions doivent être notées sur un registre spécial tenu à la disposition de l'inspection des installations classées.
       </div>
+      <a class="arretify-page_separator" data-page_index="50">
+      </a>
      </section>
      <section class="arretify-section" data-number="6.9.2" data-title="Étiquetage des substances et préparations dangereuses " data-type="unknown">
       <h4 class="arretify-section_title">
@@ -7999,6 +8143,8 @@
       <div class="arretify-alinea" data-number="3">
        Les dispositions nécessaires doivent être prises pour garantir que les produits utilisés sont conformes aux spé-
       </div>
+      <a class="arretify-page_separator" data-page_index="51">
+      </a>
       <div class="arretify-alinea" data-number="4">
        cifications techniques que requiert leur mise en œuvre, quand celles-ci conditionnent la sécurité. Les réservoirs sont équipés de manière à pouvoir vérifier leur niveau de remplissage à tout moment et empêcher ainsi leur débordement en cours de remplissage.
       </div>
@@ -8092,6 +8238,8 @@
       <div class="arretify-alinea" data-number="5">
        Il est réalisé à partir du dossier d'origine ou reconstitué des équipements ou structures, de ses caractéristiques de construction (matériaux, code ou norme de construction, revêtement éventuel) et de l'historique des interventions réalisées sur ces équipements ou structures (contrôle initial, inspections, contrôles non destructifs, maintenances et réparations éventuelles), lorsque ces informations existent.
       </div>
+      <a class="arretify-page_separator" data-page_index="52">
+      </a>
       <div class="arretify-alinea" data-number="6">
        L'exploitant procède :
       </div>
@@ -8196,6 +8344,8 @@
       <div class="arretify-alinea" data-number="2">
        L'ensemble des moyens de lutte contre l'incendie fait l'objet d'un plan de sécurité établi par l'exploitant en liaison avec les services d'incendie et de secours et est tenu en permanence, de façon facilement accessible, à la disposition de l'inspection des installations classées et des services d'incendie et de secours.
       </div>
+      <a class="arretify-page_separator" data-page_index="53">
+      </a>
       <div class="arretify-alinea" data-number="3">
        L'établissement est doté de plusieurs points de repli destinés à protéger le personnel en cas d'accident. Leur emplacement résulte de la prise en compte des scénarii développés dans l'étude des dangers et des différentes conditions météorologiques.
       </div>
@@ -8313,6 +8463,8 @@
         </li>
        </ul>
       </div>
+      <a class="arretify-page_separator" data-page_index="54">
+      </a>
       <div class="arretify-alinea" data-number="12">
        doit pas dépasser 20 m . Ils sont adaptés au risque à couvrir dans la zone où ils se trouvent. Un extincteur approprié au risque électrique est implanté à proximité de l'armoire électrique
       </div>
@@ -8415,6 +8567,8 @@
       <div class="arretify-alinea" data-number="3">
        Les agents non affectés exclusivement aux tâches d'intervention, devront pouvoir quitter leur poste de travail à tout moment en cas d'appel. L'équipe d'intervention du site de Bolbec est susceptible d'être appelée en renfort.
       </div>
+      <a class="arretify-page_separator" data-page_index="55">
+      </a>
      </section>
      <section class="arretify-section" data-number="6.10.71" data-title="Plan d'opération interne " data-type="unknown">
       <h4 class="arretify-section_title" data-error_codes="non_contiguous_titles">
@@ -8524,6 +8678,8 @@
       <div class="arretify-alinea" data-number="17">
        Avant la mise en service de l'atelier GF3 et de ses installations associées, I'exploitant transmet une version mise à jour du Plan d'Opération Internet accompagné des Plans de Défense Incendie, pour y intégrer ces installations.
       </div>
+      <a class="arretify-page_separator" data-page_index="56">
+      </a>
       <div class="arretify-alinea" data-number="18">
        La Commission de Santé Sécurité et Conditions de Travail (CSSCT), commission spécifique du Comité Social et Économique (CSE) est consultée par l'industriel sur la teneur du P.O.I. ; I'avis du comité est transmis au Préfet.
       </div>
@@ -8579,6 +8735,8 @@
        <div class="arretify-alinea" data-number="9">
         Les capteurs de mesure des données météorologiques sont secourus. Des mesures compensatoires doivent être mises en œuvre à défaut de secours électrique par exemple. Les capteurs météorologiques peuvent être communs à plusieurs installations.
        </div>
+       <a class="arretify-page_separator" data-page_index="57">
+       </a>
       </section>
      </section>
      <section class="arretify-section" data-number="6.10.8" data-title="Dispositifs de rétention et de confinement des déversements et pollutions accidentelles" data-type="unknown">
@@ -8712,6 +8870,8 @@
         </li>
        </ul>
       </div>
+      <a class="arretify-page_separator" data-page_index="58">
+      </a>
       <div class="arretify-alinea" data-number="22">
        de l'unité GF3 et ce bassin de confinement.
       </div>
@@ -8785,12 +8945,16 @@
          </a>
          relatif à relatif à l'évaluation et à la prise en compte de la probabilité d'occurrence, de la cinétique, de l'intensité des effets et de la gravité des conséquences des accidents potentiels dans les études de dangers des installations classées soumises à autorisation, en dehors de limites de propriété et atteignant des zones occupées par des tiers à l'extérieur du site et non couvertes actuellement par une méthode reconnue de prélèvement et / ou de mesure, l'exploitant propose, dans la mesure du possible, une méthode alternative
         </div>
+        <a class="arretify-page_separator" data-page_index="59">
+        </a>
         <div class="arretify-alinea" data-number="3">
          de mesure de la concentration dans l'air (molécule traceur, méthode non normée mais permettant d'obtenir des résultats représentatifs...).
         </div>
         <div class="arretify-alinea" data-number="4">
          Les dispositifs retenus par les exploitants permettent dans la mesure du possible, d'une part de disposer d'échantillons conservatoires de la phase aiguë et d'autre part de mesures régulières des émissions accidentelles hors site pour confirmer l'efficacité des mesures prises et informer la population.
         </div>
+        <a class="arretify-page_separator" data-page_index="60">
+        </a>
        </section>
       </section>
      </section>
@@ -8906,6 +9070,8 @@
      <div class="arretify-alinea" data-number="1">
       Les effluents méthanolés concentrés sont évacués pour être valorisés (valorisation énergétique ou matière).
      </div>
+     <a class="arretify-page_separator" data-page_index="61">
+     </a>
     </section>
    </section>
    <section class="arretify-section" data-number="8" data-title="CONDITIONS PARTICULIÈRES APPLICABLES À CERTAINES INSTALLATIONS ET ÉQUIPEMENTS CONNEXES " data-type="unknown">
@@ -8977,6 +9143,8 @@
       <div class="arretify-alinea" data-number="4">
        Si la compression comporte plusieurs étages, le gaz devra être convenablement refroidi à la sortie de chaque étage intermédiaire du compresseur. Des thermomètres permettent de lire la température du gaz à la sortie de chaque étage des compresseurs. Un dispositif est prévu sur les circuits d'eau de refroidissement permettant de contrôler à chaque instant la circulation d'eau.
       </div>
+      <a class="arretify-page_separator" data-page_index="62">
+      </a>
       <div class="arretify-alinea" data-number="5">
        Les compresseurs sont pourvus de dispositifs arrêtant automatiquement l'appareil si la pression de gaz devient trop faible à son alimentation ou si la pression à la sortie dépasse la valeur fixée. Un autre dispositif à fonctionnement automatique empêche la mise en marche du compresseur ou assurera son arrêt en cas d'alimentation insuffisante en eau.
       </div>
@@ -9085,6 +9253,8 @@
       <div class="arretify-alinea" data-number="6">
        Toutes les cuves de stockage et de procédé sont équipées d'un détecteur de niveau très haut indépendant de la mesure de niveau utilisée pour la conduite du procédé.
       </div>
+      <a class="arretify-page_separator" data-page_index="63">
+      </a>
      </section>
      <section class="arretify-section" data-number="8.3.2" data-title="Gestion des effluents à traiter dans l'unité Enviolet " data-type="unknown">
       <h4 class="arretify-section_title">
@@ -9251,6 +9421,8 @@
          </li>
         </ul>
        </div>
+       <a class="arretify-page_separator" data-page_index="64">
+       </a>
        <div class="arretify-alinea" data-number="8">
         Une mesure de COT des effluents traités dans l'unité Enviolet est assurée en continu avec une alarme sur seuil haut de 500 mg / l reportée en salle de contrôle. Un enregistrement est conservé à disposition de l'inspection des installations classées sur une période glissante des 3 derniers mois. L'exploitant procède au moins annuellement à une analyse de corrélation par comparaison entre la mesure en ligne du COT moyennée sur 24 heures et l'analyse dans la même journée de la morpholine et de la nitrosomorpholine sur échantillon moyen 24 heures.
        </div>
@@ -9338,6 +9510,8 @@
       <div class="arretify-alinea" data-number="1">
        L'exploitant intègre un groupe de suivi et d'échange sur la connaissance du milieu créé à l'initiative de la direction régionale de l'environnement, de l'aménagement et du logement et de l'agence régionale de santé. Dans ce cadre, il transmet l'ensemble des informations et données concernant ses sites et leur exploitation et jugées utiles par le groupe de suivi et contribue à l'élaboration et participe au programme de suivi synchrone.
       </div>
+      <a class="arretify-page_separator" data-page_index="65">
+      </a>
      </section>
     </section>
    </section>
@@ -9484,6 +9658,8 @@
      <div class="arretify-alinea" data-number="5">
       Le délai court à compter de la dernière formalité accomplie. Si l'affichage constitue cette dernière formalité, le délai court à compter du premier jour d'affichage de la décision.
      </div>
+     <a class="arretify-page_separator" data-page_index="66">
+     </a>
      <div class="arretify-alinea" data-number="6">
       Les décisions mentionnées au
       <a class="arretify-section_reference" data-start_num="1" data-type="alinea">
@@ -9551,6 +9727,8 @@
      <div class="arretify-alinea" data-number="5">
       Béatrice STEFFAN
      </div>
+     <a class="arretify-page_separator" data-page_index="67">
+     </a>
     </section>
    </section>
   </main>

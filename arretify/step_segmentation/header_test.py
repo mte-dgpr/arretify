@@ -219,36 +219,6 @@ class TestParseVisaAndMotifs(unittest.TestCase):
                 ),
             ],
         )
-        # Arrange
-        elements = _l(
-            "CONSIDÉRANT : ",
-            "que blabla ;",
-            "que bloblo ;",
-            "qu'en application de blibli ;",
-        )
-
-        # Act
-        result = list(parse_visa_and_motif_elements(elements))
-
-        # Assert
-        assert_elements_equal(
-            result,
-            [
-                *_l("CONSIDÉRANT : "),
-                Node(
-                    type="motif",
-                    children=_l("que blabla ;"),
-                ),
-                Node(
-                    type="motif",
-                    children=_l("que bloblo ;"),
-                ),
-                Node(
-                    type="motif",
-                    children=_l("qu'en application de blibli ;"),
-                ),
-            ],
-        )
 
     def test_variant_explicit_list(self):
         # Arrange
@@ -354,6 +324,54 @@ class TestParseVisaAndMotifs(unittest.TestCase):
                 Node(
                     type="visa",
                     children=_l("- vu la demande déposée par la société XYZ ;"),
+                ),
+            ],
+        )
+
+    def test_variant_simple_with_list_inside_and_interrupted_by_age_separator(self):
+        # Arrange
+        elements = [
+            *_l(
+                "Considérant que la demande de modification sollicitée le 19 juillet 2021 porte sur :"
+            ),
+            Node(
+                type="page_separator",
+                children=[],
+            ),
+            Node(
+                type="list",
+                children=_l(
+                    "- la modification de l'installation de stockage de déchets non dangereux ;",
+                    "- la mise en conformité avec les exigences réglementaires ;",
+                ),
+            ),
+        ]
+
+        # Act
+        result = list(parse_visa_and_motif_elements(elements))
+
+        # Assert
+        assert_elements_equal(
+            result,
+            [
+                Node(
+                    type="motif",
+                    children=[
+                        *_l(
+                            "Considérant que la demande de modification sollicitée le 19 juillet 2021 porte sur :"
+                        ),
+                        Node(
+                            type="page_separator",
+                            children=[],
+                        ),
+                        Node(
+                            type="list",
+                            children=_l(
+                                "- la modification de l'installation de stockage de déchets non dangereux ;",
+                                "- la mise en conformité avec les exigences réglementaires ;",
+                            ),
+                        ),
+                    ],
                 ),
             ],
         )

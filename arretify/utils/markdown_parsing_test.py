@@ -18,7 +18,11 @@
 #
 import unittest
 
-from .markdown_parsing import TABLE_LINE_PATTERN, is_table_description
+from .markdown_parsing import (
+    TABLE_LINE_PATTERN,
+    TABLE_HEADER_SEPARATOR_PATTERN,
+    is_table_description,
+)
 
 
 class TestTableDetection(unittest.TestCase):
@@ -69,3 +73,10 @@ Volume autorisé : blablabla.
         assert is_table_description(lines[9], pile)
         assert not is_table_description(lines[10], pile)
         assert is_table_description(lines[11], pile)
+
+    def test_table_header_separator_pattern(self):
+        # Arrange
+        line = "| :--: | :--: | :--: | :--: | :--: | :--: |"
+
+        # Assert
+        assert bool(TABLE_HEADER_SEPARATOR_PATTERN.match(line)) is True

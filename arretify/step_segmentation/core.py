@@ -95,7 +95,8 @@ elif isinstance(splitted_element, SplitNotAMatch):
 ```
 """
 
-Probe = Callable[[T1], bool]
+# TODO: Callable[[List[T1], int, T2], bool] ???
+Probe = Callable[[List[T1], int], bool]
 
 NodeOrText = Union[TextSegment, "Node"]
 
@@ -113,11 +114,11 @@ class Node:
 
 @iter_func_to_list
 def flat_map_node_list(
-    input_list: List[NodeOrText],
+    elements: List[NodeOrText],
     map_function: Callable[[List[NodeOrText]], List[NodeOrText]],
 ) -> Iterator[NodeOrText]:
     pile: List[NodeOrText] = []
-    for element in input_list:
+    for element in elements:
         if is_node(element, type_in=INLINE_NODE_TYPES) or isinstance(element, TextSegment):
             pile.append(element)
 
@@ -132,28 +133,50 @@ def flat_map_node_list(
 
 
 def chain_flat_map_node_list(
-    input_list: List[NodeOrText],
+    elements: List[NodeOrText],
     map_functions: List[Callable[[List[NodeOrText]], List[NodeOrText]]],
 ) -> List[NodeOrText]:
     for map_function in map_functions:
-        input_list = flat_map_node_list(input_list, map_function)
-    return input_list
+        elements = flat_map_node_list(elements, map_function)
+    return elements
+
+
+def split_before_match(
+    elements: List[T1],
+    is_matching: Probe[T1],
+) -> Tuple[List[T1], List[T1]]:
+    """
+    Split the input list into two parts, by using the `is_matching` function.
+
+    Examples :
+
+    strings = ["a", "b", "c"]
+    split_before_match(strings, lambda s: s == "b") -> (["a"], ["b", "c"])
+    split_before_match(strings, lambda s: s == "d") -> (["a", "b", "c"], [])
+    split_before_match(strings, lambda s: s == "a") -> ([], ["a", "b", "c"])
+    """
+    i = 0
+    while i < len(elements):
+        if is_matching(elements, i):
+            break
+        i += 1
+    return elements[:i], elements[i:]
 
 
 @iter_func_to_list
 def split_text_segments(
-    input_list: List[T1],
+    elements: List[T1],
     splitter: Splitter[T1, T2],
 ) -> Splitted[T1, T2]:
     # Here we make a copy, because we don't know
-    # if the splitter will modify the input_list.
-    input_list = list(input_list)
-    while input_list:
-        result = splitter(input_list)
+    # if the splitter will modify the elements.
+    elements = list(elements)
+    while elements:
+        result = splitter(elements)
         if result is None:
-            yield SplitNotAMatch(input_list)
+            yield SplitNotAMatch(elements)
             break
-        before, match, input_list = result
+        before, match, elements = result
 
         if before:
             yield SplitNotAMatch(before)
@@ -163,8 +186,8 @@ def split_text_segments(
 def make_single_line_splitter(
     is_matching: Probe[T1],
 ) -> Splitter:
-    def _splitter(input_list: List[T1]) -> Split[T1, List[T1]] | None:
-        before, after = split_before_match(input_list, is_matching)
+    def _splitter(elements: List[T1]) -> Split[T1, List[T1]] | None:
+        before, after = split_before_match(elements, is_matching)
         if after:
             return (before, [after[0]], after[1:])
         return None
@@ -179,56 +202,113 @@ def make_while_splitter(
     if start_is_matching is None:
         start_is_matching = is_matching
 
-    def _splitter(input_list: List[T1]) -> Split[T1, List[T1]] | None:
-        before, after = split_before_match(input_list, start_is_matching)
+    def _splitter(elements: List[T1]) -> Split[T1, List[T1]] | None:
+        before, after = split_before_match(elements, start_is_matching)
         if not after:
             return None
-        match, after = split_before_match(after, lambda t: not is_matching(t))
+        match, after = split_before_match(
+            after, lambda elements, index: not is_matching(elements, index)
+        )
         return before, match, after
 
     return _splitter
 
 
+def make_negated_probe(
+    probe: Probe[T1],
+) -> Probe[T1]:
+    def _negated_probe(elements: List[T1], index: int) -> bool:
+        return not probe(elements, index)
+
+    return _negated_probe
+
+
 def text_segment_group_splitter(
-    input_list: List[NodeOrText],
+    elements: List[NodeOrText],
 ) -> Split[NodeOrText, List[TextSegment]] | None:
-    input_list = list(input_list)
+    elements = list(elements)
     before: List[NodeOrText] = []
     match: List[TextSegment] = []
-    while input_list and is_node(input_list[0]):
-        before.append(input_list[0])
-        input_list.pop(0)
+    while elements and is_node(elements[0]):
+        before.append(elements[0])
+        elements.pop(0)
 
-    while input_list and isinstance(input_list[0], TextSegment):
-        match.append(input_list[0])
-        input_list.pop(0)
+    while elements and isinstance(elements[0], TextSegment):
+        match.append(elements[0])
+        elements.pop(0)
 
     if match:
-        return (before, match, input_list)
+        return (before, match, elements)
     return None
 
 
-def split_before_match(
-    input_list: List[T1],
-    is_matching: Probe[T1],
-) -> Tuple[List[T1], List[T1]]:
-    """
-    Split the input list into two parts, by using the `is_matching` function.
+def make_pass_through_probe_for_inline_nodes(
+    is_matching: Probe[NodeOrText],
+) -> Probe[NodeOrText]:
+    def _probe(elements: List[NodeOrText], index: int) -> bool:
+        for next_index, next_element in enumerate(elements[index:], start=index):
+            if isinstance(next_element, TextSegment):
+                return is_matching(elements, next_index)
+            elif is_node(next_element, type_in=INLINE_NODE_TYPES):
+                continue
+            else:
+                return False
 
-    Examples :
+    return _probe
 
-    strings = ["a", "b", "c"]
-    split_before_match(strings, lambda s: s == "b") -> (["a"], ["b", "c"])
-    split_before_match(strings, lambda s: s == "d") -> (["a", "b", "c"], [])
-    split_before_match(strings, lambda s: s == "a") -> ([], ["a", "b", "c"])
-    """
-    i = 0
-    while i < len(input_list):
-        element = input_list[i]
-        if is_matching(element):
-            break
-        i += 1
-    return input_list[:i], input_list[i:]
+
+def make_text_segment_probe(
+    is_matching: Probe[NodeOrText],
+) -> Probe[NodeOrText]:
+    def _probe(elements: List[NodeOrText], index: int) -> bool:
+        element = elements[index]
+        if isinstance(element, TextSegment):
+            return is_matching(elements, index)
+        return False
+
+    return _probe
+
+
+def make_probe_from_pattern_proxy(
+    pattern: PatternProxy, use_search: bool = False
+) -> Probe[TextSegment]:
+    def _probe(elements: List[NodeOrText], index: int) -> bool:
+        element = elements[index]
+        if use_search is False:
+            match = pattern.match(element.contents)
+        else:
+            match = pattern.search(element.contents)
+        return bool(match)
+
+    return _probe
+
+
+def make_probe_from_regex_tree(
+    regex_tree_node: regex_tree.GroupNode,
+) -> Probe[NodeOrText]:
+    def _probe(elements: List[NodeOrText], index: int) -> bool:
+        element = elements[index]
+        return bool(match(regex_tree_node, element.contents))
+
+    return _probe
+
+
+def make_text_segment_while_splitter(
+    is_matching: Probe[NodeOrText],
+    start_is_matching: Probe[NodeOrText] | None = None,
+) -> Splitter[NodeOrText, List[TextSegment]]:
+    return make_while_splitter(
+        is_matching=make_pass_through_probe_for_inline_nodes(is_matching),
+        start_is_matching=make_text_segment_probe(start_is_matching or is_matching),
+    )
+
+
+def make_text_segment_single_line_splitter(
+    is_matching: Probe[NodeOrText],
+) -> Splitter[NodeOrText, List[TextSegment]]:
+    return make_single_line_splitter(
+        is_matching=make_text_segment_probe(is_matching),
+    )
 
 
 @iter_func_to_list
@@ -284,39 +364,3 @@ def assert_all_text_segments(
         isinstance(child, TextSegment) for child in node.children
     ), f"Node '{node.type}' must contain only TextSegment"
     return cast(List[TextSegment], node.children)
-
-
-def make_text_segment_probe_from_pattern(
-    pattern: PatternProxy, negate: bool = False, use_search: bool = False
-) -> Probe[NodeOrText]:
-    """
-    Create a probe function that checks if the contents of a TextSegment
-    match a given pattern.
-    """
-
-    def probe(element: NodeOrText) -> bool:
-        if not isinstance(element, TextSegment):
-            return False
-        if use_search is False:
-            match = pattern.match(element.contents)
-        else:
-            match = pattern.search(element.contents)
-        return not match if negate else bool(match)
-
-    return probe
-
-
-def make_text_segment_probe_from_regex_tree(
-    regex_tree_node: regex_tree.GroupNode,
-) -> Probe[NodeOrText]:
-    """
-    Create a probe function that checks if the contents of a TextSegment
-    match a given regex tree.
-    """
-
-    def probe(element: NodeOrText) -> bool:
-        if isinstance(element, TextSegment):
-            return bool(match(regex_tree_node, element.contents))
-        return False
-
-    return probe

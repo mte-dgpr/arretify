@@ -44,6 +44,21 @@
                 color: var(--warning-425-625);
             }
 
+            .arretify-visual_page_separator {
+                position: absolute;
+                left: 0;
+                width: 100vw;
+                height: 0.3em;
+                background-color: var(--grey-950-100);
+                z-index: -1;
+            }
+
+            a.arretify-visual_page_separator > span {
+                position: absolute;
+                font-size: 75%;
+                color: var(--grey-625-425);
+            }
+
             /**************** HEADER ****************/
             header {
                 padding-bottom: var(--spacing-1);
@@ -110,9 +125,42 @@
                 background-color: var(--background-action-low-blue-france);
             }
   </style>
+  <script>
+   window.onload = function() {
+                const pageSeparators = Array.from(document.querySelectorAll('.arretify-page_separator'))
+                
+                const refreshPageSeparator = () => {
+                    document.querySelectorAll('.arretify-visual_page_separator')
+                        .forEach((visualPageSeparator) => visualPageSeparator.remove())
+                    pageSeparators.slice(1).forEach(function(pageSeparator) {
+                        const boundingBox = pageSeparator.getBoundingClientRect()
+                        const position = getPositionRelativeToDocument(pageSeparator)
+                        const pageIndex = parseInt(pageSeparator.dataset.page_index, 10)
+                        const visualPageSeparator = document.createElement('a')
+                        visualPageSeparator.classList.add('arretify-visual_page_separator')
+                        visualPageSeparator.style.top = `${position.top + boundingBox.height}px`
+                        visualPageSeparator.innerHTML = `<span>↓ page ${pageIndex + 1}</span>`
+                        document.body.appendChild(visualPageSeparator)
+                    })
+                }
+
+                refreshPageSeparator()
+                window.addEventListener('resize', refreshPageSeparator)
+            }
+
+            const getPositionRelativeToDocument = (el) => {
+                const rect = el.getBoundingClientRect()
+                return {
+                    left: rect.left + window.scrollX,
+                    top: rect.top + window.scrollY,
+                }
+            }
+  </script>
  </head>
  <body>
   <header class="arretify-header">
+   <a class="arretify-page_separator" data-page_index="0">
+   </a>
    <div class="arretify-arrete_title">
     <h1>
      ARRÊTÉ DE PRESCRIPTIONS COMPLÉMENTAIRES  COMMUNE DE TINCHEBRAY SOCIÉTÉ MERMIER LEMARCHAND
@@ -223,6 +271,8 @@
    <div class="arretify-motifs">
     CONSIDÉRANT que les dispositions concernant les eaux pluviales susceptibles d'être polluées et celles concernant la protection contre la foudre méritent d'être précisées;
    </div>
+   <a class="arretify-page_separator" data-page_index="1">
+   </a>
    <div class="arretify-motifs">
     CONSIDERANT les termes de l'
     <a class="arretify-section_reference" data-start_num="R512-31" data-type="article">
@@ -274,6 +324,8 @@
     <div class="arretify-alinea" data-number="3">
      A (Autorisation) ou D (Déclaration)
     </div>
+    <a class="arretify-page_separator" data-page_index="2">
+    </a>
    </section>
    <section class="arretify-section" data-number="2" data-title="Mise à jour des dispositions transitoires applicables " data-type="article">
     <h2 class="arretify-section_title">
@@ -499,6 +551,8 @@
       </p>
      </blockquote>
     </div>
+    <a class="arretify-page_separator" data-page_index="3">
+    </a>
     <div class="arretify-alinea" data-number="3">
      <a class="arretify-document_reference" data-type="self">
       Le présent arrêté

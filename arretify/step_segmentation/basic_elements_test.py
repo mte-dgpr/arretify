@@ -22,7 +22,7 @@ from bs4 import BeautifulSoup
 
 from .core import Node
 from .basic_elements import (
-    list_indentation,
+    _list_indentation,
     parse_lists,
     parse_tables,
     parse_blockquotes,
@@ -42,7 +42,7 @@ class TestListIndentation(unittest.TestCase):
         line = "    - Item in list"
 
         # Act
-        result = list_indentation(line)
+        result = _list_indentation(line)
 
         # Assert
         assert result == 4, "Should return the correct indentation level"
@@ -52,7 +52,7 @@ class TestListIndentation(unittest.TestCase):
         line = "- Item in list"
 
         # Act
-        result = list_indentation(line)
+        result = _list_indentation(line)
 
         # Assert
         assert result == 0, "Should return zero for no indentation"
@@ -63,7 +63,7 @@ class TestListIndentation(unittest.TestCase):
 
         # Act / Assert
         with self.assertRaises(ValueError) as context:
-            list_indentation(line)
+            _list_indentation(line)
         assert (
             str(context.exception) == "Expected line to be a list element"
         ), "Should raise ValueError for non-list lines"
@@ -137,6 +137,48 @@ class TestParseTables(unittest.TestCase):
             ],
         )
 
+    def test_parse_tables_with_node_at_end(self):
+        # Arrange
+        elements = [
+            *_l(
+                "| Polluant | Concentration maximale en mg/l |",
+                "|---------|---------------------------------|",
+                "| MES     | 35                               |",
+                "| DCO     | 125                              |",
+            ),
+            Node(
+                type="page_separator",
+                children=[],
+                data=dict(page_index=1),
+            ),
+            *_l("END"),
+        ]
+
+        # Act
+        result = parse_tables(elements)
+
+        # Assert
+        assert_elements_equal(
+            result,
+            [
+                Node(
+                    type="table",
+                    children=_l(
+                        "| Polluant | Concentration maximale en mg/l |",
+                        "|---------|---------------------------------|",
+                        "| MES     | 35                               |",
+                        "| DCO     | 125                              |",
+                    ),
+                ),
+                Node(
+                    type="page_separator",
+                    children=[],
+                    data=dict(page_index=1),
+                ),
+                *_l("END"),
+            ],
+        )
+
 
 class TestParseList(unittest.TestCase):
 
@@ -184,6 +226,33 @@ class TestParseList(unittest.TestCase):
 
 
 class TestParseBlockQuote(unittest.TestCase):
+
+    def test_simple_blockquote(self):
+        # Arrange
+        elements = [
+            Node(type="some_node", children=[]),
+            *_l(
+                '"This is',
+                'a blockquote"',
+                "END",
+            ),
+        ]
+
+        # Act
+        result = parse_blockquotes(elements)
+
+        # Assert
+        assert_elements_equal(
+            result,
+            [
+                Node(type="some_node", children=[]),
+                Node(
+                    type="blockquote",
+                    children=_l("This is", "a blockquote"),
+                ),
+                *_l("END"),
+            ],
+        )
 
     def test_blockquote_nested_list(self):
         # Arrange

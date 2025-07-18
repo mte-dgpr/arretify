@@ -25,6 +25,8 @@ from arretify.types import DocumentContext
 from arretify.html_schemas import (
     SECTION_REFERENCE_SCHEMA,
     DOCUMENT_REFERENCE_SCHEMA,
+    PAGE_SEPARATOR_SCHEMA,
+    PAGE_FOOTER_SCHEMA,
 )
 from arretify.utils.html import (
     ensure_element_id,
@@ -42,17 +44,53 @@ from arretify.utils.references import build_reference_tree
 _LOGGER = logging.getLogger(__name__)
 
 
+# TODO : refactor to factorize with list in step_segmentation
+INLINE_NODE_SCHEMAS = [
+    PAGE_FOOTER_SCHEMA,
+    PAGE_SEPARATOR_SCHEMA,
+]
+
+
 def resolve_references_and_operands(document_context: DocumentContext, operation_tag: Tag) -> None:
     if operation_tag["data-direction"] != "rtl":
         raise ValueError("Only right-to-left is supported so far")
-    _resolve_rtl_references(document_context, operation_tag)
+
+    reference_tags: List[Tag] = _find_left_references(document_context, operation_tag)
+    if len(reference_tags) == 0:
+        _LOGGER.warning("No references found in operation")
+        return
+    operation_tag["data-references"] = render_str_list_attribute(
+        [ensure_element_id(document_context.id_counters, tag) for tag in reference_tags]
+    )
+
     has_operand = parse_bool_attribute(cast(str, operation_tag["data-has_operand"]))
     if has_operand:
-        _resolve_rtl_operand(document_context, operation_tag)
+        operand_tag: Tag | None = _find_right_operand(document_context, operation_tag)
+        if operand_tag is None:
+            _LOGGER.warning("No right operand found for operation")
+            return
+        element_id = ensure_element_id(document_context.id_counters, operand_tag)
+        operation_tag["data-operand"] = element_id
 
 
-def _resolve_rtl_references(document_context: DocumentContext, operation_tag: Tag) -> None:
-    contiguous_elements_left = get_contiguous_elements_left(operation_tag)
+def _find_right_operand(document_context: DocumentContext, start_tag: Tag) -> Tag | None:
+    for element in get_contiguous_elements_right(start_tag):
+        if isinstance(element, Tag) and element.name in [
+            "blockquote",
+            "q",
+            "table",
+        ]:
+            return element
+
+        # We ignore inline nodes like page separators and footers
+        # and look recursively for the next neighbouring element.
+        elif is_tag_and_matches(element, css_classes_in=[s.css_class for s in INLINE_NODE_SCHEMAS]):
+            return _find_right_operand(document_context, element)
+    return None
+
+
+def _find_left_references(document_context: DocumentContext, start_tag: Tag) -> List[Tag]:
+    contiguous_elements_left = get_contiguous_elements_left(start_tag)
     reference_tags: List[Tag] = []
 
     for element in contiguous_elements_left:
@@ -73,35 +111,15 @@ def _resolve_rtl_references(document_context: DocumentContext, operation_tag: Ta
                 raise ValueError("No section or document reference found in operation")
             break
 
+        # We ignore inline nodes like page separators and footers
+        # and look recursively for the next neighbouring element.
+        elif is_tag_and_matches(element, css_classes_in=[s.css_class for s in INLINE_NODE_SCHEMAS]):
+            return _find_left_references(document_context, element)
+
     if len(reference_tags) == 0:
         for element in contiguous_elements_left:
             if is_tag_and_matches(element, css_classes_in=[DOCUMENT_REFERENCE_SCHEMA.css_class]):
                 reference_tags = [element]
                 break
 
-    if len(reference_tags) == 0:
-        _LOGGER.warning("No references found in operation")
-        return
-
-    operation_tag["data-references"] = render_str_list_attribute(
-        [ensure_element_id(document_context.id_counters, tag) for tag in reference_tags]
-    )
-
-
-def _resolve_rtl_operand(document_context: DocumentContext, operation_tag: Tag) -> None:
-    operand_tag: Tag | None = None
-    for element in get_contiguous_elements_right(operation_tag):
-        if isinstance(element, Tag) and element.name in [
-            "blockquote",
-            "q",
-            "table",
-        ]:
-            operand_tag = element
-            break
-
-    if operand_tag is None:
-        _LOGGER.warning("No right operand found for operation")
-        return
-
-    element_id = ensure_element_id(document_context.id_counters, operand_tag)
-    operation_tag["data-operand"] = element_id
+    return reference_tags

@@ -24,12 +24,14 @@ from .core import (
     split_text_segments,
     make_single_line_splitter,
     make_while_splitter,
+    make_text_segment_while_splitter,
+    make_negated_probe,
     split_before_match,
     text_segment_group_splitter,
     SplitMatch,
     SplitNotAMatch,
     Node,
-    make_text_segment_probe_from_pattern,
+    make_probe_from_pattern_proxy,
 )
 from .testing import _l, assert_elements_equal
 
@@ -44,8 +46,8 @@ class TestSplitBeforeMatch(unittest.TestCase):
             Node(type="blo", children=[]),
         ]
 
-        def is_matching(element):
-            return isinstance(element, TextSegment) and element.contents == "d"
+        def is_matching(elements, i):
+            return isinstance(elements[i], TextSegment) and elements[i].contents == "d"
 
         # Act
         before, after = split_before_match(node_list, is_matching)
@@ -58,8 +60,8 @@ class TestSplitBeforeMatch(unittest.TestCase):
         # Arrange
         node_list = _l("match", "b", "c")
 
-        def is_matching(element):
-            return isinstance(element, TextSegment) and element.contents == "match"
+        def is_matching(elements, i):
+            return isinstance(elements[i], TextSegment) and elements[i].contents == "match"
 
         # Act
         before, after = split_before_match(node_list, is_matching)
@@ -76,8 +78,8 @@ class TestSplitBeforeMatch(unittest.TestCase):
             Node(type="blo", children=[]),
         ]
 
-        def is_matching(element):
-            return isinstance(element, TextSegment) and element.contents == "match"
+        def is_matching(elements, i):
+            return isinstance(elements[i], TextSegment) and elements[i].contents == "match"
 
         # Act
         before, after = split_before_match(node_list, is_matching)
@@ -90,8 +92,8 @@ class TestSplitBeforeMatch(unittest.TestCase):
         # Arrange
         node_list = _l("a", "b", "match")
 
-        def is_matching(element):
-            return isinstance(element, TextSegment) and element.contents == "match"
+        def is_matching(elements, i):
+            return isinstance(elements[i], TextSegment) and elements[i].contents == "match"
 
         # Act
         before, after = split_before_match(node_list, is_matching)
@@ -170,11 +172,13 @@ class TestSplitTextSegments(unittest.TestCase):
         assert result == expected
 
 
-class TestMakeSingleLineMatcher(unittest.TestCase):
+class TestMakeSingleLineSplitter(unittest.TestCase):
 
     def test_match_found(self):
         # Arrange
-        splitter = make_single_line_splitter(lambda line: line.contents == "match")
+        splitter = make_single_line_splitter(
+            lambda elements, index: elements[index].contents == "match"
+        )
         elements = _l("no match", "match", "no match")
 
         # Act
@@ -185,7 +189,9 @@ class TestMakeSingleLineMatcher(unittest.TestCase):
 
     def test_match_found_first_line(self):
         # Arrange
-        splitter = make_single_line_splitter(lambda line: line.contents == "match")
+        splitter = make_single_line_splitter(
+            lambda elements, index: elements[index].contents == "match"
+        )
         elements = _l("match", "no match", "no match")
 
         # Act
@@ -196,7 +202,9 @@ class TestMakeSingleLineMatcher(unittest.TestCase):
 
     def test_no_match(self):
         # Arrange
-        splitter = make_single_line_splitter(lambda line: line.contents == "match")
+        splitter = make_single_line_splitter(
+            lambda elements, index: elements[index].contents == "match"
+        )
         elements = _l("no match", "also no match")
 
         # Act
@@ -206,11 +214,13 @@ class TestMakeSingleLineMatcher(unittest.TestCase):
         assert result is None
 
 
-class TestMakeWhileMatcher(unittest.TestCase):
+class TestMakeWhileSplitter(unittest.TestCase):
 
     def test_match_found(self):
         # Arrange
-        splitter = make_while_splitter(lambda line: line.contents.startswith("match"))
+        splitter = make_while_splitter(
+            lambda elements, index: elements[index].contents.startswith("match")
+        )
         elements = _l("no match", "match1", "match2", "no match", "match3")
 
         # Act
@@ -221,7 +231,9 @@ class TestMakeWhileMatcher(unittest.TestCase):
 
     def test_match_found_first_line(self):
         # Arrange
-        splitter = make_while_splitter(lambda line: line.contents.startswith("match"))
+        splitter = make_while_splitter(
+            lambda elements, index: elements[index].contents.startswith("match")
+        )
         elements = _l("match1", "match2", "no match", "match3")
 
         # Act
@@ -232,7 +244,9 @@ class TestMakeWhileMatcher(unittest.TestCase):
 
     def test_match_found_last_line(self):
         # Arrange
-        splitter = make_while_splitter(lambda line: line.contents.startswith("match"))
+        splitter = make_while_splitter(
+            lambda elements, index: elements[index].contents.startswith("match")
+        )
         elements = _l("no match", "match1", "match2")
 
         # Act
@@ -243,7 +257,9 @@ class TestMakeWhileMatcher(unittest.TestCase):
 
     def test_no_match(self):
         # Arrange
-        splitter = make_while_splitter(lambda line: line.contents.startswith("match"))
+        splitter = make_while_splitter(
+            lambda elements, index: elements[index].contents.startswith("match")
+        )
         elements = _l("no match", "also no match")
 
         # Act
@@ -251,6 +267,88 @@ class TestMakeWhileMatcher(unittest.TestCase):
 
         # Assert
         assert result is None
+
+
+class TestMakeNegatedProbe(unittest.TestCase):
+
+    def test_negated_probe(self):
+        # Arrange
+        probe = make_negated_probe(
+            lambda elements, index: elements[index].contents.startswith("match")
+        )
+        elements = _l("no match", "also no match", "match this")
+
+        # Assert
+        assert probe(elements, 0) is True  # "no match"
+        assert probe(elements, 1) is True  # "also no match"
+        assert probe(elements, 2) is False  # "match this"
+
+
+class TestMakeTextSegmentWhileSplitter(unittest.TestCase):
+
+    def test_rejects_non_text_segments(self):
+        # Arrange
+        splitter = make_text_segment_while_splitter(
+            lambda elements, index: elements[index].contents.startswith("match")
+        )
+        elements = [
+            Node(type="non_text", children=[]),
+            *_l("match this"),
+            Node(type="another_non_text", children=[]),
+        ]
+
+        # Act
+        result = splitter(elements)
+
+        # Assert
+        assert result == (elements[0:1], elements[1:2], elements[2:])
+
+    def test_match_found(self):
+        # Arrange
+        splitter = make_text_segment_while_splitter(
+            lambda elements, index: elements[index].contents.startswith("match")
+        )
+        elements = _l("no match", "match this", "match that", "no match")
+
+        # Act
+        result = splitter(elements)
+
+        # Assert
+        assert result == (elements[:1], elements[1:3], elements[3:])
+
+    def test_start_is_matching_argument(self):
+        # Arrange
+        splitter = make_text_segment_while_splitter(
+            lambda elements, index: elements[index].contents.startswith("match"),
+            start_is_matching=lambda elements, index: elements[index].contents == "match this",
+        )
+        elements = [
+            Node(type="some_node", children=[]),
+            *_l("match this", "match that", "no match"),
+        ]
+
+        # Act
+        result = splitter(elements)
+
+        # Assert
+        assert result == (elements[:1], elements[1:3], elements[3:])
+
+    def test_not_interrupted_by_inline_node(self):
+        # Arrange
+        splitter = make_text_segment_while_splitter(
+            lambda elements, index: elements[index].contents.startswith("match")
+        )
+        elements = [
+            *_l("match this"),
+            Node(type="page_separator", children=[]),
+            *_l("match this too", "but not this"),
+        ]
+
+        # Act
+        result = splitter(elements)
+
+        # Assert
+        assert result == ([], elements[0:3], elements[3:])
 
 
 class TestTextSegmentGroupSplitter(unittest.TestCase):
@@ -279,11 +377,11 @@ class TestMakeTextSegmentProbeFromPattern(unittest.TestCase):
     def test_pattern_match(self):
         # Arrange
         pattern = PatternProxy(r"^match")
-        probe = make_text_segment_probe_from_pattern(pattern)
+        probe = make_probe_from_pattern_proxy(pattern)
         lines = _l("match this")
 
         # Act
-        result = probe(lines[0])
+        result = probe(lines, 0)
 
         # Assert
         assert result is True
@@ -291,25 +389,11 @@ class TestMakeTextSegmentProbeFromPattern(unittest.TestCase):
     def test_pattern_no_match(self):
         # Arrange
         pattern = PatternProxy(r"^match")
-        probe = make_text_segment_probe_from_pattern(pattern)
+        probe = make_probe_from_pattern_proxy(pattern)
         lines = _l("no match here")
 
         # Act
-        result = probe(lines[0])
+        result = probe(lines, 0)
 
         # Assert
         assert result is False
-
-    def test_negate(self):
-        # Arrange
-        pattern = PatternProxy(r"^match")
-        probe = make_text_segment_probe_from_pattern(pattern, negate=True)
-        lines = _l("no match here", "match this")
-
-        # Act
-        result1 = probe(lines[0])
-        result2 = probe(lines[1])
-
-        # Assert
-        assert result1 is True
-        assert result2 is False

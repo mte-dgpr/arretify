@@ -41,7 +41,7 @@ This pattern ensures that the line starts and ends with a pipe
 and contains at least one cell in between.
 """
 
-TABLE_HEADER_SEPARATOR_PATTERN = PatternProxy(r"^\s*[-:|]+\s*$")
+TABLE_HEADER_SEPARATOR_PATTERN = PatternProxy(r"^\s*[-:|\s]+\s*$")
 """Detect if the line is a table header separator, i.e. contains only - or : or |."""
 
 TABLE_DESCRIPTION_PATTERN = PatternProxy(r"^(\(\*+\))|^(\*+)")
