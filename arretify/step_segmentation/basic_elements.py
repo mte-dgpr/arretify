@@ -54,7 +54,7 @@ from .core import (
     NodeOrText,
     Split,
     chain_flat_map_node_list,
-    split_text_segments,
+    split_elements,
     make_text_segment_single_line_splitter,
     make_text_segment_while_splitter,
     map_splitted_text_segments,
@@ -98,7 +98,7 @@ def parse_tables(
     input_list: List[NodeOrText],
 ) -> List[NodeOrText]:
     return flat_map_splitted_text_segments(
-        split_text_segments(input_list, _table_splitter),
+        split_elements(input_list, _table_splitter),
         _make_table_nodes,
     )
 
@@ -214,7 +214,7 @@ def parse_lists(
     input_list: List[NodeOrText],
 ) -> List[NodeOrText]:
     return map_splitted_text_segments(
-        split_text_segments(
+        split_elements(
             input_list,
             make_text_segment_while_splitter(_is_list),
         ),
@@ -295,7 +295,7 @@ def parse_blockquotes(
     input_list: List[NodeOrText],
 ) -> List[NodeOrText]:
     return map_splitted_text_segments(
-        split_text_segments(
+        split_elements(
             input_list,
             _blockquote_splitter,
         ),
@@ -396,7 +396,7 @@ def parse_images(
     input_list: List[NodeOrText],
 ) -> List[NodeOrText]:
     return map_splitted_text_segments(
-        split_text_segments(
+        split_elements(
             input_list,
             make_text_segment_single_line_splitter(_is_image),
         ),

@@ -57,7 +57,7 @@ from .core import (
     flat_map_node_list,
     chain_flat_map_node_list,
     map_splitted_text_segments,
-    split_text_segments,
+    split_elements,
     make_text_segment_single_line_splitter,
     make_probe_from_regex_tree,
 )
@@ -199,7 +199,7 @@ def _create_section_title_nodes(
     elements: List[NodeOrText],
 ) -> List[NodeOrText]:
     return map_splitted_text_segments(
-        split_text_segments(
+        split_elements(
             elements,
             make_text_segment_single_line_splitter(_is_title),
         ),

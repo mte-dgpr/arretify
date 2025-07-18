@@ -21,7 +21,7 @@ import unittest
 from arretify.types import TextSegment
 from arretify.regex_utils import PatternProxy
 from .core import (
-    split_text_segments,
+    split_elements,
     make_single_line_splitter,
     make_while_splitter,
     make_text_segment_while_splitter,
@@ -103,7 +103,7 @@ class TestSplitBeforeMatch(unittest.TestCase):
         assert_elements_equal(after, _l("match"))
 
 
-class TestSplitTextSegments(unittest.TestCase):
+class TestSplitElements(unittest.TestCase):
 
     def test_no_matches(self):
         # Arrange
@@ -113,7 +113,7 @@ class TestSplitTextSegments(unittest.TestCase):
             return None
 
         # Act
-        result = list(split_text_segments(elements, splitter))
+        result = list(split_elements(elements, splitter))
 
         # Assert
         assert result == [SplitNotAMatch(elements)]
@@ -126,7 +126,7 @@ class TestSplitTextSegments(unittest.TestCase):
             return ([], elements, [])
 
         # Act
-        result = list(split_text_segments(elements, splitter))
+        result = list(split_elements(elements, splitter))
 
         # Assert
         assert result == [SplitMatch(elements)]
@@ -141,7 +141,7 @@ class TestSplitTextSegments(unittest.TestCase):
             )  # Matches [b, c] and [e, f]
 
         # Act
-        result = list(split_text_segments(elements, splitter))
+        result = list(split_elements(elements, splitter))
 
         # Assert
         expected = [
@@ -161,7 +161,7 @@ class TestSplitTextSegments(unittest.TestCase):
             return ([], elements[0:1], elements[1:])
 
         # Act
-        result = list(split_text_segments(elements, splitter))
+        result = list(split_elements(elements, splitter))
 
         # Assert
         expected = [

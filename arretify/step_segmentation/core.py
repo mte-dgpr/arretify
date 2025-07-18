@@ -38,12 +38,11 @@ from arretify.regex_utils import PatternProxy, regex_tree
 from arretify.regex_utils.regex_tree.execute import match
 
 
-INLINE_NODE_TYPES = ["page_separator", "page_footer"]
-
+# -------------------- Generic splitting utils -------------------- #
+# TODO : merge with other splitting utils voir #391
 
 T1 = TypeVar("T1")
 T2 = TypeVar("T2")
-
 
 Split = Tuple[List[T1], T2, List[T1]]
 """
@@ -98,48 +97,6 @@ elif isinstance(splitted_element, SplitNotAMatch):
 # TODO: Callable[[List[T1], int, T2], bool] ???
 Probe = Callable[[List[T1], int], bool]
 
-NodeOrText = Union[TextSegment, "Node"]
-
-
-@dataclass(frozen=True)
-class Node:
-    """
-    Node for representing our segmented arrêté as a tree structure.
-    """
-
-    type: str
-    children: List[NodeOrText]
-    data: Dict[str, Any] = field(default_factory=dict)
-
-
-@iter_func_to_list
-def flat_map_node_list(
-    elements: List[NodeOrText],
-    map_function: Callable[[List[NodeOrText]], List[NodeOrText]],
-) -> Iterator[NodeOrText]:
-    pile: List[NodeOrText] = []
-    for element in elements:
-        if is_node(element, type_in=INLINE_NODE_TYPES) or isinstance(element, TextSegment):
-            pile.append(element)
-
-        else:
-            if pile:
-                yield from map_function(pile)
-                pile = []
-            yield element
-
-    if pile:
-        yield from map_function(pile)
-
-
-def chain_flat_map_node_list(
-    elements: List[NodeOrText],
-    map_functions: List[Callable[[List[NodeOrText]], List[NodeOrText]]],
-) -> List[NodeOrText]:
-    for map_function in map_functions:
-        elements = flat_map_node_list(elements, map_function)
-    return elements
-
 
 def split_before_match(
     elements: List[T1],
@@ -164,7 +121,7 @@ def split_before_match(
 
 
 @iter_func_to_list
-def split_text_segments(
+def split_elements(
     elements: List[T1],
     splitter: Splitter[T1, T2],
 ) -> Splitted[T1, T2]:
@@ -223,6 +180,53 @@ def make_negated_probe(
     return _negated_probe
 
 
+# -------------------- Segmentation step splitting utils -------------------- #
+
+NodeOrText = Union[TextSegment, "Node"]
+
+INLINE_NODE_TYPES = ["page_separator", "page_footer"]
+
+
+@dataclass(frozen=True)
+class Node:
+    """
+    Node for representing our segmented arrêté as a tree structure.
+    """
+
+    type: str
+    children: List[NodeOrText]
+    data: Dict[str, Any] = field(default_factory=dict)
+
+
+@iter_func_to_list
+def flat_map_node_list(
+    elements: List[NodeOrText],
+    map_function: Callable[[List[NodeOrText]], List[NodeOrText]],
+) -> Iterator[NodeOrText]:
+    pile: List[NodeOrText] = []
+    for element in elements:
+        if is_node(element, type_in=INLINE_NODE_TYPES) or isinstance(element, TextSegment):
+            pile.append(element)
+
+        else:
+            if pile:
+                yield from map_function(pile)
+                pile = []
+            yield element
+
+    if pile:
+        yield from map_function(pile)
+
+
+def chain_flat_map_node_list(
+    elements: List[NodeOrText],
+    map_functions: List[Callable[[List[NodeOrText]], List[NodeOrText]]],
+) -> List[NodeOrText]:
+    for map_function in map_functions:
+        elements = flat_map_node_list(elements, map_function)
+    return elements
+
+
 def text_segment_group_splitter(
     elements: List[NodeOrText],
 ) -> Split[NodeOrText, List[TextSegment]] | None:
@@ -253,6 +257,7 @@ def make_pass_through_probe_for_inline_nodes(
                 continue
             else:
                 return False
+        return False
 
     return _probe
 
@@ -271,9 +276,10 @@ def make_text_segment_probe(
 
 def make_probe_from_pattern_proxy(
     pattern: PatternProxy, use_search: bool = False
-) -> Probe[TextSegment]:
+) -> Probe[NodeOrText]:
     def _probe(elements: List[NodeOrText], index: int) -> bool:
         element = elements[index]
+        assert isinstance(element, TextSegment)
         if use_search is False:
             match = pattern.match(element.contents)
         else:

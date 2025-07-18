@@ -39,12 +39,11 @@ from arretify.utils.functional import iter_func_to_list
 
 from .core import (
     Node,
-    Split,
     is_node,
     assert_single_text_segment,
     split_before_match,
     NodeOrText,
-    split_text_segments,
+    split_elements,
     map_splitted_text_segments,
     make_text_segment_while_splitter,
     make_probe_from_pattern_proxy,
@@ -89,7 +88,7 @@ def parse_tables_of_contents(
     elements: List[NodeOrText],
 ) -> List[NodeOrText]:
     return map_splitted_text_segments(
-        split_text_segments(
+        split_elements(
             elements,
             make_text_segment_while_splitter(
                 _table_of_contents_while_probe,
@@ -126,7 +125,7 @@ def parse_page_footers(
     elements: List[NodeOrText],
 ) -> List[NodeOrText]:
     return map_splitted_text_segments(
-        split_text_segments(
+        split_elements(
             elements,
             make_text_segment_while_splitter(_is_page_footer),
         ),

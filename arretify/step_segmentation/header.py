@@ -46,7 +46,7 @@ from .core import (
     NodeOrText,
     flat_map_node_list,
     chain_flat_map_node_list,
-    split_text_segments,
+    split_elements,
     SplitMatch,
     make_text_segment_while_splitter,
     map_splitted_text_segments,
@@ -251,7 +251,7 @@ def _parse_header_element(
     and then gathers all following lines while the pattern still matches.
     """
     return map_splitted_text_segments(
-        split_text_segments(
+        split_elements(
             elements,
             make_text_segment_while_splitter(HEADER_ELEMENTS_PROBES[node_type]),
         ),
@@ -272,7 +272,7 @@ def _parse_header_element_fuzzy(
     and then gathers all following lines that do not match another element.
     """
     return map_splitted_text_segments(
-        split_text_segments(
+        split_elements(
             elements,
             make_text_segment_while_splitter(
                 lambda elements, index: _is_nothing_else_than(node_type, elements[index]),
@@ -369,7 +369,7 @@ def _parse_visa_and_motif_elements_pass1(
     elements = flat_map_node_list(
         elements,
         lambda elements: map_splitted_text_segments(
-            split_text_segments(
+            split_elements(
                 elements,
                 make_text_segment_single_line_splitter(VISA_MOTIFS_PROBES[node_type]),
             ),
@@ -424,7 +424,7 @@ def _parse_visa_and_motif_elements_pass2(
     types of variants for formatting the visas or motifs, and normalizes
     the node flow accordingly.
     """
-    next_node: NodeOrText
+    element: NodeOrText
     elements = list(elements)
 
     # Skip nodes until we find the first node of type 'visa' or 'motif'.
@@ -571,7 +571,7 @@ def render_header_element(
     elements: List[PageElementOrString] = []
     pattern = HEADER_ELEMENTS_RENDER_PATTERNS[node.type]
 
-    for splitted_element in split_text_segments(
+    for splitted_element in split_elements(
         node.children,
         text_segment_group_splitter,
     ):

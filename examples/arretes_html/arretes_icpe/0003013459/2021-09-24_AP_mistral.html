@@ -127,6 +127,9 @@
   </style>
   <script>
    window.onload = function() {
+                // Page separators are inline elements, so they can be anywhere in the tree.
+                // To ensure proper layout, we therefore create a separate visual element
+                // for each page separator.
                 const pageSeparators = Array.from(document.querySelectorAll('.arretify-page_separator'))
                 
                 const refreshPageSeparator = () => {
