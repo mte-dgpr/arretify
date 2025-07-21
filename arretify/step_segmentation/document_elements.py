@@ -67,8 +67,6 @@ PAGE_FOOTER_PATTERN = PatternProxy(rf"^{join_with_or(PAGE_FOOTERS_LIST)}")
 TABLE_OF_CONTENTS_PAGING_PATTERN_S = r"\.{5}\s+(page\s+)?\d+"
 """Detect table of contents paging, e.g. "..... page 1" or "..... 1"."""
 
-IS_NOT_TABLE_OF_CONTENTS_PAGING_PATTERN_S = rf"(?!.*{TABLE_OF_CONTENTS_PAGING_PATTERN_S}$)"
-
 TABLE_OF_CONTENTS_LIST = [
     r"sommaire",
     r"table des matieres",

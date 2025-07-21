@@ -63,7 +63,6 @@ from .document_elements import (
     render_table_of_contents,
 )
 from .basic_elements import parse_lists, render_image, render_list
-from .document_elements import IS_NOT_TABLE_OF_CONTENTS_PAGING_PATTERN_S
 
 
 EMBLEMS_LIST = [
@@ -114,10 +113,8 @@ IDENTIFICATIONS_LIST = [
 IDENTIFICATION_PATTERN = PatternProxy(rf"^{join_with_or(IDENTIFICATIONS_LIST)}")
 """Detect all references."""
 
-ARRETE_TITLE_PATTERN = PatternProxy(
-    r"^\W*(arrete(nt)?)" + IS_NOT_TABLE_OF_CONTENTS_PAGING_PATTERN_S
-)
-"""Detect if the sentence starts with "arrete" without ending points for table of contents."""
+ARRETE_TITLE_PATTERN = PatternProxy(r"^\W*(arrete(nt)?)")
+"""Detect if the sentence starts with "arrete"."""
 
 HONORARIES_LIST = [
     r"l[ea] presidente?",
