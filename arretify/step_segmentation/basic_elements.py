@@ -22,6 +22,7 @@ import logging
 from bs4 import BeautifulSoup, Tag
 
 from arretify.types import TextSegment
+from arretify.parsing_utils.patterns import is_continuing_sentence
 from arretify.utils.functional import iter_func_to_list, chain_functions
 from arretify.utils.html import (
     PageElementOrString,
@@ -55,7 +56,6 @@ from .core import (
     RawSplit,
     split_elements,
     make_single_line_splitter_for_text_segments,
-    make_while_splitter_for_text_segments,
     map_splitted_elements,
     flat_map_splitted_elements,
     split_before_match,
@@ -192,6 +192,10 @@ LEADING_WHITESPACES_PATTERN = PatternProxy(r"^\s+")
 """Detect leading whitespaces."""
 
 _is_list = make_probe_from_pattern_proxy(LIST_PATTERN)
+_is_list_start = reject_if_not_text_segment(_is_list)
+_is_inline_node_followed_by_list = pick_if_inline_node_followed_by_match(
+    reject_if_not_text_segment(_is_list)
+)
 
 
 def _list_indentation(line: str) -> int:
@@ -207,6 +211,51 @@ def _clean_leading_whitespaces(line: str) -> str:
     return LEADING_WHITESPACES_PATTERN.sub("", line)
 
 
+def _list_splitter(
+    elements: List[NodeOrText],
+) -> RawSplit[NodeOrText, List[NodeOrText]] | None:
+    """
+    Split the input list into piles of list elements.
+    Each pile is a list of elements that are part of the same list.
+    """
+    before, elements = split_before_match(elements, _is_list_start)
+
+    if not elements:
+        return None
+
+    pile: List[NodeOrText] = []
+    while elements:
+        element = elements[0]
+        if isinstance(element, TextSegment) and _is_list(elements, 0):
+            pile.append(elements.pop(0))
+
+        # We want to keep inline node only if the list continues after it.
+        elif _is_inline_node_followed_by_list(elements, 0):
+            pile.append(elements.pop(0))
+
+        # If we get a TextSegment that does not match the list pattern,
+        # we check if it continues the previous sentence.
+        elif isinstance(element, TextSegment):
+            # First get the previous text segment in the pile.
+            j = len(pile) - 1
+            while j >= 0 and not isinstance(pile[j], TextSegment):
+                j -= 1
+            if j < 0:
+                raise RuntimeError("Expected a TextSegment before the current element in the pile.")
+            previous_text_segment = pile[j]
+            assert isinstance(previous_text_segment, TextSegment)
+
+            if is_continuing_sentence(previous_text_segment.contents, element.contents):
+                pile[j] = Node(type="text_span", children=[*pile[j:], elements.pop(0)])
+            else:
+                break
+
+        else:
+            break
+
+    return before, pile, elements
+
+
 # TODO : deal with case :
 # - bla
 #     hello
@@ -218,7 +267,7 @@ def parse_lists(
     return map_splitted_elements(
         split_elements(
             input_list,
-            make_while_splitter_for_text_segments(_is_list, _is_list),
+            _list_splitter,
         ),
         lambda pile: Node(type="list", children=pile),
     )
@@ -239,8 +288,7 @@ def _render_list(
 ) -> Tuple[List[NodeOrText], Tag]:
     elements = list(elements)
     list_pile: List[Tag] = []
-    assert isinstance(elements[0], TextSegment)
-    ref_indentation = _list_indentation(elements[0].contents)
+    ref_indentation = _get_element_list_indentation(elements[0])
 
     while elements:
         element = elements[0]
@@ -249,13 +297,19 @@ def _render_list(
             list_pile[-1].append(render_page_separator(soup, element))
             elements.pop(0)
 
-        elif isinstance(element, TextSegment):
-            current_indentation = _list_indentation(element.contents)
+        elif isinstance(element, TextSegment) or is_node(element, type_in=["text_span"]):
+            current_indentation = _get_element_list_indentation(element)
+            li_contents: List[PageElementOrString] = []
+            if isinstance(element, TextSegment):
+                li_contents = [element.contents]
+            elif is_node(element, type_in=["text_span"]):
+                li_contents = list(render_text_span(soup, element))
 
             if current_indentation == ref_indentation:
-                line = apply_to_segment(element, _clean_leading_whitespaces)
+                if isinstance(li_contents[0], str):
+                    li_contents[0] = _clean_leading_whitespaces(li_contents[0])
+                list_pile.append(make_new_tag(soup, "li", contents=li_contents))
                 elements.pop(0)
-                list_pile.append(make_new_tag(soup, "li", contents=line.contents))
 
             elif current_indentation > ref_indentation:
                 elements, nested_ul = _render_list(soup, elements)
@@ -270,6 +324,18 @@ def _render_list(
             raise ValueError(f"Unexpected element {element} in list rendering.")
 
     return elements, make_new_tag(soup, "ul", contents=list_pile)
+
+
+def _get_element_list_indentation(
+    element: NodeOrText,
+) -> int:
+    if isinstance(element, TextSegment):
+        return _list_indentation(element.contents)
+    elif is_node(element, type_in=["text_span"]):
+        assert isinstance(element.children[0], TextSegment)
+        return _list_indentation((element.children[0]).contents)
+    else:
+        raise RuntimeError(f"Expected a TextSegment or text_span node, got {element}.")
 
 
 # -------------------- Blockquotes -------------------- #
@@ -429,10 +495,24 @@ def render_inline_quotes(soup: BeautifulSoup, string: str) -> Iterable[PageEleme
     )
 
 
+def render_text_span(
+    soup: BeautifulSoup,
+    node: Node,
+) -> Iterator[PageElementOrString]:
+    for i, element in enumerate(node.children):
+        if isinstance(element, TextSegment):
+            # If this is not the last element, we add a space as separator.
+            yield element.contents + " " * int(i < len(node.children) - 1)
+        elif is_node(element, type_in=["page_separator"]):
+            yield render_page_separator(soup, element)
+        else:
+            raise ValueError(f"Unexpected element type {type(element)} in text span rendering.")
+
+
 def render_basic_elements(
     soup: BeautifulSoup,
     node: Node,
-) -> Iterable[PageElementOrString]:
+) -> Iterator[PageElementOrString]:
     if node.type == "list":
         yield render_list(soup, node)
     elif node.type == "table":

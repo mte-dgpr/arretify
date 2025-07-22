@@ -224,6 +224,38 @@ class TestParseList(unittest.TestCase):
             ],
         )
 
+    def test_text_segment_continuing_previous_sentence(self):
+        # Arrange
+        elements = _l(
+            "- Item 1",
+            "this is a continuation of the previous sentence.",
+            "- Item 2",
+            "END",
+        )
+
+        # Act
+        result = parse_lists(elements)
+
+        # Assert
+        assert_elements_equal(
+            result,
+            [
+                Node(
+                    type="list",
+                    children=[
+                        Node(
+                            type="text_span",
+                            children=_l(
+                                "- Item 1", "this is a continuation of the previous sentence."
+                            ),
+                        ),
+                        *_l("- Item 2"),
+                    ],
+                ),
+                *_l("END"),
+            ],
+        )
+
 
 class TestParseBlockQuote(unittest.TestCase):
 
@@ -534,6 +566,32 @@ class TestRenderList(unittest.TestCase):
                         <li>- Subitem 1.2</li>
                     </ul>
                 </li>
+                <li>- Item 2</li>
+            </ul>
+            """
+        )
+
+    def test_render_list_text_span(self):
+        # Arrange
+        node = Node(
+            type="list",
+            children=[
+                Node(
+                    type="text_span",
+                    children=_l("- Item 1", "This is a continuation of the previous sentence."),
+                ),
+                *_l("- Item 2"),
+            ],
+        )
+
+        # Act
+        list_tag = render_list(self.soup, node)
+
+        # Assert
+        assert normalized_html_str(str(list_tag)) == normalized_html_str(
+            """
+            <ul>
+                <li>- Item 1 This is a continuation of the previous sentence.</li>
                 <li>- Item 2</li>
             </ul>
             """
