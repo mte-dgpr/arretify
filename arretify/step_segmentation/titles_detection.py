@@ -217,6 +217,7 @@ def parse_title_info(line: str) -> TitleInfo:
     # If the title contains an alinea, break it down in two lines
     title_text, alinea_text = _split_line_based_on_first_verb(text)
 
+    # Define title info
     title_info = TitleInfo(
         section_type=section_type,
         number=number,

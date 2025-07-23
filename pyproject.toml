@@ -21,8 +21,6 @@ dependencies = [
   "roman~=5.0",
   "pylatexenc~=2.10",
   "pydantic~=2.11",
-  "spacy~=3.8.7",
-  "fr_dep_news_trf~=3.8.0",
 
   # from _vendor.clients_api_droit
   "requests~=2.32",
@@ -30,8 +28,11 @@ dependencies = [
   "zeep~=4.3",
   "lxml~=5.3",
 
-  # TODO : move this as optional dependency
-  "mistralai~=1.8"
+  # TODO : move this as optional dependency for OCR
+  "mistralai~=1.8",
+  # TODO : move this as optional dependencies for NLP
+  "torch~=2.7.1",
+  "spacy[cuda12x]~=3.8.7",
 ]
 
 [project.optional-dependencies]

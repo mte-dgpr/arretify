@@ -37,9 +37,27 @@
 
 **→ Installation** : 
 
-```python
+Créer un environnement virtuel :
+
+```bash
+py -3.12 -m venv venv
+
+venv/bin/activate  # Sur Linux
+.venv\Scripts\Activate.ps1  # Sur Windows
+
+pip install --upgrade pip  # Sur Linux
+.\venv\Scripts\python.exe -m pip install --upgrade pip  # Sur Windows
+```
+
+Installer la librairie et ses dépendances :
+
+```bash
 # **NOTE**: La librairie sera disponible très prochainement sur PyPI. En attendant, vous pouvez l'installer directement depuis le repo git.
-pip install git+https://github.com/mte-dgpr/arretify.git
+pip install git+https://github.com/mte-dgpr/arretify.git  # Sur Linux
+pip install git+https://github.com/mte-dgpr/arretify.git --extra-index-url https://download.pytorch.org/whl/cu128  # Sur Windows Windows, version CUDA à adapter selon votre cas
+
+# Modèles spacy
+python -m spacy download fr_dep_news_trf
 ```
 
 **→ Utilisation avec le CLI** : 
@@ -116,16 +134,14 @@ python -m main -i ./tmp/arretes_ocr/bla.txt -o ./tmp/arretes_html/bla.html
 
 ### Setup
 
-Créer un environnement virtuel :
+Installer la librairie et ses dépendances en mode développement :
 
 ```bash
-py -3.13 -m venv venv
-```
+pip install -e .[dev]  # Sur Linux
+pip install -e .[dev] --extra-index-url https://download.pytorch.org/whl/cu128  # Sur Windows, version CUDA à adapter selon votre cas
 
-Installer la librairie et ses dépendances :
-
-```bash
-pip install .[dev]
+# Modèles spacy
+python -m spacy download fr_dep_news_trf
 ```
 
 Initialiser les sous-modules Git (qui se trouvent dans `arretify/_vendor`) : 
