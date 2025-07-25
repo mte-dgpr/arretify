@@ -121,4 +121,4 @@ class TestCleanMarkdown(unittest.TestCase):
 
 
 def _make_text_segment(string: str) -> TextSegment:
-    return TextSegment(contents=string, start=(0, 0), end=(0, 0))
+    return TextSegment(contents=string, start=(0, 0, 0), end=(0, 0, 0))

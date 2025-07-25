@@ -34,7 +34,7 @@ from arretify.regex_utils import (
 )
 from arretify.parsing_utils.dates import MONTH_POINT_ABBREVIATIONS
 from arretify.regex_utils import regex_tree
-from arretify.utils.markdown_parsing import LIST_PATTERN, BULLETPOINT_PATTERN_S, is_table_line
+from arretify.utils.markdown_parsing import LIST_PATTERN, BULLETPOINT_PATTERN_S, TABLE_LINE_PATTERN
 
 
 LATEX_NODE = LatexNodes2Text(keep_comments=True)
@@ -248,7 +248,7 @@ def clean_markdown(line: TextSegment) -> TextSegment:
     line = apply_to_segment(line, _make_sub_wrong(r"\\&", "&"))
 
     # Remove <br> tags outside of tables, since the latter are rendered correctly
-    if not is_table_line(line.contents):
+    if not TABLE_LINE_PATTERN.match(line.contents):
         line = apply_to_segment(line, _make_sub_wrong(r"<br>", ""))
 
     # Remove footnotes detected by OCR

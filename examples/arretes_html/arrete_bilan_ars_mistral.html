@@ -44,6 +44,21 @@
                 color: var(--warning-425-625);
             }
 
+            .arretify-visual_page_separator {
+                position: absolute;
+                left: 0;
+                width: 100vw;
+                height: 0.3em;
+                background-color: var(--grey-950-100);
+                z-index: -1;
+            }
+
+            a.arretify-visual_page_separator > span {
+                position: absolute;
+                font-size: 75%;
+                color: var(--grey-625-425);
+            }
+
             /**************** HEADER ****************/
             header {
                 padding-bottom: var(--spacing-1);
@@ -110,9 +125,45 @@
                 background-color: var(--background-action-low-blue-france);
             }
   </style>
+  <script>
+   window.onload = function() {
+                // Page separators are inline elements, so they can be anywhere in the tree.
+                // To ensure proper layout, we therefore create a separate visual element
+                // for each page separator.
+                const pageSeparators = Array.from(document.querySelectorAll('.arretify-page_separator'))
+                
+                const refreshPageSeparator = () => {
+                    document.querySelectorAll('.arretify-visual_page_separator')
+                        .forEach((visualPageSeparator) => visualPageSeparator.remove())
+                    pageSeparators.slice(1).forEach(function(pageSeparator) {
+                        const boundingBox = pageSeparator.getBoundingClientRect()
+                        const position = getPositionRelativeToDocument(pageSeparator)
+                        const pageIndex = parseInt(pageSeparator.dataset.page_index, 10)
+                        const visualPageSeparator = document.createElement('a')
+                        visualPageSeparator.classList.add('arretify-visual_page_separator')
+                        visualPageSeparator.style.top = `${position.top + boundingBox.height}px`
+                        visualPageSeparator.innerHTML = `<span>↓ page ${pageIndex + 1}</span>`
+                        document.body.appendChild(visualPageSeparator)
+                    })
+                }
+
+                refreshPageSeparator()
+                window.addEventListener('resize', refreshPageSeparator)
+            }
+
+            const getPositionRelativeToDocument = (el) => {
+                const rect = el.getBoundingClientRect()
+                return {
+                    left: rect.left + window.scrollX,
+                    top: rect.top + window.scrollY,
+                }
+            }
+  </script>
  </head>
  <body>
   <header class="arretify-header">
+   <a class="arretify-page_separator" data-page_index="0">
+   </a>
    <div class="arretify-arrete_title">
     <h1>
      ARRETE ARS GRAND EST n 2025-0182 du
@@ -554,53 +605,92 @@
      Zone de référence n° 2 Champagne
     </div>
     <div class="arretify-alinea" data-number="10">
-     <span class="arretify-error" data-error_codes="markdown_parsing">
-      |   |       Au  1er        janvier       2025  | Cible 2028
-Minimum | Cible 2028
-Maximum | Demandes
-     </span>
+     |   |       Au  1er        janvier       2025  | Cible 2028
     </div>
     <div class="arretify-alinea" data-number="11">
-     d'implantations
+     Minimum | Cible 2028
     </div>
     <div class="arretify-alinea" data-number="12">
-     recevables dans la
+     Maximum | Demandes
     </div>
     <div class="arretify-alinea" data-number="13">
-     <span class="arretify-error" data-error_codes="markdown_parsing">
-      fenêtre : oui / non  |
-| --- | --- | --- | --- | --- |
-|  |   |   |   |   |
-     </span>
+     d'implantations
     </div>
     <div class="arretify-alinea" data-number="14">
-     Activités de soins - Nombre d'implantations
+     recevables dans la
     </div>
     <div class="arretify-alinea" data-number="15">
-     Traitement de l'Insuffisance rénale chronique
+     fenêtre : oui / non  |
     </div>
     <div class="arretify-alinea" data-number="16">
-     <span class="arretify-error" data-error_codes="markdown_parsing">
-      |  Hémodialyse en centre pour
-adultes | 1 | 1 | 1 | NON  |
-| --- | --- | --- | --- | --- |
-|  Dialyse médicalisée | 2 | 1 | 2 | NON  |
-|  Autodialyse | 3 | 3 | 3 | NON  |
-|  Dialyse à domicile par
-     </span>
+     <table>
+      <thead>
+       <tr>
+        <th>
+         ---
+        </th>
+        <th>
+         ---
+        </th>
+        <th>
+         ---
+        </th>
+        <th>
+         ---
+        </th>
+        <th>
+         ---
+        </th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+       </tr>
+      </tbody>
+     </table>
     </div>
     <div class="arretify-alinea" data-number="17">
-     hémodialyse ou par dialyse
+     Activités de soins - Nombre d'implantations
     </div>
     <div class="arretify-alinea" data-number="18">
-     <span class="arretify-error" data-error_codes="markdown_parsing">
-      péritonéale | 3 | 3 | 3 | NON  |
-     </span>
+     Traitement de l'Insuffisance rénale chronique
     </div>
     <div class="arretify-alinea" data-number="19">
-     Psychiatrie
+     |  Hémodialyse en centre pour
     </div>
     <div class="arretify-alinea" data-number="20">
+     adultes | 1 | 1 | 1 | NON  |
+    </div>
+    <div class="arretify-alinea" data-number="21">
+     <span class="arretify-error" data-error_codes="markdown_parsing">
+      | --- | --- | --- | --- | --- |
+|  Dialyse médicalisée | 2 | 1 | 2 | NON  |
+|  Autodialyse | 3 | 3 | 3 | NON  |
+     </span>
+    </div>
+    <div class="arretify-alinea" data-number="22">
+     |  Dialyse à domicile par
+    </div>
+    <div class="arretify-alinea" data-number="23">
+     hémodialyse ou par dialyse
+    </div>
+    <div class="arretify-alinea" data-number="24">
+     péritonéale | 3 | 3 | 3 | NON  |
+    </div>
+    <div class="arretify-alinea" data-number="25">
+     Psychiatrie
+    </div>
+    <div class="arretify-alinea" data-number="26">
      <table>
       <thead>
        <tr>
@@ -676,10 +766,10 @@ adultes | 1 | 1 | 1 | NON  |
       </tbody>
      </table>
     </div>
-    <div class="arretify-alinea" data-number="21">
+    <div class="arretify-alinea" data-number="27">
      Zone de référence n° 3 Aube et Sézannais
     </div>
-    <div class="arretify-alinea" data-number="22">
+    <div class="arretify-alinea" data-number="28">
      <table>
       <thead>
        <tr>
@@ -731,13 +821,13 @@ adultes | 1 | 1 | 1 | NON  |
       </tbody>
      </table>
     </div>
-    <div class="arretify-alinea" data-number="23">
+    <div class="arretify-alinea" data-number="29">
      Activités de soins - Nombre d'implantations
     </div>
-    <div class="arretify-alinea" data-number="24">
+    <div class="arretify-alinea" data-number="30">
      Traitement de l'Insuffisance rénale chronique
     </div>
-    <div class="arretify-alinea" data-number="25">
+    <div class="arretify-alinea" data-number="31">
      <table>
       <thead>
        <tr>
@@ -900,13 +990,13 @@ adultes | 1 | 1 | 1 | NON  |
       </tbody>
      </table>
     </div>
-    <div class="arretify-alinea" data-number="26">
+    <div class="arretify-alinea" data-number="32">
      Zone de référence n°4
      <q>
       21-52
      </q>
     </div>
-    <div class="arretify-alinea" data-number="27">
+    <div class="arretify-alinea" data-number="33">
      <table>
       <thead>
        <tr>
@@ -941,172 +1031,172 @@ adultes | 1 | 1 | 1 | NON  |
        </tr>
       </tbody>
      </table>
-    </div>
-    <div class="arretify-alinea" data-number="28">
-     Activités de soins - Nombre d'implantations
-    </div>
-    <div class="arretify-alinea" data-number="29">
-     Traitement de l'Insuffisance rénale chronique
-    </div>
-    <div class="arretify-alinea" data-number="30">
-     <table>
-      <thead>
-       <tr>
-        <th>
-         Hémodialyse en centre pour adultes
-        </th>
-        <th>
-         1
-        </th>
-        <th>
-         1
-        </th>
-        <th>
-         1
-        </th>
-        <th>
-         NON
-        </th>
-       </tr>
-      </thead>
-      <tbody>
-       <tr>
-        <td>
-         Dialyse médicalisée
-        </td>
-        <td>
-         1
-        </td>
-        <td>
-         1
-        </td>
-        <td>
-         1
-        </td>
-        <td>
-         NON
-        </td>
-       </tr>
-       <tr>
-        <td>
-         Autodialyse
-        </td>
-        <td>
-         1
-        </td>
-        <td>
-         1
-        </td>
-        <td>
-         1
-        </td>
-        <td>
-         NON
-        </td>
-       </tr>
-       <tr>
-        <td>
-         Dialyse à domicile par hémodialyse ou par dialyse péritonéale
-        </td>
-        <td>
-         1
-        </td>
-        <td>
-         1
-        </td>
-        <td>
-         1
-        </td>
-        <td>
-         NON
-        </td>
-       </tr>
-      </tbody>
-     </table>
-    </div>
-    <div class="arretify-alinea" data-number="31">
-     Psychiatrie
-    </div>
-    <div class="arretify-alinea" data-number="32">
-     <table>
-      <thead>
-       <tr>
-        <th>
-         Adultes
-        </th>
-        <th>
-         1
-        </th>
-        <th>
-         1
-        </th>
-        <th>
-         1
-        </th>
-        <th>
-         NON
-        </th>
-       </tr>
-      </thead>
-      <tbody>
-       <tr>
-        <td>
-         Enfants et adolescents
-        </td>
-        <td>
-         0
-        </td>
-        <td>
-         0
-        </td>
-        <td>
-         1
-        </td>
-        <td>
-         OUI
-        </td>
-       </tr>
-       <tr>
-        <td>
-         Périnatale
-        </td>
-        <td>
-         0
-        </td>
-        <td>
-         0
-        </td>
-        <td>
-         1
-        </td>
-        <td>
-         OUI
-        </td>
-       </tr>
-       <tr>
-        <td>
-         Soins sans consentement
-        </td>
-        <td>
-         1
-        </td>
-        <td>
-         1
-        </td>
-        <td>
-         1
-        </td>
-        <td>
-         NON
-        </td>
-       </tr>
-      </tbody>
-     </table>
-    </div>
-    <div class="arretify-alinea" data-number="33">
-     Zone de référence n°5 Cœur Grand Est
     </div>
     <div class="arretify-alinea" data-number="34">
+     Activités de soins - Nombre d'implantations
+    </div>
+    <div class="arretify-alinea" data-number="35">
+     Traitement de l'Insuffisance rénale chronique
+    </div>
+    <div class="arretify-alinea" data-number="36">
+     <table>
+      <thead>
+       <tr>
+        <th>
+         Hémodialyse en centre pour adultes
+        </th>
+        <th>
+         1
+        </th>
+        <th>
+         1
+        </th>
+        <th>
+         1
+        </th>
+        <th>
+         NON
+        </th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr>
+        <td>
+         Dialyse médicalisée
+        </td>
+        <td>
+         1
+        </td>
+        <td>
+         1
+        </td>
+        <td>
+         1
+        </td>
+        <td>
+         NON
+        </td>
+       </tr>
+       <tr>
+        <td>
+         Autodialyse
+        </td>
+        <td>
+         1
+        </td>
+        <td>
+         1
+        </td>
+        <td>
+         1
+        </td>
+        <td>
+         NON
+        </td>
+       </tr>
+       <tr>
+        <td>
+         Dialyse à domicile par hémodialyse ou par dialyse péritonéale
+        </td>
+        <td>
+         1
+        </td>
+        <td>
+         1
+        </td>
+        <td>
+         1
+        </td>
+        <td>
+         NON
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+    <div class="arretify-alinea" data-number="37">
+     Psychiatrie
+    </div>
+    <div class="arretify-alinea" data-number="38">
+     <table>
+      <thead>
+       <tr>
+        <th>
+         Adultes
+        </th>
+        <th>
+         1
+        </th>
+        <th>
+         1
+        </th>
+        <th>
+         1
+        </th>
+        <th>
+         NON
+        </th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr>
+        <td>
+         Enfants et adolescents
+        </td>
+        <td>
+         0
+        </td>
+        <td>
+         0
+        </td>
+        <td>
+         1
+        </td>
+        <td>
+         OUI
+        </td>
+       </tr>
+       <tr>
+        <td>
+         Périnatale
+        </td>
+        <td>
+         0
+        </td>
+        <td>
+         0
+        </td>
+        <td>
+         1
+        </td>
+        <td>
+         OUI
+        </td>
+       </tr>
+       <tr>
+        <td>
+         Soins sans consentement
+        </td>
+        <td>
+         1
+        </td>
+        <td>
+         1
+        </td>
+        <td>
+         1
+        </td>
+        <td>
+         NON
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+    <div class="arretify-alinea" data-number="39">
+     Zone de référence n°5 Cœur Grand Est
+    </div>
+    <div class="arretify-alinea" data-number="40">
      <table>
       <thead>
        <tr>
@@ -1142,13 +1232,13 @@ adultes | 1 | 1 | 1 | NON  |
       </tbody>
      </table>
     </div>
-    <div class="arretify-alinea" data-number="35">
+    <div class="arretify-alinea" data-number="41">
      Activités de soins – Nombre d'implantations
     </div>
-    <div class="arretify-alinea" data-number="36">
+    <div class="arretify-alinea" data-number="42">
      Traitement de l'Insuffisance rénale chronique
     </div>
-    <div class="arretify-alinea" data-number="37">
+    <div class="arretify-alinea" data-number="43">
      <table>
       <thead>
        <tr>
@@ -1224,10 +1314,10 @@ adultes | 1 | 1 | 1 | NON  |
       </tbody>
      </table>
     </div>
-    <div class="arretify-alinea" data-number="38">
+    <div class="arretify-alinea" data-number="44">
      Psychiatrie
     </div>
-    <div class="arretify-alinea" data-number="39">
+    <div class="arretify-alinea" data-number="45">
      <table>
       <thead>
        <tr>
@@ -1303,10 +1393,10 @@ adultes | 1 | 1 | 1 | NON  |
       </tbody>
      </table>
     </div>
-    <div class="arretify-alinea" data-number="40">
+    <div class="arretify-alinea" data-number="46">
      Zone de référence n°6 Lorraine Nord
     </div>
-    <div class="arretify-alinea" data-number="41">
+    <div class="arretify-alinea" data-number="47">
      <table>
       <thead>
        <tr>
@@ -1338,13 +1428,13 @@ adultes | 1 | 1 | 1 | NON  |
       </tbody>
      </table>
     </div>
-    <div class="arretify-alinea" data-number="42">
+    <div class="arretify-alinea" data-number="48">
      Activités de soins – Nombre d'implantations
     </div>
-    <div class="arretify-alinea" data-number="43">
+    <div class="arretify-alinea" data-number="49">
      Traitement de l'Insuffisance rénale chronique
     </div>
-    <div class="arretify-alinea" data-number="44">
+    <div class="arretify-alinea" data-number="50">
      <table>
       <thead>
        <tr>
@@ -1420,10 +1510,10 @@ adultes | 1 | 1 | 1 | NON  |
       </tbody>
      </table>
     </div>
-    <div class="arretify-alinea" data-number="45">
+    <div class="arretify-alinea" data-number="51">
      Psychiatrie
     </div>
-    <div class="arretify-alinea" data-number="46">
+    <div class="arretify-alinea" data-number="52">
      <table>
       <thead>
        <tr>
@@ -1499,10 +1589,10 @@ adultes | 1 | 1 | 1 | NON  |
       </tbody>
      </table>
     </div>
-    <div class="arretify-alinea" data-number="47">
+    <div class="arretify-alinea" data-number="53">
      Zone de référence n° 7 Sud Lorraine
     </div>
-    <div class="arretify-alinea" data-number="48">
+    <div class="arretify-alinea" data-number="54">
      <table>
       <thead>
        <tr>
@@ -1554,13 +1644,13 @@ adultes | 1 | 1 | 1 | NON  |
       </tbody>
      </table>
     </div>
-    <div class="arretify-alinea" data-number="49">
+    <div class="arretify-alinea" data-number="55">
      Activités de soins - Nombre d'implantations
     </div>
-    <div class="arretify-alinea" data-number="50">
+    <div class="arretify-alinea" data-number="56">
      Traitement de l'Insuffisance rénale chronique
     </div>
-    <div class="arretify-alinea" data-number="51">
+    <div class="arretify-alinea" data-number="57">
      <table>
       <thead>
        <tr>
@@ -1723,10 +1813,10 @@ adultes | 1 | 1 | 1 | NON  |
       </tbody>
      </table>
     </div>
-    <div class="arretify-alinea" data-number="52">
+    <div class="arretify-alinea" data-number="58">
      Zone de référence n° 8 Vosges
     </div>
-    <div class="arretify-alinea" data-number="53">
+    <div class="arretify-alinea" data-number="59">
      <table>
       <thead>
        <tr>
@@ -1947,10 +2037,10 @@ adultes | 1 | 1 | 1 | NON  |
       </tbody>
      </table>
     </div>
-    <div class="arretify-alinea" data-number="54">
+    <div class="arretify-alinea" data-number="60">
      Zone de référence n°9 Moselle Est
     </div>
-    <div class="arretify-alinea" data-number="55">
+    <div class="arretify-alinea" data-number="61">
      <table>
       <thead>
        <tr>
@@ -1986,13 +2076,13 @@ adultes | 1 | 1 | 1 | NON  |
       </tbody>
      </table>
     </div>
-    <div class="arretify-alinea" data-number="56">
+    <div class="arretify-alinea" data-number="62">
      Activités de soins – Nombre d'implantations
     </div>
-    <div class="arretify-alinea" data-number="57">
+    <div class="arretify-alinea" data-number="63">
      Traitement de l'Insuffisance rénale chronique
     </div>
-    <div class="arretify-alinea" data-number="58">
+    <div class="arretify-alinea" data-number="64">
      <table>
       <thead>
        <tr>
@@ -2068,10 +2158,10 @@ adultes | 1 | 1 | 1 | NON  |
       </tbody>
      </table>
     </div>
-    <div class="arretify-alinea" data-number="59">
+    <div class="arretify-alinea" data-number="65">
      Psychiatrie
     </div>
-    <div class="arretify-alinea" data-number="60">
+    <div class="arretify-alinea" data-number="66">
      <table>
       <thead>
        <tr>
@@ -2147,10 +2237,10 @@ adultes | 1 | 1 | 1 | NON  |
       </tbody>
      </table>
     </div>
-    <div class="arretify-alinea" data-number="61">
+    <div class="arretify-alinea" data-number="67">
      Zone de référence n° 10 - Basse Alsace- Sud Moselle
     </div>
-    <div class="arretify-alinea" data-number="62">
+    <div class="arretify-alinea" data-number="68">
      <table>
       <thead>
        <tr>
@@ -2202,13 +2292,13 @@ adultes | 1 | 1 | 1 | NON  |
       </tbody>
      </table>
     </div>
-    <div class="arretify-alinea" data-number="63">
+    <div class="arretify-alinea" data-number="69">
      Activités de soins - Nombre d'implantations
     </div>
-    <div class="arretify-alinea" data-number="64">
+    <div class="arretify-alinea" data-number="70">
      Traitement de l'Insuffisance rénale chronique
     </div>
-    <div class="arretify-alinea" data-number="65">
+    <div class="arretify-alinea" data-number="71">
      <table>
       <thead>
        <tr>
@@ -2371,10 +2461,10 @@ adultes | 1 | 1 | 1 | NON  |
       </tbody>
      </table>
     </div>
-    <div class="arretify-alinea" data-number="66">
+    <div class="arretify-alinea" data-number="72">
      Zone de référence n° 11 Centre Alsace
     </div>
-    <div class="arretify-alinea" data-number="67">
+    <div class="arretify-alinea" data-number="73">
      <table>
       <thead>
        <tr>
@@ -2426,13 +2516,13 @@ adultes | 1 | 1 | 1 | NON  |
       </tbody>
      </table>
     </div>
-    <div class="arretify-alinea" data-number="68">
+    <div class="arretify-alinea" data-number="74">
      Activités de soins - Nombre d'implantations
     </div>
-    <div class="arretify-alinea" data-number="69">
+    <div class="arretify-alinea" data-number="75">
      Traitement de l'Insuffisance rénale chronique
     </div>
-    <div class="arretify-alinea" data-number="70">
+    <div class="arretify-alinea" data-number="76">
      <table>
       <thead>
        <tr>
@@ -2514,10 +2604,10 @@ adultes | 1 | 1 | 1 | NON  |
       </tbody>
      </table>
     </div>
-    <div class="arretify-alinea" data-number="71">
+    <div class="arretify-alinea" data-number="77">
      Psychiatrie
     </div>
-    <div class="arretify-alinea" data-number="72">
+    <div class="arretify-alinea" data-number="78">
      <table>
       <thead>
        <tr>
@@ -2593,10 +2683,10 @@ adultes | 1 | 1 | 1 | NON  |
       </tbody>
      </table>
     </div>
-    <div class="arretify-alinea" data-number="73">
+    <div class="arretify-alinea" data-number="79">
      Zone de référence n°12 - Haute Alsace
     </div>
-    <div class="arretify-alinea" data-number="74">
+    <div class="arretify-alinea" data-number="80">
      <table>
       <thead>
        <tr>
@@ -2632,13 +2722,13 @@ adultes | 1 | 1 | 1 | NON  |
       </tbody>
      </table>
     </div>
-    <div class="arretify-alinea" data-number="75">
+    <div class="arretify-alinea" data-number="81">
      Activités de soins – Nombre d'implantations
     </div>
-    <div class="arretify-alinea" data-number="76">
+    <div class="arretify-alinea" data-number="82">
      Traitement de l'Insuffisance rénale chronique
     </div>
-    <div class="arretify-alinea" data-number="77">
+    <div class="arretify-alinea" data-number="83">
      <table>
       <thead>
        <tr>
@@ -2714,10 +2804,10 @@ adultes | 1 | 1 | 1 | NON  |
       </tbody>
      </table>
     </div>
-    <div class="arretify-alinea" data-number="78">
+    <div class="arretify-alinea" data-number="84">
      Psychiatrie
     </div>
-    <div class="arretify-alinea" data-number="79">
+    <div class="arretify-alinea" data-number="85">
      <table>
       <thead>
        <tr>
@@ -2793,13 +2883,13 @@ adultes | 1 | 1 | 1 | NON  |
       </tbody>
      </table>
     </div>
-    <div class="arretify-alinea" data-number="80">
+    <div class="arretify-alinea" data-number="86">
      Partie 2: Objectifs quantitatifs par zone d'implantation pour le niveau de soins de recours
     </div>
-    <div class="arretify-alinea" data-number="81">
+    <div class="arretify-alinea" data-number="87">
      Zone de recours A-Ouest
     </div>
-    <div class="arretify-alinea" data-number="82">
+    <div class="arretify-alinea" data-number="88">
      <table>
       <thead>
        <tr>
@@ -2852,10 +2942,10 @@ adultes | 1 | 1 | 1 | NON  |
       </tbody>
      </table>
     </div>
-    <div class="arretify-alinea" data-number="83">
+    <div class="arretify-alinea" data-number="89">
      Traitement de l'Insuffisance rénale chronique
     </div>
-    <div class="arretify-alinea" data-number="84">
+    <div class="arretify-alinea" data-number="90">
      <table>
       <thead>
        <tr>
@@ -2925,10 +3015,10 @@ adultes | 1 | 1 | 1 | NON  |
       </tbody>
      </table>
     </div>
-    <div class="arretify-alinea" data-number="85">
+    <div class="arretify-alinea" data-number="91">
      Zone de recours B-Centre
     </div>
-    <div class="arretify-alinea" data-number="86">
+    <div class="arretify-alinea" data-number="92">
      <table>
       <thead>
        <tr>
@@ -2980,13 +3070,13 @@ adultes | 1 | 1 | 1 | NON  |
       </tbody>
      </table>
     </div>
-    <div class="arretify-alinea" data-number="87">
+    <div class="arretify-alinea" data-number="93">
      Activités de soins - Nombre d'implantations
     </div>
-    <div class="arretify-alinea" data-number="88">
+    <div class="arretify-alinea" data-number="94">
      Traitement de l'Insuffisance rénale chronique
     </div>
-    <div class="arretify-alinea" data-number="89">
+    <div class="arretify-alinea" data-number="95">
      <table>
       <thead>
        <tr>
@@ -3025,10 +3115,10 @@ adultes | 1 | 1 | 1 | NON  |
       </tbody>
      </table>
     </div>
-    <div class="arretify-alinea" data-number="90">
+    <div class="arretify-alinea" data-number="96">
      Greffes d'organes et greffes de cellules hématopoiétiques
     </div>
-    <div class="arretify-alinea" data-number="91">
+    <div class="arretify-alinea" data-number="97">
      <table>
       <thead>
        <tr>
@@ -3066,61 +3156,129 @@ adultes | 1 | 1 | 1 | NON  |
       </tbody>
      </table>
     </div>
-    <div class="arretify-alinea" data-number="92">
+    <div class="arretify-alinea" data-number="98">
      Zone de recours C-Est
     </div>
-    <div class="arretify-alinea" data-number="93">
-     <span class="arretify-error" data-error_codes="markdown_parsing">
-      |   | Au
-     </span>
-    </div>
-    <div class="arretify-alinea" data-number="94">
-     1er
-    </div>
-    <div class="arretify-alinea" data-number="95">
-     janvier
-    </div>
-    <div class="arretify-alinea" data-number="96">
-     <span class="arretify-error" data-error_codes="markdown_parsing">
-      2025 | Cible 2028
-Minimum | Cible 2028
-Maximum | Demandes
-     </span>
-    </div>
-    <div class="arretify-alinea" data-number="97">
-     d'implantations
-    </div>
-    <div class="arretify-alinea" data-number="98">
-     recevables dans la
-    </div>
     <div class="arretify-alinea" data-number="99">
-     fenêtre :
+     |   | Au
     </div>
     <div class="arretify-alinea" data-number="100">
-     <span class="arretify-error" data-error_codes="markdown_parsing">
-      OUI / NON  |
-| --- | --- | --- | --- | --- |
-|  |   |   |   |   |
-     </span>
+     1er
     </div>
     <div class="arretify-alinea" data-number="101">
-     Activités de soins - Nombre d'implantations
+     janvier
     </div>
     <div class="arretify-alinea" data-number="102">
-     Traitement de l'Insuffisance rénale chronique
+     2025 | Cible 2028
     </div>
     <div class="arretify-alinea" data-number="103">
-     <span class="arretify-error" data-error_codes="markdown_parsing">
-      |  Hémodialyse en centre pour
-enfants | 1 | 1 | 1 | NON  |
-| --- | --- | --- | --- | --- |
-|  |   |   |   |   |
-     </span>
+     Minimum | Cible 2028
     </div>
     <div class="arretify-alinea" data-number="104">
-     Greffes d'organes et greffes de cellules hématopoïétiques
+     Maximum | Demandes
     </div>
     <div class="arretify-alinea" data-number="105">
+     d'implantations
+    </div>
+    <div class="arretify-alinea" data-number="106">
+     recevables dans la
+    </div>
+    <div class="arretify-alinea" data-number="107">
+     fenêtre :
+    </div>
+    <div class="arretify-alinea" data-number="108">
+     OUI / NON  |
+    </div>
+    <div class="arretify-alinea" data-number="109">
+     <table>
+      <thead>
+       <tr>
+        <th>
+         ---
+        </th>
+        <th>
+         ---
+        </th>
+        <th>
+         ---
+        </th>
+        <th>
+         ---
+        </th>
+        <th>
+         ---
+        </th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+    <div class="arretify-alinea" data-number="110">
+     Activités de soins - Nombre d'implantations
+    </div>
+    <div class="arretify-alinea" data-number="111">
+     Traitement de l'Insuffisance rénale chronique
+    </div>
+    <div class="arretify-alinea" data-number="112">
+     |  Hémodialyse en centre pour
+    </div>
+    <div class="arretify-alinea" data-number="113">
+     enfants | 1 | 1 | 1 | NON  |
+    </div>
+    <div class="arretify-alinea" data-number="114">
+     <table>
+      <thead>
+       <tr>
+        <th>
+         ---
+        </th>
+        <th>
+         ---
+        </th>
+        <th>
+         ---
+        </th>
+        <th>
+         ---
+        </th>
+        <th>
+         ---
+        </th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+    <div class="arretify-alinea" data-number="115">
+     Greffes d'organes et greffes de cellules hématopoïétiques
+    </div>
+    <div class="arretify-alinea" data-number="116">
      <table>
       <thead>
        <tr>
@@ -3158,13 +3316,13 @@ enfants | 1 | 1 | 1 | NON  |
       </tbody>
      </table>
     </div>
-    <div class="arretify-alinea" data-number="106">
+    <div class="arretify-alinea" data-number="117">
      Partie 3: Objectifs quantitatifs par zone d'implantation pour le niveau de soins régional
     </div>
-    <div class="arretify-alinea" data-number="107">
+    <div class="arretify-alinea" data-number="118">
      Zone régionale Grand-Est
     </div>
-    <div class="arretify-alinea" data-number="108">
+    <div class="arretify-alinea" data-number="119">
      <table>
       <thead>
        <tr>

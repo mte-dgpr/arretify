@@ -18,9 +18,10 @@
 #
 import unittest
 
-from .markdown_parsing import is_table_line, is_table_description
-from arretify.parsing_utils.source_mapping import (
-    TextSegment,
+from .markdown_parsing import (
+    TABLE_LINE_PATTERN,
+    TABLE_HEADER_SEPARATOR_PATTERN,
+    is_table_description,
 )
 
 
@@ -40,17 +41,24 @@ class TestTableDetection(unittest.TestCase):
 Volume autorisé : blablabla.
 """  # noqa: E501
 
-    def test_is_table_line(self):
+    def test_table_line_pattern(self):
         # Arrange
         lines = self.TABLE_MD_1.split("\n")
 
         # Assert
         for line in lines[0:2]:
-            assert not is_table_line(line)
+            assert not bool(TABLE_LINE_PATTERN.match(line))
         for line in lines[2:6]:
-            assert is_table_line(line)
+            assert bool(TABLE_LINE_PATTERN.match(line))
         for line in lines[6:]:
-            assert not is_table_line(line)
+            assert not bool(TABLE_LINE_PATTERN.match(line))
+
+    def test_table_line_pattern_single_column(self):
+        # Arrange
+        line = "| Column |"
+
+        # Assert
+        assert bool(TABLE_LINE_PATTERN.match(line))
 
     def test_is_table_description(self):
         # Arrange
@@ -66,6 +74,9 @@ Volume autorisé : blablabla.
         assert not is_table_description(lines[10], pile)
         assert is_table_description(lines[11], pile)
 
+    def test_table_header_separator_pattern(self):
+        # Arrange
+        line = "| :--: | :--: | :--: | :--: | :--: | :--: |"
 
-def _make_text_segment(string: str) -> TextSegment:
-    return TextSegment(contents=string, start=(0, 0), end=(0, 0))
+        # Assert
+        assert bool(TABLE_HEADER_SEPARATOR_PATTERN.match(line)) is True

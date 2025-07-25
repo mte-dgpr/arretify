@@ -16,14 +16,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import List, Dict, Literal, cast
+from typing import List, Dict, Literal, cast, Iterator
 
 from bs4 import Tag, BeautifulSoup
 
-from arretify.utils.functional import flat_map_string
+from arretify.utils.functional import iter_func_to_list, chain_functions
 from arretify.parsing_utils.dates import DATE_NODE, render_date_regex_tree_match
 from arretify.utils.html import wrap_in_tag, make_data_tag, make_new_tag
-from arretify.types import TextSegments, TextSegment, PageElementOrString, DataElementSchema
+from arretify.types import TextSegment, PageElementOrString, DataElementSchema
 from arretify.parsing_utils.patterns import join_split_pile_with_pattern
 from arretify.html_schemas import (
     EMBLEM_SCHEMA,
@@ -42,21 +42,24 @@ from arretify.regex_utils import (
     join_with_or,
 )
 from .core import (
-    NodeFlow,
-    NodeList,
     Node,
-    flat_map_node_flow,
-    chain_flat_map_node_flow,
-    split_text_segments,
-    make_while_splitter,
-    map_splitted_text_segments,
+    NodeOrText,
+    split_elements,
+    SplitMatch,
+    make_while_splitter_for_text_segments,
+    map_splitted_elements,
     is_node,
-    assert_single_text_segments,
-    make_single_line_splitter,
+    make_single_line_splitter_for_text_segments,
     assert_single_text_segment,
+    assert_all_text_segments,
+    group_text_segments_splitter,
+    make_probe_from_pattern_proxy,
+    Probe,
+    INLINE_NODE_TYPES,
 )
 from .document_elements import (
     render_page_footer,
+    render_page_separator,
     render_table_of_contents,
 )
 from .basic_elements import parse_lists, render_image, render_list
@@ -180,9 +183,31 @@ HEADER_ELEMENTS_SCHEMAS: Dict[str, DataElementSchema] = dict(
     supplementary_motif_info=SUPPLEMENTARY_MOTIF_INFORMATION_SCHEMA,
 )
 
+HEADER_ELEMENTS_PROBES: Dict[str, Probe[NodeOrText]] = dict(
+    emblem=make_probe_from_pattern_proxy(EMBLEM_PATTERN),
+    identification=make_probe_from_pattern_proxy(IDENTIFICATION_PATTERN),
+    honorary=make_probe_from_pattern_proxy(HONORARY_PATTERN),
+    supplementary_motif_info=make_probe_from_pattern_proxy(SUPPLEMENTARY_MOTIF_INFORMATION_PATTERN),
+)
 
-def _is_nothing_else_than(name: str, t: TextSegment) -> bool:
-    return not any(
+HEADER_ELEMENTS_FUZZY_PROBES: Dict[str, Probe[NodeOrText]] = dict(
+    entity=make_probe_from_pattern_proxy(ENTITY_PATTERN),
+    arrete_title=make_probe_from_pattern_proxy(ARRETE_TITLE_PATTERN),
+)
+
+VISA_MOTIFS_PATTERNS: Dict[str, PatternProxy] = dict(
+    visa=VISA_PATTERN,
+    motif=MOTIF_PATTERN,
+)
+
+VISA_MOTIFS_PROBES: Dict[str, Probe[NodeOrText]] = dict(
+    visa=make_probe_from_pattern_proxy(VISA_PATTERN),
+    motif=make_probe_from_pattern_proxy(MOTIF_PATTERN),
+)
+
+
+def _is_nothing_else_than(name: str, t: NodeOrText) -> bool:
+    return isinstance(t, TextSegment) and not any(
         bool(HEADER_ELEMENTS_PATTERNS[other_name].match(t.contents))
         for other_name in HEADER_ELEMENTS_PATTERNS
         if other_name != name
@@ -190,10 +215,10 @@ def _is_nothing_else_than(name: str, t: TextSegment) -> bool:
 
 
 def parse_header(
-    node_flow: NodeFlow,
-) -> NodeFlow:
-    node_flow = chain_flat_map_node_flow(
-        node_flow,
+    elements: List[NodeOrText],
+) -> List[NodeOrText]:
+    elements = chain_functions(
+        elements,
         [
             parse_emblem_element,
             parse_entity_element,
@@ -210,163 +235,145 @@ def parse_header(
             parse_lists,
         ],
     )
-    node_flow = parse_visa_and_motif_elements(node_flow)
-    return node_flow
+    elements = parse_visa_and_motif_elements(elements)
+    return elements
 
 
 def _parse_header_element(
-    lines: TextSegments,
-    node_pattern: PatternProxy,
+    elements: List[NodeOrText],
     node_type: str,
-) -> NodeFlow:
+) -> List[NodeOrText]:
     """
     Generic function to parse header elements.
     It uses a simple regex pattern to detect the element start,
     and then gathers all following lines while the pattern still matches.
     """
-    return map_splitted_text_segments(
-        split_text_segments(
-            lines,
-            make_while_splitter(
-                lambda t: bool(node_pattern.match(t.contents)),
+    return map_splitted_elements(
+        split_elements(
+            elements,
+            make_while_splitter_for_text_segments(
+                HEADER_ELEMENTS_PROBES[node_type], HEADER_ELEMENTS_PROBES[node_type]
             ),
         ),
         lambda text_segments: Node(
             type=node_type,
-            children=[text_segments],
+            children=text_segments,
         ),
     )
 
 
 def _parse_header_element_fuzzy(
-    lines: TextSegments,
-    node_pattern: PatternProxy,
+    elements: List[NodeOrText],
     node_type: str,
-) -> NodeFlow:
+) -> List[NodeOrText]:
     """
     Generic function to parse header elements with a fuzzy match.
     It uses a regex pattern to find the start of the element,
     and then gathers all following lines that do not match another element.
     """
-    return map_splitted_text_segments(
-        split_text_segments(
-            lines,
-            make_while_splitter(
-                lambda t: _is_nothing_else_than(node_type, t),
-                start_is_matching=lambda t: bool(node_pattern.match(t.contents)),
+    return map_splitted_elements(
+        split_elements(
+            elements,
+            make_while_splitter_for_text_segments(
+                HEADER_ELEMENTS_FUZZY_PROBES[node_type],
+                lambda elements, index: _is_nothing_else_than(node_type, elements[index]),
             ),
         ),
         lambda text_segments: Node(
             type=node_type,
-            children=[text_segments],
+            children=text_segments,
         ),
     )
 
 
 def parse_emblem_element(
-    lines: TextSegments,
-) -> NodeFlow:
-    return _parse_header_element(lines, EMBLEM_PATTERN, "emblem")
+    elements: List[NodeOrText],
+) -> List[NodeOrText]:
+    return _parse_header_element(elements, "emblem")
 
 
 def parse_entity_element(
-    lines: TextSegments,
-) -> NodeFlow:
+    elements: List[NodeOrText],
+) -> List[NodeOrText]:
     return _parse_header_element_fuzzy(
-        lines,
-        ENTITY_PATTERN,
+        elements,
         "entity",
     )
 
 
 def parse_identification_element(
-    lines: TextSegments,
-) -> NodeFlow:
-    return _parse_header_element(lines, IDENTIFICATION_PATTERN, "identification")
+    elements: List[NodeOrText],
+) -> List[NodeOrText]:
+    return _parse_header_element(elements, "identification")
 
 
 def parse_arrete_title_element(
-    lines: TextSegments,
-) -> NodeFlow:
+    elements: List[NodeOrText],
+) -> List[NodeOrText]:
     return _parse_header_element_fuzzy(
-        lines,
-        ARRETE_TITLE_PATTERN,
+        elements,
         "arrete_title",
     )
 
 
 def parse_honorary_element(
-    lines: TextSegments,
-) -> NodeFlow:
-    return _parse_header_element(lines, HONORARY_PATTERN, "honorary")
+    elements: List[NodeOrText],
+) -> List[NodeOrText]:
+    return _parse_header_element(elements, "honorary")
 
 
 def parse_supplementary_motif_info_element(
-    lines: TextSegments,
-) -> NodeFlow:
+    elements: List[NodeOrText],
+) -> List[NodeOrText]:
     return _parse_header_element(
-        lines,
-        SUPPLEMENTARY_MOTIF_INFORMATION_PATTERN,
+        elements,
         "supplementary_motif_info",
     )
 
 
 def parse_visa_and_motif_elements(
-    node_flow: NodeFlow,
-) -> NodeFlow:
-    node_flow = list(_parse_visa_and_motif_elements_pass1(node_flow, "visa", VISA_PATTERN))
-    node_flow = list(_parse_visa_and_motif_elements_pass1(node_flow, "motif", MOTIF_PATTERN))
-    node_flow = list(
-        _parse_visa_and_motif_elements_pass2(
-            node_flow,
-            node_type="visa",
-            node_pattern=VISA_PATTERN,
-        )
+    elements: List[NodeOrText],
+) -> List[NodeOrText]:
+    elements = _parse_visa_and_motif_elements_pass1(elements, "visa")
+    elements = _parse_visa_and_motif_elements_pass1(elements, "motif")
+    elements = _parse_visa_and_motif_elements_pass2(
+        elements,
+        node_type="visa",
     )
-    node_flow = list(
-        _parse_visa_and_motif_elements_pass3(
-            node_flow,
-            node_type="visa",
-        )
+    elements = _parse_visa_and_motif_elements_pass3(
+        elements,
+        node_type="visa",
     )
-    node_flow = list(
-        _parse_visa_and_motif_elements_pass2(
-            node_flow,
-            node_type="motif",
-            node_pattern=MOTIF_PATTERN,
-        )
+    elements = _parse_visa_and_motif_elements_pass2(
+        elements,
+        node_type="motif",
     )
-    node_flow = list(
-        _parse_visa_and_motif_elements_pass3(
-            node_flow,
-            node_type="motif",
-        )
+    elements = _parse_visa_and_motif_elements_pass3(
+        elements,
+        node_type="motif",
     )
-    return node_flow
+    return elements
 
 
+@iter_func_to_list
 def _parse_visa_and_motif_elements_pass1(
-    node_flow: NodeFlow,
+    elements: List[NodeOrText],
     node_type: Literal["visa", "motif"],
-    node_pattern: PatternProxy,
-) -> NodeFlow:
+) -> Iterator[NodeOrText]:
     """
     Pass 1 of parsing visa and motif elements.
     This pass splits the node flow into segments based on the node pattern.
     It creates nodes of type 'visa' or 'motif' for each segment that matches
     the pattern.
     """
-    node_flow = flat_map_node_flow(
-        node_flow,
-        lambda lines: map_splitted_text_segments(
-            split_text_segments(
-                lines,
-                make_single_line_splitter(lambda t: bool(node_pattern.match(t.contents))),
-            ),
-            lambda text_segments: Node(
-                type=node_type,
-                children=[text_segments],
-            ),
+    elements = map_splitted_elements(
+        split_elements(
+            elements,
+            make_single_line_splitter_for_text_segments(VISA_MOTIFS_PROBES[node_type]),
+        ),
+        lambda text_segments: Node(
+            type=node_type,
+            children=text_segments,
         ),
     )
 
@@ -376,26 +383,37 @@ def _parse_visa_and_motif_elements_pass1(
     # Should have been parsed into list nodes.
     # Therefore, we must convert list nodes that contain visas and motifs
     # into visa or motif nodes.
-    for node_or_text_segments in node_flow:
-        if is_node(node_or_text_segments, type_in=["list"]):
-            lines = assert_single_text_segments(node_or_text_segments)
-            if bool(node_pattern.match(lines[0].contents)):
-                for line in lines:
+    for element in elements:
+        is_list_of_visas_or_motifs = False
+        if is_node(element, type_in=["list"]):
+            text_segments: List[NodeOrText] = [
+                child for child in element.children if isinstance(child, TextSegment)
+            ]
+            is_list_of_visas_or_motifs = len(text_segments) > 0 and VISA_MOTIFS_PROBES[node_type](
+                text_segments, 0
+            )
+
+        if is_list_of_visas_or_motifs:
+            assert is_node(element)
+            for list_item_element in element.children:
+                if is_node(list_item_element):
+                    yield list_item_element
+                elif isinstance(list_item_element, TextSegment):
                     yield Node(
                         type=node_type,
-                        children=[[line]],
+                        children=[list_item_element],
                     )
-            else:
-                yield node_or_text_segments
+                else:
+                    raise ValueError(f"Unexpected element {list_item_element}")
         else:
-            yield node_or_text_segments
+            yield element
 
 
+@iter_func_to_list
 def _parse_visa_and_motif_elements_pass2(
-    node_flow: NodeFlow,
+    elements: List[NodeOrText],
     node_type: Literal["visa", "motif"],
-    node_pattern: PatternProxy,
-) -> NodeFlow:
+) -> Iterator[NodeOrText]:
     """
     Pass 2 of parsing visa and motif elements.
     This pass processes the node flow to find the first node of type
@@ -403,43 +421,50 @@ def _parse_visa_and_motif_elements_pass2(
     types of variants for formatting the visas or motifs, and normalizes
     the node flow accordingly.
     """
-    next_node: Node | TextSegments
-    node_list: NodeList = list(node_flow)
+    element: NodeOrText
+    elements = list(elements)
 
     # Skip nodes until we find the first node of type 'visa' or 'motif'.
-    while node_list and not is_node(node_list[0], type_in=[node_type]):
-        yield node_list.pop(0)
-    if not node_list:
+    while elements and not is_node(elements[0], type_in=[node_type]):
+        yield elements.pop(0)
+    if not elements:
         return
-    first_node = node_list.pop(0)
+    first_node = elements.pop(0)
     assert is_node(first_node, type_in=[node_type])
 
-    first_node_match = node_pattern.match(assert_single_text_segment(first_node).contents)
+    first_node_match = VISA_MOTIFS_PATTERNS[node_type].match(
+        assert_single_text_segment(first_node).contents
+    )
     # 1. Variant "simple" :
     #   Vu que blabla
     #   Vu que bloblo
     if first_node_match and first_node_match.group("contents"):
+        # Here we yield only the first node, since
+        # the rest of the elements will be yielded below.
         yield first_node
 
     # 2. Variant "explicit list" :
     #   Vu :
     #   - blabla
     #   - bloblo
-    elif node_list and is_node(node_list[0], type_in=["list"]):
+    elif elements and is_node(elements[0], type_in=["list"]):
         # Add the "Vu :" to the header
         yield from first_node.children
-        while node_list:
-            next_node = node_list[0]
-            if is_node(next_node, type_in=["page_footer"]) or isinstance(next_node, list):
-                yield node_list.pop(0)
+        while elements:
+            element = elements[0]
+            if is_node(element, type_in=INLINE_NODE_TYPES) or isinstance(element, TextSegment):
+                yield elements.pop(0)
 
-            elif is_node(next_node, type_in=["list"]):
-                node_list.pop(0)
-                for line in assert_single_text_segments(next_node):
-                    yield Node(
-                        type=node_type,
-                        children=[[line]],
-                    )
+            elif is_node(element, type_in=["list"]):
+                elements.pop(0)
+                for list_item_element in element.children:
+                    if is_node(list_item_element):
+                        yield list_item_element
+                    elif isinstance(list_item_element, TextSegment):
+                        yield Node(
+                            type=node_type,
+                            children=[list_item_element],
+                        )
             else:
                 break
 
@@ -450,86 +475,117 @@ def _parse_visa_and_motif_elements_pass2(
     else:
         # Add the "Vu :" to the header
         yield from first_node.children
-        while node_list:
-            next_node = node_list[0]
-            if is_node(next_node, type_in=["page_footer", "list"]):
-                yield node_list.pop(0)
+        while elements:
+            element = elements[0]
 
-            elif isinstance(next_node, list):
-                node_list.pop(0)
-                for line in next_node:
-                    yield Node(
-                        type=node_type,
-                        children=[[line]],
-                    )
+            # Lists will be handled in the next pass and appended to the visa or motif node
+            # if applicable.
+            if is_node(element, type_in=["list", *INLINE_NODE_TYPES]):
+                yield elements.pop(0)
+
+            elif isinstance(element, TextSegment):
+                yield Node(
+                    type=node_type,
+                    children=[elements.pop(0)],
+                )
             else:
                 break
 
-    yield from node_list
+    yield from elements
 
 
+@iter_func_to_list
 def _parse_visa_and_motif_elements_pass3(
-    node_flow: NodeFlow,
+    elements: List[NodeOrText],
     node_type: Literal["visa", "motif"],
-) -> NodeFlow:
+) -> Iterator[NodeOrText]:
     """
     Pass 3 of parsing visa and motif elements.
     Merges the nodes of type 'visa' or 'motif' with the next node
     if the next node is a list. This is done to ensure that the
     visa or motif node contains all its children.
     """
-    node_list: NodeList = list(node_flow)
-    while node_list:
-        node_or_text_segments = node_list.pop(0)
-        if is_node(node_or_text_segments, type_in=[node_type]):
-            if node_list and is_node(node_list[0], type_in=["list"]):
-                node_or_text_segments.children.append(node_list.pop(0))
-            yield node_or_text_segments
+    elements = list(elements)
+
+    while elements:
+        element = elements.pop(0)
+        if is_node(element, type_in=[node_type]):
+            inline_nodes_pile: List[Node] = []
+            while elements and is_node(elements[0], type_in=INLINE_NODE_TYPES):
+                inline_nodes_pile.append(elements[0])
+                elements.pop(0)
+
+            if elements and is_node(elements[0], type_in=["list"]):
+                if inline_nodes_pile:
+                    element.children.extend(inline_nodes_pile)
+                element.children.append(elements.pop(0))
+                yield element
+
+            else:
+                yield element
+                yield from inline_nodes_pile
+
         else:
-            yield node_or_text_segments
+            yield element
 
 
 def render_header(
     soup: BeautifulSoup,
-    node_flow: NodeFlow,
+    elements: List[NodeOrText],
 ) -> Tag:
     content = soup.new_tag("div")
-    for node in node_flow:
-        if is_node(node, type_in=["arrete_title"]):
-            content.append(rendre_arrete_title(soup, node))
-        elif is_node(node, type_in=["visa", "motif"]):
-            content.append(render_visa_motif(soup, node))
+    for element in elements:
+        if is_node(element, type_in=["arrete_title"]):
+            content.append(rendre_arrete_title(soup, element))
+        elif is_node(element, type_in=["visa", "motif"]):
+            content.append(render_visa_motif(soup, element))
         # All header elements other than the ones above
         # are treated in a generic way.
-        elif is_node(node, type_in=list(HEADER_ELEMENTS_SCHEMAS.keys())):
-            content.append(render_header_elements(soup, node))
-        elif is_node(node, type_in=["table_of_contents"]):
-            content.append(render_table_of_contents(soup, node))
-        elif is_node(node, type_in=["page_footer"]):
-            content.append(render_page_footer(soup, node))
-        elif is_node(node, type_in=["image"]):
-            content.extend(render_image(soup, node))
-        elif is_node(node, type_in=["list"]):
-            content.extend(render_list(soup, node))
+        elif is_node(element, type_in=list(HEADER_ELEMENTS_SCHEMAS.keys())):
+            content.append(render_header_element(soup, element))
+        elif is_node(element, type_in=["table_of_contents"]):
+            content.append(render_table_of_contents(soup, element))
+        elif is_node(element, type_in=["page_separator"]):
+            content.append(render_page_separator(soup, element))
+        elif is_node(element, type_in=["page_footer"]):
+            content.append(render_page_footer(soup, element))
+        elif is_node(element, type_in=["image"]):
+            content.append(render_image(soup, element))
+        elif is_node(element, type_in=["list"]):
+            content.append(render_list(soup, element))
 
-        elif is_node(node):
-            raise ValueError(f"Unexpected node {node.type} in content")
+        elif is_node(element):
+            raise ValueError(f"Unexpected node {element.type} in content")
 
-        elif isinstance(node, list):
-            content.extend(wrap_in_tag(soup, [t.contents for t in node], "div"))
+        elif isinstance(element, TextSegment):
+            content.extend(wrap_in_tag(soup, [element.contents], "div"))
     return content
 
 
-def render_header_elements(
+def render_header_element(
     soup: BeautifulSoup,
     node: Node,
 ) -> Tag:
-    lines = assert_single_text_segments(node)
-    elements_str: List[str] = [t.contents for t in lines]
-    elements: List[PageElementOrString] = cast(List[PageElementOrString], elements_str)
+    elements: List[PageElementOrString] = []
     pattern = HEADER_ELEMENTS_RENDER_PATTERNS[node.type]
-    if pattern is not None:
-        elements = join_split_pile_with_pattern(elements_str, pattern)
+
+    for splitted_element in split_elements(
+        node.children,
+        group_text_segments_splitter,
+    ):
+        if isinstance(splitted_element, SplitMatch):
+            strings = [t.contents for t in splitted_element.value]
+            if pattern is not None:
+                elements.extend(join_split_pile_with_pattern(strings, pattern))
+            else:
+                elements.extend(strings)
+
+        elif is_node(cast(Node, splitted_element.value), type_in=["page_separator"]):
+            elements.append(render_page_separator(soup, cast(Node, splitted_element.value)))
+
+        else:
+            raise ValueError(f"Unexpected element {splitted_element.value} in header elements")
+
     return make_data_tag(
         soup,
         HEADER_ELEMENTS_SCHEMAS[node.type],
@@ -543,13 +599,15 @@ def render_visa_motif(
 ) -> Tag:
     assert is_node(node, type_in=["visa", "motif"])
     elements: List[PageElementOrString] = []
-    for node_or_text_segments in node.children:
-        if is_node(node_or_text_segments, type_in=["list"]):
-            elements.extend(render_list(soup, node_or_text_segments))
-        elif isinstance(node_or_text_segments, list):
-            elements.extend(t.contents for t in node_or_text_segments)
+    for element in node.children:
+        if is_node(element, type_in=["list"]):
+            elements.append(render_list(soup, element))
+        elif is_node(element, type_in=["page_separator"]):
+            elements.append(render_page_separator(soup, element))
+        elif isinstance(element, TextSegment):
+            elements.append(element.contents)
         else:
-            raise ValueError(f"Unexpected node {node_or_text_segments.type} in visa/motif contents")
+            raise ValueError(f"Unexpected node {element.type} in visa/motif contents")
     return make_data_tag(
         soup,
         HEADER_ELEMENTS_SCHEMAS[node.type],
@@ -561,18 +619,12 @@ def rendre_arrete_title(
     soup: BeautifulSoup,
     node: Node,
 ) -> Tag:
-    lines = assert_single_text_segments(node)
-    elements: List[PageElementOrString] = join_split_pile_with_pattern(
-        [t.contents for t in lines], ARRETE_TITLE_PATTERN
-    )
+    string = " ".join([element.contents for element in assert_all_text_segments(node)])
     elements = list(
-        flat_map_string(
-            elements,
-            lambda string: map_regex_tree_match(
-                split_string_with_regex_tree(DATE_NODE, string),
-                lambda date_match: render_date_regex_tree_match(soup, date_match),
-                allowed_group_names=["__date"],
-            ),
+        map_regex_tree_match(
+            split_string_with_regex_tree(DATE_NODE, string),
+            lambda date_match: render_date_regex_tree_match(soup, date_match),
+            allowed_group_names=["__date"],
         )
     )
     return make_data_tag(

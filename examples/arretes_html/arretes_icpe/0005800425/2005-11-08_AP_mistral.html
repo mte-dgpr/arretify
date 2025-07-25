@@ -44,6 +44,21 @@
                 color: var(--warning-425-625);
             }
 
+            .arretify-visual_page_separator {
+                position: absolute;
+                left: 0;
+                width: 100vw;
+                height: 0.3em;
+                background-color: var(--grey-950-100);
+                z-index: -1;
+            }
+
+            a.arretify-visual_page_separator > span {
+                position: absolute;
+                font-size: 75%;
+                color: var(--grey-625-425);
+            }
+
             /**************** HEADER ****************/
             header {
                 padding-bottom: var(--spacing-1);
@@ -110,9 +125,45 @@
                 background-color: var(--background-action-low-blue-france);
             }
   </style>
+  <script>
+   window.onload = function() {
+                // Page separators are inline elements, so they can be anywhere in the tree.
+                // To ensure proper layout, we therefore create a separate visual element
+                // for each page separator.
+                const pageSeparators = Array.from(document.querySelectorAll('.arretify-page_separator'))
+                
+                const refreshPageSeparator = () => {
+                    document.querySelectorAll('.arretify-visual_page_separator')
+                        .forEach((visualPageSeparator) => visualPageSeparator.remove())
+                    pageSeparators.slice(1).forEach(function(pageSeparator) {
+                        const boundingBox = pageSeparator.getBoundingClientRect()
+                        const position = getPositionRelativeToDocument(pageSeparator)
+                        const pageIndex = parseInt(pageSeparator.dataset.page_index, 10)
+                        const visualPageSeparator = document.createElement('a')
+                        visualPageSeparator.classList.add('arretify-visual_page_separator')
+                        visualPageSeparator.style.top = `${position.top + boundingBox.height}px`
+                        visualPageSeparator.innerHTML = `<span>↓ page ${pageIndex + 1}</span>`
+                        document.body.appendChild(visualPageSeparator)
+                    })
+                }
+
+                refreshPageSeparator()
+                window.addEventListener('resize', refreshPageSeparator)
+            }
+
+            const getPositionRelativeToDocument = (el) => {
+                const rect = el.getBoundingClientRect()
+                return {
+                    left: rect.left + window.scrollX,
+                    top: rect.top + window.scrollY,
+                }
+            }
+  </script>
  </head>
  <body>
   <header class="arretify-header">
+   <a class="arretify-page_separator" data-page_index="0">
+   </a>
    <div class="arretify-entity">
     <div>
      PREFECTURE DE L'EURE
@@ -245,6 +296,8 @@
      </a>
      à poursuivre ses activités de fabrication et de transformation de mousse de polyuréthane dans son usine de LOUVIERS.
     </div>
+    <a class="arretify-page_separator" data-page_index="1">
+    </a>
     <section class="arretify-section" data-number="1" data-title="OBJET " data-type="unknown">
      <h3 class="arretify-section_title">
       1. OBJET
@@ -444,6 +497,8 @@
          </td>
          <td style="text-align: center;">
           D
+          <a class="arretify-page_separator" data-page_index="2">
+          </a>
          </td>
         </tr>
         <tr>
@@ -705,6 +760,8 @@
      <h3 class="arretify-section_title">
       2.6. Dossier installation classée
      </h3>
+     <a class="arretify-page_separator" data-page_index="3">
+     </a>
      <div class="arretify-alinea" data-number="1">
       L'exploitant doit établir et tenir à jour un dossier comportant les documents suivants :
      </div>
@@ -882,6 +939,8 @@
       <h4 class="arretify-section_title">
        3.1.1. Prévention des pollutions accidentelles
       </h4>
+      <a class="arretify-page_separator" data-page_index="4">
+      </a>
       <div class="arretify-alinea" data-number="1">
        L'ensemble des installations doit être conçu, réalisé, entretenu et exploité de façon qu'il ne puisse y avoir, même en cas d'accident, de déversement direct ou indirect de matières dangereuses, toxiques ou polluantes pour l'environnement vers les égouts ou le milieu naturel.
       </div>
@@ -975,6 +1034,8 @@
         </li>
        </ul>
       </div>
+      <a class="arretify-page_separator" data-page_index="5">
+      </a>
       <div class="arretify-alinea" data-number="4">
        Lorsque le stockage est constitué exclusivement de récipients de capacité unitaire inférieure ou égale à 250 litres, admis au transport, le volume minimal de la rétention est égal soit à la capacité totale des récipients si cette capacité est inférieure à 800 litres, soit à 20 % de la capacité totale avec un minimum de 800 litres si cette capacité excède 800 litres.
       </div>
@@ -1056,6 +1117,8 @@
       <div class="arretify-alinea" data-number="1">
        Le rejet direct ou indirect d'eaux résiduaires même traitées dans une nappe souterraine est interdit.
       </div>
+      <a class="arretify-page_separator" data-page_index="6">
+      </a>
      </section>
      <section class="arretify-section" data-number="3.1.13" data-title="Eaux pluviales " data-type="unknown">
       <h4 class="arretify-section_title">
@@ -1137,6 +1200,8 @@
       <div class="arretify-alinea" data-number="5">
        Les installations de traitement doivent être conçues, exploitées et entretenues de manière à réduire les durées d'indisponibilité pendant lesquelles elles ne peuvent assurer pleinement leur fonction. En cas d'indisponibilité momentanée de ces installations de traitement conduisant à un dépassement des valeurs limites imposées, l'exploitant doit prendre dans les meilleurs délais les dispositions nécessaires pour respecter à nouveau ces valeurs, en réduisant ou en arrêtant si besoin les fabrications concernées.
       </div>
+      <a class="arretify-page_separator" data-page_index="7">
+      </a>
      </section>
      <section class="arretify-section" data-number="3.2.4" data-title="Évacuation - Diffusion " data-type="unknown">
       <h4 class="arretify-section_title">
@@ -1254,6 +1319,8 @@
         </li>
         <li>
          - les véhicules sortant de l'installation ne doivent pas entraîner de dépôt de poussière ou de boue sur les voies de circulation. Pour cela, des dispositions telles que le lavage des roues des véhicules doivent être prévues en cas de besoin,
+         <a class="arretify-page_separator" data-page_index="8">
+         </a>
         </li>
         <li>
          - les surfaces où cela est possible doivent être engæonnées,
@@ -1359,6 +1426,8 @@
       <h4 class="arretify-section_title">
        3.3.4. Élimination
       </h4>
+      <a class="arretify-page_separator" data-page_index="9">
+      </a>
       <div class="arretify-alinea" data-number="1">
        Les déchets industriels sont éliminés dans des installations régulièrement autorisées au titre premier du livre V du
        <a class="arretify-document_reference" data-id="LEGITEXT000006074220" data-title="Code de l'environnement" data-type="code" href="https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006074220">
@@ -1559,6 +1628,8 @@
       <div class="arretify-alinea" data-number="3">
        Dans le cas de cession des déchets à un tiers, celle-ci doit faire l'objet d'un contrat.
       </div>
+      <a class="arretify-page_separator" data-page_index="10">
+      </a>
      </section>
     </section>
     <section class="arretify-section" data-number="3.4" data-title="PRÉVENTION DES NUISANCES SONORES " data-type="unknown">
@@ -1695,6 +1766,8 @@
       <h4 class="arretify-section_title">
        3.4.6. Émergences admissibles
       </h4>
+      <a class="arretify-page_separator" data-page_index="11">
+      </a>
       <div class="arretify-alinea" data-number="1">
        Les émissions sonores de l'installation ne doivent pas engendrer une émergence supérieure aux valeurs admissibles fixées dans le tableau ci-après, dans les zones d'émergence réglementées telles que définies dans l'
        <a class="arretify-document_reference" data-date="1997-01-23" data-type="arrete-ministeriel">
@@ -1862,6 +1935,8 @@
       </a>
       .
      </div>
+     <a class="arretify-page_separator" data-page_index="12">
+     </a>
      <div class="arretify-alinea" data-number="7">
       Un recensement actualisé est transmis au préfet avant le 31 décembre de chaque année.
      </div>
@@ -2120,6 +2195,8 @@
      <div class="arretify-alinea" data-number="6">
       ZONE Z1 : Cette zone ne devrait pas avoir vocation à la construction ou à l'installation d'autre locaux nouveaux habités ou occupés par des tiers ou de voies de circulation nouvelles autres que ceux ou celles nécessaires à la desserte ou à l'exploitation des installations industrielles. Au sein de cette zone, il conviendrait de
      </div>
+     <a class="arretify-page_separator" data-page_index="14">
+     </a>
      <div class="arretify-alinea" data-number="7">
       ne pas augmenter le nombre de personnes présentes par de nouvelles implantations, hors de l'activité engendrant cette zone, des activités connexes, des industries mettant en cuvre des produits ou procédés de nature voisine et à faible densité d'emploi.
      </div>
@@ -2233,6 +2310,8 @@
       <div class="arretify-alinea" data-number="2">
        Ces travaux ne peuvent s'effectuer qu'en respectant les règles définies par une consigne particulière établie sous la responsabilité de l'exploitant et jointe au permis de feu ou d'intervention.
       </div>
+      <a class="arretify-page_separator" data-page_index="15">
+      </a>
       <div class="arretify-alinea" data-number="3">
        Cette consigne définit les conditions de préparation, d'exécution des travaux ainsi que celles de remise en service des installations.
       </div>
@@ -2313,6 +2392,8 @@
      <div class="arretify-alinea" data-number="2">
       Le matériel électrique utilisé doit être approprié aux risques inhérents aux activités exercées. Si l'installation ou l'appareillage conditionnant la sécurité ne peuvent être mis en position de sécurité en cas de défaillance de l'alimentation
      </div>
+     <a class="arretify-page_separator" data-page_index="16">
+     </a>
      <div class="arretify-alinea" data-number="3">
       électrique normale, l'exploitant s'assurera de la disponibilité de l'alimentation électrique de secours et cela particulièrement à la suite de conditions météorologiques extrêmes (foudre, températures extrêmes, etc.).
      </div>
@@ -2418,6 +2499,8 @@
      <h3 class="arretify-section_title">
       4.14. Postes de chargement-déchargement
      </h3>
+     <a class="arretify-page_separator" data-page_index="17">
+     </a>
      <div class="arretify-alinea" data-number="1">
       Les aires de stationnement, de chargement ou de déchargement de véhicules transportant des matières toxiques ou dangereuses sont étanches, imperméables et incombustibles. Elles sont associées à une cuvette de rétention capable de recueillir tout écoulement accidentel (cf. 3.1.5.)
      </div>
@@ -2515,6 +2598,8 @@
       <div class="arretify-alinea" data-number="4">
        En cas de sinistre, les services d'intervention devront pouvoir utiliser le poteau incendie situé sur le site de l'entreprise Barry Callebaut près de la clôture mitoyenne qui fournit un débit supplémentaire de 117 m³ / h et qui est connecté au réseau DN 350, ainsi que le poteau incendie situé Voie de l'Ouvrage qui fournit 190 m³ / h.
       </div>
+      <a class="arretify-page_separator" data-page_index="18">
+      </a>
       <div class="arretify-alinea" data-number="5">
        Les bâtiments de production et de stockage à l'exception du bâtiment 09 et des trois tentes sont équipés d'un réseau d'extinction automatique à l'eau, alimenté à partir d'une réserve d'eau de 140 m³ équipée de 2 pompes utilisant deux sources d'énergie distinctes.
       </div>
@@ -2627,6 +2712,8 @@
        </li>
       </ul>
      </div>
+     <a class="arretify-page_separator" data-page_index="19">
+     </a>
      <div class="arretify-alinea" data-number="5">
       * les mesures prises en matière d'élimination de produits dangereux résiduels et déchets;
      </div>

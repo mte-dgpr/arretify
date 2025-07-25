@@ -21,7 +21,7 @@ from pathlib import Path
 
 from bs4 import BeautifulSoup
 
-from .parsing_utils.source_mapping import initialize_lines
+from .parsing_utils.source_mapping import initialize_page, initialize_pages
 from .types import DocumentContext, SessionContext
 from .settings import DEFAULT_ARRETE_TEMPLATE, OCR_FILE_EXTENSION
 from .step_segmentation import step_segmentation
@@ -67,18 +67,18 @@ def load_ocr_file(
     input_path: Path,
     arrete_template: str = DEFAULT_ARRETE_TEMPLATE,
 ) -> DocumentContext:
-    raw_lines: List[str] = []
+    page_ocr: str
 
     if not input_path.is_file():
         raise ValueError(f"Input path {input_path} is not a file.")
 
     with open(input_path, "r", encoding="utf-8") as f:
-        raw_lines = f.readlines()
+        page_ocr = f.read()
 
     return DocumentContext.from_session_context(
         session_context,
         filename=input_path.stem,
-        lines=initialize_lines(raw_lines),
+        lines=initialize_page(page_ocr, 0),
         soup=BeautifulSoup(arrete_template, features="html.parser"),
     )
 
@@ -88,20 +88,19 @@ def load_ocr_pages(
     input_path: Path,
     arrete_template: str = DEFAULT_ARRETE_TEMPLATE,
 ) -> DocumentContext:
-    raw_lines: List[str] = []
-
     if not input_path.is_dir():
         raise ValueError(f"Input path {input_path} is not a directory.")
 
     file_paths = sorted(input_path.glob(f"*{OCR_FILE_EXTENSION}"), key=lambda p: int(p.stem))
+    pages_ocr: List[str] = []
     for file_path in file_paths:
         with open(file_path, "r", encoding="utf-8") as file:
-            raw_lines.extend(file.readlines())
+            pages_ocr.append(file.read())
 
     return DocumentContext.from_session_context(
         session_context,
         filename=input_path.name,
-        lines=initialize_lines(raw_lines),
+        lines=initialize_pages(pages_ocr),
         soup=BeautifulSoup(arrete_template, features="html.parser"),
     )
 

@@ -44,6 +44,21 @@
                 color: var(--warning-425-625);
             }
 
+            .arretify-visual_page_separator {
+                position: absolute;
+                left: 0;
+                width: 100vw;
+                height: 0.3em;
+                background-color: var(--grey-950-100);
+                z-index: -1;
+            }
+
+            a.arretify-visual_page_separator > span {
+                position: absolute;
+                font-size: 75%;
+                color: var(--grey-625-425);
+            }
+
             /**************** HEADER ****************/
             header {
                 padding-bottom: var(--spacing-1);
@@ -110,9 +125,45 @@
                 background-color: var(--background-action-low-blue-france);
             }
   </style>
+  <script>
+   window.onload = function() {
+                // Page separators are inline elements, so they can be anywhere in the tree.
+                // To ensure proper layout, we therefore create a separate visual element
+                // for each page separator.
+                const pageSeparators = Array.from(document.querySelectorAll('.arretify-page_separator'))
+                
+                const refreshPageSeparator = () => {
+                    document.querySelectorAll('.arretify-visual_page_separator')
+                        .forEach((visualPageSeparator) => visualPageSeparator.remove())
+                    pageSeparators.slice(1).forEach(function(pageSeparator) {
+                        const boundingBox = pageSeparator.getBoundingClientRect()
+                        const position = getPositionRelativeToDocument(pageSeparator)
+                        const pageIndex = parseInt(pageSeparator.dataset.page_index, 10)
+                        const visualPageSeparator = document.createElement('a')
+                        visualPageSeparator.classList.add('arretify-visual_page_separator')
+                        visualPageSeparator.style.top = `${position.top + boundingBox.height}px`
+                        visualPageSeparator.innerHTML = `<span>↓ page ${pageIndex + 1}</span>`
+                        document.body.appendChild(visualPageSeparator)
+                    })
+                }
+
+                refreshPageSeparator()
+                window.addEventListener('resize', refreshPageSeparator)
+            }
+
+            const getPositionRelativeToDocument = (el) => {
+                const rect = el.getBoundingClientRect()
+                return {
+                    left: rect.left + window.scrollX,
+                    top: rect.top + window.scrollY,
+                }
+            }
+  </script>
  </head>
  <body>
   <header class="arretify-header">
+   <a class="arretify-page_separator" data-page_index="0">
+   </a>
    <div>
     CHAPIT 1  LÉsité : Égalité : Fraternité RÉPUSUQUE FRANÇAIS
    </div>
@@ -232,6 +283,8 @@
      Sur proposition de la Secrétaire générale de la préfecture de l'Eure,
     </div>
    </div>
+   <a class="arretify-page_separator" data-page_index="1">
+   </a>
    <div class="arretify-table_of_contents">
     <div>
      LISTE DES CHAPITRES
@@ -276,6 +329,8 @@
      TITRE 2 EXECUTION DE L'ARRETE ..... 7
     </div>
    </div>
+   <a class="arretify-page_separator" data-page_index="2">
+   </a>
   </header>
   <main class="arretify-main">
    <section class="arretify-section" data-number="1.1" data-title="BENEFICIAIRE ET PORTEE DE L'AUTORISATION " data-type="chapitre">
@@ -627,6 +682,8 @@
           MW
          </td>
          <td style="text-align: center;">
+          <a class="arretify-page_separator" data-page_index="3">
+          </a>
          </td>
         </tr>
         <tr>
@@ -892,6 +949,8 @@
       <ul>
        <li>
         - pour éviter toute surpression possible dans les cuves, une tuyauterie équipée d'un clapet taré oriente les gaz, au moyen de vannes, soit vers le camion citerne, en phase de dépotage, soit vers l'extérieur au travers d'une solution neutralisante,
+        <a class="arretify-page_separator" data-page_index="4">
+        </a>
        </li>
        <li>
         - pour éviter toute mise en dépression, la cuve est pressurisée en air sec ( 150 à 180 mbars), et est équipée d'un clapet à ressort «casse vide»,
@@ -1024,6 +1083,8 @@
       </a>
       .
      </div>
+     <a class="arretify-page_separator" data-page_index="5">
+     </a>
     </section>
     <section class="arretify-section" data-number="1.5.4" data-title="RESPECT DES AUTRES LEGISLATIONS ET REGLEMENTATIONS " data-type="article">
      <h4 class="arretify-section_title">
@@ -1159,6 +1220,8 @@
     <div class="arretify-alinea" data-number="4">
      Les tiers qui n'ont acquis ou pris à bail des immeubles ou n'ont élevé des constructions dans le voisinage d'une installation classée que postérieurement à l'affichage ou à la publication de l'arrêté autorisant l'ouverture de cette installation ou atténuant les prescriptions primitives ne sont pas recevables à déférer ledit arrêté à la juridiction administrative.
     </div>
+    <a class="arretify-page_separator" data-page_index="6">
+    </a>
    </section>
    <section class="arretify-section" data-number="2" data-title="EXECUTION DE L'ARRETE " data-type="titre">
     <h2 class="arretify-section_title">

@@ -33,18 +33,15 @@ from arretify.settings import Settings
 ELEMENT_NAME_PATTERN = re.compile(r"^[a-z0-9_]+$")
 DocumentContextType = TypeVar("DocumentContextType", bound="DocumentContext")
 
-LineColumn = Tuple[int, int]
-"""Tuple line and column number. Line and column numbers are 0-indexed."""
+PageLineColumn = Tuple[int, int, int]
+"""Tuple page, line and column number. All values are 0-indexed."""
 
 
 @dataclass(frozen=True)
 class TextSegment:
-    start: LineColumn
-    end: LineColumn
+    start: PageLineColumn
+    end: PageLineColumn
     contents: str
-
-
-TextSegments = List[TextSegment]
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -146,10 +143,9 @@ class DocumentContext(SessionContext):
     TODO : support for streaming PDF content
     """
 
-    lines: Optional[TextSegments]
+    lines: Optional[List[TextSegment]] = None
     """
     Contents of the markdown pages after OCR processing.
-    TODO : TextSegments should keep track of pages from the original document
     """
 
     soup: BeautifulSoup
@@ -163,7 +159,7 @@ class DocumentContext(SessionContext):
         soup: BeautifulSoup,
         filename: str | None = None,
         pdf: Optional[bytes] = None,
-        lines: TextSegments | None = None,
+        lines: List[TextSegment] | None = None,
     ) -> DocumentContextType:
         if filename is None:
             filename = str(uuid4())

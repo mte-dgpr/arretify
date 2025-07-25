@@ -25,7 +25,7 @@ from pathlib import Path
 from arretify._vendor import mistralai
 
 from arretify.types import DocumentContext
-from arretify.parsing_utils.source_mapping import initialize_lines
+from arretify.parsing_utils.source_mapping import initialize_pages
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -69,7 +69,7 @@ def mistral_ocr(
 
     return dataclass_replace(
         document_context,
-        lines=initialize_lines([line for page_ocr in ocr_pages for line in page_ocr.split("\n")]),
+        lines=initialize_pages(ocr_pages),
     )
 
 

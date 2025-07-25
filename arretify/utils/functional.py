@@ -16,10 +16,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import Iterable, Iterator, Union, Callable, TypeVar
+from typing import Iterable, Iterator, Union, Callable, TypeVar, ParamSpec, List
+from functools import wraps, reduce
 
 
 P = TypeVar("P")
+T = ParamSpec("T")
 
 
 def flat_map_string(
@@ -38,3 +40,44 @@ def flat_map_string(
             yield from map_func(element)
         else:
             yield element
+
+
+def iter_func_to_list(func: Callable[T, Iterable[P]]) -> Callable[T, list[P]]:
+    """
+    Converts a function that returns an iterable into a function that returns a list.
+
+    Example:
+        >>> @iter_func_to_list
+        >>> def my_iterable(a: int, b: int, c: int) -> range:
+        ...     return range(a, b, c)
+        >>> my_list_func = iter_func_to_list(my_iterable)
+        >>> my_list_func(1, 10, 2)
+        [1, 3, 5, 7, 9]
+    """
+
+    @wraps(func)
+    def wrapped(*args: T.args, **kwargs: T.kwargs) -> list[P]:
+        return list(func(*args, **kwargs))
+
+    return wrapped
+
+
+def chain_functions(
+    elements: P,
+    functions: List[Callable[[P], P]],
+) -> P:
+    """
+    Chains a list of functions to be applied sequentially to an initial value.
+    Each function in the list takes the output of the previous function as input.
+    Example:
+        >>> def add_one(x): return x + 1
+        >>> def multiply_by_two(x): return x * 2
+        >>> functions = [add_one, multiply_by_two]
+        >>> chain_functions(3, functions)
+        8
+    """
+    return reduce(
+        lambda elements, func: func(elements),
+        functions,
+        elements,
+    )

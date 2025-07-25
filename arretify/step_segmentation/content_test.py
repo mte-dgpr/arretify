@@ -21,7 +21,7 @@ import unittest
 from .content import parse_section_titles, parse_sections
 from .core import Node
 from .testing import (
-    assert_node_flows_equal,
+    assert_elements_equal,
     _l,
 )
 
@@ -30,32 +30,28 @@ class TestParseSectionTitles(unittest.TestCase):
 
     def test_parse_section_titles(self):
         # Arrange
-        node_flow = [
-            _l(
-                "Titre I - Introduction",
-                "1. Contexte",
-                "bla bla bla",
-                "2. Objectifs",
-                "blo blo blo",
-                "bli bli bli",
-                "Titre II - Méthodologie",
-                "blu blu blu",
-                "ble ble ble",
-            )
-        ]
+        elements = _l(
+            "Titre I - Introduction",
+            "1. Contexte",
+            "bla bla bla",
+            "2. Objectifs",
+            "blo blo blo",
+            "bli bli bli",
+            "Titre II - Méthodologie",
+            "blu blu blu",
+            "ble ble ble",
+        )
 
         # Act
-        result = list(parse_section_titles(node_flow))
+        result = list(parse_section_titles(elements))
 
         # Assert
-        assert_node_flows_equal(
+        assert_elements_equal(
             result,
             [
                 Node(
                     type="section_title",
-                    children=[
-                        _l("Titre I - Introduction"),
-                    ],
+                    children=_l("Titre I - Introduction"),
                     data=dict(
                         level=0,
                         number="I",
@@ -65,9 +61,7 @@ class TestParseSectionTitles(unittest.TestCase):
                 ),
                 Node(
                     type="section_title",
-                    children=[
-                        _l("1. Contexte"),
-                    ],
+                    children=_l("1. Contexte"),
                     data=dict(
                         level=1,
                         number="1",
@@ -75,10 +69,10 @@ class TestParseSectionTitles(unittest.TestCase):
                         type="unknown",
                     ),
                 ),
-                _l("bla bla bla"),
+                *_l("bla bla bla"),
                 Node(
                     type="section_title",
-                    children=[_l("2. Objectifs")],
+                    children=_l("2. Objectifs"),
                     data=dict(
                         level=1,
                         number="2",
@@ -86,13 +80,13 @@ class TestParseSectionTitles(unittest.TestCase):
                         type="unknown",
                     ),
                 ),
-                _l(
+                *_l(
                     "blo blo blo",
                     "bli bli bli",
                 ),
                 Node(
                     type="section_title",
-                    children=[_l("Titre II - Méthodologie")],
+                    children=_l("Titre II - Méthodologie"),
                     data=dict(
                         level=0,
                         number="II",
@@ -100,7 +94,7 @@ class TestParseSectionTitles(unittest.TestCase):
                         type="titre",
                     ),
                 ),
-                _l(
+                *_l(
                     "blu blu blu",
                     "ble ble ble",
                 ),
@@ -112,57 +106,49 @@ class TestParseSections(unittest.TestCase):
 
     def test_parse_sections(self):
         # Arrange
-        node_flow = [
-            _l("bly bly bly"),
+        elements = [
+            *_l("bly bly bly"),
             Node(
                 type="section_title",
                 data=dict(level=1),
-                children=[
-                    _l("Titre I - Introduction"),
-                ],
+                children=_l("Titre I - Introduction"),
             ),
             Node(
                 type="section_title",
                 data=dict(level=2),
-                children=[
-                    _l("1. Contexte"),
-                ],
+                children=_l("1. Contexte"),
             ),
-            _l("bla bla bla"),
+            *_l("bla bla bla"),
             Node(
                 type="section_title",
                 data=dict(level=2),
-                children=[
-                    _l("2. Objectifs"),
-                ],
+                children=_l("2. Objectifs"),
             ),
-            _l(
+            *_l(
                 "blo blo blo",
                 "bli bli bli",
             ),
             Node(
                 type="section_title",
                 data=dict(level=1),
-                children=[
-                    _l("Titre II - Méthodologie"),
-                ],
+                children=_l("Titre II - Méthodologie"),
             ),
-            _l(
+            *_l(
                 "blu blu blu",
                 "ble ble ble",
             ),
         ]
 
         # Act
-        result = list(parse_sections(node_flow, level=1))
+        result = list(parse_sections(elements, level=1))
 
         # Assert
-        assert_node_flows_equal(
+        assert_elements_equal(
             result,
             [
                 Node(
                     type="alinea",
-                    children=[_l("bly bly bly")],
+                    children=_l("bly bly bly"),
                     data=dict(number="1"),
                 ),
                 Node(
@@ -170,15 +156,15 @@ class TestParseSections(unittest.TestCase):
                     children=[
                         Node(
                             type="section_title",
-                            children=[_l("Titre I - Introduction")],
+                            children=_l("Titre I - Introduction"),
                         ),
                         Node(
                             type="section",
                             children=[
-                                Node(type="section_title", children=[_l("1. Contexte")]),
+                                Node(type="section_title", children=_l("1. Contexte")),
                                 Node(
                                     type="alinea",
-                                    children=[_l("bla bla bla")],
+                                    children=_l("bla bla bla"),
                                     data=dict(number="1"),
                                 ),
                             ],
@@ -186,15 +172,15 @@ class TestParseSections(unittest.TestCase):
                         Node(
                             type="section",
                             children=[
-                                Node(type="section_title", children=[_l("2. Objectifs")]),
+                                Node(type="section_title", children=_l("2. Objectifs")),
                                 Node(
                                     type="alinea",
-                                    children=[_l("blo blo blo")],
+                                    children=_l("blo blo blo"),
                                     data=dict(number="1"),
                                 ),
                                 Node(
                                     type="alinea",
-                                    children=[_l("bli bli bli")],
+                                    children=_l("bli bli bli"),
                                     data=dict(number="2"),
                                 ),
                             ],
@@ -206,16 +192,16 @@ class TestParseSections(unittest.TestCase):
                     children=[
                         Node(
                             type="section_title",
-                            children=[_l("Titre II - Méthodologie")],
+                            children=_l("Titre II - Méthodologie"),
                         ),
                         Node(
                             type="alinea",
-                            children=[_l("blu blu blu")],
+                            children=_l("blu blu blu"),
                             data=dict(number="1"),
                         ),
                         Node(
                             type="alinea",
-                            children=[_l("ble ble ble")],
+                            children=_l("ble ble ble"),
                             data=dict(number="2"),
                         ),
                     ],
@@ -226,26 +212,26 @@ class TestParseSections(unittest.TestCase):
 
     def test_parse_sections_contents(self):
         # Arrange
-        node_flow = [
+        elements = [
             Node(
                 type="section_title",
                 data=dict(level=0),
-                children=[_l("1. Bla")],
+                children=_l("1. Bla"),
             ),
-            _l("bla bla bla"),
+            *_l("bla bla bla"),
             Node(
                 type="section_title",
                 data=dict(level=1),
-                children=[_l("1.1. Blabla")],
+                children=_l("1.1. Blabla"),
             ),
-            _l("bli bli bli"),
+            *_l("bli bli bli"),
         ]
 
         # Act
-        result = list(parse_sections(node_flow, level=0))
+        result = list(parse_sections(elements, level=0))
 
         # Assert
-        assert_node_flows_equal(
+        assert_elements_equal(
             result,
             [
                 Node(
@@ -253,13 +239,11 @@ class TestParseSections(unittest.TestCase):
                     children=[
                         Node(
                             type="section_title",
-                            children=[
-                                _l("1. Bla"),
-                            ],
+                            children=_l("1. Bla"),
                         ),
                         Node(
                             type="alinea",
-                            children=[_l("bla bla bla")],
+                            children=_l("bla bla bla"),
                             data=dict(number="1"),
                         ),
                         Node(
@@ -267,11 +251,11 @@ class TestParseSections(unittest.TestCase):
                             children=[
                                 Node(
                                     type="section_title",
-                                    children=[_l("1.1. Blabla")],
+                                    children=_l("1.1. Blabla"),
                                 ),
                                 Node(
                                     type="alinea",
-                                    children=[_l("bli bli bli")],
+                                    children=_l("bli bli bli"),
                                     data=dict(number="1"),
                                 ),
                             ],
@@ -284,28 +268,24 @@ class TestParseSections(unittest.TestCase):
 
     def test_parse_sections_missing_level(self):
         # Arrange
-        node_flow = [
+        elements = [
             Node(
                 type="section_title",
                 data=dict(level=0),
-                children=[
-                    _l("1. Bla"),
-                ],
+                children=_l("1. Bla"),
             ),
             Node(
                 type="section_title",
                 data=dict(level=2),
-                children=[
-                    _l("1.1.1. Blabla"),
-                ],
+                children=_l("1.1.1. Blabla"),
             ),
         ]
 
         # Act
-        result = list(parse_sections(node_flow, level=0))
+        result = list(parse_sections(elements, level=0))
 
         # Assert
-        assert_node_flows_equal(
+        assert_elements_equal(
             result,
             [
                 Node(
@@ -313,14 +293,14 @@ class TestParseSections(unittest.TestCase):
                     children=[
                         Node(
                             type="section_title",
-                            children=[_l("1. Bla")],
+                            children=_l("1. Bla"),
                         ),
                         Node(
                             type="section",
                             children=[
                                 Node(
                                     type="section_title",
-                                    children=[_l("1.1.1. Blabla")],
+                                    children=_l("1.1.1. Blabla"),
                                 ),
                             ],
                         ),
@@ -332,49 +312,39 @@ class TestParseSections(unittest.TestCase):
 
     def test_parse_missing_title_current_level(self):
         # Arrange
-        node_flow = [
+        elements = [
             Node(
                 type="section_title",
                 data=dict(level=1),
-                children=[
-                    _l("1.1. bla"),
-                ],
+                children=_l("1.1. bla"),
             ),
             Node(
                 type="section_title",
                 data=dict(level=2),
-                children=[
-                    _l("1.1.1. bla"),
-                ],
+                children=_l("1.1.1. bla"),
             ),
             Node(
                 type="section_title",
                 data=dict(level=1),
-                children=[
-                    _l("1.2. bla"),
-                ],
+                children=_l("1.2. bla"),
             ),
             Node(
                 type="section_title",
                 data=dict(level=0),
-                children=[
-                    _l("2. bla"),
-                ],
+                children=_l("2. bla"),
             ),
             Node(
                 type="section_title",
                 data=dict(level=1),
-                children=[
-                    _l("2.1. bla"),
-                ],
+                children=_l("2.1. bla"),
             ),
         ]
 
         # Act
-        result = list(parse_sections(node_flow, level=0))
+        result = list(parse_sections(elements, level=0))
 
         # Assert
-        assert_node_flows_equal(
+        assert_elements_equal(
             result,
             [
                 Node(
@@ -382,14 +352,14 @@ class TestParseSections(unittest.TestCase):
                     children=[
                         Node(
                             type="section_title",
-                            children=[_l("1.1. bla")],
+                            children=_l("1.1. bla"),
                         ),
                         Node(
                             type="section",
                             children=[
                                 Node(
                                     type="section_title",
-                                    children=[_l("1.1.1. bla")],
+                                    children=_l("1.1.1. bla"),
                                 ),
                             ],
                         ),
@@ -400,7 +370,7 @@ class TestParseSections(unittest.TestCase):
                     children=[
                         Node(
                             type="section_title",
-                            children=[_l("1.2. bla")],
+                            children=_l("1.2. bla"),
                         ),
                     ],
                 ),
@@ -409,14 +379,14 @@ class TestParseSections(unittest.TestCase):
                     children=[
                         Node(
                             type="section_title",
-                            children=[_l("2. bla")],
+                            children=_l("2. bla"),
                         ),
                         Node(
                             type="section",
                             children=[
                                 Node(
                                     type="section_title",
-                                    children=[_l("2.1. bla")],
+                                    children=_l("2.1. bla"),
                                 ),
                             ],
                         ),

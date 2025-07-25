@@ -16,11 +16,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+from typing import List, Iterator, cast
 
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, Tag
 
-from arretify.html_schemas import PAGE_FOOTER_SCHEMA, TABLE_OF_CONTENTS_SCHEMA
-from arretify.parsing_utils.source_mapping import TextSegments
+from arretify.types import TextSegment
+from arretify.html_schemas import (
+    PAGE_FOOTER_SCHEMA,
+    TABLE_OF_CONTENTS_SCHEMA,
+    PAGE_SEPARATOR_SCHEMA,
+)
 from arretify.regex_utils import (
     PatternProxy,
     join_with_or,
@@ -30,8 +35,19 @@ from arretify.utils.html import (
     make_data_tag,
     wrap_in_tag,
 )
+from arretify.utils.functional import iter_func_to_list
 
-from .core import NodeFlow, Node, assert_single_text_segments, split_before_match
+from .core import (
+    Node,
+    is_node,
+    assert_single_text_segment,
+    split_before_match,
+    NodeOrText,
+    split_elements,
+    map_splitted_elements,
+    make_while_splitter_for_text_segments,
+    make_probe_from_pattern_proxy,
+)
 
 
 PAGE_FOOTERS_LIST = [
@@ -64,82 +80,119 @@ TABLE_OF_CONTENTS_PATTERN = PatternProxy(rf"^{join_with_or(TABLE_OF_CONTENTS_LIS
 """Detect all table of contents starting sentences."""
 
 
-def is_table_of_contents(line: str) -> bool:
-    return bool(TABLE_OF_CONTENTS_PATTERN.match(line))
+_is_table_of_contents = make_probe_from_pattern_proxy(TABLE_OF_CONTENTS_PATTERN)
+_is_page_footer = make_probe_from_pattern_proxy(PAGE_FOOTER_PATTERN)
 
 
-def is_page_footer(line: str) -> bool:
-    return bool(PAGE_FOOTER_PATTERN.match(line))
+def parse_tables_of_contents(
+    elements: List[NodeOrText],
+) -> List[NodeOrText]:
+    return map_splitted_elements(
+        split_elements(
+            elements,
+            make_while_splitter_for_text_segments(
+                _is_table_of_contents,
+                _table_of_contents_while_condition,
+            ),
+        ),
+        lambda pile: Node(type="table_of_contents", children=pile),
+    )
 
 
-def parse_table_of_contents(
-    lines: TextSegments,
-) -> NodeFlow:
-    pile: TextSegments = []
-    while lines:
-        pile, lines = split_before_match(
-            lines,
-            lambda t: is_table_of_contents(t.contents),
+def _table_of_contents_while_condition(elements: List[NodeOrText], index: int) -> bool:
+    # Instead of checking just the first line, we check the next few lines.
+    # This allows to deal with case when TOC contains lines that are not
+    # easily recognizable as TOC, e.g.:
+    #
+    #   Title 1
+    #       article 1.1 ..... page 1
+    #       article 1.2 ..... page 2
+    #   Title 2
+    #       article 2.1 ..... page 3
+    #
+    # Aditionnally, this takes in nodes such as `page_separator` that might appear
+    # between text segments.
+    next_elements = elements[index : index + 3]
+    if any(
+        isinstance(next_elements[i], TextSegment) and _is_table_of_contents(next_elements, i)
+        for i in range(len(next_elements))
+    ):
+        return True
+    return False
+
+
+def parse_page_footers(
+    elements: List[NodeOrText],
+) -> List[NodeOrText]:
+    return map_splitted_elements(
+        split_elements(
+            elements,
+            make_while_splitter_for_text_segments(_is_page_footer, _is_page_footer),
+        ),
+        lambda pile: Node(type="page_footer", children=pile),
+    )
+
+
+@iter_func_to_list
+def add_page_separators(
+    elements: List[NodeOrText],
+) -> Iterator[NodeOrText]:
+    current_page = -1
+    while elements:
+        page_lines, elements = split_before_match(
+            elements,
+            lambda elements, index: isinstance(elements[index], TextSegment)
+            and cast(TextSegment, elements[index]).start[0] != current_page,
         )
-        if pile:
-            yield pile
-
-        # Instead of checking just the first line, we check the next few lines.
-        # This allows to deal with case when TOC contains lines that are not
-        # easily recognizable as TOC, e.g.:
-        #
-        #   Title 1
-        #       article 1.1 ..... page 1
-        #       article 1.2 ..... page 2
-        #   Title 2
-        #       article 2.1 ..... page 3
-        pile = []
-        while lines and any(is_table_of_contents(lines[i].contents) for i in range(3)):
-            pile.append(lines.pop(0))
-        if pile:
-            yield Node(type="table_of_contents", children=[pile])
-            pile = []
-
-
-def parse_page_footer(
-    lines: TextSegments,
-) -> NodeFlow:
-    lines = list(lines)
-    pile: TextSegments = []
-
-    while lines:
-        while lines and not is_page_footer(lines[0].contents):
-            pile.append(lines.pop(0))
-        if pile:
-            yield pile
-            pile = []
-
-        while lines and is_page_footer(lines[0].contents):
-            pile.append(lines.pop(0))
-        if pile:
-            yield Node(type="page_footer", children=[pile])
-            pile = []
+        if page_lines:
+            yield from page_lines
+        if elements:
+            assert isinstance(elements[0], TextSegment)
+            current_page = elements[0].start[0]
+            yield Node(
+                type="page_separator",
+                data=dict(page_index=current_page),
+                children=[],
+            )
 
 
 def render_table_of_contents(
     soup: BeautifulSoup,
     node: Node,
-) -> PageElementOrString:
-    text_segments = assert_single_text_segments(node)
+) -> Tag:
+    page_elements: List[PageElementOrString] = []
+    for element in node.children:
+        if isinstance(element, TextSegment):
+            page_elements.append(element.contents)
+        elif is_node(element, type_in=["page_separator"]):
+            page_elements.append(render_page_separator(soup, element))
+        else:
+            raise ValueError(f"Unexpected element type in table of contents: {element.type}")
     return make_data_tag(
         soup,
         TABLE_OF_CONTENTS_SCHEMA,
-        contents=wrap_in_tag(soup, [t.contents for t in text_segments], "div"),
+        contents=wrap_in_tag(soup, page_elements, "div"),
     )
 
 
 def render_page_footer(
     soup: BeautifulSoup,
     node: Node,
-) -> PageElementOrString:
-    text_segments = assert_single_text_segments(node)
+) -> Tag:
+    text_segment = assert_single_text_segment(node)
     return make_data_tag(
         soup,
         PAGE_FOOTER_SCHEMA,
-        contents=wrap_in_tag(soup, [t.contents for t in text_segments], "div"),
+        contents=wrap_in_tag(soup, [text_segment.contents], "div"),
+    )
+
+
+def render_page_separator(
+    soup: BeautifulSoup,
+    node: Node,
+) -> Tag:
+    return make_data_tag(
+        soup,
+        PAGE_SEPARATOR_SCHEMA,
+        data=dict(page_index=node.data["page_index"]),
     )

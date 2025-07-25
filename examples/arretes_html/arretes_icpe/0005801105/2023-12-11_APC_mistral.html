@@ -44,6 +44,21 @@
                 color: var(--warning-425-625);
             }
 
+            .arretify-visual_page_separator {
+                position: absolute;
+                left: 0;
+                width: 100vw;
+                height: 0.3em;
+                background-color: var(--grey-950-100);
+                z-index: -1;
+            }
+
+            a.arretify-visual_page_separator > span {
+                position: absolute;
+                font-size: 75%;
+                color: var(--grey-625-425);
+            }
+
             /**************** HEADER ****************/
             header {
                 padding-bottom: var(--spacing-1);
@@ -110,9 +125,45 @@
                 background-color: var(--background-action-low-blue-france);
             }
   </style>
+  <script>
+   window.onload = function() {
+                // Page separators are inline elements, so they can be anywhere in the tree.
+                // To ensure proper layout, we therefore create a separate visual element
+                // for each page separator.
+                const pageSeparators = Array.from(document.querySelectorAll('.arretify-page_separator'))
+                
+                const refreshPageSeparator = () => {
+                    document.querySelectorAll('.arretify-visual_page_separator')
+                        .forEach((visualPageSeparator) => visualPageSeparator.remove())
+                    pageSeparators.slice(1).forEach(function(pageSeparator) {
+                        const boundingBox = pageSeparator.getBoundingClientRect()
+                        const position = getPositionRelativeToDocument(pageSeparator)
+                        const pageIndex = parseInt(pageSeparator.dataset.page_index, 10)
+                        const visualPageSeparator = document.createElement('a')
+                        visualPageSeparator.classList.add('arretify-visual_page_separator')
+                        visualPageSeparator.style.top = `${position.top + boundingBox.height}px`
+                        visualPageSeparator.innerHTML = `<span>↓ page ${pageIndex + 1}</span>`
+                        document.body.appendChild(visualPageSeparator)
+                    })
+                }
+
+                refreshPageSeparator()
+                window.addEventListener('resize', refreshPageSeparator)
+            }
+
+            const getPositionRelativeToDocument = (el) => {
+                const rect = el.getBoundingClientRect()
+                return {
+                    left: rect.left + window.scrollX,
+                    top: rect.top + window.scrollY,
+                }
+            }
+  </script>
  </head>
  <body>
   <header class="arretify-header">
+   <a class="arretify-page_separator" data-page_index="0">
+   </a>
    <div>
     CHité Départementale du Havre
    </div>
@@ -211,6 +262,8 @@
    <div class="arretify-visa">
     Vu la note ministérielle du 19 avril 2017 relative à la gestion des sites et sols pollués ;
    </div>
+   <a class="arretify-page_separator" data-page_index="1">
+   </a>
    <div class="arretify-visa">
     Vu l'
     <a class="arretify-document_reference" data-date="2023-01-30" data-num="23-035" data-type="arrete-prefectoral">
@@ -319,6 +372,8 @@
      ARRÊTE
     </h1>
    </div>
+   <a class="arretify-page_separator" data-page_index="2">
+   </a>
    <div class="arretify-table_of_contents">
     <div>
      SOMMAIRE
@@ -819,6 +874,8 @@
      Plan d'implantation des piezomètres du site ORIL Industrie de Baclair ..... 70
     </div>
    </div>
+   <a class="arretify-page_separator" data-page_index="5">
+   </a>
   </header>
   <main class="arretify-main">
    <section class="arretify-section" data-number="1.1" data-title="Bénéficiaire et portée de l'autorisation " data-type="unknown">
@@ -993,6 +1050,8 @@
          </time>
         </a>
         relatif à l'évaluation et à la prise en compte de la probabilité d'occurrence, de la cinétique, de l'intensité des effets et de la gravité des conséquences des accidents potentiels dans les études de dangers des installations classées soumises à autorisation ;
+        <a class="arretify-page_separator" data-page_index="6">
+        </a>
        </li>
        <li>
         - l'
@@ -1155,6 +1214,8 @@
      </a>
      .
     </div>
+    <a class="arretify-page_separator" data-page_index="7">
+    </a>
    </section>
    <section class="arretify-section" data-number="1.3" data-title="Nature des installations " data-type="unknown">
     <h3 class="arretify-section_title">
@@ -1389,6 +1450,8 @@
         </td>
         <td style="text-align: center;">
          A
+         <a class="arretify-page_separator" data-page_index="8">
+         </a>
         </td>
        </tr>
        <tr>
@@ -1705,6 +1768,8 @@
       </a>
       .
      </div>
+     <a class="arretify-page_separator" data-page_index="9">
+     </a>
      <div class="arretify-alinea" data-number="3">
       Dans ce cadre, l'exploitant remet au préfet, en trois exemplaires, le dossier de réexamen prévu par I'
       <a class="arretify-section_reference" data-parent_reference="13" data-start_id="LEGIARTI000034661547" data-start_num="R515-71" data-type="article" href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000034661547">
@@ -1859,6 +1924,8 @@
       </q>
       s'applique indépendamment à chacune des parties
      </div>
+     <a class="arretify-page_separator" data-page_index="10">
+     </a>
      <section class="arretify-section" data-number="1.5.1.1" data-title="Mesures générales " data-type="unknown">
       <h5 class="arretify-section_title">
        1.5.1.1 Mesures générales
@@ -1966,6 +2033,8 @@
        </li>
       </ul>
      </div>
+     <a class="arretify-page_separator" data-page_index="11">
+     </a>
     </section>
    </section>
    <section class="arretify-section" data-number="1.7" data-title="Documents tenus à la disposition de l'inspection " data-type="unknown">
@@ -2071,6 +2140,8 @@
      </a>
      .
     </div>
+    <a class="arretify-page_separator" data-page_index="12">
+    </a>
     <div class="arretify-alinea" data-number="3">
      Ces consignes d'exploitations précisent :
     </div>
@@ -2154,6 +2225,8 @@
     <div class="arretify-alinea" data-number="2">
      Ce rapport est complété dans les trois mois suivant l'incident/accident, il comporte notamment l'analyse des causes profondes et - pour les incidents dont la criticité dépasse le seuil correspondant fixé dans la procédure d'enquête et analyse des incidents de l'exploitant - la modélisation de cette analyse avec arbre des causes, la cotation échelle BARPI, ainsi que les enseignements tirés et le plan d'action à plus long terme.
     </div>
+    <a class="arretify-page_separator" data-page_index="13">
+    </a>
    </section>
    <section class="arretify-section" data-number="2" data-title="PROTECTION DE LA QUALITÉ DE L'AIR " data-type="unknown">
     <h2 class="arretify-section_title">
@@ -2442,6 +2515,8 @@
            Spécificités:
            <br/>
            Chaudières mises en réseau et situées dans le même local
+           <a class="arretify-page_separator" data-page_index="14">
+           </a>
           </td>
          </tr>
          <tr>
@@ -2971,6 +3046,8 @@
         </tbody>
        </table>
       </div>
+      <a class="arretify-page_separator" data-page_index="15">
+      </a>
      </section>
     </section>
     <section class="arretify-section" data-number="2.2" data-title="Limitation des rejets " data-type="unknown">
@@ -3044,6 +3121,8 @@
       <div class="arretify-alinea" data-number="16">
        pour chaque canalisation de rejet d'effluent, nécessitant un suivi et dont les points de rejets sont repris ciaprès, est prévu un point de prélèvement d'échantillon et des points de mesures conformes à la norme NF X 44052.
       </div>
+      <a class="arretify-page_separator" data-page_index="16">
+      </a>
       <div class="arretify-alinea" data-number="17">
        Les points de rejet sont aménagés de manière à être aisément accessibles et permettre des interventions en toute sécurité. Toutes les dispositions sont également prises pour faciliter l'intervention d'organismes extérieurs à la demande de l'inspection des installations classées.
       </div>
@@ -3377,6 +3456,8 @@
            </td>
            <td style="text-align: center;">
             100 g / h
+            <a class="arretify-page_separator" data-page_index="17">
+            </a>
            </td>
           </tr>
           <tr>
@@ -3643,6 +3724,8 @@
          </tbody>
         </table>
        </div>
+       <a class="arretify-page_separator" data-page_index="18">
+       </a>
       </section>
      </section>
      <section class="arretify-section" data-number="2.2.3" data-title="Odeurs " data-type="unknown">
@@ -3732,6 +3815,8 @@
       <div class="arretify-alinea" data-number="2">
        Les mesures (prélèvement et analyse) des émissions dans l'air sont effectuées au moins une fois par an par un organisme ou laboratoire agréé ou, s'il n'existe pas d'agrément pour le paramètre mesuré, par un organisme ou laboratoire accrédité par le Comité français d'accréditation ou par un organisme signataire de l'accord multilatéral pris dans le cadre de la Coordination européenne des organismes d'accréditation.
       </div>
+      <a class="arretify-page_separator" data-page_index="19">
+      </a>
       <div class="arretify-alinea" data-number="3">
        La fréquence de ces mesures est a minima :
       </div>
@@ -4048,6 +4133,8 @@
         </li>
        </ul>
       </div>
+      <a class="arretify-page_separator" data-page_index="20">
+      </a>
       <div class="arretify-alinea" data-number="3">
        Des dispositions équivalentes peuvent être prises en lieu et place de celles-ci.
       </div>
@@ -4073,6 +4160,8 @@
       <div class="arretify-alinea" data-number="9">
        Les abords de l'installation, placés sous le contrôle de l'exploitant, sont aménagés et maintenus en bon état de propreté (peinture...). Les émissaires de rejet et leur périphérie font l'objet d'un soin particulier (plantations, engazonnement...).
       </div>
+      <a class="arretify-page_separator" data-page_index="21">
+      </a>
      </section>
     </section>
     <section class="arretify-section" data-number="3.1" data-title="Prélèvements et consommations d'eau " data-type="unknown">
@@ -4197,6 +4286,8 @@
       <div class="arretify-alinea" data-number="5">
        Les collecteurs véhiculant des eaux polluées par des liquides inflammables ou susceptibles de l'être, sont équipés d'une protection efficace contre le danger de propagation de flamme.
       </div>
+      <a class="arretify-page_separator" data-page_index="22">
+      </a>
       <div class="arretify-alinea" data-number="6">
        Par les réseaux d'assainissement de l'établissement ne transite aucun effluent issu d'un réseau collectif externe ou d'un autre site industriel.
       </div>
@@ -4274,6 +4365,8 @@
       <div class="arretify-alinea" data-number="24">
        Ces dispositifs de traitement sont entretenus par l'exploitant conformément à un protocole d'entretien. Les opérations de contrôle et de nettoyage des équipements sont effectués à une fréquence adaptée.
       </div>
+      <a class="arretify-page_separator" data-page_index="23">
+      </a>
       <div class="arretify-alinea" data-number="25">
        Les fiches de suivi du nettoyage des équipements, l'attestation de conformité à une éventuelle norme ainsi que les bordereaux de traitement des déchets détruits ou retraités sont mis à la disposition de l'inspection des installations classées.
       </div>
@@ -4369,6 +4462,8 @@
            </td>
            <td style="text-align: center;">
             Autorisation
+            <a class="arretify-page_separator" data-page_index="24">
+            </a>
            </td>
           </tr>
           <tr>
@@ -4502,6 +4597,8 @@
        <div class="arretify-alinea" data-number="9">
         L'exploitant rédige une consigne relative à l'organisation à mettre en œuvre en cas de défaillance ou d'intervention sur le dispositif de relevage permettant de diriger les effluents traités vers la canalisation d'évitement, et l'organisation à mettre en place pour limiter ces défaillances et interventions.
        </div>
+       <a class="arretify-page_separator" data-page_index="25">
+       </a>
        <div class="arretify-alinea" data-number="10">
         La mise en œuvre de cette consigne a pour objectif de limiter, autant que possible, le rejet des effluents aqueux traités dans la rivière
         <q>
@@ -4548,6 +4645,8 @@
         </q>
         (amélioration de la disponibilité des pièces de rechange et du délai d'intervention du prestataire, par exemple, etc.). Cette analyse est tenue à la disposition de l'inspection des installations classées.
        </div>
+       <a class="arretify-page_separator" data-page_index="26">
+       </a>
        <div class="arretify-alinea" data-number="15">
         Les réseaux de collecte des effluents générés par l'établissement aboutissent aux points de rejet qui présentent les caractéristiques suivantes:
        </div>
@@ -4737,6 +4836,8 @@
            </td>
            <td style="text-align: center;">
             Autorisation
+            <a class="arretify-page_separator" data-page_index="27">
+            </a>
            </td>
           </tr>
           <tr>
@@ -4892,6 +4993,8 @@
         <div class="arretify-alinea" data-number="1">
          Les systèmes permettant le prélèvement continu sont proportionnels au débit sur une durée de 24 heures, disposent d'enregistrement et permettent la conservation des échantillons à une température de 4° C.
         </div>
+        <a class="arretify-page_separator" data-page_index="28">
+        </a>
        </section>
       </section>
      </section>
@@ -5101,6 +5204,8 @@
          </li>
         </ul>
        </div>
+       <a class="arretify-page_separator" data-page_index="29">
+       </a>
       </section>
       <section class="arretify-section" data-number="3.3.1.2" data-title="Après le démarrage des installations de l'unité GF3 " data-type="unknown">
        <h5 class="arretify-section_title">
@@ -5278,6 +5383,8 @@
          </q>
          .
         </div>
+        <a class="arretify-page_separator" data-page_index="30">
+        </a>
         <div class="arretify-alinea" data-number="2">
          Les effluents aqueux sortant des installations de traitement de l'atelier GF3 respectent les valeurs limites d'émission suivantes:
         </div>
@@ -5531,6 +5638,8 @@
        <div class="arretify-alinea" data-number="7">
         L'ensemble de ces bassins et le réseau des eaux pluviales ont été dimensionnés pour recevoir l'ensemble des eaux pluviales véhiculées sur le site.
        </div>
+       <a class="arretify-page_separator" data-page_index="31">
+       </a>
       </section>
       <section class="arretify-section" data-number="3.3.1.5" data-title="Eaux pluviales non polluées " data-type="unknown">
        <h5 class="arretify-section_title">
@@ -5674,6 +5783,8 @@
        </a>
        sont réalisées à une fréquence hebdomadaire. Les résultats sont transmis semestriellement à l'inspection des installations classées.
       </div>
+      <a class="arretify-page_separator" data-page_index="32">
+      </a>
       <div class="arretify-alinea" data-number="13">
        <ul>
         <li>
@@ -5885,6 +5996,8 @@
         </a>
         ) et sans préjudice des obligations de gestion de cette pollution, l'exploitant respecte les dispositions suivantes :
        </div>
+       <a class="arretify-page_separator" data-page_index="33">
+       </a>
        <div class="arretify-alinea" data-number="9">
         <ul>
          <li>
@@ -5946,6 +6059,8 @@
        <div class="arretify-alinea" data-number="19">
         L'étude hydrogéologique, intégrée au bilan quadriennal, est alors réexaminée et, si nécessaire, révisée en vue de vérifier les éventuelles évolutions du contexte et des enjeux. Les résultats collectés et la révision de l'étude hydrogéologique peuvent conduire à modifier le plan de surveillance, en l'allégeant, voire en l'arrêtant, ou en le renforçant suivant la nature des évolutions constatées. Tout arrêt ou modification est conditionnée à un avis de l'inspection des installations classées.
        </div>
+       <a class="arretify-page_separator" data-page_index="34">
+       </a>
        <div class="arretify-alinea" data-number="20">
         Si un ouvrage n'est plus jugé pertinent dans le cadre de la surveillance de l'installation, il est comblé, conformément aux méthodes normalisées en vigueur, par des techniques appropriées permettant de garantir l'absence de circulation d'eau entre les différentes nappes d'eau souterraine contenues dans les formations géologiques aquifères traversées et l'absence de transfert de pollution. Le rapport de travaux de comblement est communiqué au préfet.
        </div>
@@ -6069,6 +6184,8 @@
         </a>
         .
        </div>
+       <a class="arretify-page_separator" data-page_index="35">
+       </a>
       </section>
       <section class="arretify-section" data-number="3.5.2.5" data-title="Autosurveillance des eaux souterraines " data-type="unknown">
        <h5 class="arretify-section_title">
@@ -6303,6 +6420,8 @@
        <div class="arretify-alinea" data-number="10">
         :     (1) composés azotés : nitrites, nitrates, ammonium, azote total
        </div>
+       <a class="arretify-page_separator" data-page_index="36">
+       </a>
        <div class="arretify-alinea" data-number="11">
         Toute évolution anormale/atypique des paramètres suivis (substances, paramètres physico-chimiques, niveaux piézométriques) est renseignée dans les rapports de surveillance destinés à interpréter les résultats de la surveillance. Des propositions d'actions accompagnent ces constats.
        </div>
@@ -6404,6 +6523,8 @@
       <div class="arretify-alinea" data-number="15">
        Ce bilan présente un schéma conceptuel (plan et coupe).
       </div>
+      <a class="arretify-page_separator" data-page_index="37">
+      </a>
       <div class="arretify-alinea" data-number="16">
        Le bilan quadriennal ne dispense pas d'un examen des résultats obtenus lors de chaque campagne de surveillance et de prendre les mesures appropriées en cas de constats d'anomalies.
       </div>
@@ -6491,6 +6612,8 @@
       <div class="arretify-alinea" data-number="1">
        En cas de franchissement du seuil de crise sécheresse, l'exploitant respecte l'arrêté préfectoral cadre sécheresse départemental en vigueur et met en œuvre a minima les actions suivantes :
       </div>
+      <a class="arretify-page_separator" data-page_index="38">
+      </a>
       <div class="arretify-alinea" data-number="2">
        <ul>
         <li>
@@ -6516,6 +6639,8 @@
         </li>
        </ul>
       </div>
+      <a class="arretify-page_separator" data-page_index="39">
+      </a>
      </section>
     </section>
    </section>
@@ -6611,6 +6736,8 @@
       <div class="arretify-alinea" data-number="2">
        Une gestion simple et différenciée est appliquée sur les différents espaces.
       </div>
+      <a class="arretify-page_separator" data-page_index="40">
+      </a>
      </section>
     </section>
     <section class="arretify-section" data-number="2.3" data-title="Dispositif de lutte contre les espèces exotiques envahissantes (actions préventives et curatives)" data-type="unknown">
@@ -6671,6 +6798,8 @@
      <div class="arretify-alinea" data-number="1">
       Avant le 31 décembre de chaque année, l'exploitant adresse à l'inspection des installations classées le bilan commenté de la mise en œuvre des mesures compensatoires et de leur suivi. Il tient à la disposition de l'inspection des installations classées tous les éléments de preuve de la mise en œuvre des mesures compensatoires.
      </div>
+     <a class="arretify-page_separator" data-page_index="41">
+     </a>
     </section>
    </section>
    <section class="arretify-section" data-number="5" data-title="PROTECTION DU CADRE DE VIE " data-type="unknown">
@@ -6841,6 +6970,8 @@
         </tbody>
        </table>
       </div>
+      <a class="arretify-page_separator" data-page_index="42">
+      </a>
      </section>
      <section class="arretify-section" data-number="5.1.7" data-title="Mesures de réduction des émissions sonores " data-type="unknown">
       <h4 class="arretify-section_title">
@@ -6880,6 +7011,8 @@
        </a>
        relative aux vibrations mécaniques émises dans l'environnement par les installations classées.
       </div>
+      <a class="arretify-page_separator" data-page_index="43">
+      </a>
      </section>
     </section>
    </section>
@@ -6947,6 +7080,8 @@
      <div class="arretify-alinea" data-number="16">
       L'exploitant tient à la disposition de l'inspection des installations classées, les bilans réguliers établis relativement aux procédures de gestion du retour d'expérience.
      </div>
+     <a class="arretify-page_separator" data-page_index="44">
+     </a>
     </section>
     <section class="arretify-section" data-number="6.2" data-title="Réexamen quinquennal de l'étude de dangers " data-type="unknown">
      <h3 class="arretify-section_title">
@@ -7098,6 +7233,8 @@
         </li>
        </ul>
       </div>
+      <a class="arretify-page_separator" data-page_index="45">
+      </a>
      </section>
      <section class="arretify-section" data-number="6.4.2" data-title="Accès et circulation dans l'établissement " data-type="unknown">
       <h4 class="arretify-section_title">
@@ -7200,6 +7337,8 @@
       <div class="arretify-alinea" data-number="4">
        Cet inventaire est tenu à la disposition permanente des services de secours.
       </div>
+      <a class="arretify-page_separator" data-page_index="46">
+      </a>
      </section>
      <section class="arretify-section" data-number="6.5.2" data-title="Consignes d'exploitation destinées à prévenir les accidents " data-type="unknown">
       <h4 class="arretify-section_title">
@@ -7283,6 +7422,8 @@
       <div class="arretify-alinea" data-number="3">
        La nature exacte du risque (atmosphère potentiellement explosible, etc...) et les consignes à observer sont indiquées à l'entrée de ces zones et, en tant que de besoin, rappelées à l'intérieur de celles-ci. Ces consignes sont incluses dans les plans de secours.
       </div>
+      <a class="arretify-page_separator" data-page_index="47">
+      </a>
      </section>
      <section class="arretify-section" data-number="6.5.7" data-title="Zones à atmosphère explosible " data-type="unknown">
       <h4 class="arretify-section_title">
@@ -7366,6 +7507,8 @@
       <div class="arretify-alinea" data-number="4">
        Les équipements, la conception des installations et des systèmes de conduite des unités sont choisis, installés et maintenus pour permettre une mise en sécurité automatique des installations en cas de perte d'utilité (alimentation électrique, énergie pneumatique, autres...).
       </div>
+      <a class="arretify-page_separator" data-page_index="48">
+      </a>
       <div class="arretify-alinea" data-number="5">
        Le dispositif de conduite de chaque procédé assure le contrôle et la maîtrise de chacune des phases opératoires en respectant les consignes de sécurité prévues et spécifiques du procédé.
       </div>
@@ -7453,6 +7596,8 @@
       <div class="arretify-alinea" data-number="3">
        Les réseaux électriques alimentant ces équipements importants pour la sécurité sont indépendants de sorte qu'un sinistre n'entraîne pas la destruction simultanée de l'ensemble des réseaux d'alimentation.
       </div>
+      <a class="arretify-page_separator" data-page_index="49">
+      </a>
       <div class="arretify-alinea" data-number="4">
        Des vannes automatiques seront configurées en position de sécurité en cas de mise en repli des installations, de coupure électrique ou de coupure d'air.
       </div>
@@ -7544,6 +7689,8 @@
       <div class="arretify-alinea" data-number="10">
        Les défaillances sont des dysfonctionnements de nature à compromettre la fonction de sécurité d'une mesure de maîtrise des risques et à remettre en cause l'efficacité attendue, y compris de manière temporaire. Les anomalies sont des dysfonctionnements qui ne sont pas de nature à compromettre la fonction de sécurité de la mesure de maîtrise des risques ni à remettre en cause l'efficacité attendue (par exemple, par effet d'une sécurité positive).
       </div>
+      <a class="arretify-page_separator" data-page_index="50">
+      </a>
       <div class="arretify-alinea" data-number="11">
        À l'occasion du réexamen de l'étude de dangers le cas échéant, les niveaux de confiance des mesures de maîtrise des risques sont réévalués à la lumière des défaillances enregistrées et de la revue des anomalies.
       </div>
@@ -7656,6 +7803,8 @@
       <div class="arretify-alinea" data-number="9">
        Si l'éclairage met en œuvre des lampes à vapeur de sodium ou de mercure, l'exploitant prend toute disposition pour qu'en cas d'éclatement de l'ampoule, tous les éléments soient confinés dans l'appareil.
       </div>
+      <a class="arretify-page_separator" data-page_index="51">
+      </a>
       <div class="arretify-alinea" data-number="10">
        Les appareils d'éclairage électrique ne sont pas situés en des points susceptibles d'être heurtés en cours d'exploitation ou sont protégés contre les chocs.
       </div>
@@ -7746,6 +7895,8 @@
         </li>
        </ul>
       </div>
+      <a class="arretify-page_separator" data-page_index="52">
+      </a>
       <div class="arretify-alinea" data-number="3">
        Tous travaux ou interventions sont précédés, immédiatement avant leur commencement, d'une visite sur les lieux destinée à vérifier le respect des conditions prédéfinies.
       </div>
@@ -7851,6 +8002,8 @@
        </a>
        .
       </div>
+      <a class="arretify-page_separator" data-page_index="53">
+      </a>
       <div class="arretify-alinea" data-number="9">
        Les capacités de rétention ou les réseaux de collecte et de stockage des égouttures et effluents accidentels ne comportent aucun moyen de vidange par simple gravité dans le réseau d'assainissement ou le milieu naturel. La conception de la capacité est telle que toute fuite survenant sur un réservoir associé y soit récupérée, compte tenu en particulier de la différence de hauteur entre le bord de la capacité et le sommet du réservoir. Ces capacités de rétention sont construites suivant les règles de l'art, en limitant notamment les surfaces susceptibles d'être mouillées en cas de fuite.
       </div>
@@ -7908,6 +8061,8 @@
       <div class="arretify-alinea" data-number="2">
        Les tuyauteries sont installées à l'abri des chocs et donnent toutes garanties de résistance aux actions mécaniques, physiques, chimiques ou électrolytiques. Il est en particulier interdit d'intercaler des tuyauteries flexibles entre le réservoir et les robinets ou clapets d'arrêt, isolant ce réservoir des appareils d'utilisation.
       </div>
+      <a class="arretify-page_separator" data-page_index="54">
+      </a>
       <div class="arretify-alinea" data-number="3">
        Les tuyauteries et capacités transportant des produits à risques (substances ou mélanges visés par les rubriques 4 X X X, 1436, les déchets présentant des propriétés équivalentes ainsi que les fluides utilisés au-delà de leur point éclair), et leurs supportages, font l'objet de contrôles périodiques adaptés destinés à vérifier qu'elles assurent leur fonction de transfert de produits en toute sécurité. Le planning prévisionnel, le plan de contrôle, la traçabilité des résultats des contrôles ainsi que des actions correctives qui pourraient en découler sont tenus à la disposition de l'inspection des installations classées.
       </div>
@@ -8007,6 +8162,8 @@
       <div class="arretify-alinea" data-number="9">
        Pour chaque équipement ou ouvrage mentionné dans le présent article et pour lequel un plan d'inspection et de surveillance est mis en place, l'exploitant élabore un dossier tenu à la disposition de l'inspection des installations classées, contenant :
       </div>
+      <a class="arretify-page_separator" data-page_index="55">
+      </a>
       <div class="arretify-alinea" data-number="10">
        <ul>
         <li>
@@ -8099,6 +8256,8 @@
       <div class="arretify-alinea" data-number="1">
        Des masques ou appareils respiratoires d'un type correspondant au gaz ou émanations toxiques sont mis à disposition de toute personne :
       </div>
+      <a class="arretify-page_separator" data-page_index="56">
+      </a>
       <div class="arretify-alinea" data-number="2">
        <ul>
         <li>
@@ -8213,6 +8372,8 @@
         </li>
        </ul>
       </div>
+      <a class="arretify-page_separator" data-page_index="57">
+      </a>
       <div class="arretify-alinea" data-number="15">
        Des réserves en émulseur adapté aux produits présents sur le site ainsi que des réserves de sable sec ou équivalents et des pelles sont judicieusement réparties sur tout le site et en quantités adaptées au risque. Le volume d'émulseurs disponible est au minimum de 8 m³.
       </div>
@@ -8302,6 +8463,8 @@
       <div class="arretify-alinea" data-number="2">
        En cas d'accident, l'exploitant assure la direction du P.O.I. Il met en œuvre les moyens en personnels et matériels susceptibles de permettre le déclenchement sans retard du P.O.I.
       </div>
+      <a class="arretify-page_separator" data-page_index="58">
+      </a>
       <div class="arretify-alinea" data-number="3">
        Le P.O.I. est conforme à la réglementation en vigueur. Il définit les mesures d'organisation, notamment la mise en place d'un poste de commandement et les moyens afférents, les méthodes d'intervention et les moyens nécessaires à mettre en œuvre en cas d'accident en vue de protéger le personnel, les populations et l'environnement.
       </div>
@@ -8406,6 +8569,8 @@
       <div class="arretify-alinea" data-number="19">
        Le Préfet peut demander la modification des dispositions envisagées par l'exploitant dans le projet de P.O.I. qui doit lui être transmis préalablement à sa diffusion définitive, pour examen par l'inspection des installations classées et par le service départemental d'incendie et de secours.
       </div>
+      <a class="arretify-page_separator" data-page_index="59">
+      </a>
       <div class="arretify-alinea" data-number="20">
        Le P.O.I. est mis à jour tous les 3 ans, ainsi qu'à chaque modification notable, et en particulier avant la mise en service de toute nouvelle installation ayant modifié les risques existants.
       </div>
@@ -8464,6 +8629,8 @@
       <div class="arretify-alinea" data-number="1">
        Toutes mesures sont prises pour recueillir l'ensemble des eaux et écoulements susceptibles d'être pollués lors d'un sinistre, y compris les eaux utilisées lors d'un incendie, afin que celles-ci soient récupérées ou traitées afin de prévenir toute pollution des sols, des égouts, des cours d'eau ou du milieu naturel.
       </div>
+      <a class="arretify-page_separator" data-page_index="60">
+      </a>
       <div class="arretify-alinea" data-number="2">
        Les capacités de rétention sont adaptées aux risques à couvrir.
       </div>
@@ -8598,6 +8765,8 @@
         </li>
        </ul>
       </div>
+      <a class="arretify-page_separator" data-page_index="61">
+      </a>
       <div class="arretify-alinea" data-number="24">
        Un volume de 571 m³ est constamment disponible pour le confinement des eaux d'extinction d'incendie. Les eaux polluées de ce bassin sont pompées via leur transfert dans les bassins de 1300 m³ et 3000 m³ situés au nord du site.
       </div>
@@ -8661,6 +8830,8 @@
         <div class="arretify-alinea" data-number="3">
          Les dispositifs retenus par les exploitants permettent dans la mesure du possible, d'une part de disposer d'échantillons conservatoires de la phase aiguë et d'autre part de mesures régulières des émissions accidentelles hors site pour confirmer l'efficacité des mesures prises et informer la population.
         </div>
+        <a class="arretify-page_separator" data-page_index="62">
+        </a>
        </section>
       </section>
      </section>
@@ -8776,6 +8947,8 @@
      <div class="arretify-alinea" data-number="1">
       Les effluents méthanolés concentrés sont évacués pour être valorisés (valorisation énergétique ou matière).
      </div>
+     <a class="arretify-page_separator" data-page_index="63">
+     </a>
     </section>
    </section>
    <section class="arretify-section" data-number="8" data-title="CONDITIONS PARTICULIERES APPLICABLES À CERTAINES INSTALLATIONS ET ÉQUIPEMENTS CONNEXES " data-type="unknown">
@@ -8844,6 +9017,8 @@
       <div class="arretify-alinea" data-number="3">
        Des filtres maintenus en bon état de propreté empêchent la pénétration des poussières dans le compresseur.
       </div>
+      <a class="arretify-page_separator" data-page_index="64">
+      </a>
       <div class="arretify-alinea" data-number="4">
        Si la compression comporte plusieurs étages, le gaz devra être convenablement refroidi à la sortie de chaque étage intermédiaire du compresseur. Des thermomètres permettent de lire la température du gaz à la sortie de chaque étage des compresseurs. Un dispositif est prévu sur les circuits d'eau de refroidissement permettant de contrôler à chaque instant la circulation d'eau.
       </div>
@@ -8930,6 +9105,8 @@
         </li>
        </ul>
       </div>
+      <a class="arretify-page_separator" data-page_index="65">
+      </a>
       <div class="arretify-alinea" data-number="4">
        Le stockage de peroxyde d'hydrogène est sur rétention conforme à l'
        <a class="arretify-section_reference" data-parent_reference="34" data-start_num="6.9.3" data-type="article">
@@ -9093,6 +9270,8 @@
        <div class="arretify-alinea" data-number="6">
         Afin d'éviter l'instabilité du peroxyde d'hydrogène ou tout mélange incompatible, les mesures suivantes sont prises :
        </div>
+       <a class="arretify-page_separator" data-page_index="66">
+       </a>
        <div class="arretify-alinea" data-number="7">
         <ul>
          <li>
@@ -9188,6 +9367,8 @@
          </tbody>
         </table>
        </div>
+       <a class="arretify-page_separator" data-page_index="67">
+       </a>
       </section>
      </section>
     </section>
@@ -9340,6 +9521,8 @@
      <div class="arretify-alinea" data-number="6">
       Le délai court à compter de la dernière formalité accomplie. Si l'affichage constitue cette dernière formalité, le délai court à compter du premier jour d'affichage de la décision.
      </div>
+     <a class="arretify-page_separator" data-page_index="68">
+     </a>
      <div class="arretify-alinea" data-number="7">
       La présente décision peut faire l'objet d'un recours gracieux ou hiérarchique dans le délai de deux mois. Ce recours administratif prolonge de deux mois les délais mentionnés au 1° et 2° ci-avant.
      </div>
@@ -9403,6 +9586,8 @@
      <div class="arretify-alinea" data-number="3">
       <img alt="img-0.jpeg" src="data:image/jpeg;base64,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"/>
      </div>
+     <a class="arretify-page_separator" data-page_index="69">
+     </a>
     </section>
    </section>
   </main>
