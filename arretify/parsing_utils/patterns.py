@@ -20,6 +20,7 @@ from typing import List
 
 from arretify.regex_utils import (
     PatternProxy,
+    Settings,
     split_string_with_regex,
     merge_matches_with_siblings,
 )
@@ -32,6 +33,12 @@ LEADING_TRAILING_PUNCTUATION_PATTERN = PatternProxy(r"^[\s.]+|[\s.]+$")
 """Detect leading and trailing points or whitespaces."""
 
 LETTER_PATTERN_S = r"[a-zA-Z]"
+
+SENTENCE_END_PATTERN_S = r"[.!?]"
+
+SENTENCE_END_AT_LINE_END_PATTERN = PatternProxy(SENTENCE_END_PATTERN_S + r"\s*$")
+
+SENTENCE_CONTINUES_AT_LINE_START_PATTERN = PatternProxy(r"^\s*[a-z]", Settings(ignore_case=False))
 
 
 def join_split_pile_with_pattern(
@@ -46,4 +53,11 @@ def join_split_pile_with_pattern(
             ),
             "following",
         )
+    )
+
+
+def is_continuing_sentence(part1: str, part2: str) -> bool:
+    return (
+        SENTENCE_END_AT_LINE_END_PATTERN.search(part1) is None
+        and SENTENCE_CONTINUES_AT_LINE_START_PATTERN.search(part2) is not None
     )

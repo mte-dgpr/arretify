@@ -36,6 +36,7 @@ from arretify.html_schemas import (
     ALINEA_SCHEMA,
 )
 from arretify.errors import ErrorCodes
+from arretify.parsing_utils.patterns import is_continuing_sentence
 from .basic_elements import (
     render_basic_elements,
     render_inline_quotes,
@@ -371,7 +372,6 @@ def render_section(
     )
 
 
-# Parse alineas until a new section is detected
 # ALINEA : "Constitue un alinéa toute phrase, tout mot, tout ensemble de phrases ou de
 # mots commençant à la ligne, précédés ou non d’un tiret, d’un point, d’une
 # numérotation ou de guillemets, sans qu’il y ait lieu d’établir des distinctions selon
@@ -391,38 +391,49 @@ def parse_alineas(
 
     while elements:
         element = elements.pop(0)
+        # table_of_contents can appear here if we are in an annexe (then it isn't really an
+        # alinea but that's how the detection works for now).
         if is_node(element, type_in=["page_footer", "table_of_contents", "page_separator"]):
             yield element
+            continue
 
-        elif isinstance(element, Node):
-            children: List[NodeOrText] = [element]
+        alinea_children: List[NodeOrText] = []
+        if isinstance(element, Node):
+            alinea_children = [element]
             if element.type == "table":
                 while (
                     elements
                     and isinstance(elements[0], Node)
                     and elements[0].type == "table_description"
                 ):
-                    children.append(elements[0])
+                    alinea_children.append(elements[0])
                     elements.pop(0)
 
-            yield Node(
-                type="alinea",
-                children=children,
-                data=dict(
-                    number=str(alinea_count),
-                ),
-            )
-            alinea_count += 1
-
         else:
-            yield Node(
-                type="alinea",
-                children=[element],
-                data=dict(
-                    number=str(alinea_count),
-                ),
-            )
-            alinea_count += 1
+            if (
+                len(elements) >= 2
+                and is_node(elements[0], type_in=["page_separator"])
+                and isinstance(elements[1], TextSegment)
+                and is_continuing_sentence(
+                    element.contents,
+                    elements[1].contents,
+                )
+            ):
+                alinea_children = [element, elements[0], elements[1]]
+                elements.pop(0)
+                elements.pop(0)
+
+            else:
+                alinea_children = [element]
+
+        yield Node(
+            type="alinea",
+            children=alinea_children,
+            data=dict(
+                number=str(alinea_count),
+            ),
+        )
+        alinea_count += 1
 
 
 def render_alinea(

@@ -18,7 +18,7 @@
 #
 import unittest
 
-from .content import parse_section_titles, parse_sections
+from .content import parse_section_titles, parse_sections, parse_alineas
 from .core import Node
 from .testing import (
     assert_elements_equal,
@@ -394,4 +394,42 @@ class TestParseSections(unittest.TestCase):
                 ),
             ],
             ignore_data_if_omitted=True,
+        )
+
+
+class TestParseAlineas(unittest.TestCase):
+
+    def test_merge_if_continuing_sentence_and_page_separator(self):
+        # Arrange
+        elements = [
+            *_l("This is a sentence that "),
+            Node(
+                type="page_separator",
+                data=dict(page_index=1),
+                children=[],
+            ),
+            *_l("continues on the next page."),
+        ]
+
+        # Act
+        result = list(parse_alineas(elements))
+
+        # Assert
+        assert_elements_equal(
+            result,
+            [
+                Node(
+                    type="alinea",
+                    children=[
+                        *_l("This is a sentence that "),
+                        Node(
+                            type="page_separator",
+                            data=dict(page_index=1),
+                            children=[],
+                        ),
+                        *_l("continues on the next page."),
+                    ],
+                    data=dict(number="1"),
+                ),
+            ],
         )

@@ -24,7 +24,7 @@ from arretify.utils.functional import iter_func_to_list, chain_functions
 from arretify.parsing_utils.dates import DATE_NODE, render_date_regex_tree_match
 from arretify.utils.html import wrap_in_tag, make_data_tag, make_new_tag
 from arretify.types import TextSegment, PageElementOrString, DataElementSchema
-from arretify.parsing_utils.patterns import join_split_pile_with_pattern
+from arretify.parsing_utils.patterns import join_split_pile_with_pattern, is_continuing_sentence
 from arretify.html_schemas import (
     EMBLEM_SCHEMA,
     ENTITY_SCHEMA,
@@ -436,9 +436,26 @@ def _parse_visa_and_motif_elements_pass2(
     #   Vu que blabla
     #   Vu que bloblo
     if first_node_match and first_node_match.group("contents"):
-        # Here we yield only the first node, since
-        # the rest of the elements will be yielded below.
-        yield first_node
+        elements.insert(0, first_node)
+        while elements:
+            # If there is a visa / motif node just before a page separator
+            # and a text segment that continues the sentence, we merge them.
+            if (
+                len(elements) >= 3
+                and is_node(elements[0], type_in=[node_type])
+                and is_node(elements[1], type_in=["page_separator"])
+                and isinstance(elements[2], TextSegment)
+                and is_continuing_sentence(
+                    assert_single_text_segment(elements[0]).contents,
+                    elements[2].contents,
+                )
+            ):
+                elements[0].children.extend([elements[1], elements[2]])
+                yield elements.pop(0)
+                elements.pop(0)  # Remove the page separator
+                elements.pop(0)  # Remove the text segment
+            else:
+                yield elements.pop(0)
 
     # 2. Variant "explicit list" :
     #   Vu :
@@ -464,6 +481,7 @@ def _parse_visa_and_motif_elements_pass2(
                         )
             else:
                 break
+        yield from elements
 
     # 3. Variant "implicit list" (no explicit bullets) :
     #   Vu :
@@ -487,8 +505,7 @@ def _parse_visa_and_motif_elements_pass2(
                 )
             else:
                 break
-
-    yield from elements
+        yield from elements
 
 
 @iter_func_to_list
