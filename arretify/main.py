@@ -157,12 +157,12 @@ def main(args: List[str]) -> None:
                     was_ocr_disabled_warning_given = True
 
                 _LOGGER.warning(
-                    f"Skipping {input_path} because it is a PDF and OCR support is not enabled."
+                    f"Skipping {input_path} because it is a PDF " "and OCR support is not enabled."
                 )
                 continue
 
             try:
-                _process_arrete(
+                _process_file(
                     session_context,
                     input_path,
                     output_path,
@@ -182,7 +182,7 @@ def main(args: List[str]) -> None:
             )
             sys.exit(1)
 
-        _process_arrete(
+        _process_file(
             session_context,
             root_input_path,
             root_output_path,
@@ -229,18 +229,12 @@ class _Features:
     eurlex: bool = False
 
 
-def _process_arrete(
+def _process_file(
     session_context: SessionContext,
     input_path: Path,
     output_path: Path,
     features: _Features,
 ) -> None:
-    """
-    Process a single arrêté. `input_path` can be :
-    - Path of a single .md file
-    - Path of a single .pdf file
-    - Path to a folder containing markdown pages named like so : 1.md, 2.md, ...
-    """
     pipeline_steps: List[PipelineStep] = [
         step_markdown_cleaning,
         step_segmentation,
@@ -275,7 +269,7 @@ def _process_arrete(
     else:
         if input_path.is_file():
             raise ValueError(
-                f'Unsupported file "{input_path}", expected .pdf or .{OCR_FILE_EXTENSION} file.'
+                f'Unsupported file "{input_path}", ' f"expected .pdf or .{OCR_FILE_EXTENSION} file."
             )
         else:
             raise ValueError(

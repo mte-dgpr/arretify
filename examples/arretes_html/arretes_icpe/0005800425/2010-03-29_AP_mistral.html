@@ -9,7 +9,7 @@
                 --spacing-0p5: 0.5rem;
             }
 
-            header, main, .arretify-appendix {
+            header, main, footer {
                 max-width: 800px;
                 margin: auto;
                 padding: var(--spacing-1);
@@ -20,8 +20,17 @@
                 padding-left: var(--spacing-1);
             }
 
+            table {
+                border-collapse: collapse
+            }
+
             th {
                 text-align: left;
+            }
+
+            td, th {
+                border: solid 1px #cecece;
+                padding: 0.5rem;
             }
 
             a.arretify-document_reference, a.arretify-section_reference {
@@ -785,7 +794,7 @@
     </a>
    </section>
   </main>
-  <appendix class="arretify-appendix">
+  <footer class="arretify-appendix">
    <section class="arretify-section" data-number="1" data-title="Tableau des performances et assurance qualité et attestation du prestataire à renseigner par le laboratoire et à restituer à l'exploitant (Annexe 5.5 de la circulaire du 5 janvier 2009)" data-type="annexe">
     <h2 class="arretify-section_title">
      ANNEXE 1 - Tableau des performances et assurance qualité et attestation du prestataire à renseigner par le laboratoire et à restituer à l'exploitant (Annexe 5.5 de la circulaire du 5 janvier 2009)
@@ -3542,6 +3551,6 @@
      </section>
     </section>
    </section>
-  </appendix>
+  </footer>
  </body>
 </html>

@@ -9,7 +9,7 @@
                 --spacing-0p5: 0.5rem;
             }
 
-            header, main, .arretify-appendix {
+            header, main, footer {
                 max-width: 800px;
                 margin: auto;
                 padding: var(--spacing-1);
@@ -20,8 +20,17 @@
                 padding-left: var(--spacing-1);
             }
 
+            table {
+                border-collapse: collapse
+            }
+
             th {
                 text-align: left;
+            }
+
+            td, th {
+                border: solid 1px #cecece;
+                padding: 0.5rem;
             }
 
             a.arretify-document_reference, a.arretify-section_reference {
@@ -411,7 +420,7 @@
     </div>
    </section>
   </main>
-  <appendix class="arretify-appendix">
+  <footer class="arretify-appendix">
    <section class="arretify-section" data-number="1" data-title="modèle du bulletin de vote" data-type="annexe">
     <h2 class="arretify-section_title">
      ANNEXE 1 : modèle du bulletin de vote
@@ -693,6 +702,6 @@
      Les candidats à la chambre régionale d'agriculture ou à la chambre d'agriculture de région assorties de chambres territoriales non élus lors de l'élection des membres des chambres départementales, interdépartementales ou territoriales (collège 1) ou de l'élection des membres des chambres régionales d'agriculture ou des chambres d'agriculture de région assorties de chambres territoriales (collèges 2 à 5) sont appelés à siéger, dans leur ordre de présentation sur la liste, en cas de vacance de siège consécutif au départ d'un élu de la même liste (ex : décès ou démission de l'élu).
     </div>
    </section>
-  </appendix>
+  </footer>
  </body>
 </html>

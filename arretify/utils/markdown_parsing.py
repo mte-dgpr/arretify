@@ -41,14 +41,8 @@ This pattern ensures that the line starts and ends with a pipe
 and contains at least one cell in between.
 """
 
-TABLE_HEADER_SEPARATOR_PATTERN = PatternProxy(
-    r"^\|" + repeated_with_separator(r"[-:\s]+", r"\|", (1, ...)) + r"\|$"
-)
-"""
-Detect a markdown table header separator.
-This pattern ensures that the line starts and ends with a pipe
-and contains at least two cells, with only characters -, : or whitespace in between.
-"""
+TABLE_HEADER_SEPARATOR_PATTERN = PatternProxy(r"^\s*[-:|\s]+\s*$")
+"""Detect if the line is a table header separator, i.e. contains only - or : or |."""
 
 TABLE_DESCRIPTION_PATTERN = PatternProxy(r"^(\(\*+\))|^(\*+)")
 """Detect if the line is a table description, i.e. starts with "*" or "(*)"."""
