@@ -37,7 +37,6 @@ from arretify.regex_utils import (
     join_with_or,
 )
 from arretify.regex_utils.regex_tree.execute import match
-from .document_elements import IS_NOT_TABLE_OF_CONTENTS_PAGING_PATTERN_S
 from .types import TitleInfo
 
 
@@ -102,8 +101,8 @@ TITLE_NODE = regex_tree.Group(
                                     ),
                                     # Punctuation between numbering and text
                                     rf"{TITLE_PUNCTUATION_PATTERN_S}*",
-                                    # Text group not ending with table of contents paging
-                                    rf"(?P<text>{IS_NOT_TABLE_OF_CONTENTS_PAGING_PATTERN_S}.*?)$",
+                                    # Text group
+                                    r"(?P<text>.*?)$",
                                 ]
                             ),
                         ],
@@ -120,8 +119,8 @@ TITLE_NODE = regex_tree.Group(
                     rf"(?P<number>{NUMBERING_THEN_OBL_NUMBERS_PATTERN_S})",
                     # Punctuation between numbering and text
                     rf"{TITLE_PUNCTUATION_PATTERN_S}*",
-                    # Text group not ending with table of contents paging
-                    rf"(?P<text>{IS_NOT_TABLE_OF_CONTENTS_PAGING_PATTERN_S}.*?)$",
+                    # Text group
+                    r"(?P<text>.*?)$",
                 ],
             ),
             # This regex matches section names in arretes such as
@@ -133,9 +132,8 @@ TITLE_NODE = regex_tree.Group(
                     rf"^(?P<number>{NUMBERS_PATTERN_S}\.?)",
                     # Punctuation between section name and numbering
                     rf"\s*{TITLE_PUNCTUATION_PATTERN_S}\s*",
-                    # Text group not ending with table of contents paging nor punctuation
-                    rf"(?P<text>{IS_NOT_TABLE_OF_CONTENTS_PAGING_PATTERN_S}"
-                    rf"{IS_NOT_ENDING_WITH_PUNCTUATION}.*?)$",
+                    # Text group not ending with punctuation
+                    rf"(?P<text>{IS_NOT_ENDING_WITH_PUNCTUATION}.*?)$",
                 ],
             ),
         ],

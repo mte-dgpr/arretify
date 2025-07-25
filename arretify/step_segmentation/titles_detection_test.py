@@ -195,14 +195,6 @@ class TestTitlePattern(unittest.TestCase):
         text = "27406 Code postal"
         assert not match(TITLE_NODE, text)
 
-    def test_toc_no_name(self):
-        text = "1. Titre ..... 5"
-        assert not match(TITLE_NODE, text)
-
-    def test_toc(self):
-        text = "Titre 1 - Titre ..... 5"
-        assert not match(TITLE_NODE, text)
-
     def test_toc_appendix(self):
         text = "Annexes :"
         assert not match(TITLE_NODE, text)
