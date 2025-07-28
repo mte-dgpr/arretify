@@ -135,6 +135,38 @@ class TestParseVisaAndMotifs(unittest.TestCase):
             ],
         )
 
+    def test_variant_simple_page_separator_interrupting_sentence(self):
+        # Arrange
+        elements = [
+            *_l("Vu le code de l'environnement, et notamment ses titres 1er et 4"),
+            Node(
+                type="page_separator",
+                children=[],
+            ),
+            *_l("des parties réglementaires et législatives du livre V ;"),
+        ]
+
+        # Act
+        result = list(parse_visa_and_motif_elements(elements))
+
+        # Assert
+        assert_elements_equal(
+            result,
+            [
+                Node(
+                    type="visa",
+                    children=[
+                        *_l("Vu le code de l'environnement, et notamment ses titres 1er et 4"),
+                        Node(
+                            type="page_separator",
+                            children=[],
+                        ),
+                        *_l("des parties réglementaires et législatives du livre V ;"),
+                    ],
+                ),
+            ],
+        )
+
     def test_variant_implicit_list(self):
         # Arrange
         elements = _l(
@@ -332,7 +364,8 @@ class TestParseVisaAndMotifs(unittest.TestCase):
         # Arrange
         elements = [
             *_l(
-                "Considérant que la demande de modification sollicitée le 19 juillet 2021 porte sur :"
+                "Considérant que la demande de modification sollicitée "
+                "le 19 juillet 2021 porte sur :"
             ),
             Node(
                 type="page_separator",
@@ -358,7 +391,8 @@ class TestParseVisaAndMotifs(unittest.TestCase):
                     type="motif",
                     children=[
                         *_l(
-                            "Considérant que la demande de modification sollicitée le 19 juillet 2021 porte sur :"
+                            "Considérant que la demande de modification sollicitée "
+                            "le 19 juillet 2021 porte sur :"
                         ),
                         Node(
                             type="page_separator",
@@ -367,7 +401,8 @@ class TestParseVisaAndMotifs(unittest.TestCase):
                         Node(
                             type="list",
                             children=_l(
-                                "- la modification de l'installation de stockage de déchets non dangereux ;",
+                                "- la modification de l'installation de stockage de déchets "
+                                "non dangereux ;",
                                 "- la mise en conformité avec les exigences réglementaires ;",
                             ),
                         ),
