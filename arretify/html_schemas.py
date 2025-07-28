@@ -38,7 +38,7 @@ MAIN_SCHEMA = DataElementSchema(
 
 APPENDIX_SCHEMA = DataElementSchema(
     name="appendix",
-    tag_name="appendix",
+    tag_name="footer",
     data_keys=[],
 )
 

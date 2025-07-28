@@ -9,7 +9,7 @@
                 --spacing-0p5: 0.5rem;
             }
 
-            header, main, .arretify-appendix {
+            header, main, footer {
                 max-width: 800px;
                 margin: auto;
                 padding: var(--spacing-1);
@@ -20,8 +20,17 @@
                 padding-left: var(--spacing-1);
             }
 
+            table {
+                border-collapse: collapse
+            }
+
             th {
                 text-align: left;
+            }
+
+            td, th {
+                border: solid 1px #cecece;
+                padding: 0.5rem;
             }
 
             a.arretify-document_reference, a.arretify-section_reference {
@@ -902,7 +911,7 @@
     </a>
    </section>
   </main>
-  <appendix class="arretify-appendix">
+  <footer class="arretify-appendix">
    <section class="arretify-section" data-number="1" data-title="LISTE DES SUBSTANCES DANGEREUSES FAISANT PARTIE DU PROGRAMME DE SURVEILLANCE " data-type="annexe">
     <h2 class="arretify-section_title">
      ANNEXE 1 : LISTE DES SUBSTANCES DANGEREUSES FAISANT PARTIE DU PROGRAMME DE SURVEILLANCE
@@ -9518,6 +9527,6 @@
      </section>
     </section>
    </section>
-  </appendix>
+  </footer>
  </body>
 </html>
