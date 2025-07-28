@@ -54,7 +54,7 @@ class TestAssignElementId(unittest.TestCase):
 
 class TestIsTagAndMatches(unittest.TestCase):
 
-    def test_has_class(self):
+    def test_css_classes_in(self):
         # Arrange
         soup = BeautifulSoup("", "html.parser")
         tag = soup.new_tag("div")
@@ -79,6 +79,35 @@ class TestIsTagAndMatches(unittest.TestCase):
 
         # Assert
         assert result is False
+
+    def test_tag_name_in(self):
+        # Arrange
+        soup = BeautifulSoup("", "html.parser")
+        tag = soup.new_tag("span")
+
+        # Act
+        result1 = is_tag_and_matches(tag, tag_name_in=["span"])
+        result2 = is_tag_and_matches(tag, tag_name_in=["div"])
+
+        # Assert
+        assert result1 is True
+        assert result2 is False
+
+    def test_combination_of_filters(self):
+        # Arrange
+        soup = BeautifulSoup("", "html.parser")
+        tag = soup.new_tag("div")
+        tag["class"] = ["test-class"]
+
+        # Act
+        result1 = is_tag_and_matches(tag, css_classes_in=["test-class"], tag_name_in=["div"])
+        result2 = is_tag_and_matches(tag, css_classes_in=["other-test-class"], tag_name_in=["div"])
+        result3 = is_tag_and_matches(tag, css_classes_in=["test-class"], tag_name_in=["span"])
+
+        # Assert
+        assert result1 is True
+        assert result2 is False
+        assert result3 is False
 
     def test_raise_error_with_invalid_class(self):
         # Arrange

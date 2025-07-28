@@ -26,10 +26,9 @@ from arretify.parsing_utils.patterns import is_continuing_sentence
 from arretify.utils.functional import iter_func_to_list, chain_functions
 from arretify.utils.html import (
     PageElementOrString,
-    make_new_tag,
-    make_data_tag,
     render_str_list_attribute,
 )
+from arretify.utils.html_create import make_data_tag, make_new_tag
 from arretify.utils.markdown_parsing import (
     is_table_description,
     TABLE_HEADER_SEPARATOR_PATTERN,
@@ -49,21 +48,24 @@ from arretify.regex_utils import map_matches
 from arretify.parsing_utils.source_mapping import (
     apply_to_segment,
 )
-from .core import (
+from arretify.utils.split_merge import (
     Probe,
-    Node,
-    NodeOrText,
     RawSplit,
     split_elements,
-    make_single_line_splitter_for_text_segments,
     map_splitted_elements,
     flat_map_splitted_elements,
     split_before_match,
+    negate,
+)
+
+from .core import (
+    Node,
+    NodeOrText,
     is_node,
+    make_single_line_splitter_for_text_segments,
     assert_single_text_segment,
     make_probe_from_pattern_proxy,
-    negate,
-    reject_if_not_text_segment,
+    pick_text_segment,
     pick_if_inline_node_followed_by_match,
 )
 from .document_elements import render_table_of_contents, render_page_footer, render_page_separator
@@ -79,8 +81,8 @@ A match for the table splitter, in the form `(<table_elements>, <table_descripti
 """
 
 _is_table = make_probe_from_pattern_proxy(TABLE_LINE_PATTERN)
-_is_table_start = reject_if_not_text_segment(_is_table)
-_is_table_end = negate(pick_if_inline_node_followed_by_match(reject_if_not_text_segment(_is_table)))
+_is_table_start = pick_text_segment(_is_table)
+_is_table_end = negate(pick_if_inline_node_followed_by_match(pick_text_segment(_is_table)))
 
 
 def _make_table_description_end_probe(table_lines: List[TextSegment]) -> Probe[NodeOrText]:
@@ -91,7 +93,7 @@ def _make_table_description_end_probe(table_lines: List[TextSegment]) -> Probe[N
             return True
         return False
 
-    return negate(reject_if_not_text_segment(_is_table_description))
+    return negate(pick_text_segment(_is_table_description))
 
 
 def parse_tables(
@@ -192,9 +194,9 @@ LEADING_WHITESPACES_PATTERN = PatternProxy(r"^\s+")
 """Detect leading whitespaces."""
 
 _is_list = make_probe_from_pattern_proxy(LIST_PATTERN)
-_is_list_start = reject_if_not_text_segment(_is_list)
+_is_list_start = pick_text_segment(_is_list)
 _is_inline_node_followed_by_list = pick_if_inline_node_followed_by_match(
-    reject_if_not_text_segment(_is_list)
+    pick_text_segment(_is_list)
 )
 
 
@@ -355,7 +357,7 @@ DOUBLE_QUOTE_PATTERN = PatternProxy(r'"')
 
 
 _is_blockquote_start = make_probe_from_pattern_proxy(BLOCKQUOTE_START_PATTERN)
-_is_blockquote_start_text_segment = reject_if_not_text_segment(_is_blockquote_start)
+_is_blockquote_start_text_segment = pick_text_segment(_is_blockquote_start)
 _is_blockquote_end = make_probe_from_pattern_proxy(BLOCKQUOTE_END_PATTERN, use_search=True)
 
 

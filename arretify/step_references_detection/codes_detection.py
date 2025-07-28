@@ -37,9 +37,7 @@ from arretify.utils.functional import flat_map_string
 from arretify.html_schemas import (
     DOCUMENT_REFERENCE_SCHEMA,
 )
-from arretify.utils.html import (
-    make_data_tag,
-)
+from arretify.utils.html_create import make_data_tag
 from arretify.law_data.types import (
     Document,
     DocumentType,

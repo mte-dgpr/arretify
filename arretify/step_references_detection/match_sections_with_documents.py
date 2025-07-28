@@ -34,6 +34,9 @@ from arretify.html_schemas import (
     DOCUMENT_REFERENCE_SCHEMA,
 )
 from arretify.regex_utils import regex_tree
+from arretify.utils.split_merge import split_elements, map_splitted_elements
+from arretify.utils.html_split_merge import group_strings_splitter, filter_out_inline_tags
+from arretify.utils.strings import merge_strings
 
 
 CONNECTOR_SECTION_TO_PARENT_NODE = regex_tree.Group(
@@ -118,10 +121,21 @@ def _search_parent_reference_tag(
         if element_range[-1].parent != section_reference_tag.parent:
             return None
 
+        # Filter out inline tags, and generate combined strings
+        element_range_with_merged_strings = map_splitted_elements(
+            split_elements(
+                filter_out_inline_tags(element_range),
+                group_strings_splitter,
+            ),
+            lambda elements: merge_strings(
+                elements,
+            ),
+        )
+
         # Grow the range until we get 3 elements :
         # <reference tag> <connector string> <parent reference tag>
-        if len(element_range) == 3:
-            parent_reference_tag = element_range[2]
+        if len(element_range_with_merged_strings) == 3:
+            parent_reference_tag = element_range_with_merged_strings[2]
             if not is_tag_and_matches(
                 parent_reference_tag,
                 css_classes_in=[
@@ -131,7 +145,7 @@ def _search_parent_reference_tag(
             ):
                 return None
 
-            connector_str = element_range[1]
+            connector_str = element_range_with_merged_strings[1]
             if not isinstance(connector_str, str) or not bool(
                 regex_tree.match(CONNECTOR_SECTION_TO_PARENT_NODE, connector_str)
             ):
@@ -139,7 +153,7 @@ def _search_parent_reference_tag(
 
             return parent_reference_tag
 
-        elif len(element_range) < 3:
+        elif len(element_range_with_merged_strings) < 3:
             continue
 
         else:

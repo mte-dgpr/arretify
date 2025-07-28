@@ -243,3 +243,51 @@ class TestConnectParentSections(unittest.TestCase):
                 ),
             ]
         )
+
+    def test_section_separated_by_inline_element(self):
+        assert (
+            process_match_sections_to_parents(
+                """
+            <a
+                class="arretify-section_reference"
+                data-element_id="1"
+            >
+                annexe III
+            </a>
+            de <br/> l'
+            <a
+                class="arretify-document_reference"
+                data-element_id="2"
+            >
+                arrêté ministériel du 23 mai 2016
+            </a>
+            """
+            )
+            == [
+                normalized_html_str(
+                    """
+                <a
+                    class="arretify-section_reference"
+                    data-element_id="1"
+                    data-parent_reference="2"
+                >
+                    annexe III
+                </a>
+                """
+                ),
+                " de ",
+                "<br/>",
+                " l' ",
+                normalized_html_str(
+                    """
+                <a
+                    class="arretify-document_reference"
+                    data-element_id="2"
+                >
+                    arrêté ministériel du 23 mai 2016
+                </a>
+                """
+                ),
+            ]
+        )
+        # paragraphe 3 de <br/> l'annexe III de l'arrêté <br/> ministériel du 23 mai 2016

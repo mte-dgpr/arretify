@@ -30,11 +30,10 @@ from arretify.regex_utils import (
     join_with_or,
 )
 from arretify.utils.html import (
-    make_data_tag,
-    make_new_tag,
     render_str_list_attribute,
     render_bool_attribute,
 )
+from arretify.utils.html_create import make_data_tag, make_new_tag
 from arretify.html_schemas import OPERATION_SCHEMA
 from arretify.types import (
     OperationType,

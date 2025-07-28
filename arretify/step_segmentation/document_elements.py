@@ -32,19 +32,19 @@ from arretify.regex_utils import (
 )
 from arretify.utils.html import (
     PageElementOrString,
-    make_data_tag,
-    wrap_in_tag,
 )
+from arretify.utils.html_create import make_data_tag, wrap_in_tag
 from arretify.utils.functional import iter_func_to_list
-
-from .core import (
-    Node,
-    is_node,
-    assert_single_text_segment,
+from arretify.utils.split_merge import (
     split_before_match,
-    NodeOrText,
     split_elements,
     map_splitted_elements,
+)
+from .core import (
+    Node,
+    NodeOrText,
+    is_node,
+    assert_single_text_segment,
     make_while_splitter_for_text_segments,
     make_probe_from_pattern_proxy,
 )

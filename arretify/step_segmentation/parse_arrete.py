@@ -24,16 +24,18 @@ from arretify.html_schemas import (
     MAIN_SCHEMA,
     APPENDIX_SCHEMA,
 )
-from arretify.utils.html import make_data_tag
+from arretify.utils.html_create import make_data_tag
 from arretify.utils.functional import chain_functions
+from arretify.utils.split_merge import (
+    split_before_match,
+)
 from .header import parse_header, render_header
 from .titles_detection import TITLE_NODE, parse_title_info
 from .content import parse_content, render_content
 from .core import (
-    split_before_match,
     NodeOrText,
     make_probe_from_regex_tree,
-    reject_if_not_text_segment,
+    pick_text_segment,
 )
 from .basic_elements import parse_images
 from .document_elements import parse_page_footers, parse_tables_of_contents, add_page_separators
@@ -42,7 +44,7 @@ from .document_elements import parse_page_footers, parse_tables_of_contents, add
 _is_title = make_probe_from_regex_tree(
     TITLE_NODE,
 )
-_is_title_text_segment = reject_if_not_text_segment(_is_title)
+_is_title_text_segment = pick_text_segment(_is_title)
 
 
 def _is_appendix(elements: List[NodeOrText], index: int) -> bool:
@@ -59,7 +61,7 @@ def _is_appendix(elements: List[NodeOrText], index: int) -> bool:
     return False
 
 
-_is_appendix_text_segment = reject_if_not_text_segment(_is_appendix)
+_is_appendix_text_segment = pick_text_segment(_is_appendix)
 
 
 def parse_arrete(document_context: DocumentContext) -> DocumentContext:

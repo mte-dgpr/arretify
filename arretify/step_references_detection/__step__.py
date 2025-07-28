@@ -20,14 +20,15 @@ from typing import List
 
 
 from arretify.types import PageElementOrString, DocumentContext
-from arretify.utils.html import replace_children
+from arretify.utils.html_create import replace_children
+from arretify.utils.html_split_merge import group_strings_splitter
+from arretify.utils.split_merge import split_elements, map_splitted_elements
 from arretify.html_schemas import (
     ALINEA_SCHEMA,
     MOTIF_SCHEMA,
     VISA_SCHEMA,
 )
 from arretify.utils.references import iter_reference_trees
-from arretify.utils.merge import merge_strings_ignore_page_elements
 
 from .sections_detection import (
     parse_section_references,
@@ -53,6 +54,7 @@ from .unknown_sections_resolution import (
     resolve_unknown_sections,
     remove_misdetected_sections,
 )
+from arretify.utils.strings import merge_strings
 
 
 REFERENCES_CONTAINER_SELECTOR = (
@@ -91,10 +93,13 @@ def step_references_detection(document_context: DocumentContext) -> DocumentCont
     # Cleaning steps
     for tag in document_context.soup.select(REFERENCES_CONTAINER_SELECTOR):
         new_children = list(tag.children)
-        new_children = list(
-            merge_strings_ignore_page_elements(
-                remove_misdetected_sections(document_context, new_children)
-            )
+        new_children = list(remove_misdetected_sections(document_context, new_children))
+        new_children = map_splitted_elements(
+            split_elements(
+                new_children,
+                group_strings_splitter,
+            ),
+            merge_strings,
         )
         replace_children(tag, new_children)
 

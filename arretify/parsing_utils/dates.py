@@ -23,7 +23,8 @@ from typing import List, TypedDict
 from bs4 import BeautifulSoup, Tag
 
 from arretify.html_schemas import DATE_SCHEMA
-from arretify.utils.html import make_data_tag, render_str_list_attribute
+from arretify.utils.html import render_str_list_attribute
+from arretify.utils.html_create import make_data_tag
 from arretify.regex_utils import (
     regex_tree,
     join_with_or,

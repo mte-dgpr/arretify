@@ -25,9 +25,9 @@ from bs4 import BeautifulSoup, Tag
 from arretify.errors import ErrorCodes
 from arretify.utils.html import (
     PageElementOrString,
-    make_data_tag,
     render_str_list_attribute,
 )
+from arretify.utils.html_create import make_data_tag
 from arretify.html_schemas import ERROR_SCHEMA
 from arretify.regex_utils import PatternProxy, repeated_with_separator
 
