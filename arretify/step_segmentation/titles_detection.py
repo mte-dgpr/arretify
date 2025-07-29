@@ -145,51 +145,62 @@ TITLE_NODE = regex_tree.Group(
 )
 
 
-def _split_line_based_on_first_verb(line: Optional[str]) -> Tuple[Optional[str], Optional[str]]:
+def _split_at_first_verb(line: str) -> Tuple[str, Optional[str]]:
+    """
+    This function takes a complete string as input and outputs a tuple of string and eventually
+    a second string.
 
+    The input string might be a section title, an alinea, or both. If both, the section title
+    and its following alinea are usually separated with a ":" character, which we use to split
+    the line first.
+
+    Then, the function converts each part of the line into a spacy doc and looks at its tokens.
+    Whenever we fall upon a conjugated verb, the first string will contain all sentences until
+    the one containing the verb. It forms the section title. And the second string might contain
+    the following elements. It forms the alinea.
+
+    Examples :
+
+    line = "Date d'ouverture, durée et modalités: L'enquête se déroulera pendant 33 jours."
+    _split_at_first_verb(line) ->
+    title_text = "Date d'ouverture, durée et modalités:"
+    alinea_text = "L'enquête se déroulera pendant 33 jours."
+    """
     # Initialize alinea text
-    title_text = None
     alinea_text = None
-
-    # Nothing to split
-    if not line:
-        return title_text, alinea_text
 
     # Split sentences
     sentences = line.split(":")
-    title_sentences = []
 
     for i, sentence in enumerate(sentences):
 
-        # POS tagging
         if sentence.strip():
 
-            spacy_sentence = SPACY_MODEL(sentence)
+            # POS tagging
+            spacy_doc = SPACY_MODEL(sentence)
 
-            # If a sentence contains a verb in finite form, not capitalized, then all
-            # following text will be comprised in a new alinea distinct from the title
-            for token in spacy_sentence:
+            for token in spacy_doc:
 
-                verb_condition = token.pos_ in {"AUX", "VERB"}
-                morph_condition = token.morph.get("VerbForm", default=None) == ["Fin"]
-                not_cap_condition = all(c == "x" for c in token.shape_)
+                # If a sentence contains a verb in finite form, not capitalized, then all
+                # following text will be comprised in a new alinea distinct from the title
+                # See : https://universaldependencies.org/u/feat/VerbForm.html
+                is_verb = token.pos_ in {"AUX", "VERB"}
+                is_finite_form = token.morph.get("VerbForm", default=None) == ["Fin"]
+                is_lowercase = all(c == "x" for c in token.shape_)
 
-                if verb_condition and morph_condition and not_cap_condition:
+                if is_verb and is_finite_form and is_lowercase:
 
                     _LOGGER.info(f"INFO - Split alinea contents in line: {line}")
-                    # Add all following sentences to alinea
+
+                    # All parts until the verb form the section title
+                    title_text = ":".join(sentences[:i])
+                    # Following parts form the alinea
                     alinea_text = ":".join(sentences[i:])
-                    # Remove text from title contents
-                    title_text = line.replace(alinea_text, "")
 
                     break
 
-        # All this content is still part of the title
-        if not alinea_text:
-            title_sentences.append(sentence)
-
-    if len(title_sentences) > 0:
-        title_text = ":".join(title_sentences)
+    if not alinea_text:
+        title_text = line
 
     return title_text, alinea_text
 
@@ -215,7 +226,10 @@ def parse_title_info(line: str) -> TitleInfo:
     levels = str_to_levels(number)
 
     # If the title contains an alinea, break it down in two lines
-    title_text, alinea_text = _split_line_based_on_first_verb(text)
+    if not text:
+        title_text, alinea_text = text, None
+    else:
+        title_text, alinea_text = _split_at_first_verb(text)
 
     # Define title info
     title_info = TitleInfo(

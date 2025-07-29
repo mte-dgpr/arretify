@@ -15,7 +15,7 @@ env:
 jobs:
   test-and-lint:
     runs-on: ubuntu-latest
-    container: python:3.13
+    container: python:3.12
     strategy:
       matrix:
         name: [unit-tests, lint]
@@ -43,6 +43,7 @@ jobs:
           python --version
           pip install --upgrade pip
           pip install .[dev]
+          python -m spacy download fr_dep_news_trf
 
       - name: Run unit tests
         if: matrix.name == 'unit-tests'
