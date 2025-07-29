@@ -27,5 +27,4 @@ class TitleInfo:
     section_type: SectionType
     number: Optional[str] = None
     levels: Optional[List[int]] = None
-    title_text: Optional[str] = None
-    alinea_text: Optional[str] = None
+    text: Optional[str] = None

@@ -30,6 +30,7 @@ from arretify.utils.html import (
 )
 from arretify.utils.html_create import make_data_tag
 from arretify.utils.functional import iter_func_to_list, chain_functions
+from arretify.utils.split import split_at_first_verb
 from arretify.html_schemas import (
     SECTION_SCHEMA,
     SECTION_TITLE_SCHEMAS,
@@ -47,9 +48,11 @@ from .basic_elements import (
 )
 from arretify.utils.split_merge import (
     map_splitted_elements,
+    flat_map_splitted_elements,
     split_elements,
 )
 from .titles_detection import (
+    parse_title_text,
     parse_title_info,
     is_next_title,
     TITLE_NODE,
@@ -109,40 +112,16 @@ def render_content(
     return content
 
 
-def split_section_titles(lines: TextSegments) -> TextSegments:
-
-    lines = list(lines)
-
-    for i, line in enumerate(lines):
-
-        if is_title(line.contents):
-
-            # Parse title info
-            title_info = parse_title_info(line.contents)
-
-            # If the section title contains alinea text, add it to the list
-            if title_info.alinea_text:
-
-                # TODO: fix insertion of alinea text
-                # Insert alinea text after section title
-                lines.insert(
-                    i + 1,
-                    TextSegment((0, 0), (0, len(title_info.alinea_text)), title_info.alinea_text),
-                )
-
-                # Remove alinea text from title contents
-                title_contents = line.contents.replace(title_info.alinea_text, "")
-                lines[i] = TextSegment(
-                    (lines[i].start[0], 0), (lines[i].end[0], len(title_contents)), title_contents
-                )
-
-    return lines
-
-
 def parse_section_titles(
     elements: List[NodeOrText],
+    lite: bool = False,
 ) -> List[NodeOrText]:
-    # First collect all section titles in output_flow.
+    # First fix titles containing alinea
+    # Do it only if we are not in lite mode as this is computation intensive
+    if not lite:
+        elements = _fix_titles_containing_alineas(elements)
+
+    # Then collect all section titles in list
     node_list = _create_section_title_nodes(elements)
     section_titles: List[Node] = [e for e in node_list if is_node(e, type_in=["section_title"])]
 
@@ -216,11 +195,47 @@ def parse_section_titles(
             type=new_section_type.value,
             level=new_schema_level,
             number=title_info.number,
-            title=title_info.title_text,
+            title=title_info.text,
         )
         section_title.data.update(data_extra)
 
     return node_list
+
+
+def _split_title_map_function(elements: List[NodeOrText]) -> List[NodeOrText]:
+    output: List[NodeOrText] = []
+    for line in elements:
+        assert isinstance(line, TextSegment)
+        section_name, text = parse_title_text(line.contents)
+        title_text, alinea_text = split_at_first_verb(text)
+        if alinea_text:
+            # Return two segments: one for the title and one for the alinea
+            if not title_text:
+                title_text = section_name
+            else:
+                title_text = section_name + title_text
+            title_end = (line.end[0], line.end[1], len(title_text))
+            output.extend(
+                [
+                    TextSegment(contents=title_text, start=line.start, end=title_end),
+                    TextSegment(contents=alinea_text, start=title_end, end=line.end),
+                ]
+            )
+        else:
+            output.append(line)
+    return output
+
+
+def _fix_titles_containing_alineas(
+    elements: List[NodeOrText],
+) -> List[NodeOrText]:
+    return flat_map_splitted_elements(
+        split_elements(
+            elements,
+            make_single_line_splitter_for_text_segments(_is_title),
+        ),
+        _split_title_map_function,
+    )
 
 
 def _create_section_title_nodes(

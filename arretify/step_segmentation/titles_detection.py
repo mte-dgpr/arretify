@@ -19,8 +19,6 @@
 import logging
 from typing import List, Optional, Tuple
 
-import spacy
-
 from arretify.types import SectionType
 from arretify.parsing_utils.patterns import LEADING_TRAILING_PUNCTUATION_PATTERN
 from arretify.parsing_utils.numbering import (
@@ -42,8 +40,6 @@ from .types import TitleInfo
 
 
 _LOGGER = logging.getLogger(__name__)
-
-SPACY_MODEL = spacy.load("fr_dep_news_trf")
 
 
 TITLE_PUNCTUATION_PATTERN_S = r"[.\s\-:]"
@@ -86,24 +82,24 @@ TITLE_NODE = regex_tree.Group(
                             regex_tree.Sequence(
                                 [
                                     # Punctuation before the end of the line
-                                    rf"{TITLE_PUNCTUATION_PATTERN_S}*$",
+                                    rf"(?P<punc_before>{TITLE_PUNCTUATION_PATTERN_S}*)$",
                                 ]
                             ),
                             # Title has numbering
                             regex_tree.Sequence(
                                 [
                                     # Punctuation between section name and numbering
-                                    rf"\s*{TITLE_PUNCTUATION_PATTERN_S}\s*",
+                                    rf"(?P<punc_before>\s*{TITLE_PUNCTUATION_PATTERN_S}\s*)",
                                     # Numbering pattern
                                     regex_tree.Branching(
                                         [
                                             rf"(?P<number>{ORDINAL_PATTERN_S})",
-                                            rf"(?P<number>(\d|I|i)){EME_PATTERN_S}",
+                                            rf"(?P<number>(\d|I|i))(?P<eme>{EME_PATTERN_S})",
                                             rf"(?P<number>{NUMBERING_THEN_OPT_NUMBERS_PATTERN_S})",
                                         ],
                                     ),
                                     # Punctuation between numbering and text
-                                    rf"{TITLE_PUNCTUATION_PATTERN_S}*",
+                                    rf"(?P<punc_after>{TITLE_PUNCTUATION_PATTERN_S}*)",
                                     # Text group
                                     r"(?P<text>.*?)$",
                                 ]
@@ -121,7 +117,7 @@ TITLE_NODE = regex_tree.Group(
                     # Numbering pattern with at least two numbers
                     rf"(?P<number>{NUMBERING_THEN_OBL_NUMBERS_PATTERN_S})",
                     # Punctuation between numbering and text
-                    rf"{TITLE_PUNCTUATION_PATTERN_S}*",
+                    rf"(?P<punc_after>{TITLE_PUNCTUATION_PATTERN_S}*)",
                     # Text group
                     r"(?P<text>.*?)$",
                 ],
@@ -134,7 +130,7 @@ TITLE_NODE = regex_tree.Group(
                     # Numbering pattern with only one integer
                     rf"^(?P<number>{NUMBERS_PATTERN_S}\.?)",
                     # Punctuation between section name and numbering
-                    rf"\s*{TITLE_PUNCTUATION_PATTERN_S}\s*",
+                    rf"(?P<punc_after>\s*{TITLE_PUNCTUATION_PATTERN_S}\s*)",
                     # Text group not ending with punctuation
                     rf"(?P<text>{IS_NOT_ENDING_WITH_PUNCTUATION}.*?)$",
                 ],
@@ -145,64 +141,27 @@ TITLE_NODE = regex_tree.Group(
 )
 
 
-def _split_at_first_verb(line: str) -> Tuple[str, Optional[str]]:
-    """
-    This function takes a complete string as input and outputs a tuple of string and eventually
-    a second string.
+def parse_title_text(line: str) -> Tuple[str, str]:
+    """This function splits a line containing a title into its title and text parts."""
+    # Detect pattern
+    match_pattern = match(TITLE_NODE, line)
+    assert match_pattern, "Only use parse function when match pattern exists!"
 
-    The input string might be a section title, an alinea, or both. If both, the section title
-    and its following alinea are usually separated with a ":" character, which we use to split
-    the line first.
+    # Extract dict
+    match_dict = match_pattern.match_dict
 
-    Then, the function converts each part of the line into a spacy doc and looks at its tokens.
-    Whenever we fall upon a conjugated verb, the first string will contain all sentences until
-    the one containing the verb. It forms the section title. And the second string might contain
-    the following elements. It forms the alinea.
+    # Build the section name
+    section_type = match_dict.get("section_name", "")
+    punc_before = match_dict.get("punc_before", "")
+    number = match_dict.get("number", "")
+    eme = match_dict.get("eme", "")
+    punc_after = match_dict.get("punc_after", "")
+    section_name = "".join([section_type, punc_before, number, eme, punc_after])
 
-    Examples :
+    # Split text parts
+    text = match_dict.get("text", "")
 
-    line = "Date d'ouverture, durée et modalités: L'enquête se déroulera pendant 33 jours."
-    _split_at_first_verb(line) ->
-    title_text = "Date d'ouverture, durée et modalités:"
-    alinea_text = "L'enquête se déroulera pendant 33 jours."
-    """
-    # Initialize alinea text
-    alinea_text = None
-
-    # Split sentences
-    sentences = line.split(":")
-
-    for i, sentence in enumerate(sentences):
-
-        if sentence.strip():
-
-            # POS tagging
-            spacy_doc = SPACY_MODEL(sentence)
-
-            for token in spacy_doc:
-
-                # If a sentence contains a verb in finite form, not capitalized, then all
-                # following text will be comprised in a new alinea distinct from the title
-                # See : https://universaldependencies.org/u/feat/VerbForm.html
-                is_verb = token.pos_ in {"AUX", "VERB"}
-                is_finite_form = token.morph.get("VerbForm", default=None) == ["Fin"]
-                is_lowercase = all(c == "x" for c in token.shape_)
-
-                if is_verb and is_finite_form and is_lowercase:
-
-                    _LOGGER.info(f"INFO - Split alinea contents in line: {line}")
-
-                    # All parts until the verb form the section title
-                    title_text = ":".join(sentences[:i])
-                    # Following parts form the alinea
-                    alinea_text = ":".join(sentences[i:])
-
-                    break
-
-    if not alinea_text:
-        title_text = line
-
-    return title_text, alinea_text
+    return section_name, text
 
 
 def parse_title_info(line: str) -> TitleInfo:
@@ -225,19 +184,12 @@ def parse_title_info(line: str) -> TitleInfo:
         number = str(ordinal_str_to_int(number))
     levels = str_to_levels(number)
 
-    # If the title contains an alinea, break it down in two lines
-    if not text:
-        title_text, alinea_text = text, None
-    else:
-        title_text, alinea_text = _split_at_first_verb(text)
-
     # Define title info
     title_info = TitleInfo(
         section_type=section_type,
         number=number,
         levels=levels,
-        title_text=title_text,
-        alinea_text=alinea_text,
+        text=text,
     )
 
     return title_info

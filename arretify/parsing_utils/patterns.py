@@ -29,6 +29,9 @@ from arretify.utils.html import PageElementOrString
 
 ET_VIRGULE_PATTERN_S = r"(\s*(,|,?et)\s*)"
 
+LEADING_TRAILING_WHITESPACE_PATTERN = PatternProxy(r"^[\s]+|[\s]+$")
+"""Detect leading and trailing whitespaces."""
+
 LEADING_TRAILING_PUNCTUATION_PATTERN = PatternProxy(r"^[\s.]+|[\s.]+$")
 """Detect leading and trailing points or whitespaces."""
 
