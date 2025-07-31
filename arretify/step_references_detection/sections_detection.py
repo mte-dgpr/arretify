@@ -34,11 +34,11 @@ from arretify.html_schemas import (
     SECTION_REFERENCE_SCHEMA,
 )
 from arretify.utils.html import (
-    make_data_tag,
     make_group_id,
     set_group_id,
     PageElementOrString,
 )
+from arretify.utils.html_create import make_data_tag
 from arretify.parsing_utils.patterns import (
     ET_VIRGULE_PATTERN_S,
 )

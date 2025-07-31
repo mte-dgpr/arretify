@@ -26,9 +26,9 @@ from bs4 import (
 
 from arretify.types import SectionType, PageElementOrString, DataElementDataDict, TextSegment
 from arretify.utils.html import (
-    make_data_tag,
     render_str_list_attribute,
 )
+from arretify.utils.html_create import make_data_tag
 from arretify.utils.functional import iter_func_to_list, chain_functions
 from arretify.html_schemas import (
     SECTION_SCHEMA,
@@ -45,6 +45,10 @@ from .basic_elements import (
     parse_images,
     parse_blockquotes,
 )
+from arretify.utils.split_merge import (
+    map_splitted_elements,
+    split_elements,
+)
 from .titles_detection import (
     parse_title_info,
     is_next_title,
@@ -55,8 +59,6 @@ from .core import (
     NodeOrText,
     is_node,
     assert_single_text_segment,
-    map_splitted_elements,
-    split_elements,
     make_single_line_splitter_for_text_segments,
     make_probe_from_regex_tree,
 )

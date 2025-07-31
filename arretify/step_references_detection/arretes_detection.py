@@ -30,8 +30,8 @@ from typing import (
 from arretify.types import DocumentContext
 from arretify.utils.html import (
     PageElementOrString,
-    make_data_tag,
 )
+from arretify.utils.html_create import make_data_tag
 from arretify.utils.functional import flat_map_string
 from arretify.html_schemas import (
     DOCUMENT_REFERENCE_SCHEMA,

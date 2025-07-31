@@ -26,7 +26,7 @@ from arretify.html_schemas import (
     SECTION_REFERENCE_SCHEMA,
 )
 from arretify.types import PageElementOrString, DocumentContext
-from arretify.utils.html import replace_children
+from arretify.utils.html_create import replace_children
 
 from .operations_detection import (
     parse_operations,

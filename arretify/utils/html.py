@@ -16,13 +16,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import List, Iterable, cast, TypeGuard, Literal
+from typing import List, cast, TypeGuard, Literal
 
-from bs4 import BeautifulSoup, Tag
+from bs4 import Tag
 
-from arretify.utils.merge import merge_strings_ignore_page_elements
 from arretify.types import (
-    DataElementSchema,
     DataElementDataDict,
     PageElementOrString,
     ElementId,
@@ -82,61 +80,6 @@ def _get_id_from_tag(tag: Tag, name: _IdName) -> _Id | None:
     return None
 
 
-def make_data_tag(
-    soup: BeautifulSoup,
-    schema: DataElementSchema,
-    contents: Iterable[PageElementOrString] | None = None,
-    data: DataElementDataDict | None = None,
-) -> Tag:
-    if contents is None:
-        contents = []
-    if data is None:
-        data = {}
-    element = make_new_tag(soup, schema.tag_name, contents=contents)
-    element["class"] = schema.css_class
-    for key in schema.data_keys:
-        try:
-            data_value = data[key]
-        except KeyError:
-            raise KeyError(f'Missing key "{key}" for schema "{schema.name}"')
-        if data_value is not None:
-            element[f"data-{key}"] = data_value
-
-    for key in SHARED_DATA_KEYS:
-        if key in data:
-            data_value = data[key]
-            if data_value is not None:
-                element[f"data-{key}"] = data_value
-
-    return element
-
-
-def wrap_in_tag(
-    soup: BeautifulSoup,
-    elements: List[PageElementOrString],
-    tag_name: str,
-) -> List[Tag]:
-    wrapped: List[Tag] = []
-    for element in elements:
-        if isinstance(element, str) and element.strip():
-            container = soup.new_tag(tag_name)
-            wrapped.append(container)
-            container.append(element)
-    return wrapped
-
-
-def make_new_tag(
-    soup: BeautifulSoup,
-    tag_name: str,
-    contents: Iterable[PageElementOrString] | None = None,
-) -> Tag:
-    if contents is None:
-        contents = []
-    element = soup.new_tag(tag_name)
-    element.extend(merge_strings_ignore_page_elements(contents))
-    return element
-
-
 def parse_bool_attribute(value: str) -> bool:
     return value == "true"
 
@@ -162,16 +105,10 @@ def set_data_attributes(tag: Tag, data: DataElementDataDict) -> None:
             tag[f"data-{key}"] = value
 
 
-def replace_children(
-    tag: Tag,
-    new_children: Iterable[PageElementOrString],
-) -> None:
-    tag.clear()
-    tag.extend(new_children)
-
-
 def is_tag_and_matches(
-    tag: PageElementOrString, css_classes_in: List[str] | None = None
+    tag: PageElementOrString,
+    css_classes_in: List[str] | None = None,
+    tag_name_in: List[str] | None = None,
 ) -> TypeGuard[Tag]:
     """
     Check if a tag has any of the specified CSS classes.
@@ -192,7 +129,12 @@ def is_tag_and_matches(
                 )
         for css_class in css_classes_in:
             if css_class in actual_css_classes:
-                return True
-        return False
+                break
+        else:
+            return False
+
+    if tag_name_in is not None:
+        if tag.name not in tag_name_in:
+            return False
 
     return True

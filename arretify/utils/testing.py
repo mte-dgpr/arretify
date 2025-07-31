@@ -23,7 +23,7 @@ from bs4 import Tag, BeautifulSoup, PageElement, NavigableString
 
 from arretify.settings import Settings
 from arretify.types import PageElementOrString, DocumentContext
-from arretify.utils.html import replace_children
+from arretify.utils.html_create import replace_children
 
 
 _INLINE_TAGS = [

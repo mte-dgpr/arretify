@@ -22,7 +22,7 @@ from bs4 import Tag, BeautifulSoup
 
 from arretify.utils.functional import iter_func_to_list, chain_functions
 from arretify.parsing_utils.dates import DATE_NODE, render_date_regex_tree_match
-from arretify.utils.html import wrap_in_tag, make_data_tag, make_new_tag
+from arretify.utils.html_create import wrap_in_tag, make_data_tag, make_new_tag
 from arretify.types import TextSegment, PageElementOrString, DataElementSchema
 from arretify.parsing_utils.patterns import join_split_pile_with_pattern, is_continuing_sentence
 from arretify.html_schemas import (
@@ -41,20 +41,22 @@ from arretify.regex_utils import (
     PatternProxy,
     join_with_or,
 )
+from arretify.utils.split_merge import (
+    split_elements,
+    SplitMatch,
+    map_splitted_elements,
+    Probe,
+)
 from .core import (
     Node,
     NodeOrText,
-    split_elements,
-    SplitMatch,
-    make_while_splitter_for_text_segments,
-    map_splitted_elements,
     is_node,
+    make_while_splitter_for_text_segments,
     make_single_line_splitter_for_text_segments,
     assert_single_text_segment,
     assert_all_text_segments,
     group_text_segments_splitter,
     make_probe_from_pattern_proxy,
-    Probe,
     INLINE_NODE_TYPES,
 )
 from .document_elements import (

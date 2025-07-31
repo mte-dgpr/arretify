@@ -27,7 +27,7 @@ from arretify.regex_utils import (
     map_matches,
     safe_group,
 )
-from arretify.utils.merge import merge_strings
+from arretify.utils.strings import merge_strings
 from arretify.parsing_utils.source_mapping import (
     TextSegment,
     apply_to_segment,
