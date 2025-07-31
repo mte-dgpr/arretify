@@ -24,7 +24,7 @@ from arretify.regex_utils import (
     regex_tree,
     map_regex_tree_match,
     split_string_with_regex_tree,
-    iter_regex_tree_match_strings,
+    iter_regex_tree_match_page_elements_or_strings,
 )
 from arretify.regex_utils.helpers import (
     join_with_or,
@@ -148,5 +148,5 @@ def _render_eu_act_reference(
         soup,
         DOCUMENT_REFERENCE_SCHEMA,
         data=document.get_data_attributes(),
-        contents=iter_regex_tree_match_strings(eu_act_group_match),
+        contents=iter_regex_tree_match_page_elements_or_strings(eu_act_group_match),
     )

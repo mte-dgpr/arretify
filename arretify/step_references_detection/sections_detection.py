@@ -53,7 +53,7 @@ from arretify.regex_utils import (
     map_regex_tree_match,
     flat_map_regex_tree_match,
     split_string_with_regex_tree,
-    iter_regex_tree_match_strings,
+    iter_regex_tree_match_page_elements_or_strings,
     filter_regex_tree_match_children,
     repeated_with_separator,
     named_group,
@@ -310,7 +310,7 @@ def _render_section_reference(
             parent_reference=None,
             **section.get_data_attributes(),
         ),
-        contents=iter_regex_tree_match_strings(section_reference_match),
+        contents=iter_regex_tree_match_page_elements_or_strings(section_reference_match),
     )
     if group_id is not None:
         set_group_id(section_tag, group_id)

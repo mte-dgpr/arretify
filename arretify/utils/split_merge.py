@@ -21,6 +21,7 @@ from typing import (
     List,
     Tuple,
     Iterator,
+    Iterable,
     TypeVar,
     Generic,
 )
@@ -34,6 +35,7 @@ from arretify.utils.functional import iter_func_to_list
 
 T1 = TypeVar("T1")
 T2 = TypeVar("T2")
+T3 = TypeVar("T3")
 
 RawSplit = Tuple[List[T1], T2, List[T1]]
 """
@@ -125,8 +127,8 @@ def split_elements(
 @iter_func_to_list
 def map_splitted_elements(
     splitted_list: List[SplittedElement[T1, T2]],
-    map_func: Callable[[T2], T1],
-) -> Iterator[T1]:
+    map_func: Callable[[T2], T3],
+) -> Iterator[T1 | T3]:
     """
     Map a function over a list of SplittedElement.
 
@@ -153,8 +155,8 @@ def map_splitted_elements(
 @iter_func_to_list
 def flat_map_splitted_elements(
     splitted_list: List[SplittedElement[T1, T2]],
-    map_func: Callable[[T2], List[T1]],
-) -> Iterator[T1]:
+    map_func: Callable[[T2], Iterable[T3]],
+) -> Iterator[T1 | T3]:
     for splitted_element in splitted_list:
         if isinstance(splitted_element, SplitMatch):
             yield from map_func(splitted_element.value)

@@ -32,6 +32,7 @@ from arretify.regex_utils import (
     split_string_with_regex_tree,
     map_regex_tree_match_strings,
 )
+from arretify.utils.strings import merge_strings
 from arretify.parsing_utils.dates import MONTH_POINT_ABBREVIATIONS
 from arretify.regex_utils import regex_tree
 from arretify.utils.markdown_parsing import LIST_PATTERN, BULLETPOINT_PATTERN_S, TABLE_LINE_PATTERN
@@ -164,7 +165,7 @@ def _render_point_abbreviation_month(match: regex_tree.Match) -> str:
 
 
 def _clean_failed_month_abbreviations(line_contents: str) -> str:
-    return "".join(
+    return merge_strings(
         map_regex_tree_match_strings(
             split_string_with_regex_tree(
                 FAILED_MONTH_POINT_ABBREVIATIONS,

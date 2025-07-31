@@ -23,7 +23,7 @@ from arretify.regex_utils import (
     regex_tree,
     map_regex_tree_match,
     split_string_with_regex_tree,
-    iter_regex_tree_match_strings,
+    iter_regex_tree_match_page_elements_or_strings,
 )
 from arretify.types import PageElementOrString, DocumentContext
 from arretify.utils.functional import flat_map_string
@@ -61,7 +61,7 @@ def parse_self_references(
                     document_context.soup,
                     DOCUMENT_REFERENCE_SCHEMA,
                     data=document.get_data_attributes(),
-                    contents=iter_regex_tree_match_strings(self_group_match),
+                    contents=iter_regex_tree_match_page_elements_or_strings(self_group_match),
                 ),
                 allowed_group_names=["__self"],
             ),

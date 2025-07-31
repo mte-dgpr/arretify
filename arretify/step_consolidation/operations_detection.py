@@ -25,7 +25,7 @@ from arretify.regex_utils import (
     split_string_with_regex_tree,
     flat_map_regex_tree_match,
     map_regex_tree_match,
-    iter_regex_tree_match_strings,
+    iter_regex_tree_match_page_elements_or_strings,
     filter_regex_tree_match_children,
     join_with_or,
 )
@@ -34,6 +34,7 @@ from arretify.utils.html import (
     render_bool_attribute,
 )
 from arretify.utils.html_create import make_data_tag, make_new_tag
+from arretify.utils.strings import merge_strings
 from arretify.html_schemas import OPERATION_SCHEMA
 from arretify.types import (
     OperationType,
@@ -339,12 +340,12 @@ def _render_group_match(
     soup: BeautifulSoup, group_match: regex_tree.Match
 ) -> Iterator[PageElementOrString]:
     if group_match.group_name == "__has_operand":
-        yield from iter_regex_tree_match_strings(group_match)
+        yield from iter_regex_tree_match_page_elements_or_strings(group_match)
     elif group_match.group_name in OPERATION_TYPES_GROUP_NAMES:
         yield make_new_tag(
             soup,
             "b",
-            contents=iter_regex_tree_match_strings(group_match),
+            contents=iter_regex_tree_match_page_elements_or_strings(group_match),
         )
     else:
         raise RuntimeError(f"Unexpected group name {group_match.group_name}")
@@ -365,6 +366,6 @@ def _extract_operation_data(
 
     return dict(
         operation_type=operation_type_group.group_name,
-        keyword="".join(iter_regex_tree_match_strings(operation_type_group)),
+        keyword=merge_strings(iter_regex_tree_match_page_elements_or_strings(operation_type_group)),
         has_operand=render_bool_attribute(has_operand),
     )
