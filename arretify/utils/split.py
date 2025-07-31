@@ -32,17 +32,16 @@ SPACY_MODEL = spacy.load("fr_dep_news_trf")
 
 def split_at_first_verb(line: str) -> Tuple[Optional[str], Optional[str]]:
     """
-    This function takes a complete string as input and outputs a tuple of string and eventually
-    a second string.
+    This function takes a complete string as input and outputs one to two strings.
 
     The input string might be a section title, an alinea, or both. If both, the section title
     and its following alinea are usually separated with a ":" character, which we use to split
     the line first.
 
     Then, the function converts each part of the line into a spacy doc and looks at its tokens.
-    Whenever we fall upon a conjugated verb, the first string will contain all sentences until
+    Whenever we fall upon a conjugated verb, the first string will contain all parts until
     the one containing the verb. It forms the section title. And the second string might contain
-    the following elements. It forms the alinea.
+    the following parts. It forms the alinea.
 
     Examples :
 
@@ -51,33 +50,33 @@ def split_at_first_verb(line: str) -> Tuple[Optional[str], Optional[str]]:
     until_verb_or_all = "Date d'ouverture, durée et modalités:"
     after_verb = "L'enquête se déroulera pendant 33 jours."
     """
-    # Initialize after_verb text
+    # Initialize texts
     until_verb_or_all: Optional[str] = None
     after_verb: Optional[str] = None
 
-    # Split sentences
-    sentences = line.split(":")
+    # Split parts
+    parts = line.split(":")
 
-    for i, sentence in enumerate(sentences):
+    for i, part in enumerate(parts):
 
-        if sentence.strip():
+        if part.strip():
 
             # POS tagging
-            spacy_doc = SPACY_MODEL(sentence)
+            spacy_doc = SPACY_MODEL(part)
 
             for token in spacy_doc:
 
-                # If a sentence contains a verb in finite form, not capitalized, then all
+                # If a part contains a verb in finite form, not capitalized, then all
                 # following text will be comprised in a new alinea distinct from the title
-                # See : https://universaldependencies.org/u/feat/VerbForm.html
                 # Only verbs or auxiliary verbs
                 is_verb = token.pos_ in {"AUX", "VERB"}
                 # Only finite forms
+                # See : https://universaldependencies.org/u/feat/VerbForm.html
                 is_finite_form = token.morph.get("VerbForm", default=None) == ["Fin"]
                 # Either the word contains a single letter then it should be lowercase e.g. "a"
                 # or it contains multiple letters then all letters except the first one should be
-                # lowercase e.g. "Est" or "est"
-                is_lowercase = (len(token.shape_) == 1 and token.shape_.islower()) or (
+                # lowercase e.g. "Est" or "est" but not "EST"
+                is_lowercase = (len(token.shape_) <= 1 and token.shape_.islower()) or (
                     len(token.shape_) > 1 and token.shape_[1:].islower()
                 )
 
@@ -87,17 +86,17 @@ def split_at_first_verb(line: str) -> Tuple[Optional[str], Optional[str]]:
 
                     # All parts until the verb form the section title
                     # TODO: improve the split and merging of strings
-                    until_verb_or_all = ":".join(sentences[:i])
+                    until_verb_or_all = ":".join(parts[:i])
                     if len(until_verb_or_all) <= 0:
                         until_verb_or_all = None
-                    elif len(sentences) >= 2 and until_verb_or_all:
+                    elif len(parts) >= 2 and until_verb_or_all:
                         until_verb_or_all += ":"
                     if until_verb_or_all:
                         until_verb_or_all = LEADING_TRAILING_WHITESPACE_PATTERN.sub(
                             "", until_verb_or_all
                         )
                     # Following parts form the alinea
-                    after_verb = ":".join(sentences[i:])
+                    after_verb = ":".join(parts[i:])
                     after_verb = LEADING_TRAILING_WHITESPACE_PATTERN.sub("", after_verb)
 
                     break

@@ -43,7 +43,7 @@ Créer un environnement virtuel :
 py -3.12 -m venv venv
 
 venv/bin/activate  # Sur Linux
-.venv\Scripts\Activate.ps1  # Sur Windows
+.\venv\Scripts\Activate.ps1  # Sur Windows
 
 pip install --upgrade pip  # Sur Linux
 .\venv\Scripts\python.exe -m pip install --upgrade pip  # Sur Windows
@@ -54,7 +54,7 @@ Installer la librairie et ses dépendances :
 ```bash
 # **NOTE**: La librairie sera disponible très prochainement sur PyPI. En attendant, vous pouvez l'installer directement depuis le repo git.
 pip install git+https://github.com/mte-dgpr/arretify.git  # Sur Linux
-pip install git+https://github.com/mte-dgpr/arretify.git --extra-index-url https://download.pytorch.org/whl/cu128  # Sur Windows Windows, version CUDA à adapter selon votre cas
+pip install git+https://github.com/mte-dgpr/arretify.git --extra-index-url https://download.pytorch.org/whl/cu128  # Sur Windows, version CUDA à adapter selon votre cas
 
 # Modèles spacy
 python -m spacy download fr_dep_news_trf
