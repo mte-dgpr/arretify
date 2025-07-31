@@ -31,5 +31,4 @@ from .compile import (
     Repeat,
     Node,
 )
-from .execute import match
 from .types import RegexTreeMatch as Match, GroupNode, MatchDict

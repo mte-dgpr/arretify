@@ -148,7 +148,7 @@ def _search_parent_reference_tag(
 
             connector_str = element_range_with_merged_strings[1]
             if not isinstance(connector_str, str) or not bool(
-                regex_tree.match(CONNECTOR_SECTION_TO_PARENT_NODE, connector_str)
+                CONNECTOR_SECTION_TO_PARENT_NODE.pattern.match(connector_str)
             ):
                 return None
 

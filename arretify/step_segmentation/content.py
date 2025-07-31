@@ -60,7 +60,7 @@ from .core import (
     is_node,
     assert_single_text_segment,
     make_single_line_splitter_for_text_segments,
-    make_probe_from_regex_tree,
+    make_probe_from_pattern,
 )
 from .document_elements import (
     render_page_footer,
@@ -72,8 +72,8 @@ from .document_elements import (
 _LOGGER = logging.getLogger(__name__)
 
 
-_is_title = make_probe_from_regex_tree(
-    TITLE_NODE,
+_is_title = make_probe_from_pattern(
+    TITLE_NODE.pattern,
 )
 
 

@@ -36,7 +36,7 @@ from arretify.regex_utils import (
     regex_tree,
     join_with_or,
 )
-from arretify.regex_utils.regex_tree.execute import match
+from arretify.utils.html_split_merge import regex_tree_match
 from .types import TitleInfo
 
 
@@ -143,9 +143,8 @@ TITLE_NODE = regex_tree.Group(
 
 
 def parse_title_info(line: str) -> TitleInfo:
-
     # Detect pattern
-    match_pattern = match(TITLE_NODE, line)
+    match_pattern = regex_tree_match([line], TITLE_NODE)
     assert match_pattern, "Only use parse function when match pattern exists!"
 
     # Extract dict

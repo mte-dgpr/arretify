@@ -27,8 +27,7 @@ from typing import (
 from dataclasses import dataclass, field
 
 from arretify.types import TextSegment
-from arretify.regex_utils import PatternProxy, regex_tree
-from arretify.regex_utils.regex_tree.execute import match
+from arretify.regex_utils import PatternProxy
 from arretify.utils.split_merge import (
     make_while_splitter,
     make_single_line_splitter,
@@ -119,13 +118,13 @@ def make_probe_from_pattern_proxy(
     return _probe
 
 
-def make_probe_from_regex_tree(
-    regex_tree_node: regex_tree.GroupNode,
+def make_probe_from_pattern(
+    pattern: PatternProxy,
 ) -> Probe[NodeOrText]:
     def _probe(elements: List[NodeOrText], index: int) -> bool:
         element = elements[index]
         assert isinstance(element, TextSegment)
-        return bool(match(regex_tree_node, element.contents))
+        return bool(pattern.match(element.contents))
 
     return _probe
 
