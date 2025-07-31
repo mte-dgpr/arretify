@@ -35,7 +35,8 @@ from arretify.html_schemas import (
 )
 from arretify.regex_utils import regex_tree
 from arretify.utils.split_merge import split_elements, map_splitted_elements
-from arretify.utils.html_split_merge import group_strings_splitter, filter_out_inline_tags
+from arretify.utils.html_split_merge import group_strings_splitter
+from arretify.utils.html import filter_out_inline_tags
 from arretify.utils.strings import merge_strings
 
 

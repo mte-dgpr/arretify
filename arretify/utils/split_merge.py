@@ -164,6 +164,36 @@ def flat_map_splitted_elements(
             yield from splitted_element.value
 
 
+@iter_func_to_list
+def merge_splitted_elements(
+    splitted_list: List[SplittedElement[T1, List[T1]]],
+) -> Iterator[T1]:
+    """
+    Flatten a list of SplittedElement.
+    Works only if type of match and non match are the same.
+
+    For example :
+
+    >>> splitted_list = [
+    ...     SplitNotAMatch([1, 2]),
+    ...     SplitMatch([3, 4]),
+    ...     SplitNotAMatch([5]),
+    ... ]
+    >>> list(merge_splitted_elements(splitted_list))
+    [1, 2, 3, 4, 5]
+    """
+
+    for splitted_element in splitted_list:
+        if isinstance(splitted_element, SplitMatch):
+            yield from splitted_element.value
+        elif isinstance(splitted_element, SplitNotAMatch):
+            yield from splitted_element.value
+        else:
+            raise RuntimeError(
+                "Unexpected type in splitted_list, expected SplitMatch or SplitNotAMatch"
+            )
+
+
 def split_before_match(
     elements: List[T1],
     is_matching: Probe[T1],

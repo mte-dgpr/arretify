@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 
-from typing import Iterator, Iterable
+from typing import Iterator, List
 from dataclasses import replace as dataclass_replace
 
 from arretify.types import DocumentContext, PageElementOrString
@@ -27,6 +27,7 @@ from arretify.utils.references import (
     build_reference_tree,
     ReferenceTree,
 )
+from arretify.utils.functional import iter_func_to_list
 from arretify.utils.html import set_data_attributes, is_tag_and_matches
 from arretify.html_schemas import SECTION_REFERENCE_SCHEMA
 
@@ -81,9 +82,10 @@ def resolve_unknown_sections(
         )
 
 
+@iter_func_to_list
 def remove_misdetected_sections(
     document_context: DocumentContext,
-    children: Iterable[PageElementOrString],
+    children: List[PageElementOrString],
 ) -> Iterator[PageElementOrString]:
     for section_reference_tag in children:
         if not is_tag_and_matches(

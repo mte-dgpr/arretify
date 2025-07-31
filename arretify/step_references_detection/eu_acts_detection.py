@@ -16,14 +16,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import Iterable, List
+from typing import List
 
 from bs4 import BeautifulSoup
 
 from arretify.regex_utils import (
     regex_tree,
-    map_regex_tree_match,
-    split_string_with_regex_tree,
     iter_regex_tree_match_page_elements_or_strings,
 )
 from arretify.regex_utils.helpers import (
@@ -35,11 +33,12 @@ from arretify.parsing_utils.dates import (
     render_year_str,
 )
 from arretify.types import PageElementOrString, DocumentContext
-from arretify.utils.functional import flat_map_string
 from arretify.html_schemas import (
     DOCUMENT_REFERENCE_SCHEMA,
 )
 from arretify.utils.html_create import make_data_tag
+from arretify.utils.html_split_merge import make_regex_tree_splitter
+from arretify.utils.split_merge import split_elements, map_splitted_elements
 from arretify.law_data.types import (
     Document,
     DocumentType,
@@ -106,20 +105,16 @@ EU_ACT_NODE = regex_tree.Group(
 
 def parse_eu_acts_references(
     document_context: DocumentContext,
-    children: Iterable[PageElementOrString],
+    children: List[PageElementOrString],
 ) -> List[PageElementOrString]:
-    return list(
-        flat_map_string(
+    return map_splitted_elements(
+        split_elements(
             children,
-            lambda string: map_regex_tree_match(
-                split_string_with_regex_tree(EU_ACT_NODE, string),
-                lambda eu_act_group_match: _render_eu_act_reference(
-                    document_context.soup,
-                    eu_act_group_match,
-                ),
-                allowed_group_names=["__eu_act"],
-            ),
-        )
+            make_regex_tree_splitter(EU_ACT_NODE),
+        ),
+        lambda eu_act_group_match: _render_eu_act_reference(
+            document_context.soup, eu_act_group_match
+        ),
     )
 
 

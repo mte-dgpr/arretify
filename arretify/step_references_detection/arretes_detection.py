@@ -37,7 +37,7 @@ from arretify.utils.html import (
     PageElementOrString,
 )
 from arretify.utils.html_create import make_data_tag
-from arretify.utils.html_split_merge import make_pattern_splitter, regex_tree_match
+from arretify.utils.html_split_merge import make_regex_tree_splitter
 from arretify.html_schemas import (
     DOCUMENT_REFERENCE_SCHEMA,
 )
@@ -244,11 +244,11 @@ def _parse_arretes_references(
     return map_splitted_elements(
         split_elements(
             children,
-            make_pattern_splitter(ARRETE_NODE.pattern),
+            make_regex_tree_splitter(ARRETE_NODE),
         ),
-        lambda match: _render_arrete_container(
+        lambda match_tree: _render_arrete_container(
             soup,
-            regex_tree_match(match.elements, ARRETE_NODE),
+            match_tree,
         ),
     )
 
@@ -262,14 +262,14 @@ def _parse_multiple_arretes_references(
     return flat_map_splitted_elements(
         split_elements(
             children,
-            make_pattern_splitter(ARRETE_MULTIPLE_NODE.pattern),
+            make_regex_tree_splitter(ARRETE_MULTIPLE_NODE),
         ),
-        lambda match: map_regex_tree_match(
-            regex_tree_match(match.elements, ARRETE_MULTIPLE_NODE).children,
+        lambda match_tree: map_regex_tree_match(
+            match_tree.children,
             lambda arrete_container_group_match: _render_arrete_container(
                 soup,
                 arrete_container_group_match,
-                regex_tree_match(match.elements, ARRETE_MULTIPLE_NODE),
+                match_tree,
             ),
             allowed_group_names=["__arrete"],
         ),

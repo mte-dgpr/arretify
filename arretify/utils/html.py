@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import List, cast, TypeGuard, Literal
+from typing import List, cast, TypeGuard, Literal, Iterable, Iterator
 
 from bs4 import Tag
 
@@ -27,6 +27,10 @@ from arretify.types import (
     ElementGroupId,
     IdCounters,
 )
+from arretify.utils.functional import iter_func_to_list
+
+
+INLINE_TAG_TYPES = ["br"]
 
 
 SHARED_DATA_KEYS = [
@@ -138,3 +142,12 @@ def is_tag_and_matches(
             return False
 
     return True
+
+
+@iter_func_to_list
+def filter_out_inline_tags(
+    elements: Iterable[PageElementOrString],
+) -> Iterator[PageElementOrString]:
+    for element in elements:
+        if not is_tag_and_matches(element, tag_name_in=INLINE_TAG_TYPES):
+            yield element

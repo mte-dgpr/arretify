@@ -18,7 +18,6 @@
 #
 from bs4 import Tag
 from typing import (
-    Iterable,
     List,
     Iterator,
 )
@@ -29,7 +28,6 @@ from arretify.types import (
     SectionType,
 )
 from arretify.parsing_utils.numbering import ROMAN_NUMERALS_PATTERN_S
-from arretify.utils.functional import flat_map_string
 from arretify.html_schemas import (
     SECTION_REFERENCE_SCHEMA,
 )
@@ -39,6 +37,12 @@ from arretify.utils.html import (
     PageElementOrString,
 )
 from arretify.utils.html_create import make_data_tag
+from arretify.utils.html_split_merge import make_regex_tree_splitter
+from arretify.utils.split_merge import (
+    split_elements,
+    map_splitted_elements,
+    flat_map_splitted_elements,
+)
 from arretify.parsing_utils.patterns import (
     ET_VIRGULE_PATTERN_S,
 )
@@ -51,8 +55,6 @@ from arretify.parsing_utils.numbering import (
 from arretify.regex_utils import (
     regex_tree,
     map_regex_tree_match,
-    flat_map_regex_tree_match,
-    split_string_with_regex_tree,
     iter_regex_tree_match_page_elements_or_strings,
     filter_regex_tree_match_children,
     repeated_with_separator,
@@ -70,7 +72,7 @@ SectionNumber = str
 
 def parse_section_references(
     document_context: DocumentContext,
-    children: Iterable[PageElementOrString],
+    children: List[PageElementOrString],
 ) -> List[PageElementOrString]:
     # First check for multiple, cause it is the most exhaustive pattern
     new_children = list(_parse_section_reference_multiple(document_context, children))
@@ -425,17 +427,16 @@ SECTION_REFERENCE_NODE = regex_tree.Group(
 
 def _parse_section_references(
     document_context: DocumentContext,
-    children: Iterable[PageElementOrString],
-) -> Iterable[PageElementOrString]:
-    return flat_map_string(
-        children,
-        lambda string: map_regex_tree_match(
-            split_string_with_regex_tree(SECTION_REFERENCE_NODE, string),
-            lambda section_reference_match: _render_section_reference(
-                document_context,
-                section_reference_match,
-            ),
-            allowed_group_names=["__section_reference"],
+    children: List[PageElementOrString],
+) -> List[PageElementOrString]:
+    return map_splitted_elements(
+        split_elements(
+            children,
+            make_regex_tree_splitter(SECTION_REFERENCE_NODE),
+        ),
+        lambda section_reference_match: _render_section_reference(
+            document_context,
+            section_reference_match,
         ),
     )
 
@@ -527,18 +528,17 @@ SECTION_REFERENCE_MULTIPLE_NODE = regex_tree.Group(
 
 def _parse_section_reference_multiple(
     document_context: DocumentContext,
-    children: Iterable[PageElementOrString],
-):
+    children: List[PageElementOrString],
+) -> List[PageElementOrString]:
     # For multiple arretes, we need to first parse some of the attributes in common
     # before parsing each individual arrete reference.
-    return flat_map_string(
-        children,
-        lambda string: flat_map_regex_tree_match(
-            split_string_with_regex_tree(SECTION_REFERENCE_MULTIPLE_NODE, string),
-            lambda section_reference_multiple_match: _render_section_reference_multiple(
-                document_context,
-                section_reference_multiple_match,
-            ),
-            allowed_group_names=["__section_reference_multiple"],
+    return flat_map_splitted_elements(
+        split_elements(
+            children,
+            make_regex_tree_splitter(SECTION_REFERENCE_MULTIPLE_NODE),
+        ),
+        lambda section_reference_multiple_match: _render_section_reference_multiple(
+            document_context,
+            section_reference_multiple_match,
         ),
     )

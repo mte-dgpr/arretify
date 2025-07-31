@@ -16,11 +16,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import List, Iterable, Iterator, Tuple
+from typing import List, Iterator, Tuple, TypeVar
 from dataclasses import dataclass
 
 from arretify.utils.functional import iter_func_to_list
-from arretify.utils.html import is_tag_and_matches
+from arretify.utils.html import is_tag_and_matches, INLINE_TAG_TYPES
 from arretify.utils.split_merge import (
     Probe,
     make_while_splitter,
@@ -31,6 +31,7 @@ from arretify.utils.split_merge import (
     SplittedElement,
     split_elements,
     flat_map_splitted_elements,
+    merge_splitted_elements,
 )
 from arretify.types import PageElementOrString
 from arretify.regex_utils import safe_group, MatchProxy, PatternProxy
@@ -48,9 +49,10 @@ from arretify.regex_utils.regex_tree.types import (
 from arretify.utils.strings import merge_strings
 
 
-INLINE_TAG_TYPES = ["br"]
+T = TypeVar("T")
 
 
+# -------------------- Split / merge for html -------------------- #
 def pick_if_inline_tag_followed_by_match(
     is_matching: Probe[PageElementOrString],
 ) -> Probe[PageElementOrString]:
@@ -123,13 +125,31 @@ when these are preceded and followed by strings.
 """
 
 
-@iter_func_to_list
-def filter_out_inline_tags(
-    elements: Iterable[PageElementOrString],
-) -> Iterator[PageElementOrString]:
-    for element in elements:
-        if not is_tag_and_matches(element, tag_name_in=INLINE_TAG_TYPES):
-            yield element
+def make_regex_tree_splitter(
+    node: GroupNode,
+) -> Splitter[PageElementOrString, RegexTreeMatch]:
+    """
+    Splits a list of elements based on a regex tree node.
+    """
+    pattern_splitter = make_pattern_splitter(node.pattern)
+
+    def _splitter(
+        elements: List[PageElementOrString],
+    ) -> RawSplit[PageElementOrString, RegexTreeMatch] | None:
+        split = pattern_splitter(elements)
+        if not split:
+            return None
+        before, match, after = split
+        return (
+            before,
+            regex_tree_match(
+                match.elements,
+                node,
+            ),
+            after,
+        )
+
+    return _splitter
 
 
 @dataclass(frozen=True)
@@ -165,8 +185,8 @@ def make_pattern_splitter(
                 match_proxy.start(),
                 match_proxy.end(),
             )
-            before = _flatten_regex_tree_splitted_elements(grouped_strings[:i]) + before_match
-            after = after_match + _flatten_regex_tree_splitted_elements(grouped_strings[i + 1 :])
+            before = merge_splitted_elements(grouped_strings[:i]) + before_match
+            after = after_match + merge_splitted_elements(grouped_strings[i + 1 :])
 
             return (
                 before,
@@ -210,32 +230,26 @@ def _trim_strings_before_merging(elements: List[PageElementOrString]) -> List[Pa
     return elements
 
 
-@iter_func_to_list
-def _flatten_regex_tree_splitted_elements(
-    splitted_list: List[SplittedElement[PageElementOrString, List[PageElementOrString]]],
-) -> Iterator[PageElementOrString]:
-    for splitted_element in splitted_list:
-        if isinstance(splitted_element, SplitMatch):
-            yield from splitted_element.value
-        elif isinstance(splitted_element, SplitNotAMatch):
-            yield from splitted_element.value
-        else:
-            raise RuntimeError(
-                "Unexpected type in splitted_list, expected SplitMatch or SplitNotAMatch"
-            )
-
-
 def _slice_elements_with_string_index(
-    elements: List[PageElementOrString], start: int, end: int
-) -> RawSplit[PageElementOrString, List[PageElementOrString]]:
+    elements: List[str | T], start: int, end: int
+) -> RawSplit[str | T, List[str | T]]:
+    """
+    Takes a list and slices it based only on its string elements.
+
+    Example :
+
+    >>> elements = ["Hello", <br/>, "World"]
+    >>> _slice_elements_with_string_index(elements, 2, 7)
+    (["He"], ["llo", "<br/>", "Wo"], ["rld"])
+    """
     before_match, match_elements = _split_before_string_index(elements, start)
     match_elements, after_match = _split_before_string_index(match_elements, end - start)
     return before_match, match_elements, after_match
 
 
 def _split_before_string_index(
-    elements: List[PageElementOrString], split_index: int
-) -> Tuple[List[PageElementOrString], List[PageElementOrString]]:
+    elements: List[str | T], split_index: int
+) -> Tuple[List[str | T], List[str | T]]:
     current_index = 0
     for i, element in enumerate(elements):
         if not isinstance(element, str):
@@ -254,6 +268,19 @@ def _split_before_string_index(
         after = [string_after] + elements[i + 1 :]
         return (before, after)
     return (elements, [])
+
+
+# -------------------- Regex tree matching -------------------- #
+class NoMatch(Exception):
+    """
+    Enables the algorithm to break out of the current branch and try the next one.
+    """
+
+
+@dataclass(frozen=True)
+class _NamedGroupSplitterMatch:
+    elements: List[PageElementOrString]
+    group_name: GroupName
 
 
 def regex_tree_match(elements: List[PageElementOrString], node: GroupNode) -> RegexTreeMatch:
@@ -340,18 +367,6 @@ def _regex_tree_match_recursive(
 
     else:
         raise RuntimeError(f"unexpected node type: {node}")
-
-
-class NoMatch(Exception):
-    """
-    Enables the algorithm to break out of the current branch and try the next one.
-    """
-
-
-@dataclass(frozen=True)
-class _NamedGroupSplitterMatch:
-    elements: List[PageElementOrString]
-    group_name: GroupName
 
 
 @iter_func_to_list

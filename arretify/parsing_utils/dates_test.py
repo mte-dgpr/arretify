@@ -18,6 +18,7 @@
 #
 import unittest
 from datetime import date
+from typing import List
 
 from bs4 import BeautifulSoup
 
@@ -29,9 +30,13 @@ from .dates import (
     parse_year_str,
     render_year_str,
 )
-from arretify.regex_utils import (
-    map_regex_tree_match,
-    split_string_with_regex_tree,
+from arretify.types import PageElementOrString
+from arretify.utils.split_merge import (
+    split_elements,
+    map_splitted_elements,
+)
+from arretify.utils.html_split_merge import (
+    make_regex_tree_splitter,
 )
 
 
@@ -163,9 +168,12 @@ class TestRenderDateRegexTreeMatch(unittest.TestCase):
 
 def _parsed_elements(string: str) -> list[str]:
     soup = BeautifulSoup(string, features="html.parser")
-    elements = map_regex_tree_match(
-        split_string_with_regex_tree(DATE_NODE, string),
+    elements: List[PageElementOrString] = [string]
+    elements = map_splitted_elements(
+        split_elements(
+            elements,
+            make_regex_tree_splitter(DATE_NODE),
+        ),
         lambda regex_tree_match: render_date_regex_tree_match(soup, regex_tree_match),
-        allowed_group_names=[DATE_NODE.group_name],
     )
     return [str(element) for element in elements]
