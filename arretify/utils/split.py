@@ -52,7 +52,8 @@ def split_at_first_verb(line: str) -> Tuple[Optional[str], Optional[str]]:
     after_verb = "L'enquête se déroulera pendant 33 jours."
     """
     # Initialize after_verb text
-    after_verb = None
+    until_verb_or_all: Optional[str] = None
+    after_verb: Optional[str] = None
 
     # Split sentences
     sentences = line.split(":")
@@ -89,7 +90,7 @@ def split_at_first_verb(line: str) -> Tuple[Optional[str], Optional[str]]:
                     until_verb_or_all = ":".join(sentences[:i])
                     if len(until_verb_or_all) <= 0:
                         until_verb_or_all = None
-                    elif len(sentences) >= 2:
+                    elif len(sentences) >= 2 and until_verb_or_all:
                         until_verb_or_all += ":"
                     if until_verb_or_all:
                         until_verb_or_all = LEADING_TRAILING_WHITESPACE_PATTERN.sub(
