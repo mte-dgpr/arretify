@@ -23,6 +23,7 @@ from bs4 import Tag, BeautifulSoup
 from arretify.utils.functional import iter_func_to_list, chain_functions
 from arretify.parsing_utils.dates import DATE_NODE, render_date_regex_tree_match
 from arretify.utils.html_create import wrap_in_tag, make_data_tag, make_new_tag
+from arretify.utils.html_split_merge import make_regex_tree_splitter
 from arretify.types import TextSegment, PageElementOrString, DataElementSchema
 from arretify.parsing_utils.patterns import join_split_pile_with_pattern, is_continuing_sentence
 from arretify.html_schemas import (
@@ -36,8 +37,6 @@ from arretify.html_schemas import (
     SUPPLEMENTARY_MOTIF_INFORMATION_SCHEMA,
 )
 from arretify.regex_utils import (
-    map_regex_tree_match,
-    split_string_with_regex_tree,
     PatternProxy,
     join_with_or,
 )
@@ -635,16 +634,18 @@ def rendre_arrete_title(
     soup: BeautifulSoup,
     node: Node,
 ) -> Tag:
-    string = " ".join([element.contents for element in assert_all_text_segments(node)])
-    elements = list(
-        map_regex_tree_match(
-            split_string_with_regex_tree(DATE_NODE, string),
-            lambda date_match: render_date_regex_tree_match(soup, date_match),
-            allowed_group_names=["__date"],
-        )
+    elements: List[PageElementOrString] = [
+        " ".join([element.contents for element in assert_all_text_segments(node)])
+    ]
+    elements = map_splitted_elements(
+        split_elements(
+            elements,
+            make_regex_tree_splitter(DATE_NODE),
+        ),
+        lambda tree_match: render_date_regex_tree_match(soup, tree_match),
     )
     return make_data_tag(
         soup,
         ARRETE_TITLE_SCHEMA,
-        contents=[make_new_tag(soup, "h1", elements)],
+        contents=[make_new_tag(soup, "h1", contents=elements)],
     )

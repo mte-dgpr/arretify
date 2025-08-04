@@ -16,16 +16,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import List, Iterator, Iterable
+from typing import List, Iterator
 
 from bs4 import BeautifulSoup
 
 from arretify.regex_utils import (
     regex_tree,
-    split_string_with_regex_tree,
     flat_map_regex_tree_match,
-    map_regex_tree_match,
-    iter_regex_tree_match_strings,
+    iter_regex_tree_match_page_elements_or_strings,
     filter_regex_tree_match_children,
     join_with_or,
 )
@@ -34,6 +32,9 @@ from arretify.utils.html import (
     render_bool_attribute,
 )
 from arretify.utils.html_create import make_data_tag, make_new_tag
+from arretify.utils.strings import merge_strings
+from arretify.utils.html_split_merge import make_regex_tree_splitter
+from arretify.utils.split_merge import split_elements, map_splitted_elements
 from arretify.html_schemas import OPERATION_SCHEMA
 from arretify.types import (
     OperationType,
@@ -41,7 +42,6 @@ from arretify.types import (
     DocumentContext,
     DataElementDataDict,
 )
-from arretify.utils.functional import flat_map_string
 
 from arretify.parsing_utils.numbering import COUNT_PATTERN_S
 
@@ -305,33 +305,38 @@ RTL_OPERATION_NODE = regex_tree.Group(
 
 def parse_operations(
     document_context: DocumentContext,
-    children: Iterable[PageElementOrString],
+    children: List[PageElementOrString],
 ) -> List[PageElementOrString]:
-    return list(
-        flat_map_string(
+    return map_splitted_elements(
+        split_elements(
             children,
-            lambda string: map_regex_tree_match(
-                split_string_with_regex_tree(RTL_OPERATION_NODE, string),
-                lambda operation_match: make_data_tag(
-                    document_context.soup,
-                    OPERATION_SCHEMA,
-                    contents=flat_map_regex_tree_match(
-                        operation_match.children,
-                        lambda group_match: _render_group_match(document_context.soup, group_match),
-                        allowed_group_names=[
-                            "__has_operand",
-                            *OPERATION_TYPES_GROUP_NAMES,
-                        ],
-                    ),
-                    data=dict(
-                        **_extract_operation_data(operation_match),
-                        references=render_str_list_attribute([]),
-                        direction="rtl",
-                        operand="",
-                    ),
-                ),
-            ),
-        )
+            make_regex_tree_splitter(RTL_OPERATION_NODE),
+        ),
+        lambda operation_match: _render_operation_match(document_context.soup, operation_match),
+    )
+
+
+def _render_operation_match(
+    soup: BeautifulSoup,
+    operation_match: regex_tree.Match,
+):
+    return make_data_tag(
+        soup,
+        OPERATION_SCHEMA,
+        contents=flat_map_regex_tree_match(
+            operation_match.children,
+            lambda group_match: _render_group_match(soup, group_match),
+            allowed_group_names=[
+                "__has_operand",
+                *OPERATION_TYPES_GROUP_NAMES,
+            ],
+        ),
+        data=dict(
+            **_extract_operation_data(operation_match),
+            references=render_str_list_attribute([]),
+            direction="rtl",
+            operand="",
+        ),
     )
 
 
@@ -339,12 +344,12 @@ def _render_group_match(
     soup: BeautifulSoup, group_match: regex_tree.Match
 ) -> Iterator[PageElementOrString]:
     if group_match.group_name == "__has_operand":
-        yield from iter_regex_tree_match_strings(group_match)
+        yield from iter_regex_tree_match_page_elements_or_strings(group_match)
     elif group_match.group_name in OPERATION_TYPES_GROUP_NAMES:
         yield make_new_tag(
             soup,
             "b",
-            contents=iter_regex_tree_match_strings(group_match),
+            contents=iter_regex_tree_match_page_elements_or_strings(group_match),
         )
     else:
         raise RuntimeError(f"Unexpected group name {group_match.group_name}")
@@ -365,6 +370,6 @@ def _extract_operation_data(
 
     return dict(
         operation_type=operation_type_group.group_name,
-        keyword="".join(iter_regex_tree_match_strings(operation_type_group)),
+        keyword=merge_strings(iter_regex_tree_match_page_elements_or_strings(operation_type_group)),
         has_operand=render_bool_attribute(has_operand),
     )

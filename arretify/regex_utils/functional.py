@@ -18,6 +18,8 @@
 #
 from typing import Callable, Iterable, Iterator, List, TypeVar, Union
 
+from bs4 import PageElement
+
 from .types import GroupName
 from .core import MatchFlow, MatchProxy
 from .regex_tree.types import RegexTreeMatch, RegexTreeMatchFlow
@@ -48,7 +50,7 @@ def flat_map_regex_tree_match(
         map_func,
         allowed_group_names,
     ):
-        if isinstance(mapped, str):
+        if isinstance(mapped, (str, PageElement)):
             yield mapped
         else:
             yield from mapped
@@ -66,27 +68,13 @@ def map_regex_tree_match(
     )
 
 
-def map_regex_tree_match_strings(
-    regex_tree_match_flow: RegexTreeMatchFlow,
-    map_func: Callable[[RegexTreeMatch], str],
-    allowed_group_names: List[GroupName] | None = None,
-) -> Iterator[str]:
-    return _map_regex_tree_match_generic(
-        regex_tree_match_flow,
-        map_func,
-        allowed_group_names,
-    )
-
-
 def _map_regex_tree_match_generic(
     regex_tree_match_flow: RegexTreeMatchFlow,
     map_func: Callable[[RegexTreeMatch], R],
     allowed_group_names: List[GroupName] | None = None,
-) -> Iterator[R | str]:
+) -> Iterator[R | PageElementOrString]:
     for str_or_group in regex_tree_match_flow:
-        if isinstance(str_or_group, str):
-            yield str_or_group
-        else:
+        if isinstance(str_or_group, RegexTreeMatch):
             if (
                 allowed_group_names is not None
                 and str_or_group.group_name not in allowed_group_names
@@ -96,11 +84,13 @@ def _map_regex_tree_match_generic(
                     f"Allowed : {allowed_group_names}"
                 )
             yield map_func(str_or_group)
+        else:
+            yield str_or_group
 
 
-def iter_regex_tree_match_strings(
+def iter_regex_tree_match_page_elements_or_strings(
     match: RegexTreeMatch,
-) -> Iterator[str]:
+) -> Iterator[PageElementOrString]:
     """
     Iterates over the strings in a regex tree match by traversing the whole tree.
 
@@ -109,14 +99,14 @@ def iter_regex_tree_match_strings(
     ...     group_name=None,
     ...     match_dict={}
     ... )
-    >>> list(iter_regex_tree_match_strings(match))
+    >>> list(iter_regex_tree_match_page_elements_or_strings(match))
     ['hello', 'world', '!', 'python']
     """  # noqa: E501
     for child in match.children:
-        if isinstance(child, str):
-            yield child
+        if isinstance(child, RegexTreeMatch):
+            yield from iter_regex_tree_match_page_elements_or_strings(child)
         else:
-            yield from iter_regex_tree_match_strings(child)
+            yield child
 
 
 def filter_regex_tree_match_children(

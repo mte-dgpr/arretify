@@ -34,15 +34,15 @@ from .titles_detection import TITLE_NODE, parse_title_info
 from .content import parse_content, render_content
 from .core import (
     NodeOrText,
-    make_probe_from_regex_tree,
+    make_probe_from_pattern,
     pick_text_segment,
 )
 from .basic_elements import parse_images
 from .document_elements import parse_page_footers, parse_tables_of_contents, add_page_separators
 
 
-_is_title = make_probe_from_regex_tree(
-    TITLE_NODE,
+_is_title = make_probe_from_pattern(
+    TITLE_NODE.pattern,
 )
 _is_title_text_segment = pick_text_segment(_is_title)
 

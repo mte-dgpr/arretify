@@ -28,11 +28,16 @@ from typing import (
 )
 
 from arretify.types import DocumentContext
+from arretify.utils.split_merge import (
+    split_elements,
+    map_splitted_elements,
+    flat_map_splitted_elements,
+)
 from arretify.utils.html import (
     PageElementOrString,
 )
 from arretify.utils.html_create import make_data_tag
-from arretify.utils.functional import flat_map_string
+from arretify.utils.html_split_merge import make_regex_tree_splitter
 from arretify.html_schemas import (
     DOCUMENT_REFERENCE_SCHEMA,
 )
@@ -45,9 +50,7 @@ from arretify.parsing_utils.dates import (
 )
 from arretify.regex_utils import (
     regex_tree,
-    flat_map_regex_tree_match,
     map_regex_tree_match,
-    split_string_with_regex_tree,
 )
 from arretify.law_data.types import (
     Document,
@@ -177,8 +180,8 @@ def parse_arretes_references(
     children: Iterable[PageElementOrString],
 ) -> List[PageElementOrString]:
     # First check for multiple, cause it is the most exhaustive pattern
-    new_children = list(_parse_multiple_arretes_references(document_context.soup, children))
-    return list(_parse_arretes_references(document_context.soup, new_children))
+    new_children = _parse_multiple_arretes_references(document_context.soup, list(children))
+    return _parse_arretes_references(document_context.soup, new_children)
 
 
 def _extract_identifier(
@@ -190,8 +193,11 @@ def _extract_identifier(
 def _render_arrete_container(
     soup: BeautifulSoup,
     arrete_match: regex_tree.Match,
-    base_arrete_match: regex_tree.Match,
+    base_arrete_match: regex_tree.Match | None = None,
 ) -> Tag:
+    if base_arrete_match is None:
+        base_arrete_match = arrete_match
+
     # Parse date tag and extract date value
     arrete_tag_contents = list(
         map_regex_tree_match(
@@ -233,41 +239,38 @@ def _render_arrete_container(
 
 def _parse_arretes_references(
     soup: BeautifulSoup,
-    children: Iterable[PageElementOrString],
-):
-    return flat_map_string(
-        children,
-        lambda string: map_regex_tree_match(
-            split_string_with_regex_tree(ARRETE_NODE, string),
-            lambda arrete_container_group_match: _render_arrete_container(
-                soup,
-                arrete_container_group_match,
-                arrete_container_group_match,
-            ),
-            allowed_group_names=["__arrete"],
+    children: List[PageElementOrString],
+) -> List[PageElementOrString]:
+    return map_splitted_elements(
+        split_elements(
+            children,
+            make_regex_tree_splitter(ARRETE_NODE),
+        ),
+        lambda match_tree: _render_arrete_container(
+            soup,
+            match_tree,
         ),
     )
 
 
 def _parse_multiple_arretes_references(
     soup: BeautifulSoup,
-    children: Iterable[PageElementOrString],
-):
+    children: List[PageElementOrString],
+) -> List[PageElementOrString]:
     # For multiple arretes, we need to first parse some of the attributes in common
     # before parsing each individual arrete reference.
-    return flat_map_string(
-        children,
-        lambda string: flat_map_regex_tree_match(
-            split_string_with_regex_tree(ARRETE_MULTIPLE_NODE, string),
-            lambda arrete_multiple_group_match: map_regex_tree_match(
-                arrete_multiple_group_match.children,
-                lambda arrete_container_group_match: _render_arrete_container(
-                    soup,
-                    arrete_container_group_match,
-                    arrete_multiple_group_match,
-                ),
-                allowed_group_names=["__arrete"],
+    return flat_map_splitted_elements(
+        split_elements(
+            children,
+            make_regex_tree_splitter(ARRETE_MULTIPLE_NODE),
+        ),
+        lambda match_tree: map_regex_tree_match(
+            match_tree.children,
+            lambda arrete_container_group_match: _render_arrete_container(
+                soup,
+                arrete_container_group_match,
+                match_tree,
             ),
-            allowed_group_names=["__arrete_multiple"],
+            allowed_group_names=["__arrete"],
         ),
     )

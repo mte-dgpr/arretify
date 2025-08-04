@@ -17,13 +17,11 @@
 # limitations under the License.
 #
 from .split import split_string_with_regex
-from .split_with_regex_tree import split_string_with_regex_tree
 from .functional import (
     flat_map_regex_tree_match,
     map_regex_tree_match,
-    map_regex_tree_match_strings,
     map_matches,
-    iter_regex_tree_match_strings,
+    iter_regex_tree_match_page_elements_or_strings,
     filter_regex_tree_match_children,
 )
 from .merge import merge_matches_with_siblings

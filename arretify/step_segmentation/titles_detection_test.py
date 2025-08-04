@@ -23,7 +23,6 @@ import unittest
 from bs4 import BeautifulSoup
 
 from arretify.types import SectionType
-from arretify.regex_utils.regex_tree.execute import match
 from .types import TitleInfo
 from .titles_detection import (
     TITLE_NODE,
@@ -172,32 +171,32 @@ class TestTitlePattern(unittest.TestCase):
 
     def test_table_description(self):
         text = "(1) à l'exception du monoxyde de carbone."
-        assert not match(TITLE_NODE, text)
+        assert TITLE_NODE.pattern.match(text) is None
 
     def test_list_with_colon(self):
         text = "3. Liste ;"
-        assert not match(TITLE_NODE, text)
+        assert TITLE_NODE.pattern.match(text) is None
 
     def test_sentence_start_point(self):
         text = ". Ni 5,0 mg / 1"
-        assert not match(TITLE_NODE, text)
+        assert TITLE_NODE.pattern.match(text) is None
 
     def test_mister(self):
         text = "M. le Maire de"
-        assert not match(TITLE_NODE, text)
+        assert TITLE_NODE.pattern.match(text) is None
 
     def test_chapter_no_numbering(self):
         # TODO: Case to solve
         text = "A. Chapitre"
-        assert not match(TITLE_NODE, text)
+        assert TITLE_NODE.pattern.match(text) is None
 
     def test_more_than_two_numbers(self):
         text = "27406 Code postal"
-        assert not match(TITLE_NODE, text)
+        assert TITLE_NODE.pattern.match(text) is None
 
     def test_toc_appendix(self):
         text = "Annexes :"
-        assert not match(TITLE_NODE, text)
+        assert TITLE_NODE.pattern.match(text) is None
 
 
 class TestParseTitleInfo(unittest.TestCase):

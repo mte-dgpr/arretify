@@ -28,7 +28,7 @@ from arretify.utils.html_create import make_data_tag
 from arretify.regex_utils import (
     regex_tree,
     join_with_or,
-    iter_regex_tree_match_strings,
+    iter_regex_tree_match_page_elements_or_strings,
 )
 from arretify.regex_utils.helpers import (
     lookup_normalized_version,
@@ -232,7 +232,7 @@ def render_date_regex_tree_match(soup: BeautifulSoup, regex_tree_match: regex_tr
     date_container = make_data_tag(
         soup,
         DATE_SCHEMA,
-        contents=iter_regex_tree_match_strings(regex_tree_match),
+        contents=iter_regex_tree_match_page_elements_or_strings(regex_tree_match),
         data=data_dict,
     )
     date_container["datetime"] = date_str

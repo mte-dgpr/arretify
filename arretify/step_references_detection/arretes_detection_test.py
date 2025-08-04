@@ -93,6 +93,27 @@ class TestParseArreteReferences(unittest.TestCase):
             ",",
         ]
 
+    def test_interrupted_inline_tag(self):
+        assert process_children("Vu l'arrêté ministériel <br/> du 2 février 1998,") == [
+            "Vu l'",
+            normalized_html_str(
+                """
+                <a
+                    class="arretify-document_reference"
+                    data-date="1998-02-02"
+                    data-type="arrete-ministeriel"
+                >
+                    arrêté ministériel<br/>
+                    du
+                    <time class="arretify-date" datetime="1998-02-02">
+                        2 février 1998
+                    </time>
+                </a>
+            """
+            ),
+            ",",
+        ]
+
 
 class TestParseArretePluralReferences(unittest.TestCase):
 

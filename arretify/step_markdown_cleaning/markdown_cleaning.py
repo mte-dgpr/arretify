@@ -18,6 +18,7 @@
 #
 import re
 from unicodedata import normalize
+from typing import cast
 
 from pylatexenc.latex2text import LatexNodes2Text
 
@@ -29,9 +30,14 @@ from arretify.regex_utils import (
     sub_with_match,
     lookup_normalized_version,
     join_with_or,
-    split_string_with_regex_tree,
-    map_regex_tree_match_strings,
 )
+from arretify.utils.strings import merge_strings
+from arretify.utils.split_merge import (
+    split_elements,
+    map_splitted_elements,
+    Splitter,
+)
+from arretify.utils.html_split_merge import make_regex_tree_splitter
 from arretify.parsing_utils.dates import MONTH_POINT_ABBREVIATIONS
 from arretify.regex_utils import regex_tree
 from arretify.utils.markdown_parsing import LIST_PATTERN, BULLETPOINT_PATTERN_S, TABLE_LINE_PATTERN
@@ -164,14 +170,16 @@ def _render_point_abbreviation_month(match: regex_tree.Match) -> str:
 
 
 def _clean_failed_month_abbreviations(line_contents: str) -> str:
-    return "".join(
-        map_regex_tree_match_strings(
-            split_string_with_regex_tree(
-                FAILED_MONTH_POINT_ABBREVIATIONS,
-                line_contents,
+    return merge_strings(
+        map_splitted_elements(
+            split_elements(
+                [line_contents],
+                cast(
+                    Splitter[str, regex_tree.Match],
+                    make_regex_tree_splitter(FAILED_MONTH_POINT_ABBREVIATIONS),
+                ),
             ),
             _render_point_abbreviation_month,
-            allowed_group_names=["__failed_month_point_abbreviation"],
         )
     )
 

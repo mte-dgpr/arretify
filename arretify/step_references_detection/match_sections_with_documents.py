@@ -35,7 +35,8 @@ from arretify.html_schemas import (
 )
 from arretify.regex_utils import regex_tree
 from arretify.utils.split_merge import split_elements, map_splitted_elements
-from arretify.utils.html_split_merge import group_strings_splitter, filter_out_inline_tags
+from arretify.utils.html_split_merge import group_strings_splitter
+from arretify.utils.html import filter_out_inline_tags
 from arretify.utils.strings import merge_strings
 
 
@@ -147,7 +148,7 @@ def _search_parent_reference_tag(
 
             connector_str = element_range_with_merged_strings[1]
             if not isinstance(connector_str, str) or not bool(
-                regex_tree.match(CONNECTOR_SECTION_TO_PARENT_NODE, connector_str)
+                CONNECTOR_SECTION_TO_PARENT_NODE.pattern.match(connector_str)
             ):
                 return None
 

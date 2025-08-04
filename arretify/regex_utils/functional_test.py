@@ -19,7 +19,7 @@
 import unittest
 
 from .functional import (
-    iter_regex_tree_match_strings,
+    iter_regex_tree_match_page_elements_or_strings,
     map_matches,
     map_regex_tree_match,
 )
@@ -66,7 +66,7 @@ class TestIterRegexTreeMatchStrings(unittest.TestCase):
         )
 
         # Act
-        result = list(iter_regex_tree_match_strings(match))
+        result = list(iter_regex_tree_match_page_elements_or_strings(match))
 
         # Assert
         assert result == ["hello", "world"]
@@ -88,7 +88,7 @@ class TestIterRegexTreeMatchStrings(unittest.TestCase):
         )
 
         # Act
-        result = list(iter_regex_tree_match_strings(match))
+        result = list(iter_regex_tree_match_page_elements_or_strings(match))
 
         # Assert
         assert result == ["hello", "world", "!", "python"]
@@ -98,7 +98,7 @@ class TestIterRegexTreeMatchStrings(unittest.TestCase):
         match = RegexTreeMatch(children=[], group_name=None, match_dict={})
 
         # Act
-        result = list(iter_regex_tree_match_strings(match))
+        result = list(iter_regex_tree_match_page_elements_or_strings(match))
 
         # Assert
         assert result == []
@@ -126,7 +126,7 @@ class TestIterRegexTreeMatchStrings(unittest.TestCase):
         )
 
         # Act
-        result = list(iter_regex_tree_match_strings(match))
+        result = list(iter_regex_tree_match_page_elements_or_strings(match))
 
         # Assert
         assert result == ["level1", "level2", "level3", "deep"]
