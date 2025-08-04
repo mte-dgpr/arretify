@@ -20,7 +20,7 @@ import unittest
 
 from bs4 import BeautifulSoup
 
-from arretify.utils.html_split_merge import SplitMatch, SplitNotAMatch
+from arretify.utils.split_merge import SplitMatch, SplitNotAMatch
 from arretify.regex_utils import PatternProxy, regex_tree, Settings
 from .html_split_merge import (
     pick_string,
