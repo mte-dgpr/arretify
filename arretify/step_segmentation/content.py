@@ -60,9 +60,9 @@ from .core import (
     Node,
     NodeOrText,
     is_node,
-    assert_single_text_segment,
-    make_single_line_splitter_for_text_segments,
-    make_probe_from_pattern,
+    make_single_line_splitter_for_text_span_nodes,
+    make_probe_from_pattern_proxy,
+    get_string,
 )
 from .document_elements import (
     render_page_footer,
@@ -74,7 +74,7 @@ from .document_elements import (
 _LOGGER = logging.getLogger(__name__)
 
 
-_is_title = make_probe_from_pattern(
+_is_title = make_probe_from_pattern_proxy(
     TITLE_NODE.pattern,
 )
 
@@ -142,7 +142,7 @@ def parse_section_titles(
     current_schema_level = -1
 
     for section_title in section_titles:
-        title_text = assert_single_text_segment(section_title).contents
+        title_text = get_string(section_title)
         data_extra: Dict = dict()
 
         # Parse title info
@@ -231,11 +231,11 @@ def _create_section_title_nodes(
     return map_splitted_elements(
         split_elements(
             elements,
-            make_single_line_splitter_for_text_segments(_is_title),
+            make_single_line_splitter_for_text_span_nodes(_is_title),
         ),
-        lambda text_segments: Node(
+        lambda children: Node(
             type="section_title",
-            children=text_segments,
+            children=children,
         ),
     )
 
@@ -358,7 +358,7 @@ def render_section_title(
     return make_data_tag(
         soup,
         SECTION_TITLE_SCHEMAS[node.data["level"]],
-        contents=[assert_single_text_segment(node).contents],
+        contents=[get_string(node)],
         data=data,
     )
 
@@ -432,33 +432,32 @@ def parse_alineas(
             continue
 
         alinea_children: List[NodeOrText] = []
-        if isinstance(element, Node):
+        if is_node(element, type_in=["table"]):
             alinea_children = [element]
-            if element.type == "table":
-                while (
-                    elements
-                    and isinstance(elements[0], Node)
-                    and elements[0].type == "table_description"
-                ):
-                    alinea_children.append(elements[0])
-                    elements.pop(0)
+            while (
+                elements
+                and isinstance(elements[0], Node)
+                and elements[0].type == "table_description"
+            ):
+                alinea_children.append(elements[0])
+                elements.pop(0)
+
+        elif (
+            len(elements) >= 2
+            and is_node(element, type_in=["text_span"])
+            and is_node(elements[0], type_in=["page_separator"])
+            and is_node(elements[1], type_in=["text_span"])
+            and is_continuing_sentence(
+                get_string(element),
+                get_string(elements[1]),
+            )
+        ):
+            alinea_children = [element, elements[0], elements[1]]
+            elements.pop(0)
+            elements.pop(0)
 
         else:
-            if (
-                len(elements) >= 2
-                and is_node(elements[0], type_in=["page_separator"])
-                and isinstance(elements[1], TextSegment)
-                and is_continuing_sentence(
-                    element.contents,
-                    elements[1].contents,
-                )
-            ):
-                alinea_children = [element, elements[0], elements[1]]
-                elements.pop(0)
-                elements.pop(0)
-
-            else:
-                alinea_children = [element]
+            alinea_children = [element]
 
         yield Node(
             type="alinea",
@@ -476,7 +475,9 @@ def render_alinea(
 ) -> Tag:
     contents: List[PageElementOrString] = []
     for element in node.children:
-        if isinstance(element, Node):
+        if is_node(element, type_in=["text_span"]):
+            contents.extend(render_inline_quotes(soup, get_string(element)))
+        elif isinstance(element, Node):
             contents.extend(render_basic_elements(soup, element))
         else:
             contents.extend(render_inline_quotes(soup, element.contents))

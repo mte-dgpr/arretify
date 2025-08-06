@@ -23,11 +23,13 @@ from bs4 import BeautifulSoup
 from arretify.utils.testing import normalized_html_str
 from .header import (
     parse_visa_and_motif_elements,
-    render_header_element,
     _parse_header_element,
     _parse_header_element_fuzzy,
+    render_header_element,
+    render_visa_motif,
+    rendre_arrete_title,
 )
-from .testing import assert_elements_equal, _l
+from .testing import assert_elements_equal, make_text_spans
 from .core import Node
 
 
@@ -35,7 +37,7 @@ class TestParseVisaAndMotifs(unittest.TestCase):
 
     def test_variant_simple(self):
         # Arrange
-        elements = _l(
+        elements = make_text_spans(
             (
                 "Vu le code de l'environnement, et notamment ses titres "
                 "1er et 4 des parties réglementaires et législatives du livre V ;"
@@ -55,7 +57,7 @@ class TestParseVisaAndMotifs(unittest.TestCase):
             [
                 Node(
                     type="visa",
-                    children=_l(
+                    children=make_text_spans(
                         (
                             "Vu le code de l'environnement, et notamment ses titres "
                             "1er et 4 des parties réglementaires et législatives du livre V ;"
@@ -64,7 +66,7 @@ class TestParseVisaAndMotifs(unittest.TestCase):
                 ),
                 Node(
                     type="visa",
-                    children=_l(
+                    children=make_text_spans(
                         (
                             "Vu la nomenclature des installations classées codifiée à l'annexe "
                             "de l'article R511-9 du code de l'environnement ;"
@@ -77,9 +79,9 @@ class TestParseVisaAndMotifs(unittest.TestCase):
     def test_variant_simple_interrupted_by_random_text(self):
         # Arrange
         elements = [
-            *_l("Vu bla"),
-            *_l("Ceci est du texte aléatoire qui n'est pas un visa."),
-            *_l("Vu blo"),
+            *make_text_spans("Vu bla"),
+            *make_text_spans("Ceci est du texte aléatoire qui n'est pas un visa."),
+            *make_text_spans("Vu blo"),
         ]
 
         # Act
@@ -91,12 +93,12 @@ class TestParseVisaAndMotifs(unittest.TestCase):
             [
                 Node(
                     type="visa",
-                    children=_l("Vu bla"),
+                    children=make_text_spans("Vu bla"),
                 ),
-                *_l("Ceci est du texte aléatoire qui n'est pas un visa."),
+                *make_text_spans("Ceci est du texte aléatoire qui n'est pas un visa."),
                 Node(
                     type="visa",
-                    children=_l("Vu blo"),
+                    children=make_text_spans("Vu blo"),
                 ),
             ],
         )
@@ -106,7 +108,7 @@ class TestParseVisaAndMotifs(unittest.TestCase):
         elements = [
             Node(
                 type="list",
-                children=_l(
+                children=make_text_spans(
                     "- Considérant que blabla ;",
                     "- Considérant que bloblo ;",
                 ),
@@ -122,13 +124,13 @@ class TestParseVisaAndMotifs(unittest.TestCase):
             [
                 Node(
                     type="motif",
-                    children=_l(
+                    children=make_text_spans(
                         "- Considérant que blabla ;",
                     ),
                 ),
                 Node(
                     type="motif",
-                    children=_l(
+                    children=make_text_spans(
                         "- Considérant que bloblo ;",
                     ),
                 ),
@@ -138,12 +140,12 @@ class TestParseVisaAndMotifs(unittest.TestCase):
     def test_variant_simple_page_separator_interrupting_sentence(self):
         # Arrange
         elements = [
-            *_l("Vu le code de l'environnement, et notamment ses titres 1er et 4"),
+            *make_text_spans("Vu le code de l'environnement, et notamment ses titres 1er et 4"),
             Node(
                 type="page_separator",
                 children=[],
             ),
-            *_l("des parties réglementaires et législatives du livre V ;"),
+            *make_text_spans("des parties réglementaires et législatives du livre V ;"),
         ]
 
         # Act
@@ -156,12 +158,14 @@ class TestParseVisaAndMotifs(unittest.TestCase):
                 Node(
                     type="visa",
                     children=[
-                        *_l("Vu le code de l'environnement, et notamment ses titres 1er et 4"),
+                        *make_text_spans(
+                            "Vu le code de l'environnement, et notamment ses titres 1er et 4"
+                        ),
                         Node(
                             type="page_separator",
                             children=[],
                         ),
-                        *_l("des parties réglementaires et législatives du livre V ;"),
+                        *make_text_spans("des parties réglementaires et législatives du livre V ;"),
                     ],
                 ),
             ],
@@ -169,7 +173,7 @@ class TestParseVisaAndMotifs(unittest.TestCase):
 
     def test_variant_implicit_list(self):
         # Arrange
-        elements = _l(
+        elements = make_text_spans(
             "CONSIDÉRANT : ",
             "que blabla ;",
             "que bloblo ;",
@@ -183,18 +187,18 @@ class TestParseVisaAndMotifs(unittest.TestCase):
         assert_elements_equal(
             result,
             [
-                *_l("CONSIDÉRANT : "),
+                *make_text_spans("CONSIDÉRANT : "),
                 Node(
                     type="motif",
-                    children=_l("que blabla ;"),
+                    children=make_text_spans("que blabla ;"),
                 ),
                 Node(
                     type="motif",
-                    children=_l("que bloblo ;"),
+                    children=make_text_spans("que bloblo ;"),
                 ),
                 Node(
                     type="motif",
-                    children=_l("qu'en application de blibli ;"),
+                    children=make_text_spans("qu'en application de blibli ;"),
                 ),
             ],
         )
@@ -202,7 +206,7 @@ class TestParseVisaAndMotifs(unittest.TestCase):
     def test_variant_implicit_list_interrupted_by_page_footer(self):
         # Arrange
         elements = [
-            *_l(
+            *make_text_spans(
                 "Vu : ",
                 (
                     "le code de l'environnement, et notamment ses titres "
@@ -211,9 +215,9 @@ class TestParseVisaAndMotifs(unittest.TestCase):
             ),
             Node(
                 type="page_footer",
-                children=_l("page 1"),
+                children=make_text_spans("page 1"),
             ),
-            *_l(
+            *make_text_spans(
                 (
                     "la nomenclature des installations classées codifiée à l'annexe "
                     "de l'article R511-9 du code de l'environnement ;"
@@ -228,23 +232,23 @@ class TestParseVisaAndMotifs(unittest.TestCase):
         assert_elements_equal(
             result,
             [
-                *_l(
+                *make_text_spans(
                     "Vu : ",
                 ),
                 Node(
                     type="visa",
-                    children=_l(
+                    children=make_text_spans(
                         "le code de l'environnement, et notamment ses titres "
                         "1er et 4 des parties réglementaires et législatives du livre V ;"
                     ),
                 ),
                 Node(
                     type="page_footer",
-                    children=_l("page 1"),
+                    children=make_text_spans("page 1"),
                 ),
                 Node(
                     type="visa",
-                    children=_l(
+                    children=make_text_spans(
                         "la nomenclature des installations classées codifiée à l'annexe "
                         "de l'article R511-9 du code de l'environnement ;"
                     ),
@@ -255,10 +259,10 @@ class TestParseVisaAndMotifs(unittest.TestCase):
     def test_variant_explicit_list(self):
         # Arrange
         elements = [
-            *_l("Vu : "),
+            *make_text_spans("Vu : "),
             Node(
                 type="list",
-                children=_l(
+                children=make_text_spans(
                     "- le code de l'environnement ;",
                     "- la nomenclature des installations classées ;",
                 ),
@@ -272,14 +276,14 @@ class TestParseVisaAndMotifs(unittest.TestCase):
         assert_elements_equal(
             result,
             [
-                *_l("Vu : "),
+                *make_text_spans("Vu : "),
                 Node(
                     type="visa",
-                    children=_l("- le code de l'environnement ;"),
+                    children=make_text_spans("- le code de l'environnement ;"),
                 ),
                 Node(
                     type="visa",
-                    children=_l("- la nomenclature des installations classées ;"),
+                    children=make_text_spans("- la nomenclature des installations classées ;"),
                 ),
             ],
         )
@@ -287,17 +291,17 @@ class TestParseVisaAndMotifs(unittest.TestCase):
     def test_variant_explicit_list_interrupted(self):
         # Arrange
         elements = [
-            *_l("Vu : "),
+            *make_text_spans("Vu : "),
             Node(
                 type="list",
-                children=_l(
+                children=make_text_spans(
                     "- le code de l'environnement ;",
                 ),
             ),
-            *_l("Ceci est du texte aléatoire qui n'est pas un visa."),
+            *make_text_spans("Ceci est du texte aléatoire qui n'est pas un visa."),
             Node(
                 type="list",
-                children=_l(
+                children=make_text_spans(
                     "- la nomenclature des installations classées ;",
                 ),
             ),
@@ -310,15 +314,15 @@ class TestParseVisaAndMotifs(unittest.TestCase):
         assert_elements_equal(
             result,
             [
-                *_l("Vu : "),
+                *make_text_spans("Vu : "),
                 Node(
                     type="visa",
-                    children=_l("- le code de l'environnement ;"),
+                    children=make_text_spans("- le code de l'environnement ;"),
                 ),
-                *_l("Ceci est du texte aléatoire qui n'est pas un visa."),
+                *make_text_spans("Ceci est du texte aléatoire qui n'est pas un visa."),
                 Node(
                     type="visa",
-                    children=_l("- la nomenclature des installations classées ;"),
+                    children=make_text_spans("- la nomenclature des installations classées ;"),
                 ),
             ],
         )
@@ -326,10 +330,10 @@ class TestParseVisaAndMotifs(unittest.TestCase):
     def test_variant_explicit_list_vu_inside_list_element(self):
         # Arrange
         elements = [
-            *_l("Vu : "),
+            *make_text_spans("Vu : "),
             Node(
                 type="list",
-                children=_l(
+                children=make_text_spans(
                     "- le code de l'environnement ;",
                     "- la nomenclature des installations classées ;",
                     "- vu la demande déposée par la société XYZ ;",
@@ -344,18 +348,18 @@ class TestParseVisaAndMotifs(unittest.TestCase):
         assert_elements_equal(
             result,
             [
-                *_l("Vu : "),
+                *make_text_spans("Vu : "),
                 Node(
                     type="visa",
-                    children=_l("- le code de l'environnement ;"),
+                    children=make_text_spans("- le code de l'environnement ;"),
                 ),
                 Node(
                     type="visa",
-                    children=_l("- la nomenclature des installations classées ;"),
+                    children=make_text_spans("- la nomenclature des installations classées ;"),
                 ),
                 Node(
                     type="visa",
-                    children=_l("- vu la demande déposée par la société XYZ ;"),
+                    children=make_text_spans("- vu la demande déposée par la société XYZ ;"),
                 ),
             ],
         )
@@ -363,7 +367,7 @@ class TestParseVisaAndMotifs(unittest.TestCase):
     def test_variant_simple_with_list_inside_and_interrupted_by_age_separator(self):
         # Arrange
         elements = [
-            *_l(
+            *make_text_spans(
                 "Considérant que la demande de modification sollicitée "
                 "le 19 juillet 2021 porte sur :"
             ),
@@ -373,7 +377,7 @@ class TestParseVisaAndMotifs(unittest.TestCase):
             ),
             Node(
                 type="list",
-                children=_l(
+                children=make_text_spans(
                     "- la modification de l'installation de stockage de déchets non dangereux ;",
                     "- la mise en conformité avec les exigences réglementaires ;",
                 ),
@@ -390,7 +394,7 @@ class TestParseVisaAndMotifs(unittest.TestCase):
                 Node(
                     type="motif",
                     children=[
-                        *_l(
+                        *make_text_spans(
                             "Considérant que la demande de modification sollicitée "
                             "le 19 juillet 2021 porte sur :"
                         ),
@@ -400,7 +404,7 @@ class TestParseVisaAndMotifs(unittest.TestCase):
                         ),
                         Node(
                             type="list",
-                            children=_l(
+                            children=make_text_spans(
                                 "- la modification de l'installation de stockage de déchets "
                                 "non dangereux ;",
                                 "- la mise en conformité avec les exigences réglementaires ;",
@@ -421,7 +425,7 @@ class TestRenderHeaderElement(unittest.TestCase):
         # Arrange
         node = Node(
             type="emblem",
-            children=_l(
+            children=make_text_spans(
                 "liberté égalité fraternité",
             ),
         )
@@ -445,7 +449,7 @@ class TestParseHeaderElement(unittest.TestCase):
 
     def test_parse_header_element(self):
         # Arrange
-        elements = _l(
+        elements = make_text_spans(
             "liberte",
             "égalité",
             "fraternité",
@@ -460,7 +464,7 @@ class TestParseHeaderElement(unittest.TestCase):
             [
                 Node(
                     type="emblem",
-                    children=_l(
+                    children=make_text_spans(
                         "liberte",
                         "égalité",
                         "fraternité",
@@ -471,7 +475,7 @@ class TestParseHeaderElement(unittest.TestCase):
 
     def test_parse_header_element_fuzzy(self):
         # Arrange
-        elements = _l(
+        elements = make_text_spans(
             "prefecture de la région",
             "basée à Naboo",
             # Arrete title : should not be included in the entity
@@ -487,13 +491,73 @@ class TestParseHeaderElement(unittest.TestCase):
             [
                 Node(
                     type="entity",
-                    children=_l(
+                    children=make_text_spans(
                         "prefecture de la région",
                         "basée à Naboo",
                     ),
                 ),
-                *_l(
+                *make_text_spans(
                     "Arrêté du 1er janvier 2020",
                 ),
             ],
+        )
+
+
+class TestRenderVisaMotif(unittest.TestCase):
+
+    def setUp(self):
+        self.soup = BeautifulSoup("", features="html.parser")
+
+    def test_render_simple(self):
+        # Arrange
+        node = Node(
+            type="visa",
+            children=make_text_spans(
+                "Vu le code de l'environnement, et notamment ses titres "
+                "1er et 4 des parties réglementaires et législatives du livre V ;",
+            ),
+        )
+
+        # Act
+        rendered = render_visa_motif(self.soup, node)
+
+        # Assert
+        assert normalized_html_str(str(rendered)) == normalized_html_str(
+            """
+            <div class="arretify-visa">
+                Vu le code de l'environnement, et notamment ses titres
+                1er et 4 des parties réglementaires et législatives du livre V ;
+            </div>
+            """
+        )
+
+
+class TestRenderArreteTitle(unittest.TestCase):
+
+    def setUp(self):
+        self.soup = BeautifulSoup("", features="html.parser")
+
+    def test_render_arrete_title(self):
+        # Arrange
+        node = Node(
+            type="arrete_title",
+            children=make_text_spans(
+                "Arrêté du 1er janvier 2020",
+            ),
+        )
+
+        # Act
+        rendered = rendre_arrete_title(self.soup, node)
+
+        # Assert
+        assert normalized_html_str(str(rendered)) == normalized_html_str(
+            """
+            <div class="arretify-arrete_title">
+                <h1>Arrêté du
+                    <time class="arretify-date" datetime="2020-01-01">
+                        1er janvier 2020
+                    </time>
+                </h1>
+            </div>
+            """
         )

@@ -23,11 +23,14 @@ from typing import (
     Any,
     Union,
     cast,
+    Iterator,
 )
 from dataclasses import dataclass, field
 
+from arretify.utils.functional import iter_func_to_list
 from arretify.types import TextSegment
 from arretify.regex_utils import PatternProxy
+from arretify.utils.strings import merge_strings
 from arretify.utils.split_merge import (
     make_while_splitter,
     make_single_line_splitter,
@@ -91,75 +94,63 @@ def pick_if_inline_node_followed_by_match(
     return _pick_inline_nodes_probe
 
 
-def pick_text_segment(
+def pick_text_span_node(
     probe: Probe[NodeOrText],
 ) -> Probe[NodeOrText]:
-    def _text_segment_probe(elements: List[NodeOrText], index: int) -> bool:
+    def _probe(elements: List[NodeOrText], index: int) -> bool:
         element = elements[index]
-        if isinstance(element, TextSegment):
+        if is_node(element, type_in=["text_span"]):
             return probe(elements, index)
         return False
 
-    return _text_segment_probe
+    return _probe
 
 
 def make_probe_from_pattern_proxy(
     pattern: PatternProxy, use_search: bool = False
 ) -> Probe[NodeOrText]:
     def _probe(elements: List[NodeOrText], index: int) -> bool:
-        element = elements[index]
-        assert isinstance(element, TextSegment)
+        string = get_string(elements[index])
         if use_search is False:
-            match = pattern.match(element.contents)
+            match = pattern.match(string)
         else:
-            match = pattern.search(element.contents)
+            match = pattern.search(string)
         return bool(match)
 
     return _probe
 
 
-def make_probe_from_pattern(
-    pattern: PatternProxy,
-) -> Probe[NodeOrText]:
-    def _probe(elements: List[NodeOrText], index: int) -> bool:
-        element = elements[index]
-        assert isinstance(element, TextSegment)
-        return bool(pattern.match(element.contents))
-
-    return _probe
-
-
-def make_while_splitter_for_text_segments(
+def make_while_splitter_for_text_span_nodes(
     start_condition: Probe[NodeOrText],
     while_condition: Probe[NodeOrText],
 ) -> Splitter[NodeOrText, List[NodeOrText]]:
     return make_while_splitter(
-        pick_text_segment(start_condition),
-        pick_if_inline_node_followed_by_match(pick_text_segment(while_condition)),
+        pick_text_span_node(start_condition),
+        pick_if_inline_node_followed_by_match(pick_text_span_node(while_condition)),
     )
 
 
-def make_single_line_splitter_for_text_segments(
+def make_single_line_splitter_for_text_span_nodes(
     is_matching: Probe[NodeOrText],
 ) -> Splitter[NodeOrText, List[NodeOrText]]:
     return make_single_line_splitter(
-        is_matching=pick_text_segment(is_matching),
+        is_matching=pick_text_span_node(is_matching),
     )
 
 
-group_text_segments_splitter = cast(
-    Splitter[NodeOrText, List[TextSegment]],
+group_text_span_nodes_splitter = cast(
+    Splitter[NodeOrText, List[NodeOrText]],
     make_while_splitter(
-        pick_text_segment(lambda elements, index: True),
-        pick_if_inline_node_followed_by_match(pick_text_segment(lambda elements, index: True)),
+        pick_text_span_node(lambda elements, index: True),
+        pick_if_inline_node_followed_by_match(pick_text_span_node(lambda elements, index: True)),
     ),
 )
 """
-Splitter to enable grouping of TextSegment elements.
+Splitter to enable grouping of text_span nodes.
 """
 
 
-def is_node(node: Node | TextSegment, type_in: List[str] | None = None) -> TypeGuard[Node]:
+def is_node(node: NodeOrText, type_in: List[str] | None = None) -> TypeGuard[Node]:
     if not isinstance(node, Node):
         return False
 
@@ -168,23 +159,71 @@ def is_node(node: Node | TextSegment, type_in: List[str] | None = None) -> TypeG
     return True
 
 
-def assert_single_text_segment(node: Node) -> TextSegment:
+def get_string(node: NodeOrText) -> str:
     """
-    Assert that the node contains exactly one TextSegment.
+    Extracts the string from a Node or TextSegment.
+    If the node is a TextSegment, it returns its contents.
+    If the node is a Node, it recursively extracts strings from its text_span children.
+    If its has other than text_span children, it will raises a ValueError.
     """
-    assert len(node.children) == 1 and isinstance(
-        node.children[0], TextSegment
-    ), f"Node '{node.type}' must contain exactly one TextSegment"
-    return node.children[0]
+    if isinstance(node, TextSegment):
+        return node.contents
+
+    strings: List[str] = []
+    for child in node.children:
+        if isinstance(child, TextSegment):
+            strings.append(child.contents)
+        else:
+            strings.append(_get_string(child))
+    return merge_strings(strings)
 
 
-def assert_all_text_segments(
-    node: Node,
-) -> List[TextSegment]:
+def _get_string(element: NodeOrText) -> str:
+    if isinstance(element, TextSegment):
+        return element.contents
+    elif is_node(element, type_in=["text_span"]):
+        return merge_strings(_get_string(child) for child in element.children)
+    elif is_node(element, type_in=INLINE_NODE_TYPES):
+        return ""
+    else:
+        raise ValueError(f"Unexpected element '{element}'")
+
+
+@iter_func_to_list
+def get_strings(nodes: List[NodeOrText]) -> Iterator[str]:
+    for node in nodes:
+        if is_node(node, type_in=["text_span"]):
+            yield get_string(node)
+        elif is_node(node, type_in=INLINE_NODE_TYPES):
+            continue
+        else:
+            raise ValueError(f"Node '{node}' is not a text_span or an inline node")
+
+
+def combine_text_spans(
+    elements: List[NodeOrText],
+) -> Node:
     """
-    Assert that all children of the node are TextSegment.
+    Combines a list of TextSegments and text_span nodes into a single text_span node.
     """
-    assert all(
-        isinstance(child, TextSegment) for child in node.children
-    ), f"Node '{node.type}' must contain only TextSegment"
-    return cast(List[TextSegment], node.children)
+    children: List[NodeOrText] = []
+    for element in elements:
+        if is_node(element, type_in=["text_span"]):
+            for text_span_child in element.children:
+                if isinstance(text_span_child, TextSegment) or is_node(
+                    text_span_child, type_in=INLINE_NODE_TYPES
+                ):
+                    children.append(text_span_child)
+                else:
+                    raise ValueError(f"Unexpected child '{text_span_child}' in of text_span node")
+
+        elif is_node(element, type_in=INLINE_NODE_TYPES):
+            children.append(element)
+
+        else:
+            raise ValueError(f"Unexpected element '{element}' ")
+
+    return Node(
+        type="text_span",
+        children=children,
+    )

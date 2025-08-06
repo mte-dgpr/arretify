@@ -50,12 +50,12 @@ from .core import (
     Node,
     NodeOrText,
     is_node,
-    make_while_splitter_for_text_segments,
-    make_single_line_splitter_for_text_segments,
-    assert_single_text_segment,
-    assert_all_text_segments,
-    group_text_segments_splitter,
+    make_while_splitter_for_text_span_nodes,
+    make_single_line_splitter_for_text_span_nodes,
+    group_text_span_nodes_splitter,
     make_probe_from_pattern_proxy,
+    get_string,
+    get_strings,
     INLINE_NODE_TYPES,
 )
 from .document_elements import (
@@ -63,7 +63,7 @@ from .document_elements import (
     render_page_separator,
     render_table_of_contents,
 )
-from .basic_elements import parse_lists, render_image, render_list
+from .basic_elements import parse_lists, render_image, render_list, render_text_span
 
 
 EMBLEMS_LIST = [
@@ -204,9 +204,9 @@ VISA_MOTIFS_PROBES: Dict[str, Probe[NodeOrText]] = dict(
 )
 
 
-def _is_nothing_else_than(name: str, t: NodeOrText) -> bool:
-    return isinstance(t, TextSegment) and not any(
-        bool(HEADER_ELEMENTS_PATTERNS[other_name].match(t.contents))
+def _is_nothing_else_than(name: str, element: NodeOrText) -> bool:
+    return is_node(element, type_in=["text_span"]) and not any(
+        bool(HEADER_ELEMENTS_PATTERNS[other_name].match(get_string(element)))
         for other_name in HEADER_ELEMENTS_PATTERNS
         if other_name != name
     )
@@ -249,13 +249,13 @@ def _parse_header_element(
     return map_splitted_elements(
         split_elements(
             elements,
-            make_while_splitter_for_text_segments(
+            make_while_splitter_for_text_span_nodes(
                 HEADER_ELEMENTS_PROBES[node_type], HEADER_ELEMENTS_PROBES[node_type]
             ),
         ),
-        lambda text_segments: Node(
+        lambda children: Node(
             type=node_type,
-            children=text_segments,
+            children=children,
         ),
     )
 
@@ -272,14 +272,14 @@ def _parse_header_element_fuzzy(
     return map_splitted_elements(
         split_elements(
             elements,
-            make_while_splitter_for_text_segments(
+            make_while_splitter_for_text_span_nodes(
                 HEADER_ELEMENTS_FUZZY_PROBES[node_type],
                 lambda elements, index: _is_nothing_else_than(node_type, elements[index]),
             ),
         ),
-        lambda text_segments: Node(
+        lambda children: Node(
             type=node_type,
-            children=text_segments,
+            children=children,
         ),
     )
 
@@ -367,11 +367,11 @@ def _parse_visa_and_motif_elements_pass1(
     elements = map_splitted_elements(
         split_elements(
             elements,
-            make_single_line_splitter_for_text_segments(VISA_MOTIFS_PROBES[node_type]),
+            make_single_line_splitter_for_text_span_nodes(VISA_MOTIFS_PROBES[node_type]),
         ),
-        lambda text_segments: Node(
+        lambda children: Node(
             type=node_type,
-            children=text_segments,
+            children=children,
         ),
     )
 
@@ -384,19 +384,13 @@ def _parse_visa_and_motif_elements_pass1(
     for element in elements:
         is_list_of_visas_or_motifs = False
         if is_node(element, type_in=["list"]):
-            text_segments: List[NodeOrText] = [
-                child for child in element.children if isinstance(child, TextSegment)
-            ]
-            is_list_of_visas_or_motifs = len(text_segments) > 0 and VISA_MOTIFS_PROBES[node_type](
-                text_segments, 0
-            )
+            assert len(element.children) > 0, "List node should not be empty"
+            is_list_of_visas_or_motifs = VISA_MOTIFS_PROBES[node_type](element.children, 0)
 
         if is_list_of_visas_or_motifs:
             assert is_node(element)
             for list_item_element in element.children:
-                if is_node(list_item_element):
-                    yield list_item_element
-                elif isinstance(list_item_element, TextSegment):
+                if is_node(list_item_element, type_in=["text_span"]):
                     yield Node(
                         type=node_type,
                         children=[list_item_element],
@@ -428,11 +422,13 @@ def _parse_visa_and_motif_elements_pass2(
     if not elements:
         return
     first_node = elements.pop(0)
-    assert is_node(first_node, type_in=[node_type])
-
-    first_node_match = VISA_MOTIFS_PATTERNS[node_type].match(
-        assert_single_text_segment(first_node).contents
+    assert (
+        is_node(first_node, type_in=[node_type])
+        and len(first_node.children) > 0
+        and is_node(first_node.children[0])
     )
+
+    first_node_match = VISA_MOTIFS_PATTERNS[node_type].match(get_string(first_node))
     # 1. Variant "simple" :
     #   Vu que blabla
     #   Vu que bloblo
@@ -445,10 +441,11 @@ def _parse_visa_and_motif_elements_pass2(
                 len(elements) >= 3
                 and is_node(elements[0], type_in=[node_type])
                 and is_node(elements[1], type_in=["page_separator"])
-                and isinstance(elements[2], TextSegment)
+                and is_node(elements[2], type_in=["text_span"])
+                and is_node(elements[0].children[0])
                 and is_continuing_sentence(
-                    assert_single_text_segment(elements[0]).contents,
-                    elements[2].contents,
+                    get_string(elements[0].children[0]),
+                    get_string(elements[2]),
                 )
             ):
                 elements[0].children.extend([elements[1], elements[2]])
@@ -467,19 +464,23 @@ def _parse_visa_and_motif_elements_pass2(
         yield from first_node.children
         while elements:
             element = elements[0]
-            if is_node(element, type_in=INLINE_NODE_TYPES) or isinstance(element, TextSegment):
+            # We're a bit lenient here and accept a few unassigned_line nodes,
+            # as random text sometimes interferes with the parsing.
+            if is_node(element, type_in=INLINE_NODE_TYPES) or is_node(
+                element, type_in=["text_span"]
+            ):
                 yield elements.pop(0)
 
             elif is_node(element, type_in=["list"]):
                 elements.pop(0)
                 for list_item_element in element.children:
-                    if is_node(list_item_element):
-                        yield list_item_element
-                    elif isinstance(list_item_element, TextSegment):
+                    if is_node(list_item_element, type_in=["text_span"]):
                         yield Node(
                             type=node_type,
                             children=[list_item_element],
                         )
+                    else:
+                        yield list_item_element
             else:
                 break
         yield from elements
@@ -499,11 +500,12 @@ def _parse_visa_and_motif_elements_pass2(
             if is_node(element, type_in=["list", *INLINE_NODE_TYPES]):
                 yield elements.pop(0)
 
-            elif isinstance(element, TextSegment):
+            elif is_node(element, type_in=["text_span"]):
                 yield Node(
                     type=node_type,
-                    children=[elements.pop(0)],
+                    children=[element],
                 )
+                elements.pop(0)
             else:
                 break
         yield from elements
@@ -568,6 +570,14 @@ def render_header(
             content.append(render_image(soup, element))
         elif is_node(element, type_in=["list"]):
             content.append(render_list(soup, element))
+        elif is_node(element, type_in=["text_span"]):
+            content.append(
+                make_new_tag(
+                    soup,
+                    "div",
+                    contents=render_text_span(soup, element),
+                )
+            )
 
         elif is_node(element):
             raise ValueError(f"Unexpected node {element.type} in content")
@@ -586,10 +596,10 @@ def render_header_element(
 
     for splitted_element in split_elements(
         node.children,
-        group_text_segments_splitter,
+        group_text_span_nodes_splitter,
     ):
         if isinstance(splitted_element, SplitMatch):
-            strings = [t.contents for t in splitted_element.value]
+            strings = get_strings(splitted_element.value)
             if pattern is not None:
                 elements.extend(join_split_pile_with_pattern(strings, pattern))
             else:
@@ -615,14 +625,14 @@ def render_visa_motif(
     assert is_node(node, type_in=["visa", "motif"])
     elements: List[PageElementOrString] = []
     for element in node.children:
-        if is_node(element, type_in=["list"]):
+        if is_node(element, type_in=["text_span"]):
+            elements.append(get_string(element))
+        elif is_node(element, type_in=["list"]):
             elements.append(render_list(soup, element))
         elif is_node(element, type_in=["page_separator"]):
             elements.append(render_page_separator(soup, element))
-        elif isinstance(element, TextSegment):
-            elements.append(element.contents)
         else:
-            raise ValueError(f"Unexpected node {element.type} in visa/motif contents")
+            raise ValueError(f"Unexpected element {element} in visa/motif")
     return make_data_tag(
         soup,
         HEADER_ELEMENTS_SCHEMAS[node.type],
@@ -634,9 +644,9 @@ def rendre_arrete_title(
     soup: BeautifulSoup,
     node: Node,
 ) -> Tag:
-    elements: List[PageElementOrString] = [
-        " ".join([element.contents for element in assert_all_text_segments(node)])
-    ]
+    elements: List[PageElementOrString] = [" ".join(get_strings(node.children))]
+    # TODO : Parsing date should be done in a node and not on the fly
+    # like this.
     elements = map_splitted_elements(
         split_elements(
             elements,

@@ -62,10 +62,12 @@ from .core import (
     Node,
     NodeOrText,
     is_node,
-    make_single_line_splitter_for_text_segments,
-    assert_single_text_segment,
+    make_single_line_splitter_for_text_span_nodes,
+    get_string,
+    get_strings,
+    combine_text_spans,
     make_probe_from_pattern_proxy,
-    pick_text_segment,
+    pick_text_span_node,
     pick_if_inline_node_followed_by_match,
 )
 from .document_elements import render_table_of_contents, render_page_footer, render_page_separator
@@ -81,19 +83,17 @@ A match for the table splitter, in the form `(<table_elements>, <table_descripti
 """
 
 _is_table = make_probe_from_pattern_proxy(TABLE_LINE_PATTERN)
-_is_table_start = pick_text_segment(_is_table)
-_is_table_end = negate(pick_if_inline_node_followed_by_match(pick_text_segment(_is_table)))
+_is_table_start = pick_text_span_node(_is_table)
+_is_table_end = negate(pick_if_inline_node_followed_by_match(pick_text_span_node(_is_table)))
 
 
-def _make_table_description_end_probe(table_lines: List[TextSegment]) -> Probe[NodeOrText]:
+def _make_table_description_end_probe(table_lines: List[str]) -> Probe[NodeOrText]:
     def _is_table_description(elements: List[NodeOrText], index: int) -> bool:
-        element = elements[index]
-        assert isinstance(element, TextSegment)
-        if is_table_description(element.contents, [t.contents for t in table_lines]):
+        if is_table_description(get_string(elements[index]), table_lines):
             return True
         return False
 
-    return negate(pick_text_segment(_is_table_description))
+    return negate(pick_text_span_node(_is_table_description))
 
 
 def parse_tables(
@@ -120,17 +120,20 @@ def _table_splitter(
     table_pile, input_list = split_before_match(input_list, _is_table_end)
 
     if table_pile:
-        table_lines: List[TextSegment] = []
-        for element in table_pile:
-            if isinstance(element, TextSegment):
-                table_lines.append(element)
-
         # Directly after table end, look for table description.
         table_description_pile, input_list = split_before_match(
             input_list,
-            _make_table_description_end_probe(table_lines),
+            _make_table_description_end_probe(get_strings(table_pile)),
         )
-        return before, (table_pile, table_description_pile), input_list
+
+        return (
+            before,
+            (
+                table_pile,
+                table_description_pile,
+            ),
+            input_list,
+        )
     else:
         return None
 
@@ -143,9 +146,10 @@ def render_table(
     has_table_header = False
     inline_nodes: List[Tuple[int, Node]] = []
     for element in node.children:
-        if isinstance(element, TextSegment):
-            pile.append(element.contents)
-            if bool(TABLE_HEADER_SEPARATOR_PATTERN.match(element.contents)):
+        if is_node(element, type_in=["text_span"]):
+            element_str = get_string(element)
+            pile.append(element_str)
+            if bool(TABLE_HEADER_SEPARATOR_PATTERN.match(element_str)):
                 has_table_header = True
         elif is_node(element, type_in=["page_separator"]):
             table_tag = parse_markdown_table(pile)
@@ -178,9 +182,9 @@ def render_table_description(
     node: Node,
 ) -> Iterable[PageElementOrString]:
     for element in node.children:
-        if isinstance(element, TextSegment):
+        if is_node(element, type_in=["text_span"]):
             yield soup.new_tag("br")
-            yield element.contents
+            yield get_string(element)
         elif is_node(element, type_in=["page_separator"]):
             yield render_page_separator(soup, element)
         else:
@@ -193,11 +197,9 @@ def render_table_description(
 LEADING_WHITESPACES_PATTERN = PatternProxy(r"^\s+")
 """Detect leading whitespaces."""
 
-_is_list = make_probe_from_pattern_proxy(LIST_PATTERN)
-_is_list_start = pick_text_segment(_is_list)
-_is_inline_node_followed_by_list = pick_if_inline_node_followed_by_match(
-    pick_text_segment(_is_list)
-)
+_is_list_element = make_probe_from_pattern_proxy(LIST_PATTERN)
+_is_list_start = pick_text_span_node(_is_list_element)
+_is_list_continuation = pick_if_inline_node_followed_by_match(pick_text_span_node(_is_list_element))
 
 
 def _list_indentation(line: str) -> int:
@@ -228,27 +230,28 @@ def _list_splitter(
     pile: List[NodeOrText] = []
     while elements:
         element = elements[0]
-        if isinstance(element, TextSegment) and _is_list(elements, 0):
+
+        # This will pick either a list element, or an inline tag (e.g. page separator)
+        # that is followed by a list element.
+        if _is_list_continuation(elements, 0):
             pile.append(elements.pop(0))
 
-        # We want to keep inline node only if the list continues after it.
-        elif _is_inline_node_followed_by_list(elements, 0):
-            pile.append(elements.pop(0))
-
-        # If we get a TextSegment that does not match the list pattern,
+        # If we get a line that does not match the list pattern,
         # we check if it continues the previous sentence.
-        elif isinstance(element, TextSegment):
-            # First get the previous text segment in the pile.
+        elif is_node(element, type_in=["text_span"]):
+            # First get the previous list element in the pile.
             j = len(pile) - 1
-            while j >= 0 and not isinstance(pile[j], TextSegment):
+            while j >= 0 and not is_node(pile[j], type_in=["text_span"]):
                 j -= 1
             if j < 0:
-                raise RuntimeError("Expected a TextSegment before the current element in the pile.")
-            previous_text_segment = pile[j]
-            assert isinstance(previous_text_segment, TextSegment)
+                raise RuntimeError("Expected to find a list element in the pile.")
+            previous_list_element = pile[j]
 
-            if is_continuing_sentence(previous_text_segment.contents, element.contents):
-                pile[j] = Node(type="text_span", children=[*pile[j:], elements.pop(0)])
+            if is_continuing_sentence(
+                get_string(previous_list_element),
+                get_string(element),
+            ):
+                pile[j] = combine_text_spans([*pile[j:], elements.pop(0)])
             else:
                 break
 
@@ -290,7 +293,8 @@ def _render_list(
 ) -> Tuple[List[NodeOrText], Tag]:
     elements = list(elements)
     list_pile: List[Tag] = []
-    ref_indentation = _get_element_list_indentation(elements[0])
+    element = elements[0]
+    ref_indentation = _list_indentation(get_string(element))
 
     while elements:
         element = elements[0]
@@ -299,15 +303,11 @@ def _render_list(
             list_pile[-1].append(render_page_separator(soup, element))
             elements.pop(0)
 
-        elif isinstance(element, TextSegment) or is_node(element, type_in=["text_span"]):
-            current_indentation = _get_element_list_indentation(element)
-            li_contents: List[PageElementOrString] = []
-            if isinstance(element, TextSegment):
-                li_contents = [element.contents]
-            elif is_node(element, type_in=["text_span"]):
-                li_contents = list(render_text_span(soup, element))
+        elif is_node(element, type_in=["text_span", "text_span"]):
+            current_indentation = _list_indentation(get_string(element))
 
             if current_indentation == ref_indentation:
+                li_contents = list(render_text_span(soup, element))
                 if isinstance(li_contents[0], str):
                     li_contents[0] = _clean_leading_whitespaces(li_contents[0])
                 list_pile.append(make_new_tag(soup, "li", contents=li_contents))
@@ -328,18 +328,6 @@ def _render_list(
     return elements, make_new_tag(soup, "ul", contents=list_pile)
 
 
-def _get_element_list_indentation(
-    element: NodeOrText,
-) -> int:
-    if isinstance(element, TextSegment):
-        return _list_indentation(element.contents)
-    elif is_node(element, type_in=["text_span"]):
-        assert isinstance(element.children[0], TextSegment)
-        return _list_indentation((element.children[0]).contents)
-    else:
-        raise RuntimeError(f"Expected a TextSegment or text_span node, got {element}.")
-
-
 # -------------------- Blockquotes -------------------- #
 _BlockquoteSplitterMatch = Tuple[List[NodeOrText], ErrorCodes | None]
 """
@@ -356,9 +344,10 @@ DOUBLE_QUOTE_PATTERN = PatternProxy(r'"')
 """Basic double quote '"' pattern."""
 
 
-_is_blockquote_start = make_probe_from_pattern_proxy(BLOCKQUOTE_START_PATTERN)
-_is_blockquote_start_text_segment = pick_text_segment(_is_blockquote_start)
-_is_blockquote_end = make_probe_from_pattern_proxy(BLOCKQUOTE_END_PATTERN, use_search=True)
+_is_blockquote_start = pick_text_span_node(make_probe_from_pattern_proxy(BLOCKQUOTE_START_PATTERN))
+_is_blockquote_end = pick_text_span_node(
+    make_probe_from_pattern_proxy(BLOCKQUOTE_END_PATTERN, use_search=True)
+)
 
 
 def parse_blockquotes(
@@ -376,10 +365,10 @@ def parse_blockquotes(
 def _make_blockquote_node(match: _BlockquoteSplitterMatch) -> Node:
     pile, error_code = match
     if error_code is None:
-        elements = chain_functions(pile, [parse_tables, parse_lists, parse_images])
+        children = chain_functions(pile, [parse_tables, parse_lists, parse_images])
         return Node(
             type="blockquote",
-            children=list(elements),
+            children=children,
         )
     else:
         return Node(
@@ -392,31 +381,31 @@ def _make_blockquote_node(match: _BlockquoteSplitterMatch) -> Node:
 def _blockquote_splitter(
     input_list: List[NodeOrText],
 ) -> RawSplit[NodeOrText, _BlockquoteSplitterMatch] | None:
-    before, input_list = split_before_match(input_list, _is_blockquote_start_text_segment)
+    before, input_list = split_before_match(input_list, _is_blockquote_start)
 
     if not input_list:
         return None
 
     # At this point, we know that the first element is a blockquote start
-    assert isinstance(input_list[0], TextSegment)
-    opening_quote_start = input_list[0].start
-
+    element = input_list[0]
+    assert is_node(element, type_in=["text_span"])
+    first_text_segment_index, first_text_segment = _get_first_text_segment(element)
     # Remove opening quote
     # TODO-PROCESS-TAG
-    input_list[0] = apply_to_segment(
-        input_list[0],
+    element.children[first_text_segment_index] = apply_to_segment(
+        first_text_segment,
         lambda string: BLOCKQUOTE_START_PATTERN.sub("", string),
     )
     quotes_depth_count = 1
 
     for i, element in enumerate(input_list):
-        if not isinstance(element, TextSegment):
+        if not is_node(element, type_in=["text_span"]):
             continue
 
         # Ignore case when the line contains a balanced number of quotes.
         # In that case, no need to increment or decrement as this will
         # be handled recursively.
-        double_quotes_matches = list(DOUBLE_QUOTE_PATTERN.finditer(element.contents))
+        double_quotes_matches = list(DOUBLE_QUOTE_PATTERN.finditer(get_string(element)))
         if len(double_quotes_matches) % 2 == 0:
             pass
         else:
@@ -425,10 +414,11 @@ def _blockquote_splitter(
             if _is_blockquote_end(input_list, i):
                 quotes_depth_count -= 1
             if quotes_depth_count <= 0:
+                last_text_segment_index, last_text_segment = _get_last_text_segment(element)
                 # Remove the end quote
                 # TODO-PROCESS-TAG
-                input_list[i] = apply_to_segment(
-                    element,
+                element.children[last_text_segment_index] = apply_to_segment(
+                    last_text_segment,
                     lambda string: BLOCKQUOTE_END_PATTERN.sub("", string),
                 )
                 break
@@ -437,8 +427,26 @@ def _blockquote_splitter(
         # Last line should be included, so we take `i + 1`
         return before, (input_list[: i + 1], None), input_list[i + 1 :]
     else:
-        _LOGGER.warning(f"Found unbalanced quote starting {opening_quote_start}")
+        _LOGGER.warning(f"Found unbalanced quote starting {first_text_segment.start}")
         return before, (input_list[0:1], ErrorCodes.unbalanced_quote), input_list[1:]
+
+
+def _get_first_text_segment(
+    text_span_node: Node,
+) -> Tuple[int, TextSegment]:
+    for i, element in enumerate(text_span_node.children):
+        if isinstance(element, TextSegment):
+            return i, element
+    raise ValueError("No text segment found.")
+
+
+def _get_last_text_segment(
+    text_span_node: Node,
+) -> Tuple[int, TextSegment]:
+    for i, element in enumerate(reversed(text_span_node.children)):
+        if isinstance(element, TextSegment):
+            return len(text_span_node.children) - 1 - i, element
+    raise ValueError("No text segment found.")
 
 
 def render_blockquote(
@@ -447,14 +455,19 @@ def render_blockquote(
 ) -> Iterable[PageElementOrString]:
     tag = soup.new_tag("blockquote")
     for element in node.children:
-        if isinstance(element, Node):
-            tag.extend(render_basic_elements(soup, element))
-        else:
-            # Parse inline quotes in the line
-            # and add them as <q> tags
+        if is_node(element, type_in=["text_span"]):
             tag.append(
-                make_new_tag(soup, "p", contents=render_inline_quotes(soup, element.contents))
+                make_new_tag(
+                    soup,
+                    "p",
+                    # TODO : should be parsed like other nodes, instead of being
+                    # rendered here on the fly. This would also make parsing blockquote easier.
+                    contents=render_inline_quotes(soup, get_string(element)),
+                )
             )
+        elif is_node(element):
+            tag.extend(render_basic_elements(soup, element))
+
     yield tag
 
 
@@ -468,9 +481,9 @@ def parse_images(
     return map_splitted_elements(
         split_elements(
             input_list,
-            make_single_line_splitter_for_text_segments(_is_image),
+            make_single_line_splitter_for_text_span_nodes(_is_image),
         ),
-        lambda pile: Node(type="image", children=pile),
+        lambda children: Node(type="image", children=children),
     )
 
 
@@ -478,7 +491,7 @@ def render_image(
     soup: BeautifulSoup,
     node: Node,
 ) -> Tag:
-    return parse_markdown_image(assert_single_text_segment(node).contents)
+    return parse_markdown_image(get_string(node))
 
 
 # -------------------- Misc -------------------- #
@@ -533,6 +546,8 @@ def render_basic_elements(
         yield render_image(soup, node)
     elif node.type == "error":
         yield render_error(soup, node)
+    elif node.type == "text_span":
+        yield from render_text_span(soup, node)
     else:
         raise ValueError(f"Unknown node type '{node.type}' in render_basic_elements.")
 
@@ -545,5 +560,5 @@ def render_error(
         soup,
         ERROR_SCHEMA,
         data=dict(error_codes=render_str_list_attribute(node.data["error_codes"])),
-        contents=[assert_single_text_segment(node).contents],
+        contents=[get_string(n) for n in node.children],
     )

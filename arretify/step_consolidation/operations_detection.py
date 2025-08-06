@@ -18,7 +18,7 @@
 #
 from typing import List, Iterator
 
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, Tag
 
 from arretify.regex_utils import (
     regex_tree,
@@ -319,7 +319,7 @@ def parse_operations(
 def _render_operation_match(
     soup: BeautifulSoup,
     operation_match: regex_tree.Match,
-):
+) -> Tag:
     return make_data_tag(
         soup,
         OPERATION_SCHEMA,

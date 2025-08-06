@@ -26,12 +26,13 @@ from .basic_elements import (
     parse_lists,
     parse_tables,
     parse_blockquotes,
+    parse_images,
     render_inline_quotes,
     render_table,
     render_table_description,
     render_list,
 )
-from .testing import assert_elements_equal, _l
+from .testing import assert_elements_equal, _l, make_text_spans
 from arretify.utils.testing import normalized_html_str, assert_html_list_equal
 
 
@@ -73,7 +74,7 @@ class TestParseTables(unittest.TestCase):
 
     def test_simple_table(self):
         # Arrange
-        elements = _l(
+        elements = make_text_spans(
             "| Polluant | Concentration maximale en mg/l |",
             "|---------|---------------------------------|",
             "| MES     | 35                               |",
@@ -91,7 +92,7 @@ class TestParseTables(unittest.TestCase):
             [
                 Node(
                     type="table",
-                    children=_l(
+                    children=make_text_spans(
                         "| Polluant | Concentration maximale en mg/l |",
                         "|---------|---------------------------------|",
                         "| MES     | 35                               |",
@@ -99,13 +100,13 @@ class TestParseTables(unittest.TestCase):
                         "| Hydrocarbures totaux | 10                             |",
                     ),
                 ),
-                *_l("END"),
+                *make_text_spans("END"),
             ],
         )
 
     def test_table_description(self):
         # Arrange
-        elements = _l(
+        elements = make_text_spans(
             "| Polluant | Concentration maximale en mg/l |",
             "|---------|---------------------------------|",
             "| MES     | 35                               |",
@@ -123,7 +124,7 @@ class TestParseTables(unittest.TestCase):
             [
                 Node(
                     type="table",
-                    children=_l(
+                    children=make_text_spans(
                         "| Polluant | Concentration maximale en mg/l |",
                         "|---------|---------------------------------|",
                         "| MES     | 35                               |",
@@ -131,16 +132,18 @@ class TestParseTables(unittest.TestCase):
                 ),
                 Node(
                     type="table_description",
-                    children=_l("(*) bla bla", "Polluant : Matières en suspension (MES)"),
+                    children=make_text_spans(
+                        "(*) bla bla", "Polluant : Matières en suspension (MES)"
+                    ),
                 ),
-                *_l("END"),
+                *make_text_spans("END"),
             ],
         )
 
     def test_parse_tables_with_node_at_end(self):
         # Arrange
         elements = [
-            *_l(
+            *make_text_spans(
                 "| Polluant | Concentration maximale en mg/l |",
                 "|---------|---------------------------------|",
                 "| MES     | 35                               |",
@@ -151,7 +154,7 @@ class TestParseTables(unittest.TestCase):
                 children=[],
                 data=dict(page_index=1),
             ),
-            *_l("END"),
+            *make_text_spans("END"),
         ]
 
         # Act
@@ -163,7 +166,7 @@ class TestParseTables(unittest.TestCase):
             [
                 Node(
                     type="table",
-                    children=_l(
+                    children=make_text_spans(
                         "| Polluant | Concentration maximale en mg/l |",
                         "|---------|---------------------------------|",
                         "| MES     | 35                               |",
@@ -175,7 +178,7 @@ class TestParseTables(unittest.TestCase):
                     children=[],
                     data=dict(page_index=1),
                 ),
-                *_l("END"),
+                *make_text_spans("END"),
             ],
         )
 
@@ -184,7 +187,7 @@ class TestParseList(unittest.TestCase):
 
     def test_simple_list(self):
         # Arrange
-        elements = _l("- Item 1", "- Item 2", "- Item 3", "END")
+        elements = make_text_spans("- Item 1", "- Item 2", "- Item 3", "END")
 
         # Act
         result = parse_lists(elements)
@@ -195,15 +198,15 @@ class TestParseList(unittest.TestCase):
             [
                 Node(
                     type="list",
-                    children=_l("- Item 1", "- Item 2", "- Item 3"),
+                    children=make_text_spans("- Item 1", "- Item 2", "- Item 3"),
                 ),
-                *_l("END"),
+                *make_text_spans("END"),
             ],
         )
 
     def test_nested_list(self):
         # Arrange
-        elements = _l(
+        elements = make_text_spans(
             "- Item 1",
             "  - Subitem 1.1",
             "  - Subitem 1.2",
@@ -219,14 +222,16 @@ class TestParseList(unittest.TestCase):
             [
                 Node(
                     type="list",
-                    children=_l("- Item 1", "  - Subitem 1.1", "  - Subitem 1.2", "- Item 2"),
+                    children=make_text_spans(
+                        "- Item 1", "  - Subitem 1.1", "  - Subitem 1.2", "- Item 2"
+                    ),
                 ),
             ],
         )
 
     def test_text_segment_continuing_previous_sentence(self):
         # Arrange
-        elements = _l(
+        elements = make_text_spans(
             "- Item 1",
             "this is a continuation of the previous sentence.",
             "- Item 2",
@@ -249,10 +254,10 @@ class TestParseList(unittest.TestCase):
                                 "- Item 1", "this is a continuation of the previous sentence."
                             ),
                         ),
-                        *_l("- Item 2"),
+                        *make_text_spans("- Item 2"),
                     ],
                 ),
-                *_l("END"),
+                *make_text_spans("END"),
             ],
         )
 
@@ -263,7 +268,7 @@ class TestParseBlockQuote(unittest.TestCase):
         # Arrange
         elements = [
             Node(type="some_node", children=[]),
-            *_l(
+            *make_text_spans(
                 '"This is',
                 'a blockquote"',
                 "END",
@@ -280,15 +285,15 @@ class TestParseBlockQuote(unittest.TestCase):
                 Node(type="some_node", children=[]),
                 Node(
                     type="blockquote",
-                    children=_l("This is", "a blockquote"),
+                    children=make_text_spans("This is", "a blockquote"),
                 ),
-                *_l("END"),
+                *make_text_spans("END"),
             ],
         )
 
     def test_blockquote_nested_list(self):
         # Arrange
-        lines = _l(
+        lines = make_text_spans(
             '"bla bla',
             "blo blo :",
             "- Item 1",
@@ -306,26 +311,26 @@ class TestParseBlockQuote(unittest.TestCase):
                 Node(
                     type="blockquote",
                     children=[
-                        *_l(
+                        *make_text_spans(
                             "bla bla",
                             "blo blo :",
                         ),
                         Node(
                             type="list",
-                            children=_l(
+                            children=make_text_spans(
                                 "- Item 1",
                                 "- Item 2",
                             ),
                         ),
                     ],
                 ),
-                *_l("END"),
+                *make_text_spans("END"),
             ],
         )
 
     def test_blockquote_one_liner_nested_blockquote(self):
         # Arrange
-        elements = _l(
+        elements = make_text_spans(
             '"bla bla',
             '"blo blo"',
             'bli bli"',
@@ -341,15 +346,15 @@ class TestParseBlockQuote(unittest.TestCase):
             [
                 Node(
                     type="blockquote",
-                    children=_l("bla bla", '"blo blo"', "bli bli"),
+                    children=make_text_spans("bla bla", '"blo blo"', "bli bli"),
                 ),
-                *_l("END"),
+                *make_text_spans("END"),
             ],
         )
 
     def test_blockquote_nested_inline_quote(self):
         # Arrange
-        elements = _l(
+        elements = make_text_spans(
             '"bla bla',
             'blo blo "haha"',
             'bli bli"',
@@ -365,19 +370,19 @@ class TestParseBlockQuote(unittest.TestCase):
             [
                 Node(
                     type="blockquote",
-                    children=_l(
+                    children=make_text_spans(
                         "bla bla",
                         'blo blo "haha"',
                         "bli bli",
                     ),
                 ),
-                *_l("END"),
+                *make_text_spans("END"),
             ],
         )
 
     def test_blockquote_one_line(self):
         # Arrange
-        elements = _l(
+        elements = make_text_spans(
             '"bla bla"',
             "END",
         )
@@ -391,9 +396,9 @@ class TestParseBlockQuote(unittest.TestCase):
             [
                 Node(
                     type="blockquote",
-                    children=_l("bla bla"),
+                    children=make_text_spans("bla bla"),
                 ),
-                *_l("END"),
+                *make_text_spans("END"),
             ],
         )
 
@@ -428,13 +433,13 @@ class TestRenderTable(unittest.TestCase):
         node = Node(
             type="table",
             children=[
-                *_l("| Column 1 | Column 2 |", "|----------|----------|"),
+                *make_text_spans("| Column 1 | Column 2 |", "|----------|----------|"),
                 Node(
                     type="page_separator",
                     children=[],
                     data=dict(page_index=1),
                 ),
-                *_l(
+                *make_text_spans(
                     "| Row 1    | Data 1   |",
                 ),
                 Node(
@@ -442,7 +447,7 @@ class TestRenderTable(unittest.TestCase):
                     children=[],
                     data=dict(page_index=2),
                 ),
-                *_l(
+                *make_text_spans(
                     "| Row 2    | Data 2   |",
                 ),
             ],
@@ -486,13 +491,13 @@ class TestRenderTableDescription(unittest.TestCase):
         node = Node(
             type="table_description",
             children=[
-                *_l("This is a description of the table."),
+                *make_text_spans("This is a description of the table."),
                 Node(
                     type="page_separator",
                     children=[],
                     data=dict(page_index=1),
                 ),
-                *_l("This is another part of the description."),
+                *make_text_spans("This is another part of the description."),
             ],
         )
 
@@ -521,13 +526,13 @@ class TestRenderList(unittest.TestCase):
         node = Node(
             type="list",
             children=[
-                *_l("- Item 1"),
+                *make_text_spans("- Item 1"),
                 Node(
                     type="page_separator",
                     children=[],
                     data=dict(page_index=1),
                 ),
-                *_l("- Item 2"),
+                *make_text_spans("- Item 2"),
             ],
         )
 
@@ -549,7 +554,7 @@ class TestRenderList(unittest.TestCase):
         node = Node(
             type="list",
             children=[
-                *_l("- Item 1", "  - Subitem 1.1", "  - Subitem 1.2", "- Item 2"),
+                *make_text_spans("- Item 1", "  - Subitem 1.1", "  - Subitem 1.2", "- Item 2"),
             ],
         )
 
@@ -580,7 +585,7 @@ class TestRenderList(unittest.TestCase):
                     type="text_span",
                     children=_l("- Item 1", "This is a continuation of the previous sentence."),
                 ),
-                *_l("- Item 2"),
+                *make_text_spans("- Item 2"),
             ],
         )
 
@@ -595,4 +600,30 @@ class TestRenderList(unittest.TestCase):
                 <li>- Item 2</li>
             </ul>
             """
+        )
+
+
+class TestParseImage(unittest.TestCase):
+
+    def test_parse_image(self):
+        # Arrange
+        elements = make_text_spans(
+            "![Image description](image_url.jpg)",
+            "END",
+        )
+
+        # Act
+        result = parse_images(elements)
+
+        # Assert
+        assert_elements_equal(
+            result,
+            [
+                Node(
+                    type="image",
+                    data=dict(),
+                    children=make_text_spans("![Image description](image_url.jpg)"),
+                ),
+                *make_text_spans("END"),
+            ],
         )

@@ -24,7 +24,6 @@ from bs4 import BeautifulSoup, Tag
 
 from arretify.errors import ErrorCodes
 from arretify.utils.html import (
-    PageElementOrString,
     render_str_list_attribute,
 )
 from arretify.utils.html_create import make_data_tag
@@ -63,7 +62,7 @@ IMAGE_PATTERN = PatternProxy(r"!\[[^\[\]]+\]\([^()]+\)")
 """Detect if the line starts with an image."""
 
 
-def is_table_description(line: str, pile: List[PageElementOrString]) -> bool:
+def is_table_description(line: str, pile: List[str]) -> bool:
     # Sentence starts with any number of * between parentheses or without parentheses
     match = TABLE_DESCRIPTION_PATTERN.match(line)
     if match:

@@ -39,9 +39,9 @@ PageLineColumn = Tuple[int, int, int]
 
 @dataclass(frozen=True)
 class TextSegment:
+    contents: str
     start: PageLineColumn
     end: PageLineColumn
-    contents: str
 
 
 @dataclass(frozen=True, kw_only=True)
