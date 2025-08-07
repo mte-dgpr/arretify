@@ -31,8 +31,7 @@ class TestSplitAtFirstVerb(unittest.TestCase):
         result = split_at_first_verb(line)
 
         # Assert
-        assert result[0] == ":"
-        assert result[1] is None
+        assert result is None
 
     def test_title_only(self):
         # Arrange
@@ -42,8 +41,7 @@ class TestSplitAtFirstVerb(unittest.TestCase):
         result = split_at_first_verb(line)
 
         # Assert
-        assert result[0] == "Date d'ouverture, durée et modalités :"
-        assert result[1] is None
+        assert result is None
 
     def test_alinea_only(self):
         # Arrange
@@ -53,7 +51,7 @@ class TestSplitAtFirstVerb(unittest.TestCase):
         result = split_at_first_verb(line)
 
         # Assert
-        assert result[0] is None
+        assert result[0] == ""
         assert result[1] == "L'enquête se déroulera pendant 33 jours."
 
     def test_title_and_alinea(self):
@@ -75,7 +73,7 @@ class TestSplitAtFirstVerb(unittest.TestCase):
         result = split_at_first_verb(line)
 
         # Assert
-        assert result[0] is None
+        assert result[0] == ""
         assert result[1] == "Les itinéraires suivants sont interdits :"
 
     def test_title_and_alinea_colon_both(self):

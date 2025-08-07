@@ -144,7 +144,7 @@ TITLE_NODE = regex_tree.Group(
 def parse_title_text(line: str) -> Tuple[str, str]:
     """This function splits a line containing a title into its section name and text parts."""
     # Detect pattern
-    match_pattern = match(TITLE_NODE, line)
+    match_pattern = regex_tree_match([line], TITLE_NODE)
     assert match_pattern, "Only use parse function when match pattern exists!"
 
     # Extract dict

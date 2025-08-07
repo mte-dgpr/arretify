@@ -48,7 +48,6 @@ from .basic_elements import (
 )
 from arretify.utils.split_merge import (
     map_splitted_elements,
-    flat_map_splitted_elements,
     split_elements,
 )
 from .titles_detection import (
@@ -202,40 +201,28 @@ def parse_section_titles(
     return node_list
 
 
-def _split_title_map_function(elements: List[NodeOrText]) -> List[NodeOrText]:
-    output: List[NodeOrText] = []
-    for line in elements:
-        assert isinstance(line, TextSegment)
-        section_name, text = parse_title_text(line.contents)
-        title_text, alinea_text = split_at_first_verb(text)
-        if alinea_text:
-            # Return two segments: one for the title and one for the alinea
-            if not title_text:
-                title_text = section_name
-            else:
-                title_text = section_name + title_text
-            title_end = (line.end[0], line.end[1], len(title_text))
-            output.extend(
-                [
-                    TextSegment(contents=title_text, start=line.start, end=title_end),
-                    TextSegment(contents=alinea_text, start=title_end, end=line.end),
-                ]
-            )
+@iter_func_to_list
+def _fix_titles_containing_alineas(elements: List[NodeOrText]) -> Iterator[NodeOrText]:
+    for element in elements:
+        if not isinstance(element, TextSegment) or not TITLE_NODE.pattern.match(element.contents):
+            yield element
+            continue
+
+        section_name, text = parse_title_text(element.contents)
+        result = split_at_first_verb(text)
+        if result is None:
+            yield element
+            continue
+
+        title_text, alinea_text = result
+        # Return two segments: one for the title and one for the alinea
+        if not title_text:
+            title_text = section_name
         else:
-            output.append(line)
-    return output
-
-
-def _fix_titles_containing_alineas(
-    elements: List[NodeOrText],
-) -> List[NodeOrText]:
-    return flat_map_splitted_elements(
-        split_elements(
-            elements,
-            make_single_line_splitter_for_text_segments(_is_title),
-        ),
-        _split_title_map_function,
-    )
+            title_text = section_name + title_text
+        title_end = (element.end[0], element.end[1], len(title_text))
+        yield TextSegment(contents=title_text, start=element.start, end=title_end)
+        yield TextSegment(contents=alinea_text, start=title_end, end=element.end)
 
 
 def _create_section_title_nodes(

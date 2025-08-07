@@ -37,28 +37,16 @@
 
 **→ Installation** : 
 
-Créer un environnement virtuel :
-
-```bash
-py -3.12 -m venv venv
-
-venv/bin/activate  # Sur Linux
-.\venv\Scripts\Activate.ps1  # Sur Windows
-
-pip install --upgrade pip  # Sur Linux
-.\venv\Scripts\python.exe -m pip install --upgrade pip  # Sur Windows
-```
-
-Installer la librairie et ses dépendances :
-
 ```bash
 # **NOTE**: La librairie sera disponible très prochainement sur PyPI. En attendant, vous pouvez l'installer directement depuis le repo git.
-pip install git+https://github.com/mte-dgpr/arretify.git  # Sur Linux
-pip install git+https://github.com/mte-dgpr/arretify.git --extra-index-url https://download.pytorch.org/whl/cu128  # Sur Windows, version CUDA à adapter selon votre cas
+pip install git+https://github.com/mte-dgpr/arretify.git
 
 # Modèles spacy
 python -m spacy download fr_dep_news_trf
 ```
+
+Plus d'options d'installation, voir la section [options d'installation](#options_d_installation)
+
 
 **→ Utilisation avec le CLI** : 
 
@@ -115,6 +103,7 @@ EURLEX_WEB_SERVICE_PASSWORD = '<EURLEX_WEB_SERVICE_PASSWORD>'
 ENV = 'development'
 ```
 
+
 ## CLI
 
 Pour éxecuter le parsing sur un lot de fichiers OCRisés, copier le dossier de fichiers dans un dossier facilement accessible (e.g. `./tmp/arretes_ocr`), et exécuter la commande `main.py`. Par exemple :
@@ -127,6 +116,21 @@ Il est aussi possible d'éxecuter le parsing sur un fichier unique en passant en
 
 ```bash
 python -m main -i ./tmp/arretes_ocr/bla.txt -o ./tmp/arretes_html/bla.html
+```
+
+<a id="options_d_installation"></a>
+
+## Options d'installation
+
+Arretify est plus rapide et performant avec un GPU.
+Vous pouvez alors installer les dépendances optionnelles suivantes : 
+
+```bash
+# Adapter selon votre version de cuda
+# Pour torch : https://pytorch.org/get-started/locally/
+# Pour spacy : https://spacy.io/usage
+pip install torch~=2.8.0 --extra-index-url https://download.pytorch.org/whl/cu128
+pip install spacy[cuda12x]~=3.8.7
 ```
 
 

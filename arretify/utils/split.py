@@ -16,12 +16,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import Optional, Tuple
+from typing import Tuple
 import logging
 
 import spacy
-
 from arretify.parsing_utils.patterns import LEADING_TRAILING_WHITESPACE_PATTERN
+
+spacy.prefer_gpu()
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -30,7 +31,7 @@ _LOGGER = logging.getLogger(__name__)
 SPACY_MODEL = spacy.load("fr_dep_news_trf")
 
 
-def split_at_first_verb(line: str) -> Tuple[Optional[str], Optional[str]]:
+def split_at_first_verb(line: str) -> Tuple[str, str] | None:
     """
     This function takes a complete string as input and outputs one to two strings.
 
@@ -50,58 +51,50 @@ def split_at_first_verb(line: str) -> Tuple[Optional[str], Optional[str]]:
     until_verb_or_all = "Date d'ouverture, durée et modalités:"
     after_verb = "L'enquête se déroulera pendant 33 jours."
     """
-    # Initialize texts
-    until_verb_or_all: Optional[str] = None
-    after_verb: Optional[str] = None
-
     # Split parts
     parts = line.split(":")
 
     for i, part in enumerate(parts):
 
-        if part.strip():
+        if not part.strip():
+            continue
 
-            # POS tagging
-            spacy_doc = SPACY_MODEL(part)
+        # POS tagging
+        spacy_doc = SPACY_MODEL(part)
 
-            for token in spacy_doc:
+        for token in spacy_doc:
 
-                # If a part contains a verb in finite form, not capitalized, then all
-                # following text will be comprised in a new alinea distinct from the title
-                # Only verbs or auxiliary verbs
-                is_verb = token.pos_ in {"AUX", "VERB"}
-                # Only finite forms
-                # See : https://universaldependencies.org/u/feat/VerbForm.html
-                is_finite_form = token.morph.get("VerbForm", default=None) == ["Fin"]
-                # Either the word contains a single letter then it should be lowercase e.g. "a"
-                # or it contains multiple letters then all letters except the first one should be
-                # lowercase e.g. "Est" or "est" but not "EST"
-                is_lowercase = (len(token.shape_) <= 1 and token.shape_.islower()) or (
-                    len(token.shape_) > 1 and token.shape_[1:].islower()
-                )
+            # If a part contains a verb in finite form, not capitalized, then all
+            # following text will be comprised in a new alinea distinct from the title
+            # Only verbs or auxiliary verbs
+            is_verb = token.pos_ in {"AUX", "VERB"}
+            # Only finite forms
+            # See : https://universaldependencies.org/u/feat/VerbForm.html
+            is_finite_form = token.morph.get("VerbForm", default=None) == ["Fin"]
+            # Either the word contains a single letter then it should be lowercase e.g. "a"
+            # or it contains multiple letters then all letters except the first one should be
+            # lowercase e.g. "Est" or "est" but not "EST"
+            is_lowercase = (len(token.shape_) <= 1 and token.shape_.islower()) or (
+                len(token.shape_) > 1 and token.shape_[1:].islower()
+            )
 
-                if is_verb and is_finite_form and is_lowercase:
+            if not (is_verb and is_finite_form and is_lowercase):
+                continue
 
-                    _LOGGER.info(f"INFO - Split alinea contents in line: {line}")
+            _LOGGER.info(f"INFO - Split alinea contents in line: {line}")
 
-                    # All parts until the verb form the section title
-                    # TODO: improve the split and merging of strings
-                    until_verb_or_all = ":".join(parts[:i])
-                    if len(until_verb_or_all) <= 0:
-                        until_verb_or_all = None
-                    elif len(parts) >= 2 and until_verb_or_all:
-                        until_verb_or_all += ":"
-                    if until_verb_or_all:
-                        until_verb_or_all = LEADING_TRAILING_WHITESPACE_PATTERN.sub(
-                            "", until_verb_or_all
-                        )
-                    # Following parts form the alinea
-                    after_verb = ":".join(parts[i:])
-                    after_verb = LEADING_TRAILING_WHITESPACE_PATTERN.sub("", after_verb)
+            # All parts until the verb form the section title
+            # TODO: improve the split and merging of strings
+            until_verb = ":".join(parts[:i])
+            if len(parts) >= 2 and until_verb:
+                until_verb += ":"
+            if until_verb:
+                until_verb = LEADING_TRAILING_WHITESPACE_PATTERN.sub("", until_verb)
 
-                    break
+            # Following parts form the alinea
+            after_verb = ":".join(parts[i:])
+            after_verb = LEADING_TRAILING_WHITESPACE_PATTERN.sub("", after_verb)
 
-    if not after_verb:
-        until_verb_or_all = line
+            return until_verb, after_verb
 
-    return until_verb_or_all, after_verb
+    return None
