@@ -30,6 +30,7 @@ from arretify.utils.html import (
 )
 from arretify.utils.html_create import make_data_tag
 from arretify.utils.functional import iter_func_to_list, chain_functions
+from arretify.utils.split import split_at_first_verb
 from arretify.html_schemas import (
     SECTION_SCHEMA,
     SECTION_TITLE_SCHEMAS,
@@ -50,6 +51,7 @@ from arretify.utils.split_merge import (
     split_elements,
 )
 from .titles_detection import (
+    parse_title_text,
     parse_title_info,
     is_next_title,
     TITLE_NODE,
@@ -111,8 +113,14 @@ def render_content(
 
 def parse_section_titles(
     elements: List[NodeOrText],
+    lite: bool = False,
 ) -> List[NodeOrText]:
-    # First collect all section titles in output_flow.
+    # First fix titles containing alinea
+    # Do it only if we are not in lite mode as this is computation intensive
+    if not lite:
+        elements = _fix_titles_containing_alineas(elements)
+
+    # Then collect all section titles in list
     node_list = _create_section_title_nodes(elements)
     section_titles: List[Node] = [e for e in node_list if is_node(e, type_in=["section_title"])]
 
@@ -191,6 +199,30 @@ def parse_section_titles(
         section_title.data.update(data_extra)
 
     return node_list
+
+
+@iter_func_to_list
+def _fix_titles_containing_alineas(elements: List[NodeOrText]) -> Iterator[NodeOrText]:
+    for element in elements:
+        if not isinstance(element, TextSegment) or not TITLE_NODE.pattern.match(element.contents):
+            yield element
+            continue
+
+        section_name, text = parse_title_text(element.contents)
+        result = split_at_first_verb(text)
+        if result is None:
+            yield element
+            continue
+
+        title_text, alinea_text = result
+        # Return two segments: one for the title and one for the alinea
+        if not title_text:
+            title_text = section_name
+        else:
+            title_text = section_name + title_text
+        title_end = (element.end[0], element.end[1], len(title_text))
+        yield TextSegment(contents=title_text, start=element.start, end=title_end)
+        yield TextSegment(contents=alinea_text, start=title_end, end=element.end)
 
 
 def _create_section_title_nodes(

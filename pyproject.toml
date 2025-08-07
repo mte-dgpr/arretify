@@ -11,7 +11,8 @@ authors = [
 ]
 description = ""
 readme = "README.md"
-requires-python = ">=3.13"
+# Python 3.13 is not supported by spacy with cuda as of august 2025.
+requires-python = "~=3.12"
 classifiers = []
 dependencies = [
   "python-dotenv~=1.0",
@@ -28,8 +29,10 @@ dependencies = [
   "zeep~=4.3",
   "lxml~=5.3",
 
-  # TODO : move this as optional dependency
-  "mistralai~=1.8"
+  # TODO : move this as optional dependency for OCR
+  "mistralai~=1.8",
+  # TODO : move this as optional dependencies for NLP
+  "spacy~=3.8.7",
 ]
 
 [project.optional-dependencies]

@@ -17,8 +17,7 @@
 # limitations under the License.
 #
 import logging
-from typing import List, Optional
-
+from typing import List, Optional, Tuple
 
 from arretify.types import SectionType
 from arretify.parsing_utils.patterns import LEADING_TRAILING_PUNCTUATION_PATTERN
@@ -83,24 +82,24 @@ TITLE_NODE = regex_tree.Group(
                             regex_tree.Sequence(
                                 [
                                     # Punctuation before the end of the line
-                                    rf"{TITLE_PUNCTUATION_PATTERN_S}*$",
+                                    rf"(?P<punc_before>{TITLE_PUNCTUATION_PATTERN_S}*)$",
                                 ]
                             ),
                             # Title has numbering
                             regex_tree.Sequence(
                                 [
                                     # Punctuation between section name and numbering
-                                    rf"\s*{TITLE_PUNCTUATION_PATTERN_S}\s*",
+                                    rf"(?P<punc_before>\s*{TITLE_PUNCTUATION_PATTERN_S}\s*)",
                                     # Numbering pattern
                                     regex_tree.Branching(
                                         [
                                             rf"(?P<number>{ORDINAL_PATTERN_S})",
-                                            rf"(?P<number>(\d|I|i)){EME_PATTERN_S}",
+                                            rf"(?P<number>(\d|I|i))(?P<eme>{EME_PATTERN_S})",
                                             rf"(?P<number>{NUMBERING_THEN_OPT_NUMBERS_PATTERN_S})",
                                         ],
                                     ),
                                     # Punctuation between numbering and text
-                                    rf"{TITLE_PUNCTUATION_PATTERN_S}*",
+                                    rf"(?P<punc_after>{TITLE_PUNCTUATION_PATTERN_S}*)",
                                     # Text group
                                     r"(?P<text>.*?)$",
                                 ]
@@ -118,7 +117,7 @@ TITLE_NODE = regex_tree.Group(
                     # Numbering pattern with at least two numbers
                     rf"(?P<number>{NUMBERING_THEN_OBL_NUMBERS_PATTERN_S})",
                     # Punctuation between numbering and text
-                    rf"{TITLE_PUNCTUATION_PATTERN_S}*",
+                    rf"(?P<punc_after>{TITLE_PUNCTUATION_PATTERN_S}*)",
                     # Text group
                     r"(?P<text>.*?)$",
                 ],
@@ -131,7 +130,7 @@ TITLE_NODE = regex_tree.Group(
                     # Numbering pattern with only one integer
                     rf"^(?P<number>{NUMBERS_PATTERN_S}\.?)",
                     # Punctuation between section name and numbering
-                    rf"\s*{TITLE_PUNCTUATION_PATTERN_S}\s*",
+                    rf"(?P<punc_after>\s*{TITLE_PUNCTUATION_PATTERN_S}\s*)",
                     # Text group not ending with punctuation
                     rf"(?P<text>{IS_NOT_ENDING_WITH_PUNCTUATION}.*?)$",
                 ],
@@ -140,6 +139,29 @@ TITLE_NODE = regex_tree.Group(
     ),
     group_name="title",
 )
+
+
+def parse_title_text(line: str) -> Tuple[str, str]:
+    """This function splits a line containing a title into its section name and text parts."""
+    # Detect pattern
+    match_pattern = regex_tree_match([line], TITLE_NODE)
+    assert match_pattern, "Only use parse function when match pattern exists!"
+
+    # Extract dict
+    match_dict = match_pattern.match_dict
+
+    # Build the section name
+    section_type = match_dict.get("section_name", "")
+    punc_before = match_dict.get("punc_before", "")
+    number = match_dict.get("number", "")
+    eme = match_dict.get("eme", "")
+    punc_after = match_dict.get("punc_after", "")
+    section_name = "".join([section_type, punc_before, number, eme, punc_after])
+
+    # Split text parts
+    text = match_dict.get("text", "")
+
+    return section_name, text
 
 
 def parse_title_info(line: str) -> TitleInfo:
@@ -162,6 +184,7 @@ def parse_title_info(line: str) -> TitleInfo:
         number = str(ordinal_str_to_int(number))
     levels = str_to_levels(number)
 
+    # Define title info
     title_info = TitleInfo(
         section_type=section_type,
         number=number,
