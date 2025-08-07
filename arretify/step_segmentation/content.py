@@ -117,7 +117,7 @@ def parse_section_titles(
 ) -> List[NodeOrText]:
     # First fix titles containing alinea
     # Do it only if we are not in lite mode as this is computation intensive
-    if not lite:
+    if lite is False:
         elements = _fix_titles_containing_alineas(elements)
 
     # Then collect all section titles in list
@@ -204,11 +204,16 @@ def parse_section_titles(
 @iter_func_to_list
 def _fix_titles_containing_alineas(elements: List[NodeOrText]) -> Iterator[NodeOrText]:
     for element in elements:
-        if not isinstance(element, TextSegment) or not TITLE_NODE.pattern.match(element.contents):
+        if not is_node(element, type_in=["text_span"]):
             yield element
             continue
 
-        section_name, text = parse_title_text(element.contents)
+        title_string = get_string(element)
+        if not TITLE_NODE.pattern.match(title_string):
+            yield element
+            continue
+
+        section_name, text = parse_title_text(title_string)
         result = split_at_first_verb(text)
         if result is None:
             yield element
@@ -220,9 +225,23 @@ def _fix_titles_containing_alineas(elements: List[NodeOrText]) -> Iterator[NodeO
             title_text = section_name
         else:
             title_text = section_name + title_text
-        title_end = (element.end[0], element.end[1], len(title_text))
-        yield TextSegment(contents=title_text, start=element.start, end=title_end)
-        yield TextSegment(contents=alinea_text, start=title_end, end=element.end)
+
+        # TODO : fix TextSegments start / end
+        assert len(element.children) == 1 and isinstance(element.children[0], TextSegment)
+        text_segment: TextSegment = element.children[0]
+        title_end = (text_segment.end[0], text_segment.end[1], len(title_text))
+        yield Node(
+            type="text_span",
+            children=[
+                TextSegment(contents=title_text, start=text_segment.start, end=title_end),
+            ],
+        )
+        yield Node(
+            type="text_span",
+            children=[
+                TextSegment(contents=alinea_text, start=title_end, end=text_segment.end),
+            ],
+        )
 
 
 def _create_section_title_nodes(
