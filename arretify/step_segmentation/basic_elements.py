@@ -303,7 +303,7 @@ def _render_list(
             list_pile[-1].append(render_page_separator(soup, element))
             elements.pop(0)
 
-        elif is_node(element, type_in=["text_span", "text_span"]):
+        elif is_node(element, type_in=["text_span"]):
             current_indentation = _list_indentation(get_string(element))
 
             if current_indentation == ref_indentation:

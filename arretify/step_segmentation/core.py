@@ -171,10 +171,7 @@ def get_string(node: NodeOrText) -> str:
 
     strings: List[str] = []
     for child in node.children:
-        if isinstance(child, TextSegment):
-            strings.append(child.contents)
-        else:
-            strings.append(_get_string(child))
+        strings.append(_get_string(child))
     return merge_strings(strings)
 
 
