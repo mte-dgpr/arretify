@@ -154,7 +154,7 @@ class TestReplaceOperations(unittest.TestCase):
                     data-references=""
                 >
                     2 .4 .2 L' article 15 .2 de l' arrêté préfectoral du 19 mars 2003 est
-                      <b>modifié et remplacé</b> par les dispositions suivantes :
+                    <b>modifié et remplacé</b> par les dispositions suivantes :
                 </span>
                 """
             )
@@ -175,7 +175,7 @@ class TestReplaceOperations(unittest.TestCase):
                     data-operation_type="replace"
                     data-references="">
                     L'article 5 des prescriptions techniques annexées à l'arrêté préfectoral du
-                      11 juin 2004 est <b>modifié et complété</b> par les dispositions suivantes :
+                    11 juin 2004 est <b>modifié et complété</b> par les dispositions suivantes :
                 </span>
                 """
             )
@@ -198,7 +198,7 @@ class TestReplaceOperations(unittest.TestCase):
                     data-references="">
                     Les dispositions de l'arrêté préfectoral n09-0150 du 20 janvier 2009 susvisé
                     sont <b>modifiées, complétées, ou annulées</b> par les dispositions fixées
-                        aux articles suivants, et dont le récapitulatif figure ci-après :
+                    aux articles suivants, et dont le récapitulatif figure ci-après :
                 </span>
                 """
             )
@@ -261,7 +261,28 @@ class TestReplaceOperations(unittest.TestCase):
                     data-operation_type="replace"
                     data-references="">
                     Les dispositions de l'article 2.8 - Arrêtés types sont <b>supprimées et sont
-                     remplacées</b> par celles du tableau suivant :
+                    remplacées</b> par celles du tableau suivant :
+                </span>
+                """
+            )
+        ]
+
+    def test_update(self):
+        assert process_operations(
+            "Le tableau de l'article 1.2.1 de l'arrêté préfectoral du 10 décembre 2008 "
+            "est mis à jour de la façon suivante :"
+        ) == [
+            normalized_html_str(
+                """
+                <span class="arretify-operation"
+                    data-direction="rtl"
+                    data-has_operand="true"
+                    data-keyword="mis à jour"
+                    data-operand=""
+                    data-operation_type="replace"
+                    data-references="">
+                    Le tableau de l'article 1.2.1 de l'arrêté préfectoral du 10 décembre 2008
+                    est <b>mis à jour</b> de la façon suivante :
                 </span>
                 """
             )
@@ -586,7 +607,7 @@ class TestAddOperations(unittest.TestCase):
                     data-operation_type="add"
                     data-references="">
                     Après lé 6ème alinéa de l'article 4.3.8 de l'arrêté préfectoral précité,
-                      il est <b>inséré</b> les deux nouveaux alinéas suivants :
+                    il est <b>inséré</b> les deux nouveaux alinéas suivants :
                 </span>
                 """
             )
@@ -630,7 +651,7 @@ class TestAddOperations(unittest.TestCase):
                     data-operation_type="add"
                     data-references="">
                     Un article numéroté 12.4.1. intitulé Dispositions spécifiques a l'atelier est
-                      <b>insérée</b> dans le
+                    <b>insérée</b> dans le
                 </span>
                 """
             ),

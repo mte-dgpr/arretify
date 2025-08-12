@@ -275,6 +275,20 @@ RTL_OPERATION_NODE = regex_tree.Group(
                             ),
                         ]
                     ),
+                    regex_tree.Sequence(
+                        [
+                            regex_tree.Group(
+                                r"mis(e|es)? a jour",
+                                group_name=OperationType.REPLACE.value,
+                            ),
+                            r"\s",
+                            regex_tree.Branching(
+                                [
+                                    r"de\sla\sfaçon\ssuivante",
+                                ]
+                            ),
+                        ]
+                    ),
                     # DELETE OPERATIONS
                     regex_tree.Group(
                         regex_tree.Branching(
