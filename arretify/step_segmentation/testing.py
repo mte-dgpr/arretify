@@ -20,7 +20,7 @@ from typing import List
 
 from arretify.parsing_utils.source_mapping import initialize_page
 from arretify.types import TextSegment
-from .core import NodeOrText, is_node
+from .core import NodeOrText, is_node, Node
 
 
 def assert_elements_equal(
@@ -60,3 +60,10 @@ def _line_column_to_zero(text_segment: TextSegment) -> TextSegment:
 
 def _l(*raw_lines: str, page_index: int = 0) -> List[TextSegment]:
     return initialize_page("\n".join(raw_lines), page_index)
+
+
+def make_text_spans(*raw_lines: str, page_index: int = 0) -> List[Node]:
+    return [
+        Node(type="text_span", children=[text_segment])
+        for text_segment in initialize_page("\n".join(raw_lines), page_index)
+    ]

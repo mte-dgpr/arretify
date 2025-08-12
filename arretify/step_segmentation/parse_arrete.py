@@ -16,16 +16,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import List, cast
+from typing import List, Iterator
 
-from arretify.types import DocumentContext, SectionType, TextSegment
+from bs4 import BeautifulSoup
+
+from arretify.types import SectionType, PageElementOrString
 from arretify.html_schemas import (
     HEADER_SCHEMA,
     MAIN_SCHEMA,
     APPENDIX_SCHEMA,
 )
 from arretify.utils.html_create import make_data_tag
-from arretify.utils.functional import chain_functions
+from arretify.utils.functional import chain_functions, iter_func_to_list
 from arretify.utils.split_merge import (
     split_before_match,
 )
@@ -33,26 +35,33 @@ from .header import parse_header, render_header
 from .titles_detection import TITLE_NODE, parse_title_info
 from .content import parse_content, render_content
 from .core import (
+    Node,
     NodeOrText,
-    make_probe_from_pattern,
-    pick_text_segment,
+    make_probe_from_pattern_proxy,
+    pick_text_span_node,
+    is_node,
+    get_string,
 )
 from .basic_elements import parse_images
-from .document_elements import parse_page_footers, parse_tables_of_contents, add_page_separators
+from .document_elements import (
+    parse_page_footers,
+    parse_tables_of_contents,
+    initialize_document_structure,
+)
 
 
-_is_title = make_probe_from_pattern(
+_is_title = make_probe_from_pattern_proxy(
     TITLE_NODE.pattern,
 )
-_is_title_text_segment = pick_text_segment(_is_title)
+_is_title_line = pick_text_span_node(_is_title)
 
 
 def _is_appendix(elements: List[NodeOrText], index: int) -> bool:
     element = elements[index]
-    assert isinstance(element, TextSegment)
-    if _is_title(elements, index):
+    assert is_node(element)
+    if _is_title_line(elements, index):
         # Parse title info
-        title_info = parse_title_info(element.contents)
+        title_info = parse_title_info(get_string(element))
         new_section_type = title_info.section_type
 
         # Appendix is considered as a different part of the document
@@ -61,45 +70,53 @@ def _is_appendix(elements: List[NodeOrText], index: int) -> bool:
     return False
 
 
-_is_appendix_text_segment = pick_text_segment(_is_appendix)
+_is_appendix_text_segment = pick_text_span_node(_is_appendix)
 
 
-def parse_arrete(document_context: DocumentContext) -> DocumentContext:
-    body = document_context.soup.body
-    assert body
-
-    lines = document_context.lines
-    assert lines
-
-    elements: List[NodeOrText] = cast(List[NodeOrText], lines)
+@iter_func_to_list
+def parse_arrete(elements: List[NodeOrText]) -> Iterator[NodeOrText]:
     # Add basic document elements
     elements = chain_functions(
         elements,
         # Image strings can be very long, and table of contents pattern look
         # at the end of the sentence.
         # So, we make sure we parse images before table of contents.
-        [add_page_separators, parse_images, parse_page_footers, parse_tables_of_contents],
+        [initialize_document_structure, parse_images, parse_page_footers, parse_tables_of_contents],
     )
 
     # Header
-    pile, elements = split_before_match(elements, _is_title_text_segment)
-    header = make_data_tag(document_context.soup, HEADER_SCHEMA)
-    body.append(header)
-    rendered_header = render_header(document_context.soup, list(parse_header(pile)))
-    header.extend(list(rendered_header.children))
+    pile, elements = split_before_match(elements, _is_title_line)
+    yield Node(
+        type="header",
+        children=parse_header(pile),
+    )
 
     # Main content
     pile, elements = split_before_match(elements, _is_appendix_text_segment)
-    main_content = make_data_tag(document_context.soup, MAIN_SCHEMA)
-    body.append(main_content)
-    rendered_content = render_content(document_context.soup, list(parse_content(pile)))
-    main_content.extend(list(rendered_content.children))
+    yield Node(
+        type="main",
+        children=parse_content(pile),
+    )
 
     # Appendix
     if elements:
-        appendix = make_data_tag(document_context.soup, APPENDIX_SCHEMA)
-        body.append(appendix)
-        rendered_appendix = render_content(document_context.soup, list(parse_content(elements)))
-        appendix.extend(list(rendered_appendix.children))
+        yield Node(
+            type="appendix",
+            children=parse_content(elements),
+        )
 
-    return document_context
+
+@iter_func_to_list
+def render_arrete(soup: BeautifulSoup, elements: List[NodeOrText]) -> Iterator[PageElementOrString]:
+    body = soup.body
+    assert body
+
+    for element in elements:
+        if is_node(element, type_in=["header"]):
+            yield make_data_tag(soup, HEADER_SCHEMA, contents=render_header(soup, element.children))
+        elif is_node(element, type_in=["main"]):
+            yield make_data_tag(soup, MAIN_SCHEMA, contents=render_content(soup, element.children))
+        elif is_node(element, type_in=["appendix"]):
+            yield make_data_tag(
+                soup, APPENDIX_SCHEMA, contents=render_content(soup, element.children)
+            )

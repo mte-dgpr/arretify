@@ -18,11 +18,15 @@
 #
 import unittest
 
-from .content import parse_section_titles, parse_sections, parse_alineas
+from bs4 import BeautifulSoup
+
+from arretify.utils.testing import normalized_html_str
+from .content import parse_section_titles, parse_sections, parse_alineas, render_alinea
 from .core import Node
 from .testing import (
     assert_elements_equal,
     _l,
+    make_text_spans,
 )
 
 
@@ -30,7 +34,7 @@ class TestParseSectionTitles(unittest.TestCase):
 
     def test_parse_section_titles(self):
         # Arrange
-        elements = _l(
+        elements = make_text_spans(
             "Titre I - Introduction",
             "1. Contexte",
             "bla bla bla",
@@ -51,7 +55,7 @@ class TestParseSectionTitles(unittest.TestCase):
             [
                 Node(
                     type="section_title",
-                    children=_l("Titre I - Introduction"),
+                    children=make_text_spans("Titre I - Introduction"),
                     data=dict(
                         level=0,
                         number="I",
@@ -61,7 +65,7 @@ class TestParseSectionTitles(unittest.TestCase):
                 ),
                 Node(
                     type="section_title",
-                    children=_l("1. Contexte"),
+                    children=make_text_spans("1. Contexte"),
                     data=dict(
                         level=1,
                         number="1",
@@ -69,10 +73,10 @@ class TestParseSectionTitles(unittest.TestCase):
                         type="unknown",
                     ),
                 ),
-                *_l("bla bla bla"),
+                *make_text_spans("bla bla bla"),
                 Node(
                     type="section_title",
-                    children=_l("2. Objectifs"),
+                    children=make_text_spans("2. Objectifs"),
                     data=dict(
                         level=1,
                         number="2",
@@ -80,13 +84,13 @@ class TestParseSectionTitles(unittest.TestCase):
                         type="unknown",
                     ),
                 ),
-                *_l(
+                *make_text_spans(
                     "blo blo blo",
                     "bli bli bli",
                 ),
                 Node(
                     type="section_title",
-                    children=_l("Titre II - Méthodologie"),
+                    children=make_text_spans("Titre II - Méthodologie"),
                     data=dict(
                         level=0,
                         number="II",
@@ -94,7 +98,7 @@ class TestParseSectionTitles(unittest.TestCase):
                         type="titre",
                     ),
                 ),
-                *_l(
+                *make_text_spans(
                     "blu blu blu",
                     "ble ble ble",
                 ),
@@ -107,33 +111,33 @@ class TestParseSections(unittest.TestCase):
     def test_parse_sections(self):
         # Arrange
         elements = [
-            *_l("bly bly bly"),
+            *make_text_spans("bly bly bly"),
             Node(
                 type="section_title",
                 data=dict(level=1),
-                children=_l("Titre I - Introduction"),
+                children=make_text_spans("Titre I - Introduction"),
             ),
             Node(
                 type="section_title",
                 data=dict(level=2),
-                children=_l("1. Contexte"),
+                children=make_text_spans("1. Contexte"),
             ),
-            *_l("bla bla bla"),
+            *make_text_spans("bla bla bla"),
             Node(
                 type="section_title",
                 data=dict(level=2),
-                children=_l("2. Objectifs"),
+                children=make_text_spans("2. Objectifs"),
             ),
-            *_l(
+            *make_text_spans(
                 "blo blo blo",
                 "bli bli bli",
             ),
             Node(
                 type="section_title",
                 data=dict(level=1),
-                children=_l("Titre II - Méthodologie"),
+                children=make_text_spans("Titre II - Méthodologie"),
             ),
-            *_l(
+            *make_text_spans(
                 "blu blu blu",
                 "ble ble ble",
             ),
@@ -148,7 +152,7 @@ class TestParseSections(unittest.TestCase):
             [
                 Node(
                     type="alinea",
-                    children=_l("bly bly bly"),
+                    children=make_text_spans("bly bly bly"),
                     data=dict(number="1"),
                 ),
                 Node(
@@ -156,15 +160,15 @@ class TestParseSections(unittest.TestCase):
                     children=[
                         Node(
                             type="section_title",
-                            children=_l("Titre I - Introduction"),
+                            children=make_text_spans("Titre I - Introduction"),
                         ),
                         Node(
                             type="section",
                             children=[
-                                Node(type="section_title", children=_l("1. Contexte")),
+                                Node(type="section_title", children=make_text_spans("1. Contexte")),
                                 Node(
                                     type="alinea",
-                                    children=_l("bla bla bla"),
+                                    children=make_text_spans("bla bla bla"),
                                     data=dict(number="1"),
                                 ),
                             ],
@@ -172,15 +176,17 @@ class TestParseSections(unittest.TestCase):
                         Node(
                             type="section",
                             children=[
-                                Node(type="section_title", children=_l("2. Objectifs")),
+                                Node(
+                                    type="section_title", children=make_text_spans("2. Objectifs")
+                                ),
                                 Node(
                                     type="alinea",
-                                    children=_l("blo blo blo"),
+                                    children=make_text_spans("blo blo blo"),
                                     data=dict(number="1"),
                                 ),
                                 Node(
                                     type="alinea",
-                                    children=_l("bli bli bli"),
+                                    children=make_text_spans("bli bli bli"),
                                     data=dict(number="2"),
                                 ),
                             ],
@@ -192,16 +198,16 @@ class TestParseSections(unittest.TestCase):
                     children=[
                         Node(
                             type="section_title",
-                            children=_l("Titre II - Méthodologie"),
+                            children=make_text_spans("Titre II - Méthodologie"),
                         ),
                         Node(
                             type="alinea",
-                            children=_l("blu blu blu"),
+                            children=make_text_spans("blu blu blu"),
                             data=dict(number="1"),
                         ),
                         Node(
                             type="alinea",
-                            children=_l("ble ble ble"),
+                            children=make_text_spans("ble ble ble"),
                             data=dict(number="2"),
                         ),
                     ],
@@ -402,13 +408,13 @@ class TestParseAlineas(unittest.TestCase):
     def test_merge_if_continuing_sentence_and_page_separator(self):
         # Arrange
         elements = [
-            *_l("This is a sentence that "),
+            *make_text_spans("This is a sentence that "),
             Node(
                 type="page_separator",
                 data=dict(page_index=1),
                 children=[],
             ),
-            *_l("continues on the next page."),
+            *make_text_spans("continues on the next page."),
         ]
 
         # Act
@@ -421,15 +427,41 @@ class TestParseAlineas(unittest.TestCase):
                 Node(
                     type="alinea",
                     children=[
-                        *_l("This is a sentence that "),
+                        *make_text_spans("This is a sentence that "),
                         Node(
                             type="page_separator",
                             data=dict(page_index=1),
                             children=[],
                         ),
-                        *_l("continues on the next page."),
+                        *make_text_spans("continues on the next page."),
                     ],
                     data=dict(number="1"),
                 ),
             ],
+        )
+
+
+class TestRenderAlinea(unittest.TestCase):
+
+    def setUp(self):
+        self.soup = BeautifulSoup("", features="html.parser")
+
+    def test_simple(self):
+        # Arrange
+        alinea = Node(
+            type="alinea",
+            children=make_text_spans("This is an alinea."),
+            data=dict(number="1"),
+        )
+
+        # Act
+        result = render_alinea(self.soup, alinea)
+
+        # Assert
+        assert normalized_html_str(str(result)) == normalized_html_str(
+            """
+            <div class="arretify-alinea" data-number="1">
+                This is an alinea.
+            </div>
+            """
         )

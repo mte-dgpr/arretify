@@ -44,9 +44,9 @@ from .core import (
     Node,
     NodeOrText,
     is_node,
-    assert_single_text_segment,
-    make_while_splitter_for_text_segments,
+    make_while_splitter_for_text_span_nodes,
     make_probe_from_pattern_proxy,
+    get_string,
 )
 
 
@@ -88,7 +88,7 @@ def parse_tables_of_contents(
     return map_splitted_elements(
         split_elements(
             elements,
-            make_while_splitter_for_text_segments(
+            make_while_splitter_for_text_span_nodes(
                 _is_table_of_contents,
                 _table_of_contents_while_condition,
             ),
@@ -112,7 +112,7 @@ def _table_of_contents_while_condition(elements: List[NodeOrText], index: int) -
     # between text segments.
     next_elements = elements[index : index + 3]
     if any(
-        isinstance(next_elements[i], TextSegment) and _is_table_of_contents(next_elements, i)
+        is_node(next_elements[i], type_in=["text_span"]) and _is_table_of_contents(next_elements, i)
         for i in range(len(next_elements))
     ):
         return True
@@ -125,14 +125,14 @@ def parse_page_footers(
     return map_splitted_elements(
         split_elements(
             elements,
-            make_while_splitter_for_text_segments(_is_page_footer, _is_page_footer),
+            make_while_splitter_for_text_span_nodes(_is_page_footer, _is_page_footer),
         ),
-        lambda pile: Node(type="page_footer", children=pile),
+        lambda children: Node(type="page_footer", children=children),
     )
 
 
 @iter_func_to_list
-def add_page_separators(
+def initialize_document_structure(
     elements: List[NodeOrText],
 ) -> Iterator[NodeOrText]:
     current_page = -1
@@ -143,7 +143,11 @@ def add_page_separators(
             and cast(TextSegment, elements[index]).start[0] != current_page,
         )
         if page_lines:
-            yield from page_lines
+            for line in page_lines:
+                yield Node(
+                    type="text_span",
+                    children=[line],
+                )
         if elements:
             assert isinstance(elements[0], TextSegment)
             current_page = elements[0].start[0]
@@ -160,12 +164,12 @@ def render_table_of_contents(
 ) -> Tag:
     page_elements: List[PageElementOrString] = []
     for element in node.children:
-        if isinstance(element, TextSegment):
-            page_elements.append(element.contents)
+        if is_node(element, type_in=["text_span"]):
+            page_elements.append(get_string(element))
         elif is_node(element, type_in=["page_separator"]):
             page_elements.append(render_page_separator(soup, element))
         else:
-            raise ValueError(f"Unexpected element type in table of contents: {element.type}")
+            raise ValueError(f"Unexpected element in table of contents: {element}")
     return make_data_tag(
         soup,
         TABLE_OF_CONTENTS_SCHEMA,
@@ -177,11 +181,10 @@ def render_page_footer(
     soup: BeautifulSoup,
     node: Node,
 ) -> Tag:
-    text_segment = assert_single_text_segment(node)
     return make_data_tag(
         soup,
         PAGE_FOOTER_SCHEMA,
-        contents=wrap_in_tag(soup, [text_segment.contents], "div"),
+        contents=wrap_in_tag(soup, [get_string(node)], "div"),
     )
 
 

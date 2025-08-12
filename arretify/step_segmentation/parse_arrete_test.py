@@ -1,0 +1,93 @@
+#
+# Copyright (c) 2025 Direction générale de la prévention des risques (DGPR).
+#
+# This file is part of Arrêtify.
+# See https://github.com/mte-dgpr/arretify for further info.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+import unittest
+
+from .core import Node
+from .parse_arrete import parse_arrete
+from .testing import make_text_spans, _l, assert_elements_equal
+
+
+class TestParseArrete(unittest.TestCase):
+
+    def test_simple(self):
+        # Arrange
+        lines = _l(
+            "Arrêté n° 123",
+            "Article 1 : Disposition",
+            "Bla bla bla ...",
+            "Annexe 1 : Détails",
+            "Bla bla bla ...",
+        )
+
+        # Act
+        elements = parse_arrete(lines)
+
+        # Assert
+        assert_elements_equal(
+            elements,
+            [
+                Node(
+                    type="header",
+                    children=[
+                        Node(
+                            type="page_separator",
+                            children=[],
+                        ),
+                        Node(type="arrete_title", children=make_text_spans("Arrêté n° 123")),
+                    ],
+                ),
+                Node(
+                    type="main",
+                    children=[
+                        Node(
+                            type="section",
+                            children=[
+                                Node(
+                                    type="section_title",
+                                    children=make_text_spans("Article 1 : Disposition"),
+                                ),
+                                Node(
+                                    type="alinea",
+                                    children=make_text_spans("Bla bla bla ..."),
+                                ),
+                            ],
+                        ),
+                    ],
+                ),
+                Node(
+                    type="appendix",
+                    children=[
+                        Node(
+                            type="section",
+                            children=[
+                                Node(
+                                    type="section_title",
+                                    children=make_text_spans("Annexe 1 : Détails"),
+                                ),
+                                Node(
+                                    type="alinea",
+                                    children=make_text_spans("Bla bla bla ..."),
+                                ),
+                            ],
+                        ),
+                    ],
+                ),
+            ],
+            ignore_data_if_omitted=True,
+        )
