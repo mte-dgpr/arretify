@@ -168,10 +168,7 @@ def get_string(node: NodeOrText) -> str:
     """
     if isinstance(node, TextSegment):
         return node.contents
-
-    strings: List[str] = []
-    for child in node.children:
-        strings.append(_get_string(child))
+    strings: List[str] = [_get_string(child) for child in node.children]
     return merge_strings(strings)
 
 
