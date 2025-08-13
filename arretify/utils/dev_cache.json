@@ -69,7 +69,8 @@
         "(directive, 2006, 11)": "https://eur-lex.europa.eu/legal-content/FR/TXT/HTML/?uri=cellar:4ea4e474-3ca0-4c40-8a60-d47a2470b374",
         "(directive, 2000, 60)": "https://eur-lex.europa.eu/legal-content/FR/TXT/HTML/?uri=cellar:5c835afb-2ec6-4577-bdf8-756d3d694eeb",
         "(directive, 1976, 464)": "https://eur-lex.europa.eu/legal-content/FR/TXT/HTML/?uri=cellar:2efc093a-eba8-4834-8ae6-c91d6c47db78",
-        "(directive, 2006, 12)": "https://eur-lex.europa.eu/legal-content/FR/TXT/HTML/?uri=cellar:0f484039-4061-4922-9739-76d173d0d919"
+        "(directive, 2006, 12)": "https://eur-lex.europa.eu/legal-content/FR/TXT/HTML/?uri=cellar:0f484039-4061-4922-9739-76d173d0d919",
+        "(decision, 2020, 2019)": "https://eur-lex.europa.eu/legal-content/FR/TXT/HTML/?uri=cellar:8e42e417-3ab2-11eb-b27b-01aa75ed71a1"
     },
     "get_decret_legifrance_id": {
         "(2024-05-21, title= portant nomination de Mme Christelle RATIGNIER CARBONNEIL en qualité de la directrice Générale de l'Agence Régionale, num=None)": null,
