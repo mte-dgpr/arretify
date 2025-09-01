@@ -72,11 +72,14 @@ class TestWalkInputDir(unittest.TestCase):
             ARRETES_OCR_DIR / "arretes_icpe/0005800425/2010-03-29_AP_mistral",
             ARRETES_OCR_DIR / "arretes_icpe/0005800425/2012-09-03_AP_mistral",
             ARRETES_OCR_DIR / "arretes_icpe/0005800425/2025-02-24_APC_mistral",
-            ARRETES_OCR_DIR / "arretes_icpe/0005801105/2012-07-13_AP_mistral",
-            ARRETES_OCR_DIR / "arretes_icpe/0005801105/2013-06-06_AP_mistral",
-            ARRETES_OCR_DIR / "arretes_icpe/0005801105/2016-08-01_AP_mistral",
-            ARRETES_OCR_DIR / "arretes_icpe/0005801105/2023-03-30_AP_mistral",
-            ARRETES_OCR_DIR / "arretes_icpe/0005801105/2023-12-11_APC_mistral",
+            ARRETES_OCR_DIR / "arretes_icpe/0005804239/2009-12-08_AP_mistral",
+            ARRETES_OCR_DIR / "arretes_icpe/0005804239/2012-04-02_AP_mistral",
+            ARRETES_OCR_DIR / "arretes_icpe/0005804239/2013-07-19_Autre_mistral",
+            ARRETES_OCR_DIR / "arretes_icpe/0005804239/2014-01-09_APC_mistral",
+            ARRETES_OCR_DIR / "arretes_icpe/0005804239/2014-12-11_APC_mistral",
+            ARRETES_OCR_DIR / "arretes_icpe/0005804239/2020-04-30_APC_mistral",
+            ARRETES_OCR_DIR / "arretes_icpe/0005804239/2023-12-04_APC_mistral",
+            ARRETES_OCR_DIR / "arretes_icpe/0005804239/2024-09-27_APC_mistral",
         ]
 
 

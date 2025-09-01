@@ -44,8 +44,8 @@ class TestResolveCirculaireLegifranceId(unittest.TestCase):
                     23 juillet 1986
                 </time>
             </a>
-            relative aux vibrations mecaniques emises dans l'environnement par les
-            installations classees pour la protection de l'environnement
+            relative aux vibrations mécaniques émises dans l'environnement par les
+            installations classées
             """,
                 css_selector=".arretify-document_reference",
             )

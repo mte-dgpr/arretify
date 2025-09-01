@@ -106,11 +106,11 @@ class TestResolveEuActUrls(unittest.TestCase):
                 """
             <a
                 class="arretify-document_reference"
-                data-date="2020"
-                data-num="21"
+                data-date="2012"
+                data-num="601"
                 data-type="eu-regulation"
             >
-                règlement 2020/21/UE
+                règlement 2012/601/UE
             </a>
             """
             )
@@ -118,13 +118,13 @@ class TestResolveEuActUrls(unittest.TestCase):
                 """
             <a
                 class="arretify-document_reference"
-                data-date="2020"
-                data-id="https://eur-lex.europa.eu/legal-content/FR/TXT/HTML/?uri=cellar:fa14e336-3777-11ea-ba6e-01aa75ed71a1"
-                data-num="21"
+                data-date="2012"
+                data-id="https://eur-lex.europa.eu/legal-content/FR/TXT/HTML/?uri=cellar:a025c83e-c7f9-4f94-87bb-3522f4ff930d"
+                data-num="601"
                 data-type="eu-regulation"
-                href="https://eur-lex.europa.eu/legal-content/FR/TXT/HTML/?uri=cellar:fa14e336-3777-11ea-ba6e-01aa75ed71a1"
+                href="https://eur-lex.europa.eu/legal-content/FR/TXT/HTML/?uri=cellar:a025c83e-c7f9-4f94-87bb-3522f4ff930d"
             >
-                règlement 2020/21/UE
+                règlement 2012/601/UE
             </a>
             """
             )
