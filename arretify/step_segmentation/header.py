@@ -96,8 +96,10 @@ ENTITIES_LIST = [
     r"bureau",
     r"mission",
     r"unite",
+    r"cellule",
     r"installations? classees? pour la protection de l'environnement",
-    r"affaires? suivies? par",
+    r"etablissements? dangereux,? insalubres? ou incommodes?",
+    r"(dossier|affaire)s? suivie?s? par",
     r"cheff?e? de (bureau|mission)",
 ]
 
@@ -123,13 +125,15 @@ HONORARIES_LIST = [
     r"la prefecture",
     r"l[ea] prefete?",
     r"commissaire",
-    r"l[ea] rect(eur|rice)",
-    r"recteur",
+    r"(l[ea] )?rect(eur|rice)",
     r"l[ea] direct(eur|rice)",
     r"commandeur",
     r"chevalier",
     r"officier",
     r"chancelier",
+    r"l[ea]s? maires?",
+    r"maitre",
+    r"gentilhomme",
 ]
 
 HONORARY_PATTERN = PatternProxy(rf"^\W*({join_with_or(HONORARIES_LIST)})")
