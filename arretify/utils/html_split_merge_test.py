@@ -24,7 +24,7 @@ from arretify.utils.split_merge import SplitMatch, SplitNotAMatch
 from arretify.regex_utils import PatternProxy, regex_tree, Settings
 from .html_split_merge import (
     pick_string,
-    make_pattern_splitter,
+    make_pattern_splitter_ignoring_inline_tags,
     _split_before_string_index,
     _trim_strings_before_merging,
     _split_match_by_named_groups,
@@ -61,7 +61,7 @@ class TestPickStrings(unittest.TestCase):
         assert text_segments_probe(elements, 3) is True
 
 
-class TestMakePatternSplitter(unittest.TestCase):
+class TestMakePatternSplitterIgnoringInlineTags(unittest.TestCase):
 
     def setUp(self):
         self.soup = BeautifulSoup("", features="html.parser")
@@ -78,7 +78,7 @@ class TestMakePatternSplitter(unittest.TestCase):
         ]
 
         # Act
-        splitter = make_pattern_splitter(pattern_proxy)
+        splitter = make_pattern_splitter_ignoring_inline_tags(pattern_proxy)
         before1, match1, after1 = splitter(elements)
         before2, match2, after2 = splitter(after1)
 
@@ -103,7 +103,7 @@ class TestMakePatternSplitter(unittest.TestCase):
         ]
 
         # Act
-        splitter = make_pattern_splitter(pattern_proxy)
+        splitter = make_pattern_splitter_ignoring_inline_tags(pattern_proxy)
         before, match, after = splitter(elements)
 
         # Assert
@@ -122,7 +122,7 @@ class TestMakePatternSplitter(unittest.TestCase):
         ]
 
         # Act
-        splitter = make_pattern_splitter(pattern_proxy)
+        splitter = make_pattern_splitter_ignoring_inline_tags(pattern_proxy)
         before, match, after = splitter(elements)
 
         # Assert
@@ -145,7 +145,7 @@ class TestMakePatternSplitter(unittest.TestCase):
         ]
 
         # Act
-        splitter = make_pattern_splitter(pattern_proxy)
+        splitter = make_pattern_splitter_ignoring_inline_tags(pattern_proxy)
         before, match, after = splitter(elements)
 
         # Assert

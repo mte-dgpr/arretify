@@ -23,13 +23,15 @@ from arretify.regex_utils import PatternProxy
 from .core import (
     make_while_splitter_for_text_span_nodes,
     pick_text_span_node,
+    pick_text_segment,
     group_text_span_nodes_splitter,
     Node,
     make_probe_from_pattern_proxy,
     get_string,
     combine_text_spans,
+    make_pattern_splitter,
 )
-from .testing import _l, make_text_spans
+from .testing import _l, make_text_spans, assert_elements_equal
 
 
 class TestMakeTextSegmentWhileSplitter(unittest.TestCase):
@@ -95,7 +97,7 @@ class TestMakeTextSegmentWhileSplitter(unittest.TestCase):
         # Assert
         assert result == (elements[:1], elements[1:3], elements[3:])
 
-    def test_not_interrupted_by_inline_node(self):
+    def test_not_interrupted_by_transparent_node(self):
         # Arrange
         def probe(elements, index):
             return elements[index].children[0].contents.startswith("match")
@@ -181,17 +183,33 @@ class TestPickTextSpanNode(unittest.TestCase):
             Node(type="text_span", children=_l("blo4", "bla5")),
         ]
 
-        def probe_first_child_starts_with_bla(elements, index):
-            return elements[index].children[0].contents.startswith("bla")
-
         # Act
-        text_span_node_probe = pick_text_span_node(probe_first_child_starts_with_bla)
+        text_span_node_probe = pick_text_span_node(lambda elements, index: True)
 
         # Assert
-        assert text_span_node_probe(elements, 0) is True  # text_span node with "bla1"
-        assert text_span_node_probe(elements, 1) is False  # some_node
-        assert text_span_node_probe(elements, 2) is False  # some TextSegment
-        assert text_span_node_probe(elements, 3) is False  # text_span node with "blo4"
+        assert text_span_node_probe(elements, 0) is True
+        assert text_span_node_probe(elements, 1) is False
+        assert text_span_node_probe(elements, 2) is False
+        assert text_span_node_probe(elements, 3) is True
+
+
+class TestPickTextSegment(unittest.TestCase):
+
+    def test_simple(self):
+        # Arrange
+        elements = [
+            *_l("bla1"),
+            Node(type="some_node", children=[]),
+            *_l("blo4"),
+        ]
+
+        # Act
+        text_segment_probe = pick_text_segment(lambda elements, index: True)
+
+        # Assert
+        assert text_segment_probe(elements, 0) is True
+        assert text_segment_probe(elements, 1) is False
+        assert text_segment_probe(elements, 2) is True
 
 
 class TestGetString(unittest.TestCase):
@@ -247,6 +265,23 @@ class TestGetString(unittest.TestCase):
         with self.assertRaises(ValueError):
             get_string(node)
 
+    def test_inline_nodes_inside_text_span(self):
+        # Arrange
+        node = Node(
+            type="text_span",
+            children=[
+                *_l("Viens au "),
+                Node(type="address", children=_l("123 rue de la Paix")),
+                *_l(", à 12h"),
+            ],
+        )
+
+        # Act
+        result = get_string(node)
+
+        # Assert
+        assert result == "Viens au 123 rue de la Paix, à 12h"
+
 
 class TestCombineTextSpans(unittest.TestCase):
 
@@ -280,3 +315,114 @@ class TestCombineTextSpans(unittest.TestCase):
                 TextSegment(" with multiple lines.", start=(13, 14, 15), end=(16, 17, 18)),
             ],
         )
+
+
+class TestMakePatternSplitter(unittest.TestCase):
+
+    def test_match_middle(self):
+        # Arrange
+        pattern = PatternProxy(r"\d+")
+        splitter = make_pattern_splitter(pattern)
+        elements = [
+            *_l("abc"),
+            Node(
+                type="some_type",
+                children=[],
+            ),
+            *_l("def123ghi"),
+            Node(
+                type="some_type",
+                children=[],
+            ),
+            *_l("jkl"),
+        ]
+
+        # Act
+        result = splitter(elements)
+
+        # Assert
+        assert result is not None
+        before, match, after = result
+        assert_elements_equal(
+            before,
+            [
+                *_l("abc"),
+                Node(
+                    type="some_type",
+                    children=[],
+                ),
+                *_l("def"),
+            ],
+        )
+        assert_elements_equal(
+            after,
+            [
+                *_l("ghi"),
+                Node(
+                    type="some_type",
+                    children=[],
+                ),
+                *_l("jkl"),
+            ],
+        )
+        assert match.group(0) == "123"
+
+    def test_match_start(self):
+        # Arrange
+        pattern = PatternProxy(r"\d+")
+        splitter = make_pattern_splitter(pattern)
+        elements = _l("123abc")
+
+        # Act
+        result = splitter(elements)
+
+        # Assert
+        assert result is not None
+        before, match, after = result
+        assert_elements_equal(before, [])
+        assert_elements_equal(after, _l("abc"))
+        assert match.group(0) == "123"
+
+    def test_match_end(self):
+        # Arrange
+        pattern = PatternProxy(r"\d+")
+        splitter = make_pattern_splitter(pattern)
+        elements = _l("jkl456")
+
+        # Act
+        result = splitter(elements)
+
+        # Assert
+        assert result is not None
+        before, match, after = result
+        assert_elements_equal(before, _l("jkl"))
+        assert_elements_equal(after, [])
+        assert match.group(0) == "456"
+
+    def test_no_match(self):
+        # Arrange
+        pattern = PatternProxy(r"\d+")
+        splitter = make_pattern_splitter(pattern)
+        elements = _l("abc", "defghi", "jkl")
+
+        # Act
+        result = splitter(elements)
+
+        # Assert
+        assert result is None
+
+    def test_match_across_segments(self):
+        # Arrange
+        pattern = PatternProxy(r"defghi")
+        splitter = make_pattern_splitter(pattern)
+        elements = _l("abcdef", "ghijkl")
+
+        # Act
+        result = splitter(elements)
+
+        # Assert
+        assert result is not None
+        before, match, after = result
+        assert_elements_equal(before, _l("abc"))
+        assert_elements_equal(after, _l("jkl"))
+        assert match.group(0) == "defghi"

@@ -41,6 +41,7 @@ from arretify.parsing_utils.patterns import is_continuing_sentence
 from .basic_elements import (
     render_basic_elements,
     render_inline_quotes,
+    render_text_span,
     parse_tables,
     parse_lists,
     parse_images,
@@ -74,9 +75,21 @@ from .document_elements import (
 _LOGGER = logging.getLogger(__name__)
 
 
-_is_title = make_probe_from_pattern_proxy(
+_is_title_string = make_probe_from_pattern_proxy(
     TITLE_NODE.pattern,
 )
+
+
+def is_title(elements: List[NodeOrText], index: int) -> bool:
+    element = elements[index]
+    assert is_node(element, type_in=["text_span"])
+    # Exclude text_span nodes that start with an inline node.
+    # This excludes cases when a line starts with an address
+    # or another inline element, which cannot be a title.
+    if element.children == 0 or not isinstance(element.children[0], TextSegment):
+        return False
+    else:
+        return _is_title_string(elements, index)
 
 
 def _get_downstream_sections_types(section_type):
@@ -250,7 +263,7 @@ def _create_section_title_nodes(
     return map_splitted_elements(
         split_elements(
             elements,
-            make_single_line_splitter_for_text_span_nodes(_is_title),
+            make_single_line_splitter_for_text_span_nodes(is_title),
         ),
         lambda children: Node(
             type="section_title",
@@ -495,7 +508,13 @@ def render_alinea(
     contents: List[PageElementOrString] = []
     for element in node.children:
         if is_node(element, type_in=["text_span"]):
-            contents.extend(render_inline_quotes(soup, get_string(element)))
+            # TODO : move render_inline_quotes inside render_text_span
+            text_span_elements = render_text_span(soup, element)
+            for text_span_element in text_span_elements:
+                if isinstance(text_span_element, str):
+                    contents.extend(render_inline_quotes(soup, text_span_element))
+                else:
+                    contents.append(text_span_element)
         elif isinstance(element, Node):
             contents.extend(render_basic_elements(soup, element))
         else:
