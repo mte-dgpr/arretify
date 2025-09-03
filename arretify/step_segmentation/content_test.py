@@ -105,6 +105,42 @@ class TestParseSectionTitles(unittest.TestCase):
             ],
         )
 
+    def test_reject_text_span_starting_with_inline_node(self):
+        # Arrange
+        elements = [
+            *make_text_spans(
+                "Titre I - Introduction",
+            ),
+            Node(
+                type="text_span",
+                children=[Node(type="address", children=make_text_spans("1 rue de l'avenir"))],
+            ),
+        ]
+
+        # Act
+        result = list(parse_section_titles(elements))
+
+        # Assert
+        assert_elements_equal(
+            result,
+            [
+                Node(
+                    type="section_title",
+                    children=make_text_spans("Titre I - Introduction"),
+                    data=dict(
+                        level=0,
+                        number="I",
+                        title="Introduction",
+                        type="titre",
+                    ),
+                ),
+                Node(
+                    type="text_span",
+                    children=[Node(type="address", children=make_text_spans("1 rue de l'avenir"))],
+                ),
+            ],
+        )
+
 
 class TestParseSections(unittest.TestCase):
 

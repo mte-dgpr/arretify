@@ -29,19 +29,31 @@ from dataclasses import dataclass, field
 
 from arretify.utils.functional import iter_func_to_list
 from arretify.types import TextSegment
-from arretify.regex_utils import PatternProxy
+from arretify.regex_utils import PatternProxy, MatchProxy
 from arretify.utils.strings import merge_strings
 from arretify.utils.split_merge import (
     make_while_splitter,
     make_single_line_splitter,
     Splitter,
     Probe,
+    RawSplit,
+    split_elements,
+    merge_splitted_elements,
+    SplitMatch,
 )
 
 
 NodeOrText = Union[TextSegment, "Node"]
 
-INLINE_NODE_TYPES = ["page_separator", "page_footer"]
+TRANSPARENT_NODE_TYPES = ["page_separator", "page_footer"]
+"""
+List of node types that are considered transparent for text extraction purposes.
+"""
+
+INLINE_NODE_TYPES = ["address"]
+"""
+List of node types that contains specific bits of text information inside a text_span.
+"""
 
 
 @dataclass(frozen=True)
@@ -55,11 +67,11 @@ class Node:
     data: Dict[str, Any] = field(default_factory=dict)
 
 
-def pick_if_inline_node_followed_by_match(
+def pick_if_transparent_node_followed_by_match(
     is_matching: Probe[NodeOrText],
 ) -> Probe[NodeOrText]:
     """
-    Builds a function that returns True for an inline node,
+    Builds a function that returns True for a transparent node,
     only if it is followed by an element that matches the provided `is_matching` function.
     For other elements, it will return the result of the `is_matching` function directly.
 
@@ -74,7 +86,7 @@ def pick_if_inline_node_followed_by_match(
     ... ]
     >>> def is_text_segment(elements: List[NodeOrText], index: int) -> bool:
     ...     return isinstance(elements[index], TextSegment)
-    >>> probe = pick_if_inline_node_followed_by_match(is_text_segment)
+    >>> probe = pick_if_transparent_node_followed_by_match(is_text_segment)
     >>> probe(elements, 0) # -> directly calls `is_text_segment`
     True
     >>> probe(elements, 1) # -> calls `is_text_segment` on the next element
@@ -83,15 +95,15 @@ def pick_if_inline_node_followed_by_match(
     False
     """
 
-    def _pick_inline_nodes_probe(elements: List[NodeOrText], index: int) -> bool:
+    def _pick_transparent_nodes_probe(elements: List[NodeOrText], index: int) -> bool:
         for next_index, next_element in enumerate(elements[index:], start=index):
-            if is_node(next_element, type_in=INLINE_NODE_TYPES):
+            if is_node(next_element, type_in=TRANSPARENT_NODE_TYPES):
                 continue
             else:
                 return is_matching(elements, next_index)
         return False
 
-    return _pick_inline_nodes_probe
+    return _pick_transparent_nodes_probe
 
 
 def pick_text_span_node(
@@ -100,6 +112,18 @@ def pick_text_span_node(
     def _probe(elements: List[NodeOrText], index: int) -> bool:
         element = elements[index]
         if is_node(element, type_in=["text_span"]):
+            return probe(elements, index)
+        return False
+
+    return _probe
+
+
+def pick_text_segment(
+    probe: Probe[NodeOrText],
+) -> Probe[NodeOrText]:
+    def _probe(elements: List[NodeOrText], index: int) -> bool:
+        element = elements[index]
+        if isinstance(element, TextSegment):
             return probe(elements, index)
         return False
 
@@ -126,7 +150,7 @@ def make_while_splitter_for_text_span_nodes(
 ) -> Splitter[NodeOrText, List[NodeOrText]]:
     return make_while_splitter(
         pick_text_span_node(start_condition),
-        pick_if_inline_node_followed_by_match(pick_text_span_node(while_condition)),
+        pick_if_transparent_node_followed_by_match(pick_text_span_node(while_condition)),
     )
 
 
@@ -138,15 +162,76 @@ def make_single_line_splitter_for_text_span_nodes(
     )
 
 
+def make_pattern_splitter(
+    pattern: PatternProxy,
+) -> Splitter[NodeOrText, MatchProxy]:
+    def _splitter(
+        elements: List[NodeOrText],
+    ) -> RawSplit[NodeOrText, MatchProxy] | None:
+        splitted_elements = split_elements(elements, group_text_segments_splitter)
+        for i, splitted_element in enumerate(splitted_elements):
+            if not isinstance(splitted_element, SplitMatch):
+                continue
+
+            string: str = merge_strings([get_string(element) for element in splitted_element.value])
+            match_proxy = pattern.search(string)
+            if not match_proxy:
+                continue
+
+            before = merge_splitted_elements(splitted_elements[:i])
+            if match_proxy.start() > 0:
+                before.append(
+                    TextSegment(
+                        contents=string[: match_proxy.start()],
+                        start=(0, 0, 0),
+                        end=(0, 0, 0),
+                    )
+                )
+
+            after = merge_splitted_elements(splitted_elements[i + 1 :])
+            if match_proxy.end() < len(string):
+                after.insert(
+                    0,
+                    TextSegment(
+                        contents=string[match_proxy.end() :],
+                        start=(0, 0, 0),
+                        end=(0, 0, 0),
+                    ),
+                )
+
+            return (
+                before,
+                match_proxy,
+                after,
+            )
+        return None
+
+    return _splitter
+
+
 group_text_span_nodes_splitter = cast(
     Splitter[NodeOrText, List[NodeOrText]],
     make_while_splitter(
         pick_text_span_node(lambda elements, index: True),
-        pick_if_inline_node_followed_by_match(pick_text_span_node(lambda elements, index: True)),
+        pick_if_transparent_node_followed_by_match(
+            pick_text_span_node(lambda elements, index: True)
+        ),
     ),
 )
 """
 Splitter to enable grouping of text_span nodes.
+"""
+
+
+group_text_segments_splitter = cast(
+    Splitter[NodeOrText, List[NodeOrText]],
+    make_while_splitter(
+        pick_text_segment(lambda elements, index: True),
+        pick_text_segment(lambda elements, index: True),
+    ),
+)
+"""
+Splitter to enable grouping of TextSegments.
 """
 
 
@@ -175,9 +260,9 @@ def get_string(node: NodeOrText) -> str:
 def _get_string(element: NodeOrText) -> str:
     if isinstance(element, TextSegment):
         return element.contents
-    elif is_node(element, type_in=["text_span"]):
+    elif is_node(element, type_in=["text_span", *INLINE_NODE_TYPES]):
         return merge_strings(_get_string(child) for child in element.children)
-    elif is_node(element, type_in=INLINE_NODE_TYPES):
+    elif is_node(element, type_in=TRANSPARENT_NODE_TYPES):
         return ""
     else:
         raise ValueError(f"Unexpected element '{element}'")
@@ -188,10 +273,10 @@ def get_strings(nodes: List[NodeOrText]) -> Iterator[str]:
     for node in nodes:
         if is_node(node, type_in=["text_span"]):
             yield get_string(node)
-        elif is_node(node, type_in=INLINE_NODE_TYPES):
+        elif is_node(node, type_in=TRANSPARENT_NODE_TYPES):
             continue
         else:
-            raise ValueError(f"Node '{node}' is not a text_span or an inline node")
+            raise ValueError(f"Node '{node}' is not a text_span or an transparent node")
 
 
 def combine_text_spans(
@@ -205,13 +290,13 @@ def combine_text_spans(
         if is_node(element, type_in=["text_span"]):
             for text_span_child in element.children:
                 if isinstance(text_span_child, TextSegment) or is_node(
-                    text_span_child, type_in=INLINE_NODE_TYPES
+                    text_span_child, type_in=TRANSPARENT_NODE_TYPES
                 ):
                     children.append(text_span_child)
                 else:
                     raise ValueError(f"Unexpected child '{text_span_child}' in of text_span node")
 
-        elif is_node(element, type_in=INLINE_NODE_TYPES):
+        elif is_node(element, type_in=TRANSPARENT_NODE_TYPES):
             children.append(element)
 
         else:

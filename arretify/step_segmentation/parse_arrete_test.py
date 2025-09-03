@@ -91,3 +91,64 @@ class TestParseArrete(unittest.TestCase):
             ],
             ignore_data_if_omitted=True,
         )
+
+    def test_parse_text_span_inline_content_nodes(self):
+        # Arrange
+        lines = _l(
+            "Arrêté n° 123",
+            "Article 1 : Disposition",
+            # This address should be parsed as an address
+            # node inside a text_span
+            "Bla bla, 123 rue de la Paix, bla ...",
+        )
+
+        # Act
+        elements = parse_arrete(lines)
+
+        # Assert
+        assert_elements_equal(
+            elements,
+            [
+                Node(
+                    type="header",
+                    children=[
+                        Node(
+                            type="page_separator",
+                            children=[],
+                        ),
+                        Node(type="arrete_title", children=make_text_spans("Arrêté n° 123")),
+                    ],
+                ),
+                Node(
+                    type="main",
+                    children=[
+                        Node(
+                            type="section",
+                            children=[
+                                Node(
+                                    type="section_title",
+                                    children=make_text_spans("Article 1 : Disposition"),
+                                ),
+                                Node(
+                                    type="alinea",
+                                    children=[
+                                        Node(
+                                            type="text_span",
+                                            children=[
+                                                *_l("Bla bla, "),
+                                                Node(
+                                                    type="address",
+                                                    children=_l("123 rue de la Paix"),
+                                                ),
+                                                *_l(", bla ..."),
+                                            ],
+                                        )
+                                    ],
+                                ),
+                            ],
+                        ),
+                    ],
+                ),
+            ],
+            ignore_data_if_omitted=True,
+        )

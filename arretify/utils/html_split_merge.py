@@ -131,7 +131,7 @@ def make_regex_tree_splitter(
     """
     Splits a list of elements based on a regex tree node.
     """
-    pattern_splitter = make_pattern_splitter(node.pattern)
+    pattern_splitter = make_pattern_splitter_ignoring_inline_tags(node.pattern)
 
     def _splitter(
         elements: List[PageElementOrString],
@@ -158,7 +158,7 @@ class _PatternSplitterMatch:
     match_proxy: MatchProxy
 
 
-def make_pattern_splitter(
+def make_pattern_splitter_ignoring_inline_tags(
     pattern: PatternProxy,
 ) -> Splitter[PageElementOrString, _PatternSplitterMatch]:
     def _splitter(
@@ -325,7 +325,7 @@ def _regex_tree_match_recursive(
         return
 
     # For other nodes, there is no problem using `pattern`.
-    split = make_pattern_splitter(node.pattern)(elements)
+    split = make_pattern_splitter_ignoring_inline_tags(node.pattern)(elements)
     if not split:
         raise NoMatch()
     if not current_group:
@@ -346,7 +346,7 @@ def _regex_tree_match_recursive(
         yield from flat_map_splitted_elements(
             split_elements(
                 node_match.elements,
-                make_pattern_splitter(node.child.pattern),
+                make_pattern_splitter_ignoring_inline_tags(node.child.pattern),
             ),
             lambda repeat_match: _regex_tree_match_recursive(
                 repeat_match.elements,

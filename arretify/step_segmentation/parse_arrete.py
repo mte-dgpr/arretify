@@ -16,7 +16,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import List, Iterator
+from typing import List, Iterator, Callable
+from dataclasses import replace as dataclass_replace
 
 from bs4 import BeautifulSoup
 
@@ -32,17 +33,16 @@ from arretify.utils.split_merge import (
     split_before_match,
 )
 from .header import parse_header, render_header
-from .titles_detection import TITLE_NODE, parse_title_info
-from .content import parse_content, render_content
+from .titles_detection import parse_title_info
+from .content import parse_content, render_content, is_title
 from .core import (
     Node,
     NodeOrText,
-    make_probe_from_pattern_proxy,
     pick_text_span_node,
     is_node,
     get_string,
 )
-from .basic_elements import parse_images
+from .basic_elements import parse_images, parse_addresses
 from .document_elements import (
     parse_page_footers,
     parse_tables_of_contents,
@@ -50,10 +50,7 @@ from .document_elements import (
 )
 
 
-_is_title = make_probe_from_pattern_proxy(
-    TITLE_NODE.pattern,
-)
-_is_title_line = pick_text_span_node(_is_title)
+_is_title_line = pick_text_span_node(is_title)
 
 
 def _is_appendix(elements: List[NodeOrText], index: int) -> bool:
@@ -78,10 +75,16 @@ def parse_arrete(elements: List[NodeOrText]) -> Iterator[NodeOrText]:
     # Add basic document elements
     elements = chain_functions(
         elements,
-        # Image strings can be very long, and table of contents pattern look
-        # at the end of the sentence.
-        # So, we make sure we parse images before table of contents.
-        [initialize_document_structure, parse_images, parse_page_footers, parse_tables_of_contents],
+        [
+            initialize_document_structure,
+            _make_text_span_parser(parse_addresses),
+            # Image strings can be very long, and table of contents pattern look
+            # at the end of the sentence.
+            # So, we make sure we parse images before table of contents.
+            parse_images,
+            parse_page_footers,
+            parse_tables_of_contents,
+        ],
     )
 
     # Header
@@ -120,3 +123,24 @@ def render_arrete(soup: BeautifulSoup, elements: List[NodeOrText]) -> Iterator[P
             yield make_data_tag(
                 soup, APPENDIX_SCHEMA, contents=render_content(soup, element.children)
             )
+
+
+def _make_text_span_parser(
+    func: Callable[[List[NodeOrText]], List[NodeOrText]],
+) -> Callable[[List[NodeOrText]], List[NodeOrText]]:
+    """
+    Makes a function that uses `func` to parse the children of text_span nodes.
+    """
+
+    @iter_func_to_list
+    def _parse(elements: List[NodeOrText]) -> Iterator[NodeOrText]:
+        for element in elements:
+            if is_node(element, type_in=["text_span"]):
+                yield dataclass_replace(
+                    element,
+                    children=func(element.children),
+                )
+            else:
+                yield element
+
+    return _parse

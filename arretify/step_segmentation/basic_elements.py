@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import List, Tuple, Iterable, Iterator
+from typing import List, Tuple, Iterator
 import logging
 
 from bs4 import BeautifulSoup, Tag
@@ -40,6 +40,10 @@ from arretify.utils.markdown_parsing import (
 )
 from arretify.regex_utils import (
     PatternProxy,
+    join_with_or,
+    named_group,
+    safe_group,
+    normalize_string,
 )
 from arretify.errors import ErrorCodes
 from arretify.html_schemas import ERROR_SCHEMA
@@ -57,6 +61,12 @@ from arretify.utils.split_merge import (
     split_before_match,
     negate,
 )
+from arretify.law_data.french_addresses import (
+    WAY_TYPES,
+    NUMBER_SUFFIXES,
+    ALL_STREET_NAMES,
+    STREET_NAMES_NORMALIZATION_SETTINGS,
+)
 
 from .core import (
     Node,
@@ -68,7 +78,8 @@ from .core import (
     combine_text_spans,
     make_probe_from_pattern_proxy,
     pick_text_span_node,
-    pick_if_inline_node_followed_by_match,
+    pick_if_transparent_node_followed_by_match,
+    make_pattern_splitter,
 )
 from .document_elements import render_table_of_contents, render_page_footer, render_page_separator
 
@@ -84,7 +95,7 @@ A match for the table splitter, in the form `(<table_elements>, <table_descripti
 
 _is_table = make_probe_from_pattern_proxy(TABLE_LINE_PATTERN)
 _is_table_start = pick_text_span_node(_is_table)
-_is_table_end = negate(pick_if_inline_node_followed_by_match(pick_text_span_node(_is_table)))
+_is_table_end = negate(pick_if_transparent_node_followed_by_match(pick_text_span_node(_is_table)))
 
 
 def _make_table_description_end_probe(table_lines: List[str]) -> Probe[NodeOrText]:
@@ -144,7 +155,7 @@ def render_table(
 ) -> Tag:
     pile: List[str] = []
     has_table_header = False
-    inline_nodes: List[Tuple[int, Node]] = []
+    transparent_nodes: List[Tuple[int, Node]] = []
     for element in node.children:
         if is_node(element, type_in=["text_span"]):
             element_str = get_string(element)
@@ -153,23 +164,23 @@ def render_table(
                 has_table_header = True
         elif is_node(element, type_in=["page_separator"]):
             table_tag = parse_markdown_table(pile)
-            # Get the right table row for inserting the inline node.
+            # Get the right table row for inserting the transparent node.
             # If the table has a header, the `pile` contains a header
             # separation line (e.g. "|---|---|---|"), which is not
             # counting as a row in the final html table tag.
             row_index = len(pile) - 1 - int(has_table_header)
-            inline_nodes.append((row_index, element))
+            transparent_nodes.append((row_index, element))
         else:
             raise ValueError(f"Unexpected element type {type(element)} in table rendering.")
 
     table_tag = parse_markdown_table(pile)
 
-    # Insert inline nodes in their corresponding table rows.
+    # Insert transparent nodes in their corresponding table rows.
     table_rows = table_tag.find_all("tr")
-    for row_index, inline_node in inline_nodes:
+    for row_index, transparent_node in transparent_nodes:
         if row_index < len(table_rows) and row_index >= 0:
             table_rows[row_index].select("td, th")[-1].append(
-                render_page_separator(soup, inline_node)
+                render_page_separator(soup, transparent_node)
             )
         else:
             raise ValueError(f"Invalid index {row_index} in table rendering. ")
@@ -180,7 +191,7 @@ def render_table(
 def render_table_description(
     soup: BeautifulSoup,
     node: Node,
-) -> Iterable[PageElementOrString]:
+) -> Iterator[PageElementOrString]:
     for element in node.children:
         if is_node(element, type_in=["text_span"]):
             yield soup.new_tag("br")
@@ -199,7 +210,9 @@ LEADING_WHITESPACES_PATTERN = PatternProxy(r"^\s+")
 
 _is_list_element = make_probe_from_pattern_proxy(LIST_PATTERN)
 _is_list_start = pick_text_span_node(_is_list_element)
-_is_list_continuation = pick_if_inline_node_followed_by_match(pick_text_span_node(_is_list_element))
+_is_list_continuation = pick_if_transparent_node_followed_by_match(
+    pick_text_span_node(_is_list_element)
+)
 
 
 def _list_indentation(line: str) -> int:
@@ -231,7 +244,7 @@ def _list_splitter(
     while elements:
         element = elements[0]
 
-        # This will pick either a list element, or an inline tag (e.g. page separator)
+        # This will pick either a list element, or an transparent tag (e.g. page separator)
         # that is followed by a list element.
         if _is_list_continuation(elements, 0):
             pile.append(elements.pop(0))
@@ -261,7 +274,7 @@ def _list_splitter(
     return before, pile, elements
 
 
-# TODO : deal with case :
+# Does not deal with case (no bullets, but indented lines) :
 # - bla
 #     hello
 #     hellu
@@ -452,7 +465,7 @@ def _get_last_text_segment(
 def render_blockquote(
     soup: BeautifulSoup,
     node: Node,
-) -> Iterable[PageElementOrString]:
+) -> Iterator[PageElementOrString]:
     tag = soup.new_tag("blockquote")
     for element in node.children:
         if is_node(element, type_in=["text_span"]):
@@ -494,12 +507,114 @@ def render_image(
     return parse_markdown_image(get_string(node))
 
 
+# -------------------- Addresses -------------------- #
+ADDRESS_DETECT_PATTERN = PatternProxy(
+    # Detects a street number at the start of the string.
+    # Examples :
+    # 123
+    # 42bis
+    named_group(
+        rf"\d+(\s*({join_with_or(list(NUMBER_SUFFIXES))}))?\s+",
+        group_name="street_number",
+    )
+    # Detects a string that starts with a way type, then
+    # all characters until the end of the string.
+    # Example :
+    # rue Jean Moulin, 12345 Ville-sur-Fleuve, blabla.
+    + named_group(rf"({join_with_or(list(WAY_TYPES))}).*$", group_name="street_name_and_remainder")
+)
+
+
+_address_detect_splitter = make_pattern_splitter(ADDRESS_DETECT_PATTERN)
+
+
+def parse_addresses(
+    input_list: List[NodeOrText],
+) -> List[NodeOrText]:
+    """
+    Parse French addresses.
+
+    Right now we detect only the street number and street name.
+    e.g. : in "12bis rue Jean Moulin, 75000 Paris", we detect only "12bis rue Jean Moulin".
+    """
+    return map_splitted_elements(
+        split_elements(
+            input_list,
+            _address_splitter,
+        ),
+        lambda address: Node(
+            type="address",
+            children=[
+                TextSegment(
+                    contents=address,
+                    start=(0, 0, 0),
+                    end=(0, 0, 0),
+                )
+            ],
+        ),
+    )
+
+
+def _address_splitter(elements: List[NodeOrText]) -> RawSplit[NodeOrText, str] | None:
+    split = _address_detect_splitter(elements)
+    if not split:
+        return None
+
+    before_elements, match, after_elements = split
+    street_number = safe_group(match, "street_number")
+    street_name_and_remainder: str = safe_group(match, "street_name_and_remainder")
+    normalized_street_name_and_remainder = normalize_string(
+        street_name_and_remainder, STREET_NAMES_NORMALIZATION_SETTINGS
+    )
+
+    # Find the longest street name that matches, so we can separate
+    # the street name from the remainder.
+    i = len(normalized_street_name_and_remainder)
+    candidate = normalized_street_name_and_remainder[0:i]
+    while i > 0:
+        if candidate in ALL_STREET_NAMES:
+            break
+        i -= 1
+        candidate = normalized_street_name_and_remainder[0:i]
+
+    remainder_string = street_name_and_remainder[len(candidate) :]
+    if remainder_string:
+        after_elements.insert(
+            0,
+            TextSegment(
+                contents=remainder_string,
+                start=(0, 0, 0),
+                end=(0, 0, 0),
+            ),
+        )
+
+    return (
+        before_elements,
+        # Recompose address by re-adding street number
+        street_number + street_name_and_remainder[0 : len(candidate)],
+        after_elements,
+    )
+
+
+def render_address(
+    soup: BeautifulSoup,
+    node: Node,
+) -> Tag:
+    return make_new_tag(
+        soup,
+        "address",
+        contents=[
+            get_string(node),
+        ],
+    )
+
+
 # -------------------- Misc -------------------- #
 INLINE_QUOTE_PATTERN = PatternProxy(r'"(?P<quoted>[^"]+)"')
 """Detect if a sentence has inline quotes."""
 
 
-def render_inline_quotes(soup: BeautifulSoup, string: str) -> Iterable[PageElementOrString]:
+def render_inline_quotes(soup: BeautifulSoup, string: str) -> Iterator[PageElementOrString]:
     return map_matches(
         split_string_with_regex(INLINE_QUOTE_PATTERN, string),
         lambda inline_quote_match: make_new_tag(
@@ -510,6 +625,7 @@ def render_inline_quotes(soup: BeautifulSoup, string: str) -> Iterable[PageEleme
     )
 
 
+@iter_func_to_list
 def render_text_span(
     soup: BeautifulSoup,
     node: Node,
@@ -520,6 +636,8 @@ def render_text_span(
             yield element.contents + " " * int(i < len(node.children) - 1)
         elif is_node(element, type_in=["page_separator"]):
             yield render_page_separator(soup, element)
+        elif is_node(element, type_in=["address"]):
+            yield render_address(soup, element)
         else:
             raise ValueError(f"Unexpected element type {type(element)} in text span rendering.")
 

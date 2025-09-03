@@ -56,7 +56,7 @@ from .core import (
     make_probe_from_pattern_proxy,
     get_string,
     get_strings,
-    INLINE_NODE_TYPES,
+    TRANSPARENT_NODE_TYPES,
 )
 from .document_elements import (
     render_page_footer,
@@ -470,7 +470,7 @@ def _parse_visa_and_motif_elements_pass2(
             element = elements[0]
             # We're a bit lenient here and accept a few unassigned_line nodes,
             # as random text sometimes interferes with the parsing.
-            if is_node(element, type_in=INLINE_NODE_TYPES) or is_node(
+            if is_node(element, type_in=TRANSPARENT_NODE_TYPES) or is_node(
                 element, type_in=["text_span"]
             ):
                 yield elements.pop(0)
@@ -501,7 +501,7 @@ def _parse_visa_and_motif_elements_pass2(
 
             # Lists will be handled in the next pass and appended to the visa or motif node
             # if applicable.
-            if is_node(element, type_in=["list", *INLINE_NODE_TYPES]):
+            if is_node(element, type_in=["list", *TRANSPARENT_NODE_TYPES]):
                 yield elements.pop(0)
 
             elif is_node(element, type_in=["text_span"]):
@@ -531,20 +531,20 @@ def _parse_visa_and_motif_elements_pass3(
     while elements:
         element = elements.pop(0)
         if is_node(element, type_in=[node_type]):
-            inline_nodes_pile: List[Node] = []
-            while elements and is_node(elements[0], type_in=INLINE_NODE_TYPES):
-                inline_nodes_pile.append(elements[0])
+            transparent_nodes_pile: List[Node] = []
+            while elements and is_node(elements[0], type_in=TRANSPARENT_NODE_TYPES):
+                transparent_nodes_pile.append(elements[0])
                 elements.pop(0)
 
             if elements and is_node(elements[0], type_in=["list"]):
-                if inline_nodes_pile:
-                    element.children.extend(inline_nodes_pile)
+                if transparent_nodes_pile:
+                    element.children.extend(transparent_nodes_pile)
                 element.children.append(elements.pop(0))
                 yield element
 
             else:
                 yield element
-                yield from inline_nodes_pile
+                yield from transparent_nodes_pile
 
         else:
             yield element

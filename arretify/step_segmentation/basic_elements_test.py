@@ -27,13 +27,16 @@ from .basic_elements import (
     parse_tables,
     parse_blockquotes,
     parse_images,
+    parse_addresses,
     render_inline_quotes,
     render_table,
     render_table_description,
     render_list,
+    render_address,
 )
 from .testing import assert_elements_equal, _l, make_text_spans
 from arretify.utils.testing import normalized_html_str, assert_html_list_equal
+from arretify.law_data.french_addresses import ALL_STREET_NAMES
 
 
 class TestListIndentation(unittest.TestCase):
@@ -626,4 +629,75 @@ class TestParseImage(unittest.TestCase):
                 ),
                 *make_text_spans("END"),
             ],
+        )
+
+
+class TestParseAddresses(unittest.TestCase):
+
+    def test_simple_address(self):
+        # Arrange
+        elements = _l(
+            "Some text before ", "123 bis rue de la Paix, 75002 Paris.", " Some text after"
+        )
+
+        # Act
+        result = parse_addresses(elements)
+
+        # Assert
+        assert_elements_equal(
+            result,
+            [
+                *_l("Some text before "),
+                Node(
+                    type="address",
+                    children=_l("123 bis rue de la Paix"),
+                ),
+                *_l(", 75002 Paris. Some text after"),
+            ],
+        )
+
+    def test_street_name_greedy(self):
+        # Arrange
+        assert "rue jean" in ALL_STREET_NAMES
+        assert "rue jean moulin" in ALL_STREET_NAMES
+        elements = _l(
+            "Some text before ", "123 bis rue jean moulin, 75002 Paris.", " Some text after"
+        )
+
+        # Act
+        result = parse_addresses(elements)
+
+        # Assert
+        assert_elements_equal(
+            result,
+            [
+                *_l("Some text before "),
+                Node(
+                    type="address",
+                    children=_l("123 bis rue jean moulin"),
+                ),
+                *_l(", 75002 Paris. Some text after"),
+            ],
+        )
+
+
+class TestRenderAddress(unittest.TestCase):
+    def setUp(self):
+        self.soup = BeautifulSoup("", "html.parser")
+
+    def test_render_address(self):
+        # Arrange
+        node = Node(
+            type="address",
+            children=_l("123 bis rue de la Paix"),
+        )
+
+        # Act
+        address_tag = render_address(self.soup, node)
+
+        # Assert
+        assert normalized_html_str(str(address_tag)) == normalized_html_str(
+            """
+            <address>123 bis rue de la Paix</address>
+            """
         )
