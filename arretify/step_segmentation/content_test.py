@@ -103,6 +103,7 @@ class TestParseSectionTitles(unittest.TestCase):
                     "ble ble ble",
                 ),
             ],
+            ignore_text_span_data=True,
         )
 
     def test_reject_text_span_starting_with_inline_node(self):
@@ -139,6 +140,7 @@ class TestParseSectionTitles(unittest.TestCase):
                     children=[Node(type="address", children=make_text_spans("1 rue de l'avenir"))],
                 ),
             ],
+            ignore_text_span_data=True,
         )
 
 
@@ -250,6 +252,7 @@ class TestParseSections(unittest.TestCase):
                 ),
             ],
             ignore_data_if_omitted=True,
+            ignore_text_span_data=True,
         )
 
     def test_parse_sections_contents(self):
@@ -306,6 +309,7 @@ class TestParseSections(unittest.TestCase):
                 ),
             ],
             ignore_data_if_omitted=True,
+            ignore_text_span_data=True,
         )
 
     def test_parse_sections_missing_level(self):
@@ -350,6 +354,7 @@ class TestParseSections(unittest.TestCase):
                 ),
             ],
             ignore_data_if_omitted=True,
+            ignore_text_span_data=True,
         )
 
     def test_parse_missing_title_current_level(self):
@@ -436,6 +441,7 @@ class TestParseSections(unittest.TestCase):
                 ),
             ],
             ignore_data_if_omitted=True,
+            ignore_text_span_data=True,
         )
 
 
@@ -474,6 +480,7 @@ class TestParseAlineas(unittest.TestCase):
                     data=dict(number="1"),
                 ),
             ],
+            ignore_text_span_data=True,
         )
 
 

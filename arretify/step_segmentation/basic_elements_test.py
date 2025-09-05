@@ -105,6 +105,7 @@ class TestParseTables(unittest.TestCase):
                 ),
                 *make_text_spans("END"),
             ],
+            ignore_text_span_data=True,
         )
 
     def test_table_description(self):
@@ -141,6 +142,7 @@ class TestParseTables(unittest.TestCase):
                 ),
                 *make_text_spans("END"),
             ],
+            ignore_text_span_data=True,
         )
 
     def test_parse_tables_with_node_at_end(self):
@@ -183,6 +185,7 @@ class TestParseTables(unittest.TestCase):
                 ),
                 *make_text_spans("END"),
             ],
+            ignore_text_span_data=True,
         )
 
 
@@ -205,6 +208,7 @@ class TestParseList(unittest.TestCase):
                 ),
                 *make_text_spans("END"),
             ],
+            ignore_text_span_data=True,
         )
 
     def test_nested_list(self):
@@ -230,6 +234,7 @@ class TestParseList(unittest.TestCase):
                     ),
                 ),
             ],
+            ignore_text_span_data=True,
         )
 
     def test_text_segment_continuing_previous_sentence(self):
@@ -262,6 +267,7 @@ class TestParseList(unittest.TestCase):
                 ),
                 *make_text_spans("END"),
             ],
+            ignore_text_span_data=True,
         )
 
 
@@ -292,6 +298,7 @@ class TestParseBlockQuote(unittest.TestCase):
                 ),
                 *make_text_spans("END"),
             ],
+            ignore_text_span_data=True,
         )
 
     def test_blockquote_nested_list(self):
@@ -329,6 +336,7 @@ class TestParseBlockQuote(unittest.TestCase):
                 ),
                 *make_text_spans("END"),
             ],
+            ignore_text_span_data=True,
         )
 
     def test_blockquote_one_liner_nested_blockquote(self):
@@ -353,6 +361,7 @@ class TestParseBlockQuote(unittest.TestCase):
                 ),
                 *make_text_spans("END"),
             ],
+            ignore_text_span_data=True,
         )
 
     def test_blockquote_nested_inline_quote(self):
@@ -381,6 +390,7 @@ class TestParseBlockQuote(unittest.TestCase):
                 ),
                 *make_text_spans("END"),
             ],
+            ignore_text_span_data=True,
         )
 
     def test_blockquote_one_line(self):
@@ -403,6 +413,7 @@ class TestParseBlockQuote(unittest.TestCase):
                 ),
                 *make_text_spans("END"),
             ],
+            ignore_text_span_data=True,
         )
 
 
@@ -629,6 +640,7 @@ class TestParseImage(unittest.TestCase):
                 ),
                 *make_text_spans("END"),
             ],
+            ignore_text_span_data=True,
         )
 
 
@@ -654,6 +666,7 @@ class TestParseAddresses(unittest.TestCase):
                 ),
                 *_l(", 75002 Paris. Some text after"),
             ],
+            ignore_text_span_data=True,
         )
 
     def test_street_name_greedy(self):
@@ -678,6 +691,7 @@ class TestParseAddresses(unittest.TestCase):
                 ),
                 *_l(", 75002 Paris. Some text after"),
             ],
+            ignore_text_span_data=True,
         )
 
 

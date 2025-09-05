@@ -20,6 +20,7 @@ import unittest
 
 from bs4 import BeautifulSoup
 
+from arretify.types import TextSegment
 from .core import Node
 from .document_elements import (
     initialize_document_structure,
@@ -32,24 +33,16 @@ from arretify.utils.testing import normalized_html_str
 
 class TestInitializeDocumentStructure(unittest.TestCase):
 
-    def test_page_separators_inserted(self):
+    def test_page_separators_inserted_and_text_spans_created(self):
         # Arrange
-        lines = (
-            _l(
-                "Line 1",
-                "Line 2",
-                "Line 3",
-            )
-            + _l(
-                "Line 4",
-                "Line 5",
-                page_index=1,
-            )
-            + _l(
-                "Line 6",
-                page_index=2,
-            )
-        )
+        lines = [
+            TextSegment(contents="Line 1", start=(0, 0, 0), end=(0, 0, 5)),
+            TextSegment(contents="Line 2", start=(0, 1, 0), end=(0, 1, 5)),
+            TextSegment(contents="Line 3", start=(0, 2, 0), end=(0, 2, 5)),
+            TextSegment(contents="Line 4", start=(1, 0, 0), end=(1, 0, 5)),
+            TextSegment(contents="Line 5", start=(1, 1, 0), end=(1, 1, 5)),
+            TextSegment(contents="Line 6", start=(2, 0, 0), end=(2, 0, 5)),
+        ]
 
         # Act
         result = list(initialize_document_structure(lines))
@@ -59,11 +52,38 @@ class TestInitializeDocumentStructure(unittest.TestCase):
             result,
             [
                 Node(type="page_separator", data=dict(page_index=0), children=[]),
-                *make_text_spans("Line 1", "Line 2", "Line 3"),
+                Node(
+                    type="text_span",
+                    children=_l("Line 1"),
+                    data=dict(start=(0, 0, 0), end=(0, 0, 5)),
+                ),
+                Node(
+                    type="text_span",
+                    children=_l("Line 2"),
+                    data=dict(start=(0, 1, 0), end=(0, 1, 5)),
+                ),
+                Node(
+                    type="text_span",
+                    children=_l("Line 3"),
+                    data=dict(start=(0, 2, 0), end=(0, 2, 5)),
+                ),
                 Node(type="page_separator", data=dict(page_index=1), children=[]),
-                *make_text_spans("Line 4", "Line 5"),
+                Node(
+                    type="text_span",
+                    children=_l("Line 4"),
+                    data=dict(start=(1, 0, 0), end=(1, 0, 5)),
+                ),
+                Node(
+                    type="text_span",
+                    children=_l("Line 5"),
+                    data=dict(start=(1, 1, 0), end=(1, 1, 5)),
+                ),
                 Node(type="page_separator", data=dict(page_index=2), children=[]),
-                *make_text_spans("Line 6"),
+                Node(
+                    type="text_span",
+                    children=_l("Line 6"),
+                    data=dict(start=(2, 0, 0), end=(2, 0, 5)),
+                ),
             ],
         )
 
@@ -95,6 +115,7 @@ class TestParseTablesOfContents(unittest.TestCase):
                 ),
                 *make_text_spans("Line 2"),
             ],
+            ignore_text_span_data=True,
         )
 
 

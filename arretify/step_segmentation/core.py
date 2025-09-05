@@ -286,8 +286,13 @@ def combine_text_spans(
     Combines a list of TextSegments and text_span nodes into a single text_span node.
     """
     children: List[NodeOrText] = []
+    first_text_span: Node | None = None
+    last_text_span: Node | None = None
     for element in elements:
         if is_node(element, type_in=["text_span"]):
+            if first_text_span is None:
+                first_text_span = element
+            last_text_span = element
             for text_span_child in element.children:
                 if isinstance(text_span_child, TextSegment) or is_node(
                     text_span_child, type_in=TRANSPARENT_NODE_TYPES
@@ -302,7 +307,9 @@ def combine_text_spans(
         else:
             raise ValueError(f"Unexpected element '{element}' ")
 
+    assert first_text_span is not None and last_text_span is not None, "No text_span found"
     return Node(
         type="text_span",
         children=children,
+        data=dict(start=first_text_span.data["start"], end=last_text_span.data["end"]),
     )
