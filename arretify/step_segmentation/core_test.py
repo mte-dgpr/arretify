@@ -18,7 +18,6 @@
 #
 import unittest
 
-from arretify.types import TextSegment
 from arretify.regex_utils import PatternProxy
 from .core import (
     make_while_splitter_for_text_span_nodes,
@@ -290,16 +289,13 @@ class TestCombineTextSpans(unittest.TestCase):
         elements = [
             Node(
                 type="text_span",
-                children=[
-                    TextSegment("This is", start=(1, 2, 3), end=(4, 5, 6)),
-                ],
+                children=_l("This is"),
+                data=dict(start=(1, 2, 3), end=(4, 5, 6)),
             ),
             Node(
                 type="text_span",
-                children=[
-                    TextSegment(" a test", start=(7, 8, 9), end=(10, 11, 12)),
-                    TextSegment(" with multiple lines.", start=(13, 14, 15), end=(16, 17, 18)),
-                ],
+                children=_l(" a test", " with multiple lines."),
+                data=dict(start=(7, 8, 9), end=(16, 17, 18)),
             ),
         ]
 
@@ -307,12 +303,18 @@ class TestCombineTextSpans(unittest.TestCase):
         result = combine_text_spans(elements)
 
         # Assert
-        assert result == Node(
-            type="text_span",
-            children=[
-                TextSegment("This is", start=(1, 2, 3), end=(4, 5, 6)),
-                TextSegment(" a test", start=(7, 8, 9), end=(10, 11, 12)),
-                TextSegment(" with multiple lines.", start=(13, 14, 15), end=(16, 17, 18)),
+        assert_elements_equal(
+            [result],
+            [
+                Node(
+                    type="text_span",
+                    children=_l(
+                        "This is",
+                        " a test",
+                        " with multiple lines.",
+                    ),
+                    data=dict(start=(1, 2, 3), end=(16, 17, 18)),
+                )
             ],
         )
 

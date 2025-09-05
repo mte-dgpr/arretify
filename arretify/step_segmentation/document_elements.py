@@ -144,9 +144,9 @@ def initialize_document_structure(
         )
         if page_lines:
             for line in page_lines:
+                assert isinstance(line, TextSegment)
                 yield Node(
-                    type="text_span",
-                    children=[line],
+                    type="text_span", children=[line], data=dict(start=line.start, end=line.end)
                 )
         if elements:
             assert isinstance(elements[0], TextSegment)

@@ -74,6 +74,7 @@ class TestParseVisaAndMotifs(unittest.TestCase):
                     ),
                 ),
             ],
+            ignore_text_span_data=True,
         )
 
     def test_variant_simple_interrupted_by_random_text(self):
@@ -101,6 +102,7 @@ class TestParseVisaAndMotifs(unittest.TestCase):
                     children=make_text_spans("Vu blo"),
                 ),
             ],
+            ignore_text_span_data=True,
         )
 
     def test_variant_simple_inside_list(self):
@@ -135,6 +137,7 @@ class TestParseVisaAndMotifs(unittest.TestCase):
                     ),
                 ),
             ],
+            ignore_text_span_data=True,
         )
 
     def test_variant_simple_page_separator_interrupting_sentence(self):
@@ -169,6 +172,7 @@ class TestParseVisaAndMotifs(unittest.TestCase):
                     ],
                 ),
             ],
+            ignore_text_span_data=True,
         )
 
     def test_variant_implicit_list(self):
@@ -201,6 +205,7 @@ class TestParseVisaAndMotifs(unittest.TestCase):
                     children=make_text_spans("qu'en application de blibli ;"),
                 ),
             ],
+            ignore_text_span_data=True,
         )
 
     def test_variant_implicit_list_interrupted_by_page_footer(self):
@@ -254,6 +259,7 @@ class TestParseVisaAndMotifs(unittest.TestCase):
                     ),
                 ),
             ],
+            ignore_text_span_data=True,
         )
 
     def test_variant_explicit_list(self):
@@ -286,6 +292,7 @@ class TestParseVisaAndMotifs(unittest.TestCase):
                     children=make_text_spans("- la nomenclature des installations classées ;"),
                 ),
             ],
+            ignore_text_span_data=True,
         )
 
     def test_variant_explicit_list_interrupted(self):
@@ -325,6 +332,7 @@ class TestParseVisaAndMotifs(unittest.TestCase):
                     children=make_text_spans("- la nomenclature des installations classées ;"),
                 ),
             ],
+            ignore_text_span_data=True,
         )
 
     def test_variant_explicit_list_vu_inside_list_element(self):
@@ -362,6 +370,7 @@ class TestParseVisaAndMotifs(unittest.TestCase):
                     children=make_text_spans("- vu la demande déposée par la société XYZ ;"),
                 ),
             ],
+            ignore_text_span_data=True,
         )
 
     def test_variant_simple_with_list_inside_and_interrupted_by_age_separator(self):
@@ -413,6 +422,7 @@ class TestParseVisaAndMotifs(unittest.TestCase):
                     ],
                 ),
             ],
+            ignore_text_span_data=True,
         )
 
 
@@ -471,6 +481,7 @@ class TestParseHeaderElement(unittest.TestCase):
                     ),
                 ),
             ],
+            ignore_text_span_data=True,
         )
 
     def test_parse_header_element_fuzzy(self):
@@ -500,6 +511,7 @@ class TestParseHeaderElement(unittest.TestCase):
                     "Arrêté du 1er janvier 2020",
                 ),
             ],
+            ignore_text_span_data=True,
         )
 
 

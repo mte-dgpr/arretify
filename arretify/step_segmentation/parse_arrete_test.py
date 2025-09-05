@@ -90,6 +90,7 @@ class TestParseArrete(unittest.TestCase):
                 ),
             ],
             ignore_data_if_omitted=True,
+            ignore_text_span_data=True,
         )
 
     def test_parse_text_span_inline_content_nodes(self):
@@ -151,4 +152,5 @@ class TestParseArrete(unittest.TestCase):
                 ),
             ],
             ignore_data_if_omitted=True,
+            ignore_text_span_data=True,
         )

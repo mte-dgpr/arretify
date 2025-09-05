@@ -239,21 +239,25 @@ def _fix_titles_containing_alineas(elements: List[NodeOrText]) -> Iterator[NodeO
         else:
             title_text = section_name + title_text
 
-        # TODO : fix TextSegments start / end
-        assert len(element.children) == 1 and isinstance(element.children[0], TextSegment)
-        text_segment: TextSegment = element.children[0]
-        title_end = (text_segment.end[0], text_segment.end[1], len(title_text))
-        yield Node(
-            type="text_span",
-            children=[
-                TextSegment(contents=title_text, start=text_segment.start, end=title_end),
-            ],
+        # As we don't know exactly the split position in the original text,
+        # we use an approximation of original position for source mapping.
+        text_span_data = dict(
+            start=element.data["start"],
+            end=element.data["end"],
         )
         yield Node(
             type="text_span",
             children=[
-                TextSegment(contents=alinea_text, start=title_end, end=text_segment.end),
+                TextSegment(contents=title_text, start=(0, 0, 0), end=(0, 0, 0)),
             ],
+            data=text_span_data,
+        )
+        yield Node(
+            type="text_span",
+            children=[
+                TextSegment(contents=alinea_text, start=(0, 0, 0), end=(0, 0, 0)),
+            ],
+            data=text_span_data,
         )
 
 

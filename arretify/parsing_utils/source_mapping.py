@@ -41,7 +41,3 @@ def apply_to_segment(segment: TextSegment, func: Callable[[str], str]) -> TextSe
         segment,
         contents=func(segment.contents),
     )
-
-
-def text_segments_to_str(segments: List[TextSegment]) -> List[str]:
-    return [segment.contents for segment in segments]
