@@ -25,7 +25,6 @@ from .content import parse_section_titles, parse_sections, parse_alineas, render
 from .core import Node
 from .testing import (
     assert_elements_equal,
-    _l,
     make_text_spans,
 )
 
@@ -261,15 +260,15 @@ class TestParseSections(unittest.TestCase):
             Node(
                 type="section_title",
                 data=dict(level=0),
-                children=_l("1. Bla"),
+                children=["1. Bla"],
             ),
-            *_l("bla bla bla"),
+            "bla bla bla",
             Node(
                 type="section_title",
                 data=dict(level=1),
-                children=_l("1.1. Blabla"),
+                children=["1.1. Blabla"],
             ),
-            *_l("bli bli bli"),
+            "bli bli bli",
         ]
 
         # Act
@@ -284,11 +283,11 @@ class TestParseSections(unittest.TestCase):
                     children=[
                         Node(
                             type="section_title",
-                            children=_l("1. Bla"),
+                            children=["1. Bla"],
                         ),
                         Node(
                             type="alinea",
-                            children=_l("bla bla bla"),
+                            children=["bla bla bla"],
                             data=dict(number="1"),
                         ),
                         Node(
@@ -296,11 +295,11 @@ class TestParseSections(unittest.TestCase):
                             children=[
                                 Node(
                                     type="section_title",
-                                    children=_l("1.1. Blabla"),
+                                    children=["1.1. Blabla"],
                                 ),
                                 Node(
                                     type="alinea",
-                                    children=_l("bli bli bli"),
+                                    children=["bli bli bli"],
                                     data=dict(number="1"),
                                 ),
                             ],
@@ -318,12 +317,12 @@ class TestParseSections(unittest.TestCase):
             Node(
                 type="section_title",
                 data=dict(level=0),
-                children=_l("1. Bla"),
+                children=["1. Bla"],
             ),
             Node(
                 type="section_title",
                 data=dict(level=2),
-                children=_l("1.1.1. Blabla"),
+                children=["1.1.1. Blabla"],
             ),
         ]
 
@@ -339,14 +338,14 @@ class TestParseSections(unittest.TestCase):
                     children=[
                         Node(
                             type="section_title",
-                            children=_l("1. Bla"),
+                            children=["1. Bla"],
                         ),
                         Node(
                             type="section",
                             children=[
                                 Node(
                                     type="section_title",
-                                    children=_l("1.1.1. Blabla"),
+                                    children=["1.1.1. Blabla"],
                                 ),
                             ],
                         ),
@@ -363,27 +362,27 @@ class TestParseSections(unittest.TestCase):
             Node(
                 type="section_title",
                 data=dict(level=1),
-                children=_l("1.1. bla"),
+                children=["1.1. bla"],
             ),
             Node(
                 type="section_title",
                 data=dict(level=2),
-                children=_l("1.1.1. bla"),
+                children=["1.1.1. bla"],
             ),
             Node(
                 type="section_title",
                 data=dict(level=1),
-                children=_l("1.2. bla"),
+                children=["1.2. bla"],
             ),
             Node(
                 type="section_title",
                 data=dict(level=0),
-                children=_l("2. bla"),
+                children=["2. bla"],
             ),
             Node(
                 type="section_title",
                 data=dict(level=1),
-                children=_l("2.1. bla"),
+                children=["2.1. bla"],
             ),
         ]
 
@@ -399,14 +398,14 @@ class TestParseSections(unittest.TestCase):
                     children=[
                         Node(
                             type="section_title",
-                            children=_l("1.1. bla"),
+                            children=["1.1. bla"],
                         ),
                         Node(
                             type="section",
                             children=[
                                 Node(
                                     type="section_title",
-                                    children=_l("1.1.1. bla"),
+                                    children=["1.1.1. bla"],
                                 ),
                             ],
                         ),
@@ -417,7 +416,7 @@ class TestParseSections(unittest.TestCase):
                     children=[
                         Node(
                             type="section_title",
-                            children=_l("1.2. bla"),
+                            children=["1.2. bla"],
                         ),
                     ],
                 ),
@@ -426,14 +425,14 @@ class TestParseSections(unittest.TestCase):
                     children=[
                         Node(
                             type="section_title",
-                            children=_l("2. bla"),
+                            children=["2. bla"],
                         ),
                         Node(
                             type="section",
                             children=[
                                 Node(
                                     type="section_title",
-                                    children=_l("2.1. bla"),
+                                    children=["2.1. bla"],
                                 ),
                             ],
                         ),
@@ -469,13 +468,18 @@ class TestParseAlineas(unittest.TestCase):
                 Node(
                     type="alinea",
                     children=[
-                        *make_text_spans("This is a sentence that "),
                         Node(
-                            type="page_separator",
-                            data=dict(page_index=1),
-                            children=[],
-                        ),
-                        *make_text_spans("continues on the next page."),
+                            type="text_span",
+                            children=[
+                                "This is a sentence that ",
+                                Node(
+                                    type="page_separator",
+                                    data=dict(page_index=1),
+                                    children=[],
+                                ),
+                                "continues on the next page.",
+                            ],
+                        )
                     ],
                     data=dict(number="1"),
                 ),

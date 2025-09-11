@@ -21,7 +21,6 @@ import logging
 
 from bs4 import BeautifulSoup, Tag
 
-from arretify.types import TextSegment
 from arretify.parsing_utils.patterns import is_continuing_sentence
 from arretify.utils.functional import iter_func_to_list, chain_functions
 from arretify.utils.html import (
@@ -49,9 +48,6 @@ from arretify.errors import ErrorCodes
 from arretify.html_schemas import ERROR_SCHEMA
 from arretify.regex_utils import split_string_with_regex
 from arretify.regex_utils import map_matches
-from arretify.parsing_utils.source_mapping import (
-    apply_to_segment,
-)
 from arretify.utils.split_merge import (
     Probe,
     RawSplit,
@@ -402,13 +398,11 @@ def _blockquote_splitter(
     # At this point, we know that the first element is a blockquote start
     element = input_list[0]
     assert is_node(element, type_in=["text_span"])
-    first_text_segment_index, first_text_segment = _get_first_text_segment(element)
+    first_str_index, first_str = _get_first_str(element)
+    blockquote_start = element.data["start"]
     # Remove opening quote
     # TODO-PROCESS-TAG
-    element.children[first_text_segment_index] = apply_to_segment(
-        first_text_segment,
-        lambda string: BLOCKQUOTE_START_PATTERN.sub("", string),
-    )
+    element.children[first_str_index] = BLOCKQUOTE_START_PATTERN.sub("", first_str)
     quotes_depth_count = 1
 
     for i, element in enumerate(input_list):
@@ -427,39 +421,36 @@ def _blockquote_splitter(
             if _is_blockquote_end(input_list, i):
                 quotes_depth_count -= 1
             if quotes_depth_count <= 0:
-                last_text_segment_index, last_text_segment = _get_last_text_segment(element)
+                last_str_index, last_str = _get_last_str(element)
                 # Remove the end quote
                 # TODO-PROCESS-TAG
-                element.children[last_text_segment_index] = apply_to_segment(
-                    last_text_segment,
-                    lambda string: BLOCKQUOTE_END_PATTERN.sub("", string),
-                )
+                element.children[last_str_index] = BLOCKQUOTE_END_PATTERN.sub("", last_str)
                 break
 
     if quotes_depth_count == 0:
         # Last line should be included, so we take `i + 1`
         return before, (input_list[: i + 1], None), input_list[i + 1 :]
     else:
-        _LOGGER.warning(f"Found unbalanced quote starting {first_text_segment.start}")
+        _LOGGER.warning(f"Found unbalanced quote starting {blockquote_start}")
         return before, (input_list[0:1], ErrorCodes.unbalanced_quote), input_list[1:]
 
 
-def _get_first_text_segment(
+def _get_first_str(
     text_span_node: Node,
-) -> Tuple[int, TextSegment]:
+) -> Tuple[int, str]:
     for i, element in enumerate(text_span_node.children):
-        if isinstance(element, TextSegment):
+        if isinstance(element, str):
             return i, element
-    raise ValueError("No text segment found.")
+    raise ValueError("No str found.")
 
 
-def _get_last_text_segment(
+def _get_last_str(
     text_span_node: Node,
-) -> Tuple[int, TextSegment]:
+) -> Tuple[int, str]:
     for i, element in enumerate(reversed(text_span_node.children)):
-        if isinstance(element, TextSegment):
+        if isinstance(element, str):
             return len(text_span_node.children) - 1 - i, element
-    raise ValueError("No text segment found.")
+    raise ValueError("No str found.")
 
 
 def render_blockquote(
@@ -544,13 +535,7 @@ def parse_addresses(
         ),
         lambda address: Node(
             type="address",
-            children=[
-                TextSegment(
-                    contents=address,
-                    start=(0, 0, 0),
-                    end=(0, 0, 0),
-                )
-            ],
+            children=[address],
         ),
     )
 
@@ -581,11 +566,7 @@ def _address_splitter(elements: List[NodeOrText]) -> RawSplit[NodeOrText, str] |
     if remainder_string:
         after_elements.insert(
             0,
-            TextSegment(
-                contents=remainder_string,
-                start=(0, 0, 0),
-                end=(0, 0, 0),
-            ),
+            remainder_string,
         )
 
     return (
@@ -631,9 +612,9 @@ def render_text_span(
     node: Node,
 ) -> Iterator[PageElementOrString]:
     for i, element in enumerate(node.children):
-        if isinstance(element, TextSegment):
+        if isinstance(element, str):
             # If this is not the last element, we add a space as separator.
-            yield element.contents + " " * int(i < len(node.children) - 1)
+            yield element + " " * int(i < len(node.children) - 1)
         elif is_node(element, type_in=["page_separator"]):
             yield render_page_separator(soup, element)
         elif is_node(element, type_in=["address"]):

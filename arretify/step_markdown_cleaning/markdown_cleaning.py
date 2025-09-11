@@ -22,10 +22,6 @@ from typing import cast
 
 from pylatexenc.latex2text import LatexNodes2Text
 
-from arretify.parsing_utils.source_mapping import (
-    TextSegment,
-    apply_to_segment,
-)
 from arretify.regex_utils import (
     sub_with_match,
     lookup_normalized_version,
@@ -107,10 +103,6 @@ def _resolve_diacritics(text: str):
     return text
 
 
-def _make_sub_wrong(wrong: str, correct: str):
-    return lambda contents: re.sub(wrong, correct, contents)
-
-
 def _convert_latex(match) -> str:
 
     contents = match.group(1)
@@ -185,53 +177,44 @@ def _clean_failed_month_abbreviations(line_contents: str) -> str:
 
 
 # TODO-PROCESS-TAG
-def clean_markdown(line: TextSegment) -> TextSegment:
+def clean_markdown(line: str) -> str:
 
     # Remove newline at the end
-    line = apply_to_segment(line, _make_sub_wrong(r"[\n\r]+$", ""))
+    line = re.sub(r"[\n\r]+$", "", line)
 
     # Remove * at the beginning only if matching closing * found
     matched_em_open = re.search(
         rf"^{BULLETPOINT_PATTERN_S}?\s*(?P<em_open>\*+)(?!\s)",
-        line.contents,
+        line,
     )
 
-    line_mem: TextSegment
+    line_mem: str
     if matched_em_open:
         asterisk_count = len(matched_em_open.group("em_open"))
         line_mem = line
-        line = apply_to_segment(
-            line,
-            lambda contents: sub_with_match(contents, matched_em_open, "em_open"),
-        )
+        line = sub_with_match(line, matched_em_open, "em_open")
         matched_em_close = re.search(
             r"\s*(?P<em_close>\*" + f"{{{asterisk_count}}})\b*",
-            line.contents,
+            line,
         )
         # If there's no matching closing asterisks, we restore the line
         if not matched_em_close or matched_em_close.start() == 0:
             line = line_mem
         else:
-            line = apply_to_segment(
-                line,
-                lambda contents: sub_with_match(contents, matched_em_close, "em_close"),
-            )
+            line = sub_with_match(line, matched_em_close, "em_close")
 
     # Remove any number of # or whitespaces at the beginning of the sentence
-    if not LIST_PATTERN.match(line.contents):
-        line = apply_to_segment(line, _make_sub_wrong(r"^\s*[#\s]+", ""))
+    if not LIST_PATTERN.match(line):
+        line = re.sub(r"^\s*[#\s]+", "", line)
 
     # Convert from latex to plain text
-    line = apply_to_segment(
-        line,
-        lambda contents: re.sub(r"\$(.*?)\$", _convert_latex, contents),
-    )
+    line = re.sub(r"\$(.*?)\$", _convert_latex, line)
 
     # Resolve diacritics
-    line = apply_to_segment(line, _resolve_diacritics)
+    line = _resolve_diacritics(line)
 
     # Replace wrong month abbreviations
-    line = apply_to_segment(line, _clean_failed_month_abbreviations)
+    line = _clean_failed_month_abbreviations(line)
 
     # Resolve specific OCR mismatches
     ocr_replacements = {
@@ -247,19 +230,19 @@ def clean_markdown(line: TextSegment) -> TextSegment:
         r"º": "°",
     }
     for wrong, correct in ocr_replacements.items():
-        line = apply_to_segment(line, _make_sub_wrong(wrong, correct))
+        line = re.sub(wrong, correct, line)
 
     # Convert any '\%' to '%'
-    line = apply_to_segment(line, _make_sub_wrong(r"\\%", "%"))
+    line = re.sub(r"\\%", "%", line)
 
     # Convert any '\&' to '&'
-    line = apply_to_segment(line, _make_sub_wrong(r"\\&", "&"))
+    line = re.sub(r"\\&", "&", line)
 
     # Remove <br> tags outside of tables, since the latter are rendered correctly
-    if not TABLE_LINE_PATTERN.match(line.contents):
-        line = apply_to_segment(line, _make_sub_wrong(r"<br>", ""))
+    if not TABLE_LINE_PATTERN.match(line):
+        line = re.sub(r"<br>", "", line)
 
     # Remove footnotes detected by OCR
-    line = apply_to_segment(line, _make_sub_wrong(r"\[\^0\]\s*", ""))
+    line = re.sub(r"\[\^0\]\s*", "", line)
 
     return line

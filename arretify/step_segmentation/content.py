@@ -24,7 +24,7 @@ from bs4 import (
     Tag,
 )
 
-from arretify.types import SectionType, PageElementOrString, DataElementDataDict, TextSegment
+from arretify.types import SectionType, PageElementOrString, DataElementDataDict
 from arretify.utils.html import (
     render_str_list_attribute,
 )
@@ -37,7 +37,6 @@ from arretify.html_schemas import (
     ALINEA_SCHEMA,
 )
 from arretify.errors import ErrorCodes
-from arretify.parsing_utils.patterns import is_continuing_sentence
 from .basic_elements import (
     render_basic_elements,
     render_inline_quotes,
@@ -60,7 +59,9 @@ from .titles_detection import (
 from .core import (
     Node,
     NodeOrText,
+    combine_text_spans,
     is_node,
+    make_recombine_interrupted_lines_splitter,
     make_single_line_splitter_for_text_span_nodes,
     make_probe_from_pattern_proxy,
     get_string,
@@ -86,7 +87,7 @@ def is_title(elements: List[NodeOrText], index: int) -> bool:
     # Exclude text_span nodes that start with an inline node.
     # This excludes cases when a line starts with an address
     # or another inline element, which cannot be a title.
-    if element.children == 0 or not isinstance(element.children[0], TextSegment):
+    if element.children == 0 or not isinstance(element.children[0], str):
         return False
     else:
         return _is_title_string(elements, index)
@@ -247,16 +248,12 @@ def _fix_titles_containing_alineas(elements: List[NodeOrText]) -> Iterator[NodeO
         )
         yield Node(
             type="text_span",
-            children=[
-                TextSegment(contents=title_text, start=(0, 0, 0), end=(0, 0, 0)),
-            ],
+            children=[title_text],
             data=text_span_data,
         )
         yield Node(
             type="text_span",
-            children=[
-                TextSegment(contents=alinea_text, start=(0, 0, 0), end=(0, 0, 0)),
-            ],
+            children=[alinea_text],
             data=text_span_data,
         )
 
@@ -425,8 +422,8 @@ def render_section(
             contents.append(render_table_of_contents(soup, element))
         elif is_node(element, type_in=["page_separator"]):
             contents.append(render_page_separator(soup, element))
-        elif isinstance(element, TextSegment):
-            contents.append(element.contents)
+        elif isinstance(element, str):
+            contents.append(element)
         elif is_node(element):
             raise ValueError(f"Unexpected node {element.type} in section contents")
 
@@ -459,6 +456,19 @@ def parse_alineas(
         [parse_tables, parse_lists, parse_images],
     )
 
+    # Recombine interrupted lines before processing elements.
+    # e.g.
+    #   This is an alinea that
+    #   <page_separator>
+    #   continues on the next page.
+    elements = map_splitted_elements(
+        split_elements(
+            elements,
+            make_recombine_interrupted_lines_splitter("text_span"),
+        ),
+        lambda grouped_elements: combine_text_spans(grouped_elements),
+    )
+
     while elements:
         element = elements.pop(0)
         # table_of_contents can appear here if we are in an annexe (then it isn't really an
@@ -477,20 +487,6 @@ def parse_alineas(
             ):
                 alinea_children.append(elements[0])
                 elements.pop(0)
-
-        elif (
-            len(elements) >= 2
-            and is_node(element, type_in=["text_span"])
-            and is_node(elements[0], type_in=["page_separator"])
-            and is_node(elements[1], type_in=["text_span"])
-            and is_continuing_sentence(
-                get_string(element),
-                get_string(elements[1]),
-            )
-        ):
-            alinea_children = [element, elements[0], elements[1]]
-            elements.pop(0)
-            elements.pop(0)
 
         else:
             alinea_children = [element]
@@ -522,7 +518,7 @@ def render_alinea(
         elif isinstance(element, Node):
             contents.extend(render_basic_elements(soup, element))
         else:
-            contents.extend(render_inline_quotes(soup, element.contents))
+            contents.extend(render_inline_quotes(soup, element))
 
     return make_data_tag(
         soup,

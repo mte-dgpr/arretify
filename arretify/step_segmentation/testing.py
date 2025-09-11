@@ -18,8 +18,6 @@
 #
 from typing import List
 
-from arretify.parsing_utils.source_mapping import initialize_page
-from arretify.types import TextSegment
 from .core import NodeOrText, is_node, Node
 
 
@@ -54,11 +52,9 @@ def assert_elements_equal(
                 ignore_text_span_data=ignore_text_span_data,
             )
         else:
-            assert isinstance(a, TextSegment), f"[{child_path}] Expected TextSegment, got {a}"
-            assert isinstance(e, TextSegment)
-            assert _line_column_to_zero(a) == _line_column_to_zero(
-                e
-            ), f"[{child_path}] Expected {e}, got {a}"
+            assert isinstance(a, str), f"[{child_path}] Expected str, got {a}"
+            assert isinstance(e, str)
+            assert a == e, f"[{child_path}] Expected {e}, got {a}"
 
 
 def _assert_data_equal(
@@ -75,20 +71,12 @@ def _assert_data_equal(
     assert actual.data == expected.data, f"[{path}] Expected {expected.data}, got {actual.data}"
 
 
-def _line_column_to_zero(text_segment: TextSegment) -> TextSegment:
-    return TextSegment(contents=text_segment.contents, start=(0, 0, 0), end=(0, 0, 0))
-
-
-def _l(*raw_lines: str, page_index: int = 0) -> List[TextSegment]:
-    return initialize_page("\n".join(raw_lines), page_index)
-
-
-def make_text_spans(*raw_lines: str, page_index: int = 0) -> List[Node]:
+def make_text_spans(*lines: str) -> List[Node]:
     return [
         Node(
             type="text_span",
-            children=[text_segment],
-            data=dict(start=text_segment.start, end=text_segment.end),
+            children=[line],
+            data=dict(start=(0, 0, 0), end=(0, 0, 0)),
         )
-        for text_segment in initialize_page("\n".join(raw_lines), page_index)
+        for line in lines
     ]

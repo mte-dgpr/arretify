@@ -37,3 +37,14 @@ def merge_strings(
                 f"Unexpected element type in merge_strings: {str(element)} of type {type(element)}"
             )
     return merged_string
+
+
+def split_lines(text: str) -> list[str]:
+    lines = text.split("\n")
+    if lines and lines[-1] == "":
+        lines = lines[:-1]
+    return lines
+
+
+def join_lines(lines: Iterable[str]) -> str:
+    return "\n".join(lines)

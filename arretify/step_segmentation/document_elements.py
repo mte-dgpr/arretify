@@ -16,11 +16,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import List, Iterator, cast
+from typing import List, Iterator
 
 from bs4 import BeautifulSoup, Tag
 
-from arretify.types import TextSegment
 from arretify.html_schemas import (
     PAGE_FOOTER_SCHEMA,
     TABLE_OF_CONTENTS_SCHEMA,
@@ -33,10 +32,10 @@ from arretify.regex_utils import (
 from arretify.utils.html import (
     PageElementOrString,
 )
+from arretify.utils.strings import split_lines
 from arretify.utils.html_create import make_data_tag, wrap_in_tag
 from arretify.utils.functional import iter_func_to_list
 from arretify.utils.split_merge import (
-    split_before_match,
     split_elements,
     map_splitted_elements,
 )
@@ -133,28 +132,23 @@ def parse_page_footers(
 
 @iter_func_to_list
 def initialize_document_structure(
-    elements: List[NodeOrText],
+    pages: List[str],
 ) -> Iterator[NodeOrText]:
-    current_page = -1
-    while elements:
-        page_lines, elements = split_before_match(
-            elements,
-            lambda elements, index: isinstance(elements[index], TextSegment)
-            and cast(TextSegment, elements[index]).start[0] != current_page,
+    for page_index, page_text in enumerate(pages):
+        yield Node(
+            type="page_separator",
+            data=dict(page_index=page_index),
+            children=[],
         )
-        if page_lines:
-            for line in page_lines:
-                assert isinstance(line, TextSegment)
-                yield Node(
-                    type="text_span", children=[line], data=dict(start=line.start, end=line.end)
-                )
-        if elements:
-            assert isinstance(elements[0], TextSegment)
-            current_page = elements[0].start[0]
+        page_lines = split_lines(page_text)
+        for line_index, line in enumerate(page_lines):
             yield Node(
-                type="page_separator",
-                data=dict(page_index=current_page),
-                children=[],
+                type="text_span",
+                children=[line],
+                data=dict(
+                    start=(page_index, line_index, 0),
+                    end=(page_index, line_index, len(line) - 1),
+                ),
             )
 
 

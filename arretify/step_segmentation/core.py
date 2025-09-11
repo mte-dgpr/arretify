@@ -27,8 +27,8 @@ from typing import (
 )
 from dataclasses import dataclass, field
 
+from arretify.parsing_utils.patterns import is_continuing_sentence
 from arretify.utils.functional import iter_func_to_list
-from arretify.types import TextSegment
 from arretify.regex_utils import PatternProxy, MatchProxy
 from arretify.utils.strings import merge_strings
 from arretify.utils.split_merge import (
@@ -40,10 +40,11 @@ from arretify.utils.split_merge import (
     split_elements,
     merge_splitted_elements,
     SplitMatch,
+    split_before_match,
 )
 
 
-NodeOrText = Union[TextSegment, "Node"]
+NodeOrText = Union["Node", str]
 
 TRANSPARENT_NODE_TYPES = ["page_separator", "page_footer"]
 """
@@ -78,20 +79,20 @@ def pick_if_transparent_node_followed_by_match(
     For example :
 
     >>> elements = [
-    ...     TextSegment("Hello"),
+    ...     "Hello",
     ...     Node(type="page_separator", children=[]),
-    ...     TextSegment("World"),
+    ...     "World",
     ...     Node(type="page_separator", children=[]),
     ...     Node(type="other_type", children=[]),
     ... ]
-    >>> def is_text_segment(elements: List[NodeOrText], index: int) -> bool:
-    ...     return isinstance(elements[index], TextSegment)
-    >>> probe = pick_if_transparent_node_followed_by_match(is_text_segment)
-    >>> probe(elements, 0) # -> directly calls `is_text_segment`
+    >>> def is_string(elements: List[NodeOrText], index: int) -> bool:
+    ...     return isinstance(elements[index], str)
+    >>> probe = pick_if_transparent_node_followed_by_match(is_string)
+    >>> probe(elements, 0) # -> directly calls `is_string`
     True
-    >>> probe(elements, 1) # -> calls `is_text_segment` on the next element
+    >>> probe(elements, 1) # -> calls `is_string` on the next element
     True
-    >>> probe(elements, 3) # -> calls `is_text_segment` on the next element
+    >>> probe(elements, 3) # -> calls `is_string` on the next element
     False
     """
 
@@ -118,12 +119,12 @@ def pick_text_span_node(
     return _probe
 
 
-def pick_text_segment(
+def pick_str(
     probe: Probe[NodeOrText],
 ) -> Probe[NodeOrText]:
     def _probe(elements: List[NodeOrText], index: int) -> bool:
         element = elements[index]
-        if isinstance(element, TextSegment):
+        if isinstance(element, str):
             return probe(elements, index)
         return False
 
@@ -168,7 +169,7 @@ def make_pattern_splitter(
     def _splitter(
         elements: List[NodeOrText],
     ) -> RawSplit[NodeOrText, MatchProxy] | None:
-        splitted_elements = split_elements(elements, group_text_segments_splitter)
+        splitted_elements = split_elements(elements, group_str_splitter)
         for i, splitted_element in enumerate(splitted_elements):
             if not isinstance(splitted_element, SplitMatch):
                 continue
@@ -180,24 +181,11 @@ def make_pattern_splitter(
 
             before = merge_splitted_elements(splitted_elements[:i])
             if match_proxy.start() > 0:
-                before.append(
-                    TextSegment(
-                        contents=string[: match_proxy.start()],
-                        start=(0, 0, 0),
-                        end=(0, 0, 0),
-                    )
-                )
+                before.append(string[: match_proxy.start()])
 
             after = merge_splitted_elements(splitted_elements[i + 1 :])
             if match_proxy.end() < len(string):
-                after.insert(
-                    0,
-                    TextSegment(
-                        contents=string[match_proxy.end() :],
-                        start=(0, 0, 0),
-                        end=(0, 0, 0),
-                    ),
-                )
+                after.insert(0, string[match_proxy.end() :])
 
             return (
                 before,
@@ -223,16 +211,75 @@ Splitter to enable grouping of text_span nodes.
 """
 
 
-group_text_segments_splitter = cast(
+group_str_splitter = cast(
     Splitter[NodeOrText, List[NodeOrText]],
     make_while_splitter(
-        pick_text_segment(lambda elements, index: True),
-        pick_text_segment(lambda elements, index: True),
+        pick_str(lambda elements, index: True),
+        pick_str(lambda elements, index: True),
     ),
 )
 """
-Splitter to enable grouping of TextSegments.
+Splitter to enable grouping of strings.
 """
+
+
+def make_recombine_interrupted_lines_splitter(
+    start_node_type: str,
+) -> Splitter[NodeOrText, List[NodeOrText]]:
+    """
+    Builds a splitter for groupping text that is interrupted by page separators.
+    """
+
+    def _splitter(
+        elements: List[NodeOrText],
+    ) -> RawSplit[NodeOrText, List[NodeOrText]] | None:
+        before: List[NodeOrText] = []
+        while elements:
+            # Find the next starting element
+            before_start, elements = split_before_match(
+                elements, lambda elements, i: is_node(elements[i], type_in=[start_node_type])
+            )
+            before.extend(before_start)
+            if not elements:
+                break
+
+            start_element = elements.pop(0)
+            match_elements = [start_element]
+            previous_text = get_string(start_element)
+            # Continue to add elements as long as we find continuing sentences,
+            # i.e a group that follows the pattern:
+            #   <page_separator>    # One or several page separators
+            #   <text_span>         # A text span that continues the previous text
+            while True:
+                page_separators, elements = split_before_match(
+                    elements,
+                    lambda elements, i: (
+                        i > 0  # need at least one page separator
+                        and all(is_node(el, type_in=["page_separator"]) for el in elements[:i])
+                        and is_node(elements[i], type_in=["text_span"])
+                        and is_continuing_sentence(previous_text, get_string(elements[i]))
+                    ),
+                )
+
+                if not elements:
+                    # Restore elements if no match
+                    elements = page_separators
+                    break
+
+                # We have a match, add the page separators and the next element.
+                match_elements.extend(page_separators)
+                next_element = elements.pop(0)
+                match_elements.append(next_element)
+                previous_text = get_string(next_element)
+
+            if len(match_elements) > 1:
+                return (before, match_elements, elements)
+            else:
+                before.extend(match_elements)
+
+        return None
+
+    return _splitter
 
 
 def is_node(node: NodeOrText, type_in: List[str] | None = None) -> TypeGuard[Node]:
@@ -246,20 +293,20 @@ def is_node(node: NodeOrText, type_in: List[str] | None = None) -> TypeGuard[Nod
 
 def get_string(node: NodeOrText) -> str:
     """
-    Extracts the string from a Node or TextSegment.
-    If the node is a TextSegment, it returns its contents.
+    Extracts the string from a Node.
+    If the node is a str, it returns it.
     If the node is a Node, it recursively extracts strings from its text_span children.
     If its has other than text_span children, it will raises a ValueError.
     """
-    if isinstance(node, TextSegment):
-        return node.contents
+    if isinstance(node, str):
+        return node
     strings: List[str] = [_get_string(child) for child in node.children]
     return merge_strings(strings)
 
 
 def _get_string(element: NodeOrText) -> str:
-    if isinstance(element, TextSegment):
-        return element.contents
+    if isinstance(element, str):
+        return element
     elif is_node(element, type_in=["text_span", *INLINE_NODE_TYPES]):
         return merge_strings(_get_string(child) for child in element.children)
     elif is_node(element, type_in=TRANSPARENT_NODE_TYPES):
@@ -283,7 +330,7 @@ def combine_text_spans(
     elements: List[NodeOrText],
 ) -> Node:
     """
-    Combines a list of TextSegments and text_span nodes into a single text_span node.
+    Combines a list of strings and text_span nodes into a single text_span node.
     """
     children: List[NodeOrText] = []
     first_text_span: Node | None = None
@@ -294,8 +341,8 @@ def combine_text_spans(
                 first_text_span = element
             last_text_span = element
             for text_span_child in element.children:
-                if isinstance(text_span_child, TextSegment) or is_node(
-                    text_span_child, type_in=TRANSPARENT_NODE_TYPES
+                if isinstance(text_span_child, str) or is_node(
+                    text_span_child, type_in=TRANSPARENT_NODE_TYPES + INLINE_NODE_TYPES
                 ):
                     children.append(text_span_child)
                 else:

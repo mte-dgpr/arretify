@@ -21,7 +21,6 @@ from pathlib import Path
 
 from bs4 import BeautifulSoup
 
-from .parsing_utils.source_mapping import initialize_page, initialize_pages
 from .types import DocumentContext, SessionContext
 from .settings import DEFAULT_ARRETE_TEMPLATE, OCR_FILE_EXTENSION
 from .step_segmentation import step_segmentation
@@ -78,7 +77,7 @@ def load_ocr_file(
     return DocumentContext.from_session_context(
         session_context,
         filename=input_path.stem,
-        lines=initialize_page(page_ocr, 0),
+        pages=[page_ocr],
         soup=BeautifulSoup(arrete_template, features="html.parser"),
     )
 
@@ -100,7 +99,7 @@ def load_ocr_pages(
     return DocumentContext.from_session_context(
         session_context,
         filename=input_path.name,
-        lines=initialize_pages(pages_ocr),
+        pages=pages_ocr,
         soup=BeautifulSoup(arrete_template, features="html.parser"),
     )
 
