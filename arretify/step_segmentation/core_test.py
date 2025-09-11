@@ -22,23 +22,24 @@ from arretify.regex_utils import PatternProxy
 from .core import (
     make_while_splitter_for_text_span_nodes,
     pick_text_span_node,
-    pick_text_segment,
+    pick_str,
     group_text_span_nodes_splitter,
     Node,
     make_probe_from_pattern_proxy,
     get_string,
     combine_text_spans,
     make_pattern_splitter,
+    make_recombine_interrupted_lines_splitter,
 )
-from .testing import _l, make_text_spans, assert_elements_equal
+from .testing import make_text_spans, assert_elements_equal
 
 
-class TestMakeTextSegmentWhileSplitter(unittest.TestCase):
+class TestMakeWhileSplitterForTextSpanNodes(unittest.TestCase):
 
-    def test_rejects_non_text_segments(self):
+    def test_rejects_non_text_span(self):
         # Arrange
         def probe(elements, index):
-            return elements[index].children[0].contents.startswith("match")
+            return elements[index].children[0].startswith("match")
 
         splitter = make_while_splitter_for_text_span_nodes(
             probe,
@@ -59,7 +60,7 @@ class TestMakeTextSegmentWhileSplitter(unittest.TestCase):
     def test_match_found(self):
         # Arrange
         def probe(elements, index):
-            return elements[index].children[0].contents.startswith("match")
+            return elements[index].children[0].startswith("match")
 
         splitter = make_while_splitter_for_text_span_nodes(
             probe,
@@ -76,10 +77,10 @@ class TestMakeTextSegmentWhileSplitter(unittest.TestCase):
     def test_start_is_matching_argument(self):
         # Arrange
         def start_condition(elements, index):
-            return elements[index].children[0].contents == "match this"
+            return elements[index].children[0] == "match this"
 
         def while_condition(elements, index):
-            return elements[index].children[0].contents.startswith("match")
+            return elements[index].children[0].startswith("match")
 
         splitter = make_while_splitter_for_text_span_nodes(
             start_condition,
@@ -99,7 +100,7 @@ class TestMakeTextSegmentWhileSplitter(unittest.TestCase):
     def test_not_interrupted_by_transparent_node(self):
         # Arrange
         def probe(elements, index):
-            return elements[index].children[0].contents.startswith("match")
+            return elements[index].children[0].startswith("match")
 
         splitter = make_while_splitter_for_text_span_nodes(probe, probe)
         elements = [
@@ -117,12 +118,12 @@ class TestMakeTextSegmentWhileSplitter(unittest.TestCase):
 
 class TestGroupTextSpanNodesSplitter(unittest.TestCase):
 
-    def test_single_text_segment(self):
+    def test_simple(self):
         # Arrange
         elements = [
             Node(type="node1", children=[]),
-            Node(type="text_span", children=_l("line1")),
-            Node(type="text_span", children=_l("line2", "line3")),
+            Node(type="text_span", children=["line1"]),
+            Node(type="text_span", children=["line2", "line3"]),
             Node(type="node2", children=[]),
         ]
 
@@ -135,8 +136,8 @@ class TestGroupTextSpanNodesSplitter(unittest.TestCase):
                 Node(type="node1", children=[]),
             ],
             [
-                Node(type="text_span", children=_l("line1")),
-                Node(type="text_span", children=_l("line2", "line3")),
+                Node(type="text_span", children=["line1"]),
+                Node(type="text_span", children=["line2", "line3"]),
             ],
             [
                 Node(type="node2", children=[]),
@@ -144,7 +145,7 @@ class TestGroupTextSpanNodesSplitter(unittest.TestCase):
         )
 
 
-class TestMakeTextSegmentProbeFromPattern(unittest.TestCase):
+class TestMakeProbeFromPatternProxy(unittest.TestCase):
 
     def test_pattern_match(self):
         # Arrange
@@ -176,10 +177,10 @@ class TestPickTextSpanNode(unittest.TestCase):
     def test_simple(self):
         # Arrange
         elements = [
-            Node(type="text_span", children=_l("bla1")),
+            Node(type="text_span", children=["bla1"]),
             Node(type="some_node", children=[]),
-            *_l("bla2"),
-            Node(type="text_span", children=_l("blo4", "bla5")),
+            "bla2",
+            Node(type="text_span", children=["blo4", "bla5"]),
         ]
 
         # Act
@@ -192,40 +193,126 @@ class TestPickTextSpanNode(unittest.TestCase):
         assert text_span_node_probe(elements, 3) is True
 
 
-class TestPickTextSegment(unittest.TestCase):
+class TestPickStr(unittest.TestCase):
 
     def test_simple(self):
         # Arrange
         elements = [
-            *_l("bla1"),
+            "bla1",
             Node(type="some_node", children=[]),
-            *_l("blo4"),
+            "blo4",
         ]
 
         # Act
-        text_segment_probe = pick_text_segment(lambda elements, index: True)
+        probe = pick_str(lambda elements, index: True)
 
         # Assert
-        assert text_segment_probe(elements, 0) is True
-        assert text_segment_probe(elements, 1) is False
-        assert text_segment_probe(elements, 2) is True
+        assert probe(elements, 0) is True
+        assert probe(elements, 1) is False
+        assert probe(elements, 2) is True
+
+
+class TestMakeRecombineInterruptedLinesSplitter(unittest.TestCase):
+
+    def test_multiple_lines_and_page_separators(self):
+        # Arrange
+        splitter = make_recombine_interrupted_lines_splitter("some_type")
+        elements = [
+            Node(
+                type="some_type",
+                children=["This is a line"],
+            ),
+            Node(type="page_separator", children=[], data=dict(page_index=1)),
+            *make_text_spans(
+                " that continues ",
+            ),
+            Node(type="page_separator", children=[], data=dict(page_index=2)),
+            Node(type="page_separator", children=[], data=dict(page_index=3)),
+            *make_text_spans(
+                " and continues again.",
+            ),
+        ]
+
+        # Act
+        result = splitter(elements)
+
+        # Assert
+        assert result is not None
+        before, match, after = result
+        assert_elements_equal(before, [])
+        assert_elements_equal(
+            match,
+            (
+                Node(
+                    type="some_type",
+                    children=["This is a line"],
+                ),
+                Node(type="page_separator", children=[], data=dict(page_index=1)),
+                *make_text_spans(
+                    " that continues ",
+                ),
+                Node(type="page_separator", children=[], data=dict(page_index=2)),
+                Node(type="page_separator", children=[], data=dict(page_index=3)),
+                *make_text_spans(
+                    " and continues again.",
+                ),
+            ),
+        )
+        assert_elements_equal(after, [])
+
+    def test_line_is_not_continuing(self):
+        # Arrange
+        splitter = make_recombine_interrupted_lines_splitter("some_type")
+        elements = [
+            Node(
+                type="some_type",
+                children=["This is a line."],
+            ),
+            Node(type="page_separator", children=[], data=dict(page_index=1)),
+            *make_text_spans(
+                "blo blo blo",
+            ),
+        ]
+
+        # Act
+        result = splitter(elements)
+
+        # Assert
+        assert result is None
+
+    def test_line_is_continuing_but_no_page_separator(self):
+        # Arrange
+        splitter = make_recombine_interrupted_lines_splitter("some_type")
+        elements = [
+            Node(
+                type="some_type",
+                children=["This is a line"],
+            ),
+            *make_text_spans(" that continues."),
+        ]
+
+        # Act
+        result = splitter(elements)
+
+        # Assert
+        assert result is None
 
 
 class TestGetString(unittest.TestCase):
 
-    def test_text_segment(self):
+    def test_string(self):
         # Arrange
-        text_segment = _l("This is a test")[0]
+        string = "This is a test"
 
         # Act
-        result = get_string(text_segment)
+        result = get_string(string)
 
         # Assert
         assert result == "This is a test"
 
-    def test_node_with_text_segments(self):
+    def test_node_with_string_children(self):
         # Arrange
-        node = Node(type="some_node", children=_l("This is", " a test"))
+        node = Node(type="some_node", children=["This is", " a test"])
 
         # Act
         result = get_string(node)
@@ -238,8 +325,8 @@ class TestGetString(unittest.TestCase):
         node = Node(
             type="some_node",
             children=[
-                *_l("This is"),
-                Node(type="text_span", children=_l(" a test")),
+                "This is",
+                Node(type="text_span", children=[" a test"]),
             ],
         )
 
@@ -254,9 +341,9 @@ class TestGetString(unittest.TestCase):
         node = Node(
             type="some_node",
             children=[
-                *_l("This is"),
+                "This is",
                 Node(type="non_text", children=[]),
-                *_l(" a test"),
+                " a test",
             ],
         )
 
@@ -269,9 +356,9 @@ class TestGetString(unittest.TestCase):
         node = Node(
             type="text_span",
             children=[
-                *_l("Viens au "),
-                Node(type="address", children=_l("123 rue de la Paix")),
-                *_l(", à 12h"),
+                "Viens au ",
+                Node(type="address", children=["123 rue de la Paix"]),
+                ", à 12h",
             ],
         )
 
@@ -284,17 +371,17 @@ class TestGetString(unittest.TestCase):
 
 class TestCombineTextSpans(unittest.TestCase):
 
-    def test_combine_list_text_spans_and_text_segments(self):
+    def test_combine_text_spans(self):
         # Arrange
         elements = [
             Node(
                 type="text_span",
-                children=_l("This is"),
+                children=["This is"],
                 data=dict(start=(1, 2, 3), end=(4, 5, 6)),
             ),
             Node(
                 type="text_span",
-                children=_l(" a test", " with multiple lines."),
+                children=[" a test", " with multiple lines."],
                 data=dict(start=(7, 8, 9), end=(16, 17, 18)),
             ),
         ]
@@ -308,11 +395,50 @@ class TestCombineTextSpans(unittest.TestCase):
             [
                 Node(
                     type="text_span",
-                    children=_l(
+                    children=[
                         "This is",
                         " a test",
                         " with multiple lines.",
-                    ),
+                    ],
+                    data=dict(start=(1, 2, 3), end=(16, 17, 18)),
+                )
+            ],
+        )
+
+    def test_containing_inline_node(self):
+        # Arrange
+        elements = [
+            Node(
+                type="text_span",
+                children=["This is"],
+                data=dict(start=(1, 2, 3), end=(4, 5, 6)),
+            ),
+            Node(
+                type="text_span",
+                children=[
+                    " a test ",
+                    Node(type="address", children=["123 rue de la Paix"]),
+                    " with multiple lines.",
+                ],
+                data=dict(start=(7, 8, 9), end=(16, 17, 18)),
+            ),
+        ]
+
+        # Act
+        result = combine_text_spans(elements)
+
+        # Assert
+        assert_elements_equal(
+            [result],
+            [
+                Node(
+                    type="text_span",
+                    children=[
+                        "This is",
+                        " a test ",
+                        Node(type="address", children=["123 rue de la Paix"]),
+                        " with multiple lines.",
+                    ],
                     data=dict(start=(1, 2, 3), end=(16, 17, 18)),
                 )
             ],
@@ -326,17 +452,17 @@ class TestMakePatternSplitter(unittest.TestCase):
         pattern = PatternProxy(r"\d+")
         splitter = make_pattern_splitter(pattern)
         elements = [
-            *_l("abc"),
+            "abc",
             Node(
                 type="some_type",
                 children=[],
             ),
-            *_l("def123ghi"),
+            "def123ghi",
             Node(
                 type="some_type",
                 children=[],
             ),
-            *_l("jkl"),
+            "jkl",
         ]
 
         # Act
@@ -348,23 +474,23 @@ class TestMakePatternSplitter(unittest.TestCase):
         assert_elements_equal(
             before,
             [
-                *_l("abc"),
+                "abc",
                 Node(
                     type="some_type",
                     children=[],
                 ),
-                *_l("def"),
+                "def",
             ],
         )
         assert_elements_equal(
             after,
             [
-                *_l("ghi"),
+                "ghi",
                 Node(
                     type="some_type",
                     children=[],
                 ),
-                *_l("jkl"),
+                "jkl",
             ],
         )
         assert match.group(0) == "123"
@@ -373,7 +499,7 @@ class TestMakePatternSplitter(unittest.TestCase):
         # Arrange
         pattern = PatternProxy(r"\d+")
         splitter = make_pattern_splitter(pattern)
-        elements = _l("123abc")
+        elements = ["123abc"]
 
         # Act
         result = splitter(elements)
@@ -382,14 +508,14 @@ class TestMakePatternSplitter(unittest.TestCase):
         assert result is not None
         before, match, after = result
         assert_elements_equal(before, [])
-        assert_elements_equal(after, _l("abc"))
+        assert_elements_equal(after, ["abc"])
         assert match.group(0) == "123"
 
     def test_match_end(self):
         # Arrange
         pattern = PatternProxy(r"\d+")
         splitter = make_pattern_splitter(pattern)
-        elements = _l("jkl456")
+        elements = ["jkl456"]
 
         # Act
         result = splitter(elements)
@@ -397,7 +523,7 @@ class TestMakePatternSplitter(unittest.TestCase):
         # Assert
         assert result is not None
         before, match, after = result
-        assert_elements_equal(before, _l("jkl"))
+        assert_elements_equal(before, ["jkl"])
         assert_elements_equal(after, [])
         assert match.group(0) == "456"
 
@@ -405,7 +531,7 @@ class TestMakePatternSplitter(unittest.TestCase):
         # Arrange
         pattern = PatternProxy(r"\d+")
         splitter = make_pattern_splitter(pattern)
-        elements = _l("abc", "defghi", "jkl")
+        elements = ["abc", "defghi", "jkl"]
 
         # Act
         result = splitter(elements)
@@ -417,7 +543,7 @@ class TestMakePatternSplitter(unittest.TestCase):
         # Arrange
         pattern = PatternProxy(r"defghi")
         splitter = make_pattern_splitter(pattern)
-        elements = _l("abcdef", "ghijkl")
+        elements = ["abcdef", "ghijkl"]
 
         # Act
         result = splitter(elements)
@@ -425,6 +551,6 @@ class TestMakePatternSplitter(unittest.TestCase):
         # Assert
         assert result is not None
         before, match, after = result
-        assert_elements_equal(before, _l("abc"))
-        assert_elements_equal(after, _l("jkl"))
+        assert_elements_equal(before, ["abc"])
+        assert_elements_equal(after, ["jkl"])
         assert match.group(0) == "defghi"

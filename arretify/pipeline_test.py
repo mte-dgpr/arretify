@@ -25,7 +25,7 @@ from arretify.pipeline import (
     load_ocr_file,
     load_ocr_pages,
 )
-from arretify.types import SessionContext, TextSegment
+from arretify.types import SessionContext
 from arretify.settings import Settings
 
 
@@ -65,18 +65,7 @@ class TestFileLoadingFunctions(unittest.TestCase):
             # Assert
             assert result is not None
             assert result.filename == "dummy_path"
-            assert result.lines == [
-                TextSegment(
-                    contents="line1",
-                    start=(0, 0, 0),
-                    end=(0, 0, 5),
-                ),
-                TextSegment(
-                    contents="line2",
-                    start=(0, 1, 0),
-                    end=(0, 1, 5),
-                ),
-            ]
+            assert result.pages == ["line1\nline2"]
             assert result.soup is not None
 
     def test_load_ocr_pages(self):
@@ -114,21 +103,9 @@ class TestFileLoadingFunctions(unittest.TestCase):
             # Assert
             assert result is not None
             assert result.filename == "dummy_directory"
-            assert result.lines == [
-                TextSegment(
-                    contents="content of file 1",
-                    start=(0, 0, 0),
-                    end=(0, 0, 17),
-                ),
-                TextSegment(
-                    contents="content of file 2",
-                    start=(1, 0, 0),
-                    end=(1, 0, 17),
-                ),
-                TextSegment(
-                    contents="content of file 10",
-                    start=(2, 0, 0),
-                    end=(2, 0, 18),
-                ),
+            assert result.pages == [
+                "content of file 1",
+                "content of file 2",
+                "content of file 10",
             ]
             assert result.soup is not None

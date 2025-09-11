@@ -51,14 +51,14 @@ class TestPickStrings(unittest.TestCase):
             return elements[index].startswith("text")
 
         # Act
-        text_segments_probe = pick_string(probe)
+        probe = pick_string(probe)
 
         # Assert
-        assert text_segments_probe(elements, 0) is True
-        # If pick_text_segment not used, this should raise an error
-        assert text_segments_probe(elements, 1) is False
-        assert text_segments_probe(elements, 2) is True
-        assert text_segments_probe(elements, 3) is True
+        assert probe(elements, 0) is True
+        # If pick_str not used, this should raise an error
+        assert probe(elements, 1) is False
+        assert probe(elements, 2) is True
+        assert probe(elements, 3) is True
 
 
 class TestMakePatternSplitterIgnoringInlineTags(unittest.TestCase):

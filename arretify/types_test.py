@@ -34,9 +34,9 @@ class TestDocumentContext(unittest.TestCase):
         eurlex_client = mock.Mock(spec=EurlexClient)
         settings = mock.Mock(spec=Settings)
         soup = BeautifulSoup("<html></html>", "html.parser")
-        lines = [
-            {"start": (0, 0), "end": (0, 5), "contents": "Hello"},
-            {"start": (1, 0), "end": (1, 5), "contents": "World"},
+        pages = [
+            "Hello",
+            "World",
         ]
         session_context = SessionContext(
             settings=settings,
@@ -46,11 +46,11 @@ class TestDocumentContext(unittest.TestCase):
 
         # Act
         document_context = DocumentContext.from_session_context(
-            session_context, lines=lines, soup=soup
+            session_context, pages=pages, soup=soup
         )
 
         # Assert
-        assert document_context.lines is lines
+        assert document_context.pages is pages
         assert document_context.soup is soup
         assert document_context.legifrance_client is legifrance_client
         assert document_context.eurlex_client is eurlex_client

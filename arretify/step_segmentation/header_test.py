@@ -373,7 +373,7 @@ class TestParseVisaAndMotifs(unittest.TestCase):
             ignore_text_span_data=True,
         )
 
-    def test_variant_simple_with_list_inside_and_interrupted_by_age_separator(self):
+    def test_variant_simple_with_list_inside_and_interrupted_by_page_separator(self):
         # Arrange
         elements = [
             *make_text_spans(

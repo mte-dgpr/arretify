@@ -206,7 +206,7 @@ def split_before_match(
     strings = ["a", "b", "c"]
     >>> split_before_match(strings, lambda s: s == "b")
     (["a"], ["b", "c"])
-    >>> split_before_match(strings, lambda s: s == "d")
+    >>> split_before_match(strings, lambda s: s == "d") # No match
     (["a", "b", "c"], [])
     >>> split_before_match(strings, lambda s: s == "a")
     ([], ["a", "b", "c"])

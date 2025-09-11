@@ -20,23 +20,25 @@ import unittest
 
 from .core import Node
 from .parse_arrete import parse_arrete
-from .testing import make_text_spans, _l, assert_elements_equal
+from .testing import make_text_spans, assert_elements_equal
 
 
 class TestParseArrete(unittest.TestCase):
 
     def test_simple(self):
         # Arrange
-        lines = _l(
-            "Arrêté n° 123",
-            "Article 1 : Disposition",
-            "Bla bla bla ...",
-            "Annexe 1 : Détails",
-            "Bla bla bla ...",
-        )
+        pages = [
+            (
+                "Arrêté n° 123\n"
+                "Article 1 : Disposition\n"
+                "Bla bla bla ...\n"
+                "Annexe 1 : Détails\n"
+                "Bla bla bla ...\n"
+            )
+        ]
 
         # Act
-        elements = parse_arrete(lines)
+        elements = parse_arrete(pages)
 
         # Assert
         assert_elements_equal(
@@ -95,16 +97,18 @@ class TestParseArrete(unittest.TestCase):
 
     def test_parse_text_span_inline_content_nodes(self):
         # Arrange
-        lines = _l(
-            "Arrêté n° 123",
-            "Article 1 : Disposition",
-            # This address should be parsed as an address
-            # node inside a text_span
-            "Bla bla, 123 rue de la Paix, bla ...",
-        )
+        pages = [
+            (
+                "Arrêté n° 123\n"
+                "Article 1 : Disposition\n"
+                # This address should be parsed as an address
+                # node inside a text_span
+                "Bla bla, 123 rue de la Paix, bla ..."
+            )
+        ]
 
         # Act
-        elements = parse_arrete(lines)
+        elements = parse_arrete(pages)
 
         # Assert
         assert_elements_equal(
@@ -136,12 +140,12 @@ class TestParseArrete(unittest.TestCase):
                                         Node(
                                             type="text_span",
                                             children=[
-                                                *_l("Bla bla, "),
+                                                "Bla bla, ",
                                                 Node(
                                                     type="address",
-                                                    children=_l("123 rue de la Paix"),
+                                                    children=["123 rue de la Paix"],
                                                 ),
-                                                *_l(", bla ..."),
+                                                ", bla ...",
                                             ],
                                         )
                                     ],

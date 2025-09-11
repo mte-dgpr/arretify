@@ -19,7 +19,7 @@
 import unittest
 import re
 
-from .strings import merge_strings
+from .strings import merge_strings, split_lines
 
 
 class TestMergeStrings(unittest.TestCase):
@@ -59,3 +59,33 @@ class TestMergeStrings(unittest.TestCase):
         result = merge_strings(elements, strip_other_types=True)
         # Assert
         assert result == "abcdef"
+
+
+class TestSplitLines(unittest.TestCase):
+
+    def test_simple(self):
+        # Arrange
+        text = "Line 1\nLine 2\nLine 3"
+
+        # Act
+        result = split_lines(text)
+
+        # Assert
+        assert result == [
+            "Line 1",
+            "Line 2",
+            "Line 3",
+        ]
+
+    def test_empty_last_line(self):
+        # Arrange
+        text = "Line 1\nLine 2\n"
+
+        # Act
+        result = split_lines(text)
+
+        # Assert
+        assert result == [
+            "Line 1",
+            "Line 2",
+        ]

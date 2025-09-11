@@ -16,28 +16,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import List, cast
-
-
 from arretify.types import DocumentContext
 from .parse_arrete import parse_arrete, render_arrete
-from .core import NodeOrText
 
 
 def step_segmentation(document_context: DocumentContext) -> DocumentContext:
-    if not document_context.lines:
-        raise ValueError("Parsing context does not contain any lines to segment")
+    if not document_context.pages:
+        raise ValueError("Parsing context does not contain any pages to segment")
 
     body = document_context.soup.body
     assert body
 
-    lines = document_context.lines
-    assert lines
+    pages = document_context.pages
+    assert pages
 
     body.extend(
         render_arrete(
             document_context.soup,
-            parse_arrete(cast(List[NodeOrText], lines)),
+            parse_arrete(pages),
         )
     )
 

@@ -53,7 +53,7 @@ from .document_elements import (
 _is_title_line = pick_text_span_node(is_title)
 
 
-def _is_appendix(elements: List[NodeOrText], index: int) -> bool:
+def _is_appendix_text_span_node(elements: List[NodeOrText], index: int) -> bool:
     element = elements[index]
     assert is_node(element)
     if _is_title_line(elements, index):
@@ -67,16 +67,17 @@ def _is_appendix(elements: List[NodeOrText], index: int) -> bool:
     return False
 
 
-_is_appendix_text_segment = pick_text_span_node(_is_appendix)
+_is_appendix = pick_text_span_node(_is_appendix_text_span_node)
 
 
 @iter_func_to_list
-def parse_arrete(elements: List[NodeOrText]) -> Iterator[NodeOrText]:
+def parse_arrete(pages: List[str]) -> Iterator[NodeOrText]:
+    elements: List[NodeOrText] = initialize_document_structure(pages)
+
     # Add basic document elements
     elements = chain_functions(
         elements,
         [
-            initialize_document_structure,
             _make_text_span_parser(parse_addresses),
             # Image strings can be very long, and table of contents pattern look
             # at the end of the sentence.
@@ -95,7 +96,7 @@ def parse_arrete(elements: List[NodeOrText]) -> Iterator[NodeOrText]:
     )
 
     # Main content
-    pile, elements = split_before_match(elements, _is_appendix_text_segment)
+    pile, elements = split_before_match(elements, _is_appendix)
     yield Node(
         type="main",
         children=parse_content(pile),

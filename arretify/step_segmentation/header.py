@@ -24,8 +24,8 @@ from arretify.utils.functional import iter_func_to_list, chain_functions
 from arretify.parsing_utils.dates import DATE_NODE, render_date_regex_tree_match
 from arretify.utils.html_create import wrap_in_tag, make_data_tag, make_new_tag
 from arretify.utils.html_split_merge import make_regex_tree_splitter
-from arretify.types import TextSegment, PageElementOrString, DataElementSchema
-from arretify.parsing_utils.patterns import join_split_pile_with_pattern, is_continuing_sentence
+from arretify.types import PageElementOrString, DataElementSchema
+from arretify.parsing_utils.patterns import join_split_pile_with_pattern
 from arretify.html_schemas import (
     EMBLEM_SCHEMA,
     ENTITY_SCHEMA,
@@ -50,6 +50,7 @@ from .core import (
     Node,
     NodeOrText,
     is_node,
+    make_recombine_interrupted_lines_splitter,
     make_while_splitter_for_text_span_nodes,
     make_single_line_splitter_for_text_span_nodes,
     group_text_span_nodes_splitter,
@@ -438,26 +439,15 @@ def _parse_visa_and_motif_elements_pass2(
     #   Vu que bloblo
     if first_node_match and first_node_match.group("contents"):
         elements.insert(0, first_node)
-        while elements:
-            # If there is a visa / motif node just before a page separator
-            # and a text segment that continues the sentence, we merge them.
-            if (
-                len(elements) >= 3
-                and is_node(elements[0], type_in=[node_type])
-                and is_node(elements[1], type_in=["page_separator"])
-                and is_node(elements[2], type_in=["text_span"])
-                and is_node(elements[0].children[0])
-                and is_continuing_sentence(
-                    get_string(elements[0].children[0]),
-                    get_string(elements[2]),
-                )
-            ):
-                elements[0].children.extend([elements[1], elements[2]])
-                yield elements.pop(0)
-                elements.pop(0)  # Remove the page separator
-                elements.pop(0)  # Remove the text segment
-            else:
-                yield elements.pop(0)
+        # Recombine interrupted lines, e.g.
+        #   Vu que blabla
+        #   <page_separator>
+        #   continues on the next page.
+        elements = map_splitted_elements(
+            split_elements(elements, make_recombine_interrupted_lines_splitter(node_type)),
+            _recombine_visa_motif_with_next_if_continuing_sentence,
+        )
+        yield from elements
 
     # 2. Variant "explicit list" :
     #   Vu :
@@ -513,6 +503,14 @@ def _parse_visa_and_motif_elements_pass2(
             else:
                 break
         yield from elements
+
+
+def _recombine_visa_motif_with_next_if_continuing_sentence(
+    elements: List[NodeOrText],
+) -> Node:
+    assert len(elements) > 0 and is_node(elements[0], type_in=["visa", "motif"])
+    elements[0].children.extend(elements[1:])
+    return elements[0]
 
 
 @iter_func_to_list
@@ -586,8 +584,8 @@ def render_header(
         elif is_node(element):
             raise ValueError(f"Unexpected node {element.type} in content")
 
-        elif isinstance(element, TextSegment):
-            content.extend(wrap_in_tag(soup, [element.contents], "div"))
+        elif isinstance(element, str):
+            content.extend(wrap_in_tag(soup, [element], "div"))
     return content
 
 

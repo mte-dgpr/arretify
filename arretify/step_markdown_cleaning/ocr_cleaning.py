@@ -28,10 +28,6 @@ from arretify.regex_utils import (
     safe_group,
 )
 from arretify.utils.strings import merge_strings
-from arretify.parsing_utils.source_mapping import (
-    TextSegment,
-    apply_to_segment,
-)
 
 
 _DECOMPOSED_WORD_PATTERN = PatternProxy(r"(?=\b)([a-zA-Z]\s)+[a-zA-Z](?=\b)")
@@ -46,13 +42,13 @@ _PUNCTUATION_LINE_PATTERN = PatternProxy(r"^[·.,;:!?'\s\-]*$")
 
 
 # TODO-PROCESS-TAG
-def clean_ocr(line: TextSegment) -> TextSegment:
-    line = apply_to_segment(line, recompose_words)
+def clean_ocr(line: str) -> str:
+    line = recompose_words(line)
     return line
 
 
-def is_useful_line(line: TextSegment) -> bool:
-    return not is_punctuation_line(line.contents)
+def is_useful_line(line: str) -> bool:
+    return not is_punctuation_line(line)
 
 
 def is_punctuation_line(text: str) -> bool:

@@ -20,22 +20,29 @@
 from dataclasses import replace as dataclass_replace
 
 from arretify.types import DocumentContext
+from arretify.utils.strings import split_lines, join_lines
 from .markdown_cleaning import clean_markdown
 from .ocr_cleaning import clean_ocr, is_useful_line
 
 
 def step_markdown_cleaning(document_context: DocumentContext) -> DocumentContext:
-    if not document_context.lines:
-        raise ValueError("Parsing context does not contain any lines to clean")
+    if not document_context.pages:
+        raise ValueError("Parsing context does not contain any pages to clean")
 
-    # Clean input markdown
-    lines = [clean_markdown(line) for line in document_context.lines]
+    cleaned_pages: list[str] = []
+    for page in document_context.pages:
+        lines = split_lines(page)
 
-    # TODO-PROCESS-TAG
-    # Remove lines that are not useful
-    lines = [line for line in lines if is_useful_line(line)]
+        # Clean input markdown
+        lines = [clean_markdown(line) for line in lines]
 
-    # Clean common OCR errors
-    lines = [clean_ocr(line) for line in lines]
+        # TODO-PROCESS-TAG
+        # Remove lines that are not useful
+        lines = [line for line in lines if is_useful_line(line)]
 
-    return dataclass_replace(document_context, lines=lines)
+        # Clean common OCR errors
+        lines = [clean_ocr(line) for line in lines]
+
+        cleaned_pages.append(join_lines(lines))
+
+    return dataclass_replace(document_context, pages=cleaned_pages)

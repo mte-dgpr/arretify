@@ -34,7 +34,7 @@ from .basic_elements import (
     render_list,
     render_address,
 )
-from .testing import assert_elements_equal, _l, make_text_spans
+from .testing import assert_elements_equal, make_text_spans
 from arretify.utils.testing import normalized_html_str, assert_html_list_equal
 from arretify.law_data.french_addresses import ALL_STREET_NAMES
 
@@ -237,7 +237,7 @@ class TestParseList(unittest.TestCase):
             ignore_text_span_data=True,
         )
 
-    def test_text_segment_continuing_previous_sentence(self):
+    def test_continuing_previous_sentence(self):
         # Arrange
         elements = make_text_spans(
             "- Item 1",
@@ -258,9 +258,10 @@ class TestParseList(unittest.TestCase):
                     children=[
                         Node(
                             type="text_span",
-                            children=_l(
-                                "- Item 1", "this is a continuation of the previous sentence."
-                            ),
+                            children=[
+                                "- Item 1",
+                                "this is a continuation of the previous sentence.",
+                            ],
                         ),
                         *make_text_spans("- Item 2"),
                     ],
@@ -597,7 +598,7 @@ class TestRenderList(unittest.TestCase):
             children=[
                 Node(
                     type="text_span",
-                    children=_l("- Item 1", "This is a continuation of the previous sentence."),
+                    children=["- Item 1", "This is a continuation of the previous sentence."],
                 ),
                 *make_text_spans("- Item 2"),
             ],
@@ -648,9 +649,7 @@ class TestParseAddresses(unittest.TestCase):
 
     def test_simple_address(self):
         # Arrange
-        elements = _l(
-            "Some text before ", "123 bis rue de la Paix, 75002 Paris.", " Some text after"
-        )
+        elements = ["Some text before ", "123 bis rue de la Paix, 75002 Paris.", " Some text after"]
 
         # Act
         result = parse_addresses(elements)
@@ -659,12 +658,12 @@ class TestParseAddresses(unittest.TestCase):
         assert_elements_equal(
             result,
             [
-                *_l("Some text before "),
+                "Some text before ",
                 Node(
                     type="address",
-                    children=_l("123 bis rue de la Paix"),
+                    children=["123 bis rue de la Paix"],
                 ),
-                *_l(", 75002 Paris. Some text after"),
+                ", 75002 Paris. Some text after",
             ],
             ignore_text_span_data=True,
         )
@@ -673,9 +672,11 @@ class TestParseAddresses(unittest.TestCase):
         # Arrange
         assert "rue jean" in ALL_STREET_NAMES
         assert "rue jean moulin" in ALL_STREET_NAMES
-        elements = _l(
-            "Some text before ", "123 bis rue jean moulin, 75002 Paris.", " Some text after"
-        )
+        elements = [
+            "Some text before ",
+            "123 bis rue jean moulin, 75002 Paris.",
+            " Some text after",
+        ]
 
         # Act
         result = parse_addresses(elements)
@@ -684,12 +685,12 @@ class TestParseAddresses(unittest.TestCase):
         assert_elements_equal(
             result,
             [
-                *_l("Some text before "),
+                "Some text before ",
                 Node(
                     type="address",
-                    children=_l("123 bis rue jean moulin"),
+                    children=["123 bis rue jean moulin"],
                 ),
-                *_l(", 75002 Paris. Some text after"),
+                ", 75002 Paris. Some text after",
             ],
             ignore_text_span_data=True,
         )
@@ -703,7 +704,7 @@ class TestRenderAddress(unittest.TestCase):
         # Arrange
         node = Node(
             type="address",
-            children=_l("123 bis rue de la Paix"),
+            children=["123 bis rue de la Paix"],
         )
 
         # Act

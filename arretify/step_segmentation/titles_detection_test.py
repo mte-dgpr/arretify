@@ -29,7 +29,6 @@ from .titles_detection import (
     parse_title_info,
     is_next_title,
 )
-from .testing import _l
 
 
 class TestCompareLevelTitles(unittest.TestCase):
@@ -206,10 +205,10 @@ class TestParseTitleInfo(unittest.TestCase):
 
     def test_title_with_roman_number(self):
         # Arrange
-        lines = _l("TITRE I - Premier titre")
+        line = "TITRE I - Premier titre"
 
         # Act
-        title_info = parse_title_info(lines[0].contents)
+        title_info = parse_title_info(line)
 
         # Assert
         assert title_info == TitleInfo(
@@ -221,10 +220,10 @@ class TestParseTitleInfo(unittest.TestCase):
 
     def test_title_with_arabic_number(self):
         # Arrange
-        lines = _l("TITRE 1 - Autre titre")
+        line = "TITRE 1 - Autre titre"
 
         # Act
-        title_info = parse_title_info(lines[0].contents)
+        title_info = parse_title_info(line)
 
         # Assert
         assert title_info == TitleInfo(
@@ -236,10 +235,10 @@ class TestParseTitleInfo(unittest.TestCase):
 
     def test_chapter_with_letter_without_dot(self):
         # Arrange
-        lines = _l("CHAPITRE A - Premier chapitre")
+        line = "CHAPITRE A - Premier chapitre"
 
         # Act
-        title_info = parse_title_info(lines[0].contents)
+        title_info = parse_title_info(line)
 
         # Assert
         assert title_info == TitleInfo(
@@ -251,10 +250,10 @@ class TestParseTitleInfo(unittest.TestCase):
 
     def test_chapter_with_letter_with_dot(self):
         # Arrange
-        lines = _l("CHAPITRE A. - Premier chapitre")
+        line = "CHAPITRE A. - Premier chapitre"
 
         # Act
-        title_info = parse_title_info(lines[0].contents)
+        title_info = parse_title_info(line)
 
         # Assert
         assert title_info == TitleInfo(
@@ -266,10 +265,10 @@ class TestParseTitleInfo(unittest.TestCase):
 
     def test_article_with_arabic_number_without_dot(self):
         # Arrange
-        lines = _l("ARTICLE 1")
+        line = "ARTICLE 1"
 
         # Act
-        title_info = parse_title_info(lines[0].contents)
+        title_info = parse_title_info(line)
 
         # Assert
         assert title_info == TitleInfo(
@@ -280,10 +279,10 @@ class TestParseTitleInfo(unittest.TestCase):
 
     def test_article_with_first_number(self):
         # Arrange
-        lines = _l("ARTICLE 1er")
+        line = "ARTICLE 1er"
 
         # Act
-        title_info = parse_title_info(lines[0].contents)
+        title_info = parse_title_info(line)
 
         # Assert
         assert title_info == TitleInfo(
@@ -294,10 +293,10 @@ class TestParseTitleInfo(unittest.TestCase):
 
     def test_article_with_arabic_number_with_dot(self):
         # Arrange
-        lines = _l("ARTICLE 1.")
+        line = "ARTICLE 1."
 
         # Act
-        title_info = parse_title_info(lines[0].contents)
+        title_info = parse_title_info(line)
 
         # Assert
         assert title_info == TitleInfo(
@@ -310,10 +309,10 @@ class TestParseTitleInfo(unittest.TestCase):
         self,
     ):
         # Arrange
-        lines = _l("CHAPITRE 1.1 Premier chapitre")
+        line = "CHAPITRE 1.1 Premier chapitre"
 
         # Act
-        title_info = parse_title_info(lines[0].contents)
+        title_info = parse_title_info(line)
 
         # Assert
         assert title_info == TitleInfo(
@@ -327,10 +326,10 @@ class TestParseTitleInfo(unittest.TestCase):
         self,
     ):
         # Arrange
-        lines = _l("ARTICLE 1.1.1 Premier article")
+        line = "ARTICLE 1.1.1 Premier article"
 
         # Act
-        title_info = parse_title_info(lines[0].contents)
+        title_info = parse_title_info(line)
 
         # Assert
         assert title_info == TitleInfo(
@@ -344,10 +343,10 @@ class TestParseTitleInfo(unittest.TestCase):
         self,
     ):
         # Arrange
-        lines = _l("ARTICLE 1.1.1.1 Premier sous article")
+        line = "ARTICLE 1.1.1.1 Premier sous article"
 
         # Act
-        title_info = parse_title_info(lines[0].contents)
+        title_info = parse_title_info(line)
 
         # Assert
         assert title_info == TitleInfo(
@@ -359,10 +358,10 @@ class TestParseTitleInfo(unittest.TestCase):
 
     def test_simple_title_no_name(self):
         # Arrange
-        lines = _l("1. TITRE")
+        line = "1. TITRE"
 
         # Act
-        title_info = parse_title_info(lines[0].contents)
+        title_info = parse_title_info(line)
 
         # Assert
         assert title_info == TitleInfo(
@@ -374,10 +373,10 @@ class TestParseTitleInfo(unittest.TestCase):
 
     def test_hierarchical_title_no_name(self):
         # Arrange
-        lines = _l("1.1.1 Article")
+        line = "1.1.1 Article"
 
         # Act
-        title_info = parse_title_info(lines[0].contents)
+        title_info = parse_title_info(line)
 
         # Assert
         assert title_info == TitleInfo(
@@ -389,10 +388,10 @@ class TestParseTitleInfo(unittest.TestCase):
 
     def test_sub_article_no_name(self):
         # Arrange
-        lines = _l("3.1. Sous-article")
+        line = "3.1. Sous-article"
 
         # Act
-        title_info = parse_title_info(lines[0].contents)
+        title_info = parse_title_info(line)
 
         # Assert
         assert title_info == TitleInfo(
@@ -404,10 +403,10 @@ class TestParseTitleInfo(unittest.TestCase):
 
     def test_simple_no_space(self):
         # Arrange
-        lines = _l("ARTICLE 6-ARTICLE")
+        line = "ARTICLE 6-ARTICLE"
 
         # Act
-        title_info = parse_title_info(lines[0].contents)
+        title_info = parse_title_info(line)
 
         # Assert
         assert title_info == TitleInfo(
@@ -419,10 +418,10 @@ class TestParseTitleInfo(unittest.TestCase):
 
     def test_ocr_error_eme(self):
         # Arrange
-        lines = _l("ARTICLE 1erTitre")
+        line = "ARTICLE 1erTitre"
 
         # Act
-        title_info = parse_title_info(lines[0].contents)
+        title_info = parse_title_info(line)
 
         # Assert
         assert title_info == TitleInfo(
@@ -434,10 +433,10 @@ class TestParseTitleInfo(unittest.TestCase):
 
     def test_chapter_joined_text(self):
         # Arrange
-        lines = _l("CHAPITRE 5.1CHAPITRE")
+        line = "CHAPITRE 5.1CHAPITRE"
 
         # Act
-        title_info = parse_title_info(lines[0].contents)
+        title_info = parse_title_info(line)
 
         # Assert
         assert title_info == TitleInfo(
@@ -449,10 +448,10 @@ class TestParseTitleInfo(unittest.TestCase):
 
     def test_article_ordinal(self):
         # Arrange
-        lines = _l("Article premier :")
+        line = "Article premier :"
 
         # Act
-        title_info = parse_title_info(lines[0].contents)
+        title_info = parse_title_info(line)
 
         # Assert
         assert title_info == TitleInfo(
@@ -464,10 +463,10 @@ class TestParseTitleInfo(unittest.TestCase):
 
     def test_article_roman_eme(self):
         # Arrange
-        lines = _l("Article Ier :")
+        line = "Article Ier :"
 
         # Act
-        title_info = parse_title_info(lines[0].contents)
+        title_info = parse_title_info(line)
 
         # Assert
         assert title_info == TitleInfo(
@@ -479,10 +478,10 @@ class TestParseTitleInfo(unittest.TestCase):
 
     def test_title_no_point(self):
         # Arrange
-        lines = _l("1 Titre")
+        line = "1 Titre"
 
         # Act
-        title_info = parse_title_info(lines[0].contents)
+        title_info = parse_title_info(line)
 
         # Assert
         assert title_info == TitleInfo(
@@ -494,10 +493,10 @@ class TestParseTitleInfo(unittest.TestCase):
 
     def test_title_punctuation_middle(self):
         # Arrange
-        lines = _l("1  - Titre")
+        line = "1  - Titre"
 
         # Act
-        title_info = parse_title_info(lines[0].contents)
+        title_info = parse_title_info(line)
 
         # Assert
         assert title_info == TitleInfo(
@@ -509,10 +508,10 @@ class TestParseTitleInfo(unittest.TestCase):
 
     def test_hyphen_before_numbering(self):
         # Arrange
-        lines = _l("Article - 1.2.3. Article")
+        line = "Article - 1.2.3. Article"
 
         # Act
-        title_info = parse_title_info(lines[0].contents)
+        title_info = parse_title_info(line)
 
         # Assert
         assert title_info == TitleInfo(
@@ -524,10 +523,10 @@ class TestParseTitleInfo(unittest.TestCase):
 
     def test_hyphen_in_numbering(self):
         # Arrange
-        lines = _l("Article 2-1 Article")
+        line = "Article 2-1 Article"
 
         # Act
-        title_info = parse_title_info(lines[0].contents)
+        title_info = parse_title_info(line)
 
         # Assert
         assert title_info == TitleInfo(
@@ -539,10 +538,10 @@ class TestParseTitleInfo(unittest.TestCase):
 
     def test_chapter(self):
         # Arrange
-        lines = _l("Chapitre A - Chapitre")
+        line = "Chapitre A - Chapitre"
 
         # Act
-        title_info = parse_title_info(lines[0].contents)
+        title_info = parse_title_info(line)
 
         # Assert
         assert title_info == TitleInfo(
@@ -554,10 +553,10 @@ class TestParseTitleInfo(unittest.TestCase):
 
     def test_article_no_numbering_ending_punctuation(self):
         # Arrange
-        lines = _l("2.1 - Article.")
+        line = "2.1 - Article."
 
         # Act
-        title_info = parse_title_info(lines[0].contents)
+        title_info = parse_title_info(line)
 
         # Assert
         assert title_info == TitleInfo(
@@ -569,10 +568,10 @@ class TestParseTitleInfo(unittest.TestCase):
 
     def test_chapter_no_space(self):
         # Arrange
-        lines = _l("5.3CHAPITRE")
+        line = "5.3CHAPITRE"
 
         # Act
-        title_info = parse_title_info(lines[0].contents)
+        title_info = parse_title_info(line)
 
         # Assert
         assert title_info == TitleInfo(
@@ -584,10 +583,10 @@ class TestParseTitleInfo(unittest.TestCase):
 
     def test_roman_no_section_name(self):
         # Arrange
-        lines = _l("II.1.1 - Sous-titre")
+        line = "II.1.1 - Sous-titre"
 
         # Act
-        title_info = parse_title_info(lines[0].contents)
+        title_info = parse_title_info(line)
 
         # Assert
         assert title_info == TitleInfo(
@@ -599,10 +598,10 @@ class TestParseTitleInfo(unittest.TestCase):
 
     def test_appendix(self):
         # Arrange
-        lines = _l("ANNEXE ")
+        line = "ANNEXE "
 
         # Act
-        title_info = parse_title_info(lines[0].contents)
+        title_info = parse_title_info(line)
 
         # Assert
         assert title_info == TitleInfo(
@@ -614,10 +613,10 @@ class TestParseTitleInfo(unittest.TestCase):
 
     def test_article_no_name_no_space(self):
         # Arrange
-        lines = _l("2-Article")
+        line = "2-Article"
 
         # Act
-        title_info = parse_title_info(lines[0].contents)
+        title_info = parse_title_info(line)
 
         # Assert
         assert title_info == TitleInfo(
@@ -629,10 +628,10 @@ class TestParseTitleInfo(unittest.TestCase):
 
     def test_chapter_letter_v_roman(self):
         # Arrange
-        lines = _l("Chapitre C - Chapitre")
+        line = "Chapitre C - Chapitre"
 
         # Act
-        title_info = parse_title_info(lines[0].contents)
+        title_info = parse_title_info(line)
 
         # Assert
         assert title_info == TitleInfo(
@@ -644,10 +643,10 @@ class TestParseTitleInfo(unittest.TestCase):
 
     def test_title_long_roman(self):
         # Arrange
-        lines = _l("Titre XIV - Titre")
+        line = "Titre XIV - Titre"
 
         # Act
-        title_info = parse_title_info(lines[0].contents)
+        title_info = parse_title_info(line)
 
         # Assert
         assert title_info == TitleInfo(
@@ -659,10 +658,10 @@ class TestParseTitleInfo(unittest.TestCase):
 
     def test_title_max_roman(self):
         # Arrange
-        lines = _l("Titre XXXIX - Titre")
+        line = "Titre XXXIX - Titre"
 
         # Act
-        title_info = parse_title_info(lines[0].contents)
+        title_info = parse_title_info(line)
 
         # Assert
         assert title_info == TitleInfo(

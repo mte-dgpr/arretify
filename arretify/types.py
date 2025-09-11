@@ -37,13 +37,6 @@ PageLineColumn = Tuple[int, int, int]
 """Tuple page, line and column number. All values are 0-indexed."""
 
 
-@dataclass(frozen=True)
-class TextSegment:
-    contents: str
-    start: PageLineColumn
-    end: PageLineColumn
-
-
 @dataclass(frozen=True, kw_only=True)
 class DataElementSchema:
     name: str
@@ -143,7 +136,7 @@ class DocumentContext(SessionContext):
     TODO : support for streaming PDF content
     """
 
-    lines: Optional[List[TextSegment]] = None
+    pages: Optional[List[str]]
     """
     Contents of the markdown pages after OCR processing.
     """
@@ -159,7 +152,7 @@ class DocumentContext(SessionContext):
         soup: BeautifulSoup,
         filename: str | None = None,
         pdf: Optional[bytes] = None,
-        lines: List[TextSegment] | None = None,
+        pages: List[str] | None = None,
     ) -> DocumentContextType:
         if filename is None:
             filename = str(uuid4())
@@ -169,7 +162,7 @@ class DocumentContext(SessionContext):
             },
             filename=filename,
             pdf=pdf,
-            lines=lines,
+            pages=pages,
             soup=soup,
         )
 

@@ -20,14 +20,13 @@ import unittest
 
 from bs4 import BeautifulSoup
 
-from arretify.types import TextSegment
 from .core import Node
 from .document_elements import (
     initialize_document_structure,
     parse_tables_of_contents,
     render_table_of_contents,
 )
-from .testing import _l, assert_elements_equal, make_text_spans
+from .testing import assert_elements_equal, make_text_spans
 from arretify.utils.testing import normalized_html_str
 
 
@@ -35,17 +34,14 @@ class TestInitializeDocumentStructure(unittest.TestCase):
 
     def test_page_separators_inserted_and_text_spans_created(self):
         # Arrange
-        lines = [
-            TextSegment(contents="Line 1", start=(0, 0, 0), end=(0, 0, 5)),
-            TextSegment(contents="Line 2", start=(0, 1, 0), end=(0, 1, 5)),
-            TextSegment(contents="Line 3", start=(0, 2, 0), end=(0, 2, 5)),
-            TextSegment(contents="Line 4", start=(1, 0, 0), end=(1, 0, 5)),
-            TextSegment(contents="Line 5", start=(1, 1, 0), end=(1, 1, 5)),
-            TextSegment(contents="Line 6", start=(2, 0, 0), end=(2, 0, 5)),
+        pages = [
+            "Line 1\nLine 2\nLine 3",
+            "Line 4\nLine 5",
+            "Line 6",
         ]
 
         # Act
-        result = list(initialize_document_structure(lines))
+        result = list(initialize_document_structure(pages))
 
         # Assert
         assert_elements_equal(
@@ -54,34 +50,34 @@ class TestInitializeDocumentStructure(unittest.TestCase):
                 Node(type="page_separator", data=dict(page_index=0), children=[]),
                 Node(
                     type="text_span",
-                    children=_l("Line 1"),
+                    children=["Line 1"],
                     data=dict(start=(0, 0, 0), end=(0, 0, 5)),
                 ),
                 Node(
                     type="text_span",
-                    children=_l("Line 2"),
+                    children=["Line 2"],
                     data=dict(start=(0, 1, 0), end=(0, 1, 5)),
                 ),
                 Node(
                     type="text_span",
-                    children=_l("Line 3"),
+                    children=["Line 3"],
                     data=dict(start=(0, 2, 0), end=(0, 2, 5)),
                 ),
                 Node(type="page_separator", data=dict(page_index=1), children=[]),
                 Node(
                     type="text_span",
-                    children=_l("Line 4"),
+                    children=["Line 4"],
                     data=dict(start=(1, 0, 0), end=(1, 0, 5)),
                 ),
                 Node(
                     type="text_span",
-                    children=_l("Line 5"),
+                    children=["Line 5"],
                     data=dict(start=(1, 1, 0), end=(1, 1, 5)),
                 ),
                 Node(type="page_separator", data=dict(page_index=2), children=[]),
                 Node(
                     type="text_span",
-                    children=_l("Line 6"),
+                    children=["Line 6"],
                     data=dict(start=(2, 0, 0), end=(2, 0, 5)),
                 ),
             ],
@@ -129,9 +125,9 @@ class TestRenderTableOfContents(unittest.TestCase):
         node = Node(
             type="table_of_contents",
             children=[
-                Node(type="text_span", children=_l("Sommaire")),
-                Node(type="text_span", children=_l("bla ..... page 1")),
-                Node(type="text_span", children=_l("blo ..... page 2")),
+                Node(type="text_span", children=["Sommaire"]),
+                Node(type="text_span", children=["bla ..... page 1"]),
+                Node(type="text_span", children=["blo ..... page 2"]),
             ],
         )
 
