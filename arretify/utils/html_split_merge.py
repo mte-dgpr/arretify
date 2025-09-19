@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import List, Iterator, Tuple, TypeVar
+from typing import Iterator, List, Sequence, Tuple, TypeVar
 from dataclasses import dataclass
 
 from arretify.utils.functional import iter_func_to_list
@@ -70,7 +70,7 @@ def pick_if_inline_tag_followed_by_match(
     ...     Tag(type="br"),
     ...     Tag(type="other_type"),
     ... ]
-    >>> def is_string(elements: List[PageElementOrString], index: int) -> bool:
+    >>> def is_string(elements: Sequence[PageElementOrString], index: int) -> bool:
     ...     return isinstance(elements[index], str)
     >>> probe = pick_if_inline_tag_followed_by_match(is_string)
     >>> probe(elements, 0) # -> directly calls `is_string`
@@ -81,7 +81,7 @@ def pick_if_inline_tag_followed_by_match(
     False
     """
 
-    def _pick_inline_tags_probe(elements: List[PageElementOrString], index: int) -> bool:
+    def _pick_inline_tags_probe(elements: Sequence[PageElementOrString], index: int) -> bool:
         for next_index, next_element in enumerate(elements[index:], start=index):
             if is_tag_and_matches(next_element, tag_name_in=INLINE_TAG_TYPES):
                 continue
@@ -95,7 +95,7 @@ def pick_if_inline_tag_followed_by_match(
 def pick_string(
     probe: Probe[PageElementOrString],
 ) -> Probe[PageElementOrString]:
-    def _string_probe(elements: List[PageElementOrString], index: int) -> bool:
+    def _string_probe(elements: Sequence[PageElementOrString], index: int) -> bool:
         element = elements[index]
         if isinstance(element, str):
             return probe(elements, index)
@@ -113,11 +113,11 @@ Splitter to enable grouping of string elements.
 """
 
 
-group_strings_and_inline_tags_splitter: Splitter[PageElementOrString, List[PageElementOrString]] = (
-    make_while_splitter(
-        pick_string(lambda elements, index: True),
-        pick_if_inline_tag_followed_by_match(pick_string(lambda elements, index: True)),
-    )
+group_strings_and_inline_tags_splitter: Splitter[
+    PageElementOrString, Sequence[PageElementOrString]
+] = make_while_splitter(
+    pick_string(lambda elements, index: True),
+    pick_if_inline_tag_followed_by_match(pick_string(lambda elements, index: True)),
 )
 """
 Splitter to enable grouping of string elements and inline tags,
@@ -134,7 +134,7 @@ def make_regex_tree_splitter(
     pattern_splitter = make_pattern_splitter_ignoring_inline_tags(node.pattern)
 
     def _splitter(
-        elements: List[PageElementOrString],
+        elements: Sequence[PageElementOrString],
     ) -> RawSplit[PageElementOrString, RegexTreeMatch] | None:
         split = pattern_splitter(elements)
         if not split:
@@ -154,7 +154,7 @@ def make_regex_tree_splitter(
 
 @dataclass(frozen=True)
 class _PatternSplitterMatch:
-    elements: List[PageElementOrString]
+    elements: Sequence[PageElementOrString]
     match_proxy: MatchProxy
 
 
@@ -162,7 +162,7 @@ def make_pattern_splitter_ignoring_inline_tags(
     pattern: PatternProxy,
 ) -> Splitter[PageElementOrString, _PatternSplitterMatch]:
     def _splitter(
-        elements: List[PageElementOrString],
+        elements: Sequence[PageElementOrString],
     ) -> RawSplit[PageElementOrString, _PatternSplitterMatch] | None:
         grouped_strings = split_elements(elements, group_strings_and_inline_tags_splitter)
 
@@ -198,7 +198,9 @@ def make_pattern_splitter_ignoring_inline_tags(
     return _splitter
 
 
-def _trim_strings_before_merging(elements: List[PageElementOrString]) -> List[PageElementOrString]:
+def _trim_strings_before_merging(
+    elements: Sequence[PageElementOrString],
+) -> List[PageElementOrString]:
     """
     Trims spaces in string elements before and after an inline tag in order
     to avoid double spaces. Example:
@@ -231,7 +233,7 @@ def _trim_strings_before_merging(elements: List[PageElementOrString]) -> List[Pa
 
 
 def _slice_elements_with_string_index(
-    elements: List[str | T], start: int, end: int
+    elements: Sequence[str | T], start: int, end: int
 ) -> RawSplit[str | T, List[str | T]]:
     """
     Takes a list and slices it based only on its string elements.
@@ -248,7 +250,7 @@ def _slice_elements_with_string_index(
 
 
 def _split_before_string_index(
-    elements: List[str | T], split_index: int
+    elements: Sequence[str | T], split_index: int
 ) -> Tuple[List[str | T], List[str | T]]:
     current_index = 0
     for i, element in enumerate(elements):
@@ -260,14 +262,11 @@ def _split_before_string_index(
         surplus = current_index - split_index
 
         string_before = element[:-surplus]
-        before = elements[:i]
-        if string_before:
-            before.append(string_before)
-
+        before = list(elements[:i]) + ([string_before] if string_before else [])
         string_after = element[-surplus:]
-        after = [string_after] + elements[i + 1 :]
+        after = [string_after] + list(elements[i + 1 :])
         return (before, after)
-    return (elements, [])
+    return (list(elements), [])
 
 
 # -------------------- Regex tree matching -------------------- #
@@ -279,11 +278,11 @@ class NoMatch(Exception):
 
 @dataclass(frozen=True)
 class _NamedGroupSplitterMatch:
-    elements: List[PageElementOrString]
+    elements: Sequence[PageElementOrString]
     group_name: GroupName
 
 
-def regex_tree_match(elements: List[PageElementOrString], node: GroupNode) -> RegexTreeMatch:
+def regex_tree_match(elements: Sequence[PageElementOrString], node: GroupNode) -> RegexTreeMatch:
     try:
         results = list(_regex_tree_match_recursive(elements, node, None))
     except NoMatch:
@@ -296,7 +295,7 @@ def regex_tree_match(elements: List[PageElementOrString], node: GroupNode) -> Re
 
 
 def _regex_tree_match_recursive(
-    elements: List[PageElementOrString],
+    elements: Sequence[PageElementOrString],
     node: Node,
     current_group: RegexTreeMatch | None,
 ) -> RegexTreeMatchFlow:
@@ -372,7 +371,7 @@ def _regex_tree_match_recursive(
 @iter_func_to_list
 def _split_match_by_named_groups(
     match_proxy: MatchProxy,
-    elements: List[PageElementOrString],
+    elements: Sequence[PageElementOrString],
 ) -> Iterator[SplittedElement[PageElementOrString, _NamedGroupSplitterMatch]]:
     safe_group(match_proxy, 0)
     # Offset in original text

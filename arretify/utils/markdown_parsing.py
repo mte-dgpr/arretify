@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 import re
-from typing import List
+from typing import List, Sequence
 
 import markdown
 from bs4 import BeautifulSoup, Tag
@@ -62,7 +62,7 @@ IMAGE_PATTERN = PatternProxy(r"!\[[^\[\]]+\]\([^()]+\)")
 """Detect if the line starts with an image."""
 
 
-def is_table_description(line: str, pile: List[str]) -> bool:
+def is_table_description(line: str, pile: Sequence[str]) -> bool:
     # Sentence starts with any number of * between parentheses or without parentheses
     match = TABLE_DESCRIPTION_PATTERN.match(line)
     if match:

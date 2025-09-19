@@ -16,7 +16,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import Iterable, List
+from copy import copy
+import json
+from typing import Dict, Iterable, List
 from bs4 import BeautifulSoup, Tag
 
 from arretify.types import DataElementDataDict, PageElementOrString, DataElementSchema
@@ -60,6 +62,39 @@ def make_data_tag(
     return element
 
 
+SegmentationTagDataDict = Dict[str, str | int | float | bool | None | List[str] | List[int]]
+
+
+def make_segmentation_tag(
+    soup: BeautifulSoup,
+    tag_name: str,
+    contents: Iterable[PageElementOrString] | None = None,
+    data: SegmentationTagDataDict | None = None,
+) -> Tag:
+    if contents is None:
+        contents = []
+    if data is None:
+        data = {}
+    element = make_new_tag(soup, tag_name, contents=contents)
+    update_segmentation_tag_data(element, data)
+    return element
+
+
+def update_segmentation_tag_data(element: Tag, data: SegmentationTagDataDict):
+    for key, value in data.items():
+        element[f"data-{key}"] = json.dumps(value, ensure_ascii=False)
+
+
+def read_segmentation_tag_data(element: Tag) -> SegmentationTagDataDict:
+    data: SegmentationTagDataDict = {}
+    for key, value in element.attrs.items():
+        if key.startswith("data-"):
+            data_key = key[5:]
+            data_value = json.loads(value)
+            data[data_key] = data_value
+    return data
+
+
 def wrap_in_tag(
     soup: BeautifulSoup,
     elements: List[PageElementOrString],
@@ -79,13 +114,22 @@ def make_new_tag(
     tag_name: str,
     contents: Iterable[PageElementOrString] | None = None,
 ) -> Tag:
+    # We must be careful not to move elements from one part of the tree to another
+    # because that might have unexpected side-effects.
+    # For example, if iterating over the children of a tag and moving one of them
+    # to a new tag, the list currenlty being iterated is modified.
+    # This is why we work with copies here.
+    cloned_contents: List[PageElementOrString]
     if contents is None:
-        contents = []
+        cloned_contents = []
+    else:
+        cloned_contents = [copy(element) for element in contents]
+
     element = soup.new_tag(tag_name)
     element.extend(
         map_splitted_elements(
             split_elements(
-                list(contents),
+                cloned_contents,
                 group_strings_splitter,
             ),
             merge_strings,
@@ -97,6 +141,7 @@ def make_new_tag(
 def replace_children(
     tag: Tag,
     new_children: Iterable[PageElementOrString],
-) -> None:
+) -> Tag:
     tag.clear()
     tag.extend(new_children)
+    return tag

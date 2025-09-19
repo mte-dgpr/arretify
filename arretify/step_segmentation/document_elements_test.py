@@ -18,19 +18,23 @@
 #
 import unittest
 
-from bs4 import BeautifulSoup
-
-from .core import Node
+from arretify.utils.html_create import make_segmentation_tag
 from .document_elements import (
     initialize_document_structure,
     parse_tables_of_contents,
     render_table_of_contents,
 )
 from .testing import assert_elements_equal, make_text_spans
-from arretify.utils.testing import normalized_html_str
+from arretify.utils.testing import create_document_context, normalized_html_str
 
 
-class TestInitializeDocumentStructure(unittest.TestCase):
+class BaseTestCase(unittest.TestCase):
+    def setUp(self):
+        self.context = create_document_context()
+        self.soup = self.context.soup
+
+
+class TestInitializeDocumentStructure(BaseTestCase):
 
     def test_page_separators_inserted_and_text_spans_created(self):
         # Arrange
@@ -41,98 +45,103 @@ class TestInitializeDocumentStructure(unittest.TestCase):
         ]
 
         # Act
-        result = list(initialize_document_structure(pages))
+        result = list(initialize_document_structure(self.context, pages))
 
         # Assert
         assert_elements_equal(
             result,
             [
-                Node(type="page_separator", data=dict(page_index=0), children=[]),
-                Node(
-                    type="text_span",
-                    children=["Line 1"],
+                make_segmentation_tag(self.soup, "page_separator", data=dict(page_index=0)),
+                make_segmentation_tag(
+                    self.soup,
+                    "text_span",
+                    contents=["Line 1"],
                     data=dict(start=(0, 0, 0), end=(0, 0, 5)),
                 ),
-                Node(
-                    type="text_span",
-                    children=["Line 2"],
+                make_segmentation_tag(
+                    self.soup,
+                    "text_span",
+                    contents=["Line 2"],
                     data=dict(start=(0, 1, 0), end=(0, 1, 5)),
                 ),
-                Node(
-                    type="text_span",
-                    children=["Line 3"],
+                make_segmentation_tag(
+                    self.soup,
+                    "text_span",
+                    contents=["Line 3"],
                     data=dict(start=(0, 2, 0), end=(0, 2, 5)),
                 ),
-                Node(type="page_separator", data=dict(page_index=1), children=[]),
-                Node(
-                    type="text_span",
-                    children=["Line 4"],
+                make_segmentation_tag(self.soup, "page_separator", data=dict(page_index=1)),
+                make_segmentation_tag(
+                    self.soup,
+                    "text_span",
+                    contents=["Line 4"],
                     data=dict(start=(1, 0, 0), end=(1, 0, 5)),
                 ),
-                Node(
-                    type="text_span",
-                    children=["Line 5"],
+                make_segmentation_tag(
+                    self.soup,
+                    "text_span",
+                    contents=["Line 5"],
                     data=dict(start=(1, 1, 0), end=(1, 1, 5)),
                 ),
-                Node(type="page_separator", data=dict(page_index=2), children=[]),
-                Node(
-                    type="text_span",
-                    children=["Line 6"],
+                make_segmentation_tag(self.soup, "page_separator", data=dict(page_index=2)),
+                make_segmentation_tag(
+                    self.soup,
+                    "text_span",
+                    contents=["Line 6"],
                     data=dict(start=(2, 0, 0), end=(2, 0, 5)),
                 ),
             ],
         )
 
 
-class TestParseTablesOfContents(unittest.TestCase):
+class TestParseTablesOfContents(BaseTestCase):
 
     def test_parse_tables_of_contents(self):
         # Arrange
         lines = make_text_spans(
-            "Line 1", "Sommaire", "bla ..... page 1", "blo ..... page 2", "Line 2"
+            self.soup, "Line 1", "Sommaire", "bla ..... page 1", "blo ..... page 2", "Line 2"
         )
 
         # Act
-        elements = list(parse_tables_of_contents(lines))
+        elements = list(parse_tables_of_contents(self.context, lines))
 
         # Assert
         assert_elements_equal(
             elements,
             [
-                *make_text_spans("Line 1"),
-                Node(
-                    type="table_of_contents",
-                    data=dict(),
-                    children=make_text_spans(
+                *make_text_spans(self.soup, "Line 1"),
+                make_segmentation_tag(
+                    self.soup,
+                    "table_of_contents",
+                    contents=make_text_spans(
+                        self.soup,
                         "Sommaire",
                         "bla ..... page 1",
                         "blo ..... page 2",
                     ),
                 ),
-                *make_text_spans("Line 2"),
+                *make_text_spans(self.soup, "Line 2"),
             ],
             ignore_text_span_data=True,
         )
 
 
-class TestRenderTableOfContents(unittest.TestCase):
-
-    def setUp(self):
-        self.soup = BeautifulSoup("", "html.parser")
+class TestRenderTableOfContents(BaseTestCase):
 
     def test_simple_render(self):
         # Arrange
-        node = Node(
-            type="table_of_contents",
-            children=[
-                Node(type="text_span", children=["Sommaire"]),
-                Node(type="text_span", children=["bla ..... page 1"]),
-                Node(type="text_span", children=["blo ..... page 2"]),
+        node = make_segmentation_tag(
+            self.soup,
+            "table_of_contents",
+            contents=[
+                make_segmentation_tag(self.soup, "text_span", contents=["Sommaire"]),
+                make_segmentation_tag(self.soup, "text_span", contents=["bla ..... page 1"]),
+                make_segmentation_tag(self.soup, "text_span", contents=["blo ..... page 2"]),
             ],
         )
 
         # Act
-        rendered = render_table_of_contents(self.soup, node)
+        rendered = render_table_of_contents(self.context, node)
 
         # Assert
         assert normalized_html_str(str(rendered)) == normalized_html_str(

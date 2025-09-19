@@ -18,22 +18,34 @@
 #
 import unittest
 
-from bs4 import BeautifulSoup
-
-from arretify.utils.testing import normalized_html_str
-from .content import parse_section_titles, parse_sections, parse_alineas, render_alinea
-from .core import Node
+from arretify.utils.html_create import make_segmentation_tag
+from arretify.utils.testing import create_document_context, normalized_html_str
+from .content import (
+    parse_section_titles,
+    parse_sections,
+    parse_alineas,
+    render_alinea,
+    render_section_title,
+    render_section,
+)
 from .testing import (
     assert_elements_equal,
     make_text_spans,
 )
 
 
-class TestParseSectionTitles(unittest.TestCase):
+class BaseTestCase(unittest.TestCase):
+    def setUp(self):
+        self.context = create_document_context()
+        self.soup = self.context.soup
+
+
+class TestParseSectionTitles(BaseTestCase):
 
     def test_parse_section_titles(self):
         # Arrange
         elements = make_text_spans(
+            self.soup,
             "Titre I - Introduction",
             "1. Contexte",
             "bla bla bla",
@@ -46,15 +58,16 @@ class TestParseSectionTitles(unittest.TestCase):
         )
 
         # Act
-        result = list(parse_section_titles(elements))
+        result = list(parse_section_titles(self.context, elements))
 
         # Assert
         assert_elements_equal(
             result,
             [
-                Node(
-                    type="section_title",
-                    children=make_text_spans("Titre I - Introduction"),
+                make_segmentation_tag(
+                    self.soup,
+                    "section_title",
+                    contents=make_text_spans(self.soup, "Titre I - Introduction"),
                     data=dict(
                         level=0,
                         number="I",
@@ -62,9 +75,10 @@ class TestParseSectionTitles(unittest.TestCase):
                         type="titre",
                     ),
                 ),
-                Node(
-                    type="section_title",
-                    children=make_text_spans("1. Contexte"),
+                make_segmentation_tag(
+                    self.soup,
+                    "section_title",
+                    contents=make_text_spans(self.soup, "1. Contexte"),
                     data=dict(
                         level=1,
                         number="1",
@@ -72,10 +86,11 @@ class TestParseSectionTitles(unittest.TestCase):
                         type="unknown",
                     ),
                 ),
-                *make_text_spans("bla bla bla"),
-                Node(
-                    type="section_title",
-                    children=make_text_spans("2. Objectifs"),
+                *make_text_spans(self.soup, "bla bla bla"),
+                make_segmentation_tag(
+                    self.soup,
+                    "section_title",
+                    contents=make_text_spans(self.soup, "2. Objectifs"),
                     data=dict(
                         level=1,
                         number="2",
@@ -84,12 +99,14 @@ class TestParseSectionTitles(unittest.TestCase):
                     ),
                 ),
                 *make_text_spans(
+                    self.soup,
                     "blo blo blo",
                     "bli bli bli",
                 ),
-                Node(
-                    type="section_title",
-                    children=make_text_spans("Titre II - Méthodologie"),
+                make_segmentation_tag(
+                    self.soup,
+                    "section_title",
+                    contents=make_text_spans(self.soup, "Titre II - Méthodologie"),
                     data=dict(
                         level=0,
                         number="II",
@@ -98,6 +115,7 @@ class TestParseSectionTitles(unittest.TestCase):
                     ),
                 ),
                 *make_text_spans(
+                    self.soup,
                     "blu blu blu",
                     "ble ble ble",
                 ),
@@ -109,24 +127,33 @@ class TestParseSectionTitles(unittest.TestCase):
         # Arrange
         elements = [
             *make_text_spans(
+                self.soup,
                 "Titre I - Introduction",
             ),
-            Node(
-                type="text_span",
-                children=[Node(type="address", children=make_text_spans("1 rue de l'avenir"))],
+            make_segmentation_tag(
+                self.soup,
+                "text_span",
+                contents=[
+                    make_segmentation_tag(
+                        self.soup,
+                        "address",
+                        contents=make_text_spans(self.soup, "1 rue de l'avenir"),
+                    )
+                ],
             ),
         ]
 
         # Act
-        result = list(parse_section_titles(elements))
+        result = list(parse_section_titles(self.context, elements))
 
         # Assert
         assert_elements_equal(
             result,
             [
-                Node(
-                    type="section_title",
-                    children=make_text_spans("Titre I - Introduction"),
+                make_segmentation_tag(
+                    self.soup,
+                    "section_title",
+                    contents=make_text_spans(self.soup, "Titre I - Introduction"),
                     data=dict(
                         level=0,
                         number="I",
@@ -134,117 +161,148 @@ class TestParseSectionTitles(unittest.TestCase):
                         type="titre",
                     ),
                 ),
-                Node(
-                    type="text_span",
-                    children=[Node(type="address", children=make_text_spans("1 rue de l'avenir"))],
+                make_segmentation_tag(
+                    self.soup,
+                    "text_span",
+                    contents=[
+                        make_segmentation_tag(
+                            self.soup,
+                            "address",
+                            contents=make_text_spans(self.soup, "1 rue de l'avenir"),
+                        )
+                    ],
                 ),
             ],
             ignore_text_span_data=True,
         )
 
 
-class TestParseSections(unittest.TestCase):
+class TestParseSections(BaseTestCase):
 
     def test_parse_sections(self):
         # Arrange
         elements = [
-            *make_text_spans("bly bly bly"),
-            Node(
-                type="section_title",
+            *make_text_spans(self.soup, "bly bly bly"),
+            make_segmentation_tag(
+                self.soup,
+                "section_title",
+                contents=make_text_spans(self.soup, "Titre I - Introduction"),
                 data=dict(level=1),
-                children=make_text_spans("Titre I - Introduction"),
             ),
-            Node(
-                type="section_title",
+            make_segmentation_tag(
+                self.soup,
+                "section_title",
+                contents=make_text_spans(self.soup, "1. Contexte"),
                 data=dict(level=2),
-                children=make_text_spans("1. Contexte"),
             ),
-            *make_text_spans("bla bla bla"),
-            Node(
-                type="section_title",
+            *make_text_spans(self.soup, "bla bla bla"),
+            make_segmentation_tag(
+                self.soup,
+                "section_title",
+                contents=make_text_spans(self.soup, "2. Objectifs"),
                 data=dict(level=2),
-                children=make_text_spans("2. Objectifs"),
             ),
             *make_text_spans(
+                self.soup,
                 "blo blo blo",
                 "bli bli bli",
             ),
-            Node(
-                type="section_title",
+            make_segmentation_tag(
+                self.soup,
+                "section_title",
+                contents=make_text_spans(self.soup, "Titre II - Méthodologie"),
                 data=dict(level=1),
-                children=make_text_spans("Titre II - Méthodologie"),
             ),
             *make_text_spans(
+                self.soup,
                 "blu blu blu",
                 "ble ble ble",
             ),
         ]
 
         # Act
-        result = list(parse_sections(elements, level=1))
+        result = parse_sections(self.context, elements, level=1)
 
         # Assert
         assert_elements_equal(
             result,
             [
-                Node(
-                    type="alinea",
-                    children=make_text_spans("bly bly bly"),
+                make_segmentation_tag(
+                    self.soup,
+                    "alinea",
+                    contents=make_text_spans(self.soup, "bly bly bly"),
                     data=dict(number="1"),
                 ),
-                Node(
-                    type="section",
-                    children=[
-                        Node(
-                            type="section_title",
-                            children=make_text_spans("Titre I - Introduction"),
+                make_segmentation_tag(
+                    self.soup,
+                    "section",
+                    contents=[
+                        make_segmentation_tag(
+                            self.soup,
+                            "section_title",
+                            contents=make_text_spans(self.soup, "Titre I - Introduction"),
                         ),
-                        Node(
-                            type="section",
-                            children=[
-                                Node(type="section_title", children=make_text_spans("1. Contexte")),
-                                Node(
-                                    type="alinea",
-                                    children=make_text_spans("bla bla bla"),
+                        make_segmentation_tag(
+                            self.soup,
+                            "section",
+                            contents=[
+                                make_segmentation_tag(
+                                    self.soup,
+                                    "section_title",
+                                    contents=make_text_spans(self.soup, "1. Contexte"),
+                                ),
+                                make_segmentation_tag(
+                                    self.soup,
+                                    "alinea",
+                                    contents=make_text_spans(self.soup, "bla bla bla"),
                                     data=dict(number="1"),
                                 ),
                             ],
                         ),
-                        Node(
-                            type="section",
-                            children=[
-                                Node(
-                                    type="section_title", children=make_text_spans("2. Objectifs")
+                        make_segmentation_tag(
+                            self.soup,
+                            "section",
+                            contents=[
+                                make_segmentation_tag(
+                                    self.soup,
+                                    "section_title",
+                                    contents=make_text_spans(self.soup, "2. Objectifs"),
                                 ),
-                                Node(
-                                    type="alinea",
-                                    children=make_text_spans("blo blo blo"),
+                                make_segmentation_tag(
+                                    self.soup,
+                                    "alinea",
+                                    contents=make_text_spans(self.soup, "blo blo blo"),
                                     data=dict(number="1"),
                                 ),
-                                Node(
-                                    type="alinea",
-                                    children=make_text_spans("bli bli bli"),
+                                make_segmentation_tag(
+                                    self.soup,
+                                    "alinea",
+                                    contents=make_text_spans(self.soup, "bli bli bli"),
                                     data=dict(number="2"),
                                 ),
                             ],
                         ),
                     ],
                 ),
-                Node(
-                    type="section",
-                    children=[
-                        Node(
-                            type="section_title",
-                            children=make_text_spans("Titre II - Méthodologie"),
+                make_segmentation_tag(
+                    self.soup,
+                    "section",
+                    contents=[
+                        make_segmentation_tag(
+                            self.soup,
+                            "section_title",
+                            contents=make_text_spans(self.soup, "Titre II - Méthodologie"),
                         ),
-                        Node(
-                            type="alinea",
-                            children=make_text_spans("blu blu blu"),
+                        make_segmentation_tag(
+                            self.soup,
+                            "alinea",
+                            contents=make_text_spans(self.soup, "blu blu blu"),
                             data=dict(number="1"),
                         ),
-                        Node(
-                            type="alinea",
-                            children=make_text_spans("ble ble ble"),
+                        make_segmentation_tag(
+                            self.soup,
+                            "alinea",
+                            contents=make_text_spans(self.soup, "ble ble ble"),
                             data=dict(number="2"),
                         ),
                     ],
@@ -257,49 +315,57 @@ class TestParseSections(unittest.TestCase):
     def test_parse_sections_contents(self):
         # Arrange
         elements = [
-            Node(
-                type="section_title",
+            make_segmentation_tag(
+                self.soup,
+                "section_title",
+                contents=["1. Bla"],
                 data=dict(level=0),
-                children=["1. Bla"],
             ),
             "bla bla bla",
-            Node(
-                type="section_title",
+            make_segmentation_tag(
+                self.soup,
+                "section_title",
+                contents=["1.1. Blabla"],
                 data=dict(level=1),
-                children=["1.1. Blabla"],
             ),
             "bli bli bli",
         ]
 
         # Act
-        result = list(parse_sections(elements, level=0))
+        result = parse_sections(self.context, elements, level=0)
 
         # Assert
         assert_elements_equal(
             result,
             [
-                Node(
-                    type="section",
-                    children=[
-                        Node(
-                            type="section_title",
-                            children=["1. Bla"],
+                make_segmentation_tag(
+                    self.soup,
+                    "section",
+                    contents=[
+                        make_segmentation_tag(
+                            self.soup,
+                            "section_title",
+                            contents=["1. Bla"],
                         ),
-                        Node(
-                            type="alinea",
-                            children=["bla bla bla"],
+                        make_segmentation_tag(
+                            self.soup,
+                            "alinea",
+                            contents=["bla bla bla"],
                             data=dict(number="1"),
                         ),
-                        Node(
-                            type="section",
-                            children=[
-                                Node(
-                                    type="section_title",
-                                    children=["1.1. Blabla"],
+                        make_segmentation_tag(
+                            self.soup,
+                            "section",
+                            contents=[
+                                make_segmentation_tag(
+                                    self.soup,
+                                    "section_title",
+                                    contents=["1.1. Blabla"],
                                 ),
-                                Node(
-                                    type="alinea",
-                                    children=["bli bli bli"],
+                                make_segmentation_tag(
+                                    self.soup,
+                                    "alinea",
+                                    contents=["bli bli bli"],
                                     data=dict(number="1"),
                                 ),
                             ],
@@ -314,38 +380,44 @@ class TestParseSections(unittest.TestCase):
     def test_parse_sections_missing_level(self):
         # Arrange
         elements = [
-            Node(
-                type="section_title",
+            make_segmentation_tag(
+                self.soup,
+                "section_title",
+                contents=["1. Bla"],
                 data=dict(level=0),
-                children=["1. Bla"],
             ),
-            Node(
-                type="section_title",
+            make_segmentation_tag(
+                self.soup,
+                "section_title",
+                contents=["1.1.1. Blabla"],
                 data=dict(level=2),
-                children=["1.1.1. Blabla"],
             ),
         ]
 
         # Act
-        result = list(parse_sections(elements, level=0))
+        result = parse_sections(self.context, elements, level=0)
 
         # Assert
         assert_elements_equal(
             result,
             [
-                Node(
-                    type="section",
-                    children=[
-                        Node(
-                            type="section_title",
-                            children=["1. Bla"],
+                make_segmentation_tag(
+                    self.soup,
+                    "section",
+                    contents=[
+                        make_segmentation_tag(
+                            self.soup,
+                            "section_title",
+                            contents=["1. Bla"],
                         ),
-                        Node(
-                            type="section",
-                            children=[
-                                Node(
-                                    type="section_title",
-                                    children=["1.1.1. Blabla"],
+                        make_segmentation_tag(
+                            self.soup,
+                            "section",
+                            contents=[
+                                make_segmentation_tag(
+                                    self.soup,
+                                    "section_title",
+                                    contents=["1.1.1. Blabla"],
                                 ),
                             ],
                         ),
@@ -359,80 +431,95 @@ class TestParseSections(unittest.TestCase):
     def test_parse_missing_title_current_level(self):
         # Arrange
         elements = [
-            Node(
-                type="section_title",
+            make_segmentation_tag(
+                self.soup,
+                "section_title",
+                contents=["1.1. bla"],
                 data=dict(level=1),
-                children=["1.1. bla"],
             ),
-            Node(
-                type="section_title",
+            make_segmentation_tag(
+                self.soup,
+                "section_title",
+                contents=["1.1.1. bla"],
                 data=dict(level=2),
-                children=["1.1.1. bla"],
             ),
-            Node(
-                type="section_title",
+            make_segmentation_tag(
+                self.soup,
+                "section_title",
+                contents=["1.2. bla"],
                 data=dict(level=1),
-                children=["1.2. bla"],
             ),
-            Node(
-                type="section_title",
+            make_segmentation_tag(
+                self.soup,
+                "section_title",
+                contents=["2. bla"],
                 data=dict(level=0),
-                children=["2. bla"],
             ),
-            Node(
-                type="section_title",
+            make_segmentation_tag(
+                self.soup,
+                "section_title",
+                contents=["2.1. bla"],
                 data=dict(level=1),
-                children=["2.1. bla"],
             ),
         ]
 
         # Act
-        result = list(parse_sections(elements, level=0))
+        result = parse_sections(self.context, elements, level=0)
 
         # Assert
         assert_elements_equal(
             result,
             [
-                Node(
-                    type="section",
-                    children=[
-                        Node(
-                            type="section_title",
-                            children=["1.1. bla"],
+                make_segmentation_tag(
+                    self.soup,
+                    "section",
+                    contents=[
+                        make_segmentation_tag(
+                            self.soup,
+                            "section_title",
+                            contents=["1.1. bla"],
                         ),
-                        Node(
-                            type="section",
-                            children=[
-                                Node(
-                                    type="section_title",
-                                    children=["1.1.1. bla"],
+                        make_segmentation_tag(
+                            self.soup,
+                            "section",
+                            contents=[
+                                make_segmentation_tag(
+                                    self.soup,
+                                    "section_title",
+                                    contents=["1.1.1. bla"],
                                 ),
                             ],
                         ),
                     ],
                 ),
-                Node(
-                    type="section",
-                    children=[
-                        Node(
-                            type="section_title",
-                            children=["1.2. bla"],
+                make_segmentation_tag(
+                    self.soup,
+                    "section",
+                    contents=[
+                        make_segmentation_tag(
+                            self.soup,
+                            "section_title",
+                            contents=["1.2. bla"],
                         ),
                     ],
                 ),
-                Node(
-                    type="section",
-                    children=[
-                        Node(
-                            type="section_title",
-                            children=["2. bla"],
+                make_segmentation_tag(
+                    self.soup,
+                    "section",
+                    contents=[
+                        make_segmentation_tag(
+                            self.soup,
+                            "section_title",
+                            contents=["2. bla"],
                         ),
-                        Node(
-                            type="section",
-                            children=[
-                                Node(
-                                    type="section_title",
-                                    children=["2.1. bla"],
+                        make_segmentation_tag(
+                            self.soup,
+                            "section",
+                            contents=[
+                                make_segmentation_tag(
+                                    self.soup,
+                                    "section_title",
+                                    contents=["2.1. bla"],
                                 ),
                             ],
                         ),
@@ -444,38 +531,34 @@ class TestParseSections(unittest.TestCase):
         )
 
 
-class TestParseAlineas(unittest.TestCase):
+class TestParseAlineas(BaseTestCase):
 
     def test_merge_if_continuing_sentence_and_page_separator(self):
         # Arrange
         elements = [
-            *make_text_spans("This is a sentence that "),
-            Node(
-                type="page_separator",
-                data=dict(page_index=1),
-                children=[],
-            ),
-            *make_text_spans("continues on the next page."),
+            *make_text_spans(self.soup, "This is a sentence that "),
+            make_segmentation_tag(self.soup, "page_separator", data=dict(page_index=1)),
+            *make_text_spans(self.soup, "continues on the next page."),
         ]
 
         # Act
-        result = list(parse_alineas(elements))
+        result = parse_alineas(self.context, elements)
 
         # Assert
         assert_elements_equal(
             result,
             [
-                Node(
-                    type="alinea",
-                    children=[
-                        Node(
-                            type="text_span",
-                            children=[
+                make_segmentation_tag(
+                    self.soup,
+                    "alinea",
+                    contents=[
+                        make_segmentation_tag(
+                            self.soup,
+                            "text_span",
+                            contents=[
                                 "This is a sentence that ",
-                                Node(
-                                    type="page_separator",
-                                    data=dict(page_index=1),
-                                    children=[],
+                                make_segmentation_tag(
+                                    self.soup, "page_separator", data=dict(page_index=1)
                                 ),
                                 "continues on the next page.",
                             ],
@@ -485,24 +568,23 @@ class TestParseAlineas(unittest.TestCase):
                 ),
             ],
             ignore_text_span_data=True,
+            ignore_data_if_omitted=True,
         )
 
 
-class TestRenderAlinea(unittest.TestCase):
-
-    def setUp(self):
-        self.soup = BeautifulSoup("", features="html.parser")
+class TestRenderAlinea(BaseTestCase):
 
     def test_simple(self):
         # Arrange
-        alinea = Node(
-            type="alinea",
-            children=make_text_spans("This is an alinea."),
+        alinea = make_segmentation_tag(
+            self.soup,
+            "alinea",
+            contents=make_text_spans(self.soup, "This is an alinea."),
             data=dict(number="1"),
         )
 
         # Act
-        result = render_alinea(self.soup, alinea)
+        result = render_alinea(self.context, alinea)
 
         # Assert
         assert normalized_html_str(str(result)) == normalized_html_str(
@@ -510,5 +592,80 @@ class TestRenderAlinea(unittest.TestCase):
             <div class="arretify-alinea" data-number="1">
                 This is an alinea.
             </div>
+            """
+        )
+
+
+class TestRenderSection(BaseTestCase):
+
+    def test_simple(self):
+        # Arrange
+        tag = make_segmentation_tag(
+            self.soup,
+            "section",
+            contents=[
+                make_segmentation_tag(
+                    self.soup,
+                    "section_title",
+                    contents=make_text_spans(self.soup, "Article 1 : Disposition"),
+                    data=dict(
+                        level=0,
+                        number="1",
+                        title="Disposition",
+                        type="article",
+                    ),
+                ),
+                make_segmentation_tag(
+                    self.soup,
+                    "alinea",
+                    contents=make_text_spans(self.soup, "Bla bla bla ..."),
+                    data=dict(number="1"),
+                ),
+            ],
+        )
+
+        # Act
+        result = render_section(self.context, tag)
+
+        # Assert
+        assert normalized_html_str(str(result)) == normalized_html_str(
+            """
+            <section class="arretify-section" data-number="1" data-title="Disposition" data-type="article">
+                <h2 class="arretify-section_title">
+                    Article 1 : Disposition
+                </h2>
+                <div class="arretify-alinea" data-number="1">
+                    Bla bla bla ...
+                </div>
+            </section>
+            """  # noqa: E501
+        )
+
+
+class TestRenderSectionTitle(BaseTestCase):
+
+    def test_simple(self):
+        # Arrange
+        section_title = make_segmentation_tag(
+            self.soup,
+            "section_title",
+            contents=make_text_spans(self.soup, "Titre I - Introduction"),
+            data=dict(
+                level=0,
+                number="I",
+                title="Introduction",
+                type="titre",
+            ),
+        )
+
+        # Act
+        result = render_section_title(self.context, section_title)
+
+        # Assert
+        assert normalized_html_str(str(result)) == normalized_html_str(
+            """
+            <h2 class="arretify-section_title">
+                Titre I - Introduction
+            </h2>
             """
         )

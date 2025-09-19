@@ -16,18 +16,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import List, Iterator, Callable
-from dataclasses import replace as dataclass_replace
+from typing import List, Iterator, Callable, Sequence
 
-from bs4 import BeautifulSoup
-
-from arretify.types import SectionType, PageElementOrString
+from arretify.types import DocumentContext, SectionType, PageElementOrString
 from arretify.html_schemas import (
     HEADER_SCHEMA,
     MAIN_SCHEMA,
     APPENDIX_SCHEMA,
 )
-from arretify.utils.html_create import make_data_tag
+from arretify.utils.html_create import make_data_tag, make_segmentation_tag, replace_children
 from arretify.utils.functional import chain_functions, iter_func_to_list
 from arretify.utils.split_merge import (
     split_before_match,
@@ -36,10 +33,8 @@ from .header import parse_header, render_header
 from .titles_detection import parse_title_info
 from .content import parse_content, render_content, is_title
 from .core import (
-    Node,
-    NodeOrText,
     pick_text_span_node,
-    is_node,
+    is_tag,
     get_string,
 )
 from .basic_elements import parse_images, parse_addresses
@@ -53,9 +48,9 @@ from .document_elements import (
 _is_title_line = pick_text_span_node(is_title)
 
 
-def _is_appendix_text_span_node(elements: List[NodeOrText], index: int) -> bool:
+def _is_appendix_text_span_node(elements: Sequence[PageElementOrString], index: int) -> bool:
     element = elements[index]
-    assert is_node(element)
+    assert is_tag(element)
     if _is_title_line(elements, index):
         # Parse title info
         title_info = parse_title_info(get_string(element))
@@ -71,11 +66,12 @@ _is_appendix = pick_text_span_node(_is_appendix_text_span_node)
 
 
 @iter_func_to_list
-def parse_arrete(pages: List[str]) -> Iterator[NodeOrText]:
-    elements: List[NodeOrText] = initialize_document_structure(pages)
+def parse_arrete(context: DocumentContext, pages: Sequence[str]) -> Iterator[PageElementOrString]:
+    elements: List[PageElementOrString] = initialize_document_structure(context, pages)
 
     # Add basic document elements
     elements = chain_functions(
+        context,
         elements,
         [
             _make_text_span_parser(parse_addresses),
@@ -90,57 +86,55 @@ def parse_arrete(pages: List[str]) -> Iterator[NodeOrText]:
 
     # Header
     pile, elements = split_before_match(elements, _is_title_line)
-    yield Node(
-        type="header",
-        children=parse_header(pile),
-    )
+    yield make_segmentation_tag(context.soup, "header", contents=parse_header(context, pile))
 
     # Main content
     pile, elements = split_before_match(elements, _is_appendix)
-    yield Node(
-        type="main",
-        children=parse_content(pile),
-    )
+    yield make_segmentation_tag(context.soup, "main", contents=parse_content(context, pile))
 
     # Appendix
     if elements:
-        yield Node(
-            type="appendix",
-            children=parse_content(elements),
+        yield make_segmentation_tag(
+            context.soup, "appendix", contents=parse_content(context, elements)
         )
 
 
 @iter_func_to_list
-def render_arrete(soup: BeautifulSoup, elements: List[NodeOrText]) -> Iterator[PageElementOrString]:
-    body = soup.body
+def render_arrete(
+    context: DocumentContext, elements: List[PageElementOrString]
+) -> Iterator[PageElementOrString]:
+    body = context.soup.body
     assert body
 
     for element in elements:
-        if is_node(element, type_in=["header"]):
-            yield make_data_tag(soup, HEADER_SCHEMA, contents=render_header(soup, element.children))
-        elif is_node(element, type_in=["main"]):
-            yield make_data_tag(soup, MAIN_SCHEMA, contents=render_content(soup, element.children))
-        elif is_node(element, type_in=["appendix"]):
+        if is_tag(element, tag_name_in=["header"]):
             yield make_data_tag(
-                soup, APPENDIX_SCHEMA, contents=render_content(soup, element.children)
+                context.soup, HEADER_SCHEMA, contents=render_header(context, element.contents)
+            )
+        elif is_tag(element, tag_name_in=["main"]):
+            yield make_data_tag(
+                context.soup, MAIN_SCHEMA, contents=render_content(context, element.contents)
+            )
+        elif is_tag(element, tag_name_in=["appendix"]):
+            yield make_data_tag(
+                context.soup, APPENDIX_SCHEMA, contents=render_content(context, element.contents)
             )
 
 
 def _make_text_span_parser(
-    func: Callable[[List[NodeOrText]], List[NodeOrText]],
-) -> Callable[[List[NodeOrText]], List[NodeOrText]]:
+    func: Callable[[DocumentContext, Sequence[PageElementOrString]], List[PageElementOrString]],
+) -> Callable[[DocumentContext, Sequence[PageElementOrString]], List[PageElementOrString]]:
     """
     Makes a function that uses `func` to parse the children of text_span nodes.
     """
 
     @iter_func_to_list
-    def _parse(elements: List[NodeOrText]) -> Iterator[NodeOrText]:
+    def _parse(
+        context: DocumentContext, elements: Sequence[PageElementOrString]
+    ) -> Iterator[PageElementOrString]:
         for element in elements:
-            if is_node(element, type_in=["text_span"]):
-                yield dataclass_replace(
-                    element,
-                    children=func(element.children),
-                )
+            if is_tag(element, tag_name_in=["text_span"]):
+                yield replace_children(element, func(context, element.contents))
             else:
                 yield element
 

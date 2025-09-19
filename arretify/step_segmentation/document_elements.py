@@ -16,9 +16,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import List, Iterator
+from typing import List, Iterator, Sequence
 
-from bs4 import BeautifulSoup, Tag
+from bs4 import Tag
 
 from arretify.html_schemas import (
     PAGE_FOOTER_SCHEMA,
@@ -29,20 +29,22 @@ from arretify.regex_utils import (
     PatternProxy,
     join_with_or,
 )
-from arretify.utils.html import (
-    PageElementOrString,
-)
+
+from arretify.types import DocumentContext, PageElementOrString
 from arretify.utils.strings import split_on_newlines
-from arretify.utils.html_create import make_data_tag, wrap_in_tag
+from arretify.utils.html_create import (
+    make_data_tag,
+    make_segmentation_tag,
+    read_segmentation_tag_data,
+    wrap_in_tag,
+)
 from arretify.utils.functional import iter_func_to_list
 from arretify.utils.split_merge import (
     split_elements,
     map_splitted_elements,
 )
 from .core import (
-    Node,
-    NodeOrText,
-    is_node,
+    is_tag,
     make_while_splitter_for_text_span_nodes,
     make_probe_from_pattern_proxy,
     get_string,
@@ -82,8 +84,9 @@ _is_page_footer = make_probe_from_pattern_proxy(PAGE_FOOTER_PATTERN)
 
 
 def parse_tables_of_contents(
-    elements: List[NodeOrText],
-) -> List[NodeOrText]:
+    context: DocumentContext,
+    elements: Sequence[PageElementOrString],
+) -> List[PageElementOrString]:
     return map_splitted_elements(
         split_elements(
             elements,
@@ -92,11 +95,13 @@ def parse_tables_of_contents(
                 _table_of_contents_while_condition,
             ),
         ),
-        lambda pile: Node(type="table_of_contents", children=pile),
+        lambda pile: make_segmentation_tag(
+            context.soup, "table_of_contents", contents=pile, data=None
+        ),
     )
 
 
-def _table_of_contents_while_condition(elements: List[NodeOrText], index: int) -> bool:
+def _table_of_contents_while_condition(elements: Sequence[PageElementOrString], index: int) -> bool:
     # Instead of checking just the first line, we check the next few lines.
     # This allows to deal with case when TOC contains lines that are not
     # easily recognizable as TOC, e.g.:
@@ -111,7 +116,8 @@ def _table_of_contents_while_condition(elements: List[NodeOrText], index: int) -
     # between text segments.
     next_elements = elements[index : index + 3]
     if any(
-        is_node(next_elements[i], type_in=["text_span"]) and _is_table_of_contents(next_elements, i)
+        is_tag(next_elements[i], tag_name_in=["text_span"])
+        and _is_table_of_contents(next_elements, i)
         for i in range(len(next_elements))
     ):
         return True
@@ -119,75 +125,78 @@ def _table_of_contents_while_condition(elements: List[NodeOrText], index: int) -
 
 
 def parse_page_footers(
-    elements: List[NodeOrText],
-) -> List[NodeOrText]:
+    context: DocumentContext,
+    elements: Sequence[PageElementOrString],
+) -> List[PageElementOrString]:
     return map_splitted_elements(
         split_elements(
             elements,
             make_while_splitter_for_text_span_nodes(_is_page_footer, _is_page_footer),
         ),
-        lambda children: Node(type="page_footer", children=children),
+        lambda children: make_segmentation_tag(
+            context.soup, "page_footer", contents=children, data=None
+        ),
     )
 
 
 @iter_func_to_list
 def initialize_document_structure(
-    pages: List[str],
-) -> Iterator[NodeOrText]:
+    context: DocumentContext,
+    pages: Sequence[str],
+) -> Iterator[PageElementOrString]:
     for page_index, page_text in enumerate(pages):
-        yield Node(
-            type="page_separator",
-            data=dict(page_index=page_index),
-            children=[],
+        yield make_segmentation_tag(
+            context.soup, "page_separator", contents=[], data=dict(page_index=page_index)
         )
         page_lines = split_on_newlines(page_text)
         for line_index, line in enumerate(page_lines):
-            yield Node(
-                type="text_span",
-                children=[line],
+            yield make_segmentation_tag(
+                context.soup,
+                "text_span",
+                contents=[line],
                 data=dict(
-                    start=(page_index, line_index, 0),
-                    end=(page_index, line_index, len(line) - 1),
+                    start=[page_index, line_index, 0],
+                    end=[page_index, line_index, len(line) - 1],
                 ),
             )
 
 
 def render_table_of_contents(
-    soup: BeautifulSoup,
-    node: Node,
+    context: DocumentContext,
+    node: Tag,
 ) -> Tag:
     page_elements: List[PageElementOrString] = []
     for element in node.children:
-        if is_node(element, type_in=["text_span"]):
+        if is_tag(element, tag_name_in=["text_span"]):
             page_elements.append(get_string(element))
-        elif is_node(element, type_in=["page_separator"]):
-            page_elements.append(render_page_separator(soup, element))
+        elif is_tag(element, tag_name_in=["page_separator"]):
+            page_elements.append(render_page_separator(context, element))
         else:
             raise ValueError(f"Unexpected element in table of contents: {element}")
     return make_data_tag(
-        soup,
+        context.soup,
         TABLE_OF_CONTENTS_SCHEMA,
-        contents=wrap_in_tag(soup, page_elements, "div"),
+        contents=wrap_in_tag(context.soup, page_elements, "div"),
     )
 
 
 def render_page_footer(
-    soup: BeautifulSoup,
-    node: Node,
+    context: DocumentContext,
+    tag: Tag,
 ) -> Tag:
     return make_data_tag(
-        soup,
+        context.soup,
         PAGE_FOOTER_SCHEMA,
-        contents=wrap_in_tag(soup, [get_string(node)], "div"),
+        contents=wrap_in_tag(context.soup, [get_string(tag)], "div"),
     )
 
 
 def render_page_separator(
-    soup: BeautifulSoup,
-    node: Node,
+    context: DocumentContext,
+    tag: Tag,
 ) -> Tag:
     return make_data_tag(
-        soup,
+        context.soup,
         PAGE_SEPARATOR_SCHEMA,
-        data=dict(page_index=node.data["page_index"]),
+        data=dict(page_index=str(read_segmentation_tag_data(tag)["page_index"])),
     )

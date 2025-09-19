@@ -18,18 +18,22 @@
 #
 from typing import (
     List,
+    Sequence,
     TypeGuard,
     Dict,
     Any,
-    Union,
     cast,
     Iterator,
 )
 from dataclasses import dataclass, field
 
+from bs4 import Tag
+
 from arretify.parsing_utils.patterns import is_continuing_sentence
+from arretify.types import DocumentContext, PageElementOrString
 from arretify.utils.functional import iter_func_to_list
 from arretify.regex_utils import PatternProxy, MatchProxy
+from arretify.utils.html_create import make_segmentation_tag, read_segmentation_tag_data
 from arretify.utils.strings import merge_strings
 from arretify.utils.split_merge import (
     make_while_splitter,
@@ -44,16 +48,14 @@ from arretify.utils.split_merge import (
 )
 
 
-NodeOrText = Union["Node", str]
-
-TRANSPARENT_NODE_TYPES = ["page_separator", "page_footer"]
+TRANSPARENT_TAG_TYPES = ["page_separator", "page_footer"]
 """
-List of node types that are considered transparent for text extraction purposes.
+List of tag names that are considered transparent for text extraction purposes.
 """
 
-INLINE_NODE_TYPES = ["address"]
+INLINE_TAG_TYPES = ["address"]
 """
-List of node types that contains specific bits of text information inside a text_span.
+List of tag names that contains specific bits of text information inside a text_span.
 """
 
 
@@ -64,15 +66,15 @@ class Node:
     """
 
     type: str
-    children: List[NodeOrText]
+    children: List[PageElementOrString]
     data: Dict[str, Any] = field(default_factory=dict)
 
 
-def pick_if_transparent_node_followed_by_match(
-    is_matching: Probe[NodeOrText],
-) -> Probe[NodeOrText]:
+def pick_if_transparent_tag_followed_by_match(
+    is_matching: Probe[PageElementOrString],
+) -> Probe[PageElementOrString]:
     """
-    Builds a function that returns True for a transparent node,
+    Builds a function that returns True for a transparent tag,
     only if it is followed by an element that matches the provided `is_matching` function.
     For other elements, it will return the result of the `is_matching` function directly.
 
@@ -80,12 +82,12 @@ def pick_if_transparent_node_followed_by_match(
 
     >>> elements = [
     ...     "Hello",
-    ...     Node(type="page_separator", children=[]),
+    ...     <page_separator />,
     ...     "World",
-    ...     Node(type="page_separator", children=[]),
-    ...     Node(type="other_type", children=[]),
+    ...     <page_separator />,
+    ...     <other_tag />,
     ... ]
-    >>> def is_string(elements: List[NodeOrText], index: int) -> bool:
+    >>> def is_string(elements: List[PageElementOrString], index: int) -> bool:
     ...     return isinstance(elements[index], str)
     >>> probe = pick_if_transparent_node_followed_by_match(is_string)
     >>> probe(elements, 0) # -> directly calls `is_string`
@@ -96,23 +98,23 @@ def pick_if_transparent_node_followed_by_match(
     False
     """
 
-    def _pick_transparent_nodes_probe(elements: List[NodeOrText], index: int) -> bool:
+    def _probe(elements: Sequence[PageElementOrString], index: int) -> bool:
         for next_index, next_element in enumerate(elements[index:], start=index):
-            if is_node(next_element, type_in=TRANSPARENT_NODE_TYPES):
+            if is_tag(next_element, tag_name_in=TRANSPARENT_TAG_TYPES):
                 continue
             else:
                 return is_matching(elements, next_index)
         return False
 
-    return _pick_transparent_nodes_probe
+    return _probe
 
 
 def pick_text_span_node(
-    probe: Probe[NodeOrText],
-) -> Probe[NodeOrText]:
-    def _probe(elements: List[NodeOrText], index: int) -> bool:
+    probe: Probe[PageElementOrString],
+) -> Probe[PageElementOrString]:
+    def _probe(elements: Sequence[PageElementOrString], index: int) -> bool:
         element = elements[index]
-        if is_node(element, type_in=["text_span"]):
+        if is_tag(element, tag_name_in=["text_span"]):
             return probe(elements, index)
         return False
 
@@ -120,9 +122,9 @@ def pick_text_span_node(
 
 
 def pick_str(
-    probe: Probe[NodeOrText],
-) -> Probe[NodeOrText]:
-    def _probe(elements: List[NodeOrText], index: int) -> bool:
+    probe: Probe[PageElementOrString],
+) -> Probe[PageElementOrString]:
+    def _probe(elements: Sequence[PageElementOrString], index: int) -> bool:
         element = elements[index]
         if isinstance(element, str):
             return probe(elements, index)
@@ -133,8 +135,8 @@ def pick_str(
 
 def make_probe_from_pattern_proxy(
     pattern: PatternProxy, use_search: bool = False
-) -> Probe[NodeOrText]:
-    def _probe(elements: List[NodeOrText], index: int) -> bool:
+) -> Probe[PageElementOrString]:
+    def _probe(elements: Sequence[PageElementOrString], index: int) -> bool:
         string = get_string(elements[index])
         if use_search is False:
             match = pattern.match(string)
@@ -146,18 +148,18 @@ def make_probe_from_pattern_proxy(
 
 
 def make_while_splitter_for_text_span_nodes(
-    start_condition: Probe[NodeOrText],
-    while_condition: Probe[NodeOrText],
-) -> Splitter[NodeOrText, List[NodeOrText]]:
+    start_condition: Probe[PageElementOrString],
+    while_condition: Probe[PageElementOrString],
+) -> Splitter[PageElementOrString, List[PageElementOrString]]:
     return make_while_splitter(
         pick_text_span_node(start_condition),
-        pick_if_transparent_node_followed_by_match(pick_text_span_node(while_condition)),
+        pick_if_transparent_tag_followed_by_match(pick_text_span_node(while_condition)),
     )
 
 
 def make_single_line_splitter_for_text_span_nodes(
-    is_matching: Probe[NodeOrText],
-) -> Splitter[NodeOrText, List[NodeOrText]]:
+    is_matching: Probe[PageElementOrString],
+) -> Splitter[PageElementOrString, List[PageElementOrString]]:
     return make_single_line_splitter(
         is_matching=pick_text_span_node(is_matching),
     )
@@ -165,10 +167,10 @@ def make_single_line_splitter_for_text_span_nodes(
 
 def make_pattern_splitter(
     pattern: PatternProxy,
-) -> Splitter[NodeOrText, MatchProxy]:
+) -> Splitter[PageElementOrString, MatchProxy]:
     def _splitter(
-        elements: List[NodeOrText],
-    ) -> RawSplit[NodeOrText, MatchProxy] | None:
+        elements: Sequence[PageElementOrString],
+    ) -> RawSplit[PageElementOrString, MatchProxy] | None:
         splitted_elements = split_elements(elements, group_str_splitter)
         for i, splitted_element in enumerate(splitted_elements):
             if not isinstance(splitted_element, SplitMatch):
@@ -198,10 +200,10 @@ def make_pattern_splitter(
 
 
 group_text_span_nodes_splitter = cast(
-    Splitter[NodeOrText, List[NodeOrText]],
+    Splitter[PageElementOrString, Sequence[PageElementOrString]],
     make_while_splitter(
         pick_text_span_node(lambda elements, index: True),
-        pick_if_transparent_node_followed_by_match(
+        pick_if_transparent_tag_followed_by_match(
             pick_text_span_node(lambda elements, index: True)
         ),
     ),
@@ -212,7 +214,7 @@ Splitter to enable grouping of text_span nodes.
 
 
 group_str_splitter = cast(
-    Splitter[NodeOrText, List[NodeOrText]],
+    Splitter[PageElementOrString, Sequence[PageElementOrString]],
     make_while_splitter(
         pick_str(lambda elements, index: True),
         pick_str(lambda elements, index: True),
@@ -225,19 +227,19 @@ Splitter to enable grouping of strings.
 
 def make_recombine_interrupted_lines_splitter(
     start_node_type: str,
-) -> Splitter[NodeOrText, List[NodeOrText]]:
+) -> Splitter[PageElementOrString, Sequence[PageElementOrString]]:
     """
     Builds a splitter for groupping text that is interrupted by page separators.
     """
 
     def _splitter(
-        elements: List[NodeOrText],
-    ) -> RawSplit[NodeOrText, List[NodeOrText]] | None:
-        before: List[NodeOrText] = []
+        elements: Sequence[PageElementOrString],
+    ) -> RawSplit[PageElementOrString, List[PageElementOrString]] | None:
+        before: List[PageElementOrString] = []
         while elements:
             # Find the next starting element
             before_start, elements = split_before_match(
-                elements, lambda elements, i: is_node(elements[i], type_in=[start_node_type])
+                elements, lambda elements, i: is_tag(elements[i], tag_name_in=[start_node_type])
             )
             before.extend(before_start)
             if not elements:
@@ -255,8 +257,11 @@ def make_recombine_interrupted_lines_splitter(
                     elements,
                     lambda elements, i: (
                         i > 0  # need at least one page separator
-                        and all(is_node(el, type_in=["page_separator"]) for el in elements[:i])
-                        and is_node(elements[i], type_in=["text_span"])
+                        and all(
+                            is_tag(element, tag_name_in=["page_separator"])
+                            for element in elements[:i]
+                        )
+                        and is_tag(elements[i], tag_name_in=["text_span"])
                         and is_continuing_sentence(previous_text, get_string(elements[i]))
                     ),
                 )
@@ -282,81 +287,89 @@ def make_recombine_interrupted_lines_splitter(
     return _splitter
 
 
-def is_node(node: NodeOrText, type_in: List[str] | None = None) -> TypeGuard[Node]:
-    if not isinstance(node, Node):
+def is_tag(tag: PageElementOrString, tag_name_in: List[str] | None = None) -> TypeGuard[Tag]:
+    if not isinstance(tag, Tag):
         return False
 
-    if type_in is not None:
-        return node.type in type_in
+    if tag_name_in is not None:
+        return tag.name is not None and tag.name in tag_name_in
     return True
 
 
-def get_string(node: NodeOrText) -> str:
+def get_string(element: PageElementOrString) -> str:
     """
-    Extracts the string from a Node.
-    If the node is a str, it returns it.
-    If the node is a Node, it recursively extracts strings from its text_span children.
+    Extracts the string from a Tag.
+    If the element is a str, it returns it.
+    If the element is a Tag, it recursively extracts strings from its text_span children.
     If its has other than text_span children, it will raises a ValueError.
     """
-    if isinstance(node, str):
-        return node
-    strings: List[str] = [_get_string(child) for child in node.children]
-    return merge_strings(strings)
-
-
-def _get_string(element: NodeOrText) -> str:
     if isinstance(element, str):
         return element
-    elif is_node(element, type_in=["text_span", *INLINE_NODE_TYPES]):
-        return merge_strings(_get_string(child) for child in element.children)
-    elif is_node(element, type_in=TRANSPARENT_NODE_TYPES):
+    elif is_tag(element):
+        strings: List[str] = [_get_string(child) for child in element.contents]
+        return merge_strings(strings)
+    else:
+        raise ValueError(f"Element '{element}' is neither a string nor a Tag")
+
+
+def _get_string(element: PageElementOrString) -> str:
+    if isinstance(element, str):
+        return element
+    elif is_tag(element, tag_name_in=["text_span", *INLINE_TAG_TYPES]):
+        return merge_strings(_get_string(child) for child in element.contents)
+    elif is_tag(element, tag_name_in=TRANSPARENT_TAG_TYPES):
         return ""
     else:
         raise ValueError(f"Unexpected element '{element}'")
 
 
 @iter_func_to_list
-def get_strings(nodes: List[NodeOrText]) -> Iterator[str]:
-    for node in nodes:
-        if is_node(node, type_in=["text_span"]):
-            yield get_string(node)
-        elif is_node(node, type_in=TRANSPARENT_NODE_TYPES):
+def get_strings(tags: Sequence[PageElementOrString]) -> Iterator[str]:
+    for tag in tags:
+        if is_tag(tag, tag_name_in=["text_span"]):
+            yield get_string(tag)
+        elif is_tag(tag, tag_name_in=TRANSPARENT_TAG_TYPES):
             continue
         else:
-            raise ValueError(f"Node '{node}' is not a text_span or an transparent node")
+            raise ValueError(f"Tag '{tag}' is not a text_span or a transparent tag")
 
 
 def combine_text_spans(
-    elements: List[NodeOrText],
-) -> Node:
+    context: DocumentContext,
+    elements: Sequence[PageElementOrString],
+) -> Tag:
     """
-    Combines a list of strings and text_span nodes into a single text_span node.
+    Combines a list of strings and text_span tags into a single text_span tag.
     """
-    children: List[NodeOrText] = []
-    first_text_span: Node | None = None
-    last_text_span: Node | None = None
+    children: List[PageElementOrString] = []
+    first_text_span: Tag | None = None
+    last_text_span: Tag | None = None
     for element in elements:
-        if is_node(element, type_in=["text_span"]):
+        if is_tag(element, tag_name_in=["text_span"]):
             if first_text_span is None:
                 first_text_span = element
             last_text_span = element
             for text_span_child in element.children:
-                if isinstance(text_span_child, str) or is_node(
-                    text_span_child, type_in=TRANSPARENT_NODE_TYPES + INLINE_NODE_TYPES
+                if isinstance(text_span_child, str) or is_tag(
+                    text_span_child, tag_name_in=TRANSPARENT_TAG_TYPES + INLINE_TAG_TYPES
                 ):
                     children.append(text_span_child)
                 else:
-                    raise ValueError(f"Unexpected child '{text_span_child}' in of text_span node")
+                    raise ValueError(f"Unexpected child '{text_span_child}' in of text_span tag")
 
-        elif is_node(element, type_in=TRANSPARENT_NODE_TYPES):
+        elif is_tag(element, tag_name_in=TRANSPARENT_TAG_TYPES):
             children.append(element)
 
         else:
             raise ValueError(f"Unexpected element '{element}' ")
 
     assert first_text_span is not None and last_text_span is not None, "No text_span found"
-    return Node(
-        type="text_span",
-        children=children,
-        data=dict(start=first_text_span.data["start"], end=last_text_span.data["end"]),
+    return make_segmentation_tag(
+        context.soup,
+        "text_span",
+        contents=children,
+        data=dict(
+            start=read_segmentation_tag_data(first_text_span)["start"],
+            end=read_segmentation_tag_data(last_text_span)["end"],
+        ),
     )

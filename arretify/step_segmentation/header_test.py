@@ -18,9 +18,8 @@
 #
 import unittest
 
-from bs4 import BeautifulSoup
-
-from arretify.utils.testing import normalized_html_str
+from arretify.utils.html_create import make_segmentation_tag
+from arretify.utils.testing import create_document_context, normalized_html_str
 from .header import (
     parse_visa_and_motif_elements,
     _parse_header_element,
@@ -30,14 +29,20 @@ from .header import (
     rendre_arrete_title,
 )
 from .testing import assert_elements_equal, make_text_spans
-from .core import Node
 
 
-class TestParseVisaAndMotifs(unittest.TestCase):
+class BaseTestCase(unittest.TestCase):
+    def setUp(self):
+        self.context = create_document_context()
+        self.soup = self.context.soup
+
+
+class TestParseVisaAndMotifs(BaseTestCase):
 
     def test_variant_simple(self):
         # Arrange
         elements = make_text_spans(
+            self.soup,
             (
                 "Vu le code de l'environnement, et notamment ses titres "
                 "1er et 4 des parties réglementaires et législatives du livre V ;"
@@ -49,28 +54,32 @@ class TestParseVisaAndMotifs(unittest.TestCase):
         )
 
         # Act
-        result = list(parse_visa_and_motif_elements(elements))
+        result = list(parse_visa_and_motif_elements(self.context, elements))
 
         # Assert
         assert_elements_equal(
             result,
             [
-                Node(
-                    type="visa",
-                    children=make_text_spans(
+                make_segmentation_tag(
+                    self.soup,
+                    "visa",
+                    contents=make_text_spans(
+                        self.soup,
                         (
                             "Vu le code de l'environnement, et notamment ses titres "
                             "1er et 4 des parties réglementaires et législatives du livre V ;"
-                        )
+                        ),
                     ),
                 ),
-                Node(
-                    type="visa",
-                    children=make_text_spans(
+                make_segmentation_tag(
+                    self.soup,
+                    "visa",
+                    contents=make_text_spans(
+                        self.soup,
                         (
                             "Vu la nomenclature des installations classées codifiée à l'annexe "
                             "de l'article R511-9 du code de l'environnement ;"
-                        )
+                        ),
                     ),
                 ),
             ],
@@ -79,27 +88,26 @@ class TestParseVisaAndMotifs(unittest.TestCase):
 
     def test_variant_simple_interrupted_by_random_text(self):
         # Arrange
-        elements = [
-            *make_text_spans("Vu bla"),
-            *make_text_spans("Ceci est du texte aléatoire qui n'est pas un visa."),
-            *make_text_spans("Vu blo"),
-        ]
+        elements = make_text_spans(
+            self.soup,
+            "Vu bla",
+            "Ceci est du texte aléatoire qui n'est pas un visa.",
+            "Vu blo",
+        )
 
         # Act
-        result = list(parse_visa_and_motif_elements(elements))
+        result = list(parse_visa_and_motif_elements(self.context, elements))
 
         # Assert
         assert_elements_equal(
             result,
             [
-                Node(
-                    type="visa",
-                    children=make_text_spans("Vu bla"),
+                make_segmentation_tag(
+                    self.soup, "visa", contents=make_text_spans(self.soup, "Vu bla")
                 ),
-                *make_text_spans("Ceci est du texte aléatoire qui n'est pas un visa."),
-                Node(
-                    type="visa",
-                    children=make_text_spans("Vu blo"),
+                *make_text_spans(self.soup, "Ceci est du texte aléatoire qui n'est pas un visa."),
+                make_segmentation_tag(
+                    self.soup, "visa", contents=make_text_spans(self.soup, "Vu blo")
                 ),
             ],
             ignore_text_span_data=True,
@@ -108,9 +116,11 @@ class TestParseVisaAndMotifs(unittest.TestCase):
     def test_variant_simple_inside_list(self):
         # Arrange
         elements = [
-            Node(
-                type="list",
-                children=make_text_spans(
+            make_segmentation_tag(
+                self.soup,
+                "list",
+                contents=make_text_spans(
+                    self.soup,
                     "- Considérant que blabla ;",
                     "- Considérant que bloblo ;",
                 ),
@@ -118,23 +128,21 @@ class TestParseVisaAndMotifs(unittest.TestCase):
         ]
 
         # Act
-        result = parse_visa_and_motif_elements(elements)
+        result = parse_visa_and_motif_elements(self.context, elements)
 
         # Assert
         assert_elements_equal(
             result,
             [
-                Node(
-                    type="motif",
-                    children=make_text_spans(
-                        "- Considérant que blabla ;",
-                    ),
+                make_segmentation_tag(
+                    self.soup,
+                    "motif",
+                    contents=make_text_spans(self.soup, "- Considérant que blabla ;"),
                 ),
-                Node(
-                    type="motif",
-                    children=make_text_spans(
-                        "- Considérant que bloblo ;",
-                    ),
+                make_segmentation_tag(
+                    self.soup,
+                    "motif",
+                    contents=make_text_spans(self.soup, "- Considérant que bloblo ;"),
                 ),
             ],
             ignore_text_span_data=True,
@@ -143,32 +151,32 @@ class TestParseVisaAndMotifs(unittest.TestCase):
     def test_variant_simple_page_separator_interrupting_sentence(self):
         # Arrange
         elements = [
-            *make_text_spans("Vu le code de l'environnement, et notamment ses titres 1er et 4"),
-            Node(
-                type="page_separator",
-                children=[],
+            *make_text_spans(
+                self.soup, "Vu le code de l'environnement, et notamment ses titres 1er et 4"
             ),
-            *make_text_spans("des parties réglementaires et législatives du livre V ;"),
+            make_segmentation_tag(self.soup, "page_separator"),
+            *make_text_spans(self.soup, "des parties réglementaires et législatives du livre V ;"),
         ]
 
         # Act
-        result = list(parse_visa_and_motif_elements(elements))
+        result = list(parse_visa_and_motif_elements(self.context, elements))
 
         # Assert
         assert_elements_equal(
             result,
             [
-                Node(
-                    type="visa",
-                    children=[
+                make_segmentation_tag(
+                    self.soup,
+                    "visa",
+                    contents=[
                         *make_text_spans(
-                            "Vu le code de l'environnement, et notamment ses titres 1er et 4"
+                            self.soup,
+                            "Vu le code de l'environnement, et notamment ses titres 1er et 4",
                         ),
-                        Node(
-                            type="page_separator",
-                            children=[],
+                        make_segmentation_tag(self.soup, "page_separator"),
+                        *make_text_spans(
+                            self.soup, "des parties réglementaires et législatives du livre V ;"
                         ),
-                        *make_text_spans("des parties réglementaires et législatives du livre V ;"),
                     ],
                 ),
             ],
@@ -178,6 +186,7 @@ class TestParseVisaAndMotifs(unittest.TestCase):
     def test_variant_implicit_list(self):
         # Arrange
         elements = make_text_spans(
+            self.soup,
             "CONSIDÉRANT : ",
             "que blabla ;",
             "que bloblo ;",
@@ -185,24 +194,23 @@ class TestParseVisaAndMotifs(unittest.TestCase):
         )
 
         # Act
-        result = list(parse_visa_and_motif_elements(elements))
+        result = list(parse_visa_and_motif_elements(self.context, elements))
 
         # Assert
         assert_elements_equal(
             result,
             [
-                *make_text_spans("CONSIDÉRANT : "),
-                Node(
-                    type="motif",
-                    children=make_text_spans("que blabla ;"),
+                *make_text_spans(self.soup, "CONSIDÉRANT : "),
+                make_segmentation_tag(
+                    self.soup, "motif", contents=make_text_spans(self.soup, "que blabla ;")
                 ),
-                Node(
-                    type="motif",
-                    children=make_text_spans("que bloblo ;"),
+                make_segmentation_tag(
+                    self.soup, "motif", contents=make_text_spans(self.soup, "que bloblo ;")
                 ),
-                Node(
-                    type="motif",
-                    children=make_text_spans("qu'en application de blibli ;"),
+                make_segmentation_tag(
+                    self.soup,
+                    "motif",
+                    contents=make_text_spans(self.soup, "qu'en application de blibli ;"),
                 ),
             ],
             ignore_text_span_data=True,
@@ -212,50 +220,52 @@ class TestParseVisaAndMotifs(unittest.TestCase):
         # Arrange
         elements = [
             *make_text_spans(
+                self.soup,
                 "Vu : ",
                 (
                     "le code de l'environnement, et notamment ses titres "
                     "1er et 4 des parties réglementaires et législatives du livre V ;"
                 ),
             ),
-            Node(
-                type="page_footer",
-                children=make_text_spans("page 1"),
+            make_segmentation_tag(
+                self.soup, "page_footer", contents=make_text_spans(self.soup, "page 1")
             ),
             *make_text_spans(
+                self.soup,
                 (
                     "la nomenclature des installations classées codifiée à l'annexe "
                     "de l'article R511-9 du code de l'environnement ;"
-                )
+                ),
             ),
         ]
 
         # Act
-        result = list(parse_visa_and_motif_elements(elements))
+        result = list(parse_visa_and_motif_elements(self.context, elements))
 
         # Assert
         assert_elements_equal(
             result,
             [
-                *make_text_spans(
-                    "Vu : ",
-                ),
-                Node(
-                    type="visa",
-                    children=make_text_spans(
+                *make_text_spans(self.soup, "Vu : "),
+                make_segmentation_tag(
+                    self.soup,
+                    "visa",
+                    contents=make_text_spans(
+                        self.soup,
                         "le code de l'environnement, et notamment ses titres "
-                        "1er et 4 des parties réglementaires et législatives du livre V ;"
+                        "1er et 4 des parties réglementaires et législatives du livre V ;",
                     ),
                 ),
-                Node(
-                    type="page_footer",
-                    children=make_text_spans("page 1"),
+                make_segmentation_tag(
+                    self.soup, "page_footer", contents=make_text_spans(self.soup, "page 1")
                 ),
-                Node(
-                    type="visa",
-                    children=make_text_spans(
+                make_segmentation_tag(
+                    self.soup,
+                    "visa",
+                    contents=make_text_spans(
+                        self.soup,
                         "la nomenclature des installations classées codifiée à l'annexe "
-                        "de l'article R511-9 du code de l'environnement ;"
+                        "de l'article R511-9 du code de l'environnement ;",
                     ),
                 ),
             ],
@@ -265,10 +275,12 @@ class TestParseVisaAndMotifs(unittest.TestCase):
     def test_variant_explicit_list(self):
         # Arrange
         elements = [
-            *make_text_spans("Vu : "),
-            Node(
-                type="list",
-                children=make_text_spans(
+            *make_text_spans(self.soup, "Vu : "),
+            make_segmentation_tag(
+                self.soup,
+                "list",
+                contents=make_text_spans(
+                    self.soup,
                     "- le code de l'environnement ;",
                     "- la nomenclature des installations classées ;",
                 ),
@@ -276,20 +288,24 @@ class TestParseVisaAndMotifs(unittest.TestCase):
         ]
 
         # Act
-        result = list(parse_visa_and_motif_elements(elements))
+        result = list(parse_visa_and_motif_elements(self.context, elements))
 
         # Assert
         assert_elements_equal(
             result,
             [
-                *make_text_spans("Vu : "),
-                Node(
-                    type="visa",
-                    children=make_text_spans("- le code de l'environnement ;"),
+                *make_text_spans(self.soup, "Vu : "),
+                make_segmentation_tag(
+                    self.soup,
+                    "visa",
+                    contents=make_text_spans(self.soup, "- le code de l'environnement ;"),
                 ),
-                Node(
-                    type="visa",
-                    children=make_text_spans("- la nomenclature des installations classées ;"),
+                make_segmentation_tag(
+                    self.soup,
+                    "visa",
+                    contents=make_text_spans(
+                        self.soup, "- la nomenclature des installations classées ;"
+                    ),
                 ),
             ],
             ignore_text_span_data=True,
@@ -298,38 +314,42 @@ class TestParseVisaAndMotifs(unittest.TestCase):
     def test_variant_explicit_list_interrupted(self):
         # Arrange
         elements = [
-            *make_text_spans("Vu : "),
-            Node(
-                type="list",
-                children=make_text_spans(
-                    "- le code de l'environnement ;",
-                ),
+            *make_text_spans(self.soup, "Vu : "),
+            make_segmentation_tag(
+                self.soup,
+                "list",
+                contents=make_text_spans(self.soup, "- le code de l'environnement ;"),
             ),
-            *make_text_spans("Ceci est du texte aléatoire qui n'est pas un visa."),
-            Node(
-                type="list",
-                children=make_text_spans(
-                    "- la nomenclature des installations classées ;",
+            *make_text_spans(self.soup, "Ceci est du texte aléatoire qui n'est pas un visa."),
+            make_segmentation_tag(
+                self.soup,
+                "list",
+                contents=make_text_spans(
+                    self.soup, "- la nomenclature des installations classées ;"
                 ),
             ),
         ]
 
         # Act
-        result = list(parse_visa_and_motif_elements(elements))
+        result = list(parse_visa_and_motif_elements(self.context, elements))
 
         # Assert
         assert_elements_equal(
             result,
             [
-                *make_text_spans("Vu : "),
-                Node(
-                    type="visa",
-                    children=make_text_spans("- le code de l'environnement ;"),
+                *make_text_spans(self.soup, "Vu : "),
+                make_segmentation_tag(
+                    self.soup,
+                    "visa",
+                    contents=make_text_spans(self.soup, "- le code de l'environnement ;"),
                 ),
-                *make_text_spans("Ceci est du texte aléatoire qui n'est pas un visa."),
-                Node(
-                    type="visa",
-                    children=make_text_spans("- la nomenclature des installations classées ;"),
+                *make_text_spans(self.soup, "Ceci est du texte aléatoire qui n'est pas un visa."),
+                make_segmentation_tag(
+                    self.soup,
+                    "visa",
+                    contents=make_text_spans(
+                        self.soup, "- la nomenclature des installations classées ;"
+                    ),
                 ),
             ],
             ignore_text_span_data=True,
@@ -338,10 +358,12 @@ class TestParseVisaAndMotifs(unittest.TestCase):
     def test_variant_explicit_list_vu_inside_list_element(self):
         # Arrange
         elements = [
-            *make_text_spans("Vu : "),
-            Node(
-                type="list",
-                children=make_text_spans(
+            *make_text_spans(self.soup, "Vu : "),
+            make_segmentation_tag(
+                self.soup,
+                "list",
+                contents=make_text_spans(
+                    self.soup,
                     "- le code de l'environnement ;",
                     "- la nomenclature des installations classées ;",
                     "- vu la demande déposée par la société XYZ ;",
@@ -350,24 +372,31 @@ class TestParseVisaAndMotifs(unittest.TestCase):
         ]
 
         # Act
-        result = list(parse_visa_and_motif_elements(elements))
+        result = list(parse_visa_and_motif_elements(self.context, elements))
 
         # Assert
         assert_elements_equal(
             result,
             [
-                *make_text_spans("Vu : "),
-                Node(
-                    type="visa",
-                    children=make_text_spans("- le code de l'environnement ;"),
+                *make_text_spans(self.soup, "Vu : "),
+                make_segmentation_tag(
+                    self.soup,
+                    "visa",
+                    contents=make_text_spans(self.soup, "- le code de l'environnement ;"),
                 ),
-                Node(
-                    type="visa",
-                    children=make_text_spans("- la nomenclature des installations classées ;"),
+                make_segmentation_tag(
+                    self.soup,
+                    "visa",
+                    contents=make_text_spans(
+                        self.soup, "- la nomenclature des installations classées ;"
+                    ),
                 ),
-                Node(
-                    type="visa",
-                    children=make_text_spans("- vu la demande déposée par la société XYZ ;"),
+                make_segmentation_tag(
+                    self.soup,
+                    "visa",
+                    contents=make_text_spans(
+                        self.soup, "- vu la demande déposée par la société XYZ ;"
+                    ),
                 ),
             ],
             ignore_text_span_data=True,
@@ -377,16 +406,16 @@ class TestParseVisaAndMotifs(unittest.TestCase):
         # Arrange
         elements = [
             *make_text_spans(
+                self.soup,
                 "Considérant que la demande de modification sollicitée "
-                "le 19 juillet 2021 porte sur :"
+                "le 19 juillet 2021 porte sur:",
             ),
-            Node(
-                type="page_separator",
-                children=[],
-            ),
-            Node(
-                type="list",
-                children=make_text_spans(
+            make_segmentation_tag(self.soup, "page_separator"),
+            make_segmentation_tag(
+                self.soup,
+                "list",
+                contents=make_text_spans(
+                    self.soup,
                     "- la modification de l'installation de stockage de déchets non dangereux ;",
                     "- la mise en conformité avec les exigences réglementaires ;",
                 ),
@@ -394,28 +423,31 @@ class TestParseVisaAndMotifs(unittest.TestCase):
         ]
 
         # Act
-        result = list(parse_visa_and_motif_elements(elements))
+        result = list(parse_visa_and_motif_elements(self.context, elements))
 
         # Assert
         assert_elements_equal(
             result,
             [
-                Node(
-                    type="motif",
-                    children=[
+                make_segmentation_tag(
+                    self.soup,
+                    "motif",
+                    contents=[
                         *make_text_spans(
+                            self.soup,
                             "Considérant que la demande de modification sollicitée "
-                            "le 19 juillet 2021 porte sur :"
+                            "le 19 juillet 2021 porte sur:",
                         ),
-                        Node(
-                            type="page_separator",
-                            children=[],
-                        ),
-                        Node(
-                            type="list",
-                            children=make_text_spans(
-                                "- la modification de l'installation de stockage de déchets "
-                                "non dangereux ;",
+                        make_segmentation_tag(self.soup, "page_separator"),
+                        make_segmentation_tag(
+                            self.soup,
+                            "list",
+                            contents=make_text_spans(
+                                self.soup,
+                                (
+                                    "- la modification de l'installation de stockage de déchets"
+                                    " non dangereux ;"
+                                ),
                                 "- la mise en conformité avec les exigences réglementaires ;",
                             ),
                         ),
@@ -426,22 +458,18 @@ class TestParseVisaAndMotifs(unittest.TestCase):
         )
 
 
-class TestRenderHeaderElement(unittest.TestCase):
-
-    def setUp(self):
-        self.soup = BeautifulSoup("", features="html.parser")
+class TestRenderHeaderElement(BaseTestCase):
 
     def test_render_header_element(self):
         # Arrange
-        node = Node(
-            type="emblem",
-            children=make_text_spans(
-                "liberté égalité fraternité",
-            ),
+        node = make_segmentation_tag(
+            self.soup,
+            "emblem",
+            contents=make_text_spans(self.soup, "liberté égalité fraternité"),
         )
 
         # Act
-        rendered = render_header_element(self.soup, node)
+        rendered = render_header_element(self.context, node)
 
         # Assert
         assert normalized_html_str(str(rendered)) == normalized_html_str(
@@ -455,26 +483,29 @@ class TestRenderHeaderElement(unittest.TestCase):
         )
 
 
-class TestParseHeaderElement(unittest.TestCase):
+class TestParseHeaderElement(BaseTestCase):
 
     def test_parse_header_element(self):
         # Arrange
         elements = make_text_spans(
+            self.soup,
             "liberte",
             "égalité",
             "fraternité",
         )
 
         # Act
-        elements = _parse_header_element(elements, "emblem")
+        elements = _parse_header_element(self.context, elements, "emblem")
 
         # Assert
         assert_elements_equal(
             elements,
             [
-                Node(
-                    type="emblem",
-                    children=make_text_spans(
+                make_segmentation_tag(
+                    self.soup,
+                    "emblem",
+                    contents=make_text_spans(
+                        self.soup,
                         "liberte",
                         "égalité",
                         "fraternité",
@@ -487,6 +518,7 @@ class TestParseHeaderElement(unittest.TestCase):
     def test_parse_header_element_fuzzy(self):
         # Arrange
         elements = make_text_spans(
+            self.soup,
             "prefecture de la région",
             "basée à Naboo",
             # Arrete title : should not be included in the entity
@@ -494,20 +526,23 @@ class TestParseHeaderElement(unittest.TestCase):
         )
 
         # Act
-        elements = _parse_header_element_fuzzy(elements, "entity")
+        elements = _parse_header_element_fuzzy(self.context, elements, "entity")
 
         # Assert
         assert_elements_equal(
             elements,
             [
-                Node(
-                    type="entity",
-                    children=make_text_spans(
+                make_segmentation_tag(
+                    self.soup,
+                    "entity",
+                    contents=make_text_spans(
+                        self.soup,
                         "prefecture de la région",
                         "basée à Naboo",
                     ),
                 ),
                 *make_text_spans(
+                    self.soup,
                     "Arrêté du 1er janvier 2020",
                 ),
             ],
@@ -515,23 +550,22 @@ class TestParseHeaderElement(unittest.TestCase):
         )
 
 
-class TestRenderVisaMotif(unittest.TestCase):
-
-    def setUp(self):
-        self.soup = BeautifulSoup("", features="html.parser")
+class TestRenderVisaMotif(BaseTestCase):
 
     def test_render_simple(self):
         # Arrange
-        node = Node(
-            type="visa",
-            children=make_text_spans(
+        node = make_segmentation_tag(
+            self.soup,
+            "visa",
+            contents=make_text_spans(
+                self.soup,
                 "Vu le code de l'environnement, et notamment ses titres "
                 "1er et 4 des parties réglementaires et législatives du livre V ;",
             ),
         )
 
         # Act
-        rendered = render_visa_motif(self.soup, node)
+        rendered = render_visa_motif(self.context, node)
 
         # Assert
         assert normalized_html_str(str(rendered)) == normalized_html_str(
@@ -544,22 +578,21 @@ class TestRenderVisaMotif(unittest.TestCase):
         )
 
 
-class TestRenderArreteTitle(unittest.TestCase):
-
-    def setUp(self):
-        self.soup = BeautifulSoup("", features="html.parser")
+class TestRenderArreteTitle(BaseTestCase):
 
     def test_render_arrete_title(self):
         # Arrange
-        node = Node(
-            type="arrete_title",
-            children=make_text_spans(
+        node = make_segmentation_tag(
+            self.soup,
+            "arrete_title",
+            contents=make_text_spans(
+                self.soup,
                 "Arrêté du 1er janvier 2020",
             ),
         )
 
         # Act
-        rendered = rendre_arrete_title(self.soup, node)
+        rendered = rendre_arrete_title(self.context, node)
 
         # Assert
         assert normalized_html_str(str(rendered)) == normalized_html_str(
