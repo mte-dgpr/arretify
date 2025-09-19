@@ -123,7 +123,7 @@ class TestParseSectionTitles(BaseTestCase):
             ignore_text_span_data=True,
         )
 
-    def test_reject_text_span_starting_with_inline_node(self):
+    def test_reject_text_span_starting_with_inline_tag(self):
         # Arrange
         elements = [
             *make_text_spans(

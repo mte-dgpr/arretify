@@ -112,14 +112,14 @@ class TestParseArrete(BaseTestCase):
             ignore_text_span_data=True,
         )
 
-    def test_parse_text_span_inline_content_nodes(self):
+    def test_parse_text_span_inline_content_tags(self):
         # Arrange
         pages = [
             (
                 "Arrêté n° 123\n"
                 "Article 1 : Disposition\n"
                 # This address should be parsed as an address
-                # node inside a text_span
+                # tag inside a text_span
                 "Bla bla, 123 rue de la Paix, bla ..."
             )
         ]

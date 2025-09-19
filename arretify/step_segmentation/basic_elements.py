@@ -72,12 +72,12 @@ from arretify.law_data.french_addresses import (
 
 from .core import (
     is_tag,
-    make_single_line_splitter_for_text_span_nodes,
+    make_single_line_splitter_for_text_spans,
     get_string,
     get_strings,
     combine_text_spans,
     make_probe_from_pattern_proxy,
-    pick_text_span_node,
+    pick_text_spans,
     pick_if_transparent_tag_followed_by_match,
     make_pattern_splitter,
 )
@@ -94,8 +94,8 @@ A match for the table splitter, in the form `(<table_elements>, <table_descripti
 """
 
 _is_table = make_probe_from_pattern_proxy(TABLE_LINE_PATTERN)
-_is_table_start = pick_text_span_node(_is_table)
-_is_table_end = negate(pick_if_transparent_tag_followed_by_match(pick_text_span_node(_is_table)))
+_is_table_start = pick_text_spans(_is_table)
+_is_table_end = negate(pick_if_transparent_tag_followed_by_match(pick_text_spans(_is_table)))
 
 
 def _make_table_description_end_probe(table_lines: Sequence[str]) -> Probe[PageElementOrString]:
@@ -104,7 +104,7 @@ def _make_table_description_end_probe(table_lines: Sequence[str]) -> Probe[PageE
             return True
         return False
 
-    return negate(pick_text_span_node(_is_table_description))
+    return negate(pick_text_spans(_is_table_description))
 
 
 def parse_tables(
@@ -180,7 +180,7 @@ def render_table(
 
     table_tag = parse_markdown_table(pile)
 
-    # Insert transparent nodes in their corresponding table rows.
+    # Insert transparent tags in their corresponding table rows.
     table_rows = table_tag.find_all("tr")
     for row_index, transparent_tag in transparent_tags:
         if row_index < len(table_rows) and row_index >= 0:
@@ -214,10 +214,8 @@ LEADING_WHITESPACES_PATTERN = PatternProxy(r"^\s+")
 """Detect leading whitespaces."""
 
 _is_list_element = make_probe_from_pattern_proxy(LIST_PATTERN)
-_is_list_start = pick_text_span_node(_is_list_element)
-_is_list_continuation = pick_if_transparent_tag_followed_by_match(
-    pick_text_span_node(_is_list_element)
-)
+_is_list_start = pick_text_spans(_is_list_element)
+_is_list_continuation = pick_if_transparent_tag_followed_by_match(pick_text_spans(_is_list_element))
 
 
 def _list_indentation(line: str) -> int:
@@ -370,8 +368,8 @@ DOUBLE_QUOTE_PATTERN = PatternProxy(r'"')
 """Basic double quote '"' pattern."""
 
 
-_is_blockquote_start = pick_text_span_node(make_probe_from_pattern_proxy(BLOCKQUOTE_START_PATTERN))
-_is_blockquote_end = pick_text_span_node(
+_is_blockquote_start = pick_text_spans(make_probe_from_pattern_proxy(BLOCKQUOTE_START_PATTERN))
+_is_blockquote_end = pick_text_spans(
     make_probe_from_pattern_proxy(BLOCKQUOTE_END_PATTERN, use_search=True)
 )
 
@@ -477,7 +475,7 @@ def render_blockquote(
                 make_new_tag(
                     context.soup,
                     "p",
-                    # TODO : should be parsed like other nodes, instead of being
+                    # TODO : should be parsed like other tags, instead of being
                     # rendered here on the fly. This would also make parsing blockquote easier.
                     contents=render_inline_quotes(context, get_string(element)),
                 )
@@ -499,7 +497,7 @@ def parse_images(
     return map_splitted_elements(
         split_elements(
             elements,
-            make_single_line_splitter_for_text_span_nodes(_is_image),
+            make_single_line_splitter_for_text_spans(_is_image),
         ),
         lambda children: make_segmentation_tag(context.soup, "image", contents=children),
     )

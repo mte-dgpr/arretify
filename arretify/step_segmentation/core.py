@@ -74,7 +74,7 @@ def pick_if_transparent_tag_followed_by_match(
     ... ]
     >>> def is_string(elements: Sequence[PageElementOrString], index: int) -> bool:
     ...     return isinstance(elements[index], str)
-    >>> probe = pick_if_transparent_node_followed_by_match(is_string)
+    >>> probe = pick_if_transparent_tag_followed_by_match(is_string)
     >>> probe(elements, 0) # -> directly calls `is_string`
     True
     >>> probe(elements, 1) # -> calls `is_string` on the next element
@@ -94,7 +94,7 @@ def pick_if_transparent_tag_followed_by_match(
     return _probe
 
 
-def pick_text_span_node(
+def pick_text_spans(
     probe: Probe[PageElementOrString],
 ) -> Probe[PageElementOrString]:
     def _probe(elements: Sequence[PageElementOrString], index: int) -> bool:
@@ -132,21 +132,21 @@ def make_probe_from_pattern_proxy(
     return _probe
 
 
-def make_while_splitter_for_text_span_nodes(
+def make_while_splitter_for_text_spans(
     start_condition: Probe[PageElementOrString],
     while_condition: Probe[PageElementOrString],
 ) -> Splitter[PageElementOrString, list[PageElementOrString]]:
     return make_while_splitter(
-        pick_text_span_node(start_condition),
-        pick_if_transparent_tag_followed_by_match(pick_text_span_node(while_condition)),
+        pick_text_spans(start_condition),
+        pick_if_transparent_tag_followed_by_match(pick_text_spans(while_condition)),
     )
 
 
-def make_single_line_splitter_for_text_span_nodes(
+def make_single_line_splitter_for_text_spans(
     is_matching: Probe[PageElementOrString],
 ) -> Splitter[PageElementOrString, list[PageElementOrString]]:
     return make_single_line_splitter(
-        is_matching=pick_text_span_node(is_matching),
+        is_matching=pick_text_spans(is_matching),
     )
 
 
@@ -184,17 +184,15 @@ def make_pattern_splitter(
     return _splitter
 
 
-group_text_span_nodes_splitter = cast(
+group_text_span_tags_splitter = cast(
     Splitter[PageElementOrString, Sequence[PageElementOrString]],
     make_while_splitter(
-        pick_text_span_node(lambda elements, index: True),
-        pick_if_transparent_tag_followed_by_match(
-            pick_text_span_node(lambda elements, index: True)
-        ),
+        pick_text_spans(lambda elements, index: True),
+        pick_if_transparent_tag_followed_by_match(pick_text_spans(lambda elements, index: True)),
     ),
 )
 """
-Splitter to enable grouping of text_span nodes.
+Splitter to enable grouping of text_span tags.
 """
 
 
@@ -211,7 +209,7 @@ Splitter to enable grouping of strings.
 
 
 def make_recombine_interrupted_lines_splitter(
-    start_node_type: str,
+    start_tag_type: str,
 ) -> Splitter[PageElementOrString, Sequence[PageElementOrString]]:
     """
     Builds a splitter for groupping text that is interrupted by page separators.
@@ -224,7 +222,7 @@ def make_recombine_interrupted_lines_splitter(
         while elements:
             # Find the next starting element
             before_start, elements = split_before_match(
-                elements, lambda elements, i: is_tag(elements[i], tag_name_in=[start_node_type])
+                elements, lambda elements, i: is_tag(elements[i], tag_name_in=[start_tag_type])
             )
             before.extend(before_start)
             if not elements:

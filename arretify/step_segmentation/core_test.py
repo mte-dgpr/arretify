@@ -22,10 +22,10 @@ from arretify.regex_utils import PatternProxy
 from arretify.utils.html_create import make_segmentation_tag
 from arretify.utils.testing import create_document_context
 from .core import (
-    make_while_splitter_for_text_span_nodes,
-    pick_text_span_node,
+    make_while_splitter_for_text_spans,
+    pick_text_spans,
     pick_str,
-    group_text_span_nodes_splitter,
+    group_text_span_tags_splitter,
     make_probe_from_pattern_proxy,
     get_string,
     combine_text_spans,
@@ -41,14 +41,14 @@ class BaseTestCase(unittest.TestCase):
         self.soup = self.context.soup
 
 
-class TestMakeWhileSplitterForTextSpanNodes(BaseTestCase):
+class TestMakeWhileSplitterForTextSpans(BaseTestCase):
 
     def test_rejects_non_text_span(self):
         # Arrange
         def probe(elements, index):
             return elements[index].contents[0].startswith("match")
 
-        splitter = make_while_splitter_for_text_span_nodes(
+        splitter = make_while_splitter_for_text_spans(
             probe,
             probe,
         )
@@ -69,7 +69,7 @@ class TestMakeWhileSplitterForTextSpanNodes(BaseTestCase):
         def probe(elements, index):
             return elements[index].contents[0].startswith("match")
 
-        splitter = make_while_splitter_for_text_span_nodes(
+        splitter = make_while_splitter_for_text_spans(
             probe,
             probe,
         )
@@ -89,12 +89,12 @@ class TestMakeWhileSplitterForTextSpanNodes(BaseTestCase):
         def while_condition(elements, index):
             return elements[index].contents[0].startswith("match")
 
-        splitter = make_while_splitter_for_text_span_nodes(
+        splitter = make_while_splitter_for_text_spans(
             start_condition,
             while_condition,
         )
         elements = [
-            make_segmentation_tag(self.soup, "some_node"),
+            make_segmentation_tag(self.soup, "some_tag"),
             *make_text_spans(self.soup, "match this", "match that", "no match"),
         ]
 
@@ -104,12 +104,12 @@ class TestMakeWhileSplitterForTextSpanNodes(BaseTestCase):
         # Assert
         assert result == (elements[:1], elements[1:3], elements[3:])
 
-    def test_not_interrupted_by_transparent_node(self):
+    def test_not_interrupted_by_transparent_tag(self):
         # Arrange
         def probe(elements, index):
             return elements[index].contents[0].startswith("match")
 
-        splitter = make_while_splitter_for_text_span_nodes(probe, probe)
+        splitter = make_while_splitter_for_text_spans(probe, probe)
         elements = [
             *make_text_spans(self.soup, "match this"),
             make_segmentation_tag(self.soup, "page_separator"),
@@ -123,31 +123,31 @@ class TestMakeWhileSplitterForTextSpanNodes(BaseTestCase):
         assert result == ([], elements[0:3], elements[3:])
 
 
-class TestGroupTextSpanNodesSplitter(BaseTestCase):
+class TestGroupTextSpanTagsSplitter(BaseTestCase):
 
     def test_simple(self):
         # Arrange
         elements = [
-            make_segmentation_tag(self.soup, "node1"),
+            make_segmentation_tag(self.soup, "tag1"),
             make_segmentation_tag(self.soup, "text_span", contents=["line1"]),
             make_segmentation_tag(self.soup, "text_span", contents=["line2", "line3"]),
-            make_segmentation_tag(self.soup, "node2"),
+            make_segmentation_tag(self.soup, "tag2"),
         ]
 
         # Act
-        result = group_text_span_nodes_splitter(elements)
+        result = group_text_span_tags_splitter(elements)
 
         # Assert
         assert result == (
             [
-                make_segmentation_tag(self.soup, "node1"),
+                make_segmentation_tag(self.soup, "tag1"),
             ],
             [
                 make_segmentation_tag(self.soup, "text_span", contents=["line1"]),
                 make_segmentation_tag(self.soup, "text_span", contents=["line2", "line3"]),
             ],
             [
-                make_segmentation_tag(self.soup, "node2"),
+                make_segmentation_tag(self.soup, "tag2"),
             ],
         )
 
@@ -179,25 +179,25 @@ class TestMakeProbeFromPatternProxy(BaseTestCase):
         assert result is False
 
 
-class TestPickTextSpanNode(BaseTestCase):
+class TestPickTextSpans(BaseTestCase):
 
     def test_simple(self):
         # Arrange
         elements = [
             make_segmentation_tag(self.soup, "text_span", contents=["bla1"]),
-            make_segmentation_tag(self.soup, "some_node"),
+            make_segmentation_tag(self.soup, "some_tag"),
             "bla2",
             make_segmentation_tag(self.soup, "text_span", contents=["blo4", "bla5"]),
         ]
 
         # Act
-        text_span_node_probe = pick_text_span_node(lambda elements, index: True)
+        text_spans_probe = pick_text_spans(lambda elements, index: True)
 
         # Assert
-        assert text_span_node_probe(elements, 0) is True
-        assert text_span_node_probe(elements, 1) is False
-        assert text_span_node_probe(elements, 2) is False
-        assert text_span_node_probe(elements, 3) is True
+        assert text_spans_probe(elements, 0) is True
+        assert text_spans_probe(elements, 1) is False
+        assert text_spans_probe(elements, 2) is False
+        assert text_spans_probe(elements, 3) is True
 
 
 class TestPickStr(BaseTestCase):
@@ -206,7 +206,7 @@ class TestPickStr(BaseTestCase):
         # Arrange
         elements = [
             "bla1",
-            make_segmentation_tag(self.soup, "some_node"),
+            make_segmentation_tag(self.soup, "some_tag"),
             "blo4",
         ]
 
@@ -310,9 +310,9 @@ class TestGetString(BaseTestCase):
         # Assert
         assert result == "This is a test"
 
-    def test_node_with_string_children(self):
+    def test_tag_with_string_children(self):
         # Arrange
-        tag = make_segmentation_tag(self.soup, "some_node", contents=["This is", " a test"])
+        tag = make_segmentation_tag(self.soup, "some_tag", contents=["This is", " a test"])
 
         # Act
         result = get_string(tag)
@@ -320,11 +320,11 @@ class TestGetString(BaseTestCase):
         # Assert
         assert result == "This is a test"
 
-    def test_node_with_text_spans(self):
+    def test_tag_with_text_spans(self):
         # Arrange
         tag = make_segmentation_tag(
             self.soup,
-            "some_node",
+            "some_tag",
             contents=[
                 "This is",
                 make_segmentation_tag(self.soup, "text_span", contents=[" a test"]),
@@ -337,11 +337,11 @@ class TestGetString(BaseTestCase):
         # Assert
         assert result == "This is a test"
 
-    def test_node_with_non_text_child(self):
+    def test_tag_with_non_text_child(self):
         # Arrange
         tag = make_segmentation_tag(
             self.soup,
-            "some_node",
+            "some_tag",
             contents=[
                 "This is",
                 make_segmentation_tag(self.soup, "non_text"),
@@ -353,7 +353,7 @@ class TestGetString(BaseTestCase):
         with self.assertRaises(ValueError):
             get_string(tag)
 
-    def test_inline_nodes_inside_text_span(self):
+    def test_inline_tags_inside_text_span(self):
         # Arrange
         tag = make_segmentation_tag(
             self.soup,
@@ -411,7 +411,7 @@ class TestCombineTextSpans(BaseTestCase):
             ],
         )
 
-    def test_containing_inline_node(self):
+    def test_containing_inline_tag(self):
         # Arrange
         elements = [
             make_segmentation_tag(

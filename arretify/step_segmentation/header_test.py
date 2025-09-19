@@ -462,14 +462,14 @@ class TestRenderHeaderElement(BaseTestCase):
 
     def test_render_header_element(self):
         # Arrange
-        node = make_segmentation_tag(
+        tag = make_segmentation_tag(
             self.soup,
             "emblem",
             contents=make_text_spans(self.soup, "liberté égalité fraternité"),
         )
 
         # Act
-        rendered = render_header_element(self.context, node)
+        rendered = render_header_element(self.context, tag)
 
         # Assert
         assert normalized_html_str(str(rendered)) == normalized_html_str(
@@ -554,7 +554,7 @@ class TestRenderVisaMotif(BaseTestCase):
 
     def test_render_simple(self):
         # Arrange
-        node = make_segmentation_tag(
+        tag = make_segmentation_tag(
             self.soup,
             "visa",
             contents=make_text_spans(
@@ -565,7 +565,7 @@ class TestRenderVisaMotif(BaseTestCase):
         )
 
         # Act
-        rendered = render_visa_motif(self.context, node)
+        rendered = render_visa_motif(self.context, tag)
 
         # Assert
         assert normalized_html_str(str(rendered)) == normalized_html_str(
@@ -582,7 +582,7 @@ class TestRenderArreteTitle(BaseTestCase):
 
     def test_render_arrete_title(self):
         # Arrange
-        node = make_segmentation_tag(
+        tag = make_segmentation_tag(
             self.soup,
             "arrete_title",
             contents=make_text_spans(
@@ -592,7 +592,7 @@ class TestRenderArreteTitle(BaseTestCase):
         )
 
         # Act
-        rendered = rendre_arrete_title(self.context, node)
+        rendered = rendre_arrete_title(self.context, tag)
 
         # Assert
         assert normalized_html_str(str(rendered)) == normalized_html_str(

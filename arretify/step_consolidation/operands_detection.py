@@ -45,7 +45,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 # TODO : refactor to factorize with list in step_segmentation
-INLINE_NODE_SCHEMAS = [
+INLINE_TAG_SCHEMAS = [
     PAGE_FOOTER_SCHEMA,
     PAGE_SEPARATOR_SCHEMA,
 ]
@@ -82,9 +82,9 @@ def _find_right_operand(document_context: DocumentContext, start_tag: Tag) -> Ta
         ]:
             return element
 
-        # We ignore inline nodes like page separators and footers
+        # We ignore inline tags like page separators and footers
         # and look recursively for the next neighbouring element.
-        elif is_tag_and_matches(element, css_classes_in=[s.css_class for s in INLINE_NODE_SCHEMAS]):
+        elif is_tag_and_matches(element, css_classes_in=[s.css_class for s in INLINE_TAG_SCHEMAS]):
             return _find_right_operand(document_context, element)
     return None
 
@@ -111,9 +111,9 @@ def _find_left_references(document_context: DocumentContext, start_tag: Tag) -> 
                 raise ValueError("No section or document reference found in operation")
             break
 
-        # We ignore inline nodes like page separators and footers
+        # We ignore inline tags like page separators and footers
         # and look recursively for the next neighbouring element.
-        elif is_tag_and_matches(element, css_classes_in=[s.css_class for s in INLINE_NODE_SCHEMAS]):
+        elif is_tag_and_matches(element, css_classes_in=[s.css_class for s in INLINE_TAG_SCHEMAS]):
             return _find_left_references(document_context, element)
 
     if len(reference_tags) == 0:

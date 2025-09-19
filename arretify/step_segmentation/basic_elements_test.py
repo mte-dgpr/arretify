@@ -161,7 +161,7 @@ class TestParseTables(BaseTestCase):
             ignore_text_span_data=True,
         )
 
-    def test_parse_tables_with_node_at_end(self):
+    def test_parse_tables_with_tag_at_end(self):
         # Arrange
         elements = [
             *make_text_spans(
@@ -295,7 +295,7 @@ class TestParseBlockQuote(BaseTestCase):
     def test_simple_blockquote(self):
         # Arrange
         elements = [
-            make_segmentation_tag(self.soup, "some_node"),
+            make_segmentation_tag(self.soup, "some_tag"),
             *make_text_spans(
                 self.soup,
                 '"This is',
@@ -311,7 +311,7 @@ class TestParseBlockQuote(BaseTestCase):
         assert_elements_equal(
             result,
             [
-                make_segmentation_tag(self.soup, "some_node"),
+                make_segmentation_tag(self.soup, "some_tag"),
                 make_segmentation_tag(
                     self.soup,
                     "blockquote",
@@ -471,7 +471,7 @@ class TestRenderTable(BaseTestCase):
 
     def test_render_table_with_page_separators(self):
         # Arrange
-        node = make_segmentation_tag(
+        tag = make_segmentation_tag(
             self.soup,
             "table",
             contents=[
@@ -490,7 +490,7 @@ class TestRenderTable(BaseTestCase):
         )
 
         # Act
-        table_tag = render_table(self.context, node)
+        table_tag = render_table(self.context, tag)
 
         # Assert
         assert normalized_html_str(str(table_tag)) == normalized_html_str(
@@ -521,7 +521,7 @@ class TestRenderTableDescription(BaseTestCase):
 
     def test_render_table_description_with_page_separators(self):
         # Arrange
-        node = make_segmentation_tag(
+        tag = make_segmentation_tag(
             self.soup,
             "table_description",
             contents=[
@@ -532,7 +532,7 @@ class TestRenderTableDescription(BaseTestCase):
         )
 
         # Act
-        table_description_elements = list(render_table_description(self.context, node))
+        table_description_elements = list(render_table_description(self.context, tag))
 
         # Assert
         assert_html_list_equal(
@@ -551,7 +551,7 @@ class TestRenderList(BaseTestCase):
 
     def test_render_list_with_page_separator(self):
         # Arrange
-        node = make_segmentation_tag(
+        tag = make_segmentation_tag(
             self.soup,
             "list",
             contents=[
@@ -562,7 +562,7 @@ class TestRenderList(BaseTestCase):
         )
 
         # Act
-        list_tag = render_list(self.context, node)
+        list_tag = render_list(self.context, tag)
 
         # Assert
         assert normalized_html_str(str(list_tag)) == normalized_html_str(
@@ -576,7 +576,7 @@ class TestRenderList(BaseTestCase):
 
     def test_render_nested_list(self):
         # Arrange
-        node = make_segmentation_tag(
+        tag = make_segmentation_tag(
             self.soup,
             "list",
             contents=[
@@ -587,7 +587,7 @@ class TestRenderList(BaseTestCase):
         )
 
         # Act
-        list_tag = render_list(self.context, node)
+        list_tag = render_list(self.context, tag)
 
         # Assert
         assert normalized_html_str(str(list_tag)) == normalized_html_str(
@@ -606,7 +606,7 @@ class TestRenderList(BaseTestCase):
 
     def test_render_list_text_span(self):
         # Arrange
-        node = make_segmentation_tag(
+        tag = make_segmentation_tag(
             self.soup,
             "list",
             contents=[
@@ -620,7 +620,7 @@ class TestRenderList(BaseTestCase):
         )
 
         # Act
-        list_tag = render_list(self.context, node)
+        list_tag = render_list(self.context, tag)
 
         # Assert
         assert normalized_html_str(str(list_tag)) == normalized_html_str(
@@ -712,10 +712,10 @@ class TestRenderAddress(BaseTestCase):
 
     def test_render_address(self):
         # Arrange
-        node = make_segmentation_tag(self.soup, "address", contents=["123 bis rue de la Paix"])
+        tag = make_segmentation_tag(self.soup, "address", contents=["123 bis rue de la Paix"])
 
         # Act
-        address_tag = render_address(self.context, node)
+        address_tag = render_address(self.context, tag)
 
         # Assert
         assert normalized_html_str(str(address_tag)) == normalized_html_str(
@@ -729,14 +729,14 @@ class TestRenderBlockQuote(BaseTestCase):
 
     def test_render_blockquote(self):
         # Arrange
-        node = make_segmentation_tag(
+        tag = make_segmentation_tag(
             self.soup,
             "blockquote",
             contents=make_text_spans(self.soup, "This is", "a blockquote"),
         )
 
         # Act
-        blockquote_tag = render_blockquote(self.context, node)
+        blockquote_tag = render_blockquote(self.context, tag)
 
         # Assert
         assert normalized_html_str(str(blockquote_tag)) == normalized_html_str(

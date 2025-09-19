@@ -33,7 +33,7 @@ def assert_elements_equal(
 ):
     assert len(actual) == len(
         expected
-    ), f"[{path}] Expected {[type(el) for el in expected]} nodes, got {[type(el) for el in actual]}"
+    ), f"[{path}] Expected {[type(el) for el in expected]} tags, got {[type(el) for el in actual]}"
     for i, (a, e) in enumerate(zip(actual, expected)):
         child_path = f"{path}/{i}"
         if is_tag(e):

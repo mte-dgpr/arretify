@@ -130,7 +130,7 @@ class TestRenderTableOfContents(BaseTestCase):
 
     def test_simple_render(self):
         # Arrange
-        node = make_segmentation_tag(
+        tag = make_segmentation_tag(
             self.soup,
             "table_of_contents",
             contents=[
@@ -141,7 +141,7 @@ class TestRenderTableOfContents(BaseTestCase):
         )
 
         # Act
-        rendered = render_table_of_contents(self.context, node)
+        rendered = render_table_of_contents(self.context, tag)
 
         # Assert
         assert normalized_html_str(str(rendered)) == normalized_html_str(

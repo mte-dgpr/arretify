@@ -33,7 +33,7 @@ from .header import parse_header, render_header
 from .titles_detection import parse_title_info
 from .content import parse_content, render_content, is_title
 from .core import (
-    pick_text_span_node,
+    pick_text_spans,
     is_tag,
     get_string,
 )
@@ -45,10 +45,10 @@ from .document_elements import (
 )
 
 
-_is_title_line = pick_text_span_node(is_title)
+_is_title_line = pick_text_spans(is_title)
 
 
-def _is_appendix_text_span_node(elements: Sequence[PageElementOrString], index: int) -> bool:
+def _is_appendix_text_span_tag(elements: Sequence[PageElementOrString], index: int) -> bool:
     element = elements[index]
     assert is_tag(element)
     if _is_title_line(elements, index):
@@ -62,7 +62,7 @@ def _is_appendix_text_span_node(elements: Sequence[PageElementOrString], index: 
     return False
 
 
-_is_appendix = pick_text_span_node(_is_appendix_text_span_node)
+_is_appendix = pick_text_spans(_is_appendix_text_span_tag)
 
 
 @iter_func_to_list
@@ -125,7 +125,7 @@ def _make_text_span_parser(
     func: Callable[[DocumentContext, Sequence[PageElementOrString]], list[PageElementOrString]],
 ) -> Callable[[DocumentContext, Sequence[PageElementOrString]], list[PageElementOrString]]:
     """
-    Makes a function that uses `func` to parse the children of text_span nodes.
+    Makes a function that uses `func` to parse the children of text_span tags.
     """
 
     @iter_func_to_list
