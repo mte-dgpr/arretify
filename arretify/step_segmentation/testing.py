@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import List, Sequence
+from typing import Sequence
 
 from bs4 import Tag
 
@@ -76,7 +76,7 @@ def _assert_data_equal(
     assert actual_data == expected_data, f"[{path}] Expected {expected_data}, got {actual_data}"
 
 
-def make_text_spans(soup, *lines: str) -> List[Tag]:
+def make_text_spans(soup, *lines: str) -> list[Tag]:
     return [
         make_segmentation_tag(
             soup,

@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import List, Sequence, Tuple, Iterator, cast
+from typing import Sequence, Tuple, Iterator, cast
 import logging
 
 from bs4 import Tag
@@ -88,7 +88,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 # -------------------- Tables -------------------- #
-_TableSplitterMatch = Tuple[List[PageElementOrString], List[PageElementOrString]]
+_TableSplitterMatch = Tuple[list[PageElementOrString], list[PageElementOrString]]
 """
 A match for the table splitter, in the form `(<table_elements>, <table_description_elements>)`.
 """
@@ -110,7 +110,7 @@ def _make_table_description_end_probe(table_lines: Sequence[str]) -> Probe[PageE
 def parse_tables(
     context: DocumentContext,
     elements: Sequence[PageElementOrString],
-) -> List[PageElementOrString]:
+) -> list[PageElementOrString]:
     return flat_map_splitted_elements(
         split_elements(elements, _table_splitter),
         lambda match: _make_table_tags(context, match),
@@ -158,9 +158,9 @@ def render_table(
     context: DocumentContext,
     tag: Tag,
 ) -> Tag:
-    pile: List[str] = []
+    pile: list[str] = []
     has_table_header = False
-    transparent_tags: List[Tuple[int, Tag]] = []
+    transparent_tags: list[Tuple[int, Tag]] = []
     for element in tag.children:
         if is_tag(element, tag_name_in=["text_span"]):
             element_str = get_string(element)
@@ -235,10 +235,10 @@ def _clean_leading_whitespaces(line: str) -> str:
 
 def _make_list_splitter(
     context: DocumentContext,
-) -> Splitter[PageElementOrString, List[PageElementOrString]]:
+) -> Splitter[PageElementOrString, list[PageElementOrString]]:
     def _splitter(
         elements: Sequence[PageElementOrString],
-    ) -> RawSplit[PageElementOrString, List[PageElementOrString]] | None:
+    ) -> RawSplit[PageElementOrString, list[PageElementOrString]] | None:
         """
         Split the input list into piles of list elements.
         Each pile is a list of elements that are part of the same list.
@@ -248,7 +248,7 @@ def _make_list_splitter(
         if not elements:
             return None
 
-        pile: List[PageElementOrString] = []
+        pile: list[PageElementOrString] = []
         while elements:
             element = elements[0]
 
@@ -294,7 +294,7 @@ def _make_list_splitter(
 def parse_lists(
     context: DocumentContext,
     elements: Sequence[PageElementOrString],
-) -> List[PageElementOrString]:
+) -> list[PageElementOrString]:
     return map_splitted_elements(
         split_elements(
             elements,
@@ -316,9 +316,9 @@ def render_list(
 def _render_list(
     context: DocumentContext,
     elements_: Sequence[PageElementOrString],
-) -> Tuple[List[PageElementOrString], Tag]:
+) -> Tuple[list[PageElementOrString], Tag]:
     elements = list(elements_)
-    list_pile: List[Tag] = []
+    list_pile: list[Tag] = []
     element = elements[0]
     ref_indentation = _list_indentation(get_string(element))
 
@@ -355,7 +355,7 @@ def _render_list(
 
 
 # -------------------- Blockquotes -------------------- #
-_BlockquoteSplitterMatch = Tuple[List[PageElementOrString], ErrorCodes | None]
+_BlockquoteSplitterMatch = Tuple[list[PageElementOrString], ErrorCodes | None]
 """
 A match for the blockquote splitter, in the form `(<blockquote_elements>, <error_codes>)`.
 """
@@ -379,7 +379,7 @@ _is_blockquote_end = pick_text_span_node(
 def parse_blockquotes(
     context: DocumentContext,
     elements: Sequence[PageElementOrString],
-) -> List[PageElementOrString]:
+) -> list[PageElementOrString]:
     return map_splitted_elements(
         split_elements(
             elements,
@@ -495,7 +495,7 @@ _is_image = make_probe_from_pattern_proxy(IMAGE_PATTERN)
 def parse_images(
     context: DocumentContext,
     elements: Sequence[PageElementOrString],
-) -> List[PageElementOrString]:
+) -> list[PageElementOrString]:
     return map_splitted_elements(
         split_elements(
             elements,
@@ -536,7 +536,7 @@ _address_detect_splitter = make_pattern_splitter(ADDRESS_DETECT_PATTERN)
 def parse_addresses(
     context: DocumentContext,
     elements: Sequence[PageElementOrString],
-) -> List[PageElementOrString]:
+) -> list[PageElementOrString]:
     """
     Parse French addresses.
 
@@ -675,7 +675,7 @@ def render_error(
         ERROR_SCHEMA,
         data=dict(
             error_codes=render_str_list_attribute(
-                cast(List[str], read_segmentation_tag_data(tag)["error_codes"])
+                cast(list[str], read_segmentation_tag_data(tag)["error_codes"])
             )
         ),
         contents=[get_string(n) for n in tag.contents],

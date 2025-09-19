@@ -18,7 +18,7 @@
 #
 import logging
 from datetime import date, datetime
-from typing import List, TypedDict
+from typing import Sequence, TypedDict
 
 from bs4 import BeautifulSoup, Tag
 
@@ -168,7 +168,7 @@ def _handle_date_match_dict(match_dict: regex_tree.MatchDict) -> _DateDict:
     )
 
 
-def _get_month_index(month: str, month_strings: List[str]) -> int:
+def _get_month_index(month: str, month_strings: Sequence[str]) -> int:
     match_month = lookup_normalized_version(month_strings, month)
     try:
         return month_strings.index(match_month) + 1

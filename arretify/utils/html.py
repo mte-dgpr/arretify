@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import List, cast, TypeGuard, Literal, Iterable, Iterator
+from typing import Sequence, cast, TypeGuard, Literal, Iterable, Iterator
 
 from bs4 import Tag
 
@@ -92,11 +92,11 @@ def render_bool_attribute(value: bool) -> str:
     return "true" if value else "false"
 
 
-def parse_str_list_attribute(value: str) -> List[str]:
+def parse_str_list_attribute(value: str) -> list[str]:
     return value.split(",")
 
 
-def render_str_list_attribute(value: List[str]) -> str:
+def render_str_list_attribute(value: Sequence[str]) -> str:
     for item in value:
         if "," in item:
             raise ValueError(f'Invalid item "{item}" in list')
@@ -111,8 +111,8 @@ def set_data_attributes(tag: Tag, data: DataElementDataDict) -> None:
 
 def is_tag_and_matches(
     tag: PageElementOrString,
-    css_classes_in: List[str] | None = None,
-    tag_name_in: List[str] | None = None,
+    css_classes_in: Sequence[str] | None = None,
+    tag_name_in: Sequence[str] | None = None,
 ) -> TypeGuard[Tag]:
     """
     Check if a tag has any of the specified CSS classes.

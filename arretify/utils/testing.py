@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 import re
-from typing import Callable, List, TypeVar
+from typing import Callable, Sequence, TypeVar
 
 from bs4 import Tag, BeautifulSoup, PageElement, NavigableString
 
@@ -71,7 +71,7 @@ def make_testing_function_for_single_tag(
     def _testing_function(string: str, css_selector: str | None = None) -> str:
         document_context = create_document_context(normalized_html_str(string))
 
-        tag_list: List[PageElement]
+        tag_list: list[PageElement]
         if css_selector is None:
             tag_list = list(document_context.soup.children)
         else:
@@ -93,8 +93,8 @@ def make_testing_function_for_single_tag(
 
 def make_testing_function_for_children_list(
     process_function: Callable[
-        [DocumentContext, List[PageElementOrString]],
-        List[PageElementOrString],
+        [DocumentContext, Sequence[PageElementOrString]],
+        list[PageElementOrString],
     ],
 ) -> Callable[[str], str]:
     def _testing_function(string: str):
@@ -138,8 +138,8 @@ def normalized_soup(html: str) -> BeautifulSoup:
 
 
 def assert_html_list_equal(
-    actual: List[PageElementOrString],
-    expected: List[PageElementOrString],
+    actual: Sequence[PageElementOrString],
+    expected: Sequence[PageElementOrString],
 ) -> None:
     """
     Assert that two lists of HTML strings are equal after normalization.
@@ -155,8 +155,8 @@ def assert_html_list_equal(
 
 
 def _normalize_element_list(
-    html_list: List[PageElementOrString],
-) -> List[PageElementOrString]:
+    html_list: Sequence[PageElementOrString],
+) -> list[PageElementOrString]:
     return [
         normalized_html_str(str(element)) if isinstance(element, Tag) else str(element)
         for element in html_list
@@ -229,7 +229,7 @@ def _normalize_string(nav_string: NavigableString) -> str | None:
 
 
 def _normalize_tag(tag: P) -> P:
-    new_children: List[PageElementOrString] = []
+    new_children: list[PageElementOrString] = []
     for child in tag.children:
         if isinstance(child, NavigableString):
             normalized_string = _normalize_string(child)

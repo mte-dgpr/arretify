@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import List, Union
+from typing import Union, Sequence as SequenceType
 from dataclasses import replace
 
 from .types import (
@@ -61,14 +61,14 @@ def Literal(
 
 
 def Branching(
-    child_or_str_list: List[Node | str],
+    child_or_str_list: SequenceType[Node | str],
     settings: Settings | None = None,
 ) -> BranchingNode:
     """
     Order of patterns matters, from most specific to less specific.
     """
     settings = settings or Settings()
-    children_list: List[Node] = []
+    children_list: list[Node] = []
     for child_or_str in child_or_str_list:
         children_list.append(_initialize_child(child_or_str, settings))
 
@@ -89,7 +89,7 @@ def Branching(
 
 
 def Sequence(
-    child_or_str_list: List[Node | str],
+    child_or_str_list: SequenceType[Node | str],
     settings: Settings | None = None,
 ) -> SequenceNode:
     settings = settings or Settings()

@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 from dataclasses import dataclass
-from typing import List, Optional
+from typing import Optional, Sequence
 
 from arretify.types import SectionType
 
@@ -26,5 +26,5 @@ from arretify.types import SectionType
 class TitleInfo:
     section_type: SectionType
     number: Optional[str] = None
-    levels: Optional[List[int]] = None
+    levels: Optional[Sequence[int]] = None
     text: Optional[str] = None

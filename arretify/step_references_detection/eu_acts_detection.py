@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import List
+from typing import Sequence
 
 from bs4 import BeautifulSoup
 
@@ -105,8 +105,8 @@ EU_ACT_NODE = regex_tree.Group(
 
 def parse_eu_acts_references(
     document_context: DocumentContext,
-    children: List[PageElementOrString],
-) -> List[PageElementOrString]:
+    children: Sequence[PageElementOrString],
+) -> list[PageElementOrString]:
     return map_splitted_elements(
         split_elements(
             children,

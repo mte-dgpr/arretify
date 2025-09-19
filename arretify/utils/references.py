@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import List, Iterable, Tuple, Iterator
+from typing import Iterable, Tuple, Iterator
 
 from bs4 import BeautifulSoup, Tag
 
@@ -28,8 +28,8 @@ from arretify.html_schemas import (
 from arretify.law_data.types import Document, Section
 
 
-ReferenceTree = List[List[Tag]]
-ReferenceTreeTraversal = Iterable[Tuple[Tag, Document | None, List[Section]]]
+ReferenceTree = list[list[Tag]]
+ReferenceTreeTraversal = Iterable[Tuple[Tag, Document | None, list[Section]]]
 
 
 def build_and_traverse_reference_tree(
@@ -125,11 +125,11 @@ def build_reference_tree(
             raise RuntimeError("Found more than one parent reference tag, which is not expected")
         root_reference_tag = parent_reference_tag_matches[0]
 
-    reference_tree: List[List[Tag]] = [[root_reference_tag]]
+    reference_tree: list[list[Tag]] = [[root_reference_tag]]
     should_continue = True
     while should_continue is True:
         should_continue = False
-        new_reference_branches: List[List[Tag]] = []
+        new_reference_branches: list[list[Tag]] = []
         for branch in reference_tree:
             parent_reference_tag = branch[-1]
             # If the parent reference tag has no data-element_id,
@@ -163,7 +163,7 @@ def traverse_reference_tree(
     """
     Function allowing to traverse a reference tree (depth-first).
     """
-    seen: List[Tag] = []
+    seen: list[Tag] = []
     for branch in reference_tree:
         document: Document | None = None
         sections: list[Section] = []
@@ -197,7 +197,7 @@ def traverse_reference_tree(
 
 
 def iter_reference_trees(soup: BeautifulSoup) -> Iterator[ReferenceTree]:
-    processed: List[Tag] = []
+    processed: list[Tag] = []
     for reference_tag in soup.select(
         f".{DOCUMENT_REFERENCE_SCHEMA.css_class}, .{SECTION_REFERENCE_SCHEMA.css_class}"
     ):

@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 import re
-from typing import List, Sequence
+from typing import Sequence
 
 import markdown
 from bs4 import BeautifulSoup, Tag
@@ -86,7 +86,7 @@ def is_table_description(line: str, pile: Sequence[str]) -> bool:
     return False
 
 
-def parse_markdown_table(lines: List[str]) -> Tag:
+def parse_markdown_table(lines: Sequence[str]) -> Tag:
     markdown_str = "\n".join(lines)
     html_str = markdown.markdown(markdown_str, extensions=["tables"])
     soup = BeautifulSoup(html_str, features="html.parser")

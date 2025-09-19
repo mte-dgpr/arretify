@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import List
+from typing import Sequence
 
 from arretify.regex_utils import (
     PatternProxy,
@@ -45,9 +45,9 @@ SENTENCE_CONTINUES_AT_LINE_START_PATTERN = PatternProxy(r"^\s*[a-z]", Settings(i
 
 
 def join_split_pile_with_pattern(
-    pile: List[str],
+    pile: Sequence[str],
     pattern: PatternProxy,
-) -> List[PageElementOrString]:
+) -> list[PageElementOrString]:
     return list(
         merge_matches_with_siblings(
             split_string_with_regex(

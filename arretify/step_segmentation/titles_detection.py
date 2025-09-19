@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 import logging
-from typing import List, Optional, Tuple
+from typing import Optional, Sequence, Tuple
 
 from arretify.types import SectionType
 from arretify.parsing_utils.patterns import LEADING_TRAILING_PUNCTUATION_PATTERN
@@ -196,9 +196,9 @@ def parse_title_info(line: str) -> TitleInfo:
 
 
 def is_next_title(
-    current_global_levels: Optional[List[int]],
-    current_title_levels: Optional[List[int]],
-    new_title_levels: Optional[List[int]],
+    current_global_levels: Optional[Sequence[int]],
+    current_title_levels: Optional[Sequence[int]],
+    new_title_levels: Optional[Sequence[int]],
 ) -> bool:
     return are_levels_contiguous(current_global_levels, new_title_levels) or are_levels_contiguous(
         current_title_levels, new_title_levels

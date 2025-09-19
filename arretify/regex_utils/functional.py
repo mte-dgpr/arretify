@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import Callable, Iterable, Iterator, List, TypeVar, Union
+from typing import Callable, Iterable, Iterator, Sequence, TypeVar, Union
 
 from bs4 import PageElement
 
@@ -43,7 +43,7 @@ def map_matches(
 def flat_map_regex_tree_match(
     regex_tree_match_flow: RegexTreeMatchFlow,
     map_func: Callable[[RegexTreeMatch], Iterable[PageElementOrString]],
-    allowed_group_names: List[GroupName] | None = None,
+    allowed_group_names: Sequence[GroupName] | None = None,
 ) -> Iterator[PageElementOrString]:
     for mapped in _map_regex_tree_match_generic(
         regex_tree_match_flow,
@@ -59,7 +59,7 @@ def flat_map_regex_tree_match(
 def map_regex_tree_match(
     regex_tree_match_flow: RegexTreeMatchFlow,
     map_func: Callable[[RegexTreeMatch], PageElementOrString],
-    allowed_group_names: List[GroupName] | None = None,
+    allowed_group_names: Sequence[GroupName] | None = None,
 ) -> Iterator[PageElementOrString]:
     return _map_regex_tree_match_generic(
         regex_tree_match_flow,
@@ -71,7 +71,7 @@ def map_regex_tree_match(
 def _map_regex_tree_match_generic(
     regex_tree_match_flow: RegexTreeMatchFlow,
     map_func: Callable[[RegexTreeMatch], R],
-    allowed_group_names: List[GroupName] | None = None,
+    allowed_group_names: Sequence[GroupName] | None = None,
 ) -> Iterator[R | PageElementOrString]:
     for str_or_group in regex_tree_match_flow:
         if isinstance(str_or_group, RegexTreeMatch):
@@ -111,8 +111,8 @@ def iter_regex_tree_match_page_elements_or_strings(
 
 def filter_regex_tree_match_children(
     match: RegexTreeMatch,
-    group_names: List[GroupName],
-) -> List[RegexTreeMatch]:
+    group_names: Sequence[GroupName],
+) -> list[RegexTreeMatch]:
     """
     Filters the children of a regex tree match by group names.
 

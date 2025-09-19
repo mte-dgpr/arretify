@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 from dataclasses import dataclass
-from typing import List, Dict, Union, Iterable
+from typing import Dict, Sequence, Union, Iterable
 
 from ..core import PatternProxy
 from ..types import GroupName, Settings, QuantifierRange
@@ -79,7 +79,7 @@ class RepeatNode(BaseNode):
 
 @dataclass(frozen=True)
 class RegexTreeMatch:
-    children: List[Union[PageElementOrString, "RegexTreeMatch"]]
+    children: Sequence[Union[PageElementOrString, "RegexTreeMatch"]]
     group_name: Union[GroupName, None]
     match_dict: MatchDict
 

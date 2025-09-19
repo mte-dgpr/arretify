@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import List, Iterator
+from typing import Iterator
 
 from bs4 import Tag, PageElement
 
@@ -27,7 +27,7 @@ from .html_tree_navigation import (
 )
 
 
-ElementRange = List[PageElement]
+ElementRange = list[PageElement]
 """
 A range of elements which follow each other in parsing order. e.g. :
 
@@ -181,7 +181,7 @@ def _collapse_element_range(
     return collapsed
 
 
-def get_contiguous_elements_left(start_tag: Tag) -> List[PageElement]:
+def get_contiguous_elements_left(start_tag: Tag) -> list[PageElement]:
     """
     List elements contiguous to `start_tag` in parsing order in the left direction.
 
@@ -198,7 +198,7 @@ def get_contiguous_elements_left(start_tag: Tag) -> List[PageElement]:
     This function will return the following list of elements :
         [bli, "blo"]
     """
-    elements: List[PageElement] = []
+    elements: list[PageElement] = []
     for element_range in iter_collapsed_range_left(start_tag):
         if len(element_range) < 2:
             continue
@@ -220,7 +220,7 @@ def get_contiguous_elements_left(start_tag: Tag) -> List[PageElement]:
 
 def get_contiguous_elements_right(
     start_tag: Tag,
-) -> List[PageElement]:
+) -> list[PageElement]:
     """
     List elements contiguous to `start_tag` in parsing order in the right direction.
 
@@ -235,7 +235,7 @@ def get_contiguous_elements_right(
     This function will return the following list of elements :
         [bli, bla, "blo"]
     """
-    elements: List[PageElement] = []
+    elements: list[PageElement] = []
     for element_range in iter_collapsed_range_right(start_tag):
         if len(element_range) < 2:
             continue

@@ -19,7 +19,7 @@
 import logging
 import json
 from pathlib import Path
-from typing import Dict, List, TypedDict
+from typing import Dict, Sequence, TypedDict
 
 
 CURRENT_DIR = Path(__file__).parent
@@ -40,9 +40,9 @@ class CodeIndexDatum(TypedDict):
 
 
 with open(LEGIFRANCE_DATA / "codes.json", "r", encoding="utf-8") as fd:
-    CODES: List[CodeDatum] = json.loads(fd.read())["data"]
+    CODES: Sequence[CodeDatum] = json.loads(fd.read())["data"]
 
-CODE_INDEXES: Dict[str, List[CodeIndexDatum]] = {}
+CODE_INDEXES: Dict[str, Sequence[CodeIndexDatum]] = {}
 for code in CODES:
     code_index_file_path = LEGIFRANCE_DATA / f"code_index_{code['cid']}.json"
     try:
@@ -54,7 +54,7 @@ for code in CODES:
     CODE_INDEXES[code["cid"]] = code_index
 
 
-def get_code_titles() -> List[str]:
+def get_code_titles() -> list[str]:
     return [code["titre"] for code in CODES]
 
 

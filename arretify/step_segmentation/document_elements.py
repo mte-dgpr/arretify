@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import List, Iterator, Sequence
+from typing import Iterator, Sequence
 
 from bs4 import Tag
 
@@ -86,7 +86,7 @@ _is_page_footer = make_probe_from_pattern_proxy(PAGE_FOOTER_PATTERN)
 def parse_tables_of_contents(
     context: DocumentContext,
     elements: Sequence[PageElementOrString],
-) -> List[PageElementOrString]:
+) -> list[PageElementOrString]:
     return map_splitted_elements(
         split_elements(
             elements,
@@ -127,7 +127,7 @@ def _table_of_contents_while_condition(elements: Sequence[PageElementOrString], 
 def parse_page_footers(
     context: DocumentContext,
     elements: Sequence[PageElementOrString],
-) -> List[PageElementOrString]:
+) -> list[PageElementOrString]:
     return map_splitted_elements(
         split_elements(
             elements,
@@ -165,7 +165,7 @@ def render_table_of_contents(
     context: DocumentContext,
     node: Tag,
 ) -> Tag:
-    page_elements: List[PageElementOrString] = []
+    page_elements: list[PageElementOrString] = []
     for element in node.children:
         if is_tag(element, tag_name_in=["text_span"]):
             page_elements.append(get_string(element))

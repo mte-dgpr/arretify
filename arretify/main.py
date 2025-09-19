@@ -17,7 +17,6 @@
 # limitations under the License.
 #
 import sys
-from typing import List
 from pathlib import Path
 from optparse import OptionParser
 import traceback
@@ -60,7 +59,7 @@ def main_cli() -> None:
     main(sys.argv[1:])
 
 
-def main(args: List[str]) -> None:
+def main(args: list[str]) -> None:
     parser = OptionParser()
     parser.add_option(
         "-i",
@@ -192,8 +191,8 @@ def main(args: List[str]) -> None:
 
 def _walk_input_dir(
     root_dir_path: Path,
-) -> List[Path]:
-    paths: List[Path] = []
+) -> list[Path]:
+    paths: list[Path] = []
     for dir_path, sub_dir_names, file_names in root_dir_path.walk():
         # If we have entered a subdirectory that contains OCR pages,
         # we do not want to process it again.
@@ -241,7 +240,7 @@ def _process_arrete(
     - Path of a single .pdf file
     - Path to a folder containing markdown pages named like so : 1.md, 2.md, ...
     """
-    pipeline_steps: List[PipelineStep] = [
+    pipeline_steps: list[PipelineStep] = [
         step_markdown_cleaning,
         step_segmentation,
         step_references_detection,

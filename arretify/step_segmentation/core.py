@@ -17,15 +17,11 @@
 # limitations under the License.
 #
 from typing import (
-    List,
     Sequence,
     TypeGuard,
-    Dict,
-    Any,
     cast,
     Iterator,
 )
-from dataclasses import dataclass, field
 
 from bs4 import Tag
 
@@ -59,17 +55,6 @@ List of tag names that contains specific bits of text information inside a text_
 """
 
 
-@dataclass(frozen=True)
-class Node:
-    """
-    Node for representing our segmented arrêté as a tree structure.
-    """
-
-    type: str
-    children: List[PageElementOrString]
-    data: Dict[str, Any] = field(default_factory=dict)
-
-
 def pick_if_transparent_tag_followed_by_match(
     is_matching: Probe[PageElementOrString],
 ) -> Probe[PageElementOrString]:
@@ -87,7 +72,7 @@ def pick_if_transparent_tag_followed_by_match(
     ...     <page_separator />,
     ...     <other_tag />,
     ... ]
-    >>> def is_string(elements: List[PageElementOrString], index: int) -> bool:
+    >>> def is_string(elements: Sequence[PageElementOrString], index: int) -> bool:
     ...     return isinstance(elements[index], str)
     >>> probe = pick_if_transparent_node_followed_by_match(is_string)
     >>> probe(elements, 0) # -> directly calls `is_string`
@@ -150,7 +135,7 @@ def make_probe_from_pattern_proxy(
 def make_while_splitter_for_text_span_nodes(
     start_condition: Probe[PageElementOrString],
     while_condition: Probe[PageElementOrString],
-) -> Splitter[PageElementOrString, List[PageElementOrString]]:
+) -> Splitter[PageElementOrString, list[PageElementOrString]]:
     return make_while_splitter(
         pick_text_span_node(start_condition),
         pick_if_transparent_tag_followed_by_match(pick_text_span_node(while_condition)),
@@ -159,7 +144,7 @@ def make_while_splitter_for_text_span_nodes(
 
 def make_single_line_splitter_for_text_span_nodes(
     is_matching: Probe[PageElementOrString],
-) -> Splitter[PageElementOrString, List[PageElementOrString]]:
+) -> Splitter[PageElementOrString, list[PageElementOrString]]:
     return make_single_line_splitter(
         is_matching=pick_text_span_node(is_matching),
     )
@@ -234,8 +219,8 @@ def make_recombine_interrupted_lines_splitter(
 
     def _splitter(
         elements: Sequence[PageElementOrString],
-    ) -> RawSplit[PageElementOrString, List[PageElementOrString]] | None:
-        before: List[PageElementOrString] = []
+    ) -> RawSplit[PageElementOrString, list[PageElementOrString]] | None:
+        before: list[PageElementOrString] = []
         while elements:
             # Find the next starting element
             before_start, elements = split_before_match(
@@ -287,7 +272,7 @@ def make_recombine_interrupted_lines_splitter(
     return _splitter
 
 
-def is_tag(tag: PageElementOrString, tag_name_in: List[str] | None = None) -> TypeGuard[Tag]:
+def is_tag(tag: PageElementOrString, tag_name_in: Sequence[str] | None = None) -> TypeGuard[Tag]:
     if not isinstance(tag, Tag):
         return False
 
@@ -306,7 +291,7 @@ def get_string(element: PageElementOrString) -> str:
     if isinstance(element, str):
         return element
     elif is_tag(element):
-        strings: List[str] = [_get_string(child) for child in element.contents]
+        strings: list[str] = [_get_string(child) for child in element.contents]
         return merge_strings(strings)
     else:
         raise ValueError(f"Element '{element}' is neither a string nor a Tag")
@@ -341,7 +326,7 @@ def combine_text_spans(
     """
     Combines a list of strings and text_span tags into a single text_span tag.
     """
-    children: List[PageElementOrString] = []
+    children: list[PageElementOrString] = []
     first_text_span: Tag | None = None
     last_text_span: Tag | None = None
     for element in elements:

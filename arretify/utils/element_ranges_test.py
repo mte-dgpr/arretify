@@ -17,7 +17,6 @@
 # limitations under the License.
 #
 import unittest
-from typing import List
 
 from bs4 import Tag
 
@@ -471,5 +470,5 @@ class TestGetContiguousElementsRight(unittest.TestCase):
         ]
 
 
-def _range_to_str(element_range: ElementRange) -> List[str]:
+def _range_to_str(element_range: ElementRange) -> list[str]:
     return [str(element) for element in element_range]

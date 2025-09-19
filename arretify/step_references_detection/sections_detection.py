@@ -18,8 +18,8 @@
 #
 from bs4 import Tag
 from typing import (
-    List,
     Iterator,
+    Sequence,
 )
 
 from arretify.types import (
@@ -72,8 +72,8 @@ SectionNumber = str
 
 def parse_section_references(
     document_context: DocumentContext,
-    children: List[PageElementOrString],
-) -> List[PageElementOrString]:
+    children: Sequence[PageElementOrString],
+) -> list[PageElementOrString]:
     # First check for multiple, cause it is the most exhaustive pattern
     new_children = list(_parse_section_reference_multiple(document_context, children))
     return list(_parse_section_references(document_context, new_children))
@@ -427,8 +427,8 @@ SECTION_REFERENCE_NODE = regex_tree.Group(
 
 def _parse_section_references(
     document_context: DocumentContext,
-    children: List[PageElementOrString],
-) -> List[PageElementOrString]:
+    children: Sequence[PageElementOrString],
+) -> list[PageElementOrString]:
     return map_splitted_elements(
         split_elements(
             children,
@@ -528,8 +528,8 @@ SECTION_REFERENCE_MULTIPLE_NODE = regex_tree.Group(
 
 def _parse_section_reference_multiple(
     document_context: DocumentContext,
-    children: List[PageElementOrString],
-) -> List[PageElementOrString]:
+    children: Sequence[PageElementOrString],
+) -> list[PageElementOrString]:
     # For multiple arretes, we need to first parse some of the attributes in common
     # before parsing each individual arrete reference.
     return flat_map_splitted_elements(

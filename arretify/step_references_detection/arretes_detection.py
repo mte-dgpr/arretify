@@ -19,10 +19,9 @@
 from bs4 import Tag, BeautifulSoup
 from typing import (
     Literal,
-    List,
     Dict,
     Optional,
-    Iterable,
+    Sequence,
     Union,
     cast,
 )
@@ -177,8 +176,8 @@ ARRETE_MULTIPLE_NODE = regex_tree.Group(
 
 def parse_arretes_references(
     document_context: DocumentContext,
-    children: Iterable[PageElementOrString],
-) -> List[PageElementOrString]:
+    children: Sequence[PageElementOrString],
+) -> list[PageElementOrString]:
     # First check for multiple, cause it is the most exhaustive pattern
     new_children = _parse_multiple_arretes_references(document_context.soup, list(children))
     return _parse_arretes_references(document_context.soup, new_children)
@@ -239,8 +238,8 @@ def _render_arrete_container(
 
 def _parse_arretes_references(
     soup: BeautifulSoup,
-    children: List[PageElementOrString],
-) -> List[PageElementOrString]:
+    children: Sequence[PageElementOrString],
+) -> list[PageElementOrString]:
     return map_splitted_elements(
         split_elements(
             children,
@@ -255,8 +254,8 @@ def _parse_arretes_references(
 
 def _parse_multiple_arretes_references(
     soup: BeautifulSoup,
-    children: List[PageElementOrString],
-) -> List[PageElementOrString]:
+    children: Sequence[PageElementOrString],
+) -> list[PageElementOrString]:
     # For multiple arretes, we need to first parse some of the attributes in common
     # before parsing each individual arrete reference.
     return flat_map_splitted_elements(

@@ -18,7 +18,7 @@
 #
 from copy import copy
 import json
-from typing import Dict, Iterable, List
+from typing import Dict, Iterable, Sequence
 from bs4 import BeautifulSoup, Tag
 
 from arretify.types import DataElementDataDict, PageElementOrString, DataElementSchema
@@ -62,7 +62,7 @@ def make_data_tag(
     return element
 
 
-SegmentationTagDataDict = Dict[str, str | int | float | bool | None | List[str] | List[int]]
+SegmentationTagDataDict = Dict[str, str | int | float | bool | None | list[str] | list[int]]
 
 
 def make_segmentation_tag(
@@ -97,10 +97,10 @@ def read_segmentation_tag_data(element: Tag) -> SegmentationTagDataDict:
 
 def wrap_in_tag(
     soup: BeautifulSoup,
-    elements: List[PageElementOrString],
+    elements: Sequence[PageElementOrString],
     tag_name: str,
-) -> List[Tag]:
-    wrapped: List[Tag] = []
+) -> list[Tag]:
+    wrapped: list[Tag] = []
     for element in elements:
         if isinstance(element, str) and element.strip():
             container = soup.new_tag(tag_name)
@@ -119,7 +119,7 @@ def make_new_tag(
     # For example, if iterating over the children of a tag and moving one of them
     # to a new tag, the list currenlty being iterated is modified.
     # This is why we work with copies here.
-    cloned_contents: List[PageElementOrString]
+    cloned_contents: list[PageElementOrString]
     if contents is None:
         cloned_contents = []
     else:

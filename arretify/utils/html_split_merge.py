@@ -16,8 +16,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import Iterator, List, Sequence, Tuple, TypeVar
-from dataclasses import dataclass
+from typing import Iterator, Sequence, Tuple, TypeVar
+from dataclasses import dataclass, replace as dataclass_replace
 
 from arretify.utils.functional import iter_func_to_list
 from arretify.utils.html import is_tag_and_matches, INLINE_TAG_TYPES
@@ -200,7 +200,7 @@ def make_pattern_splitter_ignoring_inline_tags(
 
 def _trim_strings_before_merging(
     elements: Sequence[PageElementOrString],
-) -> List[PageElementOrString]:
+) -> list[PageElementOrString]:
     """
     Trims spaces in string elements before and after an inline tag in order
     to avoid double spaces. Example:
@@ -234,7 +234,7 @@ def _trim_strings_before_merging(
 
 def _slice_elements_with_string_index(
     elements: Sequence[str | T], start: int, end: int
-) -> RawSplit[str | T, List[str | T]]:
+) -> RawSplit[str | T, list[str | T]]:
     """
     Takes a list and slices it based only on its string elements.
 
@@ -251,7 +251,7 @@ def _slice_elements_with_string_index(
 
 def _split_before_string_index(
     elements: Sequence[str | T], split_index: int
-) -> Tuple[List[str | T], List[str | T]]:
+) -> Tuple[list[str | T], list[str | T]]:
     current_index = 0
     for i, element in enumerate(elements):
         if not isinstance(element, str):
@@ -319,8 +319,10 @@ def _regex_tree_match_recursive(
             group_name=node.group_name,
             match_dict=dict(),
         )
-        child_group.children.extend(_regex_tree_match_recursive(elements, node.child, child_group))
-        yield child_group
+        yield dataclass_replace(
+            child_group,
+            children=list(_regex_tree_match_recursive(elements, node.child, child_group)),
+        )
         return
 
     # For other nodes, there is no problem using `pattern`.

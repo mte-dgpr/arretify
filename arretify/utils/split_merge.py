@@ -18,7 +18,6 @@
 #
 from typing import (
     Callable,
-    List,
     Sequence,
     Tuple,
     Iterator,
@@ -38,15 +37,15 @@ T1 = TypeVar("T1")
 T2 = TypeVar("T2")
 T3 = TypeVar("T3")
 
-RawSplit = Tuple[List[T1], T2, List[T1]]
+RawSplit = Tuple[list[T1], T2, list[T1]]
 """
 Generic type alias representing a raw search & split operation on a list of elements.
 It is subscribed like so `RawSplit[ElementType, MatchType]`
 It represents a tuple `(before, match, after)` where:
-- `before` is of type `List[ElementType]` and represents a
+- `before` is of type `list[ElementType]` and represents a
     list of elements before the match.
 - `match` is of type `MatchType` and represents the matched element.
-- `after` is of type `List[ElementType]` and represents a
+- `after` is of type `list[ElementType]` and represents a
     list of elements after the match.
 """
 
@@ -198,7 +197,7 @@ def merge_splitted_elements(
 def split_before_match(
     elements: Sequence[T1],
     is_matching: Probe[T1],
-) -> Tuple[List[T1], List[T1]]:
+) -> Tuple[list[T1], list[T1]]:
     """
     Split the input list into two parts, by using the `is_matching` function.
 
@@ -234,7 +233,7 @@ def make_single_line_splitter(
     (["a"], ["b"], ["b", "c"])
     """
 
-    def _splitter(elements: Sequence[T1]) -> RawSplit[T1, List[T1]] | None:
+    def _splitter(elements: Sequence[T1]) -> RawSplit[T1, list[T1]] | None:
         before, after = split_before_match(elements, is_matching)
         if after:
             return (before, [after[0]], after[1:])
@@ -246,7 +245,7 @@ def make_single_line_splitter(
 def make_while_splitter(
     start_condition: Probe[T1],
     while_condition: Probe[T1],
-) -> Splitter[T1, List[T1]]:
+) -> Splitter[T1, list[T1]]:
     """
     Starts the split at the first element matched by `start_condition`, and continues
     to match until the first element that does not match `while_condition`.
@@ -259,7 +258,7 @@ def make_while_splitter(
     (["a"], ["b", "b"], ["c"])
     """
 
-    def _splitter(elements: Sequence[T1]) -> RawSplit[T1, List[T1]] | None:
+    def _splitter(elements: Sequence[T1]) -> RawSplit[T1, list[T1]] | None:
         before, after = split_before_match(elements, start_condition)
         if not after:
             return None

@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import List
+from typing import Sequence
 from dataclasses import replace as dataclass_replace
 import logging
 
@@ -43,12 +43,12 @@ def resolve_code_article_legifrance_id(
     document_context: DocumentContext,
     code_article_reference_tag: Tag,
     document: Document,
-    sections: List[Section],
+    sections: Sequence[Section],
 ) -> None:
     if document.id is None:
         return
 
-    resolved_sections: List[Section] = []
+    resolved_sections: list[Section] = []
     for section in sections:
         if section.type == SectionType.ARTICLE:
             new_fields: DataElementDataDict = dict(

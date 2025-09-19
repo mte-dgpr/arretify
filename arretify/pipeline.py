@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import Callable, List
+from typing import Callable, Sequence
 from pathlib import Path
 
 from bs4 import BeautifulSoup
@@ -32,7 +32,7 @@ PipelineStep = Callable[[DocumentContext], DocumentContext]
 
 def run_pipeline(
     document_context: DocumentContext,
-    steps: List[PipelineStep] | None = None,
+    steps: Sequence[PipelineStep] | None = None,
 ) -> DocumentContext:
     if steps is None:
         steps = [
@@ -91,7 +91,7 @@ def load_ocr_pages(
         raise ValueError(f"Input path {input_path} is not a directory.")
 
     file_paths = sorted(input_path.glob(f"*{OCR_FILE_EXTENSION}"), key=lambda p: int(p.stem))
-    pages_ocr: List[str] = []
+    pages_ocr: list[str] = []
     for file_path in file_paths:
         with open(file_path, "r", encoding="utf-8") as file:
             pages_ocr.append(file.read())
