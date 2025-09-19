@@ -16,18 +16,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import List, Tuple, Iterator
+from typing import List, Sequence, Tuple, Iterator, cast
 import logging
 
-from bs4 import BeautifulSoup, Tag
+from bs4 import Tag
 
 from arretify.parsing_utils.patterns import is_continuing_sentence
+from arretify.types import DocumentContext, PageElementOrString
 from arretify.utils.functional import iter_func_to_list, chain_functions
 from arretify.utils.html import (
-    PageElementOrString,
     render_str_list_attribute,
 )
-from arretify.utils.html_create import make_data_tag, make_new_tag
+from arretify.utils.html_create import (
+    make_data_tag,
+    make_new_tag,
+    make_segmentation_tag,
+    read_segmentation_tag_data,
+)
 from arretify.utils.markdown_parsing import (
     is_table_description,
     TABLE_HEADER_SEPARATOR_PATTERN,
@@ -51,6 +56,7 @@ from arretify.regex_utils import map_matches
 from arretify.utils.split_merge import (
     Probe,
     RawSplit,
+    Splitter,
     split_elements,
     map_splitted_elements,
     flat_map_splitted_elements,
@@ -65,16 +71,14 @@ from arretify.law_data.french_addresses import (
 )
 
 from .core import (
-    Node,
-    NodeOrText,
-    is_node,
+    is_tag,
     make_single_line_splitter_for_text_span_nodes,
     get_string,
     get_strings,
     combine_text_spans,
     make_probe_from_pattern_proxy,
     pick_text_span_node,
-    pick_if_transparent_node_followed_by_match,
+    pick_if_transparent_tag_followed_by_match,
     make_pattern_splitter,
 )
 from .document_elements import render_table_of_contents, render_page_footer, render_page_separator
@@ -84,18 +88,18 @@ _LOGGER = logging.getLogger(__name__)
 
 
 # -------------------- Tables -------------------- #
-_TableSplitterMatch = Tuple[List[NodeOrText], List[NodeOrText]]
+_TableSplitterMatch = Tuple[List[PageElementOrString], List[PageElementOrString]]
 """
 A match for the table splitter, in the form `(<table_elements>, <table_description_elements>)`.
 """
 
 _is_table = make_probe_from_pattern_proxy(TABLE_LINE_PATTERN)
 _is_table_start = pick_text_span_node(_is_table)
-_is_table_end = negate(pick_if_transparent_node_followed_by_match(pick_text_span_node(_is_table)))
+_is_table_end = negate(pick_if_transparent_tag_followed_by_match(pick_text_span_node(_is_table)))
 
 
-def _make_table_description_end_probe(table_lines: List[str]) -> Probe[NodeOrText]:
-    def _is_table_description(elements: List[NodeOrText], index: int) -> bool:
+def _make_table_description_end_probe(table_lines: Sequence[str]) -> Probe[PageElementOrString]:
+    def _is_table_description(elements: Sequence[PageElementOrString], index: int) -> bool:
         if is_table_description(get_string(elements[index]), table_lines):
             return True
         return False
@@ -104,32 +108,37 @@ def _make_table_description_end_probe(table_lines: List[str]) -> Probe[NodeOrTex
 
 
 def parse_tables(
-    input_list: List[NodeOrText],
-) -> List[NodeOrText]:
+    context: DocumentContext,
+    elements: Sequence[PageElementOrString],
+) -> List[PageElementOrString]:
     return flat_map_splitted_elements(
-        split_elements(input_list, _table_splitter),
-        _make_table_nodes,
+        split_elements(elements, _table_splitter),
+        lambda match: _make_table_tags(context, match),
     )
 
 
 @iter_func_to_list
-def _make_table_nodes(match: _TableSplitterMatch) -> Iterator[NodeOrText]:
+def _make_table_tags(
+    context: DocumentContext, match: _TableSplitterMatch
+) -> Iterator[PageElementOrString]:
     table_pile, table_description_pile = match
-    yield Node(type="table", children=table_pile)
+    yield make_segmentation_tag(context.soup, "table", contents=table_pile)
     if table_description_pile:
-        yield Node(type="table_description", children=table_description_pile)
+        yield make_segmentation_tag(
+            context.soup, "table_description", contents=table_description_pile
+        )
 
 
 def _table_splitter(
-    input_list: List[NodeOrText],
-) -> RawSplit[NodeOrText, _TableSplitterMatch] | None:
-    before, input_list = split_before_match(input_list, _is_table_start)
-    table_pile, input_list = split_before_match(input_list, _is_table_end)
+    elements: Sequence[PageElementOrString],
+) -> RawSplit[PageElementOrString, _TableSplitterMatch] | None:
+    before, elements = split_before_match(elements, _is_table_start)
+    table_pile, elements = split_before_match(elements, _is_table_end)
 
     if table_pile:
         # Directly after table end, look for table description.
-        table_description_pile, input_list = split_before_match(
-            input_list,
+        table_description_pile, elements = split_before_match(
+            elements,
             _make_table_description_end_probe(get_strings(table_pile)),
         )
 
@@ -139,33 +148,33 @@ def _table_splitter(
                 table_pile,
                 table_description_pile,
             ),
-            input_list,
+            elements,
         )
     else:
         return None
 
 
 def render_table(
-    soup: BeautifulSoup,
-    node: Node,
+    context: DocumentContext,
+    tag: Tag,
 ) -> Tag:
     pile: List[str] = []
     has_table_header = False
-    transparent_nodes: List[Tuple[int, Node]] = []
-    for element in node.children:
-        if is_node(element, type_in=["text_span"]):
+    transparent_tags: List[Tuple[int, Tag]] = []
+    for element in tag.children:
+        if is_tag(element, tag_name_in=["text_span"]):
             element_str = get_string(element)
             pile.append(element_str)
             if bool(TABLE_HEADER_SEPARATOR_PATTERN.match(element_str)):
                 has_table_header = True
-        elif is_node(element, type_in=["page_separator"]):
+        elif is_tag(element, tag_name_in=["page_separator"]):
             table_tag = parse_markdown_table(pile)
-            # Get the right table row for inserting the transparent node.
+            # Get the right table row for inserting the transparent tag.
             # If the table has a header, the `pile` contains a header
             # separation line (e.g. "|---|---|---|"), which is not
             # counting as a row in the final html table tag.
             row_index = len(pile) - 1 - int(has_table_header)
-            transparent_nodes.append((row_index, element))
+            transparent_tags.append((row_index, element))
         else:
             raise ValueError(f"Unexpected element type {type(element)} in table rendering.")
 
@@ -173,10 +182,10 @@ def render_table(
 
     # Insert transparent nodes in their corresponding table rows.
     table_rows = table_tag.find_all("tr")
-    for row_index, transparent_node in transparent_nodes:
+    for row_index, transparent_tag in transparent_tags:
         if row_index < len(table_rows) and row_index >= 0:
             table_rows[row_index].select("td, th")[-1].append(
-                render_page_separator(soup, transparent_node)
+                render_page_separator(context, transparent_tag)
             )
         else:
             raise ValueError(f"Invalid index {row_index} in table rendering. ")
@@ -185,15 +194,15 @@ def render_table(
 
 
 def render_table_description(
-    soup: BeautifulSoup,
-    node: Node,
+    context: DocumentContext,
+    tag: Tag,
 ) -> Iterator[PageElementOrString]:
-    for element in node.children:
-        if is_node(element, type_in=["text_span"]):
-            yield soup.new_tag("br")
+    for element in tag.children:
+        if is_tag(element, tag_name_in=["text_span"]):
+            yield context.soup.new_tag("br")
             yield get_string(element)
-        elif is_node(element, type_in=["page_separator"]):
-            yield render_page_separator(soup, element)
+        elif is_tag(element, tag_name_in=["page_separator"]):
+            yield render_page_separator(context, element)
         else:
             raise ValueError(
                 f"Unexpected element type {type(element)} in table description rendering."
@@ -206,7 +215,7 @@ LEADING_WHITESPACES_PATTERN = PatternProxy(r"^\s+")
 
 _is_list_element = make_probe_from_pattern_proxy(LIST_PATTERN)
 _is_list_start = pick_text_span_node(_is_list_element)
-_is_list_continuation = pick_if_transparent_node_followed_by_match(
+_is_list_continuation = pick_if_transparent_tag_followed_by_match(
     pick_text_span_node(_is_list_element)
 )
 
@@ -224,50 +233,57 @@ def _clean_leading_whitespaces(line: str) -> str:
     return LEADING_WHITESPACES_PATTERN.sub("", line)
 
 
-def _list_splitter(
-    elements: List[NodeOrText],
-) -> RawSplit[NodeOrText, List[NodeOrText]] | None:
-    """
-    Split the input list into piles of list elements.
-    Each pile is a list of elements that are part of the same list.
-    """
-    before, elements = split_before_match(elements, _is_list_start)
+def _make_list_splitter(
+    context: DocumentContext,
+) -> Splitter[PageElementOrString, List[PageElementOrString]]:
+    def _splitter(
+        elements: Sequence[PageElementOrString],
+    ) -> RawSplit[PageElementOrString, List[PageElementOrString]] | None:
+        """
+        Split the input list into piles of list elements.
+        Each pile is a list of elements that are part of the same list.
+        """
+        before, elements = split_before_match(elements, _is_list_start)
 
-    if not elements:
-        return None
+        if not elements:
+            return None
 
-    pile: List[NodeOrText] = []
-    while elements:
-        element = elements[0]
+        pile: List[PageElementOrString] = []
+        while elements:
+            element = elements[0]
 
-        # This will pick either a list element, or an transparent tag (e.g. page separator)
-        # that is followed by a list element.
-        if _is_list_continuation(elements, 0):
-            pile.append(elements.pop(0))
+            # This will pick either a list element, or an transparent tag (e.g. page separator)
+            # that is followed by a list element.
+            if _is_list_continuation(elements, 0):
+                pile.append(elements.pop(0))
 
-        # If we get a line that does not match the list pattern,
-        # we check if it continues the previous sentence.
-        elif is_node(element, type_in=["text_span"]):
-            # First get the previous list element in the pile.
-            j = len(pile) - 1
-            while j >= 0 and not is_node(pile[j], type_in=["text_span"]):
-                j -= 1
-            if j < 0:
-                raise RuntimeError("Expected to find a list element in the pile.")
-            previous_list_element = pile[j]
+            # If we get a line that does not match the list pattern,
+            # we check if it continues the previous sentence.
+            elif is_tag(element, tag_name_in=["text_span"]):
+                # First get the previous list element in the pile.
+                j = len(pile) - 1
+                while j >= 0 and not is_tag(pile[j], tag_name_in=["text_span"]):
+                    j -= 1
+                if j < 0:
+                    raise RuntimeError("Expected to find a list element in the pile.")
+                previous_list_element = pile[j]
 
-            if is_continuing_sentence(
-                get_string(previous_list_element),
-                get_string(element),
-            ):
-                pile[j] = combine_text_spans([*pile[j:], elements.pop(0)])
+                if is_continuing_sentence(
+                    get_string(previous_list_element),
+                    get_string(element),
+                ):
+                    element.insert(0, " ")
+                    pile[j] = combine_text_spans(context, [*pile[j:], element])
+                    elements.pop(0)
+                else:
+                    break
+
             else:
                 break
 
-        else:
-            break
+        return before, pile, elements
 
-    return before, pile, elements
+    return _splitter
 
 
 # Does not deal with case (no bullets, but indented lines) :
@@ -276,31 +292,32 @@ def _list_splitter(
 #     hellu
 # - bli
 def parse_lists(
-    input_list: List[NodeOrText],
-) -> List[NodeOrText]:
+    context: DocumentContext,
+    elements: Sequence[PageElementOrString],
+) -> List[PageElementOrString]:
     return map_splitted_elements(
         split_elements(
-            input_list,
-            _list_splitter,
+            elements,
+            _make_list_splitter(context),
         ),
-        lambda pile: Node(type="list", children=pile),
+        lambda pile: make_segmentation_tag(context.soup, "list", contents=pile),
     )
 
 
 def render_list(
-    soup: BeautifulSoup,
-    node: Node,
+    context: DocumentContext,
+    tag: Tag,
 ) -> Tag:
-    elements, ul = _render_list(soup, node.children)
+    elements, ul = _render_list(context, tag.contents)
     assert len(elements) == 0, "Expected all lines to be consumed in list rendering"
     return ul
 
 
 def _render_list(
-    soup: BeautifulSoup,
-    elements: List[NodeOrText],
-) -> Tuple[List[NodeOrText], Tag]:
-    elements = list(elements)
+    context: DocumentContext,
+    elements_: Sequence[PageElementOrString],
+) -> Tuple[List[PageElementOrString], Tag]:
+    elements = list(elements_)
     list_pile: List[Tag] = []
     element = elements[0]
     ref_indentation = _list_indentation(get_string(element))
@@ -308,22 +325,22 @@ def _render_list(
     while elements:
         element = elements[0]
 
-        if is_node(element, type_in=["page_separator"]):
-            list_pile[-1].append(render_page_separator(soup, element))
+        if is_tag(element, tag_name_in=["page_separator"]):
+            list_pile[-1].append(render_page_separator(context, element))
             elements.pop(0)
 
-        elif is_node(element, type_in=["text_span"]):
+        elif is_tag(element, tag_name_in=["text_span"]):
             current_indentation = _list_indentation(get_string(element))
 
             if current_indentation == ref_indentation:
-                li_contents = list(render_text_span(soup, element))
+                li_contents = list(render_text_span(context, element))
                 if isinstance(li_contents[0], str):
                     li_contents[0] = _clean_leading_whitespaces(li_contents[0])
-                list_pile.append(make_new_tag(soup, "li", contents=li_contents))
+                list_pile.append(make_new_tag(context.soup, "li", contents=li_contents))
                 elements.pop(0)
 
             elif current_indentation > ref_indentation:
-                elements, nested_ul = _render_list(soup, elements)
+                elements, nested_ul = _render_list(context, elements)
                 list_pile[-1].append(nested_ul)
 
             # If the indentation is less than the reference indentation,
@@ -334,11 +351,11 @@ def _render_list(
         else:
             raise ValueError(f"Unexpected element {element} in list rendering.")
 
-    return elements, make_new_tag(soup, "ul", contents=list_pile)
+    return elements, make_new_tag(context.soup, "ul", contents=list_pile)
 
 
 # -------------------- Blockquotes -------------------- #
-_BlockquoteSplitterMatch = Tuple[List[NodeOrText], ErrorCodes | None]
+_BlockquoteSplitterMatch = Tuple[List[PageElementOrString], ErrorCodes | None]
 """
 A match for the blockquote splitter, in the form `(<blockquote_elements>, <error_codes>)`.
 """
@@ -360,53 +377,48 @@ _is_blockquote_end = pick_text_span_node(
 
 
 def parse_blockquotes(
-    input_list: List[NodeOrText],
-) -> List[NodeOrText]:
+    context: DocumentContext,
+    elements: Sequence[PageElementOrString],
+) -> List[PageElementOrString]:
     return map_splitted_elements(
         split_elements(
-            input_list,
+            elements,
             _blockquote_splitter,
         ),
-        _make_blockquote_node,
+        lambda match: _make_blockquote_tag(context, match),
     )
 
 
-def _make_blockquote_node(match: _BlockquoteSplitterMatch) -> Node:
+def _make_blockquote_tag(context: DocumentContext, match: _BlockquoteSplitterMatch) -> Tag:
     pile, error_code = match
     if error_code is None:
-        children = chain_functions(pile, [parse_tables, parse_lists, parse_images])
-        return Node(
-            type="blockquote",
-            children=children,
-        )
+        contents = chain_functions(context, pile, [parse_tables, parse_lists, parse_images])
+        return make_segmentation_tag(context.soup, "blockquote", contents=contents)
     else:
-        return Node(
-            type="error",
-            children=pile,
-            data=dict(error_codes=[error_code.value]),
+        return make_segmentation_tag(
+            context.soup, "error", contents=pile, data=dict(error_codes=[error_code.value])
         )
 
 
 def _blockquote_splitter(
-    input_list: List[NodeOrText],
-) -> RawSplit[NodeOrText, _BlockquoteSplitterMatch] | None:
-    before, input_list = split_before_match(input_list, _is_blockquote_start)
+    elements: Sequence[PageElementOrString],
+) -> RawSplit[PageElementOrString, _BlockquoteSplitterMatch] | None:
+    before, elements = split_before_match(elements, _is_blockquote_start)
 
-    if not input_list:
+    if not elements:
         return None
 
     # At this point, we know that the first element is a blockquote start
-    element = input_list[0]
-    assert is_node(element, type_in=["text_span"])
+    element = elements[0]
+    assert is_tag(element, tag_name_in=["text_span"])
     first_str_index, first_str = _get_first_str(element)
-    blockquote_start = element.data["start"]
+    blockquote_start = read_segmentation_tag_data(element)["start"]
     # Remove opening quote
-    # TODO-PROCESS-TAG
-    element.children[first_str_index] = BLOCKQUOTE_START_PATTERN.sub("", first_str)
+    element.contents[first_str_index].replace_with(BLOCKQUOTE_START_PATTERN.sub("", first_str))
     quotes_depth_count = 1
 
-    for i, element in enumerate(input_list):
-        if not is_node(element, type_in=["text_span"]):
+    for i, element in enumerate(elements):
+        if not is_tag(element, tag_name_in=["text_span"]):
             continue
 
         # Ignore case when the line contains a balanced number of quotes.
@@ -416,63 +428,64 @@ def _blockquote_splitter(
         if len(double_quotes_matches) % 2 == 0:
             pass
         else:
-            if _is_blockquote_start(input_list, i):
+            if _is_blockquote_start(elements, i):
                 quotes_depth_count += 1
-            if _is_blockquote_end(input_list, i):
+            if _is_blockquote_end(elements, i):
                 quotes_depth_count -= 1
             if quotes_depth_count <= 0:
                 last_str_index, last_str = _get_last_str(element)
                 # Remove the end quote
-                # TODO-PROCESS-TAG
-                element.children[last_str_index] = BLOCKQUOTE_END_PATTERN.sub("", last_str)
+                element.contents[last_str_index].replace_with(
+                    BLOCKQUOTE_END_PATTERN.sub("", last_str)
+                )
                 break
 
     if quotes_depth_count == 0:
         # Last line should be included, so we take `i + 1`
-        return before, (input_list[: i + 1], None), input_list[i + 1 :]
+        return before, (elements[: i + 1], None), elements[i + 1 :]
     else:
         _LOGGER.warning(f"Found unbalanced quote starting {blockquote_start}")
-        return before, (input_list[0:1], ErrorCodes.unbalanced_quote), input_list[1:]
+        return before, (elements[0:1], ErrorCodes.unbalanced_quote), elements[1:]
 
 
 def _get_first_str(
-    text_span_node: Node,
+    text_span_tag: Tag,
 ) -> Tuple[int, str]:
-    for i, element in enumerate(text_span_node.children):
+    for i, element in enumerate(text_span_tag.contents):
         if isinstance(element, str):
             return i, element
     raise ValueError("No str found.")
 
 
 def _get_last_str(
-    text_span_node: Node,
+    text_span_tag: Tag,
 ) -> Tuple[int, str]:
-    for i, element in enumerate(reversed(text_span_node.children)):
+    for i, element in enumerate(reversed(text_span_tag.contents)):
         if isinstance(element, str):
-            return len(text_span_node.children) - 1 - i, element
+            return len(text_span_tag.contents) - 1 - i, element
     raise ValueError("No str found.")
 
 
 def render_blockquote(
-    soup: BeautifulSoup,
-    node: Node,
-) -> Iterator[PageElementOrString]:
-    tag = soup.new_tag("blockquote")
-    for element in node.children:
-        if is_node(element, type_in=["text_span"]):
-            tag.append(
+    context: DocumentContext,
+    tag: Tag,
+) -> Tag:
+    blockquote_tag = context.soup.new_tag("blockquote")
+    for element in tag.contents:
+        if is_tag(element, tag_name_in=["text_span"]):
+            blockquote_tag.append(
                 make_new_tag(
-                    soup,
+                    context.soup,
                     "p",
                     # TODO : should be parsed like other nodes, instead of being
                     # rendered here on the fly. This would also make parsing blockquote easier.
-                    contents=render_inline_quotes(soup, get_string(element)),
+                    contents=render_inline_quotes(context, get_string(element)),
                 )
             )
-        elif is_node(element):
-            tag.extend(render_basic_elements(soup, element))
+        elif is_tag(element):
+            blockquote_tag.extend(render_basic_elements(context, element))
 
-    yield tag
+    return blockquote_tag
 
 
 # -------------------- Images -------------------- #
@@ -480,22 +493,23 @@ _is_image = make_probe_from_pattern_proxy(IMAGE_PATTERN)
 
 
 def parse_images(
-    input_list: List[NodeOrText],
-) -> List[NodeOrText]:
+    context: DocumentContext,
+    elements: Sequence[PageElementOrString],
+) -> List[PageElementOrString]:
     return map_splitted_elements(
         split_elements(
-            input_list,
+            elements,
             make_single_line_splitter_for_text_span_nodes(_is_image),
         ),
-        lambda children: Node(type="image", children=children),
+        lambda children: make_segmentation_tag(context.soup, "image", contents=children),
     )
 
 
 def render_image(
-    soup: BeautifulSoup,
-    node: Node,
+    context: DocumentContext,
+    tag: Tag,
 ) -> Tag:
-    return parse_markdown_image(get_string(node))
+    return parse_markdown_image(get_string(tag))
 
 
 # -------------------- Addresses -------------------- #
@@ -520,8 +534,9 @@ _address_detect_splitter = make_pattern_splitter(ADDRESS_DETECT_PATTERN)
 
 
 def parse_addresses(
-    input_list: List[NodeOrText],
-) -> List[NodeOrText]:
+    context: DocumentContext,
+    elements: Sequence[PageElementOrString],
+) -> List[PageElementOrString]:
     """
     Parse French addresses.
 
@@ -530,17 +545,16 @@ def parse_addresses(
     """
     return map_splitted_elements(
         split_elements(
-            input_list,
+            elements,
             _address_splitter,
         ),
-        lambda address: Node(
-            type="address",
-            children=[address],
-        ),
+        lambda address: make_segmentation_tag(context.soup, "address", contents=[address]),
     )
 
 
-def _address_splitter(elements: List[NodeOrText]) -> RawSplit[NodeOrText, str] | None:
+def _address_splitter(
+    elements: Sequence[PageElementOrString],
+) -> RawSplit[PageElementOrString, str] | None:
     split = _address_detect_splitter(elements)
     if not split:
         return None
@@ -578,14 +592,14 @@ def _address_splitter(elements: List[NodeOrText]) -> RawSplit[NodeOrText, str] |
 
 
 def render_address(
-    soup: BeautifulSoup,
-    node: Node,
+    context: DocumentContext,
+    tag: Tag,
 ) -> Tag:
     return make_new_tag(
-        soup,
+        context.soup,
         "address",
         contents=[
-            get_string(node),
+            get_string(tag),
         ],
     )
 
@@ -595,11 +609,11 @@ INLINE_QUOTE_PATTERN = PatternProxy(r'"(?P<quoted>[^"]+)"')
 """Detect if a sentence has inline quotes."""
 
 
-def render_inline_quotes(soup: BeautifulSoup, string: str) -> Iterator[PageElementOrString]:
+def render_inline_quotes(context: DocumentContext, string: str) -> Iterator[PageElementOrString]:
     return map_matches(
         split_string_with_regex(INLINE_QUOTE_PATTERN, string),
         lambda inline_quote_match: make_new_tag(
-            soup,
+            context.soup,
             "q",
             contents=[str(inline_quote_match.group("quoted"))],
         ),
@@ -608,56 +622,61 @@ def render_inline_quotes(soup: BeautifulSoup, string: str) -> Iterator[PageEleme
 
 @iter_func_to_list
 def render_text_span(
-    soup: BeautifulSoup,
-    node: Node,
+    context: DocumentContext,
+    tag: Tag,
 ) -> Iterator[PageElementOrString]:
-    for i, element in enumerate(node.children):
+    for i, element in enumerate(tag.contents):
         if isinstance(element, str):
             # If this is not the last element, we add a space as separator.
-            yield element + " " * int(i < len(node.children) - 1)
-        elif is_node(element, type_in=["page_separator"]):
-            yield render_page_separator(soup, element)
-        elif is_node(element, type_in=["address"]):
-            yield render_address(soup, element)
+            yield element + " " * int(i < len(tag.contents) - 1)
+        elif is_tag(element, tag_name_in=["page_separator"]):
+            yield render_page_separator(context, element)
+        elif is_tag(element, tag_name_in=["address"]):
+            yield render_address(context, element)
         else:
             raise ValueError(f"Unexpected element type {type(element)} in text span rendering.")
 
 
 def render_basic_elements(
-    soup: BeautifulSoup,
-    node: Node,
+    context: DocumentContext,
+    tag: Tag,
 ) -> Iterator[PageElementOrString]:
-    if node.type == "list":
-        yield render_list(soup, node)
-    elif node.type == "table":
-        yield render_table(soup, node)
-    elif node.type == "table_description":
-        yield from render_table_description(soup, node)
-    elif node.type == "blockquote":
-        yield from render_blockquote(soup, node)
-    elif node.type == "table_of_contents":
-        yield render_table_of_contents(soup, node)
-    elif node.type == "page_footer":
-        yield render_page_footer(soup, node)
-    elif node.type == "page_separator":
-        yield render_page_separator(soup, node)
-    elif node.type == "image":
-        yield render_image(soup, node)
-    elif node.type == "error":
-        yield render_error(soup, node)
-    elif node.type == "text_span":
-        yield from render_text_span(soup, node)
+    tag_name = tag.name
+    if tag_name == "list":
+        yield render_list(context, tag)
+    elif tag_name == "table":
+        yield render_table(context, tag)
+    elif tag_name == "table_description":
+        yield from render_table_description(context, tag)
+    elif tag_name == "blockquote":
+        yield render_blockquote(context, tag)
+    elif tag_name == "table_of_contents":
+        yield render_table_of_contents(context, tag)
+    elif tag_name == "page_footer":
+        yield render_page_footer(context, tag)
+    elif tag_name == "page_separator":
+        yield render_page_separator(context, tag)
+    elif tag_name == "image":
+        yield render_image(context, tag)
+    elif tag_name == "error":
+        yield render_error(context, tag)
+    elif tag_name == "text_span":
+        yield from render_text_span(context, tag)
     else:
-        raise ValueError(f"Unknown node type '{node.type}' in render_basic_elements.")
+        raise ValueError(f"Unknown tag type '{tag_name}' in render_basic_elements.")
 
 
 def render_error(
-    soup: BeautifulSoup,
-    node: Node,
+    context: DocumentContext,
+    tag: Tag,
 ) -> Tag:
     return make_data_tag(
-        soup,
+        context.soup,
         ERROR_SCHEMA,
-        data=dict(error_codes=render_str_list_attribute(node.data["error_codes"])),
-        contents=[get_string(n) for n in node.children],
+        data=dict(
+            error_codes=render_str_list_attribute(
+                cast(List[str], read_segmentation_tag_data(tag)["error_codes"])
+            )
+        ),
+        contents=[get_string(n) for n in tag.contents],
     )

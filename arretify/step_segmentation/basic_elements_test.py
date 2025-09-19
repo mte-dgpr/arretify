@@ -18,9 +18,7 @@
 #
 import unittest
 
-from bs4 import BeautifulSoup
-
-from .core import Node
+from arretify.utils.html_create import make_segmentation_tag
 from .basic_elements import (
     _list_indentation,
     parse_lists,
@@ -33,13 +31,24 @@ from .basic_elements import (
     render_table_description,
     render_list,
     render_address,
+    render_blockquote,
 )
 from .testing import assert_elements_equal, make_text_spans
-from arretify.utils.testing import normalized_html_str, assert_html_list_equal
+from arretify.utils.testing import (
+    create_document_context,
+    normalized_html_str,
+    assert_html_list_equal,
+)
 from arretify.law_data.french_addresses import ALL_STREET_NAMES
 
 
-class TestListIndentation(unittest.TestCase):
+class BaseTestCase(unittest.TestCase):
+    def setUp(self):
+        self.context = create_document_context()
+        self.soup = self.context.soup
+
+
+class TestListIndentation(BaseTestCase):
 
     def test_correct_indentation(self):
         # Arrange
@@ -73,11 +82,12 @@ class TestListIndentation(unittest.TestCase):
         ), "Should raise ValueError for non-list lines"
 
 
-class TestParseTables(unittest.TestCase):
+class TestParseTables(BaseTestCase):
 
     def test_simple_table(self):
         # Arrange
         elements = make_text_spans(
+            self.soup,
             "| Polluant | Concentration maximale en mg/l |",
             "|---------|---------------------------------|",
             "| MES     | 35                               |",
@@ -87,15 +97,17 @@ class TestParseTables(unittest.TestCase):
         )
 
         # Act
-        elements = parse_tables(elements)
+        elements = parse_tables(self.context, elements)
 
         # Assert
         assert_elements_equal(
             elements,
             [
-                Node(
-                    type="table",
-                    children=make_text_spans(
+                make_segmentation_tag(
+                    self.soup,
+                    "table",
+                    contents=make_text_spans(
+                        self.soup,
                         "| Polluant | Concentration maximale en mg/l |",
                         "|---------|---------------------------------|",
                         "| MES     | 35                               |",
@@ -103,7 +115,7 @@ class TestParseTables(unittest.TestCase):
                         "| Hydrocarbures totaux | 10                             |",
                     ),
                 ),
-                *make_text_spans("END"),
+                *make_text_spans(self.soup, "END"),
             ],
             ignore_text_span_data=True,
         )
@@ -111,6 +123,7 @@ class TestParseTables(unittest.TestCase):
     def test_table_description(self):
         # Arrange
         elements = make_text_spans(
+            self.soup,
             "| Polluant | Concentration maximale en mg/l |",
             "|---------|---------------------------------|",
             "| MES     | 35                               |",
@@ -120,27 +133,30 @@ class TestParseTables(unittest.TestCase):
         )
 
         # Act
-        result = parse_tables(elements)
+        result = parse_tables(self.context, elements)
 
         # Assert
         assert_elements_equal(
             result,
             [
-                Node(
-                    type="table",
-                    children=make_text_spans(
+                make_segmentation_tag(
+                    self.soup,
+                    "table",
+                    contents=make_text_spans(
+                        self.soup,
                         "| Polluant | Concentration maximale en mg/l |",
                         "|---------|---------------------------------|",
                         "| MES     | 35                               |",
                     ),
                 ),
-                Node(
-                    type="table_description",
-                    children=make_text_spans(
-                        "(*) bla bla", "Polluant : Matières en suspension (MES)"
+                make_segmentation_tag(
+                    self.soup,
+                    "table_description",
+                    contents=make_text_spans(
+                        self.soup, "(*) bla bla", "Polluant : Matières en suspension (MES)"
                     ),
                 ),
-                *make_text_spans("END"),
+                *make_text_spans(self.soup, "END"),
             ],
             ignore_text_span_data=True,
         )
@@ -149,64 +165,60 @@ class TestParseTables(unittest.TestCase):
         # Arrange
         elements = [
             *make_text_spans(
+                self.soup,
                 "| Polluant | Concentration maximale en mg/l |",
                 "|---------|---------------------------------|",
                 "| MES     | 35                               |",
                 "| DCO     | 125                              |",
             ),
-            Node(
-                type="page_separator",
-                children=[],
-                data=dict(page_index=1),
-            ),
-            *make_text_spans("END"),
+            make_segmentation_tag(self.soup, "page_separator", data=dict(page_index=1)),
+            *make_text_spans(self.soup, "END"),
         ]
 
         # Act
-        result = parse_tables(elements)
+        result = parse_tables(self.context, elements)
 
         # Assert
         assert_elements_equal(
             result,
             [
-                Node(
-                    type="table",
-                    children=make_text_spans(
+                make_segmentation_tag(
+                    self.soup,
+                    "table",
+                    contents=make_text_spans(
+                        self.soup,
                         "| Polluant | Concentration maximale en mg/l |",
                         "|---------|---------------------------------|",
                         "| MES     | 35                               |",
                         "| DCO     | 125                              |",
                     ),
                 ),
-                Node(
-                    type="page_separator",
-                    children=[],
-                    data=dict(page_index=1),
-                ),
-                *make_text_spans("END"),
+                make_segmentation_tag(self.soup, "page_separator", data=dict(page_index=1)),
+                *make_text_spans(self.soup, "END"),
             ],
             ignore_text_span_data=True,
         )
 
 
-class TestParseList(unittest.TestCase):
+class TestParseList(BaseTestCase):
 
     def test_simple_list(self):
         # Arrange
-        elements = make_text_spans("- Item 1", "- Item 2", "- Item 3", "END")
+        elements = make_text_spans(self.soup, "- Item 1", "- Item 2", "- Item 3", "END")
 
         # Act
-        result = parse_lists(elements)
+        result = parse_lists(self.context, elements)
 
         # Assert
         assert_elements_equal(
             result,
             [
-                Node(
-                    type="list",
-                    children=make_text_spans("- Item 1", "- Item 2", "- Item 3"),
+                make_segmentation_tag(
+                    self.soup,
+                    "list",
+                    contents=make_text_spans(self.soup, "- Item 1", "- Item 2", "- Item 3"),
                 ),
-                *make_text_spans("END"),
+                *make_text_spans(self.soup, "END"),
             ],
             ignore_text_span_data=True,
         )
@@ -214,6 +226,7 @@ class TestParseList(unittest.TestCase):
     def test_nested_list(self):
         # Arrange
         elements = make_text_spans(
+            self.soup,
             "- Item 1",
             "  - Subitem 1.1",
             "  - Subitem 1.2",
@@ -221,16 +234,17 @@ class TestParseList(unittest.TestCase):
         )
 
         # Act
-        result = parse_lists(elements)
+        result = parse_lists(self.context, elements)
 
         # Assert
         assert_elements_equal(
             result,
             [
-                Node(
-                    type="list",
-                    children=make_text_spans(
-                        "- Item 1", "  - Subitem 1.1", "  - Subitem 1.2", "- Item 2"
+                make_segmentation_tag(
+                    self.soup,
+                    "list",
+                    contents=make_text_spans(
+                        self.soup, "- Item 1", "  - Subitem 1.1", "  - Subitem 1.2", "- Item 2"
                     ),
                 ),
             ],
@@ -240,6 +254,7 @@ class TestParseList(unittest.TestCase):
     def test_continuing_previous_sentence(self):
         # Arrange
         elements = make_text_spans(
+            self.soup,
             "- Item 1",
             "this is a continuation of the previous sentence.",
             "- Item 2",
@@ -247,38 +262,42 @@ class TestParseList(unittest.TestCase):
         )
 
         # Act
-        result = parse_lists(elements)
+        result = parse_lists(self.context, elements)
 
         # Assert
         assert_elements_equal(
             result,
             [
-                Node(
-                    type="list",
-                    children=[
-                        Node(
-                            type="text_span",
-                            children=[
+                make_segmentation_tag(
+                    self.soup,
+                    "list",
+                    contents=[
+                        make_segmentation_tag(
+                            self.soup,
+                            "text_span",
+                            contents=[
                                 "- Item 1",
-                                "this is a continuation of the previous sentence.",
+                                " this is a continuation of the previous sentence.",
                             ],
                         ),
-                        *make_text_spans("- Item 2"),
+                        *make_text_spans(self.soup, "- Item 2"),
                     ],
                 ),
-                *make_text_spans("END"),
+                *make_text_spans(self.soup, "END"),
             ],
             ignore_text_span_data=True,
+            ignore_data_if_omitted=True,
         )
 
 
-class TestParseBlockQuote(unittest.TestCase):
+class TestParseBlockQuote(BaseTestCase):
 
     def test_simple_blockquote(self):
         # Arrange
         elements = [
-            Node(type="some_node", children=[]),
+            make_segmentation_tag(self.soup, "some_node"),
             *make_text_spans(
+                self.soup,
                 '"This is',
                 'a blockquote"',
                 "END",
@@ -286,25 +305,27 @@ class TestParseBlockQuote(unittest.TestCase):
         ]
 
         # Act
-        result = parse_blockquotes(elements)
+        result = parse_blockquotes(self.context, elements)
 
         # Assert
         assert_elements_equal(
             result,
             [
-                Node(type="some_node", children=[]),
-                Node(
-                    type="blockquote",
-                    children=make_text_spans("This is", "a blockquote"),
+                make_segmentation_tag(self.soup, "some_node"),
+                make_segmentation_tag(
+                    self.soup,
+                    "blockquote",
+                    contents=make_text_spans(self.soup, "This is", "a blockquote"),
                 ),
-                *make_text_spans("END"),
+                *make_text_spans(self.soup, "END"),
             ],
             ignore_text_span_data=True,
         )
 
     def test_blockquote_nested_list(self):
         # Arrange
-        lines = make_text_spans(
+        elements = make_text_spans(
+            self.soup,
             '"bla bla',
             "blo blo :",
             "- Item 1",
@@ -313,29 +334,33 @@ class TestParseBlockQuote(unittest.TestCase):
         )
 
         # Act
-        result = parse_blockquotes(lines)
+        result = parse_blockquotes(self.context, elements)
 
         # Assert
         assert_elements_equal(
             result,
             [
-                Node(
-                    type="blockquote",
-                    children=[
+                make_segmentation_tag(
+                    self.soup,
+                    "blockquote",
+                    contents=[
                         *make_text_spans(
+                            self.soup,
                             "bla bla",
                             "blo blo :",
                         ),
-                        Node(
-                            type="list",
-                            children=make_text_spans(
+                        make_segmentation_tag(
+                            self.soup,
+                            "list",
+                            contents=make_text_spans(
+                                self.soup,
                                 "- Item 1",
                                 "- Item 2",
                             ),
                         ),
                     ],
                 ),
-                *make_text_spans("END"),
+                *make_text_spans(self.soup, "END"),
             ],
             ignore_text_span_data=True,
         )
@@ -343,6 +368,7 @@ class TestParseBlockQuote(unittest.TestCase):
     def test_blockquote_one_liner_nested_blockquote(self):
         # Arrange
         elements = make_text_spans(
+            self.soup,
             '"bla bla',
             '"blo blo"',
             'bli bli"',
@@ -350,17 +376,18 @@ class TestParseBlockQuote(unittest.TestCase):
         )
 
         # Act
-        result = parse_blockquotes(elements)
+        result = parse_blockquotes(self.context, elements)
 
         # Assert
         assert_elements_equal(
             result,
             [
-                Node(
-                    type="blockquote",
-                    children=make_text_spans("bla bla", '"blo blo"', "bli bli"),
+                make_segmentation_tag(
+                    self.soup,
+                    "blockquote",
+                    contents=make_text_spans(self.soup, "bla bla", '"blo blo"', "bli bli"),
                 ),
-                *make_text_spans("END"),
+                *make_text_spans(self.soup, "END"),
             ],
             ignore_text_span_data=True,
         )
@@ -368,6 +395,7 @@ class TestParseBlockQuote(unittest.TestCase):
     def test_blockquote_nested_inline_quote(self):
         # Arrange
         elements = make_text_spans(
+            self.soup,
             '"bla bla',
             'blo blo "haha"',
             'bli bli"',
@@ -375,21 +403,23 @@ class TestParseBlockQuote(unittest.TestCase):
         )
 
         # Act
-        result = parse_blockquotes(elements)
+        result = parse_blockquotes(self.context, elements)
 
         # Assert
         assert_elements_equal(
             result,
             [
-                Node(
-                    type="blockquote",
-                    children=make_text_spans(
+                make_segmentation_tag(
+                    self.soup,
+                    "blockquote",
+                    contents=make_text_spans(
+                        self.soup,
                         "bla bla",
                         'blo blo "haha"',
                         "bli bli",
                     ),
                 ),
-                *make_text_spans("END"),
+                *make_text_spans(self.soup, "END"),
             ],
             ignore_text_span_data=True,
         )
@@ -397,38 +427,37 @@ class TestParseBlockQuote(unittest.TestCase):
     def test_blockquote_one_line(self):
         # Arrange
         elements = make_text_spans(
+            self.soup,
             '"bla bla"',
             "END",
         )
 
         # Act
-        result = parse_blockquotes(elements)
+        result = parse_blockquotes(self.context, elements)
 
         # Assert
         assert_elements_equal(
             result,
             [
-                Node(
-                    type="blockquote",
-                    children=make_text_spans("bla bla"),
+                make_segmentation_tag(
+                    self.soup,
+                    "blockquote",
+                    contents=make_text_spans(self.soup, "bla bla"),
                 ),
-                *make_text_spans("END"),
+                *make_text_spans(self.soup, "END"),
             ],
             ignore_text_span_data=True,
         )
 
 
-class TestParseInlineQuotes(unittest.TestCase):
-
-    def setUp(self):
-        self.soup = BeautifulSoup("", "html.parser")
+class TestParseInlineQuotes(BaseTestCase):
 
     def test_inline_quote(self):
         # Arrange
         line = 'bla bla "haha" bli bli'
 
         # Act
-        result = render_inline_quotes(self.soup, line)
+        result = render_inline_quotes(self.context, line)
 
         # Assert
         assert [str(element) for element in result] == [
@@ -438,38 +467,30 @@ class TestParseInlineQuotes(unittest.TestCase):
         ]
 
 
-class TestRenderTable(unittest.TestCase):
-
-    def setUp(self):
-        self.soup = BeautifulSoup("", "html.parser")
+class TestRenderTable(BaseTestCase):
 
     def test_render_table_with_page_separators(self):
         # Arrange
-        node = Node(
-            type="table",
-            children=[
-                *make_text_spans("| Column 1 | Column 2 |", "|----------|----------|"),
-                Node(
-                    type="page_separator",
-                    children=[],
-                    data=dict(page_index=1),
-                ),
+        node = make_segmentation_tag(
+            self.soup,
+            "table",
+            contents=[
+                *make_text_spans(self.soup, "| Column 1 | Column 2 |", "|----------|----------|"),
+                make_segmentation_tag(self.soup, "page_separator", data=dict(page_index=1)),
                 *make_text_spans(
+                    self.soup,
                     "| Row 1    | Data 1   |",
                 ),
-                Node(
-                    type="page_separator",
-                    children=[],
-                    data=dict(page_index=2),
-                ),
+                make_segmentation_tag(self.soup, "page_separator", data=dict(page_index=2)),
                 *make_text_spans(
+                    self.soup,
                     "| Row 2    | Data 2   |",
                 ),
             ],
         )
 
         # Act
-        table_tag = render_table(self.soup, node)
+        table_tag = render_table(self.context, node)
 
         # Assert
         assert normalized_html_str(str(table_tag)) == normalized_html_str(
@@ -496,28 +517,22 @@ class TestRenderTable(unittest.TestCase):
         )
 
 
-class TestRenderTableDescription(unittest.TestCase):
-
-    def setUp(self):
-        self.soup = BeautifulSoup("", "html.parser")
+class TestRenderTableDescription(BaseTestCase):
 
     def test_render_table_description_with_page_separators(self):
         # Arrange
-        node = Node(
-            type="table_description",
-            children=[
-                *make_text_spans("This is a description of the table."),
-                Node(
-                    type="page_separator",
-                    children=[],
-                    data=dict(page_index=1),
-                ),
-                *make_text_spans("This is another part of the description."),
+        node = make_segmentation_tag(
+            self.soup,
+            "table_description",
+            contents=[
+                *make_text_spans(self.soup, "This is a description of the table."),
+                make_segmentation_tag(self.soup, "page_separator", data=dict(page_index=1)),
+                *make_text_spans(self.soup, "This is another part of the description."),
             ],
         )
 
         # Act
-        table_description_elements = list(render_table_description(self.soup, node))
+        table_description_elements = list(render_table_description(self.context, node))
 
         # Assert
         assert_html_list_equal(
@@ -532,27 +547,22 @@ class TestRenderTableDescription(unittest.TestCase):
         )
 
 
-class TestRenderList(unittest.TestCase):
-    def setUp(self):
-        self.soup = BeautifulSoup("", "html.parser")
+class TestRenderList(BaseTestCase):
 
     def test_render_list_with_page_separator(self):
         # Arrange
-        node = Node(
-            type="list",
-            children=[
-                *make_text_spans("- Item 1"),
-                Node(
-                    type="page_separator",
-                    children=[],
-                    data=dict(page_index=1),
-                ),
-                *make_text_spans("- Item 2"),
+        node = make_segmentation_tag(
+            self.soup,
+            "list",
+            contents=[
+                *make_text_spans(self.soup, "- Item 1"),
+                make_segmentation_tag(self.soup, "page_separator", data=dict(page_index=1)),
+                *make_text_spans(self.soup, "- Item 2"),
             ],
         )
 
         # Act
-        list_tag = render_list(self.soup, node)
+        list_tag = render_list(self.context, node)
 
         # Assert
         assert normalized_html_str(str(list_tag)) == normalized_html_str(
@@ -566,15 +576,18 @@ class TestRenderList(unittest.TestCase):
 
     def test_render_nested_list(self):
         # Arrange
-        node = Node(
-            type="list",
-            children=[
-                *make_text_spans("- Item 1", "  - Subitem 1.1", "  - Subitem 1.2", "- Item 2"),
+        node = make_segmentation_tag(
+            self.soup,
+            "list",
+            contents=[
+                *make_text_spans(
+                    self.soup, "- Item 1", "  - Subitem 1.1", "  - Subitem 1.2", "- Item 2"
+                ),
             ],
         )
 
         # Act
-        list_tag = render_list(self.soup, node)
+        list_tag = render_list(self.context, node)
 
         # Assert
         assert normalized_html_str(str(list_tag)) == normalized_html_str(
@@ -593,19 +606,21 @@ class TestRenderList(unittest.TestCase):
 
     def test_render_list_text_span(self):
         # Arrange
-        node = Node(
-            type="list",
-            children=[
-                Node(
-                    type="text_span",
-                    children=["- Item 1", "This is a continuation of the previous sentence."],
+        node = make_segmentation_tag(
+            self.soup,
+            "list",
+            contents=[
+                make_segmentation_tag(
+                    self.soup,
+                    "text_span",
+                    contents=["- Item 1", " This is a continuation of the previous sentence."],
                 ),
-                *make_text_spans("- Item 2"),
+                *make_text_spans(self.soup, "- Item 2"),
             ],
         )
 
         # Act
-        list_tag = render_list(self.soup, node)
+        list_tag = render_list(self.context, node)
 
         # Assert
         assert normalized_html_str(str(list_tag)) == normalized_html_str(
@@ -618,51 +633,51 @@ class TestRenderList(unittest.TestCase):
         )
 
 
-class TestParseImage(unittest.TestCase):
+class TestParseImage(BaseTestCase):
 
     def test_parse_image(self):
         # Arrange
         elements = make_text_spans(
+            self.soup,
             "![Image description](image_url.jpg)",
             "END",
         )
 
         # Act
-        result = parse_images(elements)
+        result = parse_images(self.context, elements)
 
         # Assert
         assert_elements_equal(
             result,
             [
-                Node(
-                    type="image",
+                make_segmentation_tag(
+                    self.soup,
+                    "image",
+                    contents=make_text_spans(self.soup, "![Image description](image_url.jpg)"),
                     data=dict(),
-                    children=make_text_spans("![Image description](image_url.jpg)"),
                 ),
-                *make_text_spans("END"),
+                *make_text_spans(self.soup, "END"),
             ],
             ignore_text_span_data=True,
         )
 
 
-class TestParseAddresses(unittest.TestCase):
+class TestParseAddresses(BaseTestCase):
 
     def test_simple_address(self):
         # Arrange
+
         elements = ["Some text before ", "123 bis rue de la Paix, 75002 Paris.", " Some text after"]
 
         # Act
-        result = parse_addresses(elements)
+        result = parse_addresses(self.context, elements)
 
         # Assert
         assert_elements_equal(
             result,
             [
                 "Some text before ",
-                Node(
-                    type="address",
-                    children=["123 bis rue de la Paix"],
-                ),
+                make_segmentation_tag(self.soup, "address", contents=["123 bis rue de la Paix"]),
                 ", 75002 Paris. Some text after",
             ],
             ignore_text_span_data=True,
@@ -679,40 +694,56 @@ class TestParseAddresses(unittest.TestCase):
         ]
 
         # Act
-        result = parse_addresses(elements)
+        result = parse_addresses(self.context, elements)
 
         # Assert
         assert_elements_equal(
             result,
             [
                 "Some text before ",
-                Node(
-                    type="address",
-                    children=["123 bis rue jean moulin"],
-                ),
+                make_segmentation_tag(self.soup, "address", contents=["123 bis rue jean moulin"]),
                 ", 75002 Paris. Some text after",
             ],
             ignore_text_span_data=True,
         )
 
 
-class TestRenderAddress(unittest.TestCase):
-    def setUp(self):
-        self.soup = BeautifulSoup("", "html.parser")
+class TestRenderAddress(BaseTestCase):
 
     def test_render_address(self):
         # Arrange
-        node = Node(
-            type="address",
-            children=["123 bis rue de la Paix"],
-        )
+        node = make_segmentation_tag(self.soup, "address", contents=["123 bis rue de la Paix"])
 
         # Act
-        address_tag = render_address(self.soup, node)
+        address_tag = render_address(self.context, node)
 
         # Assert
         assert normalized_html_str(str(address_tag)) == normalized_html_str(
             """
             <address>123 bis rue de la Paix</address>
+            """
+        )
+
+
+class TestRenderBlockQuote(BaseTestCase):
+
+    def test_render_blockquote(self):
+        # Arrange
+        node = make_segmentation_tag(
+            self.soup,
+            "blockquote",
+            contents=make_text_spans(self.soup, "This is", "a blockquote"),
+        )
+
+        # Act
+        blockquote_tag = render_blockquote(self.context, node)
+
+        # Assert
+        assert normalized_html_str(str(blockquote_tag)) == normalized_html_str(
+            """
+            <blockquote>
+                <p>This is</p>
+                <p>a blockquote</p>
+            </blockquote>
             """
         )

@@ -19,6 +19,7 @@
 from typing import (
     Callable,
     List,
+    Sequence,
     Tuple,
     Iterator,
     Iterable,
@@ -49,7 +50,7 @@ It represents a tuple `(before, match, after)` where:
     list of elements after the match.
 """
 
-Splitter = Callable[[List[T1]], RawSplit[T1, T2] | None]
+Splitter = Callable[[Sequence[T1]], RawSplit[T1, T2] | None]
 """
 Generic type alias for a function that takes a list of elements,
 and returns a single RawSplit result or None if no match is found.
@@ -67,13 +68,13 @@ class SplitNotAMatch(Generic[T1]):
     value: T1
 
 
-SplittedElement = SplitNotAMatch[List[T1]] | SplitMatch[T2]
+SplittedElement = SplitNotAMatch[Sequence[T1]] | SplitMatch[T2]
 """
 Generic type alias for an element in a splitted list.
 
 It is subscribed like so `SplittedElement[ElementType, MatchType]`
 It represents either:
-- `SplitNotAMatch[List[ElementType]]` which encapsulates a list of elements that did not match.
+- `SplitNotAMatch[Sequence[ElementType]]` which encapsulates a list of elements that did not match.
 - `SplitMatch[MatchType]` which contains the matched element.
 
 This is useful for processing a list of elements and tagging as matches or non-matches
@@ -83,16 +84,16 @@ in a generic manner. This enables proper typing and handling of the results like
 if isinstance(splitted_element, SplitMatch):
     splitted_element.value  # This is of type MatchType
 elif isinstance(splitted_element, SplitNotAMatch):
-    splitted_element.value  # This is of type List[ElementType]
+    splitted_element.value  # This is of type Sequence[ElementType]
 ```
 """
 
-Probe = Callable[[List[T1], int], bool]
+Probe = Callable[[Sequence[T1], int], bool]
 
 
 @iter_func_to_list
 def split_elements(
-    elements: List[T1],
+    elements: Sequence[T1],
     splitter: Splitter[T1, T2],
 ) -> Iterator[SplittedElement[T1, T2]]:
     """
@@ -101,7 +102,7 @@ def split_elements(
     For example :
 
     >>> some_numbers = [1, 3, 11, 10, 6, 23]
-    >>> def multiple_of_3(elements: List[int]) -> RawSplit[int, int] | None:
+    >>> def multiple_of_3(elements: Sequence[int]) -> RawSplit[int, int] | None:
     ...     for i, element in enumerate(elements):
     ...         if element % 3 == 0:
     ...             return elements[:i], element, elements[i + 1:]
@@ -126,7 +127,7 @@ def split_elements(
 
 @iter_func_to_list
 def map_splitted_elements(
-    splitted_list: List[SplittedElement[T1, T2]],
+    splitted_list: Sequence[SplittedElement[T1, T2]],
     map_func: Callable[[T2], T3],
 ) -> Iterator[T1 | T3]:
     """
@@ -154,7 +155,7 @@ def map_splitted_elements(
 
 @iter_func_to_list
 def flat_map_splitted_elements(
-    splitted_list: List[SplittedElement[T1, T2]],
+    splitted_list: Sequence[SplittedElement[T1, T2]],
     map_func: Callable[[T2], Iterable[T3]],
 ) -> Iterator[T1 | T3]:
     for splitted_element in splitted_list:
@@ -166,7 +167,7 @@ def flat_map_splitted_elements(
 
 @iter_func_to_list
 def merge_splitted_elements(
-    splitted_list: List[SplittedElement[T1, List[T1]]],
+    splitted_list: Sequence[SplittedElement[T1, Sequence[T1]]],
 ) -> Iterator[T1]:
     """
     Flatten a list of SplittedElement.
@@ -195,7 +196,7 @@ def merge_splitted_elements(
 
 
 def split_before_match(
-    elements: List[T1],
+    elements: Sequence[T1],
     is_matching: Probe[T1],
 ) -> Tuple[List[T1], List[T1]]:
     """
@@ -216,7 +217,7 @@ def split_before_match(
         if is_matching(elements, i):
             break
         i += 1
-    return elements[:i], elements[i:]
+    return list(elements[:i]), list(elements[i:])
 
 
 def make_single_line_splitter(
@@ -233,7 +234,7 @@ def make_single_line_splitter(
     (["a"], ["b"], ["b", "c"])
     """
 
-    def _splitter(elements: List[T1]) -> RawSplit[T1, List[T1]] | None:
+    def _splitter(elements: Sequence[T1]) -> RawSplit[T1, List[T1]] | None:
         before, after = split_before_match(elements, is_matching)
         if after:
             return (before, [after[0]], after[1:])
@@ -258,7 +259,7 @@ def make_while_splitter(
     (["a"], ["b", "b"], ["c"])
     """
 
-    def _splitter(elements: List[T1]) -> RawSplit[T1, List[T1]] | None:
+    def _splitter(elements: Sequence[T1]) -> RawSplit[T1, List[T1]] | None:
         before, after = split_before_match(elements, start_condition)
         if not after:
             return None
@@ -287,7 +288,7 @@ def negate(
     False
     """
 
-    def _negated_probe(elements: List[T1], index: int) -> bool:
+    def _negated_probe(elements: Sequence[T1], index: int) -> bool:
         return not probe(elements, index)
 
     return _negated_probe

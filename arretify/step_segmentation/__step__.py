@@ -32,8 +32,8 @@ def step_segmentation(document_context: DocumentContext) -> DocumentContext:
 
     body.extend(
         render_arrete(
-            document_context.soup,
-            parse_arrete(pages),
+            document_context,
+            parse_arrete(document_context, pages),
         )
     )
 

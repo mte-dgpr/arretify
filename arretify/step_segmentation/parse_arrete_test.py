@@ -18,12 +18,19 @@
 #
 import unittest
 
-from .core import Node
+from arretify.utils.html_create import make_segmentation_tag
+from arretify.utils.testing import create_document_context
 from .parse_arrete import parse_arrete
 from .testing import make_text_spans, assert_elements_equal
 
 
-class TestParseArrete(unittest.TestCase):
+class BaseTestCase(unittest.TestCase):
+    def setUp(self):
+        self.context = create_document_context()
+        self.soup = self.context.soup
+
+
+class TestParseArrete(BaseTestCase):
 
     def test_simple(self):
         # Arrange
@@ -38,53 +45,63 @@ class TestParseArrete(unittest.TestCase):
         ]
 
         # Act
-        elements = parse_arrete(pages)
+        elements = parse_arrete(self.context, pages)
 
         # Assert
         assert_elements_equal(
             elements,
             [
-                Node(
-                    type="header",
-                    children=[
-                        Node(
-                            type="page_separator",
-                            children=[],
+                make_segmentation_tag(
+                    self.soup,
+                    "header",
+                    contents=[
+                        make_segmentation_tag(self.soup, "page_separator"),
+                        make_segmentation_tag(
+                            self.soup,
+                            "arrete_title",
+                            contents=make_text_spans(self.soup, "Arrêté n° 123"),
                         ),
-                        Node(type="arrete_title", children=make_text_spans("Arrêté n° 123")),
                     ],
                 ),
-                Node(
-                    type="main",
-                    children=[
-                        Node(
-                            type="section",
-                            children=[
-                                Node(
-                                    type="section_title",
-                                    children=make_text_spans("Article 1 : Disposition"),
+                make_segmentation_tag(
+                    self.soup,
+                    "main",
+                    contents=[
+                        make_segmentation_tag(
+                            self.soup,
+                            "section",
+                            contents=[
+                                make_segmentation_tag(
+                                    self.soup,
+                                    "section_title",
+                                    contents=make_text_spans(self.soup, "Article 1 : Disposition"),
                                 ),
-                                Node(
-                                    type="alinea",
-                                    children=make_text_spans("Bla bla bla ..."),
+                                make_segmentation_tag(
+                                    self.soup,
+                                    "alinea",
+                                    contents=make_text_spans(self.soup, "Bla bla bla ..."),
                                 ),
                             ],
                         ),
                     ],
                 ),
-                Node(
-                    type="appendix",
-                    children=[
-                        Node(
-                            type="section",
-                            children=[
-                                Node(
-                                    type="section_title",
-                                    children=make_text_spans("Annexe 1 : Détails"),
+                make_segmentation_tag(
+                    self.soup,
+                    "appendix",
+                    contents=[
+                        make_segmentation_tag(
+                            self.soup,
+                            "section",
+                            contents=[
+                                make_segmentation_tag(
+                                    self.soup,
+                                    "section_title",
+                                    contents=make_text_spans(self.soup, "Annexe 1 : Détails"),
                                 ),
-                                Node(
-                                    type="alinea",
-                                    children=make_text_spans("Bla bla bla ..."),
+                                make_segmentation_tag(
+                                    self.soup,
+                                    "alinea",
+                                    contents=make_text_spans(self.soup, "Bla bla bla ..."),
                                 ),
                             ],
                         ),
@@ -108,42 +125,50 @@ class TestParseArrete(unittest.TestCase):
         ]
 
         # Act
-        elements = parse_arrete(pages)
+        elements = parse_arrete(self.context, pages)
 
         # Assert
         assert_elements_equal(
             elements,
             [
-                Node(
-                    type="header",
-                    children=[
-                        Node(
-                            type="page_separator",
-                            children=[],
+                make_segmentation_tag(
+                    self.soup,
+                    "header",
+                    contents=[
+                        make_segmentation_tag(self.soup, "page_separator"),
+                        make_segmentation_tag(
+                            self.soup,
+                            "arrete_title",
+                            contents=make_text_spans(self.soup, "Arrêté n° 123"),
                         ),
-                        Node(type="arrete_title", children=make_text_spans("Arrêté n° 123")),
                     ],
                 ),
-                Node(
-                    type="main",
-                    children=[
-                        Node(
-                            type="section",
-                            children=[
-                                Node(
-                                    type="section_title",
-                                    children=make_text_spans("Article 1 : Disposition"),
+                make_segmentation_tag(
+                    self.soup,
+                    "main",
+                    contents=[
+                        make_segmentation_tag(
+                            self.soup,
+                            "section",
+                            contents=[
+                                make_segmentation_tag(
+                                    self.soup,
+                                    "section_title",
+                                    contents=make_text_spans(self.soup, "Article 1 : Disposition"),
                                 ),
-                                Node(
-                                    type="alinea",
-                                    children=[
-                                        Node(
-                                            type="text_span",
-                                            children=[
+                                make_segmentation_tag(
+                                    self.soup,
+                                    "alinea",
+                                    contents=[
+                                        make_segmentation_tag(
+                                            self.soup,
+                                            "text_span",
+                                            contents=[
                                                 "Bla bla, ",
-                                                Node(
-                                                    type="address",
-                                                    children=["123 rue de la Paix"],
+                                                make_segmentation_tag(
+                                                    self.soup,
+                                                    "address",
+                                                    contents=["123 rue de la Paix"],
                                                 ),
                                                 ", bla ...",
                                             ],

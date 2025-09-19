@@ -16,14 +16,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import List
+from typing import List, Sequence
 
-from .core import NodeOrText, is_node, Node
+from bs4 import Tag
+
+from .core import PageElementOrString, is_tag
+from arretify.utils.html_create import read_segmentation_tag_data, make_segmentation_tag
 
 
 def assert_elements_equal(
-    actual: List[NodeOrText],
-    expected: List[NodeOrText],
+    actual: Sequence[PageElementOrString],
+    expected: Sequence[PageElementOrString],
     ignore_data_if_omitted: bool = False,
     ignore_text_span_data: bool = False,
     path="",
@@ -33,8 +36,8 @@ def assert_elements_equal(
     ), f"[{path}] Expected {[type(el) for el in expected]} nodes, got {[type(el) for el in actual]}"
     for i, (a, e) in enumerate(zip(actual, expected)):
         child_path = f"{path}/{i}"
-        if is_node(e):
-            assert is_node(a, type_in=[e.type]), f"[{child_path}] Expected {e}, got {a}"
+        if is_tag(e):
+            assert is_tag(a, tag_name_in=[e.name]), f"[{child_path}] Expected {e}, got {a}"
             # if `ignore_data_if_omitted` is True, test data only
             # if defined in test expectations.
             _assert_data_equal(
@@ -45,8 +48,8 @@ def assert_elements_equal(
                 path=child_path,
             )
             assert_elements_equal(
-                a.children,
-                e.children,
+                a.contents,
+                e.contents,
                 path=child_path,
                 ignore_data_if_omitted=ignore_data_if_omitted,
                 ignore_text_span_data=ignore_text_span_data,
@@ -58,25 +61,28 @@ def assert_elements_equal(
 
 
 def _assert_data_equal(
-    actual: Node,
-    expected: Node,
+    actual: Tag,
+    expected: Tag,
     ignore_data_if_omitted: bool = False,
     ignore_text_span_data: bool = False,
     path="",
 ):
-    if ignore_data_if_omitted is True and not expected.data:
+    actual_data = read_segmentation_tag_data(actual)
+    expected_data = read_segmentation_tag_data(expected)
+    if ignore_data_if_omitted is True and not expected_data:
         return
-    if expected.type == "text_span" and ignore_text_span_data is True:
+    if expected.name == "text_span" and ignore_text_span_data is True:
         return
-    assert actual.data == expected.data, f"[{path}] Expected {expected.data}, got {actual.data}"
+    assert actual_data == expected_data, f"[{path}] Expected {expected_data}, got {actual_data}"
 
 
-def make_text_spans(*lines: str) -> List[Node]:
+def make_text_spans(soup, *lines: str) -> List[Tag]:
     return [
-        Node(
-            type="text_span",
-            children=[line],
-            data=dict(start=(0, 0, 0), end=(0, 0, 0)),
+        make_segmentation_tag(
+            soup,
+            "text_span",
+            contents=[line],
+            data=dict(start=[0, 0, 0], end=[0, 0, 0]),
         )
         for line in lines
     ]

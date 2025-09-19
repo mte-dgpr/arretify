@@ -18,19 +18,21 @@
 #
 import unittest
 from .functional import chain_functions
+from .testing import create_document_context
 
 
 class TestChainFunctions(unittest.TestCase):
 
     def test_chain_functions(self):
         # Arrange
-        def add_one(x):
+        def add_one(context, x):
             return x + 1
 
-        def multiply_by_two(x):
+        def multiply_by_two(context, x):
             return x * 2
 
+        context = create_document_context()
         functions = [add_one, multiply_by_two]
 
         # Assert
-        assert chain_functions(3, functions) == 8
+        assert chain_functions(context, 3, functions) == 8
