@@ -295,7 +295,7 @@ class TestParseOperations(unittest.TestCase):
             """  # noqa: E501
         )
 
-    def test_with_inline_node_between_operands(self):
+    def test_with_inline_tag_between_operands(self):
         # Arrange
         document_context = create_document_context(
             normalized_html_str(

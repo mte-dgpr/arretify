@@ -45,7 +45,7 @@ from arretify.utils.split_merge import (
 )
 from .core import (
     is_tag,
-    make_while_splitter_for_text_span_nodes,
+    make_while_splitter_for_text_spans,
     make_probe_from_pattern_proxy,
     get_string,
 )
@@ -90,7 +90,7 @@ def parse_tables_of_contents(
     return map_splitted_elements(
         split_elements(
             elements,
-            make_while_splitter_for_text_span_nodes(
+            make_while_splitter_for_text_spans(
                 _is_table_of_contents,
                 _table_of_contents_while_condition,
             ),
@@ -112,7 +112,7 @@ def _table_of_contents_while_condition(elements: Sequence[PageElementOrString], 
     #   Title 2
     #       article 2.1 ..... page 3
     #
-    # Aditionnally, this takes in nodes such as `page_separator` that might appear
+    # Aditionnally, this takes in tags such as `page_separator` that might appear
     # between text segments.
     next_elements = elements[index : index + 3]
     if any(
@@ -131,7 +131,7 @@ def parse_page_footers(
     return map_splitted_elements(
         split_elements(
             elements,
-            make_while_splitter_for_text_span_nodes(_is_page_footer, _is_page_footer),
+            make_while_splitter_for_text_spans(_is_page_footer, _is_page_footer),
         ),
         lambda children: make_segmentation_tag(
             context.soup, "page_footer", contents=children, data=None
@@ -163,10 +163,10 @@ def initialize_document_structure(
 
 def render_table_of_contents(
     context: DocumentContext,
-    node: Tag,
+    tag: Tag,
 ) -> Tag:
     page_elements: list[PageElementOrString] = []
-    for element in node.children:
+    for element in tag.children:
         if is_tag(element, tag_name_in=["text_span"]):
             page_elements.append(get_string(element))
         elif is_tag(element, tag_name_in=["page_separator"]):

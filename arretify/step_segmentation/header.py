@@ -54,9 +54,9 @@ from arretify.utils.split_merge import (
 from .core import (
     is_tag,
     make_recombine_interrupted_lines_splitter,
-    make_while_splitter_for_text_span_nodes,
-    make_single_line_splitter_for_text_span_nodes,
-    group_text_span_nodes_splitter,
+    make_while_splitter_for_text_spans,
+    make_single_line_splitter_for_text_spans,
+    group_text_span_tags_splitter,
     make_probe_from_pattern_proxy,
     get_string,
     get_strings,
@@ -238,7 +238,7 @@ def parse_header(
             # - after header elements, because some of them
             #       might contain lists which we don't want captured.
             #
-            # - before visas and motifs, because they use list Nodes
+            # - before visas and motifs, because they use list tags
             #       to build lists of visas / motifs
             parse_lists,
         ],
@@ -250,7 +250,7 @@ def parse_header(
 def _parse_header_element(
     context: DocumentContext,
     elements: Sequence[PageElementOrString],
-    node_type: str,
+    tag_type: str,
 ) -> list[PageElementOrString]:
     """
     Generic function to parse header elements.
@@ -260,18 +260,18 @@ def _parse_header_element(
     return map_splitted_elements(
         split_elements(
             elements,
-            make_while_splitter_for_text_span_nodes(
-                HEADER_ELEMENTS_PROBES[node_type], HEADER_ELEMENTS_PROBES[node_type]
+            make_while_splitter_for_text_spans(
+                HEADER_ELEMENTS_PROBES[tag_type], HEADER_ELEMENTS_PROBES[tag_type]
             ),
         ),
-        lambda children: make_segmentation_tag(context.soup, node_type, contents=children),
+        lambda children: make_segmentation_tag(context.soup, tag_type, contents=children),
     )
 
 
 def _parse_header_element_fuzzy(
     context: DocumentContext,
     elements: Sequence[PageElementOrString],
-    node_type: str,
+    tag_type: str,
 ) -> list[PageElementOrString]:
     """
     Generic function to parse header elements with a fuzzy match.
@@ -281,12 +281,12 @@ def _parse_header_element_fuzzy(
     return map_splitted_elements(
         split_elements(
             elements,
-            make_while_splitter_for_text_span_nodes(
-                HEADER_ELEMENTS_FUZZY_PROBES[node_type],
-                lambda elements, index: _is_nothing_else_than(node_type, elements[index]),
+            make_while_splitter_for_text_spans(
+                HEADER_ELEMENTS_FUZZY_PROBES[tag_type],
+                lambda elements, index: _is_nothing_else_than(tag_type, elements[index]),
             ),
         ),
-        lambda children: make_segmentation_tag(context.soup, node_type, contents=children),
+        lambda children: make_segmentation_tag(context.soup, tag_type, contents=children),
     )
 
 
@@ -353,22 +353,22 @@ def parse_visa_and_motif_elements(
     elements = _parse_visa_and_motif_elements_pass2(
         context,
         elements,
-        node_type="visa",
+        tag_type="visa",
     )
     elements = _parse_visa_and_motif_elements_pass3(
         context,
         elements,
-        node_type="visa",
+        tag_type="visa",
     )
     elements = _parse_visa_and_motif_elements_pass2(
         context,
         elements,
-        node_type="motif",
+        tag_type="motif",
     )
     elements = _parse_visa_and_motif_elements_pass3(
         context,
         elements,
-        node_type="motif",
+        tag_type="motif",
     )
     return elements
 
@@ -377,40 +377,40 @@ def parse_visa_and_motif_elements(
 def _parse_visa_and_motif_elements_pass1(
     context: DocumentContext,
     elements: Sequence[PageElementOrString],
-    node_type: Literal["visa", "motif"],
+    tag_type: Literal["visa", "motif"],
 ) -> Iterator[PageElementOrString]:
     """
     Pass 1 of parsing visa and motif elements.
-    This pass splits the node flow into segments based on the node pattern.
-    It creates nodes of type 'visa' or 'motif' for each segment that matches
+    This pass splits the tag flow into segments based on the node pattern.
+    It creates tags of type 'visa' or 'motif' for each segment that matches
     the pattern.
     """
     elements = map_splitted_elements(
         split_elements(
             elements,
-            make_single_line_splitter_for_text_span_nodes(VISA_MOTIFS_PROBES[node_type]),
+            make_single_line_splitter_for_text_spans(VISA_MOTIFS_PROBES[tag_type]),
         ),
-        lambda children: make_segmentation_tag(context.soup, node_type, contents=children),
+        lambda children: make_segmentation_tag(context.soup, tag_type, contents=children),
     )
 
     # Visas or motifs that are in form :
     # - Vu blabla
     # - Vu bloblo
-    # Should have been parsed into list nodes.
-    # Therefore, we must convert list nodes that contain visas and motifs
-    # into visa or motif nodes.
+    # Should have been parsed into list tags.
+    # Therefore, we must convert list tags that contain visas and motifs
+    # into visa or motif tags.
     for element in elements:
         is_list_of_visas_or_motifs = False
         if is_tag(element, tag_name_in=["list"]):
-            assert len(element.contents) > 0, "List node should not be empty"
-            is_list_of_visas_or_motifs = VISA_MOTIFS_PROBES[node_type](element.contents, 0)
+            assert len(element.contents) > 0, "List tag should not be empty"
+            is_list_of_visas_or_motifs = VISA_MOTIFS_PROBES[tag_type](element.contents, 0)
 
         if is_list_of_visas_or_motifs:
             assert is_tag(element)
             for list_item_element in element.contents:
                 if is_tag(list_item_element, tag_name_in=["text_span"]):
                     yield make_segmentation_tag(
-                        context.soup, node_type, contents=[list_item_element]
+                        context.soup, tag_type, contents=[list_item_element]
                     )
                 else:
                     raise ValueError(f"Unexpected element {list_item_element}")
@@ -422,42 +422,42 @@ def _parse_visa_and_motif_elements_pass1(
 def _parse_visa_and_motif_elements_pass2(
     context: DocumentContext,
     elements: Sequence[PageElementOrString],
-    node_type: Literal["visa", "motif"],
+    tag_type: Literal["visa", "motif"],
 ) -> Iterator[PageElementOrString]:
     """
     Pass 2 of parsing visa and motif elements.
-    This pass processes the node flow to find the first node of type
+    This pass processes the tag flow to find the first tag of type
     'visa' or 'motif'. Once found, it decides between one of the several
     types of variants for formatting the visas or motifs, and normalizes
-    the node flow accordingly.
+    the tag flow accordingly.
     """
     element: PageElementOrString
     elements = list(elements)
 
-    # Skip nodes until we find the first node of type 'visa' or 'motif'.
-    while elements and not is_tag(elements[0], tag_name_in=[node_type]):
+    # Skip tags until we find the first tag of type 'visa' or 'motif'.
+    while elements and not is_tag(elements[0], tag_name_in=[tag_type]):
         yield elements.pop(0)
     if not elements:
         return
-    first_node = elements.pop(0)
+    first_tag = elements.pop(0)
     assert (
-        is_tag(first_node, tag_name_in=[node_type])
-        and len(first_node.contents) > 0
-        and is_tag(first_node.contents[0])
+        is_tag(first_tag, tag_name_in=[tag_type])
+        and len(first_tag.contents) > 0
+        and is_tag(first_tag.contents[0])
     )
 
-    first_node_match = VISA_MOTIFS_PATTERNS[node_type].match(get_string(first_node))
+    first_tag_match = VISA_MOTIFS_PATTERNS[tag_type].match(get_string(first_tag))
     # 1. Variant "simple" :
     #   Vu que blabla
     #   Vu que bloblo
-    if first_node_match and first_node_match.group("contents"):
-        elements.insert(0, first_node)
+    if first_tag_match and first_tag_match.group("contents"):
+        elements.insert(0, first_tag)
         # Recombine interrupted lines, e.g.
         #   Vu que blabla
         #   <page_separator>
         #   continues on the next page.
         elements = map_splitted_elements(
-            split_elements(elements, make_recombine_interrupted_lines_splitter(node_type)),
+            split_elements(elements, make_recombine_interrupted_lines_splitter(tag_type)),
             _recombine_visa_motif_with_next_if_continuing_sentence,
         )
         yield from elements
@@ -468,10 +468,10 @@ def _parse_visa_and_motif_elements_pass2(
     #   - bloblo
     elif elements and is_tag(elements[0], tag_name_in=["list"]):
         # Add the "Vu :" to the header
-        yield from first_node.children
+        yield from first_tag.children
         while elements:
             element = elements[0]
-            # We're a bit lenient here and accept a few unassigned_line nodes,
+            # We're a bit lenient here and accept a few unassigned_line tags,
             # as random text sometimes interferes with the parsing.
             if is_tag(element, tag_name_in=TRANSPARENT_TAG_TYPES) or is_tag(
                 element, tag_name_in=["text_span"]
@@ -483,7 +483,7 @@ def _parse_visa_and_motif_elements_pass2(
                 for list_item_element in element.children:
                     if is_tag(list_item_element, tag_name_in=["text_span"]):
                         yield make_segmentation_tag(
-                            context.soup, node_type, contents=[list_item_element]
+                            context.soup, tag_type, contents=[list_item_element]
                         )
                     else:
                         yield list_item_element
@@ -497,17 +497,17 @@ def _parse_visa_and_motif_elements_pass2(
     #   bloblo
     else:
         # Add the "Vu :" to the header
-        yield from first_node.children
+        yield from first_tag.children
         while elements:
             element = elements[0]
 
-            # Lists will be handled in the next pass and appended to the visa or motif node
+            # Lists will be handled in the next pass and appended to the visa or motif tag
             # if applicable.
             if is_tag(element, tag_name_in=["list", *TRANSPARENT_TAG_TYPES]):
                 yield elements.pop(0)
 
             elif is_tag(element, tag_name_in=["text_span"]):
-                yield make_segmentation_tag(context.soup, node_type, contents=[element])
+                yield make_segmentation_tag(context.soup, tag_type, contents=[element])
                 elements.pop(0)
             else:
                 break
@@ -526,19 +526,19 @@ def _recombine_visa_motif_with_next_if_continuing_sentence(
 def _parse_visa_and_motif_elements_pass3(
     context: DocumentContext,
     elements: Sequence[PageElementOrString],
-    node_type: Literal["visa", "motif"],
+    tag_type: Literal["visa", "motif"],
 ) -> Iterator[PageElementOrString]:
     """
     Pass 3 of parsing visa and motif elements.
-    Merges the nodes of type 'visa' or 'motif' with the next node
-    if the next node is a list. This is done to ensure that the
-    visa or motif node contains all its children.
+    Merges the tags of type 'visa' or 'motif' with the next tag
+    if the next tag is a list. This is done to ensure that the
+    visa or motif tag contains all its children.
     """
     elements = list(elements)
 
     while elements:
         element = elements.pop(0)
-        if is_tag(element, tag_name_in=[node_type]):
+        if is_tag(element, tag_name_in=[tag_type]):
             transparent_tags_pile: list[Tag] = []
             while elements and is_tag(elements[0], tag_name_in=TRANSPARENT_TAG_TYPES):
                 transparent_tags_pile.append(elements[0])
@@ -592,7 +592,7 @@ def render_header(
             )
 
         elif is_tag(element):
-            raise ValueError(f"Unexpected node {element.type} in content")
+            raise ValueError(f"Unexpected tag {element.type} in content")
 
         elif isinstance(element, str):
             content.extend(wrap_in_tag(context.soup, [element], "div"))
@@ -609,7 +609,7 @@ def render_header_element(
 
     for splitted_element in split_elements(
         input_elements,
-        group_text_span_nodes_splitter,
+        group_text_span_tags_splitter,
     ):
         if isinstance(splitted_element, SplitMatch):
             strings = get_strings(splitted_element.value)
@@ -655,7 +655,7 @@ def rendre_arrete_title(
     tag: Tag,
 ) -> Tag:
     elements: list[PageElementOrString] = [" ".join(get_strings(tag.contents))]
-    # TODO : Parsing date should be done in a node and not on the fly
+    # TODO : Parsing date should be done in a tag and not on the fly
     # like this.
     elements = map_splitted_elements(
         split_elements(

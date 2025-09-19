@@ -53,7 +53,7 @@ def iter_collapsed_range_right(
         # If the last element is parent of `current`,
         # it means we are going down in the tree, so `current`
         # is a leaf and we don't want to collapse it, even if it
-        # is the only node of its parent.
+        # is the only tag of its parent.
         if is_parent(collapsed[-1], current):
             collapsed.pop()
         yield collapsed + [current]
@@ -110,7 +110,7 @@ def _collapse_element_range(
                 </div>
             </div>
 
-    1. Complete sub trees are collapsed into their root node. e.g., collapsing the range :
+    1. Complete sub trees are collapsed into their root tag. e.g., collapsing the range :
 
             <div id="el1">
                 <div id="el2"></div>
@@ -122,7 +122,7 @@ def _collapse_element_range(
             <div id="el1"></div>
             <div id="el2"></div>
 
-    2. For partial subtrees, we keep only leaf nodes. e.g., collapsing the range :
+    2. For partial subtrees, we keep only leaf tags. e.g., collapsing the range :
 
             <div id="el3"></div>
             <div id="el4">
@@ -141,13 +141,13 @@ def _collapse_element_range(
     collapsed: ElementRange = []
     element = pile.pop(0)
     while True:
-        # A string or tag encountered here can't belong to a collapsed node,
+        # A string or tag encountered here can't belong to a collapsed tag,
         # otherwise it would have been removed from the pile before (step 0.).
         # Therefore it can be either :
         #
         # 1. COMPLETE SUBTREE -> collapse
-        # 2. LEAF NODE -> directly add to the collapsed list
-        # 3. PARTIAL SUBTREE -> ignore the node and move one level down
+        # 2. LEAF TAG -> directly add to the collapsed list
+        # 3. PARTIAL SUBTREE -> ignore the tag and move one level down
         #
         if isinstance(element, Tag):
             # 0. Grab and remove all the descendants of the current element that
@@ -160,7 +160,7 @@ def _collapse_element_range(
             if all(descendant in descendants_in_pile for descendant in element.descendants):
                 collapsed.append(element)
 
-            # 2. LEAF NODE
+            # 2. LEAF TAG
             elif len(descendants_in_pile) == 0:
                 collapsed.append(element)
 
@@ -168,8 +168,8 @@ def _collapse_element_range(
             else:
                 pile = descendants_in_pile + pile
 
-        # 2. LEAF NODE
-        # String at this point can only be a leaf node.
+        # 2. LEAF TAG
+        # String at this point can only be a leaf tag.
         else:
             collapsed.append(element)
 

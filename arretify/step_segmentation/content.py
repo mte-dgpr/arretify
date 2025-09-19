@@ -65,7 +65,7 @@ from .core import (
     combine_text_spans,
     is_tag,
     make_recombine_interrupted_lines_splitter,
-    make_single_line_splitter_for_text_span_nodes,
+    make_single_line_splitter_for_text_spans,
     make_probe_from_pattern_proxy,
     get_string,
 )
@@ -87,7 +87,7 @@ _is_title_string = make_probe_from_pattern_proxy(
 def is_title(elements: Sequence[PageElementOrString], index: int) -> bool:
     element = elements[index]
     assert is_tag(element, tag_name_in=["text_span"])
-    # Exclude text_span nodes that start with an inline node.
+    # Exclude text_span tags that start with an inline tag.
     # This excludes cases when a line starts with an address
     # or another inline element, which cannot be a title.
     if element.children == 0 or not isinstance(element.contents[0], str):
@@ -123,7 +123,7 @@ def render_content(
         elif is_tag(tag, tag_name_in=["table_of_contents"]):
             content.append(render_table_of_contents(context, tag))
         elif is_tag(tag):
-            raise ValueError(f"Unexpected node {tag.name} in content")
+            raise ValueError(f"Unexpected tag {tag.name} in content")
         else:
             content.append(context.soup.new_tag("div", contents=tag))
     return content
@@ -140,8 +140,8 @@ def parse_section_titles(
         elements = _fix_titles_containing_alineas(context, elements)
 
     # Then collect all section titles in list
-    node_list = _create_section_title_nodes(context, elements)
-    section_titles: list[Tag] = [e for e in node_list if is_tag(e, tag_name_in=["section_title"])]
+    tag_list = _create_section_title_tags(context, elements)
+    section_titles: list[Tag] = [e for e in tag_list if is_tag(e, tag_name_in=["section_title"])]
 
     # Ancestry order from root to the current section in the parsing context
     sections: int = 1
@@ -220,7 +220,7 @@ def parse_section_titles(
         )
         update_segmentation_tag_data(section_title, data_extra)
 
-    return node_list
+    return tag_list
 
 
 @iter_func_to_list
@@ -270,14 +270,14 @@ def _fix_titles_containing_alineas(
         )
 
 
-def _create_section_title_nodes(
+def _create_section_title_tags(
     context: DocumentContext,
     elements: Sequence[PageElementOrString],
 ) -> list[PageElementOrString]:
     return map_splitted_elements(
         split_elements(
             elements,
-            make_single_line_splitter_for_text_span_nodes(is_title),
+            make_single_line_splitter_for_text_spans(is_title),
         ),
         lambda children: make_segmentation_tag(
             context.soup,
@@ -396,7 +396,7 @@ def render_section_title(
     tag: Tag,
 ) -> Tag:
     if not is_tag(tag, tag_name_in=["section_title"]):
-        raise ValueError("Node must be a section title")
+        raise ValueError("Tag must be a section title")
 
     data: DataElementDataDict = dict()
     segmentation_tag_data = read_segmentation_tag_data(tag)
@@ -442,7 +442,7 @@ def render_section(
         elif isinstance(element, str):
             contents.append(element)
         elif is_tag(element):
-            raise ValueError(f"Unexpected node {element.type} in section contents")
+            raise ValueError(f"Unexpected tag {element.type} in section contents")
 
     section_segmentation_tag_data = read_segmentation_tag_data(section_title)
     return make_data_tag(
@@ -539,7 +539,7 @@ def render_alinea(
         elif isinstance(element, str):
             contents.extend(render_inline_quotes(context, element))
         else:
-            raise ValueError(f"Unexpected node {element} in alinea contents")
+            raise ValueError(f"Unexpected tag {element} in alinea contents")
 
     alinea_segmentation_tag_data = read_segmentation_tag_data(tag)
     return make_data_tag(
