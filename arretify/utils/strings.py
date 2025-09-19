@@ -39,12 +39,12 @@ def merge_strings(
     return merged_string
 
 
-def split_lines(text: str) -> list[str]:
+def split_on_newlines(text: str) -> list[str]:
     lines = text.split("\n")
     if lines and lines[-1] == "":
         lines = lines[:-1]
     return lines
 
 
-def join_lines(lines: Iterable[str]) -> str:
+def join_on_newlines(lines: Iterable[str]) -> str:
     return "\n".join(lines)

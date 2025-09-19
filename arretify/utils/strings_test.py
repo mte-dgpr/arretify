@@ -19,7 +19,7 @@
 import unittest
 import re
 
-from .strings import merge_strings, split_lines
+from .strings import merge_strings, split_on_newlines
 
 
 class TestMergeStrings(unittest.TestCase):
@@ -68,7 +68,7 @@ class TestSplitLines(unittest.TestCase):
         text = "Line 1\nLine 2\nLine 3"
 
         # Act
-        result = split_lines(text)
+        result = split_on_newlines(text)
 
         # Assert
         assert result == [
@@ -82,7 +82,7 @@ class TestSplitLines(unittest.TestCase):
         text = "Line 1\nLine 2\n"
 
         # Act
-        result = split_lines(text)
+        result = split_on_newlines(text)
 
         # Assert
         assert result == [

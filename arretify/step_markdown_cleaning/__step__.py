@@ -20,7 +20,7 @@
 from dataclasses import replace as dataclass_replace
 
 from arretify.types import DocumentContext
-from arretify.utils.strings import split_lines, join_lines
+from arretify.utils.strings import split_on_newlines, join_on_newlines
 from .markdown_cleaning import clean_markdown
 from .ocr_cleaning import clean_ocr, is_useful_line
 
@@ -31,7 +31,7 @@ def step_markdown_cleaning(document_context: DocumentContext) -> DocumentContext
 
     cleaned_pages: list[str] = []
     for page in document_context.pages:
-        lines = split_lines(page)
+        lines = split_on_newlines(page)
 
         # Clean input markdown
         lines = [clean_markdown(line) for line in lines]
@@ -43,6 +43,6 @@ def step_markdown_cleaning(document_context: DocumentContext) -> DocumentContext
         # Clean common OCR errors
         lines = [clean_ocr(line) for line in lines]
 
-        cleaned_pages.append(join_lines(lines))
+        cleaned_pages.append(join_on_newlines(lines))
 
     return dataclass_replace(document_context, pages=cleaned_pages)
