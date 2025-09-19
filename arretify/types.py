@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 import re
-from typing import List, Union, Tuple, Optional, Type, TypeVar, Dict
+from typing import Sequence, Union, Tuple, Optional, Type, TypeVar, Dict
 from enum import Enum
 from dataclasses import dataclass, fields, field
 from uuid import uuid4
@@ -41,7 +41,7 @@ PageLineColumn = Tuple[int, int, int]
 class DataElementSchema:
     name: str
     tag_name: str
-    data_keys: List[str]
+    data_keys: Sequence[str]
 
     def __post_init__(self):
         matched = ELEMENT_NAME_PATTERN.match(self.name)
@@ -136,7 +136,7 @@ class DocumentContext(SessionContext):
     TODO : support for streaming PDF content
     """
 
-    pages: Optional[List[str]]
+    pages: Optional[Sequence[str]]
     """
     Contents of the markdown pages after OCR processing.
     """
@@ -152,7 +152,7 @@ class DocumentContext(SessionContext):
         soup: BeautifulSoup,
         filename: str | None = None,
         pdf: Optional[bytes] = None,
-        pages: List[str] | None = None,
+        pages: Sequence[str] | None = None,
     ) -> DocumentContextType:
         if filename is None:
             filename = str(uuid4())

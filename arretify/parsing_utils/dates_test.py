@@ -18,7 +18,6 @@
 #
 import unittest
 from datetime import date
-from typing import List
 
 from bs4 import BeautifulSoup
 
@@ -168,7 +167,7 @@ class TestRenderDateRegexTreeMatch(unittest.TestCase):
 
 def _parsed_elements(string: str) -> list[str]:
     soup = BeautifulSoup(string, features="html.parser")
-    elements: List[PageElementOrString] = [string]
+    elements: list[PageElementOrString] = [string]
     elements = map_splitted_elements(
         split_elements(
             elements,

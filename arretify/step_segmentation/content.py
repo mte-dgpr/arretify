@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import Dict, List, Optional, Iterator, Sequence, cast
+from typing import Dict, Optional, Iterator, Sequence, cast
 import logging
 
 from bs4 import (
@@ -105,7 +105,7 @@ def _get_downstream_sections_types(section_type):
 def parse_content(
     context: DocumentContext,
     elements: Sequence[PageElementOrString],
-) -> List[PageElementOrString]:
+) -> list[PageElementOrString]:
     elements = parse_blockquotes(context, elements)
     elements = parse_section_titles(context, elements)
     elements = parse_sections(context, elements)
@@ -133,7 +133,7 @@ def parse_section_titles(
     context: DocumentContext,
     elements: Sequence[PageElementOrString],
     lite: bool = False,
-) -> List[PageElementOrString]:
+) -> list[PageElementOrString]:
     # First fix titles containing alinea
     # Do it only if we are not in lite mode as this is computation intensive
     if lite is False:
@@ -141,16 +141,16 @@ def parse_section_titles(
 
     # Then collect all section titles in list
     node_list = _create_section_title_nodes(context, elements)
-    section_titles: List[Tag] = [e for e in node_list if is_tag(e, tag_name_in=["section_title"])]
+    section_titles: list[Tag] = [e for e in node_list if is_tag(e, tag_name_in=["section_title"])]
 
     # Ancestry order from root to the current section in the parsing context
     sections: int = 1
 
-    # List of integers from previous section title
-    current_global_levels: Optional[List[int]] = None
+    # list of integers from previous section title
+    current_global_levels: Optional[list[int]] = None
 
     # Previous list of integers extracted from the lastly seen section title for each section type
-    current_titles_levels: Dict[SectionType, Optional[List[int]]] = {}
+    current_titles_levels: Dict[SectionType, Optional[list[int]]] = {}
 
     # Considering the usual section types hierarchy, this dictionary helps improving the
     # hierarchy within the document, e.g. when finding titles, chapters and articles all having
@@ -170,7 +170,7 @@ def parse_section_titles(
 
         # Add a tag if the titles are not contiguous
         current_title_levels = current_titles_levels.get(new_section_type)
-        new_title_levels = title_info.levels
+        new_title_levels = list(title_info.levels) if title_info.levels else None
 
         if not is_next_title(current_global_levels, current_title_levels, new_title_levels):
             _LOGGER.warning(
@@ -273,7 +273,7 @@ def _fix_titles_containing_alineas(
 def _create_section_title_nodes(
     context: DocumentContext,
     elements: Sequence[PageElementOrString],
-) -> List[PageElementOrString]:
+) -> list[PageElementOrString]:
     return map_splitted_elements(
         split_elements(
             elements,
@@ -321,7 +321,7 @@ def parse_sections(
     </Section 2>
     """
     elements = list(elements)
-    pile: List[PageElementOrString] = []
+    pile: list[PageElementOrString] = []
 
     # 1. First, parse content encountered before the first sub-section title
     #
@@ -402,7 +402,7 @@ def render_section_title(
     segmentation_tag_data = read_segmentation_tag_data(tag)
     if "error_codes" in segmentation_tag_data:
         data["error_codes"] = render_str_list_attribute(
-            cast(List[str], segmentation_tag_data["error_codes"])
+            cast(list[str], segmentation_tag_data["error_codes"])
         )
 
     return make_data_tag(
@@ -425,7 +425,7 @@ def render_section(
     ), "First tag must be a section title"
     section_title: Tag = tag.contents[0]
 
-    contents: List[PageElementOrString] = []
+    contents: list[PageElementOrString] = []
     for element in tag.contents:
         if is_tag(element, tag_name_in=["section_title"]):
             contents.append(render_section_title(context, element))
@@ -500,7 +500,7 @@ def parse_alineas(
             yield element
             continue
 
-        alinea_children: List[PageElementOrString] = []
+        alinea_children: list[PageElementOrString] = []
         if is_tag(element, tag_name_in=["table"]):
             alinea_children = [element]
             while elements and is_tag(elements[0], tag_name_in=["table_description"]):
@@ -524,7 +524,7 @@ def render_alinea(
     context: DocumentContext,
     tag: Tag,
 ) -> Tag:
-    contents: List[PageElementOrString] = []
+    contents: list[PageElementOrString] = []
     for element in tag.contents:
         if is_tag(element, tag_name_in=["text_span"]):
             # TODO : move render_inline_quotes inside render_text_span

@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import List, Iterator
+from typing import Iterator, Sequence
 
 from bs4 import BeautifulSoup, Tag
 
@@ -319,8 +319,8 @@ RTL_OPERATION_NODE = regex_tree.Group(
 
 def parse_operations(
     document_context: DocumentContext,
-    children: List[PageElementOrString],
-) -> List[PageElementOrString]:
+    children: Sequence[PageElementOrString],
+) -> list[PageElementOrString]:
     return map_splitted_elements(
         split_elements(
             children,

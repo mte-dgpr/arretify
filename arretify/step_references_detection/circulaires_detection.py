@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 import logging
-from typing import List, Optional, cast
+from typing import Optional, Sequence, cast
 
 from bs4 import BeautifulSoup, Tag
 
@@ -79,8 +79,8 @@ DECRET_NODE = regex_tree.Group(
 
 def parse_circulaires_references(
     document_context: DocumentContext,
-    children: List[PageElementOrString],
-) -> List[PageElementOrString]:
+    children: Sequence[PageElementOrString],
+) -> list[PageElementOrString]:
     return map_splitted_elements(
         split_elements(
             children,

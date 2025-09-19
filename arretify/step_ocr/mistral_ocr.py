@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 import logging
-from typing import List, Iterable, Callable
+from typing import Iterable, Callable
 from dataclasses import replace as dataclass_replace
 from shutil import rmtree
 from pathlib import Path
@@ -42,7 +42,7 @@ def mistral_ocr(
     if callable(ocr_pages_dir_factory):
         ocr_pages_dir = ocr_pages_dir_factory(document_context)
 
-    ocr_pages: List[str] = []
+    ocr_pages: list[str] = []
     for i, page in enumerate(
         _call_mistral_ocr_api(
             document_context,

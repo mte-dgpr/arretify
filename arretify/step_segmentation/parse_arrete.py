@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import List, Iterator, Callable, Sequence
+from typing import Iterator, Callable, Sequence
 
 from arretify.types import DocumentContext, SectionType, PageElementOrString
 from arretify.html_schemas import (
@@ -67,7 +67,7 @@ _is_appendix = pick_text_span_node(_is_appendix_text_span_node)
 
 @iter_func_to_list
 def parse_arrete(context: DocumentContext, pages: Sequence[str]) -> Iterator[PageElementOrString]:
-    elements: List[PageElementOrString] = initialize_document_structure(context, pages)
+    elements: list[PageElementOrString] = initialize_document_structure(context, pages)
 
     # Add basic document elements
     elements = chain_functions(
@@ -101,7 +101,7 @@ def parse_arrete(context: DocumentContext, pages: Sequence[str]) -> Iterator[Pag
 
 @iter_func_to_list
 def render_arrete(
-    context: DocumentContext, elements: List[PageElementOrString]
+    context: DocumentContext, elements: Sequence[PageElementOrString]
 ) -> Iterator[PageElementOrString]:
     body = context.soup.body
     assert body
@@ -122,8 +122,8 @@ def render_arrete(
 
 
 def _make_text_span_parser(
-    func: Callable[[DocumentContext, Sequence[PageElementOrString]], List[PageElementOrString]],
-) -> Callable[[DocumentContext, Sequence[PageElementOrString]], List[PageElementOrString]]:
+    func: Callable[[DocumentContext, Sequence[PageElementOrString]], list[PageElementOrString]],
+) -> Callable[[DocumentContext, Sequence[PageElementOrString]], list[PageElementOrString]]:
     """
     Makes a function that uses `func` to parse the children of text_span nodes.
     """

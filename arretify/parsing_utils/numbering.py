@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 import re
-from typing import List, Optional
+from typing import Optional, Sequence
 
 import roman
 
@@ -72,7 +72,7 @@ def roman_str_to_int(roman_str: str) -> int:
     return roman.fromRoman(roman_str)
 
 
-def str_to_levels(number: str) -> Optional[List[int]]:
+def str_to_levels(number: str) -> Optional[list[int]]:
 
     number_split = number.replace(".", " ").replace("-", " ").split()
     level = len(number_split) - 1
@@ -102,8 +102,8 @@ def str_to_levels(number: str) -> Optional[List[int]]:
 
 
 def are_levels_contiguous(
-    cur_levels: Optional[List[int]],
-    new_levels: Optional[List[int]],
+    cur_levels: Optional[Sequence[int]],
+    new_levels: Optional[Sequence[int]],
 ) -> bool:
 
     if not new_levels:

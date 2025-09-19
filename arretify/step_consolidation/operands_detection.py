@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import List, cast
+from typing import cast
 import logging
 
 from bs4 import Tag
@@ -55,7 +55,7 @@ def resolve_references_and_operands(document_context: DocumentContext, operation
     if operation_tag["data-direction"] != "rtl":
         raise ValueError("Only right-to-left is supported so far")
 
-    reference_tags: List[Tag] = _find_left_references(document_context, operation_tag)
+    reference_tags: list[Tag] = _find_left_references(document_context, operation_tag)
     if len(reference_tags) == 0:
         _LOGGER.warning("No references found in operation")
         return
@@ -89,9 +89,9 @@ def _find_right_operand(document_context: DocumentContext, start_tag: Tag) -> Ta
     return None
 
 
-def _find_left_references(document_context: DocumentContext, start_tag: Tag) -> List[Tag]:
+def _find_left_references(document_context: DocumentContext, start_tag: Tag) -> list[Tag]:
     contiguous_elements_left = get_contiguous_elements_left(start_tag)
-    reference_tags: List[Tag] = []
+    reference_tags: list[Tag] = []
 
     for element in contiguous_elements_left:
         if is_tag_and_matches(

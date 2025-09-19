@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import List, Iterable
+from typing import Sequence
 
 from bs4 import Tag
 
@@ -62,8 +62,8 @@ CONNECTOR_SECTION_TO_PARENT_NODE = regex_tree.Group(
 
 def match_sections_to_parents(
     document_context: DocumentContext,
-    children: Iterable[PageElementOrString],
-) -> List[PageElementOrString]:
+    children: Sequence[PageElementOrString],
+) -> list[PageElementOrString]:
     document_context.soup
     children = list(children)
     section_references = [

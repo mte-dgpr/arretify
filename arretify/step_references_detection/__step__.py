@@ -16,8 +16,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import List
-
 
 from arretify.types import PageElementOrString, DocumentContext
 from arretify.utils.html_create import replace_children
@@ -64,7 +62,7 @@ REFERENCES_CONTAINER_SELECTOR = (
 
 
 def step_references_detection(document_context: DocumentContext) -> DocumentContext:
-    new_children: List[PageElementOrString]
+    new_children: list[PageElementOrString]
 
     # Parse documents and sections references
     for tag in document_context.soup.select(REFERENCES_CONTAINER_SELECTOR):

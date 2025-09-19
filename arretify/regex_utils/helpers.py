@@ -18,9 +18,7 @@
 #
 import re
 import unicodedata
-from typing import (
-    List,
-)
+from typing import Sequence
 
 from .types import Settings, PatternString, QuantifierRange
 
@@ -36,7 +34,7 @@ def without_named_groups(pattern_string: str) -> PatternString:
     return NAMED_GROUP_PATTERN.sub("", pattern_string)
 
 
-def join_with_or(pattern_strings: List[str]) -> PatternString:
+def join_with_or(pattern_strings: Sequence[str]) -> PatternString:
     return "|".join(pattern_strings)
 
 
@@ -81,13 +79,13 @@ def normalize_dashes(text: str):
 
 
 def lookup_normalized_version(
-    choices: List[str],
+    choices: Sequence[str],
     text: str,
     settings: Settings | None = None,
 ):
     if settings is None:
         settings = Settings()
-    matches: List[str] = []
+    matches: list[str] = []
     for choice in choices:
         if normalize_string(choice, settings) == normalize_string(text, settings):
             matches.append(choice)

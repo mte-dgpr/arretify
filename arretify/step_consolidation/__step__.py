@@ -16,8 +16,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import List
-
 
 from arretify.html_schemas import (
     ALINEA_SCHEMA,
@@ -41,7 +39,7 @@ def step_consolidation(document_context: DocumentContext) -> DocumentContext:
     for container_tag in document_context.soup.select(
         f".{ALINEA_SCHEMA.css_class}, .{ALINEA_SCHEMA.css_class} *"
     ):
-        new_children: List[PageElementOrString] = list(container_tag.children)
+        new_children: list[PageElementOrString] = list(container_tag.children)
         # Parse operations only if there's a document or section reference in the paragraph
         # Helps avoid many false positives during processing
         document_reference_tags = container_tag.select(

@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import List, Dict, Literal, Sequence, Iterator
+from typing import Dict, Literal, Sequence, Iterator
 
 from bs4 import Tag
 
@@ -223,7 +223,7 @@ def _is_nothing_else_than(name: str, element: PageElementOrString) -> bool:
 def parse_header(
     context: DocumentContext,
     elements: Sequence[PageElementOrString],
-) -> List[PageElementOrString]:
+) -> list[PageElementOrString]:
     elements = chain_functions(
         context,
         elements,
@@ -251,7 +251,7 @@ def _parse_header_element(
     context: DocumentContext,
     elements: Sequence[PageElementOrString],
     node_type: str,
-) -> List[PageElementOrString]:
+) -> list[PageElementOrString]:
     """
     Generic function to parse header elements.
     It uses a simple regex pattern to detect the element start,
@@ -272,7 +272,7 @@ def _parse_header_element_fuzzy(
     context: DocumentContext,
     elements: Sequence[PageElementOrString],
     node_type: str,
-) -> List[PageElementOrString]:
+) -> list[PageElementOrString]:
     """
     Generic function to parse header elements with a fuzzy match.
     It uses a regex pattern to find the start of the element,
@@ -293,14 +293,14 @@ def _parse_header_element_fuzzy(
 def parse_emblem_element(
     context: DocumentContext,
     elements: Sequence[PageElementOrString],
-) -> List[PageElementOrString]:
+) -> list[PageElementOrString]:
     return _parse_header_element(context, elements, "emblem")
 
 
 def parse_entity_element(
     context: DocumentContext,
     elements: Sequence[PageElementOrString],
-) -> List[PageElementOrString]:
+) -> list[PageElementOrString]:
     return _parse_header_element_fuzzy(
         context,
         elements,
@@ -311,14 +311,14 @@ def parse_entity_element(
 def parse_identification_element(
     context: DocumentContext,
     elements: Sequence[PageElementOrString],
-) -> List[PageElementOrString]:
+) -> list[PageElementOrString]:
     return _parse_header_element(context, elements, "identification")
 
 
 def parse_arrete_title_element(
     context: DocumentContext,
     elements: Sequence[PageElementOrString],
-) -> List[PageElementOrString]:
+) -> list[PageElementOrString]:
     return _parse_header_element_fuzzy(
         context,
         elements,
@@ -329,14 +329,14 @@ def parse_arrete_title_element(
 def parse_honorary_element(
     context: DocumentContext,
     elements: Sequence[PageElementOrString],
-) -> List[PageElementOrString]:
+) -> list[PageElementOrString]:
     return _parse_header_element(context, elements, "honorary")
 
 
 def parse_supplementary_motif_info_element(
     context: DocumentContext,
     elements: Sequence[PageElementOrString],
-) -> List[PageElementOrString]:
+) -> list[PageElementOrString]:
     return _parse_header_element(
         context,
         elements,
@@ -347,7 +347,7 @@ def parse_supplementary_motif_info_element(
 def parse_visa_and_motif_elements(
     context: DocumentContext,
     elements: Sequence[PageElementOrString],
-) -> List[PageElementOrString]:
+) -> list[PageElementOrString]:
     elements = _parse_visa_and_motif_elements_pass1(context, elements, "visa")
     elements = _parse_visa_and_motif_elements_pass1(context, elements, "motif")
     elements = _parse_visa_and_motif_elements_pass2(
@@ -539,7 +539,7 @@ def _parse_visa_and_motif_elements_pass3(
     while elements:
         element = elements.pop(0)
         if is_tag(element, tag_name_in=[node_type]):
-            transparent_tags_pile: List[Tag] = []
+            transparent_tags_pile: list[Tag] = []
             while elements and is_tag(elements[0], tag_name_in=TRANSPARENT_TAG_TYPES):
                 transparent_tags_pile.append(elements[0])
                 elements.pop(0)
@@ -604,7 +604,7 @@ def render_header_element(
     tag: Tag,
 ) -> Tag:
     input_elements: Sequence[PageElementOrString] = tag.contents
-    elements: List[PageElementOrString] = []
+    elements: list[PageElementOrString] = []
     pattern = HEADER_ELEMENTS_RENDER_PATTERNS[tag.name]
 
     for splitted_element in split_elements(
@@ -633,7 +633,7 @@ def render_visa_motif(
     tag: Tag,
 ) -> Tag:
     assert is_tag(tag, tag_name_in=["visa", "motif"])
-    elements: List[PageElementOrString] = []
+    elements: list[PageElementOrString] = []
     for element in tag.contents:
         if is_tag(element, tag_name_in=["text_span"]):
             elements.append(get_string(element))
@@ -654,7 +654,7 @@ def rendre_arrete_title(
     context: DocumentContext,
     tag: Tag,
 ) -> Tag:
-    elements: List[PageElementOrString] = [" ".join(get_strings(tag.contents))]
+    elements: list[PageElementOrString] = [" ".join(get_strings(tag.contents))]
     # TODO : Parsing date should be done in a node and not on the fly
     # like this.
     elements = map_splitted_elements(

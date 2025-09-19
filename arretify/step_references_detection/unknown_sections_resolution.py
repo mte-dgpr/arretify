@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 
-from typing import Iterator, List
+from typing import Iterator, Sequence
 from dataclasses import replace as dataclass_replace
 
 from arretify.types import DocumentContext, PageElementOrString
@@ -85,7 +85,7 @@ def resolve_unknown_sections(
 @iter_func_to_list
 def remove_misdetected_sections(
     document_context: DocumentContext,
-    children: List[PageElementOrString],
+    children: Sequence[PageElementOrString],
 ) -> Iterator[PageElementOrString]:
     for section_reference_tag in children:
         if not is_tag_and_matches(
