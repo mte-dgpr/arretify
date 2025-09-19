@@ -32,7 +32,7 @@ from arretify.regex_utils import (
 from arretify.utils.html import (
     PageElementOrString,
 )
-from arretify.utils.strings import split_lines
+from arretify.utils.strings import split_on_newlines
 from arretify.utils.html_create import make_data_tag, wrap_in_tag
 from arretify.utils.functional import iter_func_to_list
 from arretify.utils.split_merge import (
@@ -140,7 +140,7 @@ def initialize_document_structure(
             data=dict(page_index=page_index),
             children=[],
         )
-        page_lines = split_lines(page_text)
+        page_lines = split_on_newlines(page_text)
         for line_index, line in enumerate(page_lines):
             yield Node(
                 type="text_span",
