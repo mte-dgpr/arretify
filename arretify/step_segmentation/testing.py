@@ -20,8 +20,13 @@ from typing import Sequence
 
 from bs4 import Tag
 
-from .core import PageElementOrString, is_tag
-from arretify.utils.html_create import read_segmentation_tag_data, make_segmentation_tag
+from .core import (
+    PageElementOrString,
+    is_segmentation_tag,
+    read_segmentation_tag_name,
+    read_segmentation_tag_data,
+    make_segmentation_tag,
+)
 
 
 def assert_elements_equal(
@@ -36,8 +41,10 @@ def assert_elements_equal(
     ), f"[{path}] Expected {[type(el) for el in expected]} tags, got {[type(el) for el in actual]}"
     for i, (a, e) in enumerate(zip(actual, expected)):
         child_path = f"{path}/{i}"
-        if is_tag(e):
-            assert is_tag(a, tag_name_in=[e.name]), f"[{child_path}] Expected {e}, got {a}"
+        if is_segmentation_tag(e):
+            assert is_segmentation_tag(
+                a, tag_name_in=[read_segmentation_tag_name(e)]
+            ), f"[{child_path}] Expected {e}, got {a}"
             # if `ignore_data_if_omitted` is True, test data only
             # if defined in test expectations.
             _assert_data_equal(
@@ -71,7 +78,7 @@ def _assert_data_equal(
     expected_data = read_segmentation_tag_data(expected)
     if ignore_data_if_omitted is True and not expected_data:
         return
-    if expected.name == "text_span" and ignore_text_span_data is True:
+    if is_segmentation_tag(expected, tag_name_in=["text_span"]) and ignore_text_span_data is True:
         return
     assert actual_data == expected_data, f"[{path}] Expected {expected_data}, got {actual_data}"
 

@@ -20,7 +20,7 @@ import unittest
 
 from bs4 import BeautifulSoup
 
-from .html import ensure_element_id, is_tag_and_matches
+from .html import ensure_element_id, is_tag
 from arretify.types import IdCounters
 
 
@@ -62,7 +62,7 @@ class TestIsTagAndMatches(unittest.TestCase):
         tag["class"].append("other-class")
 
         # Act
-        result = is_tag_and_matches(tag, css_classes_in=["test-class"])
+        result = is_tag(tag, css_classes_in=["test-class"])
 
         # Assert
         assert result is True
@@ -75,7 +75,7 @@ class TestIsTagAndMatches(unittest.TestCase):
         tag["class"].append("another-class")
 
         # Act
-        result = is_tag_and_matches(tag, css_classes_in=["test-class"])
+        result = is_tag(tag, css_classes_in=["test-class"])
 
         # Assert
         assert result is False
@@ -86,8 +86,8 @@ class TestIsTagAndMatches(unittest.TestCase):
         tag = soup.new_tag("span")
 
         # Act
-        result1 = is_tag_and_matches(tag, tag_name_in=["span"])
-        result2 = is_tag_and_matches(tag, tag_name_in=["div"])
+        result1 = is_tag(tag, tag_name_in=["span"])
+        result2 = is_tag(tag, tag_name_in=["div"])
 
         # Assert
         assert result1 is True
@@ -100,9 +100,9 @@ class TestIsTagAndMatches(unittest.TestCase):
         tag["class"] = ["test-class"]
 
         # Act
-        result1 = is_tag_and_matches(tag, css_classes_in=["test-class"], tag_name_in=["div"])
-        result2 = is_tag_and_matches(tag, css_classes_in=["other-test-class"], tag_name_in=["div"])
-        result3 = is_tag_and_matches(tag, css_classes_in=["test-class"], tag_name_in=["span"])
+        result1 = is_tag(tag, css_classes_in=["test-class"], tag_name_in=["div"])
+        result2 = is_tag(tag, css_classes_in=["other-test-class"], tag_name_in=["div"])
+        result3 = is_tag(tag, css_classes_in=["test-class"], tag_name_in=["span"])
 
         # Assert
         assert result1 is True
@@ -117,4 +117,4 @@ class TestIsTagAndMatches(unittest.TestCase):
 
         # Act & Assert
         with self.assertRaises(RuntimeError):
-            is_tag_and_matches(tag, css_classes_in=["my-class"])
+            is_tag(tag, css_classes_in=["my-class"])

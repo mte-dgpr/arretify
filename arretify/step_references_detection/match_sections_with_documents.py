@@ -27,7 +27,7 @@ from arretify.utils.element_ranges import (
 from arretify.utils.html import (
     ensure_element_id,
     get_group_id,
-    is_tag_and_matches,
+    is_tag,
 )
 from arretify.html_schemas import (
     SECTION_REFERENCE_SCHEMA,
@@ -67,9 +67,7 @@ def match_sections_to_parents(
     document_context.soup
     children = list(children)
     section_references = [
-        tag
-        for tag in children
-        if is_tag_and_matches(tag, css_classes_in=[SECTION_REFERENCE_SCHEMA.css_class])
+        tag for tag in children if is_tag(tag, css_classes_in=[SECTION_REFERENCE_SCHEMA.css_class])
     ]
 
     for section_reference_tag in section_references:
@@ -137,7 +135,7 @@ def _search_parent_reference_tag(
         # <reference tag> <connector string> <parent reference tag>
         if len(element_range_with_merged_strings) == 3:
             parent_reference_tag = element_range_with_merged_strings[2]
-            if not is_tag_and_matches(
+            if not is_tag(
                 parent_reference_tag,
                 css_classes_in=[
                     DOCUMENT_REFERENCE_SCHEMA.css_class,

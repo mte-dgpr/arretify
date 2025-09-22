@@ -18,7 +18,6 @@
 #
 import unittest
 
-from arretify.utils.html_create import make_segmentation_tag
 from arretify.utils.testing import create_document_context, normalized_html_str
 from .content import (
     parse_section_titles,
@@ -32,6 +31,7 @@ from .testing import (
     assert_elements_equal,
     make_text_spans,
 )
+from .core import make_segmentation_tag
 
 
 class BaseTestCase(unittest.TestCase):

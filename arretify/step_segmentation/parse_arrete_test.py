@@ -18,10 +18,10 @@
 #
 import unittest
 
-from arretify.utils.html_create import make_segmentation_tag
 from arretify.utils.testing import create_document_context
 from .parse_arrete import parse_arrete
 from .testing import make_text_spans, assert_elements_equal
+from .core import make_segmentation_tag
 
 
 class BaseTestCase(unittest.TestCase):

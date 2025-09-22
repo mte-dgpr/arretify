@@ -18,7 +18,7 @@
 #
 import unittest
 
-from arretify.utils.html_create import make_segmentation_tag
+from .core import make_segmentation_tag
 from .basic_elements import (
     _list_indentation,
     parse_lists,

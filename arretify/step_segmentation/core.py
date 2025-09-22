@@ -16,20 +16,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+import json
 from typing import (
+    Dict,
+    Iterable,
     Sequence,
     TypeGuard,
     cast,
     Iterator,
 )
 
-from bs4 import Tag
+from bs4 import BeautifulSoup, Tag
 
 from arretify.parsing_utils.patterns import is_continuing_sentence
 from arretify.types import DocumentContext, PageElementOrString
 from arretify.utils.functional import iter_func_to_list
 from arretify.regex_utils import PatternProxy, MatchProxy
-from arretify.utils.html_create import make_segmentation_tag, read_segmentation_tag_data
+from arretify.utils.html_create import make_new_tag
 from arretify.utils.strings import merge_strings
 from arretify.utils.split_merge import (
     make_while_splitter,
@@ -42,6 +45,19 @@ from arretify.utils.split_merge import (
     SplitMatch,
     split_before_match,
 )
+
+
+SEGMENTATION_TAG_NAME = "arretify-segmentation"
+"""
+Name of the tag used for segmentation tags.
+"""
+
+SEGMENTATION_TAG_NAME_ATTRIBUTE = "data-tag_name"
+"""
+Name of the attribute used to store the segmentation tag name (e.g. visa, header, etc...).
+"""
+
+SegmentationTagDataDict = Dict[str, str | int | float | bool | None | list[str] | list[int]]
 
 
 TRANSPARENT_TAG_TYPES = ["page_separator", "page_footer"]
@@ -85,7 +101,7 @@ def pick_if_transparent_tag_followed_by_match(
 
     def _probe(elements: Sequence[PageElementOrString], index: int) -> bool:
         for next_index, next_element in enumerate(elements[index:], start=index):
-            if is_tag(next_element, tag_name_in=TRANSPARENT_TAG_TYPES):
+            if is_segmentation_tag(next_element, tag_name_in=TRANSPARENT_TAG_TYPES):
                 continue
             else:
                 return is_matching(elements, next_index)
@@ -99,7 +115,7 @@ def pick_text_spans(
 ) -> Probe[PageElementOrString]:
     def _probe(elements: Sequence[PageElementOrString], index: int) -> bool:
         element = elements[index]
-        if is_tag(element, tag_name_in=["text_span"]):
+        if is_segmentation_tag(element, tag_name_in=["text_span"]):
             return probe(elements, index)
         return False
 
@@ -222,7 +238,8 @@ def make_recombine_interrupted_lines_splitter(
         while elements:
             # Find the next starting element
             before_start, elements = split_before_match(
-                elements, lambda elements, i: is_tag(elements[i], tag_name_in=[start_tag_type])
+                elements,
+                lambda elements, i: is_segmentation_tag(elements[i], tag_name_in=[start_tag_type]),
             )
             before.extend(before_start)
             if not elements:
@@ -241,10 +258,10 @@ def make_recombine_interrupted_lines_splitter(
                     lambda elements, i: (
                         i > 0  # need at least one page separator
                         and all(
-                            is_tag(element, tag_name_in=["page_separator"])
+                            is_segmentation_tag(element, tag_name_in=["page_separator"])
                             for element in elements[:i]
                         )
-                        and is_tag(elements[i], tag_name_in=["text_span"])
+                        and is_segmentation_tag(elements[i], tag_name_in=["text_span"])
                         and is_continuing_sentence(previous_text, get_string(elements[i]))
                     ),
                 )
@@ -270,13 +287,56 @@ def make_recombine_interrupted_lines_splitter(
     return _splitter
 
 
-def is_tag(tag: PageElementOrString, tag_name_in: Sequence[str] | None = None) -> TypeGuard[Tag]:
-    if not isinstance(tag, Tag):
+def is_segmentation_tag(
+    tag: PageElementOrString, tag_name_in: Sequence[str] | None = None
+) -> TypeGuard[Tag]:
+    if not isinstance(tag, Tag) or tag.name != SEGMENTATION_TAG_NAME:
         return False
 
     if tag_name_in is not None:
-        return tag.name is not None and tag.name in tag_name_in
+        segmentation_tag_name = tag.get(SEGMENTATION_TAG_NAME_ATTRIBUTE)
+        return segmentation_tag_name in tag_name_in
     return True
+
+
+def make_segmentation_tag(
+    soup: BeautifulSoup,
+    tag_name: str,
+    contents: Iterable[PageElementOrString] | None = None,
+    data: SegmentationTagDataDict | None = None,
+) -> Tag:
+    if contents is None:
+        contents = []
+    if data is None:
+        data = {}
+    tag = make_new_tag(soup, SEGMENTATION_TAG_NAME, contents=contents)
+    tag[SEGMENTATION_TAG_NAME_ATTRIBUTE] = tag_name
+    update_segmentation_tag_data(tag, data)
+    return tag
+
+
+def update_segmentation_tag_data(element: Tag, data: SegmentationTagDataDict):
+    for key, value in data.items():
+        element[f"data-{key}"] = json.dumps(value, ensure_ascii=False)
+
+
+def read_segmentation_tag_data(element: Tag) -> SegmentationTagDataDict:
+    data: SegmentationTagDataDict = {}
+    for key, value in element.attrs.items():
+        if key.startswith("data-"):
+            data_key = key[5:]
+            if key == SEGMENTATION_TAG_NAME_ATTRIBUTE:
+                continue
+            data_value = json.loads(value)
+            data[data_key] = data_value
+    return data
+
+
+def read_segmentation_tag_name(element: Tag) -> str:
+    assert is_segmentation_tag(element), "Element is not a segmentation tag"
+    tag_name = element.get(SEGMENTATION_TAG_NAME_ATTRIBUTE)
+    assert isinstance(tag_name, str) and tag_name, "Segmentation tag has no tag_name or it is empty"
+    return tag_name
 
 
 def get_string(element: PageElementOrString) -> str:
@@ -288,7 +348,7 @@ def get_string(element: PageElementOrString) -> str:
     """
     if isinstance(element, str):
         return element
-    elif is_tag(element):
+    elif is_segmentation_tag(element):
         strings: list[str] = [_get_string(child) for child in element.contents]
         return merge_strings(strings)
     else:
@@ -298,9 +358,9 @@ def get_string(element: PageElementOrString) -> str:
 def _get_string(element: PageElementOrString) -> str:
     if isinstance(element, str):
         return element
-    elif is_tag(element, tag_name_in=["text_span", *INLINE_TAG_TYPES]):
+    elif is_segmentation_tag(element, tag_name_in=["text_span", *INLINE_TAG_TYPES]):
         return merge_strings(_get_string(child) for child in element.contents)
-    elif is_tag(element, tag_name_in=TRANSPARENT_TAG_TYPES):
+    elif is_segmentation_tag(element, tag_name_in=TRANSPARENT_TAG_TYPES):
         return ""
     else:
         raise ValueError(f"Unexpected element '{element}'")
@@ -309,9 +369,9 @@ def _get_string(element: PageElementOrString) -> str:
 @iter_func_to_list
 def get_strings(tags: Sequence[PageElementOrString]) -> Iterator[str]:
     for tag in tags:
-        if is_tag(tag, tag_name_in=["text_span"]):
+        if is_segmentation_tag(tag, tag_name_in=["text_span"]):
             yield get_string(tag)
-        elif is_tag(tag, tag_name_in=TRANSPARENT_TAG_TYPES):
+        elif is_segmentation_tag(tag, tag_name_in=TRANSPARENT_TAG_TYPES):
             continue
         else:
             raise ValueError(f"Tag '{tag}' is not a text_span or a transparent tag")
@@ -328,19 +388,19 @@ def combine_text_spans(
     first_text_span: Tag | None = None
     last_text_span: Tag | None = None
     for element in elements:
-        if is_tag(element, tag_name_in=["text_span"]):
+        if is_segmentation_tag(element, tag_name_in=["text_span"]):
             if first_text_span is None:
                 first_text_span = element
             last_text_span = element
             for text_span_child in element.children:
-                if isinstance(text_span_child, str) or is_tag(
+                if isinstance(text_span_child, str) or is_segmentation_tag(
                     text_span_child, tag_name_in=TRANSPARENT_TAG_TYPES + INLINE_TAG_TYPES
                 ):
                     children.append(text_span_child)
                 else:
                     raise ValueError(f"Unexpected child '{text_span_child}' in of text_span tag")
 
-        elif is_tag(element, tag_name_in=TRANSPARENT_TAG_TYPES):
+        elif is_segmentation_tag(element, tag_name_in=TRANSPARENT_TAG_TYPES):
             children.append(element)
 
         else:

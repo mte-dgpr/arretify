@@ -32,7 +32,7 @@ from arretify.utils.html import (
     ensure_element_id,
     render_str_list_attribute,
     parse_bool_attribute,
-    is_tag_and_matches,
+    is_tag,
 )
 from arretify.utils.element_ranges import (
     get_contiguous_elements_left,
@@ -75,16 +75,19 @@ def resolve_references_and_operands(document_context: DocumentContext, operation
 
 def _find_right_operand(document_context: DocumentContext, start_tag: Tag) -> Tag | None:
     for element in get_contiguous_elements_right(start_tag):
-        if isinstance(element, Tag) and element.name in [
-            "blockquote",
-            "q",
-            "table",
-        ]:
+        if is_tag(
+            element,
+            tag_name_in=[
+                "blockquote",
+                "q",
+                "table",
+            ],
+        ):
             return element
 
         # We ignore inline tags like page separators and footers
         # and look recursively for the next neighbouring element.
-        elif is_tag_and_matches(element, css_classes_in=[s.css_class for s in INLINE_TAG_SCHEMAS]):
+        elif is_tag(element, css_classes_in=[s.css_class for s in INLINE_TAG_SCHEMAS]):
             return _find_right_operand(document_context, element)
     return None
 
@@ -94,7 +97,7 @@ def _find_left_references(document_context: DocumentContext, start_tag: Tag) -> 
     reference_tags: list[Tag] = []
 
     for element in contiguous_elements_left:
-        if is_tag_and_matches(
+        if is_tag(
             element,
             css_classes_in=[
                 SECTION_REFERENCE_SCHEMA.css_class,
@@ -113,12 +116,12 @@ def _find_left_references(document_context: DocumentContext, start_tag: Tag) -> 
 
         # We ignore inline tags like page separators and footers
         # and look recursively for the next neighbouring element.
-        elif is_tag_and_matches(element, css_classes_in=[s.css_class for s in INLINE_TAG_SCHEMAS]):
+        elif is_tag(element, css_classes_in=[s.css_class for s in INLINE_TAG_SCHEMAS]):
             return _find_left_references(document_context, element)
 
     if len(reference_tags) == 0:
         for element in contiguous_elements_left:
-            if is_tag_and_matches(element, css_classes_in=[DOCUMENT_REFERENCE_SCHEMA.css_class]):
+            if is_tag(element, css_classes_in=[DOCUMENT_REFERENCE_SCHEMA.css_class]):
                 reference_tags = [element]
                 break
 

@@ -30,8 +30,6 @@ from arretify.utils.html import (
 from arretify.utils.html_create import (
     make_data_tag,
     make_new_tag,
-    make_segmentation_tag,
-    read_segmentation_tag_data,
 )
 from arretify.utils.markdown_parsing import (
     is_table_description,
@@ -71,7 +69,9 @@ from arretify.law_data.french_addresses import (
 )
 
 from .core import (
-    is_tag,
+    is_segmentation_tag,
+    make_segmentation_tag,
+    read_segmentation_tag_data,
     make_single_line_splitter_for_text_spans,
     get_string,
     get_strings,
@@ -162,12 +162,12 @@ def render_table(
     has_table_header = False
     transparent_tags: list[Tuple[int, Tag]] = []
     for element in tag.children:
-        if is_tag(element, tag_name_in=["text_span"]):
+        if is_segmentation_tag(element, tag_name_in=["text_span"]):
             element_str = get_string(element)
             pile.append(element_str)
             if bool(TABLE_HEADER_SEPARATOR_PATTERN.match(element_str)):
                 has_table_header = True
-        elif is_tag(element, tag_name_in=["page_separator"]):
+        elif is_segmentation_tag(element, tag_name_in=["page_separator"]):
             table_tag = parse_markdown_table(pile)
             # Get the right table row for inserting the transparent tag.
             # If the table has a header, the `pile` contains a header
@@ -198,10 +198,10 @@ def render_table_description(
     tag: Tag,
 ) -> Iterator[PageElementOrString]:
     for element in tag.children:
-        if is_tag(element, tag_name_in=["text_span"]):
+        if is_segmentation_tag(element, tag_name_in=["text_span"]):
             yield context.soup.new_tag("br")
             yield get_string(element)
-        elif is_tag(element, tag_name_in=["page_separator"]):
+        elif is_segmentation_tag(element, tag_name_in=["page_separator"]):
             yield render_page_separator(context, element)
         else:
             raise ValueError(
@@ -257,10 +257,10 @@ def _make_list_splitter(
 
             # If we get a line that does not match the list pattern,
             # we check if it continues the previous sentence.
-            elif is_tag(element, tag_name_in=["text_span"]):
+            elif is_segmentation_tag(element, tag_name_in=["text_span"]):
                 # First get the previous list element in the pile.
                 j = len(pile) - 1
-                while j >= 0 and not is_tag(pile[j], tag_name_in=["text_span"]):
+                while j >= 0 and not is_segmentation_tag(pile[j], tag_name_in=["text_span"]):
                     j -= 1
                 if j < 0:
                     raise RuntimeError("Expected to find a list element in the pile.")
@@ -323,11 +323,11 @@ def _render_list(
     while elements:
         element = elements[0]
 
-        if is_tag(element, tag_name_in=["page_separator"]):
+        if is_segmentation_tag(element, tag_name_in=["page_separator"]):
             list_pile[-1].append(render_page_separator(context, element))
             elements.pop(0)
 
-        elif is_tag(element, tag_name_in=["text_span"]):
+        elif is_segmentation_tag(element, tag_name_in=["text_span"]):
             current_indentation = _list_indentation(get_string(element))
 
             if current_indentation == ref_indentation:
@@ -408,7 +408,7 @@ def _blockquote_splitter(
 
     # At this point, we know that the first element is a blockquote start
     element = elements[0]
-    assert is_tag(element, tag_name_in=["text_span"])
+    assert is_segmentation_tag(element, tag_name_in=["text_span"])
     first_str_index, first_str = _get_first_str(element)
     blockquote_start = read_segmentation_tag_data(element)["start"]
     # Remove opening quote
@@ -416,7 +416,7 @@ def _blockquote_splitter(
     quotes_depth_count = 1
 
     for i, element in enumerate(elements):
-        if not is_tag(element, tag_name_in=["text_span"]):
+        if not is_segmentation_tag(element, tag_name_in=["text_span"]):
             continue
 
         # Ignore case when the line contains a balanced number of quotes.
@@ -470,7 +470,7 @@ def render_blockquote(
 ) -> Tag:
     blockquote_tag = context.soup.new_tag("blockquote")
     for element in tag.contents:
-        if is_tag(element, tag_name_in=["text_span"]):
+        if is_segmentation_tag(element, tag_name_in=["text_span"]):
             blockquote_tag.append(
                 make_new_tag(
                     context.soup,
@@ -480,7 +480,7 @@ def render_blockquote(
                     contents=render_inline_quotes(context, get_string(element)),
                 )
             )
-        elif is_tag(element):
+        elif is_segmentation_tag(element):
             blockquote_tag.extend(render_basic_elements(context, element))
 
     return blockquote_tag
@@ -627,9 +627,9 @@ def render_text_span(
         if isinstance(element, str):
             # If this is not the last element, we add a space as separator.
             yield element + " " * int(i < len(tag.contents) - 1)
-        elif is_tag(element, tag_name_in=["page_separator"]):
+        elif is_segmentation_tag(element, tag_name_in=["page_separator"]):
             yield render_page_separator(context, element)
-        elif is_tag(element, tag_name_in=["address"]):
+        elif is_segmentation_tag(element, tag_name_in=["address"]):
             yield render_address(context, element)
         else:
             raise ValueError(f"Unexpected element type {type(element)} in text span rendering.")
@@ -639,29 +639,28 @@ def render_basic_elements(
     context: DocumentContext,
     tag: Tag,
 ) -> Iterator[PageElementOrString]:
-    tag_name = tag.name
-    if tag_name == "list":
+    if is_segmentation_tag(tag, tag_name_in=["list"]):
         yield render_list(context, tag)
-    elif tag_name == "table":
+    elif is_segmentation_tag(tag, tag_name_in=["table"]):
         yield render_table(context, tag)
-    elif tag_name == "table_description":
+    elif is_segmentation_tag(tag, tag_name_in=["table_description"]):
         yield from render_table_description(context, tag)
-    elif tag_name == "blockquote":
+    elif is_segmentation_tag(tag, tag_name_in=["blockquote"]):
         yield render_blockquote(context, tag)
-    elif tag_name == "table_of_contents":
+    elif is_segmentation_tag(tag, tag_name_in=["table_of_contents"]):
         yield render_table_of_contents(context, tag)
-    elif tag_name == "page_footer":
+    elif is_segmentation_tag(tag, tag_name_in=["page_footer"]):
         yield render_page_footer(context, tag)
-    elif tag_name == "page_separator":
+    elif is_segmentation_tag(tag, tag_name_in=["page_separator"]):
         yield render_page_separator(context, tag)
-    elif tag_name == "image":
+    elif is_segmentation_tag(tag, tag_name_in=["image"]):
         yield render_image(context, tag)
-    elif tag_name == "error":
+    elif is_segmentation_tag(tag, tag_name_in=["error"]):
         yield render_error(context, tag)
-    elif tag_name == "text_span":
+    elif is_segmentation_tag(tag, tag_name_in=["text_span"]):
         yield from render_text_span(context, tag)
     else:
-        raise ValueError(f"Unknown tag type '{tag_name}' in render_basic_elements.")
+        raise ValueError(f"Unknown tag type '{tag.name}' in render_basic_elements.")
 
 
 def render_error(

@@ -19,7 +19,7 @@
 import logging
 from typing import Optional, Sequence, cast
 
-from bs4 import BeautifulSoup, Tag
+from bs4 import BeautifulSoup
 
 from arretify.regex_utils import (
     regex_tree,
@@ -33,6 +33,7 @@ from arretify.types import PageElementOrString, DocumentContext
 from arretify.html_schemas import (
     DOCUMENT_REFERENCE_SCHEMA,
 )
+from arretify.utils.html import is_tag
 from arretify.utils.html_split_merge import make_regex_tree_splitter
 from arretify.utils.split_merge import split_elements, map_splitted_elements
 from arretify.utils.html_create import make_data_tag
@@ -90,7 +91,7 @@ def _render_decret_container(
 
     decret_date: Optional[str] = None
     for tag_or_str in decret_tag_contents:
-        if isinstance(tag_or_str, Tag) and tag_or_str.name == "time":
+        if is_tag(tag_or_str, tag_name_in=["time"]):
             decret_date = cast(str, tag_or_str["datetime"])
             break
     if decret_date is None:

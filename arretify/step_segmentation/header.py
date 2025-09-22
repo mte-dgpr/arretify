@@ -23,7 +23,6 @@ from bs4 import Tag
 from arretify.utils.functional import iter_func_to_list, chain_functions
 from arretify.parsing_utils.dates import DATE_NODE, render_date_regex_tree_match
 from arretify.utils.html_create import (
-    make_segmentation_tag,
     wrap_in_tag,
     make_data_tag,
     make_new_tag,
@@ -52,7 +51,8 @@ from arretify.utils.split_merge import (
     Probe,
 )
 from .core import (
-    is_tag,
+    is_segmentation_tag,
+    make_segmentation_tag,
     make_recombine_interrupted_lines_splitter,
     make_while_splitter_for_text_spans,
     make_single_line_splitter_for_text_spans,
@@ -61,6 +61,7 @@ from .core import (
     get_string,
     get_strings,
     TRANSPARENT_TAG_TYPES,
+    read_segmentation_tag_name,
 )
 from .document_elements import (
     render_page_footer,
@@ -213,7 +214,7 @@ VISA_MOTIFS_PROBES: Dict[str, Probe[PageElementOrString]] = dict(
 
 
 def _is_nothing_else_than(name: str, element: PageElementOrString) -> bool:
-    return is_tag(element, tag_name_in=["text_span"]) and not any(
+    return is_segmentation_tag(element, tag_name_in=["text_span"]) and not any(
         bool(HEADER_ELEMENTS_PATTERNS[other_name].match(get_string(element)))
         for other_name in HEADER_ELEMENTS_PATTERNS
         if other_name != name
@@ -401,14 +402,14 @@ def _parse_visa_and_motif_elements_pass1(
     # into visa or motif tags.
     for element in elements:
         is_list_of_visas_or_motifs = False
-        if is_tag(element, tag_name_in=["list"]):
+        if is_segmentation_tag(element, tag_name_in=["list"]):
             assert len(element.contents) > 0, "List tag should not be empty"
             is_list_of_visas_or_motifs = VISA_MOTIFS_PROBES[tag_type](element.contents, 0)
 
         if is_list_of_visas_or_motifs:
-            assert is_tag(element)
+            assert is_segmentation_tag(element)
             for list_item_element in element.contents:
-                if is_tag(list_item_element, tag_name_in=["text_span"]):
+                if is_segmentation_tag(list_item_element, tag_name_in=["text_span"]):
                     yield make_segmentation_tag(
                         context.soup, tag_type, contents=[list_item_element]
                     )
@@ -435,15 +436,15 @@ def _parse_visa_and_motif_elements_pass2(
     elements = list(elements)
 
     # Skip tags until we find the first tag of type 'visa' or 'motif'.
-    while elements and not is_tag(elements[0], tag_name_in=[tag_type]):
+    while elements and not is_segmentation_tag(elements[0], tag_name_in=[tag_type]):
         yield elements.pop(0)
     if not elements:
         return
     first_tag = elements.pop(0)
     assert (
-        is_tag(first_tag, tag_name_in=[tag_type])
+        is_segmentation_tag(first_tag, tag_name_in=[tag_type])
         and len(first_tag.contents) > 0
-        and is_tag(first_tag.contents[0])
+        and is_segmentation_tag(first_tag.contents[0])
     )
 
     first_tag_match = VISA_MOTIFS_PATTERNS[tag_type].match(get_string(first_tag))
@@ -466,22 +467,22 @@ def _parse_visa_and_motif_elements_pass2(
     #   Vu :
     #   - blabla
     #   - bloblo
-    elif elements and is_tag(elements[0], tag_name_in=["list"]):
+    elif elements and is_segmentation_tag(elements[0], tag_name_in=["list"]):
         # Add the "Vu :" to the header
         yield from first_tag.children
         while elements:
             element = elements[0]
             # We're a bit lenient here and accept a few unassigned_line tags,
             # as random text sometimes interferes with the parsing.
-            if is_tag(element, tag_name_in=TRANSPARENT_TAG_TYPES) or is_tag(
-                element, tag_name_in=["text_span"]
-            ):
+            if is_segmentation_tag(
+                element, tag_name_in=TRANSPARENT_TAG_TYPES
+            ) or is_segmentation_tag(element, tag_name_in=["text_span"]):
                 yield elements.pop(0)
 
-            elif is_tag(element, tag_name_in=["list"]):
+            elif is_segmentation_tag(element, tag_name_in=["list"]):
                 elements.pop(0)
                 for list_item_element in element.children:
-                    if is_tag(list_item_element, tag_name_in=["text_span"]):
+                    if is_segmentation_tag(list_item_element, tag_name_in=["text_span"]):
                         yield make_segmentation_tag(
                             context.soup, tag_type, contents=[list_item_element]
                         )
@@ -503,10 +504,10 @@ def _parse_visa_and_motif_elements_pass2(
 
             # Lists will be handled in the next pass and appended to the visa or motif tag
             # if applicable.
-            if is_tag(element, tag_name_in=["list", *TRANSPARENT_TAG_TYPES]):
+            if is_segmentation_tag(element, tag_name_in=["list", *TRANSPARENT_TAG_TYPES]):
                 yield elements.pop(0)
 
-            elif is_tag(element, tag_name_in=["text_span"]):
+            elif is_segmentation_tag(element, tag_name_in=["text_span"]):
                 yield make_segmentation_tag(context.soup, tag_type, contents=[element])
                 elements.pop(0)
             else:
@@ -517,7 +518,7 @@ def _parse_visa_and_motif_elements_pass2(
 def _recombine_visa_motif_with_next_if_continuing_sentence(
     elements: Sequence[PageElementOrString],
 ) -> Tag:
-    assert len(elements) > 0 and is_tag(elements[0], tag_name_in=["visa", "motif"])
+    assert len(elements) > 0 and is_segmentation_tag(elements[0], tag_name_in=["visa", "motif"])
     elements[0].extend(elements[1:])
     return elements[0]
 
@@ -538,13 +539,13 @@ def _parse_visa_and_motif_elements_pass3(
 
     while elements:
         element = elements.pop(0)
-        if is_tag(element, tag_name_in=[tag_type]):
+        if is_segmentation_tag(element, tag_name_in=[tag_type]):
             transparent_tags_pile: list[Tag] = []
-            while elements and is_tag(elements[0], tag_name_in=TRANSPARENT_TAG_TYPES):
+            while elements and is_segmentation_tag(elements[0], tag_name_in=TRANSPARENT_TAG_TYPES):
                 transparent_tags_pile.append(elements[0])
                 elements.pop(0)
 
-            if elements and is_tag(elements[0], tag_name_in=["list"]):
+            if elements and is_segmentation_tag(elements[0], tag_name_in=["list"]):
                 if transparent_tags_pile:
                     element.extend(transparent_tags_pile)
                 element.append(elements.pop(0))
@@ -564,25 +565,25 @@ def render_header(
 ) -> Tag:
     content = context.soup.new_tag("div")
     for element in elements:
-        if is_tag(element, tag_name_in=["arrete_title"]):
-            content.append(rendre_arrete_title(context, element))
-        elif is_tag(element, tag_name_in=["visa", "motif"]):
+        if is_segmentation_tag(element, tag_name_in=["arrete_title"]):
+            content.append(render_arrete_title(context, element))
+        elif is_segmentation_tag(element, tag_name_in=["visa", "motif"]):
             content.append(render_visa_motif(context, element))
         # All header elements other than the ones above
         # are treated in a generic way.
-        elif is_tag(element, tag_name_in=list(HEADER_ELEMENTS_SCHEMAS.keys())):
+        elif is_segmentation_tag(element, tag_name_in=list(HEADER_ELEMENTS_SCHEMAS.keys())):
             content.append(render_header_element(context, element))
-        elif is_tag(element, tag_name_in=["table_of_contents"]):
+        elif is_segmentation_tag(element, tag_name_in=["table_of_contents"]):
             content.append(render_table_of_contents(context, element))
-        elif is_tag(element, tag_name_in=["page_separator"]):
+        elif is_segmentation_tag(element, tag_name_in=["page_separator"]):
             content.append(render_page_separator(context, element))
-        elif is_tag(element, tag_name_in=["page_footer"]):
+        elif is_segmentation_tag(element, tag_name_in=["page_footer"]):
             content.append(render_page_footer(context, element))
-        elif is_tag(element, tag_name_in=["image"]):
+        elif is_segmentation_tag(element, tag_name_in=["image"]):
             content.append(render_image(context, element))
-        elif is_tag(element, tag_name_in=["list"]):
+        elif is_segmentation_tag(element, tag_name_in=["list"]):
             content.append(render_list(context, element))
-        elif is_tag(element, tag_name_in=["text_span"]):
+        elif is_segmentation_tag(element, tag_name_in=["text_span"]):
             content.append(
                 make_new_tag(
                     context.soup,
@@ -591,7 +592,7 @@ def render_header(
                 )
             )
 
-        elif is_tag(element):
+        elif is_segmentation_tag(element):
             raise ValueError(f"Unexpected tag {element.type} in content")
 
         elif isinstance(element, str):
@@ -605,7 +606,7 @@ def render_header_element(
 ) -> Tag:
     input_elements: Sequence[PageElementOrString] = tag.contents
     elements: list[PageElementOrString] = []
-    pattern = HEADER_ELEMENTS_RENDER_PATTERNS[tag.name]
+    pattern = HEADER_ELEMENTS_RENDER_PATTERNS[read_segmentation_tag_name(tag)]
 
     for splitted_element in split_elements(
         input_elements,
@@ -623,7 +624,7 @@ def render_header_element(
 
     return make_data_tag(
         context.soup,
-        HEADER_ELEMENTS_SCHEMAS[tag.name],
+        HEADER_ELEMENTS_SCHEMAS[read_segmentation_tag_name(tag)],
         contents=wrap_in_tag(context.soup, elements, "div"),
     )
 
@@ -632,25 +633,25 @@ def render_visa_motif(
     context: DocumentContext,
     tag: Tag,
 ) -> Tag:
-    assert is_tag(tag, tag_name_in=["visa", "motif"])
+    assert is_segmentation_tag(tag, tag_name_in=["visa", "motif"])
     elements: list[PageElementOrString] = []
     for element in tag.contents:
-        if is_tag(element, tag_name_in=["text_span"]):
+        if is_segmentation_tag(element, tag_name_in=["text_span"]):
             elements.append(get_string(element))
-        elif is_tag(element, tag_name_in=["list"]):
+        elif is_segmentation_tag(element, tag_name_in=["list"]):
             elements.append(render_list(context, element))
-        elif is_tag(element, tag_name_in=["page_separator"]):
+        elif is_segmentation_tag(element, tag_name_in=["page_separator"]):
             elements.append(render_page_separator(context, element))
         else:
             raise ValueError(f"Unexpected element {element} in visa/motif")
     return make_data_tag(
         context.soup,
-        HEADER_ELEMENTS_SCHEMAS[tag.name],
+        HEADER_ELEMENTS_SCHEMAS[read_segmentation_tag_name(tag)],
         contents=elements,
     )
 
 
-def rendre_arrete_title(
+def render_arrete_title(
     context: DocumentContext,
     tag: Tag,
 ) -> Tag:
