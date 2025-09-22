@@ -28,7 +28,7 @@ from arretify.utils.references import (
     ReferenceTree,
 )
 from arretify.utils.functional import iter_func_to_list
-from arretify.utils.html import set_data_attributes, is_tag_and_matches
+from arretify.utils.html import set_data_attributes, is_tag
 from arretify.html_schemas import SECTION_REFERENCE_SCHEMA
 
 
@@ -88,9 +88,7 @@ def remove_misdetected_sections(
     children: Sequence[PageElementOrString],
 ) -> Iterator[PageElementOrString]:
     for section_reference_tag in children:
-        if not is_tag_and_matches(
-            section_reference_tag, css_classes_in=[SECTION_REFERENCE_SCHEMA.css_class]
-        ):
+        if not is_tag(section_reference_tag, css_classes_in=[SECTION_REFERENCE_SCHEMA.css_class]):
             yield section_reference_tag
             continue
 

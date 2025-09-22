@@ -34,6 +34,7 @@ from arretify.utils.split_merge import (
 )
 from arretify.utils.html import (
     PageElementOrString,
+    is_tag,
 )
 from arretify.utils.html_create import make_data_tag
 from arretify.utils.html_split_merge import make_regex_tree_splitter
@@ -208,7 +209,7 @@ def _render_arrete_container(
 
     arrete_date: Optional[str] = None
     for tag_or_str in arrete_tag_contents:
-        if isinstance(tag_or_str, Tag) and tag_or_str.name == "time":
+        if is_tag(tag_or_str, tag_name_in=["time"]):
             arrete_date = cast(str, tag_or_str["datetime"])
             break
 

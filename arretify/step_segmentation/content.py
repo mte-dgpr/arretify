@@ -30,9 +30,6 @@ from arretify.utils.html import (
 from arretify.utils.html_create import (
     make_data_tag,
     make_new_tag,
-    make_segmentation_tag,
-    read_segmentation_tag_data,
-    update_segmentation_tag_data,
 )
 from arretify.utils.functional import iter_func_to_list, chain_functions
 from arretify.utils.split import split_at_first_verb
@@ -63,7 +60,10 @@ from .titles_detection import (
 )
 from .core import (
     combine_text_spans,
-    is_tag,
+    is_segmentation_tag,
+    make_segmentation_tag,
+    read_segmentation_tag_data,
+    update_segmentation_tag_data,
     make_recombine_interrupted_lines_splitter,
     make_single_line_splitter_for_text_spans,
     make_probe_from_pattern_proxy,
@@ -86,7 +86,7 @@ _is_title_string = make_probe_from_pattern_proxy(
 
 def is_title(elements: Sequence[PageElementOrString], index: int) -> bool:
     element = elements[index]
-    assert is_tag(element, tag_name_in=["text_span"])
+    assert is_segmentation_tag(element, tag_name_in=["text_span"])
     # Exclude text_span tags that start with an inline tag.
     # This excludes cases when a line starts with an address
     # or another inline element, which cannot be a title.
@@ -118,11 +118,11 @@ def render_content(
 ) -> Tag:
     content = make_new_tag(context.soup, "div")
     for tag in elements:
-        if is_tag(tag, tag_name_in=["section"]):
+        if is_segmentation_tag(tag, tag_name_in=["section"]):
             content.append(render_section(context, tag))
-        elif is_tag(tag, tag_name_in=["table_of_contents"]):
+        elif is_segmentation_tag(tag, tag_name_in=["table_of_contents"]):
             content.append(render_table_of_contents(context, tag))
-        elif is_tag(tag):
+        elif is_segmentation_tag(tag):
             raise ValueError(f"Unexpected tag {tag.name} in content")
         else:
             content.append(context.soup.new_tag("div", contents=tag))
@@ -141,7 +141,9 @@ def parse_section_titles(
 
     # Then collect all section titles in list
     tag_list = _create_section_title_tags(context, elements)
-    section_titles: list[Tag] = [e for e in tag_list if is_tag(e, tag_name_in=["section_title"])]
+    section_titles: list[Tag] = [
+        e for e in tag_list if is_segmentation_tag(e, tag_name_in=["section_title"])
+    ]
 
     # Ancestry order from root to the current section in the parsing context
     sections: int = 1
@@ -228,7 +230,7 @@ def _fix_titles_containing_alineas(
     context: DocumentContext, elements: Sequence[PageElementOrString]
 ) -> Iterator[PageElementOrString]:
     for element in elements:
-        if not is_tag(element, tag_name_in=["text_span"]):
+        if not is_segmentation_tag(element, tag_name_in=["text_span"]):
             yield element
             continue
 
@@ -331,7 +333,7 @@ def parse_sections(
     # - when there is content before the first section title (this is a special
     #       case and rarely happens).
     pile = []
-    while elements and not is_tag(elements[0], tag_name_in=["section_title"]):
+    while elements and not is_segmentation_tag(elements[0], tag_name_in=["section_title"]):
         pile.append(elements.pop(0))
     if pile:
         yield from parse_alineas(context, pile)
@@ -349,7 +351,7 @@ def parse_sections(
     #       <Title 3>
     pile = []
     while elements:
-        if is_tag(elements[0], tag_name_in=["section_title"]):
+        if is_segmentation_tag(elements[0], tag_name_in=["section_title"]):
             element_level = cast(int, read_segmentation_tag_data(elements[0])["level"])
             if element_level == level:
                 break
@@ -372,7 +374,7 @@ def parse_sections(
         # Fill-in the pile until we find next section title
         # of the same level
         while elements:
-            if is_tag(elements[0], tag_name_in=["section_title"]):
+            if is_segmentation_tag(elements[0], tag_name_in=["section_title"]):
                 element_level = cast(int, read_segmentation_tag_data(elements[0])["level"])
                 if element_level == level:
                     break
@@ -395,7 +397,7 @@ def render_section_title(
     context: DocumentContext,
     tag: Tag,
 ) -> Tag:
-    if not is_tag(tag, tag_name_in=["section_title"]):
+    if not is_segmentation_tag(tag, tag_name_in=["section_title"]):
         raise ValueError("Tag must be a section title")
 
     data: DataElementDataDict = dict()
@@ -417,31 +419,31 @@ def render_section(
     context: DocumentContext,
     tag: Tag,
 ) -> Tag:
-    if not is_tag(tag, tag_name_in=["section"]):
+    if not is_segmentation_tag(tag, tag_name_in=["section"]):
         raise ValueError("Tag must be a section")
 
-    assert is_tag(
+    assert is_segmentation_tag(
         tag.contents[0], tag_name_in=["section_title"]
     ), "First tag must be a section title"
     section_title: Tag = tag.contents[0]
 
     contents: list[PageElementOrString] = []
     for element in tag.contents:
-        if is_tag(element, tag_name_in=["section_title"]):
+        if is_segmentation_tag(element, tag_name_in=["section_title"]):
             contents.append(render_section_title(context, element))
-        elif is_tag(element, tag_name_in=["section"]):
+        elif is_segmentation_tag(element, tag_name_in=["section"]):
             contents.append(render_section(context, element))
-        elif is_tag(element, tag_name_in=["alinea"]):
+        elif is_segmentation_tag(element, tag_name_in=["alinea"]):
             contents.append(render_alinea(context, element))
-        elif is_tag(element, tag_name_in=["page_footer"]):
+        elif is_segmentation_tag(element, tag_name_in=["page_footer"]):
             contents.append(render_page_footer(context, element))
-        elif is_tag(element, tag_name_in=["table_of_contents"]):
+        elif is_segmentation_tag(element, tag_name_in=["table_of_contents"]):
             contents.append(render_table_of_contents(context, element))
-        elif is_tag(element, tag_name_in=["page_separator"]):
+        elif is_segmentation_tag(element, tag_name_in=["page_separator"]):
             contents.append(render_page_separator(context, element))
         elif isinstance(element, str):
             contents.append(element)
-        elif is_tag(element):
+        elif is_segmentation_tag(element):
             raise ValueError(f"Unexpected tag {element.type} in section contents")
 
     section_segmentation_tag_data = read_segmentation_tag_data(section_title)
@@ -496,14 +498,16 @@ def parse_alineas(
         element = elements.pop(0)
         # table_of_contents can appear here if we are in an annexe (then it isn't really an
         # alinea but that's how the detection works for now).
-        if is_tag(element, tag_name_in=["page_footer", "table_of_contents", "page_separator"]):
+        if is_segmentation_tag(
+            element, tag_name_in=["page_footer", "table_of_contents", "page_separator"]
+        ):
             yield element
             continue
 
         alinea_children: list[PageElementOrString] = []
-        if is_tag(element, tag_name_in=["table"]):
+        if is_segmentation_tag(element, tag_name_in=["table"]):
             alinea_children = [element]
-            while elements and is_tag(elements[0], tag_name_in=["table_description"]):
+            while elements and is_segmentation_tag(elements[0], tag_name_in=["table_description"]):
                 alinea_children.append(elements[0])
                 elements.pop(0)
 
@@ -526,7 +530,7 @@ def render_alinea(
 ) -> Tag:
     contents: list[PageElementOrString] = []
     for element in tag.contents:
-        if is_tag(element, tag_name_in=["text_span"]):
+        if is_segmentation_tag(element, tag_name_in=["text_span"]):
             # TODO : move render_inline_quotes inside render_text_span
             text_span_elements = render_text_span(context, element)
             for text_span_element in text_span_elements:

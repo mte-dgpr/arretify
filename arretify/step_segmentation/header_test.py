@@ -18,7 +18,6 @@
 #
 import unittest
 
-from arretify.utils.html_create import make_segmentation_tag
 from arretify.utils.testing import create_document_context, normalized_html_str
 from .header import (
     parse_visa_and_motif_elements,
@@ -26,9 +25,10 @@ from .header import (
     _parse_header_element_fuzzy,
     render_header_element,
     render_visa_motif,
-    rendre_arrete_title,
+    render_arrete_title,
 )
 from .testing import assert_elements_equal, make_text_spans
+from .core import make_segmentation_tag
 
 
 class BaseTestCase(unittest.TestCase):
@@ -54,7 +54,7 @@ class TestParseVisaAndMotifs(BaseTestCase):
         )
 
         # Act
-        result = list(parse_visa_and_motif_elements(self.context, elements))
+        result = parse_visa_and_motif_elements(self.context, elements)
 
         # Assert
         assert_elements_equal(
@@ -96,7 +96,7 @@ class TestParseVisaAndMotifs(BaseTestCase):
         )
 
         # Act
-        result = list(parse_visa_and_motif_elements(self.context, elements))
+        result = parse_visa_and_motif_elements(self.context, elements)
 
         # Assert
         assert_elements_equal(
@@ -159,7 +159,7 @@ class TestParseVisaAndMotifs(BaseTestCase):
         ]
 
         # Act
-        result = list(parse_visa_and_motif_elements(self.context, elements))
+        result = parse_visa_and_motif_elements(self.context, elements)
 
         # Assert
         assert_elements_equal(
@@ -194,7 +194,7 @@ class TestParseVisaAndMotifs(BaseTestCase):
         )
 
         # Act
-        result = list(parse_visa_and_motif_elements(self.context, elements))
+        result = parse_visa_and_motif_elements(self.context, elements)
 
         # Assert
         assert_elements_equal(
@@ -240,7 +240,7 @@ class TestParseVisaAndMotifs(BaseTestCase):
         ]
 
         # Act
-        result = list(parse_visa_and_motif_elements(self.context, elements))
+        result = parse_visa_and_motif_elements(self.context, elements)
 
         # Assert
         assert_elements_equal(
@@ -288,7 +288,7 @@ class TestParseVisaAndMotifs(BaseTestCase):
         ]
 
         # Act
-        result = list(parse_visa_and_motif_elements(self.context, elements))
+        result = parse_visa_and_motif_elements(self.context, elements)
 
         # Assert
         assert_elements_equal(
@@ -331,7 +331,7 @@ class TestParseVisaAndMotifs(BaseTestCase):
         ]
 
         # Act
-        result = list(parse_visa_and_motif_elements(self.context, elements))
+        result = parse_visa_and_motif_elements(self.context, elements)
 
         # Assert
         assert_elements_equal(
@@ -372,7 +372,7 @@ class TestParseVisaAndMotifs(BaseTestCase):
         ]
 
         # Act
-        result = list(parse_visa_and_motif_elements(self.context, elements))
+        result = parse_visa_and_motif_elements(self.context, elements)
 
         # Assert
         assert_elements_equal(
@@ -423,7 +423,7 @@ class TestParseVisaAndMotifs(BaseTestCase):
         ]
 
         # Act
-        result = list(parse_visa_and_motif_elements(self.context, elements))
+        result = parse_visa_and_motif_elements(self.context, elements)
 
         # Assert
         assert_elements_equal(
@@ -592,7 +592,7 @@ class TestRenderArreteTitle(BaseTestCase):
         )
 
         # Act
-        rendered = rendre_arrete_title(self.context, tag)
+        rendered = render_arrete_title(self.context, tag)
 
         # Assert
         assert normalized_html_str(str(rendered)) == normalized_html_str(

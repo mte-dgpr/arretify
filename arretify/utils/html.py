@@ -109,7 +109,7 @@ def set_data_attributes(tag: Tag, data: DataElementDataDict) -> None:
             tag[f"data-{key}"] = value
 
 
-def is_tag_and_matches(
+def is_tag(
     tag: PageElementOrString,
     css_classes_in: Sequence[str] | None = None,
     tag_name_in: Sequence[str] | None = None,
@@ -149,5 +149,5 @@ def filter_out_inline_tags(
     elements: Iterable[PageElementOrString],
 ) -> Iterator[PageElementOrString]:
     for element in elements:
-        if not is_tag_and_matches(element, tag_name_in=INLINE_TAG_TYPES):
+        if not is_tag(element, tag_name_in=INLINE_TAG_TYPES):
             yield element

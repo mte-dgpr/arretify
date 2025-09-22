@@ -34,8 +34,6 @@ from arretify.types import DocumentContext, PageElementOrString
 from arretify.utils.strings import split_on_newlines
 from arretify.utils.html_create import (
     make_data_tag,
-    make_segmentation_tag,
-    read_segmentation_tag_data,
     wrap_in_tag,
 )
 from arretify.utils.functional import iter_func_to_list
@@ -44,7 +42,9 @@ from arretify.utils.split_merge import (
     map_splitted_elements,
 )
 from .core import (
-    is_tag,
+    is_segmentation_tag,
+    make_segmentation_tag,
+    read_segmentation_tag_data,
     make_while_splitter_for_text_spans,
     make_probe_from_pattern_proxy,
     get_string,
@@ -116,7 +116,7 @@ def _table_of_contents_while_condition(elements: Sequence[PageElementOrString], 
     # between text segments.
     next_elements = elements[index : index + 3]
     if any(
-        is_tag(next_elements[i], tag_name_in=["text_span"])
+        is_segmentation_tag(next_elements[i], tag_name_in=["text_span"])
         and _is_table_of_contents(next_elements, i)
         for i in range(len(next_elements))
     ):
@@ -167,9 +167,9 @@ def render_table_of_contents(
 ) -> Tag:
     page_elements: list[PageElementOrString] = []
     for element in tag.children:
-        if is_tag(element, tag_name_in=["text_span"]):
+        if is_segmentation_tag(element, tag_name_in=["text_span"]):
             page_elements.append(get_string(element))
-        elif is_tag(element, tag_name_in=["page_separator"]):
+        elif is_segmentation_tag(element, tag_name_in=["page_separator"]):
             page_elements.append(render_page_separator(context, element))
         else:
             raise ValueError(f"Unexpected element in table of contents: {element}")

@@ -20,7 +20,7 @@ from typing import Iterator, Sequence, Tuple, TypeVar
 from dataclasses import dataclass, replace as dataclass_replace
 
 from arretify.utils.functional import iter_func_to_list
-from arretify.utils.html import is_tag_and_matches, INLINE_TAG_TYPES
+from arretify.utils.html import is_tag, INLINE_TAG_TYPES
 from arretify.utils.split_merge import (
     Probe,
     make_while_splitter,
@@ -83,7 +83,7 @@ def pick_if_inline_tag_followed_by_match(
 
     def _pick_inline_tags_probe(elements: Sequence[PageElementOrString], index: int) -> bool:
         for next_index, next_element in enumerate(elements[index:], start=index):
-            if is_tag_and_matches(next_element, tag_name_in=INLINE_TAG_TYPES):
+            if is_tag(next_element, tag_name_in=INLINE_TAG_TYPES):
                 continue
             else:
                 return is_matching(elements, next_index)
@@ -210,7 +210,7 @@ def _trim_strings_before_merging(
     """
     elements = list(elements)
     for i, element in enumerate(elements):
-        if not is_tag_and_matches(element, tag_name_in=INLINE_TAG_TYPES) or i == 0:
+        if not is_tag(element, tag_name_in=INLINE_TAG_TYPES) or i == 0:
             continue
 
         previous_element = elements[i - 1]

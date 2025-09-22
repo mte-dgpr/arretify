@@ -20,7 +20,7 @@ from typing import Iterable, Tuple, Iterator
 
 from bs4 import BeautifulSoup, Tag
 
-from arretify.utils.html import is_tag_and_matches
+from arretify.utils.html import is_tag
 from arretify.html_schemas import (
     DOCUMENT_REFERENCE_SCHEMA,
     SECTION_REFERENCE_SCHEMA,
@@ -105,7 +105,7 @@ def build_reference_tree(
     reference_tags = [
         tag
         for tag in section_reference_tag.parent.children
-        if is_tag_and_matches(
+        if is_tag(
             tag,
             css_classes_in=[
                 DOCUMENT_REFERENCE_SCHEMA.css_class,
@@ -168,7 +168,7 @@ def traverse_reference_tree(
         document: Document | None = None
         sections: list[Section] = []
         for reference_tag in branch:
-            if not is_tag_and_matches(
+            if not is_tag(
                 reference_tag,
                 css_classes_in=[
                     SECTION_REFERENCE_SCHEMA.css_class,
@@ -177,13 +177,9 @@ def traverse_reference_tree(
             ):
                 raise ValueError(f"Unexpected tag in reference branch: {reference_tag}")
 
-            if is_tag_and_matches(
-                reference_tag, css_classes_in=[SECTION_REFERENCE_SCHEMA.css_class]
-            ):
+            if is_tag(reference_tag, css_classes_in=[SECTION_REFERENCE_SCHEMA.css_class]):
                 sections.append(Section.from_tag(reference_tag))
-            elif is_tag_and_matches(
-                reference_tag, css_classes_in=[DOCUMENT_REFERENCE_SCHEMA.css_class]
-            ):
+            elif is_tag(reference_tag, css_classes_in=[DOCUMENT_REFERENCE_SCHEMA.css_class]):
                 document = Document.from_tag(reference_tag)
 
             # Avoid handling the same section multiple times

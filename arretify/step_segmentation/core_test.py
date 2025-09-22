@@ -19,7 +19,6 @@
 import unittest
 
 from arretify.regex_utils import PatternProxy
-from arretify.utils.html_create import make_segmentation_tag
 from arretify.utils.testing import create_document_context
 from .core import (
     make_while_splitter_for_text_spans,
@@ -31,6 +30,9 @@ from .core import (
     combine_text_spans,
     make_pattern_splitter,
     make_recombine_interrupted_lines_splitter,
+    is_segmentation_tag,
+    make_segmentation_tag,
+    read_segmentation_tag_data,
 )
 from .testing import make_text_spans, assert_elements_equal
 
@@ -553,3 +555,57 @@ class TestMakePatternSplitter(BaseTestCase):
         assert_elements_equal(before, ["abc"])
         assert_elements_equal(after, ["jkl"])
         assert match.group(0) == "defghi"
+
+
+class TestMakeSegmentationTag(BaseTestCase):
+
+    def test_simple(self):
+        # Act
+        tag = make_segmentation_tag(
+            self.soup,
+            "some_type",
+            contents=["This is a test"],
+            data=dict(start=(1, 2, 3), end=(4, 5, 6)),
+        )
+
+        # Assert
+        assert tag.name == "arretify-segmentation"
+        assert tag["data-tag_name"] == "some_type"
+        assert tag["data-start"] == "[1, 2, 3]"
+        assert tag["data-end"] == "[4, 5, 6]"
+        assert tag.contents == ["This is a test"]
+
+
+class TestIsSegmentationTag(BaseTestCase):
+
+    def test_true(self):
+        tag = make_segmentation_tag(self.soup, "bla")
+        assert is_segmentation_tag(tag) is True
+
+    def test_false_different_tag_name(self):
+        tag = self.soup.new_tag("div")
+        assert is_segmentation_tag(tag) is False
+
+    def test_false_not_a_tag(self):
+        assert is_segmentation_tag("some string") is False
+
+    def test_true_with_tag_name_check(self):
+        tag = make_segmentation_tag(self.soup, "bla")
+        assert is_segmentation_tag(tag, tag_name_in=["bla"]) is True
+
+    def test_false_with_name_check(self):
+        tag = make_segmentation_tag(self.soup, "bla")
+        assert is_segmentation_tag(tag, tag_name_in=["blo"]) is False
+
+
+class TestReadSegmentationTagData(BaseTestCase):
+
+    def test_simple(self):
+        tag = make_segmentation_tag(
+            self.soup,
+            "some_type",
+            contents=["This is a test"],
+            data=dict(start=(1, 2, 3), end=(4, 5, 6)),
+        )
+        data = read_segmentation_tag_data(tag)
+        assert data == dict(start=[1, 2, 3], end=[4, 5, 6])

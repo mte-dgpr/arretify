@@ -18,7 +18,6 @@
 #
 import unittest
 
-from arretify.utils.html_create import make_segmentation_tag
 from .document_elements import (
     initialize_document_structure,
     parse_tables_of_contents,
@@ -26,6 +25,7 @@ from .document_elements import (
 )
 from .testing import assert_elements_equal, make_text_spans
 from arretify.utils.testing import create_document_context, normalized_html_str
+from .core import make_segmentation_tag
 
 
 class BaseTestCase(unittest.TestCase):
@@ -45,7 +45,7 @@ class TestInitializeDocumentStructure(BaseTestCase):
         ]
 
         # Act
-        result = list(initialize_document_structure(self.context, pages))
+        result = initialize_document_structure(self.context, pages)
 
         # Assert
         assert_elements_equal(
@@ -103,7 +103,7 @@ class TestParseTablesOfContents(BaseTestCase):
         )
 
         # Act
-        elements = list(parse_tables_of_contents(self.context, lines))
+        elements = parse_tables_of_contents(self.context, lines)
 
         # Assert
         assert_elements_equal(

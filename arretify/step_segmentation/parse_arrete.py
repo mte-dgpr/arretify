@@ -24,7 +24,7 @@ from arretify.html_schemas import (
     MAIN_SCHEMA,
     APPENDIX_SCHEMA,
 )
-from arretify.utils.html_create import make_data_tag, make_segmentation_tag, replace_children
+from arretify.utils.html_create import make_data_tag, replace_children
 from arretify.utils.functional import chain_functions, iter_func_to_list
 from arretify.utils.split_merge import (
     split_before_match,
@@ -34,7 +34,8 @@ from .titles_detection import parse_title_info
 from .content import parse_content, render_content, is_title
 from .core import (
     pick_text_spans,
-    is_tag,
+    is_segmentation_tag,
+    make_segmentation_tag,
     get_string,
 )
 from .basic_elements import parse_images, parse_addresses
@@ -50,7 +51,7 @@ _is_title_line = pick_text_spans(is_title)
 
 def _is_appendix_text_span_tag(elements: Sequence[PageElementOrString], index: int) -> bool:
     element = elements[index]
-    assert is_tag(element)
+    assert is_segmentation_tag(element)
     if _is_title_line(elements, index):
         # Parse title info
         title_info = parse_title_info(get_string(element))
@@ -107,15 +108,15 @@ def render_arrete(
     assert body
 
     for element in elements:
-        if is_tag(element, tag_name_in=["header"]):
+        if is_segmentation_tag(element, tag_name_in=["header"]):
             yield make_data_tag(
                 context.soup, HEADER_SCHEMA, contents=render_header(context, element.contents)
             )
-        elif is_tag(element, tag_name_in=["main"]):
+        elif is_segmentation_tag(element, tag_name_in=["main"]):
             yield make_data_tag(
                 context.soup, MAIN_SCHEMA, contents=render_content(context, element.contents)
             )
-        elif is_tag(element, tag_name_in=["appendix"]):
+        elif is_segmentation_tag(element, tag_name_in=["appendix"]):
             yield make_data_tag(
                 context.soup, APPENDIX_SCHEMA, contents=render_content(context, element.contents)
             )
@@ -133,7 +134,7 @@ def _make_text_span_parser(
         context: DocumentContext, elements: Sequence[PageElementOrString]
     ) -> Iterator[PageElementOrString]:
         for element in elements:
-            if is_tag(element, tag_name_in=["text_span"]):
+            if is_segmentation_tag(element, tag_name_in=["text_span"]):
                 yield replace_children(element, func(context, element.contents))
             else:
                 yield element

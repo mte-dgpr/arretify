@@ -17,8 +17,7 @@
 # limitations under the License.
 #
 from copy import copy
-import json
-from typing import Dict, Iterable, Sequence
+from typing import Iterable, Sequence
 from bs4 import BeautifulSoup, Tag
 
 from arretify.types import DataElementDataDict, PageElementOrString, DataElementSchema
@@ -60,39 +59,6 @@ def make_data_tag(
                 element[f"data-{key}"] = data_value
 
     return element
-
-
-SegmentationTagDataDict = Dict[str, str | int | float | bool | None | list[str] | list[int]]
-
-
-def make_segmentation_tag(
-    soup: BeautifulSoup,
-    tag_name: str,
-    contents: Iterable[PageElementOrString] | None = None,
-    data: SegmentationTagDataDict | None = None,
-) -> Tag:
-    if contents is None:
-        contents = []
-    if data is None:
-        data = {}
-    element = make_new_tag(soup, tag_name, contents=contents)
-    update_segmentation_tag_data(element, data)
-    return element
-
-
-def update_segmentation_tag_data(element: Tag, data: SegmentationTagDataDict):
-    for key, value in data.items():
-        element[f"data-{key}"] = json.dumps(value, ensure_ascii=False)
-
-
-def read_segmentation_tag_data(element: Tag) -> SegmentationTagDataDict:
-    data: SegmentationTagDataDict = {}
-    for key, value in element.attrs.items():
-        if key.startswith("data-"):
-            data_key = key[5:]
-            data_value = json.loads(value)
-            data[data_key] = data_value
-    return data
 
 
 def wrap_in_tag(
