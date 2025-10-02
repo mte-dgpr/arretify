@@ -28,9 +28,9 @@ from arretify.utils.html_create import (
     make_new_tag,
 )
 from arretify.utils.html_split_merge import make_regex_tree_splitter
-from arretify.types import DocumentContext, PageElementOrString, DataElementSchema
+from arretify.types import DocumentContext, PageElementOrString, SemanticTagSchema
 from arretify.parsing_utils.patterns import join_split_pile_with_pattern
-from arretify.html_schemas import (
+from arretify.semantic_tag_schemas import (
     EMBLEM_SCHEMA,
     ENTITY_SCHEMA,
     IDENTIFICATION_SCHEMA,
@@ -179,7 +179,7 @@ HEADER_ELEMENTS_RENDER_PATTERNS: Dict[str, PatternProxy | None] = dict(
     supplementary_motif_info=None,
 )
 
-HEADER_ELEMENTS_SCHEMAS: Dict[str, DataElementSchema] = dict(
+HEADER_ELEMENTS_SCHEMAS: Dict[str, SemanticTagSchema] = dict(
     emblem=EMBLEM_SCHEMA,
     entity=ENTITY_SCHEMA,
     identification=IDENTIFICATION_SCHEMA,

@@ -35,7 +35,7 @@ from arretify.utils.html_create import make_data_tag, make_new_tag
 from arretify.utils.strings import merge_strings
 from arretify.utils.html_split_merge import make_regex_tree_splitter
 from arretify.utils.split_merge import split_elements, map_splitted_elements
-from arretify.html_schemas import OPERATION_SCHEMA
+from arretify.semantic_tag_schemas import OPERATION_SCHEMA
 from arretify.types import (
     OperationType,
     PageElementOrString,

@@ -38,7 +38,7 @@ from arretify.utils.html import (
 )
 from arretify.utils.html_create import make_data_tag
 from arretify.utils.html_split_merge import make_regex_tree_splitter
-from arretify.html_schemas import (
+from arretify.semantic_tag_schemas import (
     DOCUMENT_REFERENCE_SCHEMA,
 )
 from arretify.parsing_utils.patterns import (

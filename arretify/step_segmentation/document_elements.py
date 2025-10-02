@@ -20,7 +20,7 @@ from typing import Iterator, Sequence
 
 from bs4 import Tag
 
-from arretify.html_schemas import (
+from arretify.semantic_tag_schemas import (
     PAGE_FOOTER_SCHEMA,
     TABLE_OF_CONTENTS_SCHEMA,
     PAGE_SEPARATOR_SCHEMA,

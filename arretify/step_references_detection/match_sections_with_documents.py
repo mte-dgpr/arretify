@@ -29,7 +29,7 @@ from arretify.utils.html import (
     get_group_id,
     is_tag,
 )
-from arretify.html_schemas import (
+from arretify.semantic_tag_schemas import (
     SECTION_REFERENCE_SCHEMA,
     DOCUMENT_REFERENCE_SCHEMA,
 )

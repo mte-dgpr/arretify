@@ -29,7 +29,7 @@ from arretify.utils.references import (
 )
 from arretify.utils.functional import iter_func_to_list
 from arretify.utils.html import set_data_attributes, is_tag
-from arretify.html_schemas import SECTION_REFERENCE_SCHEMA
+from arretify.semantic_tag_schemas import SECTION_REFERENCE_SCHEMA
 
 
 def resolve_unknown_sections(

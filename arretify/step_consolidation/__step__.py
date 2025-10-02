@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 
-from arretify.html_schemas import (
+from arretify.semantic_tag_schemas import (
     ALINEA_SCHEMA,
     DOCUMENT_REFERENCE_SCHEMA,
     OPERATION_SCHEMA,

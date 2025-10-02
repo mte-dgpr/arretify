@@ -21,7 +21,7 @@ from arretify.types import PageElementOrString, DocumentContext
 from arretify.utils.html_create import replace_children
 from arretify.utils.html_split_merge import group_strings_splitter
 from arretify.utils.split_merge import split_elements, map_splitted_elements
-from arretify.html_schemas import (
+from arretify.semantic_tag_schemas import (
     ALINEA_SCHEMA,
     MOTIF_SCHEMA,
     VISA_SCHEMA,

@@ -33,7 +33,7 @@ from arretify.parsing_utils.dates import (
     render_year_str,
 )
 from arretify.types import PageElementOrString, DocumentContext
-from arretify.html_schemas import (
+from arretify.semantic_tag_schemas import (
     DOCUMENT_REFERENCE_SCHEMA,
 )
 from arretify.utils.html_create import make_data_tag

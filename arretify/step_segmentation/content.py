@@ -33,7 +33,7 @@ from arretify.utils.html_create import (
 )
 from arretify.utils.functional import iter_func_to_list, chain_functions
 from arretify.utils.split import split_at_first_verb
-from arretify.html_schemas import (
+from arretify.semantic_tag_schemas import (
     SECTION_SCHEMA,
     SECTION_TITLE_SCHEMAS,
     ALINEA_SCHEMA,

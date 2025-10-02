@@ -22,7 +22,7 @@ from typing import Sequence, TypedDict
 
 from bs4 import BeautifulSoup, Tag
 
-from arretify.html_schemas import DATE_SCHEMA
+from arretify.semantic_tag_schemas import DATE_SCHEMA
 from arretify.utils.html import render_str_list_attribute
 from arretify.utils.html_create import make_data_tag
 from arretify.regex_utils import (

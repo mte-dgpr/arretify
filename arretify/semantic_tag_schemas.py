@@ -18,25 +18,25 @@
 #
 from typing import Dict
 
-from .types import DataElementSchema
+from .types import SemanticTagSchema
 from dataclasses import replace as dataclass_replace
 
 
 # -------------------- Parts -------------------- #
 
-HEADER_SCHEMA = DataElementSchema(
+HEADER_SCHEMA = SemanticTagSchema(
     name="header",
     tag_name="header",
     data_keys=[],
 )
 
-MAIN_SCHEMA = DataElementSchema(
+MAIN_SCHEMA = SemanticTagSchema(
     name="main",
     tag_name="main",
     data_keys=[],
 )
 
-APPENDIX_SCHEMA = DataElementSchema(
+APPENDIX_SCHEMA = SemanticTagSchema(
     name="appendix",
     tag_name="footer",
     data_keys=[],
@@ -44,19 +44,19 @@ APPENDIX_SCHEMA = DataElementSchema(
 
 # -------------------- Document schemas -------------------- #
 
-PAGE_FOOTER_SCHEMA = DataElementSchema(
+PAGE_FOOTER_SCHEMA = SemanticTagSchema(
     name="page_footer",
     tag_name="div",
     data_keys=[],
 )
 
-PAGE_SEPARATOR_SCHEMA = DataElementSchema(
+PAGE_SEPARATOR_SCHEMA = SemanticTagSchema(
     name="page_separator",
     tag_name="a",
     data_keys=["page_index"],
 )
 
-TABLE_OF_CONTENTS_SCHEMA = DataElementSchema(
+TABLE_OF_CONTENTS_SCHEMA = SemanticTagSchema(
     name="table_of_contents",
     tag_name="div",
     data_keys=[],
@@ -64,55 +64,55 @@ TABLE_OF_CONTENTS_SCHEMA = DataElementSchema(
 
 # -------------------- Header schemas -------------------- #
 
-EMBLEM_SCHEMA = DataElementSchema(
+EMBLEM_SCHEMA = SemanticTagSchema(
     name="emblem",
     tag_name="div",
     data_keys=[],
 )
 
-ENTITY_SCHEMA = DataElementSchema(
+ENTITY_SCHEMA = SemanticTagSchema(
     name="entity",
     tag_name="div",
     data_keys=[],
 )
 
-IDENTIFICATION_SCHEMA = DataElementSchema(
+IDENTIFICATION_SCHEMA = SemanticTagSchema(
     name="identification",
     tag_name="div",
     data_keys=[],
 )
 
-ARRETE_TITLE_SCHEMA = DataElementSchema(
+ARRETE_TITLE_SCHEMA = SemanticTagSchema(
     name="arrete_title",
     tag_name="div",
     data_keys=[],
 )
 
-HONORARY_SCHEMA = DataElementSchema(
+HONORARY_SCHEMA = SemanticTagSchema(
     name="honorary",
     tag_name="div",
     data_keys=[],
 )
 
-VISA_SCHEMA = DataElementSchema(
+VISA_SCHEMA = SemanticTagSchema(
     name="visa",
     tag_name="div",
     data_keys=[],
 )
 
-MOTIF_SCHEMA = DataElementSchema(
+MOTIF_SCHEMA = SemanticTagSchema(
     name="motifs",
     tag_name="div",
     data_keys=[],
 )
 
-SUPPLEMENTARY_MOTIF_INFORMATION_SCHEMA = DataElementSchema(
+SUPPLEMENTARY_MOTIF_INFORMATION_SCHEMA = SemanticTagSchema(
     name="supplementary_motif_info",
     tag_name="div",
     data_keys=[],
 )
 
-HEADER_ELEMENTS_SCHEMAS: Dict[str, DataElementSchema] = {
+HEADER_ELEMENTS_SCHEMAS: Dict[str, SemanticTagSchema] = {
     "emblem": EMBLEM_SCHEMA,
     "entity": ENTITY_SCHEMA,
     "identification": IDENTIFICATION_SCHEMA,
@@ -125,13 +125,13 @@ HEADER_ELEMENTS_SCHEMAS: Dict[str, DataElementSchema] = {
 
 # -------------------- Main and appendix schemas -------------------- #
 
-SECTION_SCHEMA = DataElementSchema(
+SECTION_SCHEMA = SemanticTagSchema(
     name="section",
     tag_name="section",
     data_keys=["title", "number", "type"],
 )
 
-SECTION_TITLE1_SCHEMA = DataElementSchema(
+SECTION_TITLE1_SCHEMA = SemanticTagSchema(
     name="section_title",
     tag_name="h2",
     data_keys=[],
@@ -152,7 +152,7 @@ SECTION_TITLE_SCHEMAS = [
     SECTION_TITLE7_SCHEMA,
 ]
 
-ALINEA_SCHEMA = DataElementSchema(
+ALINEA_SCHEMA = SemanticTagSchema(
     name="alinea",
     tag_name="div",
     data_keys=["number"],
@@ -160,7 +160,7 @@ ALINEA_SCHEMA = DataElementSchema(
 
 # -------------------- References schemas -------------------- #
 
-DOCUMENT_REFERENCE_SCHEMA = DataElementSchema(
+DOCUMENT_REFERENCE_SCHEMA = SemanticTagSchema(
     name="document_reference",
     tag_name="a",
     data_keys=[
@@ -172,13 +172,13 @@ DOCUMENT_REFERENCE_SCHEMA = DataElementSchema(
     ],
 )
 
-SECTION_REFERENCE_SCHEMA = DataElementSchema(
+SECTION_REFERENCE_SCHEMA = SemanticTagSchema(
     name="section_reference",
     tag_name="a",
     data_keys=["parent_reference", "type", "start_id", "end_id", "start_num", "end_num"],
 )
 
-DATE_SCHEMA = DataElementSchema(
+DATE_SCHEMA = SemanticTagSchema(
     name="date",
     tag_name="time",
     data_keys=[],
@@ -186,7 +186,7 @@ DATE_SCHEMA = DataElementSchema(
 
 # -------------------- Operations schemas -------------------- #
 
-OPERATION_SCHEMA = DataElementSchema(
+OPERATION_SCHEMA = SemanticTagSchema(
     name="operation",
     tag_name="span",
     data_keys=[
@@ -201,7 +201,7 @@ OPERATION_SCHEMA = DataElementSchema(
 
 # -------------------- Errors schemas -------------------- #
 
-ERROR_SCHEMA = DataElementSchema(
+ERROR_SCHEMA = SemanticTagSchema(
     name="error",
     tag_name="span",
     data_keys=[],

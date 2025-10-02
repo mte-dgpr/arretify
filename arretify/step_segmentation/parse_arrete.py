@@ -19,7 +19,7 @@
 from typing import Iterator, Callable, Sequence
 
 from arretify.types import DocumentContext, SectionType, PageElementOrString
-from arretify.html_schemas import (
+from arretify.semantic_tag_schemas import (
     HEADER_SCHEMA,
     MAIN_SCHEMA,
     APPENDIX_SCHEMA,
@@ -104,9 +104,6 @@ def parse_arrete(context: DocumentContext, pages: Sequence[str]) -> Iterator[Pag
 def render_arrete(
     context: DocumentContext, elements: Sequence[PageElementOrString]
 ) -> Iterator[PageElementOrString]:
-    body = context.soup.body
-    assert body
-
     for element in elements:
         if is_segmentation_tag(element, tag_name_in=["header"]):
             yield make_data_tag(

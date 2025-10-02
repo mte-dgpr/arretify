@@ -22,7 +22,7 @@ import logging
 from bs4 import Tag
 
 from arretify.types import DocumentContext
-from arretify.html_schemas import (
+from arretify.semantic_tag_schemas import (
     SECTION_REFERENCE_SCHEMA,
     DOCUMENT_REFERENCE_SCHEMA,
     PAGE_SEPARATOR_SCHEMA,
