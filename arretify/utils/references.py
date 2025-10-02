@@ -21,7 +21,7 @@ from typing import Iterable, Tuple, Iterator
 from bs4 import BeautifulSoup, Tag
 
 from arretify.utils.html import is_tag
-from arretify.html_schemas import (
+from arretify.semantic_tag_schemas import (
     DOCUMENT_REFERENCE_SCHEMA,
     SECTION_REFERENCE_SCHEMA,
 )

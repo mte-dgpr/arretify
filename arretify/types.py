@@ -38,7 +38,7 @@ PageLineColumn = Tuple[int, int, int]
 
 
 @dataclass(frozen=True, kw_only=True)
-class DataElementSchema:
+class SemanticTagSchema:
     name: str
     tag_name: str
     data_keys: Sequence[str]

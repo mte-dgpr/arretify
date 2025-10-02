@@ -48,7 +48,7 @@ from arretify.regex_utils import (
     normalize_string,
 )
 from arretify.errors import ErrorCodes
-from arretify.html_schemas import ERROR_SCHEMA
+from arretify.semantic_tag_schemas import ERROR_SCHEMA
 from arretify.regex_utils import split_string_with_regex
 from arretify.regex_utils import map_matches
 from arretify.utils.split_merge import (

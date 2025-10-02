@@ -20,7 +20,7 @@ from copy import copy
 from typing import Iterable, Sequence
 from bs4 import BeautifulSoup, Tag
 
-from arretify.types import DataElementDataDict, PageElementOrString, DataElementSchema
+from arretify.types import DataElementDataDict, PageElementOrString, SemanticTagSchema
 from arretify.utils.split_merge import (
     split_elements,
     map_splitted_elements,
@@ -34,7 +34,7 @@ from .html import SHARED_DATA_KEYS
 
 def make_data_tag(
     soup: BeautifulSoup,
-    schema: DataElementSchema,
+    schema: SemanticTagSchema,
     contents: Iterable[PageElementOrString] | None = None,
     data: DataElementDataDict | None = None,
 ) -> Tag:

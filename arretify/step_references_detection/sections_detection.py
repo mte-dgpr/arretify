@@ -28,7 +28,7 @@ from arretify.types import (
     SectionType,
 )
 from arretify.parsing_utils.numbering import ROMAN_NUMERALS_PATTERN_S
-from arretify.html_schemas import (
+from arretify.semantic_tag_schemas import (
     SECTION_REFERENCE_SCHEMA,
 )
 from arretify.utils.html import (

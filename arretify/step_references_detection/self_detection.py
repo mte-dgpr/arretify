@@ -24,7 +24,7 @@ from arretify.regex_utils import (
     iter_regex_tree_match_page_elements_or_strings,
 )
 from arretify.types import PageElementOrString, DocumentContext
-from arretify.html_schemas import (
+from arretify.semantic_tag_schemas import (
     DOCUMENT_REFERENCE_SCHEMA,
 )
 from arretify.utils.html_split_merge import make_regex_tree_splitter

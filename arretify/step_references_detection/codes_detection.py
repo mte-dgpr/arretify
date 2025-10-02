@@ -31,7 +31,7 @@ from arretify.regex_utils.helpers import (
     lookup_normalized_version,
 )
 from arretify.types import PageElementOrString, DocumentContext
-from arretify.html_schemas import (
+from arretify.semantic_tag_schemas import (
     DOCUMENT_REFERENCE_SCHEMA,
 )
 from arretify.utils.html_split_merge import make_regex_tree_splitter

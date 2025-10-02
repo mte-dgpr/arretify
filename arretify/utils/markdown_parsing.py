@@ -27,7 +27,7 @@ from arretify.utils.html import (
     render_str_list_attribute,
 )
 from arretify.utils.html_create import make_data_tag
-from arretify.html_schemas import ERROR_SCHEMA
+from arretify.semantic_tag_schemas import ERROR_SCHEMA
 from arretify.regex_utils import PatternProxy, repeated_with_separator
 
 

@@ -19,7 +19,7 @@
 
 from arretify.types import DocumentContext
 from arretify.law_data.types import DocumentType, Document
-from arretify.html_schemas import DOCUMENT_REFERENCE_SCHEMA
+from arretify.semantic_tag_schemas import DOCUMENT_REFERENCE_SCHEMA
 from arretify.utils.references import build_and_traverse_reference_tree
 from .codes_resolution import (
     resolve_code_article_legifrance_id,
