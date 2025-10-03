@@ -32,8 +32,10 @@ from arretify.regex_utils import (
 
 from arretify.types import DocumentContext, PageElementOrString
 from arretify.utils.strings import split_on_newlines
+from arretify.utils.html_semantic import (
+    make_semantic_tag,
+)
 from arretify.utils.html_create import (
-    make_data_tag,
     wrap_in_tag,
 )
 from arretify.utils.functional import iter_func_to_list
@@ -173,7 +175,7 @@ def render_table_of_contents(
             page_elements.append(render_page_separator(context, element))
         else:
             raise ValueError(f"Unexpected element in table of contents: {element}")
-    return make_data_tag(
+    return make_semantic_tag(
         context.soup,
         TABLE_OF_CONTENTS_SCHEMA,
         contents=wrap_in_tag(context.soup, page_elements, "div"),
@@ -184,7 +186,7 @@ def render_page_footer(
     context: DocumentContext,
     tag: Tag,
 ) -> Tag:
-    return make_data_tag(
+    return make_semantic_tag(
         context.soup,
         PAGE_FOOTER_SCHEMA,
         contents=wrap_in_tag(context.soup, [get_string(tag)], "div"),
@@ -195,7 +197,7 @@ def render_page_separator(
     context: DocumentContext,
     tag: Tag,
 ) -> Tag:
-    return make_data_tag(
+    return make_semantic_tag(
         context.soup,
         PAGE_SEPARATOR_SCHEMA,
         data=dict(page_index=str(read_segmentation_tag_data(tag)["page_index"])),

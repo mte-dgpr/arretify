@@ -24,7 +24,8 @@ from arretify.semantic_tag_schemas import (
     MAIN_SCHEMA,
     APPENDIX_SCHEMA,
 )
-from arretify.utils.html_create import make_data_tag, replace_children
+from arretify.utils.html_semantic import make_semantic_tag
+from arretify.utils.html_create import replace_children
 from arretify.utils.functional import chain_functions, iter_func_to_list
 from arretify.utils.split_merge import (
     split_before_match,
@@ -106,15 +107,15 @@ def render_arrete(
 ) -> Iterator[PageElementOrString]:
     for element in elements:
         if is_segmentation_tag(element, tag_name_in=["header"]):
-            yield make_data_tag(
+            yield make_semantic_tag(
                 context.soup, HEADER_SCHEMA, contents=render_header(context, element.contents)
             )
         elif is_segmentation_tag(element, tag_name_in=["main"]):
-            yield make_data_tag(
+            yield make_semantic_tag(
                 context.soup, MAIN_SCHEMA, contents=render_content(context, element.contents)
             )
         elif is_segmentation_tag(element, tag_name_in=["appendix"]):
-            yield make_data_tag(
+            yield make_semantic_tag(
                 context.soup, APPENDIX_SCHEMA, contents=render_content(context, element.contents)
             )
 

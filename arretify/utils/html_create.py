@@ -20,7 +20,7 @@ from copy import copy
 from typing import Iterable, Sequence
 from bs4 import BeautifulSoup, Tag
 
-from arretify.types import DataElementDataDict, PageElementOrString, SemanticTagSchema
+from arretify.types import PageElementOrString
 from arretify.utils.split_merge import (
     split_elements,
     map_splitted_elements,
@@ -29,36 +29,6 @@ from arretify.utils.html_split_merge import group_strings_splitter
 from arretify.utils.strings import (
     merge_strings,
 )
-from .html import SHARED_DATA_KEYS
-
-
-def make_data_tag(
-    soup: BeautifulSoup,
-    schema: SemanticTagSchema,
-    contents: Iterable[PageElementOrString] | None = None,
-    data: DataElementDataDict | None = None,
-) -> Tag:
-    if contents is None:
-        contents = []
-    if data is None:
-        data = {}
-    element = make_new_tag(soup, schema.tag_name, contents=contents)
-    element["class"] = schema.css_class
-    for key in schema.data_keys:
-        try:
-            data_value = data[key]
-        except KeyError:
-            raise KeyError(f'Missing key "{key}" for schema "{schema.name}"')
-        if data_value is not None:
-            element[f"data-{key}"] = data_value
-
-    for key in SHARED_DATA_KEYS:
-        if key in data:
-            data_value = data[key]
-            if data_value is not None:
-                element[f"data-{key}"] = data_value
-
-    return element
 
 
 def wrap_in_tag(

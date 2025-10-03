@@ -35,13 +35,13 @@ class TestParseDecretsReferences(unittest.TestCase):
             normalized_html_str(
                 """
                 <a
-                    class="arretify-document_reference"
                     data-date="2005-05-30"
                     data-num="2005-635"
+                    data-schema="document_reference"
                     data-type="decret"
                 >
                     décret n°2005-635 du
-                    <time class="arretify-date" datetime="2005-05-30">
+                    <time data-schema="date" datetime="2005-05-30">
                         30 mai 2005
                     </time>
                 </a>

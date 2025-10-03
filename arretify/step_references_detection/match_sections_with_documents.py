@@ -27,13 +27,13 @@ from arretify.utils.element_ranges import (
 from arretify.utils.html import (
     ensure_element_id,
     get_group_id,
-    is_tag,
 )
 from arretify.semantic_tag_schemas import (
     SECTION_REFERENCE_SCHEMA,
     DOCUMENT_REFERENCE_SCHEMA,
 )
 from arretify.regex_utils import regex_tree
+from arretify.utils.html_semantic import is_semantic_tag
 from arretify.utils.split_merge import split_elements, map_splitted_elements
 from arretify.utils.html_split_merge import group_strings_splitter
 from arretify.utils.html import filter_out_inline_tags
@@ -67,7 +67,7 @@ def match_sections_to_parents(
     document_context.soup
     children = list(children)
     section_references = [
-        tag for tag in children if is_tag(tag, css_classes_in=[SECTION_REFERENCE_SCHEMA.css_class])
+        tag for tag in children if is_semantic_tag(tag, schema_in=[SECTION_REFERENCE_SCHEMA])
     ]
 
     for section_reference_tag in section_references:
@@ -102,13 +102,13 @@ def _search_parent_reference_tag(
     For example, with :
 
         <a
-            class="arretify-section_reference"
+            data-schema="section_reference"
         >
             l'article 5
         </a>
         du
         <a
-            class="arretify-section_reference"
+            data-schema="section_reference"
         >
             présent arrêté
         </a>
@@ -135,11 +135,11 @@ def _search_parent_reference_tag(
         # <reference tag> <connector string> <parent reference tag>
         if len(element_range_with_merged_strings) == 3:
             parent_reference_tag = element_range_with_merged_strings[2]
-            if not is_tag(
+            if not is_semantic_tag(
                 parent_reference_tag,
-                css_classes_in=[
-                    DOCUMENT_REFERENCE_SCHEMA.css_class,
-                    SECTION_REFERENCE_SCHEMA.css_class,
+                schema_in=[
+                    DOCUMENT_REFERENCE_SCHEMA,
+                    SECTION_REFERENCE_SCHEMA,
                 ],
             ):
                 return None

@@ -25,6 +25,7 @@ from arretify.semantic_tag_schemas import (
 )
 from arretify.types import PageElementOrString, DocumentContext
 from arretify.utils.html_create import replace_children
+from arretify.utils.html_semantic import css_selector
 
 from .operations_detection import (
     parse_operations,
@@ -37,13 +38,13 @@ from .operands_detection import (
 def step_consolidation(document_context: DocumentContext) -> DocumentContext:
     # Find consolidation operations
     for container_tag in document_context.soup.select(
-        f".{ALINEA_SCHEMA.css_class}, .{ALINEA_SCHEMA.css_class} *"
+        f"{css_selector(ALINEA_SCHEMA)}, {css_selector(ALINEA_SCHEMA)} *"
     ):
         new_children: list[PageElementOrString] = list(container_tag.children)
         # Parse operations only if there's a document or section reference in the paragraph
         # Helps avoid many false positives during processing
         document_reference_tags = container_tag.select(
-            f".{DOCUMENT_REFERENCE_SCHEMA.css_class}, .{SECTION_REFERENCE_SCHEMA.css_class}"
+            f"{css_selector(DOCUMENT_REFERENCE_SCHEMA)}, {css_selector(SECTION_REFERENCE_SCHEMA)}"
         )
         if document_reference_tags:
             new_children = parse_operations(document_context, new_children)
@@ -51,7 +52,7 @@ def step_consolidation(document_context: DocumentContext) -> DocumentContext:
         replace_children(container_tag, new_children)
 
     # Resolve operation references and operands
-    for operation_tag in document_context.soup.select(f".{OPERATION_SCHEMA.css_class}"):
+    for operation_tag in document_context.soup.select(css_selector(OPERATION_SCHEMA)):
         resolve_references_and_operands(document_context, operation_tag)
 
     return document_context

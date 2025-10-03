@@ -32,28 +32,28 @@ class TestBuildReferenceTree(unittest.TestCase):
             """
             <div>
                 <a
-                    class="arretify-section_reference"
+                    data-schema="section_reference"
                     data-element_id="1"
                     data-parent_reference="3"
                 >
                     Section 1.1
                 </a>
                 <a
-                    class="arretify-section_reference"
+                    data-schema="section_reference"
                     data-element_id="2"
                     data-parent_reference="3"
                 >
                     Section 1.2
                 </a>
                 <a
-                    class="arretify-section_reference"
+                    data-schema="section_reference"
                     data-element_id="3"
                     data-parent_reference="4"
                 >
                     Section 1
                 </a>
                 <a
-                    class="arretify-document_reference"
+                    data-schema="document_reference"
                     data-element_id="4"
                 >
                     Some Document
@@ -79,14 +79,14 @@ class TestBuildReferenceTree(unittest.TestCase):
             <div>
                 <a
                     id="tag1"
-                    class="arretify-section_reference"
+                    data-schema="section_reference"
                     data-parent_reference="1"
                 >
                     Section 1.1
                 </a>
                 <a
                     id="tag2"
-                    class="arretify-section_reference"
+                    data-schema="section_reference"
                     data-element_id="1"
                 >
                     Section 1
@@ -95,7 +95,7 @@ class TestBuildReferenceTree(unittest.TestCase):
             """,
             features="html.parser",
         )
-        section_reference_tag = soup.select_one(".arretify-section_reference")
+        section_reference_tag = soup.select_one("[data-schema='section_reference']")
 
         # Act
         branches = build_reference_tree(section_reference_tag)
@@ -110,28 +110,28 @@ class TestBuildReferenceTree(unittest.TestCase):
             """
             <div>
                 <a
-                    class="arretify-section_reference"
+                    data-schema="section_reference"
                     data-element_id="1"
                     data-parent_reference="3"
                 >
                     Section 1.1
                 </a>
                 <a
-                    class="arretify-section_reference"
+                    data-schema="section_reference"
                     data-element_id="2"
                     data-parent_reference="3"
                 >
                     Section 1.2
                 </a>
                 <a
-                    class="arretify-section_reference"
+                    data-schema="section_reference"
                     data-element_id="3"
                     data-parent_reference="4"
                 >
                     Section 1
                 </a>
                 <a
-                    class="arretify-document_reference"
+                    data-schema="document_reference"
                     data-element_id="4"
                 >
                     Some Document
@@ -156,14 +156,14 @@ class TestBuildReferenceTree(unittest.TestCase):
             """
             <div>
                 <a
-                    class="arretify-section_reference"
+                    data-schema="section_reference"
                     data-element_id="1"
                     data-parent_reference="2"
                 >
                     Section 1
                 </a>
                 <a
-                    class="arretify-section_reference"
+                    data-schema="section_reference"
                     data-element_id="2"
                 >
                     Parent Document
@@ -190,7 +190,7 @@ class TestTraverseReferenceTree(unittest.TestCase):
             """
             <div>
                 <a
-                    class="arretify-section_reference"
+                    data-schema="section_reference"
                     data-element_id="1"
                     data-parent_reference="2"
                     data-start_num="456"
@@ -199,7 +199,7 @@ class TestTraverseReferenceTree(unittest.TestCase):
                     Section 1
                 </a>
                 <a
-                    class="arretify-document_reference"
+                    data-schema="document_reference"
                     data-element_id="2"
                     data-id="L123"
                     data-type="arrete"
@@ -210,8 +210,8 @@ class TestTraverseReferenceTree(unittest.TestCase):
             """,
             features="html.parser",
         )
-        document_reference_tag = soup.select_one(".arretify-document_reference")
-        section_reference_tag = soup.select_one(".arretify-section_reference")
+        document_reference_tag = soup.select_one("[data-schema='document_reference']")
+        section_reference_tag = soup.select_one("[data-schema='section_reference']")
         reference_tree = [[document_reference_tag, section_reference_tag]]
 
         # Act
@@ -236,7 +236,7 @@ class TestTraverseReferenceTree(unittest.TestCase):
             """
             <div>
                 <a
-                    class="arretify-section_reference"
+                    data-schema="section_reference"
                     data-element_id="1"
                     data-parent_reference="2"
                     data-start_num="456"
@@ -245,7 +245,7 @@ class TestTraverseReferenceTree(unittest.TestCase):
                     Section 1
                 </a>
                 <a
-                    class="arretify-section_reference"
+                    data-schema="section_reference"
                     data-element_id="2"
                     data-start_num="L123"
                     data-type="article"
@@ -256,8 +256,12 @@ class TestTraverseReferenceTree(unittest.TestCase):
             """,
             features="html.parser",
         )
-        section_reference_tag1 = soup.select_one(".arretify-section_reference[data-element_id='1']")
-        section_reference_tag2 = soup.select_one(".arretify-section_reference[data-element_id='2']")
+        section_reference_tag1 = soup.select_one(
+            "[data-schema='section_reference'][data-element_id='1']"
+        )
+        section_reference_tag2 = soup.select_one(
+            "[data-schema='section_reference'][data-element_id='2']"
+        )
         reference_tree = [[section_reference_tag2, section_reference_tag1]]
 
         # Act
@@ -289,7 +293,7 @@ class TestIterReferenceTrees(unittest.TestCase):
             """
             <div>
                 <a
-                    class="arretify-section_reference"
+                    data-schema="section_reference"
                     data-element_id="1"
                     data-parent_reference="2"
                     data-type="article"
@@ -297,14 +301,14 @@ class TestIterReferenceTrees(unittest.TestCase):
                     Section 1
                 </a>
                 <a
-                    class="arretify-document_reference"
+                    data-schema="document_reference"
                     data-element_id="2"
                     data-type="arrete"
                 >
                     Parent Document
                 </a>
                 <a
-                    class="arretify-section_reference"
+                    data-schema="section_reference"
                     data-element_id="3"
                     data-parent_reference="4"
                     data-type="article"
@@ -312,7 +316,7 @@ class TestIterReferenceTrees(unittest.TestCase):
                     Section 2
                 </a>
                 <a
-                    class="arretify-document_reference"
+                    data-schema="document_reference"
                     data-element_id="4"
                     data-type="arrete"
                 >

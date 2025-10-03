@@ -35,31 +35,31 @@ class TestResolveCirculaireLegifranceId(unittest.TestCase):
             process_circulaire_document_reference(
                 """
             <a
-                class="arretify-document_reference"
+                data-schema="document_reference"
                 data-date="1986-07-23"
                 data-type="circulaire"
             >
                 Circulaire du
-                <time class="arretify-date" datetime="1986-07-23">
+                <time data-schema="date" datetime="1986-07-23">
                     23 juillet 1986
                 </time>
             </a>
             relative aux vibrations mécaniques émises dans l'environnement par les
             installations classées
             """,
-                css_selector=".arretify-document_reference",
+                css_selector="[data-schema='document_reference']",
             )
             == normalized_html_str(
                 """
             <a
-                class="arretify-document_reference"
+                data-schema="document_reference"
                 data-date="1986-07-23"
                 data-id="JORFTEXT000000866509"
                 data-type="circulaire"
                 href="https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000000866509"
             >
                 Circulaire du
-                <time class="arretify-date" datetime="1986-07-23">
+                <time data-schema="date" datetime="1986-07-23">
                     23 juillet 1986
                 </time>
             </a>

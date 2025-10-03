@@ -24,7 +24,7 @@ from bs4 import BeautifulSoup, Tag
 
 from arretify.semantic_tag_schemas import DATE_SCHEMA
 from arretify.utils.html import render_str_list_attribute
-from arretify.utils.html_create import make_data_tag
+from arretify.utils.html_semantic import make_semantic_tag
 from arretify.regex_utils import (
     regex_tree,
     join_with_or,
@@ -229,7 +229,7 @@ def render_date_regex_tree_match(soup: BeautifulSoup, regex_tree_match: regex_tr
         if len(date_str) < len("YYYY-MM-DD"):
             date_str = date_str.rjust(len("YYYY-MM-DD"), "0")
 
-    date_container = make_data_tag(
+    date_container = make_semantic_tag(
         soup,
         DATE_SCHEMA,
         contents=iter_regex_tree_match_page_elements_or_strings(regex_tree_match),

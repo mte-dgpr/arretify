@@ -20,6 +20,7 @@
 from arretify.types import DocumentContext
 from arretify.law_data.types import DocumentType, Document
 from arretify.semantic_tag_schemas import DOCUMENT_REFERENCE_SCHEMA
+from arretify.utils.html_semantic import css_selector
 from arretify.utils.references import build_and_traverse_reference_tree
 from .codes_resolution import (
     resolve_code_article_legifrance_id,
@@ -45,7 +46,7 @@ def step_legifrance_references_resolution(
     document_context: DocumentContext,
 ) -> DocumentContext:
     for document_reference_tag in document_context.soup.select(
-        f".{DOCUMENT_REFERENCE_SCHEMA.css_class}"
+        css_selector(DOCUMENT_REFERENCE_SCHEMA)
     ):
         document = Document.from_tag(document_reference_tag)
         if document.type is DocumentType.arrete_ministeriel:
@@ -75,7 +76,7 @@ def step_legifrance_references_resolution(
 
 def step_eurlex_references_resolution(document_context: DocumentContext) -> DocumentContext:
     for document_reference_tag in document_context.soup.select(
-        f".{DOCUMENT_REFERENCE_SCHEMA.css_class}"
+        css_selector(DOCUMENT_REFERENCE_SCHEMA)
     ):
         document = Document.from_tag(document_reference_tag)
         if document.type is DocumentType.eu_decision:

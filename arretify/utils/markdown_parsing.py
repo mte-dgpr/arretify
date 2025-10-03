@@ -26,7 +26,7 @@ from arretify.errors import ErrorCodes
 from arretify.utils.html import (
     render_str_list_attribute,
 )
-from arretify.utils.html_create import make_data_tag
+from arretify.utils.html_semantic import make_semantic_tag
 from arretify.semantic_tag_schemas import ERROR_SCHEMA
 from arretify.regex_utils import PatternProxy, repeated_with_separator
 
@@ -92,7 +92,7 @@ def parse_markdown_table(lines: Sequence[str]) -> Tag:
     soup = BeautifulSoup(html_str, features="html.parser")
     table_result = soup.select("table")
     if len(table_result) != 1:
-        return make_data_tag(
+        return make_semantic_tag(
             soup,
             ERROR_SCHEMA,
             data=dict(error_codes=render_str_list_attribute([ErrorCodes.markdown_parsing.value])),

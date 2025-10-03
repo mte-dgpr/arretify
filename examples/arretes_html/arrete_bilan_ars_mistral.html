@@ -33,7 +33,7 @@
                 padding: 0.5rem;
             }
 
-            a.arretify-document_reference, a.arretify-section_reference {
+            a[data-schema="document_reference"], a[data-schema="section_reference"] {
                 color: var(--text-action-high-blue-france);
             }
 
@@ -42,18 +42,18 @@
                 background-color: #ffd0d0 !important;
             }
 
-            .arretify-alinea::before, .arretify-visa::before, .arretify-motifs::before {
+            [data-schema="alinea"]::before, [data-schema="visa"]::before, [data-schema="motifs"]::before {
                 color: var(--text-disabled-grey);
                 position: absolute;
                 top: 0;
                 left: -1rem;
             }
 
-            .arretify-debug_keyword {
+            [data-schema="debug_keyword"] {
                 color: var(--warning-425-625);
             }
 
-            .arretify-visual_page_separator {
+            .visual_page_separator {
                 position: absolute;
                 left: 0;
                 width: 100vw;
@@ -62,7 +62,7 @@
                 z-index: -1;
             }
 
-            a.arretify-visual_page_separator > span {
+            a.visual_page_separator > span {
                 position: absolute;
                 font-size: 75%;
                 color: var(--grey-625-425);
@@ -78,28 +78,28 @@
                 margin-bottom: var(--spacing-1);
             }
 
-            .arretify-emblem, .arretify-entity, .arretify-identification, .arretify-arrete_title, .arretify-honorary {
+            [data-schema="emblem"], [data-schema="entity"], [data-schema="identification"], [data-schema="arrete_title"], [data-schema="honorary"] {
                 padding: var(--spacing-1);
                 background-color: var(--background-alt-grey);
                 text-align: center;
             }
 
-            .arretify-arrete_title {
+            [data-schema="arrete_title"] {
                 color: var(--text-title-grey);
             }
 
-            .arretify-emblem, .arretify-entity, .arretify-identification, .arretify-honorary {
+            [data-schema="emblem"], [data-schema="entity"], [data-schema="identification"], [data-schema="honorary"] {
                 color: var(--text-title-blue-france);
                 font-size: 120%;
             }
 
-            .arretify-visa, .arretify-motifs, .arretify-supplementary_motif_info, .arretify-table_of_contents {
+            [data-schema="visa"], [data-schema="motifs"], [data-schema="supplementary_motif_info"], [data-schema="table_of_contents"] {
                 position: relative;
                 margin-top: var(--spacing-1);
                 padding-bottom: 0;
             }
 
-            .arretify-visa::before, .arretify-motifs::before {
+            [data-schema="visa"]::before, [data-schema="motifs"]::before {
                 content: '⮞';
             }
 
@@ -109,24 +109,24 @@
             }
 
             /**************** MAIN CONTENT AND APPENDIX ****************/
-            .arretify-table {
+            [data-schema="table"] {
                 font-family: monospace;
             }
 
-            .arretify-section {
+            [data-schema="section"] {
                 padding: var(--spacing-0p5) 0;
             }
 
-            .arretify-alinea {
+            [data-schema="alinea"] {
                 position: relative;
                 margin-top: var(--spacing-0p5);
             }
 
-            .arretify-alinea::before {
+            [data-schema="alinea"]::before {
                 content: '¶';
             }
 
-            .arretify-alinea img {
+            [data-schema="alinea"] img {
                 max-width: 100%;
             }
 
@@ -134,7 +134,7 @@
                 list-style: none;
             }
 
-            .arretify-operation {
+            [data-schema="operation"] {
                 background-color: var(--background-action-low-blue-france);
             }
   </style>
@@ -143,17 +143,17 @@
                 // Page separators are inline elements, so they can be anywhere in the tree.
                 // To ensure proper layout, we therefore create a separate visual element
                 // for each page separator.
-                const pageSeparators = Array.from(document.querySelectorAll('.arretify-page_separator'))
+                const pageSeparators = Array.from(document.querySelectorAll('[data-schema="page_separator"]'))
                 
                 const refreshPageSeparator = () => {
-                    document.querySelectorAll('.arretify-visual_page_separator')
+                    document.querySelectorAll('.visual_page_separator')
                         .forEach((visualPageSeparator) => visualPageSeparator.remove())
                     pageSeparators.slice(1).forEach(function(pageSeparator) {
                         const boundingBox = pageSeparator.getBoundingClientRect()
                         const position = getPositionRelativeToDocument(pageSeparator)
                         const pageIndex = parseInt(pageSeparator.dataset.page_index, 10)
                         const visualPageSeparator = document.createElement('a')
-                        visualPageSeparator.classList.add('arretify-visual_page_separator')
+                        visualPageSeparator.classList.add('visual_page_separator')
                         visualPageSeparator.style.top = `${position.top + boundingBox.height}px`
                         visualPageSeparator.innerHTML = `<span>↓ page ${pageIndex + 1}</span>`
                         document.body.appendChild(visualPageSeparator)
@@ -174,107 +174,107 @@
   </script>
  </head>
  <body>
-  <header class="arretify-header">
-   <a class="arretify-page_separator" data-page_index="0">
+  <header data-schema="header">
+   <a data-page_index="0" data-schema="page_separator">
    </a>
-   <div class="arretify-arrete_title">
+   <div data-schema="arrete_title">
     <h1>
      ARRETE ARS GRAND EST n 2025-0182 du
-     <time class="arretify-date" datetime="2025-01-13">
+     <time data-schema="date" datetime="2025-01-13">
       13 janvier 2025
      </time>
      Portant fixation du bilan quantitatif de l'offre de soins pour la période de dépôt des demandes d'autorisation des activités de soins ouverte du
-     <time class="arretify-date" datetime="2025-02-01">
+     <time data-schema="date" datetime="2025-02-01">
       1er février 2025
      </time>
      au
-     <time class="arretify-date" datetime="2025-04-01">
+     <time data-schema="date" datetime="2025-04-01">
       1er avril 2025
      </time>
      pour la région Grand Est
     </h1>
    </div>
-   <div class="arretify-honorary">
+   <div data-schema="honorary">
     <div>
      La Directrice Générale de l'Agence Régionale de Santé Grand Est
     </div>
    </div>
-   <div class="arretify-visa">
+   <div data-schema="visa">
     - VU le
-    <a class="arretify-document_reference" data-id="LEGITEXT000006072665" data-title="Code de la santé publique" data-type="code" href="https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006072665">
+    <a data-id="LEGITEXT000006072665" data-schema="document_reference" data-title="Code de la santé publique" data-type="code" href="https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006072665">
      Code de la santé publique
     </a>
     , et notamment ses
-    <a class="arretify-section_reference" data-group_id="1" data-start_num="L6122-9" data-type="article">
+    <a data-group_id="1" data-schema="section_reference" data-start_num="L6122-9" data-type="article">
      articles L 6122-9
     </a>
     et
-    <a class="arretify-section_reference" data-group_id="1" data-start_num="R6122-30" data-type="article">
+    <a data-group_id="1" data-schema="section_reference" data-start_num="R6122-30" data-type="article">
      R 6122-30
     </a>
     .
    </div>
-   <div class="arretify-visa">
+   <div data-schema="visa">
     - VU le
-    <a class="arretify-document_reference" data-date="2024-05-21" data-type="decret">
+    <a data-date="2024-05-21" data-schema="document_reference" data-type="decret">
      décret du
-     <time class="arretify-date" datetime="2024-05-21">
+     <time data-schema="date" datetime="2024-05-21">
       21 mai 2024
      </time>
     </a>
     portant nomination de Mme Christelle RATIGNIER CARBONNEIL en qualité de la directrice Générale de l'Agence Régionale de Santé Grand Est.
    </div>
-   <div class="arretify-visa">
+   <div data-schema="visa">
     - VU l'ordonnance n° 2018-4 du 3 janvier 2018 relative à la simplification et à la modernisation des régimes d'autorisation des activités de soins et d'équipements matériels lourds.
    </div>
-   <div class="arretify-visa">
+   <div data-schema="visa">
     - VU le
-    <a class="arretify-document_reference" data-date="2018-02-19" data-id="JORFTEXT000036624898" data-num="2018-117" data-type="decret" href="https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000036624898">
+    <a data-date="2018-02-19" data-id="JORFTEXT000036624898" data-num="2018-117" data-schema="document_reference" data-type="decret" href="https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000036624898">
      décret n° 2018-117 du
-     <time class="arretify-date" datetime="2018-02-19">
+     <time data-schema="date" datetime="2018-02-19">
       19 février 2018
      </time>
     </a>
     relatif à la simplification et à la modernisation des régimes d'autorisation des activités de soins et d'équipements matériels lourds.
    </div>
-   <div class="arretify-visa">
+   <div data-schema="visa">
     - VU l'arrêté ARS Grand Est n° 2023-5462 du 30 octobre 2023 portant adoption des zones du schéma régional de santé donnant lieu à la répartition des activités de soins et des équipements matériels lourds.
    </div>
-   <div class="arretify-visa">
+   <div data-schema="visa">
     - VU l'arrêté ARS Grand Est n° 2023-5463 du 30 octobre 2023 portant adoption du schéma régional de santé et du programme régional d'accès à la prévention et aux soins des personnes les plus démunies 2023-2028.
    </div>
-   <div class="arretify-visa">
+   <div data-schema="visa">
     - VU l'arrêté ARS Grand Est n° 2024-4942 du 12 décembre 2024 modifiant l'arrêté ARS Grand Est n° 2024-0255 du 10 janvier 2024 et fixant, pour l'année 2025, le calendrier des périodes de d'fixant le calendrier des périodes de dépôt des demandes d'autorisation ou de renouvellement d'autorisation relevant du schéma régional de santé en vigueur pour la région Grand Est.
    </div>
-   <div class="arretify-visa">
+   <div data-schema="visa">
     - VU l'arrêté ARS Grand Est n° 2024-5043 du 30 décembre 2024 portant délégation de signature aux Directeurs, Secrétaire Général et Délégués Territoriaux de l'Agence Régionale de Santé Grand Est.
    </div>
-   <div class="arretify-arrete_title">
+   <div data-schema="arrete_title">
     <h1>
      ARRETE
     </h1>
    </div>
   </header>
-  <main class="arretify-main">
-   <section class="arretify-section" data-number="1" data-type="article">
-    <h2 class="arretify-section_title">
+  <main data-schema="main">
+   <section data-number="1" data-schema="section" data-type="article">
+    <h2 data-schema="section_title">
      Article 1er :
     </h2>
-    <div class="arretify-alinea" data-number="1">
+    <div data-number="1" data-schema="alinea">
      Le bilan quantitatif de l'offre de soins de la région Grand Est est établi, pour la période de dépôt des demandes d'autorisation des activités de soins ouverte du 1er février 2025 au 1er avril 2025, conformément aux tableaux figurant en
-     <a class="arretify-section_reference" data-parent_reference="1" data-type="annexe">
+     <a data-parent_reference="1" data-schema="section_reference" data-type="annexe">
       annexe
      </a>
      du
-     <a class="arretify-document_reference" data-element_id="1" data-type="self">
+     <a data-element_id="1" data-schema="document_reference" data-type="self">
       présent arrêté
      </a>
      , à savoir :
     </div>
-    <div class="arretify-alinea" data-number="2">
+    <div data-number="2" data-schema="alinea">
      Annexes :
     </div>
-    <div class="arretify-alinea" data-number="3">
+    <div data-number="3" data-schema="alinea">
      <ul>
       <li>
        - ✓ Partie 1 : Objectifs quantitatifs par zone d'implantation pour le niveau de soins de référence
@@ -288,84 +288,84 @@
      </ul>
     </div>
    </section>
-   <section class="arretify-section" data-number="2" data-type="article">
-    <h2 class="arretify-section_title">
+   <section data-number="2" data-schema="section" data-type="article">
+    <h2 data-schema="section_title">
      Article 2:
     </h2>
-    <div class="arretify-alinea" data-number="1">
+    <div data-number="1" data-schema="alinea">
      La liste des activités de soins concernées est la suivante :
     </div>
-    <div class="arretify-alinea" data-number="2">
+    <div data-number="2" data-schema="alinea">
      Psychiatrie
     </div>
-    <div class="arretify-alinea" data-number="3">
+    <div data-number="3" data-schema="alinea">
      Traitement de l'insuffisance rénale chronique par épuration extrarénale
     </div>
-    <div class="arretify-alinea" data-number="4">
+    <div data-number="4" data-schema="alinea">
      Greffes d'organes et greffes de cellules hématopoïétiques
     </div>
-    <div class="arretify-alinea" data-number="5">
+    <div data-number="5" data-schema="alinea">
      Traitement des grands brulés
     </div>
    </section>
-   <section class="arretify-section" data-number="3" data-type="article">
-    <h2 class="arretify-section_title">
+   <section data-number="3" data-schema="section" data-type="article">
+    <h2 data-schema="section_title">
      Article 3:
     </h2>
-    <div class="arretify-alinea" data-number="1">
+    <div data-number="1" data-schema="alinea">
      Conformément aux dispositions de l'
-     <a class="arretify-section_reference" data-parent_reference="2" data-start_num="R6122-30" data-type="article" href="https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006072665">
+     <a data-parent_reference="2" data-schema="section_reference" data-start_num="R6122-30" data-type="article" href="https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006072665">
       article R6122-30
      </a>
      du
-     <a class="arretify-document_reference" data-element_id="2" data-id="LEGITEXT000006072665" data-title="Code de la santé publique" data-type="code" href="https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006072665">
+     <a data-element_id="2" data-id="LEGITEXT000006072665" data-schema="document_reference" data-title="Code de la santé publique" data-type="code" href="https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006072665">
       Code de la santé publique
      </a>
      , ce bilan sera publié au recueil des actes administratifs de la préfecture de la région Grand Est et fera l'objet d'une publication sur le site internet de l'Agence Régionale de Santé Grand Est.
     </div>
    </section>
-   <section class="arretify-section" data-number="4" data-type="article">
-    <h2 class="arretify-section_title">
+   <section data-number="4" data-schema="section" data-type="article">
+    <h2 data-schema="section_title">
      Article 4:
     </h2>
-    <div class="arretify-alinea" data-number="1">
+    <div data-number="1" data-schema="alinea">
      La Responsable du Département Stratégie de l'Offre Hospitalière de la Direction de l'Offre Sanitaire de l'Agence Régionale de Santé Grand Est est chargée de l'exécution du
-     <a class="arretify-document_reference" data-type="self">
+     <a data-schema="document_reference" data-type="self">
       présent arrêté
      </a>
      .
     </div>
    </section>
-   <section class="arretify-section" data-number="5" data-type="article">
-    <h2 class="arretify-section_title">
+   <section data-number="5" data-schema="section" data-type="article">
+    <h2 data-schema="section_title">
      Article 5:
     </h2>
-    <div class="arretify-alinea" data-number="1">
-     <a class="arretify-document_reference" data-type="self">
+    <div data-number="1" data-schema="alinea">
+     <a data-schema="document_reference" data-type="self">
       Le présent arrêté
      </a>
      peut faire l'objet d'un recours contentieux devant le tribunal administratif compétent dans un délai de deux mois à compter de sa publication. La juridiction peut notamment être saisie via une requête remise ou envoyée au greffe du tribunal administratif ou par l'application Télérecours citoyens accessible à partir du site www.telerecours.fr.
     </div>
-    <div class="arretify-alinea" data-number="2">
+    <div data-number="2" data-schema="alinea">
      Pour la Directrice Générale de l'Agence Régionale de Santé Grand Est, et par délégation, La Directrice de l'Offre Sanitaire
     </div>
-    <div class="arretify-alinea" data-number="3">
+    <div data-number="3" data-schema="alinea">
      Monica BOSI
     </div>
    </section>
   </main>
-  <footer class="arretify-appendix">
-   <section class="arretify-section" data-number="" data-type="annexe">
-    <h2 class="arretify-section_title" data-error_codes="non_contiguous_titles">
+  <footer data-schema="appendix">
+   <section data-number="" data-schema="section" data-type="annexe">
+    <h2 data-error_codes="non_contiguous_titles" data-schema="section_title">
      ANNEXE
     </h2>
-    <div class="arretify-alinea" data-number="1">
+    <div data-number="1" data-schema="alinea">
      Bilan quantitatif de l'offre relatif aux activités de soins par zone d'implantation pour le niveau de soins de référence, pour le niveau de soins de recours et pour le niveau de soins régional
     </div>
-    <div class="arretify-alinea" data-number="2">
+    <div data-number="2" data-schema="alinea">
      Période de dépôt des demandes : du 1er  février 2025 au 1er  avril 2025
     </div>
-    <div class="arretify-table_of_contents">
+    <div data-schema="table_of_contents">
      <div>
       Sommaire
      </div>
@@ -427,13 +427,13 @@
       Zone régionale Grand Est ..... page 21
      </div>
     </div>
-    <div class="arretify-alinea" data-number="3">
+    <div data-number="3" data-schema="alinea">
      Partie 1: Objectifs quantitatifs par zone d'implantation pour le niveau de soins de référence
     </div>
-    <div class="arretify-alinea" data-number="4">
+    <div data-number="4" data-schema="alinea">
      Zone de référence n° 1 Nord Ardennes
     </div>
-    <div class="arretify-alinea" data-number="5">
+    <div data-number="5" data-schema="alinea">
      <table>
       <thead>
        <tr>
@@ -483,13 +483,13 @@
       </tbody>
      </table>
     </div>
-    <div class="arretify-alinea" data-number="6">
+    <div data-number="6" data-schema="alinea">
      Activités de soins - Nombre d'implantations
     </div>
-    <div class="arretify-alinea" data-number="7">
+    <div data-number="7" data-schema="alinea">
      Traitement de l'Insuffisance Rénale Chronique
     </div>
-    <div class="arretify-alinea" data-number="8">
+    <div data-number="8" data-schema="alinea">
      <table>
       <thead>
        <tr>
@@ -652,28 +652,28 @@
       </tbody>
      </table>
     </div>
-    <div class="arretify-alinea" data-number="9">
+    <div data-number="9" data-schema="alinea">
      Zone de référence n° 2 Champagne
     </div>
-    <div class="arretify-alinea" data-number="10">
+    <div data-number="10" data-schema="alinea">
      |   |       Au  1er        janvier       2025  | Cible 2028
     </div>
-    <div class="arretify-alinea" data-number="11">
+    <div data-number="11" data-schema="alinea">
      Minimum | Cible 2028
     </div>
-    <div class="arretify-alinea" data-number="12">
+    <div data-number="12" data-schema="alinea">
      Maximum | Demandes
     </div>
-    <div class="arretify-alinea" data-number="13">
+    <div data-number="13" data-schema="alinea">
      d'implantations
     </div>
-    <div class="arretify-alinea" data-number="14">
+    <div data-number="14" data-schema="alinea">
      recevables dans la
     </div>
-    <div class="arretify-alinea" data-number="15">
+    <div data-number="15" data-schema="alinea">
      fenêtre : oui / non  |
     </div>
-    <div class="arretify-alinea" data-number="16">
+    <div data-number="16" data-schema="alinea">
      <table>
       <thead>
        <tr>
@@ -710,38 +710,38 @@
       </tbody>
      </table>
     </div>
-    <div class="arretify-alinea" data-number="17">
+    <div data-number="17" data-schema="alinea">
      Activités de soins - Nombre d'implantations
     </div>
-    <div class="arretify-alinea" data-number="18">
+    <div data-number="18" data-schema="alinea">
      Traitement de l'Insuffisance rénale chronique
     </div>
-    <div class="arretify-alinea" data-number="19">
+    <div data-number="19" data-schema="alinea">
      |  Hémodialyse en centre pour
     </div>
-    <div class="arretify-alinea" data-number="20">
+    <div data-number="20" data-schema="alinea">
      adultes | 1 | 1 | 1 | NON  |
     </div>
-    <div class="arretify-alinea" data-number="21">
-     <span class="arretify-error" data-error_codes="markdown_parsing">
+    <div data-number="21" data-schema="alinea">
+     <span data-error_codes="markdown_parsing" data-schema="error">
       | --- | --- | --- | --- | --- |
 |  Dialyse médicalisée | 2 | 1 | 2 | NON  |
 |  Autodialyse | 3 | 3 | 3 | NON  |
      </span>
     </div>
-    <div class="arretify-alinea" data-number="22">
+    <div data-number="22" data-schema="alinea">
      |  Dialyse à domicile par
     </div>
-    <div class="arretify-alinea" data-number="23">
+    <div data-number="23" data-schema="alinea">
      hémodialyse ou par dialyse
     </div>
-    <div class="arretify-alinea" data-number="24">
+    <div data-number="24" data-schema="alinea">
      péritonéale | 3 | 3 | 3 | NON  |
     </div>
-    <div class="arretify-alinea" data-number="25">
+    <div data-number="25" data-schema="alinea">
      Psychiatrie
     </div>
-    <div class="arretify-alinea" data-number="26">
+    <div data-number="26" data-schema="alinea">
      <table>
       <thead>
        <tr>
@@ -817,10 +817,10 @@
       </tbody>
      </table>
     </div>
-    <div class="arretify-alinea" data-number="27">
+    <div data-number="27" data-schema="alinea">
      Zone de référence n° 3 Aube et Sézannais
     </div>
-    <div class="arretify-alinea" data-number="28">
+    <div data-number="28" data-schema="alinea">
      <table>
       <thead>
        <tr>
@@ -872,13 +872,13 @@
       </tbody>
      </table>
     </div>
-    <div class="arretify-alinea" data-number="29">
+    <div data-number="29" data-schema="alinea">
      Activités de soins - Nombre d'implantations
     </div>
-    <div class="arretify-alinea" data-number="30">
+    <div data-number="30" data-schema="alinea">
      Traitement de l'Insuffisance rénale chronique
     </div>
-    <div class="arretify-alinea" data-number="31">
+    <div data-number="31" data-schema="alinea">
      <table>
       <thead>
        <tr>
@@ -1041,13 +1041,13 @@
       </tbody>
      </table>
     </div>
-    <div class="arretify-alinea" data-number="32">
+    <div data-number="32" data-schema="alinea">
      Zone de référence n°4
      <q>
       21-52
      </q>
     </div>
-    <div class="arretify-alinea" data-number="33">
+    <div data-number="33" data-schema="alinea">
      <table>
       <thead>
        <tr>
@@ -1083,13 +1083,13 @@
       </tbody>
      </table>
     </div>
-    <div class="arretify-alinea" data-number="34">
+    <div data-number="34" data-schema="alinea">
      Activités de soins - Nombre d'implantations
     </div>
-    <div class="arretify-alinea" data-number="35">
+    <div data-number="35" data-schema="alinea">
      Traitement de l'Insuffisance rénale chronique
     </div>
-    <div class="arretify-alinea" data-number="36">
+    <div data-number="36" data-schema="alinea">
      <table>
       <thead>
        <tr>
@@ -1165,10 +1165,10 @@
       </tbody>
      </table>
     </div>
-    <div class="arretify-alinea" data-number="37">
+    <div data-number="37" data-schema="alinea">
      Psychiatrie
     </div>
-    <div class="arretify-alinea" data-number="38">
+    <div data-number="38" data-schema="alinea">
      <table>
       <thead>
        <tr>
@@ -1244,10 +1244,10 @@
       </tbody>
      </table>
     </div>
-    <div class="arretify-alinea" data-number="39">
+    <div data-number="39" data-schema="alinea">
      Zone de référence n°5 Cœur Grand Est
     </div>
-    <div class="arretify-alinea" data-number="40">
+    <div data-number="40" data-schema="alinea">
      <table>
       <thead>
        <tr>
@@ -1283,13 +1283,13 @@
       </tbody>
      </table>
     </div>
-    <div class="arretify-alinea" data-number="41">
+    <div data-number="41" data-schema="alinea">
      Activités de soins – Nombre d'implantations
     </div>
-    <div class="arretify-alinea" data-number="42">
+    <div data-number="42" data-schema="alinea">
      Traitement de l'Insuffisance rénale chronique
     </div>
-    <div class="arretify-alinea" data-number="43">
+    <div data-number="43" data-schema="alinea">
      <table>
       <thead>
        <tr>
@@ -1365,10 +1365,10 @@
       </tbody>
      </table>
     </div>
-    <div class="arretify-alinea" data-number="44">
+    <div data-number="44" data-schema="alinea">
      Psychiatrie
     </div>
-    <div class="arretify-alinea" data-number="45">
+    <div data-number="45" data-schema="alinea">
      <table>
       <thead>
        <tr>
@@ -1444,10 +1444,10 @@
       </tbody>
      </table>
     </div>
-    <div class="arretify-alinea" data-number="46">
+    <div data-number="46" data-schema="alinea">
      Zone de référence n°6 Lorraine Nord
     </div>
-    <div class="arretify-alinea" data-number="47">
+    <div data-number="47" data-schema="alinea">
      <table>
       <thead>
        <tr>
@@ -1479,13 +1479,13 @@
       </tbody>
      </table>
     </div>
-    <div class="arretify-alinea" data-number="48">
+    <div data-number="48" data-schema="alinea">
      Activités de soins – Nombre d'implantations
     </div>
-    <div class="arretify-alinea" data-number="49">
+    <div data-number="49" data-schema="alinea">
      Traitement de l'Insuffisance rénale chronique
     </div>
-    <div class="arretify-alinea" data-number="50">
+    <div data-number="50" data-schema="alinea">
      <table>
       <thead>
        <tr>
@@ -1561,10 +1561,10 @@
       </tbody>
      </table>
     </div>
-    <div class="arretify-alinea" data-number="51">
+    <div data-number="51" data-schema="alinea">
      Psychiatrie
     </div>
-    <div class="arretify-alinea" data-number="52">
+    <div data-number="52" data-schema="alinea">
      <table>
       <thead>
        <tr>
@@ -1640,10 +1640,10 @@
       </tbody>
      </table>
     </div>
-    <div class="arretify-alinea" data-number="53">
+    <div data-number="53" data-schema="alinea">
      Zone de référence n° 7 Sud Lorraine
     </div>
-    <div class="arretify-alinea" data-number="54">
+    <div data-number="54" data-schema="alinea">
      <table>
       <thead>
        <tr>
@@ -1695,13 +1695,13 @@
       </tbody>
      </table>
     </div>
-    <div class="arretify-alinea" data-number="55">
+    <div data-number="55" data-schema="alinea">
      Activités de soins - Nombre d'implantations
     </div>
-    <div class="arretify-alinea" data-number="56">
+    <div data-number="56" data-schema="alinea">
      Traitement de l'Insuffisance rénale chronique
     </div>
-    <div class="arretify-alinea" data-number="57">
+    <div data-number="57" data-schema="alinea">
      <table>
       <thead>
        <tr>
@@ -1864,10 +1864,10 @@
       </tbody>
      </table>
     </div>
-    <div class="arretify-alinea" data-number="58">
+    <div data-number="58" data-schema="alinea">
      Zone de référence n° 8 Vosges
     </div>
-    <div class="arretify-alinea" data-number="59">
+    <div data-number="59" data-schema="alinea">
      <table>
       <thead>
        <tr>
@@ -2088,10 +2088,10 @@
       </tbody>
      </table>
     </div>
-    <div class="arretify-alinea" data-number="60">
+    <div data-number="60" data-schema="alinea">
      Zone de référence n°9 Moselle Est
     </div>
-    <div class="arretify-alinea" data-number="61">
+    <div data-number="61" data-schema="alinea">
      <table>
       <thead>
        <tr>
@@ -2127,13 +2127,13 @@
       </tbody>
      </table>
     </div>
-    <div class="arretify-alinea" data-number="62">
+    <div data-number="62" data-schema="alinea">
      Activités de soins – Nombre d'implantations
     </div>
-    <div class="arretify-alinea" data-number="63">
+    <div data-number="63" data-schema="alinea">
      Traitement de l'Insuffisance rénale chronique
     </div>
-    <div class="arretify-alinea" data-number="64">
+    <div data-number="64" data-schema="alinea">
      <table>
       <thead>
        <tr>
@@ -2209,10 +2209,10 @@
       </tbody>
      </table>
     </div>
-    <div class="arretify-alinea" data-number="65">
+    <div data-number="65" data-schema="alinea">
      Psychiatrie
     </div>
-    <div class="arretify-alinea" data-number="66">
+    <div data-number="66" data-schema="alinea">
      <table>
       <thead>
        <tr>
@@ -2288,10 +2288,10 @@
       </tbody>
      </table>
     </div>
-    <div class="arretify-alinea" data-number="67">
+    <div data-number="67" data-schema="alinea">
      Zone de référence n° 10 - Basse Alsace- Sud Moselle
     </div>
-    <div class="arretify-alinea" data-number="68">
+    <div data-number="68" data-schema="alinea">
      <table>
       <thead>
        <tr>
@@ -2343,13 +2343,13 @@
       </tbody>
      </table>
     </div>
-    <div class="arretify-alinea" data-number="69">
+    <div data-number="69" data-schema="alinea">
      Activités de soins - Nombre d'implantations
     </div>
-    <div class="arretify-alinea" data-number="70">
+    <div data-number="70" data-schema="alinea">
      Traitement de l'Insuffisance rénale chronique
     </div>
-    <div class="arretify-alinea" data-number="71">
+    <div data-number="71" data-schema="alinea">
      <table>
       <thead>
        <tr>
@@ -2512,10 +2512,10 @@
       </tbody>
      </table>
     </div>
-    <div class="arretify-alinea" data-number="72">
+    <div data-number="72" data-schema="alinea">
      Zone de référence n° 11 Centre Alsace
     </div>
-    <div class="arretify-alinea" data-number="73">
+    <div data-number="73" data-schema="alinea">
      <table>
       <thead>
        <tr>
@@ -2567,13 +2567,13 @@
       </tbody>
      </table>
     </div>
-    <div class="arretify-alinea" data-number="74">
+    <div data-number="74" data-schema="alinea">
      Activités de soins - Nombre d'implantations
     </div>
-    <div class="arretify-alinea" data-number="75">
+    <div data-number="75" data-schema="alinea">
      Traitement de l'Insuffisance rénale chronique
     </div>
-    <div class="arretify-alinea" data-number="76">
+    <div data-number="76" data-schema="alinea">
      <table>
       <thead>
        <tr>
@@ -2655,10 +2655,10 @@
       </tbody>
      </table>
     </div>
-    <div class="arretify-alinea" data-number="77">
+    <div data-number="77" data-schema="alinea">
      Psychiatrie
     </div>
-    <div class="arretify-alinea" data-number="78">
+    <div data-number="78" data-schema="alinea">
      <table>
       <thead>
        <tr>
@@ -2734,10 +2734,10 @@
       </tbody>
      </table>
     </div>
-    <div class="arretify-alinea" data-number="79">
+    <div data-number="79" data-schema="alinea">
      Zone de référence n°12 - Haute Alsace
     </div>
-    <div class="arretify-alinea" data-number="80">
+    <div data-number="80" data-schema="alinea">
      <table>
       <thead>
        <tr>
@@ -2773,13 +2773,13 @@
       </tbody>
      </table>
     </div>
-    <div class="arretify-alinea" data-number="81">
+    <div data-number="81" data-schema="alinea">
      Activités de soins – Nombre d'implantations
     </div>
-    <div class="arretify-alinea" data-number="82">
+    <div data-number="82" data-schema="alinea">
      Traitement de l'Insuffisance rénale chronique
     </div>
-    <div class="arretify-alinea" data-number="83">
+    <div data-number="83" data-schema="alinea">
      <table>
       <thead>
        <tr>
@@ -2855,10 +2855,10 @@
       </tbody>
      </table>
     </div>
-    <div class="arretify-alinea" data-number="84">
+    <div data-number="84" data-schema="alinea">
      Psychiatrie
     </div>
-    <div class="arretify-alinea" data-number="85">
+    <div data-number="85" data-schema="alinea">
      <table>
       <thead>
        <tr>
@@ -2934,13 +2934,13 @@
       </tbody>
      </table>
     </div>
-    <div class="arretify-alinea" data-number="86">
+    <div data-number="86" data-schema="alinea">
      Partie 2: Objectifs quantitatifs par zone d'implantation pour le niveau de soins de recours
     </div>
-    <div class="arretify-alinea" data-number="87">
+    <div data-number="87" data-schema="alinea">
      Zone de recours A-Ouest
     </div>
-    <div class="arretify-alinea" data-number="88">
+    <div data-number="88" data-schema="alinea">
      <table>
       <thead>
        <tr>
@@ -2993,10 +2993,10 @@
       </tbody>
      </table>
     </div>
-    <div class="arretify-alinea" data-number="89">
+    <div data-number="89" data-schema="alinea">
      Traitement de l'Insuffisance rénale chronique
     </div>
-    <div class="arretify-alinea" data-number="90">
+    <div data-number="90" data-schema="alinea">
      <table>
       <thead>
        <tr>
@@ -3066,10 +3066,10 @@
       </tbody>
      </table>
     </div>
-    <div class="arretify-alinea" data-number="91">
+    <div data-number="91" data-schema="alinea">
      Zone de recours B-Centre
     </div>
-    <div class="arretify-alinea" data-number="92">
+    <div data-number="92" data-schema="alinea">
      <table>
       <thead>
        <tr>
@@ -3121,13 +3121,13 @@
       </tbody>
      </table>
     </div>
-    <div class="arretify-alinea" data-number="93">
+    <div data-number="93" data-schema="alinea">
      Activités de soins - Nombre d'implantations
     </div>
-    <div class="arretify-alinea" data-number="94">
+    <div data-number="94" data-schema="alinea">
      Traitement de l'Insuffisance rénale chronique
     </div>
-    <div class="arretify-alinea" data-number="95">
+    <div data-number="95" data-schema="alinea">
      <table>
       <thead>
        <tr>
@@ -3166,10 +3166,10 @@
       </tbody>
      </table>
     </div>
-    <div class="arretify-alinea" data-number="96">
+    <div data-number="96" data-schema="alinea">
      Greffes d'organes et greffes de cellules hématopoiétiques
     </div>
-    <div class="arretify-alinea" data-number="97">
+    <div data-number="97" data-schema="alinea">
      <table>
       <thead>
        <tr>
@@ -3207,40 +3207,40 @@
       </tbody>
      </table>
     </div>
-    <div class="arretify-alinea" data-number="98">
+    <div data-number="98" data-schema="alinea">
      Zone de recours C-Est
     </div>
-    <div class="arretify-alinea" data-number="99">
+    <div data-number="99" data-schema="alinea">
      |   | Au
     </div>
-    <div class="arretify-alinea" data-number="100">
+    <div data-number="100" data-schema="alinea">
      1er
     </div>
-    <div class="arretify-alinea" data-number="101">
+    <div data-number="101" data-schema="alinea">
      janvier
     </div>
-    <div class="arretify-alinea" data-number="102">
+    <div data-number="102" data-schema="alinea">
      2025 | Cible 2028
     </div>
-    <div class="arretify-alinea" data-number="103">
+    <div data-number="103" data-schema="alinea">
      Minimum | Cible 2028
     </div>
-    <div class="arretify-alinea" data-number="104">
+    <div data-number="104" data-schema="alinea">
      Maximum | Demandes
     </div>
-    <div class="arretify-alinea" data-number="105">
+    <div data-number="105" data-schema="alinea">
      d'implantations
     </div>
-    <div class="arretify-alinea" data-number="106">
+    <div data-number="106" data-schema="alinea">
      recevables dans la
     </div>
-    <div class="arretify-alinea" data-number="107">
+    <div data-number="107" data-schema="alinea">
      fenêtre :
     </div>
-    <div class="arretify-alinea" data-number="108">
+    <div data-number="108" data-schema="alinea">
      OUI / NON  |
     </div>
-    <div class="arretify-alinea" data-number="109">
+    <div data-number="109" data-schema="alinea">
      <table>
       <thead>
        <tr>
@@ -3277,19 +3277,19 @@
       </tbody>
      </table>
     </div>
-    <div class="arretify-alinea" data-number="110">
+    <div data-number="110" data-schema="alinea">
      Activités de soins - Nombre d'implantations
     </div>
-    <div class="arretify-alinea" data-number="111">
+    <div data-number="111" data-schema="alinea">
      Traitement de l'Insuffisance rénale chronique
     </div>
-    <div class="arretify-alinea" data-number="112">
+    <div data-number="112" data-schema="alinea">
      |  Hémodialyse en centre pour
     </div>
-    <div class="arretify-alinea" data-number="113">
+    <div data-number="113" data-schema="alinea">
      enfants | 1 | 1 | 1 | NON  |
     </div>
-    <div class="arretify-alinea" data-number="114">
+    <div data-number="114" data-schema="alinea">
      <table>
       <thead>
        <tr>
@@ -3326,10 +3326,10 @@
       </tbody>
      </table>
     </div>
-    <div class="arretify-alinea" data-number="115">
+    <div data-number="115" data-schema="alinea">
      Greffes d'organes et greffes de cellules hématopoïétiques
     </div>
-    <div class="arretify-alinea" data-number="116">
+    <div data-number="116" data-schema="alinea">
      <table>
       <thead>
        <tr>
@@ -3367,13 +3367,13 @@
       </tbody>
      </table>
     </div>
-    <div class="arretify-alinea" data-number="117">
+    <div data-number="117" data-schema="alinea">
      Partie 3: Objectifs quantitatifs par zone d'implantation pour le niveau de soins régional
     </div>
-    <div class="arretify-alinea" data-number="118">
+    <div data-number="118" data-schema="alinea">
      Zone régionale Grand-Est
     </div>
-    <div class="arretify-alinea" data-number="119">
+    <div data-number="119" data-schema="alinea">
      <table>
       <thead>
        <tr>

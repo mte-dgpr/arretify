@@ -36,12 +36,15 @@ class TestParseArreteReferences(unittest.TestCase):
             normalized_html_str(
                 """
                 <a
-                    class="arretify-document_reference"
                     data-date="1998-02-02"
+                    data-schema="document_reference"
                     data-type="arrete-ministeriel"
                 >
                     arrêté ministériel du
-                    <time class="arretify-date" datetime="1998-02-02">
+                    <time
+                        data-schema="date"
+                        datetime="1998-02-02"
+                    >
                         2 février 1998
                     </time>
                 </a>
@@ -60,12 +63,12 @@ class TestParseArreteReferences(unittest.TestCase):
             normalized_html_str(
                 """
                 <a
-                    class="arretify-document_reference"
                     data-date="2016-05-23"
+                    data-schema="document_reference"
                     data-type="arrete-ministeriel"
                 >
                     arrêté ministériel du
-                    <time class="arretify-date" datetime="2016-05-23">23 mai 2016</time>
+                    <time data-schema="date" datetime="2016-05-23">23 mai 2016</time>
                     modifiant
                 </a>
             """
@@ -79,12 +82,12 @@ class TestParseArreteReferences(unittest.TestCase):
             normalized_html_str(
                 """
                 <a
-                    class="arretify-document_reference"
                     data-date="1998-02-02"
+                    data-schema="document_reference"
                     data-type="arrete"
                 >
                     arrêté du
-                    <time class="arretify-date" datetime="1998-02-02">
+                    <time data-schema="date" datetime="1998-02-02">
                         2 février 1998
                     </time>
                 </a>
@@ -99,13 +102,13 @@ class TestParseArreteReferences(unittest.TestCase):
             normalized_html_str(
                 """
                 <a
-                    class="arretify-document_reference"
                     data-date="1998-02-02"
+                    data-schema="document_reference"
                     data-type="arrete-ministeriel"
                 >
                     arrêté ministériel<br/>
                     du
-                    <time class="arretify-date" datetime="1998-02-02">
+                    <time data-schema="date" datetime="1998-02-02">
                         2 février 1998
                     </time>
                 </a>
@@ -126,13 +129,13 @@ class TestParseArretePluralReferences(unittest.TestCase):
             normalized_html_str(
                 """
                 <a
-                    class="arretify-document_reference"
                     data-date="1988-10-28"
                     data-num="5213"
+                    data-schema="document_reference"
                     data-type="arrete-prefectoral"
                 >
                     n° 5213 du
-                    <time class="arretify-date" datetime="1988-10-28">
+                    <time data-schema="date" datetime="1988-10-28">
                         28 octobre 1988
                     </time>
                 </a>
@@ -142,13 +145,13 @@ class TestParseArretePluralReferences(unittest.TestCase):
             normalized_html_str(
                 """
                 <a
-                    class="arretify-document_reference"
                     data-date="1995-03-24"
                     data-num="1636"
+                    data-schema="document_reference"
                     data-type="arrete-prefectoral"
                 >
                     n° 1636 du
-                    <time class="arretify-date" datetime="1995-03-24">
+                    <time data-schema="date" datetime="1995-03-24">
                         24/03/95
                     </time>
                 </a>
@@ -171,12 +174,12 @@ class TestParseArreteReferencesAll(unittest.TestCase):
             normalized_html_str(
                 """
                 <a
-                    class="arretify-document_reference"
                     data-date="2016-05-23"
+                    data-schema="document_reference"
                     data-type="arrete-ministeriel"
                 >
                     arrêté ministériel du
-                    <time class="arretify-date" datetime="2016-05-23">
+                    <time data-schema="date" datetime="2016-05-23">
                         23 mai 2016
                     </time>
                 </a>
@@ -186,8 +189,8 @@ class TestParseArreteReferencesAll(unittest.TestCase):
             normalized_html_str(
                 """
                 <a
-                    class="arretify-document_reference"
                     data-num="1234-567/01."
+                    data-schema="document_reference"
                     data-type="arrete-prefectoral"
                 >
                     arrêté préfectoral n° 1234-567/01.

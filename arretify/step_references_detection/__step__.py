@@ -19,6 +19,7 @@
 
 from arretify.types import PageElementOrString, DocumentContext
 from arretify.utils.html_create import replace_children
+from arretify.utils.html_semantic import css_selector
 from arretify.utils.html_split_merge import group_strings_splitter
 from arretify.utils.split_merge import split_elements, map_splitted_elements
 from arretify.semantic_tag_schemas import (
@@ -56,8 +57,8 @@ from arretify.utils.strings import merge_strings
 
 
 REFERENCES_CONTAINER_SELECTOR = (
-    f".{ALINEA_SCHEMA.css_class}, .{ALINEA_SCHEMA.css_class} *"
-    + f", .{MOTIF_SCHEMA.css_class}, .{VISA_SCHEMA.css_class}"
+    f"{css_selector(ALINEA_SCHEMA)}, {css_selector(ALINEA_SCHEMA)} *"
+    + f", {css_selector(MOTIF_SCHEMA)}, {css_selector(VISA_SCHEMA)}"
 )
 
 

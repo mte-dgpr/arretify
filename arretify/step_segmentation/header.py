@@ -22,9 +22,11 @@ from bs4 import Tag
 
 from arretify.utils.functional import iter_func_to_list, chain_functions
 from arretify.parsing_utils.dates import DATE_NODE, render_date_regex_tree_match
+from arretify.utils.html_semantic import (
+    make_semantic_tag,
+)
 from arretify.utils.html_create import (
     wrap_in_tag,
-    make_data_tag,
     make_new_tag,
 )
 from arretify.utils.html_split_merge import make_regex_tree_splitter
@@ -622,7 +624,7 @@ def render_header_element(
         else:
             raise ValueError(f"Unexpected element {splitted_element.value} in header elements")
 
-    return make_data_tag(
+    return make_semantic_tag(
         context.soup,
         HEADER_ELEMENTS_SCHEMAS[read_segmentation_tag_name(tag)],
         contents=wrap_in_tag(context.soup, elements, "div"),
@@ -644,7 +646,7 @@ def render_visa_motif(
             elements.append(render_page_separator(context, element))
         else:
             raise ValueError(f"Unexpected element {element} in visa/motif")
-    return make_data_tag(
+    return make_semantic_tag(
         context.soup,
         HEADER_ELEMENTS_SCHEMAS[read_segmentation_tag_name(tag)],
         contents=elements,
@@ -665,7 +667,7 @@ def render_arrete_title(
         ),
         lambda tree_match: render_date_regex_tree_match(context.soup, tree_match),
     )
-    return make_data_tag(
+    return make_semantic_tag(
         context.soup,
         ARRETE_TITLE_SCHEMA,
         contents=[make_new_tag(context.soup, "h1", contents=elements)],

@@ -36,7 +36,7 @@ from arretify.utils.html import (
     PageElementOrString,
     is_tag,
 )
-from arretify.utils.html_create import make_data_tag
+from arretify.utils.html_semantic import make_semantic_tag
 from arretify.utils.html_split_merge import make_regex_tree_splitter
 from arretify.semantic_tag_schemas import (
     DOCUMENT_REFERENCE_SCHEMA,
@@ -229,7 +229,7 @@ def _render_arrete_container(
     )
 
     # Render the arrete tag
-    return make_data_tag(
+    return make_semantic_tag(
         soup,
         DOCUMENT_REFERENCE_SCHEMA,
         data=document.get_data_attributes(),

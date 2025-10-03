@@ -54,32 +54,6 @@ class TestAssignElementId(unittest.TestCase):
 
 class TestIsTagAndMatches(unittest.TestCase):
 
-    def test_css_classes_in(self):
-        # Arrange
-        soup = BeautifulSoup("", "html.parser")
-        tag = soup.new_tag("div")
-        tag["class"] = ["test-class"]
-        tag["class"].append("other-class")
-
-        # Act
-        result = is_tag(tag, css_classes_in=["test-class"])
-
-        # Assert
-        assert result is True
-
-    def test_does_not_have_class(self):
-        # Arrange
-        soup = BeautifulSoup("", "html.parser")
-        tag = soup.new_tag("div")
-        tag["class"] = ["other-class"]
-        tag["class"].append("another-class")
-
-        # Act
-        result = is_tag(tag, css_classes_in=["test-class"])
-
-        # Assert
-        assert result is False
-
     def test_tag_name_in(self):
         # Arrange
         soup = BeautifulSoup("", "html.parser")
@@ -93,28 +67,12 @@ class TestIsTagAndMatches(unittest.TestCase):
         assert result1 is True
         assert result2 is False
 
-    def test_combination_of_filters(self):
+    def test_not_a_tag(self):
         # Arrange
-        soup = BeautifulSoup("", "html.parser")
-        tag = soup.new_tag("div")
-        tag["class"] = ["test-class"]
+        text = "Hello, world!"
 
         # Act
-        result1 = is_tag(tag, css_classes_in=["test-class"], tag_name_in=["div"])
-        result2 = is_tag(tag, css_classes_in=["other-test-class"], tag_name_in=["div"])
-        result3 = is_tag(tag, css_classes_in=["test-class"], tag_name_in=["span"])
+        result = is_tag(text, tag_name_in=["span"])
 
         # Assert
-        assert result1 is True
-        assert result2 is False
-        assert result3 is False
-
-    def test_raise_error_with_invalid_class(self):
-        # Arrange
-        soup = BeautifulSoup("", "html.parser")
-        tag = soup.new_tag("div")
-        tag["class"] = "my-class my-other-class"
-
-        # Act & Assert
-        with self.assertRaises(RuntimeError):
-            is_tag(tag, css_classes_in=["my-class"])
+        assert result is False

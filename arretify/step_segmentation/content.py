@@ -27,8 +27,10 @@ from arretify.types import DocumentContext, SectionType, PageElementOrString, Da
 from arretify.utils.html import (
     render_str_list_attribute,
 )
+from arretify.utils.html_semantic import (
+    make_semantic_tag,
+)
 from arretify.utils.html_create import (
-    make_data_tag,
     make_new_tag,
 )
 from arretify.utils.functional import iter_func_to_list, chain_functions
@@ -407,7 +409,7 @@ def render_section_title(
             cast(list[str], segmentation_tag_data["error_codes"])
         )
 
-    return make_data_tag(
+    return make_semantic_tag(
         context.soup,
         SECTION_TITLE_SCHEMAS[cast(int, segmentation_tag_data["level"])],
         contents=[get_string(tag)],
@@ -447,7 +449,7 @@ def render_section(
             raise ValueError(f"Unexpected tag {element.type} in section contents")
 
     section_segmentation_tag_data = read_segmentation_tag_data(section_title)
-    return make_data_tag(
+    return make_semantic_tag(
         context.soup,
         SECTION_SCHEMA,
         data=dict(
@@ -546,7 +548,7 @@ def render_alinea(
             raise ValueError(f"Unexpected tag {element} in alinea contents")
 
     alinea_segmentation_tag_data = read_segmentation_tag_data(tag)
-    return make_data_tag(
+    return make_semantic_tag(
         context.soup,
         ALINEA_SCHEMA,
         data=dict(number=str(alinea_segmentation_tag_data["number"])),

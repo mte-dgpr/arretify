@@ -31,7 +31,8 @@ from arretify.utils.html import (
     render_str_list_attribute,
     render_bool_attribute,
 )
-from arretify.utils.html_create import make_data_tag, make_new_tag
+from arretify.utils.html_semantic import make_semantic_tag
+from arretify.utils.html_create import make_new_tag
 from arretify.utils.strings import merge_strings
 from arretify.utils.html_split_merge import make_regex_tree_splitter
 from arretify.utils.split_merge import split_elements, map_splitted_elements
@@ -334,7 +335,7 @@ def _render_operation_match(
     soup: BeautifulSoup,
     operation_match: regex_tree.Match,
 ) -> Tag:
-    return make_data_tag(
+    return make_semantic_tag(
         soup,
         OPERATION_SCHEMA,
         contents=flat_map_regex_tree_match(
