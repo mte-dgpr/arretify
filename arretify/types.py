@@ -52,14 +52,6 @@ class SemanticTagSchema:
         if "group_id" in self.data_keys:
             raise ValueError("group_id is a reserved key")
 
-    @property
-    def css_class(self) -> str:
-        """
-        Returns the semantic CSS class for this schema.
-        The class is in the format `arretify-{name}`.
-        """
-        return f"arretify-{self.name}"
-
 
 DataElementDataDict = Dict[str, str | None]
 

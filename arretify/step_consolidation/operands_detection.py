@@ -38,6 +38,7 @@ from arretify.utils.element_ranges import (
     get_contiguous_elements_left,
     get_contiguous_elements_right,
 )
+from arretify.utils.html_semantic import is_semantic_tag
 from arretify.utils.references import build_reference_tree
 
 
@@ -87,7 +88,7 @@ def _find_right_operand(document_context: DocumentContext, start_tag: Tag) -> Ta
 
         # We ignore inline tags like page separators and footers
         # and look recursively for the next neighbouring element.
-        elif is_tag(element, css_classes_in=[s.css_class for s in INLINE_TAG_SCHEMAS]):
+        elif is_semantic_tag(element, schema_in=INLINE_TAG_SCHEMAS):
             return _find_right_operand(document_context, element)
     return None
 
@@ -97,11 +98,11 @@ def _find_left_references(document_context: DocumentContext, start_tag: Tag) -> 
     reference_tags: list[Tag] = []
 
     for element in contiguous_elements_left:
-        if is_tag(
+        if is_semantic_tag(
             element,
-            css_classes_in=[
-                SECTION_REFERENCE_SCHEMA.css_class,
-                DOCUMENT_REFERENCE_SCHEMA.css_class,
+            schema_in=[
+                SECTION_REFERENCE_SCHEMA,
+                DOCUMENT_REFERENCE_SCHEMA,
             ],
         ):
             # Take the leaves of the reference tree, i.e. the most
@@ -116,12 +117,12 @@ def _find_left_references(document_context: DocumentContext, start_tag: Tag) -> 
 
         # We ignore inline tags like page separators and footers
         # and look recursively for the next neighbouring element.
-        elif is_tag(element, css_classes_in=[s.css_class for s in INLINE_TAG_SCHEMAS]):
+        elif is_semantic_tag(element, schema_in=INLINE_TAG_SCHEMAS):
             return _find_left_references(document_context, element)
 
     if len(reference_tags) == 0:
         for element in contiguous_elements_left:
-            if is_tag(element, css_classes_in=[DOCUMENT_REFERENCE_SCHEMA.css_class]):
+            if is_semantic_tag(element, schema_in=[DOCUMENT_REFERENCE_SCHEMA]):
                 reference_tags = [element]
                 break
 

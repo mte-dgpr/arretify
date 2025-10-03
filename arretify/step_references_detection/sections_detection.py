@@ -36,7 +36,7 @@ from arretify.utils.html import (
     set_group_id,
     PageElementOrString,
 )
-from arretify.utils.html_create import make_data_tag
+from arretify.utils.html_semantic import make_semantic_tag
 from arretify.utils.html_split_merge import make_regex_tree_splitter
 from arretify.utils.split_merge import (
     split_elements,
@@ -305,7 +305,7 @@ def _render_section_reference(
     group_id: ElementGroupId | None = None,
 ) -> Tag:
     section = _extract_section(section_reference_match)
-    section_tag = make_data_tag(
+    section_tag = make_semantic_tag(
         document_context.soup,
         SECTION_REFERENCE_SCHEMA,
         data=dict(

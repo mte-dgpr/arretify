@@ -36,7 +36,7 @@ from arretify.semantic_tag_schemas import (
 )
 from arretify.utils.html_split_merge import make_regex_tree_splitter
 from arretify.utils.split_merge import split_elements, map_splitted_elements
-from arretify.utils.html_create import make_data_tag
+from arretify.utils.html_semantic import make_semantic_tag
 from arretify.law_data.types import (
     Document,
     DocumentType,
@@ -79,7 +79,7 @@ def _render_code_reference(
     if document.title is None:
         raise ValueError("Could not find code title")
 
-    code_reference_tag = make_data_tag(
+    code_reference_tag = make_semantic_tag(
         soup,
         DOCUMENT_REFERENCE_SCHEMA,
         data=document.get_data_attributes(),

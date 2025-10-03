@@ -22,13 +22,14 @@ from dataclasses import replace as dataclass_replace
 
 from arretify.types import DocumentContext, PageElementOrString
 from arretify.law_data.types import SectionType, Section
+from arretify.utils.html_semantic import is_semantic_tag
 from arretify.utils.references import (
     traverse_reference_tree,
     build_reference_tree,
     ReferenceTree,
 )
 from arretify.utils.functional import iter_func_to_list
-from arretify.utils.html import set_data_attributes, is_tag
+from arretify.utils.html import set_data_attributes
 from arretify.semantic_tag_schemas import SECTION_REFERENCE_SCHEMA
 
 
@@ -88,7 +89,7 @@ def remove_misdetected_sections(
     children: Sequence[PageElementOrString],
 ) -> Iterator[PageElementOrString]:
     for section_reference_tag in children:
-        if not is_tag(section_reference_tag, css_classes_in=[SECTION_REFERENCE_SCHEMA.css_class]):
+        if not is_semantic_tag(section_reference_tag, schema_in=[SECTION_REFERENCE_SCHEMA]):
             yield section_reference_tag
             continue
 

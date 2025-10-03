@@ -27,8 +27,10 @@ from arretify.utils.functional import iter_func_to_list, chain_functions
 from arretify.utils.html import (
     render_str_list_attribute,
 )
+from arretify.utils.html_semantic import (
+    make_semantic_tag,
+)
 from arretify.utils.html_create import (
-    make_data_tag,
     make_new_tag,
 )
 from arretify.utils.markdown_parsing import (
@@ -667,7 +669,7 @@ def render_error(
     context: DocumentContext,
     tag: Tag,
 ) -> Tag:
-    return make_data_tag(
+    return make_semantic_tag(
         context.soup,
         ERROR_SCHEMA,
         data=dict(

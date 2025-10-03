@@ -36,7 +36,7 @@ class TestResolveUnknownSections(unittest.TestCase):
             """
             <div>
                 <a
-                    class="arretify-section_reference"
+                    data-schema="section_reference"
                     data-element_id="1"
                     data-parent_reference="2"
                     data-start_num="123"
@@ -46,7 +46,7 @@ class TestResolveUnknownSections(unittest.TestCase):
                 </a>
                 de l'
                 <a
-                    class="arretify-document_reference"
+                    data-schema="document_reference"
                     data-element_id="2"
                     data-num="456"
                     data-type="arrete"
@@ -57,14 +57,16 @@ class TestResolveUnknownSections(unittest.TestCase):
             """
         )
         reference_tree = build_reference_tree(
-            document_context.soup.select_one(".arretify-document_reference")
+            document_context.soup.select_one("[data-schema='document_reference']")
         )
 
         # Act
         resolve_unknown_sections(document_context, reference_tree)
 
         # Assert
-        section_reference_tag = document_context.soup.select_one(".arretify-section_reference")
+        section_reference_tag = document_context.soup.select_one(
+            "[data-schema='section_reference']"
+        )
         section = Section.from_tag(section_reference_tag)
         assert section.type == SectionType.ARTICLE
 
@@ -74,7 +76,7 @@ class TestResolveUnknownSections(unittest.TestCase):
             """
             <div>
                 <a
-                    class="arretify-section_reference"
+                    data-schema="section_reference"
                     data-element_id="1"
                     data-parent_reference="2"
                     data-start_num="123"
@@ -84,7 +86,7 @@ class TestResolveUnknownSections(unittest.TestCase):
                 </a>
                 de l'
                 <a
-                    class="arretify-section_reference"
+                    data-schema="section_reference"
                     data-element_id="2"
                     data-start_num="456"
                     data-type="article"
@@ -95,7 +97,9 @@ class TestResolveUnknownSections(unittest.TestCase):
             """
         )
         reference_tree = build_reference_tree(
-            document_context.soup.select_one(".arretify-section_reference[data-element_id='1']")
+            document_context.soup.select_one(
+                "[data-schema='section_reference'][data-element_id='1']"
+            )
         )
 
         # Act
@@ -103,7 +107,7 @@ class TestResolveUnknownSections(unittest.TestCase):
 
         # Assert
         section_reference_tag = document_context.soup.select_one(
-            ".arretify-section_reference[data-element_id='1']"
+            "[data-schema='section_reference'][data-element_id='1']"
         )
         section = Section.from_tag(section_reference_tag)
         assert section.type == SectionType.ALINEA
@@ -117,7 +121,7 @@ class TestRemoveMisdetectedSections(unittest.TestCase):
                 """
             à l'
             <a
-                class="arretify-section_reference"
+                data-schema="section_reference"
                 data-element_id="1"
                 data-type="annexe"
             >

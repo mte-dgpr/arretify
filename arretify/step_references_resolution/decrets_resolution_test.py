@@ -35,31 +35,31 @@ class TestResolveDecretLegifranceId(unittest.TestCase):
             process_decret_document_reference(
                 """
             <a
-                class="arretify-document_reference"
+                data-schema="document_reference"
                 data-date="2005-04-20"
                 data-type="decret"
             >
                 décret du
-                <time class="arretify-date" datetime="2005-04-20">
+                <time data-schema="date" datetime="2005-04-20">
                     20 avril 2005
                 </time>
             </a>
             relatif au programme national d'action contre la pollution des milieux aquatiques
             par certaines substances dangereuses
             """,
-                css_selector=".arretify-document_reference",
+                css_selector="[data-schema='document_reference']",
             )
             == normalized_html_str(
                 """
             <a
-                class="arretify-document_reference"
+                data-schema="document_reference"
                 data-date="2005-04-20"
                 data-id="JORFTEXT000000259598"
                 data-type="decret"
                 href="https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000000259598"
             >
                 décret du
-                <time class="arretify-date" datetime="2005-04-20">
+                <time data-schema="date" datetime="2005-04-20">
                     20 avril 2005
                 </time>
             </a>

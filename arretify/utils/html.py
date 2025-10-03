@@ -33,10 +33,6 @@ from arretify.utils.functional import iter_func_to_list
 INLINE_TAG_TYPES = ["br"]
 
 
-SHARED_DATA_KEYS = [
-    "error_codes",
-]
-
 _Id = str
 _IdName = Literal["element_id", "group_id"]
 
@@ -111,7 +107,6 @@ def set_data_attributes(tag: Tag, data: DataElementDataDict) -> None:
 
 def is_tag(
     tag: PageElementOrString,
-    css_classes_in: Sequence[str] | None = None,
     tag_name_in: Sequence[str] | None = None,
 ) -> TypeGuard[Tag]:
     """
@@ -119,23 +114,6 @@ def is_tag(
     """
     if not isinstance(tag, Tag):
         return False
-
-    if css_classes_in is not None:
-        actual_css_classes = tag.get_attribute_list("class", [])
-        for css_class in actual_css_classes:
-            # If you set the 'class' on a tag as a string, it seems like you will
-            # get a string back, e.g. :
-            #   tag.class = "my-class my-other-class"
-            #   tag.get_attribute_list("class") -> ["my-class my-other-class"]
-            if " " in css_class:
-                raise RuntimeError(
-                    "CSS class contains spaces. Please use a list of classes instead."
-                )
-        for css_class in css_classes_in:
-            if css_class in actual_css_classes:
-                break
-        else:
-            return False
 
     if tag_name_in is not None:
         if tag.name not in tag_name_in:

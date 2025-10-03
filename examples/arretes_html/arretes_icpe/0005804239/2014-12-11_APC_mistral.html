@@ -33,7 +33,7 @@
                 padding: 0.5rem;
             }
 
-            a.arretify-document_reference, a.arretify-section_reference {
+            a[data-schema="document_reference"], a[data-schema="section_reference"] {
                 color: var(--text-action-high-blue-france);
             }
 
@@ -42,18 +42,18 @@
                 background-color: #ffd0d0 !important;
             }
 
-            .arretify-alinea::before, .arretify-visa::before, .arretify-motifs::before {
+            [data-schema="alinea"]::before, [data-schema="visa"]::before, [data-schema="motifs"]::before {
                 color: var(--text-disabled-grey);
                 position: absolute;
                 top: 0;
                 left: -1rem;
             }
 
-            .arretify-debug_keyword {
+            [data-schema="debug_keyword"] {
                 color: var(--warning-425-625);
             }
 
-            .arretify-visual_page_separator {
+            .visual_page_separator {
                 position: absolute;
                 left: 0;
                 width: 100vw;
@@ -62,7 +62,7 @@
                 z-index: -1;
             }
 
-            a.arretify-visual_page_separator > span {
+            a.visual_page_separator > span {
                 position: absolute;
                 font-size: 75%;
                 color: var(--grey-625-425);
@@ -78,28 +78,28 @@
                 margin-bottom: var(--spacing-1);
             }
 
-            .arretify-emblem, .arretify-entity, .arretify-identification, .arretify-arrete_title, .arretify-honorary {
+            [data-schema="emblem"], [data-schema="entity"], [data-schema="identification"], [data-schema="arrete_title"], [data-schema="honorary"] {
                 padding: var(--spacing-1);
                 background-color: var(--background-alt-grey);
                 text-align: center;
             }
 
-            .arretify-arrete_title {
+            [data-schema="arrete_title"] {
                 color: var(--text-title-grey);
             }
 
-            .arretify-emblem, .arretify-entity, .arretify-identification, .arretify-honorary {
+            [data-schema="emblem"], [data-schema="entity"], [data-schema="identification"], [data-schema="honorary"] {
                 color: var(--text-title-blue-france);
                 font-size: 120%;
             }
 
-            .arretify-visa, .arretify-motifs, .arretify-supplementary_motif_info, .arretify-table_of_contents {
+            [data-schema="visa"], [data-schema="motifs"], [data-schema="supplementary_motif_info"], [data-schema="table_of_contents"] {
                 position: relative;
                 margin-top: var(--spacing-1);
                 padding-bottom: 0;
             }
 
-            .arretify-visa::before, .arretify-motifs::before {
+            [data-schema="visa"]::before, [data-schema="motifs"]::before {
                 content: '⮞';
             }
 
@@ -109,24 +109,24 @@
             }
 
             /**************** MAIN CONTENT AND APPENDIX ****************/
-            .arretify-table {
+            [data-schema="table"] {
                 font-family: monospace;
             }
 
-            .arretify-section {
+            [data-schema="section"] {
                 padding: var(--spacing-0p5) 0;
             }
 
-            .arretify-alinea {
+            [data-schema="alinea"] {
                 position: relative;
                 margin-top: var(--spacing-0p5);
             }
 
-            .arretify-alinea::before {
+            [data-schema="alinea"]::before {
                 content: '¶';
             }
 
-            .arretify-alinea img {
+            [data-schema="alinea"] img {
                 max-width: 100%;
             }
 
@@ -134,7 +134,7 @@
                 list-style: none;
             }
 
-            .arretify-operation {
+            [data-schema="operation"] {
                 background-color: var(--background-action-low-blue-france);
             }
   </style>
@@ -143,17 +143,17 @@
                 // Page separators are inline elements, so they can be anywhere in the tree.
                 // To ensure proper layout, we therefore create a separate visual element
                 // for each page separator.
-                const pageSeparators = Array.from(document.querySelectorAll('.arretify-page_separator'))
+                const pageSeparators = Array.from(document.querySelectorAll('[data-schema="page_separator"]'))
                 
                 const refreshPageSeparator = () => {
-                    document.querySelectorAll('.arretify-visual_page_separator')
+                    document.querySelectorAll('.visual_page_separator')
                         .forEach((visualPageSeparator) => visualPageSeparator.remove())
                     pageSeparators.slice(1).forEach(function(pageSeparator) {
                         const boundingBox = pageSeparator.getBoundingClientRect()
                         const position = getPositionRelativeToDocument(pageSeparator)
                         const pageIndex = parseInt(pageSeparator.dataset.page_index, 10)
                         const visualPageSeparator = document.createElement('a')
-                        visualPageSeparator.classList.add('arretify-visual_page_separator')
+                        visualPageSeparator.classList.add('visual_page_separator')
                         visualPageSeparator.style.top = `${position.top + boundingBox.height}px`
                         visualPageSeparator.innerHTML = `<span>↓ page ${pageIndex + 1}</span>`
                         document.body.appendChild(visualPageSeparator)
@@ -174,10 +174,10 @@
   </script>
  </head>
  <body>
-  <header class="arretify-header">
-   <a class="arretify-page_separator" data-page_index="0">
+  <header data-schema="header">
+   <a data-page_index="0" data-schema="page_separator">
    </a>
-   <div class="arretify-entity">
+   <div data-schema="entity">
     <div>
      PRÉFET DE LA SEINE-MARITIME
     </div>
@@ -191,16 +191,16 @@
      Affaire suivie par Sabrina LE ROL Tél : 0235193284 Fax : 0235193299 Mél : sabrina.leroi@development-durable.gouv.fr
     </div>
    </div>
-   <div class="arretify-arrete_title">
+   <div data-schema="arrete_title">
     <h1>
      Arrêtédu
-     <time class="arretify-date" datetime="2014-12-11">
+     <time data-schema="date" datetime="2014-12-11">
       11 DEC. 2014
      </time>
      portant sur des prescriptions complémentaires imposant à la société OSILUB la constitution de garanties financières pour la mise en sécurité en cas d'arrêt définitif de son installation sise à GONFREVILLE L'ORCHER.
     </h1>
    </div>
-   <div class="arretify-honorary">
+   <div data-schema="honorary">
     <div>
      Le préfet de la région Haute-Normandie, préfet de la Seine-Maritime,
     </div>
@@ -208,167 +208,167 @@
      Commandeur de la Légion d'Honneur
     </div>
    </div>
-   <div class="arretify-visa">
+   <div data-schema="visa">
     Vu le
-    <a class="arretify-document_reference" data-id="LEGITEXT000006074220" data-title="Code de l'environnement" data-type="code" href="https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006074220">
+    <a data-id="LEGITEXT000006074220" data-schema="document_reference" data-title="Code de l'environnement" data-type="code" href="https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006074220">
      code de l'environnement
     </a>
     et notamment ses
-    <a class="arretify-section_reference" data-group_id="1" data-start_num="L516-1" data-type="article">
+    <a data-group_id="1" data-schema="section_reference" data-start_num="L516-1" data-type="article">
      articles L. 516-1
     </a>
     ,
-    <a class="arretify-section_reference" data-group_id="1" data-start_num="R512-31" data-type="article">
+    <a data-group_id="1" data-schema="section_reference" data-start_num="R512-31" data-type="article">
      R. 512-31
     </a>
     et
-    <a class="arretify-section_reference" data-group_id="1" data-start_num="R516-1" data-type="article">
+    <a data-group_id="1" data-schema="section_reference" data-start_num="R516-1" data-type="article">
      R. 516-1
     </a>
     et suivants;
    </div>
-   <div class="arretify-visa">
+   <div data-schema="visa">
     Vu le
-    <a class="arretify-document_reference" data-date="2004-04-29" data-id="JORFTEXT000000249712" data-num="2004-374" data-type="decret" href="https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000000249712">
+    <a data-date="2004-04-29" data-id="JORFTEXT000000249712" data-num="2004-374" data-schema="document_reference" data-type="decret" href="https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000000249712">
      décret n° 2004-374 du
-     <time class="arretify-date" datetime="2004-04-29">
+     <time data-schema="date" datetime="2004-04-29">
       29 avril 2004
      </time>
     </a>
     modifié relatif aux pouvoirs des préfets, à l'organisation et à l'action des services de l'État dans les régions et les départements;
    </div>
-   <div class="arretify-visa">
+   <div data-schema="visa">
     Vu le décret du Président de la République en date du 17 janvier 2013 nommant M. Pierre-Henry Maccioni préfet de la région Haute-Normandie, préfet de la Seine-Maritime,
    </div>
-   <div class="arretify-visa">
+   <div data-schema="visa">
     Vu l'
-    <a class="arretify-document_reference" data-date="2012-05-31" data-id="JORFTEXT000026052400" data-type="arrete-ministeriel" href="https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000026052400">
+    <a data-date="2012-05-31" data-id="JORFTEXT000026052400" data-schema="document_reference" data-type="arrete-ministeriel" href="https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000026052400">
      arrêté ministériel du
-     <time class="arretify-date" datetime="2012-05-31">
+     <time data-schema="date" datetime="2012-05-31">
       31 mai 2012
      </time>
     </a>
     fixant la liste des installations classées soumises à l'obligation de constitution de garanties financières en application du 5° de l'
-    <a class="arretify-section_reference" data-parent_reference="1" data-start_id="LEGIARTI000049913905" data-start_num="R516-1" data-type="article" href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000049913905">
+    <a data-parent_reference="1" data-schema="section_reference" data-start_id="LEGIARTI000049913905" data-start_num="R516-1" data-type="article" href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000049913905">
      article R. 516-1
     </a>
     du
-    <a class="arretify-document_reference" data-element_id="1" data-id="LEGITEXT000006074220" data-title="Code de l'environnement" data-type="code" href="https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006074220">
+    <a data-element_id="1" data-id="LEGITEXT000006074220" data-schema="document_reference" data-title="Code de l'environnement" data-type="code" href="https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006074220">
      code de l'environnement
     </a>
     ;
    </div>
-   <div class="arretify-visa">
+   <div data-schema="visa">
     Vu l'
-    <a class="arretify-document_reference" data-date="2012-05-31" data-id="JORFTEXT000026052372" data-type="arrete-ministeriel" href="https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000026052372">
+    <a data-date="2012-05-31" data-id="JORFTEXT000026052372" data-schema="document_reference" data-type="arrete-ministeriel" href="https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000026052372">
      arrêté ministériel du
-     <time class="arretify-date" datetime="2012-05-31">
+     <time data-schema="date" datetime="2012-05-31">
       31 mai 2012
      </time>
     </a>
     relatif aux modalités de détermination et d'actualisation du montant des garanties financières pour la mise en sécurité des installations classées et des garanties additionnelles en cas de mise en œuvre de mesures de gestion de la pollution des sols et des eaux souterraines;
    </div>
-   <div class="arretify-visa">
+   <div data-schema="visa">
     Vu l'
-    <a class="arretify-document_reference" data-date="2012-07-31" data-id="JORFTEXT000026269532" data-type="arrete-ministeriel" href="https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000026269532">
+    <a data-date="2012-07-31" data-id="JORFTEXT000026269532" data-schema="document_reference" data-type="arrete-ministeriel" href="https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000026269532">
      arrêté ministériel du
-     <time class="arretify-date" datetime="2012-07-31">
+     <time data-schema="date" datetime="2012-07-31">
       31 juillet 2012
      </time>
     </a>
     relatif aux modalités de constitution de garanties financières prévues aux
-    <a class="arretify-section_reference" data-parent_reference="2" data-start_id="LEGIARTI000049913905" data-start_num="R516-1" data-type="article" href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000049913905">
+    <a data-parent_reference="2" data-schema="section_reference" data-start_id="LEGIARTI000049913905" data-start_num="R516-1" data-type="article" href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000049913905">
      articles R. 516-1
     </a>
     et suivants du
-    <a class="arretify-document_reference" data-element_id="2" data-id="LEGITEXT000006074220" data-title="Code de l'environnement" data-type="code" href="https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006074220">
+    <a data-element_id="2" data-id="LEGITEXT000006074220" data-schema="document_reference" data-title="Code de l'environnement" data-type="code" href="https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006074220">
      code de l'environnement
     </a>
     ;
    </div>
-   <div class="arretify-visa">
+   <div data-schema="visa">
     Vu l'
-    <a class="arretify-document_reference" data-date="2013-04-25" data-num="13-196" data-type="arrete-prefectoral">
+    <a data-date="2013-04-25" data-num="13-196" data-schema="document_reference" data-type="arrete-prefectoral">
      arrêté préfectoral n° 13-196 du
-     <time class="arretify-date" datetime="2013-04-25">
+     <time data-schema="date" datetime="2013-04-25">
       25 avril 2013
      </time>
      modifié
     </a>
     portant délégation de signature à M. Eric MAIRE, secrétaire général de la préfecture de la Seine-Maritime;
    </div>
-   <div class="arretify-visa">
+   <div data-schema="visa">
     Vu l'arrêté d'autorisation d'exploitation de la société OSILUB en date du 8 décembre 2009 ;
    </div>
-   <div class="arretify-visa">
+   <div data-schema="visa">
     Vu les propositions de calcul du montant des garanties financières faites par la société OSILUB par courrier du 4 novembre 2013 complété par courrier du 22 septembre 2014 ;
    </div>
-   <a class="arretify-page_separator" data-page_index="1">
+   <a data-page_index="1" data-schema="page_separator">
    </a>
-   <div class="arretify-visa">
+   <div data-schema="visa">
     Vu le rapport de l'inspecteur des installations classées du 29 octobre 2014,
    </div>
-   <div class="arretify-visa">
+   <div data-schema="visa">
     Vu la délibération du conseil départemental de l'environnement et des risques sanitaires et technologiques en date du 18 novembre 2014 ;
    </div>
-   <div class="arretify-visa">
+   <div data-schema="visa">
     Vu la transmission du projet d'arrêté faite à l'exploitant en date du 19 novembre 2014.
    </div>
-   <div class="arretify-motifs">
+   <div data-schema="motifs">
     Considérant que l'installation exploitée est notamment soumise à autorisation au titre de la rubrique n° 2770 de la nomenclature des installations classées listée par l'
-    <a class="arretify-document_reference" data-date="2012-05-31" data-type="arrete-ministeriel">
+    <a data-date="2012-05-31" data-schema="document_reference" data-type="arrete-ministeriel">
      arrêté ministériel du
-     <time class="arretify-date" datetime="2012-05-31">
+     <time data-schema="date" datetime="2012-05-31">
       31 mai 2012
      </time>
     </a>
     susvisé et qu'elle est considérée comme existante au sens de ce même arrété ;
    </div>
-   <div class="arretify-motifs">
+   <div data-schema="motifs">
     Considérant que les activités concernées par cette rubrique sont exercées à des niveaux supérieurs aux seuils fixés par l'
-    <a class="arretify-document_reference" data-date="2012-05-31" data-type="arrete-ministeriel">
+    <a data-date="2012-05-31" data-schema="document_reference" data-type="arrete-ministeriel">
      arrêté ministériel du
-     <time class="arretify-date" datetime="2012-05-31">
+     <time data-schema="date" datetime="2012-05-31">
       31 mai 2012
      </time>
     </a>
     susvisé.
    </div>
-   <div class="arretify-supplementary_motif_info">
+   <div data-schema="supplementary_motif_info">
     <div>
      Sur proposition du secrétaire général de la préfecture,
     </div>
    </div>
-   <div class="arretify-arrete_title">
+   <div data-schema="arrete_title">
     <h1>
      ARRETE
     </h1>
    </div>
   </header>
-  <main class="arretify-main">
-   <section class="arretify-section" data-number="l" data-title="er : Objet" data-type="article">
-    <h2 class="arretify-section_title">
+  <main data-schema="main">
+   <section data-number="l" data-schema="section" data-title="er : Objet" data-type="article">
+    <h2 data-schema="section_title">
      Article ler : Objet
     </h2>
-    <div class="arretify-alinea" data-number="1">
+    <div data-number="1" data-schema="alinea">
      La société OSILUB, ci-après dénommée
      <q>
       l'exploitant
      </q>
      , dont le siège social est situé GONFREVILLE L'ORCHER, est tenue, dans le cadre du 5° du IV de l'
-     <a class="arretify-section_reference" data-parent_reference="3" data-start_id="LEGIARTI000049913922" data-start_num="R516-2" data-type="article" href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000049913922">
+     <a data-parent_reference="3" data-schema="section_reference" data-start_id="LEGIARTI000049913922" data-start_num="R516-2" data-type="article" href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000049913922">
       article R. 516-2
      </a>
      du
-     <a class="arretify-document_reference" data-element_id="3" data-id="LEGITEXT000006074220" data-title="Code de l'environnement" data-type="code" href="https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006074220">
+     <a data-element_id="3" data-id="LEGITEXT000006074220" data-schema="document_reference" data-title="Code de l'environnement" data-type="code" href="https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006074220">
       code de l'environnement
      </a>
      , de constituer des garanties financières visant la mise en sécurité des installations listées à l'
-     <a class="arretify-section_reference" data-parent_reference="4" data-start_num="2" data-type="article">
+     <a data-parent_reference="4" data-schema="section_reference" data-start_num="2" data-type="article">
       article 2
      </a>
      du
-     <a class="arretify-document_reference" data-element_id="4" data-type="self">
+     <a data-element_id="4" data-schema="document_reference" data-type="self">
       présent arrêté
      </a>
      , implantées sur le site sis ZIP -
@@ -378,18 +378,18 @@
      - 76700 GONFREVILLE L'ORCHER.
     </div>
    </section>
-   <section class="arretify-section" data-number="2" data-title="Installations couvertes par les garanties financières" data-type="article">
-    <h2 class="arretify-section_title" data-error_codes="non_contiguous_titles">
+   <section data-number="2" data-schema="section" data-title="Installations couvertes par les garanties financières" data-type="article">
+    <h2 data-error_codes="non_contiguous_titles" data-schema="section_title">
      Article 2 : Installations couvertes par les garanties financières
     </h2>
-    <div class="arretify-alinea" data-number="1">
+    <div data-number="1" data-schema="alinea">
      Les garanties financières définies dans
-     <a class="arretify-document_reference" data-type="self">
+     <a data-schema="document_reference" data-type="self">
       le présent arrêté
      </a>
      s'appliquent aux installations listées dans le tableau ci-après ainsi qu'à leurs installations connexes implantées sur le site susvisé :
     </div>
-    <div class="arretify-alinea" data-number="2">
+    <div data-number="2" data-schema="alinea">
      <table>
       <thead>
        <tr>
@@ -411,21 +411,21 @@
         </td>
         <td style="text-align: center;">
          Installation de traitement thermique de déchets dangereux ou de déchets contenant des substances dangereuses ou préparations dangereuses mentionnées à l'
-         <a class="arretify-section_reference" data-parent_reference="5" data-start_id="LEGIARTI000029901228" data-start_num="R511-10" data-type="article" href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000029901228">
+         <a data-parent_reference="5" data-schema="section_reference" data-start_id="LEGIARTI000029901228" data-start_num="R511-10" data-type="article" href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000029901228">
           article R. 511-10
          </a>
          du
-         <a class="arretify-document_reference" data-element_id="5" data-id="LEGITEXT000006074220" data-title="Code de l'environnement" data-type="code" href="https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006074220">
+         <a data-element_id="5" data-id="LEGITEXT000006074220" data-schema="document_reference" data-title="Code de l'environnement" data-type="code" href="https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006074220">
           code de l'environnement
          </a>
          à l'exclusion des installations visées à la rubrique 2793.
          <br/>
          1. Les déchets destinés à être traités contenant des substances dangereuses ou préparations dangereuses mentionnées à l'
-         <a class="arretify-section_reference" data-parent_reference="6" data-start_id="LEGIARTI000029901228" data-start_num="R511-10" data-type="article" href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000029901228">
+         <a data-parent_reference="6" data-schema="section_reference" data-start_id="LEGIARTI000029901228" data-start_num="R511-10" data-type="article" href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000029901228">
           article R. 511-10
          </a>
          du
-         <a class="arretify-document_reference" data-element_id="6" data-id="LEGITEXT000006074220" data-title="Code de l'environnement" data-type="code" href="https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006074220">
+         <a data-element_id="6" data-id="LEGITEXT000006074220" data-schema="document_reference" data-title="Code de l'environnement" data-type="code" href="https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006074220">
           code de l'environnement
          </a>
          .
@@ -443,31 +443,31 @@
       </tbody>
      </table>
     </div>
-    <div class="arretify-alinea" data-number="3">
+    <div data-number="3" data-schema="alinea">
      Elles s'établissent sans préjudice des garanties financières que l'exploitant constitue éventuellement en application du 3° du IV de l'
-     <a class="arretify-section_reference" data-parent_reference="7" data-start_id="LEGIARTI000049913922" data-start_num="R516-2" data-type="article" href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000049913922">
+     <a data-parent_reference="7" data-schema="section_reference" data-start_id="LEGIARTI000049913922" data-start_num="R516-2" data-type="article" href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000049913922">
       article R.516-2
      </a>
      du
-     <a class="arretify-document_reference" data-element_id="7" data-id="LEGITEXT000006074220" data-title="Code de l'environnement" data-type="code" href="https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006074220">
+     <a data-element_id="7" data-id="LEGITEXT000006074220" data-schema="document_reference" data-title="Code de l'environnement" data-type="code" href="https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006074220">
       code de l'environnement
      </a>
      .
     </div>
-    <a class="arretify-page_separator" data-page_index="2">
+    <a data-page_index="2" data-schema="page_separator">
     </a>
    </section>
-   <section class="arretify-section" data-number="3" data-title="Montant des garanties financières / natures et quantités de déchets couvertes par ces garanties" data-type="article">
-    <h2 class="arretify-section_title">
+   <section data-number="3" data-schema="section" data-title="Montant des garanties financières / natures et quantités de déchets couvertes par ces garanties" data-type="article">
+    <h2 data-schema="section_title">
      Article 3: Montant des garanties financières / natures et quantités de déchets couvertes par ces garanties
     </h2>
-    <div class="arretify-alinea" data-number="1">
+    <div data-number="1" data-schema="alinea">
      Le montant des garanties financières est fixé à 296235 € TTC.
     </div>
-    <div class="arretify-alinea" data-number="2">
+    <div data-number="2" data-schema="alinea">
      Les quantités maximales de déchets couvertes par ce montant, pouvant en conséquence être stockées sur le site, sont les suivantes :
     </div>
-    <div class="arretify-alinea" data-number="3">
+    <div data-number="3" data-schema="alinea">
      <table>
       <thead>
        <tr>
@@ -574,37 +574,37 @@
      </table>
     </div>
    </section>
-   <section class="arretify-section" data-number="4" data-title="Constitution des garanties financières " data-type="article">
-    <h2 class="arretify-section_title">
+   <section data-number="4" data-schema="section" data-title="Constitution des garanties financières " data-type="article">
+    <h2 data-schema="section_title">
      Article 4 : Constitution des garanties financières
     </h2>
-    <div class="arretify-alinea" data-number="1">
+    <div data-number="1" data-schema="alinea">
      Le document attestant de la constitution des garanties financières est délivré par l'un des organismes prévu à l'
-     <a class="arretify-section_reference" data-parent_reference="8" data-start_id="LEGIARTI000049913922" data-start_num="R516-2" data-type="article" href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000049913922">
+     <a data-parent_reference="8" data-schema="section_reference" data-start_id="LEGIARTI000049913922" data-start_num="R516-2" data-type="article" href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000049913922">
       article R. 516-2
      </a>
      du
-     <a class="arretify-document_reference" data-element_id="8" data-id="LEGITEXT000006074220" data-title="Code de l'environnement" data-type="code" href="https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006074220">
+     <a data-element_id="8" data-id="LEGITEXT000006074220" data-schema="document_reference" data-title="Code de l'environnement" data-type="code" href="https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006074220">
       code de l'environnement
      </a>
      .
     </div>
-    <div class="arretify-alinea" data-number="2">
+    <div data-number="2" data-schema="alinea">
      Il est établi dans les formes prévues par l'
-     <a class="arretify-document_reference" data-date="2012-07-31" data-type="arrete-ministeriel">
+     <a data-date="2012-07-31" data-schema="document_reference" data-type="arrete-ministeriel">
       arrêté ministériel du
-      <time class="arretify-date" datetime="2012-07-31">
+      <time data-schema="date" datetime="2012-07-31">
        31 juillet 2012
       </time>
      </a>
      susvisé. La date d'expiration du cautionnement ne peut être fixée moins de deux années après la date d'effet de la caution.
     </div>
-    <a class="arretify-page_separator" data-page_index="3">
+    <a data-page_index="3" data-schema="page_separator">
     </a>
-    <div class="arretify-alinea" data-number="3">
+    <div data-number="3" data-schema="alinea">
      Les documents attestant de la constitution des garanties financières sont transmis à l'inspection des installations classées selon l'échéancier suivant, établi en fonction du type de garants :
     </div>
-    <div class="arretify-alinea" data-number="4">
+    <div data-number="4" data-schema="alinea">
      <table>
       <thead>
        <tr>
@@ -614,11 +614,11 @@
          Taux de constitution du montant des garanties financières fixé
          <br/>
          à l'
-         <a class="arretify-section_reference" data-parent_reference="9" data-start_num="3" data-type="article">
+         <a data-parent_reference="9" data-schema="section_reference" data-start_num="3" data-type="article">
           article 3
          </a>
          du
-         <a class="arretify-document_reference" data-element_id="9" data-type="self">
+         <a data-element_id="9" data-schema="document_reference" data-type="self">
           présent arrêté
          </a>
         </th>
@@ -645,15 +645,15 @@
        <tr>
         <td style="text-align: left;">
          Selon les modalités définies à l'
-         <a class="arretify-section_reference" data-parent_reference="10" data-start_num="3" data-type="article">
+         <a data-parent_reference="10" data-schema="section_reference" data-start_num="3" data-type="article">
           article 3
          </a>
          de
          <br/>
          l'
-         <a class="arretify-document_reference" data-date="2012-05-31" data-element_id="10" data-type="arrete-ministeriel">
+         <a data-date="2012-05-31" data-element_id="10" data-schema="document_reference" data-type="arrete-ministeriel">
           arrêté ministériel du
-          <time class="arretify-date" datetime="2012-05-31">
+          <time data-schema="date" datetime="2012-05-31">
            31 mai 2012
           </time>
          </a>
@@ -758,164 +758,164 @@
      </table>
     </div>
    </section>
-   <section class="arretify-section" data-number="5" data-title="Actualisation des garanties financières " data-type="article">
-    <h2 class="arretify-section_title">
+   <section data-number="5" data-schema="section" data-title="Actualisation des garanties financières " data-type="article">
+    <h2 data-schema="section_title">
      Article 5 : Actualisation des garanties financières
     </h2>
-    <div class="arretify-alinea" data-number="1">
+    <div data-number="1" data-schema="alinea">
      Sans préjudice des dispositions de l'
-     <a class="arretify-section_reference" data-parent_reference="11" data-start_id="LEGIARTI000025805929" data-start_num="R516-5-1" data-type="article" href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000025805929">
+     <a data-parent_reference="11" data-schema="section_reference" data-start_id="LEGIARTI000025805929" data-start_num="R516-5-1" data-type="article" href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000025805929">
       article R. 516-5-1
      </a>
      du
-     <a class="arretify-document_reference" data-element_id="11" data-id="LEGITEXT000006074220" data-title="Code de l'environnement" data-type="code" href="https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006074220">
+     <a data-element_id="11" data-id="LEGITEXT000006074220" data-schema="document_reference" data-title="Code de l'environnement" data-type="code" href="https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006074220">
       code de l'environnement
      </a>
      , l'exploitant présente tous les 5 ans un état actualisé du montant de ses garanties financières.
     </div>
-    <div class="arretify-alinea" data-number="2">
+    <div data-number="2" data-schema="alinea">
      Ce montant réactualisé est obtenu par application de la méthode d'actualisation ci-après :
     </div>
-    <div class="arretify-alinea" data-number="3">
+    <div data-number="3" data-schema="alinea">
      \mathbf{M n}=\mathbf{M r}^{*}(\text { Indexn } / \text { IndexR })^{*}(1+\text { TVAn }) /(1+\text { TVAR })
     </div>
-    <div class="arretify-alinea" data-number="4">
+    <div data-number="4" data-schema="alinea">
      Avec :
     </div>
-    <div class="arretify-alinea" data-number="5">
+    <div data-number="5" data-schema="alinea">
      Mn : le montant des garanties financières devant être constituées l'année n et figurant dans le document d'attestation de la constitution de garanties financières
     </div>
-    <div class="arretify-alinea" data-number="6">
+    <div data-number="6" data-schema="alinea">
      Mr : le montant de référence des garanties financières, fixé à l'
-     <a class="arretify-section_reference" data-parent_reference="12" data-start_num="3" data-type="article">
+     <a data-parent_reference="12" data-schema="section_reference" data-start_num="3" data-type="article">
       article 3
      </a>
      du
-     <a class="arretify-document_reference" data-element_id="12" data-type="self">
+     <a data-element_id="12" data-schema="document_reference" data-type="self">
       présent arrêté
      </a>
     </div>
-    <div class="arretify-alinea" data-number="7">
+    <div data-number="7" data-schema="alinea">
      Indexn : indice TP01 au moment de la constitution du document d'attestation de la constitution des garanties financières
     </div>
-    <div class="arretify-alinea" data-number="8">
+    <div data-number="8" data-schema="alinea">
      IndexR : indice TP01 utilisé pour l'établissement du montant de référence des garanties financières; indexR =700,4
     </div>
-    <div class="arretify-alinea" data-number="9">
+    <div data-number="9" data-schema="alinea">
      TVAn : taux de la TVA applicable au moment de la constitution du document d'attestation de la constitution des garanties financières
     </div>
-    <div class="arretify-alinea" data-number="10">
+    <div data-number="10" data-schema="alinea">
      TVAR : taux de la TVA applicable à l'établissement du
-     <a class="arretify-document_reference" data-type="self">
+     <a data-schema="document_reference" data-type="self">
       présent arrêté
      </a>
      ; TVAR =20
     </div>
-    <div class="arretify-alinea" data-number="11">
+    <div data-number="11" data-schema="alinea">
      Les indices TP01 sont consultables au bulletin officiel de la concurrence, de la consommation et de la répression des fraudes.
     </div>
-    <a class="arretify-page_separator" data-page_index="4">
+    <a data-page_index="4" data-schema="page_separator">
     </a>
-    <div class="arretify-alinea" data-number="12">
+    <div data-number="12" data-schema="alinea">
      Toute modification des conditions d'exploitation conduisant à une modification du coût de mise en sécurité doit nécessiter une révision du montant de référence des garanties financières.
     </div>
    </section>
-   <section class="arretify-section" data-number="6" data-title="Renouvellement des garanties financières " data-type="article">
-    <h2 class="arretify-section_title">
+   <section data-number="6" data-schema="section" data-title="Renouvellement des garanties financières " data-type="article">
+    <h2 data-schema="section_title">
      Article 6 : Renouvellement des garanties financières
     </h2>
-    <div class="arretify-alinea" data-number="1">
+    <div data-number="1" data-schema="alinea">
      Le renouvellement des garanties financières intervient au moins trois mois avant la date d'échéance du document attestant de la constitution des garanties financières.
     </div>
-    <div class="arretify-alinea" data-number="2">
+    <div data-number="2" data-schema="alinea">
      Pour attester du renouvellement des garanties financières, l'exploitant adresse au préfet, au moins trois mois avant la date d'échéance susvisée, un nouveau document dans les formes prévues par l'
-     <a class="arretify-document_reference" data-date="2012-07-31" data-type="arrete-ministeriel">
+     <a data-date="2012-07-31" data-schema="document_reference" data-type="arrete-ministeriel">
       arrêté ministériel du
-      <time class="arretify-date" datetime="2012-07-31">
+      <time data-schema="date" datetime="2012-07-31">
        31 juillet 2012
       </time>
      </a>
      susvisé.
     </div>
-    <div class="arretify-alinea" data-number="3">
+    <div data-number="3" data-schema="alinea">
      L'exploitant informe le préfet, dès qu'il en a connaissance, de tout changement de garant, de tout changement de formes de garanties financières ou encore de toutes modifications des modalités de constitution des garanties financières, telles que définies à l'
-     <a class="arretify-section_reference" data-parent_reference="13" data-start_id="LEGIARTI000049913905" data-start_num="R516-1" data-type="article" href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000049913905">
+     <a data-parent_reference="13" data-schema="section_reference" data-start_id="LEGIARTI000049913905" data-start_num="R516-1" data-type="article" href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000049913905">
       article R. 516-1
      </a>
      du
-     <a class="arretify-document_reference" data-element_id="13" data-id="LEGITEXT000006074220" data-title="Code de l'environnement" data-type="code" href="https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006074220">
+     <a data-element_id="13" data-id="LEGITEXT000006074220" data-schema="document_reference" data-title="Code de l'environnement" data-type="code" href="https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006074220">
       code de l'environnement
      </a>
      , ainsi que de tout changement des conditions d'exploitation conduisant à une modification du montant des garanties financières.
     </div>
    </section>
-   <section class="arretify-section" data-number="7" data-title="Révision du montant des garanties financières" data-type="article">
-    <h2 class="arretify-section_title">
+   <section data-number="7" data-schema="section" data-title="Révision du montant des garanties financières" data-type="article">
+    <h2 data-schema="section_title">
      Article 7 : Révision du montant des garanties financières
     </h2>
-    <div class="arretify-alinea" data-number="1">
+    <div data-number="1" data-schema="alinea">
      Toute modification des conditions d'exploitation conduisant à une modification du coût de mise en sécurité nécessite une révision du montant de référence des garanties financières et doit être portée à la connaissance du préfet avant sa réalisation.
     </div>
    </section>
-   <section class="arretify-section" data-number="8" data-title="Absence de garanties financières" data-type="article">
-    <h2 class="arretify-section_title">
+   <section data-number="8" data-schema="section" data-title="Absence de garanties financières" data-type="article">
+    <h2 data-schema="section_title">
      Article 8 : Absence de garanties financières
     </h2>
-    <div class="arretify-alinea" data-number="1">
+    <div data-number="1" data-schema="alinea">
      Outre les sanctions rappelées à l'
-     <a class="arretify-section_reference" data-parent_reference="14" data-start_id="LEGIARTI000048248725" data-start_num="L516-1" data-type="article" href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000048248725">
+     <a data-parent_reference="14" data-schema="section_reference" data-start_id="LEGIARTI000048248725" data-start_num="L516-1" data-type="article" href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000048248725">
       article L. 516-1
      </a>
      du
-     <a class="arretify-document_reference" data-element_id="14" data-id="LEGITEXT000006074220" data-title="Code de l'environnement" data-type="code" href="https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006074220">
+     <a data-element_id="14" data-id="LEGITEXT000006074220" data-schema="document_reference" data-title="Code de l'environnement" data-type="code" href="https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006074220">
       code de l'environnement
      </a>
      , l'absence de garanties financières peut entraîner la suspension du fonctionnement des activités visées à l'
-     <a class="arretify-section_reference" data-parent_reference="15" data-start_num="2" data-type="article">
+     <a data-parent_reference="15" data-schema="section_reference" data-start_num="2" data-type="article">
       article 2
      </a>
      du
-     <a class="arretify-document_reference" data-element_id="15" data-type="self">
+     <a data-element_id="15" data-schema="document_reference" data-type="self">
       présent arrêté
      </a>
      , après mise en œuvre des modalités prévues à l'
-     <a class="arretify-section_reference" data-start_num="L171-8" data-type="article">
+     <a data-schema="section_reference" data-start_num="L171-8" data-type="article">
       article L. 171-8
      </a>
      de ce code.
     </div>
-    <div class="arretify-alinea" data-number="2">
+    <div data-number="2" data-schema="alinea">
      Conformément à l'
-     <a class="arretify-section_reference" data-start_num="L171-9" data-type="article">
+     <a data-schema="section_reference" data-start_num="L171-9" data-type="article">
       article L. 171-9
      </a>
      du même code, pendant la durée de la suspension, l'exploitant est tenu d'assurer à son personnel le paiement des salaires, indemnités et rémunérations de toute nature auxquels il avait droit jusqu'alors.
     </div>
    </section>
-   <section class="arretify-section" data-number="9" data-title="Appel des garanties financières" data-type="article">
-    <h2 class="arretify-section_title">
+   <section data-number="9" data-schema="section" data-title="Appel des garanties financières" data-type="article">
+    <h2 data-schema="section_title">
      Article 9 : Appel des garanties financières
     </h2>
-    <div class="arretify-alinea" data-number="1">
+    <div data-number="1" data-schema="alinea">
      Le préfet peut faire appel aux garanties financières à la cessation d'activité pour assurer la mise en sécurité de l'installation en application des dispositions mentionnées à l'
-     <a class="arretify-section_reference" data-parent_reference="16" data-start_id="LEGIARTI000049913755" data-start_num="R512-39-1" data-type="article" href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000049913755">
+     <a data-parent_reference="16" data-schema="section_reference" data-start_id="LEGIARTI000049913755" data-start_num="R512-39-1" data-type="article" href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000049913755">
       article R. 512-39-1
      </a>
      du
-     <a class="arretify-document_reference" data-element_id="16" data-id="LEGITEXT000006074220" data-title="Code de l'environnement" data-type="code" href="https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006074220">
+     <a data-element_id="16" data-id="LEGITEXT000006074220" data-schema="document_reference" data-title="Code de l'environnement" data-type="code" href="https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006074220">
       code de l'environnement
      </a>
      :
     </div>
-    <div class="arretify-alinea" data-number="2">
+    <div data-number="2" data-schema="alinea">
      <ul>
       <li>
        - soit en cas de non-exécution par l'exploitant de ces dispositions, après intervention des mesures prévues à l'
-       <a class="arretify-section_reference" data-parent_reference="17" data-start_id="LEGIARTI000022495306" data-start_num="L514-1" data-type="article" href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000022495306">
+       <a data-parent_reference="17" data-schema="section_reference" data-start_id="LEGIARTI000022495306" data-start_num="L514-1" data-type="article" href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000022495306">
         article L. 514-1
        </a>
        du
-       <a class="arretify-document_reference" data-element_id="17" data-id="LEGITEXT000006074220" data-title="Code de l'environnement" data-type="code" href="https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006074220">
+       <a data-element_id="17" data-id="LEGITEXT000006074220" data-schema="document_reference" data-title="Code de l'environnement" data-type="code" href="https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006074220">
         code de l'environnement
        </a>
        ,
@@ -926,65 +926,65 @@
      </ul>
     </div>
    </section>
-   <section class="arretify-section" data-number="10" data-title="Levée de l'obligation de garanties financières" data-type="article">
-    <h2 class="arretify-section_title">
+   <section data-number="10" data-schema="section" data-title="Levée de l'obligation de garanties financières" data-type="article">
+    <h2 data-schema="section_title">
      Article 10 : Levée de l'obligation de garanties financières
     </h2>
-    <div class="arretify-alinea" data-number="1">
+    <div data-number="1" data-schema="alinea">
      L'obligation de garanties financières est levée, en tout ou partie, à l'arrêt définitif total ou partiel des activités listées à l'
-     <a class="arretify-section_reference" data-parent_reference="18" data-start_num="2" data-type="article">
+     <a data-parent_reference="18" data-schema="section_reference" data-start_num="2" data-type="article">
       article 2
      </a>
      du
-     <a class="arretify-document_reference" data-element_id="18" data-type="self">
+     <a data-element_id="18" data-schema="document_reference" data-type="self">
       présent arrêté
      </a>
      , et après que les travaux couverts par les garanties financières ont été réalisés.
     </div>
-    <a class="arretify-page_separator" data-page_index="5">
+    <a data-page_index="5" data-schema="page_separator">
     </a>
-    <div class="arretify-alinea" data-number="2">
+    <div data-number="2" data-schema="alinea">
      La réalisation des mesures de mise en sécurité est constatée dans le cadre de la procédure de cessation d'activité prévue aux
-     <a class="arretify-section_reference" data-parent_reference="19" data-start_id="LEGIARTI000049913755" data-start_num="R512-39-1" data-type="article" href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000049913755">
+     <a data-parent_reference="19" data-schema="section_reference" data-start_id="LEGIARTI000049913755" data-start_num="R512-39-1" data-type="article" href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000049913755">
       articles R. 512-39-1
      </a>
      et suivants du
-     <a class="arretify-document_reference" data-element_id="19" data-id="LEGITEXT000006074220" data-title="Code de l'environnement" data-type="code" href="https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006074220">
+     <a data-element_id="19" data-id="LEGITEXT000006074220" data-schema="document_reference" data-title="Code de l'environnement" data-type="code" href="https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006074220">
       code de l'environnement
      </a>
      , par rapport de l'inspection des installations classées.
     </div>
-    <div class="arretify-alinea" data-number="3">
+    <div data-number="3" data-schema="alinea">
      L'obligation de garanties financières est levée par arrêté préfectoral, après consultation des maitres des communes intéressées.
     </div>
-    <div class="arretify-alinea" data-number="4">
+    <div data-number="4" data-schema="alinea">
      En application de l'
-     <a class="arretify-section_reference" data-parent_reference="20" data-start_id="LEGIARTI000049913954" data-start_num="R516-5" data-type="article" href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000049913954">
+     <a data-parent_reference="20" data-schema="section_reference" data-start_id="LEGIARTI000049913954" data-start_num="R516-5" data-type="article" href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000049913954">
       article R. 516-5
      </a>
      du
-     <a class="arretify-document_reference" data-element_id="20" data-id="LEGITEXT000006074220" data-title="Code de l'environnement" data-type="code" href="https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006074220">
+     <a data-element_id="20" data-id="LEGITEXT000006074220" data-schema="document_reference" data-title="Code de l'environnement" data-type="code" href="https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006074220">
       code de l'environnement
      </a>
      , le préfet peut demander la réalisation, aux frais de l'exploitant, d'une évaluation critique par un tiers expert des éléments techniques justifiant la levée de l'obligation de garanties financières.
     </div>
    </section>
-   <section class="arretify-section" data-number="11" data-title="Voies de recours " data-type="article">
-    <h2 class="arretify-section_title">
+   <section data-number="11" data-schema="section" data-title="Voies de recours " data-type="article">
+    <h2 data-schema="section_title">
      Article 11 : Voies de recours
     </h2>
-    <div class="arretify-alinea" data-number="1">
+    <div data-number="1" data-schema="alinea">
      La présente décision peut être déférée au tribunal administratif de Rouen conformément à l'
-     <a class="arretify-section_reference" data-parent_reference="21" data-start_id="LEGIARTI000049531372" data-start_num="R514-3-1" data-type="article" href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000049531372">
+     <a data-parent_reference="21" data-schema="section_reference" data-start_id="LEGIARTI000049531372" data-start_num="R514-3-1" data-type="article" href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000049531372">
       article R. 514-3-1
      </a>
      du
-     <a class="arretify-document_reference" data-element_id="21" data-id="LEGITEXT000006074220" data-title="Code de l'environnement" data-type="code" href="https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006074220">
+     <a data-element_id="21" data-id="LEGITEXT000006074220" data-schema="document_reference" data-title="Code de l'environnement" data-type="code" href="https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006074220">
       code de l'environnement
      </a>
      :
     </div>
-    <div class="arretify-alinea" data-number="2">
+    <div data-number="2" data-schema="alinea">
      <ul>
       <li>
        - dans un délai d'un an pour les tiers à compter de la date de la publication ou d'affichage en mairie,
@@ -995,48 +995,48 @@
      </ul>
     </div>
    </section>
-   <section class="arretify-section" data-number="12" data-title="Affichage" data-type="article">
-    <h2 class="arretify-section_title">
+   <section data-number="12" data-schema="section" data-title="Affichage" data-type="article">
+    <h2 data-schema="section_title">
      Article 12 : Affichage
     </h2>
-    <div class="arretify-alinea" data-number="1">
+    <div data-number="1" data-schema="alinea">
      En vue de l'information des tiers, un extrait dudit arrèté énumérant les motifs qui ont fondé la décision ainsi que les prescriptions, et faisant connaître que copie dudit arrété est déposée en mairie et peut y être consultée par tout intéressé, est affiché à la mairic pendant une durée minimum d'un mois.
     </div>
-    <div class="arretify-alinea" data-number="2">
+    <div data-number="2" data-schema="alinea">
      Un procès verbal de ces formalités doit être adressé à la préfecture de la Seine-Maritime.
     </div>
-    <div class="arretify-alinea" data-number="3">
+    <div data-number="3" data-schema="alinea">
      Le même extrait doit étre affiché en permanence de façon lisible aux portes de l'installation par les soins de l'exploitant.
     </div>
-    <div class="arretify-alinea" data-number="4">
+    <div data-number="4" data-schema="alinea">
      Une copie du
-     <a class="arretify-document_reference" data-type="self">
+     <a data-schema="document_reference" data-type="self">
       présent arrété
      </a>
      doit par ailleurs être tenue au slège social de l'exploitant à la disposition des autorités chargées d'en contrôler l'exécution.
     </div>
-    <div class="arretify-alinea" data-number="5">
+    <div data-number="5" data-schema="alinea">
      Un avis doit être inséré aux frais de l'exploitant dans deux journaux locaux diffusés dans tout le département.
     </div>
-    <div class="arretify-alinea" data-number="6">
+    <div data-number="6" data-schema="alinea">
      Ce même avis doit étre publié au recucil des actes administratifs de la préfecture de la Seine-Maritime.
     </div>
    </section>
-   <section class="arretify-section" data-number="13" data-title="Exécution de l'arrêté" data-type="article">
-    <h2 class="arretify-section_title">
+   <section data-number="13" data-schema="section" data-title="Exécution de l'arrêté" data-type="article">
+    <h2 data-schema="section_title">
      Article 13 : Exécution de l'arrêté
     </h2>
-    <div class="arretify-alinea" data-number="1">
+    <div data-number="1" data-schema="alinea">
      Le secrétaire général de la préfecture de la Seine-Maritime, le maire de la commune de GONIREVILlF. L'ORCHER, le directeur régional de l'environnement, de l'aménagement et du logement de HauteNormandie (DREAL), ainsi que iout agent habilité des services piecités et toute autorité de police et de gendarmerie sont chargés, chacun en ce qui le concerne, de l'exécution du
-     <a class="arretify-document_reference" data-type="self">
+     <a data-schema="document_reference" data-type="self">
       présent arrêté
      </a>
      .
     </div>
-    <div class="arretify-alinea" data-number="2">
+    <div data-number="2" data-schema="alinea">
      Fait à Rouen, le 11 IRE, 2014
     </div>
-    <div class="arretify-alinea" data-number="3">
+    <div data-number="3" data-schema="alinea">
      <img alt="img-0.jpeg" src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCAFoAewDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD3+iiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACkyM4paQ9zQAFgOtG4U0uAu5ugpsUqTLuUg0AS0UgPX2paACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigApoOSwp1Mx1oAoaxN9n02VwcGsTwrqLSs8crfMegq54nmK2gjU8tjisHw4fL1TYeq8UAd6RhWojz5YzSn7poX7ooAWiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAphbYxz3p9RS8gf7woAwdc2S38EQ5I5I9s1h6ayr4puFU8Bj/IVuXieZry+yEfrWFpsePFVwcfxn+lAHfZ60q9Kb/epw6UALRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAVG46/UGpKa3f6UAYkJWbW5COQqkVj2EePE1wcfxH+QrU0z/kK3P1P8hWfY/8AIyT/AO8f6UAdee4pV+6Kb3NOHSgBaKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACmP/Sn1G/3yPagDC0wEanct2yf5VnacyyeJbkKc4cg/pWpYgrd3X4/yrG0MZ8SXpx1koA7XByacOlFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRWTe+JtB066e1vda022uExvimu0RlyMjIJyOOaANbNFVbO/tNRtUurG5hurd87JYJA6Ng44YZHUVZHIoAWiiigAooooAKKQnB6VRt9a0y8vpbK21G0nu4s+ZBFOrPHg4bcoORgkA0AX6KB0ooAKKKKACmH/WD6U+mkfvB9KAKEVu0dxMdv3wcYxzxiub0GSKTXLiWKVJYpWDxyRtuV1IBBB7gjkGutdwu84yB1xj0rn9DKSatezsQWaTj3OB0zQB05oHTms601vS7y/nsrfUbOa6hz5kEc6M6YOCSoORgkD6mtANkc0AOoppcDPtSg5GaAFoopCfyoAXNFNyfTmlByM0ALRRRQAUUUUAFFFJuoAWiqxv7UXpsvtEX2vy/N8jzB5mzO3dt64zxnpmpi4BNAD6KpRapbXVnFd2LpewSuFSS2lRlYbtpYNnBC8k4OcKcAnAMlpf2t/bJc2c8VzA+dssLh1bBwcMODgg9+1AFmiqdzqthZT28F3eW8Ety2yFJZVVpTkDCgnLHLLwPUVcoAKKKSgBc0UlJvxnPagB1FU7DVbDVYWm0+8tryJW2NJbzLIobjIJUnnkfnVwcigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAryDxXpVrd/HrQAV8tzbRXLCEBZJnR3I5IwcBATkglIyAc7QfXicHGK8a8axWWqfHXQLSXUPs3l2yAyROm+OUGWSNcMCu4t5eAw53DHWgCbVl0H4YeOdJn0azjV9St3tJoZ75kSENLGVmZmDso+9nPB29AQc97rPjrw14dultNU1eGK4IyYlDSOvAPzBQSuQRjOM9s1Q0z4ceH9N1ZdUuPtmp6osgkW91GcyuuAAvTCnGMgkEg854GOb+FckkvjDx5I8Lws9+GaKTGUJknyDgkEjpwSOvPSgDutC8X6B4lD/2RqUNw6Z3RcpIMYydjANj5hzjFP03xVpGr297LYXLzfYWKXMQgkEsbAZIMRXfng4AHJBHWvO7nT4dH/aI002LPEup2jz3MaEKrnbIDwAMgmNXOc5bJParvwyhkXxj49naGQRPqmxZCCFYrJMSATwSMgn/eHqKAOw0zxv4b1ewuL6z1a3NrbMFnklJiEecbchwDgk4B6E5HUYqmPib4NZbVhr1ti6YpGMNkEED5xj92Mnq+ARyOOa474PureIfGrIyNGbqNlZJzOh+ebkSHlxjHzHkjBql8HfC2h6z4SvLnUtLt7qc34QNMm4qqKjqoz0GWbIHDA4ORxQB7R15ry7Q7SOy/aA8QiOOFFm04SBYinJYw7iwHRiwLHOCc575r1DcBnsBzmvLPD8jSftB+JXeJ4sWAXD4J4FuARtJ68HnnBHQ5FAHYar8QfCmiTCC91q2Eu5laOHdMyFeoYRhip9jjv6Vtadqlnq9hBfWE6XFtOm+ORDwR0PuCDwQeQeOorxr4cWOoazba1DZa3b2zLqDG/t7mzS/N3G4wolnyBIp2yD5cZyx43CvQvAXhqTwros2nf20mqWizMYyIivksCQ6ffYYDKeAAQ27Oc8AHQarrWnaHZNeaneQ2tuuRvkYDcQCcKOrHAOAMk44FZeoeO/Dmk3tpZ6jqBtJ7qJJolmgkTCMSAWJXCcg53YxjnFZXxbB/4Vnq/f8A1HHv50dYFx4V0S6+C0UhsYRcxaKLmO42K0oYL5xAcgkKXLZA7MwGOKAPRLrxFo1jBbT3eq2FvFcrvgeW5RVlXAOVJOGHI5HqKtC7jLyrtkBjbYd0bKM4B4JGCORyDjORnINeBeJp2vvgX4Xu7nbLcxXfkJKVAZUXzVCggdMIgI77QeTzXpPj7W7Twj4XAFkUiZDBZPFFGYreZVzESrHAAKgjAIG3txQBp4a11fVry5ubdo75IYbUHKyDYsjNH1ww5ZxgbvmfPCjHNQ308N9F5bcS/fOeoJGaup4T8SRXUeoXniuzvGtlfYtzosXyhhhgGVwy/gw5HPGRVQiGwiTUL0yOqSRRuLaElizsqDanJ+8w4BJx03dwCaU+C9QubHx9Hq62ctqWVrmMiPzmCkFHR1JL7CwAADEHjIC46TSfGfhzWdQl0/TtXt5rmNivlZKl8ZJ2ZADgBScrkY5zyCfP/itFeyeM/BdpbT/ZQ84W3uBGGEcpljG7G75tvynBUD3OTttar8M9WvdZs9b1HxshvLV4lt5m02NArB8ouA4UnewAB6k49qAL2m/EqK9+KN7oMzpa2CKbWDzvvSXSPg4I6BhkAHOSi4ILYPpAcBQe1eU+H5orj4/+JXilSRf7PCEqwYbh5CsPzBGPUEcV6n0XJIDUAYureN/Deh3v2PUdXt4bkIztFksyBV3fMFB25GMA8tnjNOvfF2j2nhaTxJ9qM2mrGJFkgG4sSdoUA4wxY7cNjB64wceYaDoV/wCIPFfjK4svEaWl0t/La3EM2nJdkwFmCLukOADgqVHZBnjbVqT4fp4J+H/isNey6kt5bJgQ2a5jK7sHDFgV+YEtgFQpIweQAdT8MPE0vibwost9qUN3qUUjLcKkQjaIEnZuA4PAyGAA7dVJrqtU1rTtDsnvNTu4rS3XP7yVsZOCcKOrMQDwOeOlcr8Jv+SaaRyek3Hp++fr9KX4sj/i2erHByPJx6j99HQBs6l438N6RcWMN9q9vE16oeAgllZCQA5YAhUOeGOAcHng1oarrmm6HYte6neQ2tuON8rY3HBO1R1Y4BIAyTg4FeUax4Z0K3+BsV5Bp9hBdtY205u2hDSF2aNm+cAtliSo7DdjhelCa8h1P4c+DL/WHzJbXscdtpdupm/tKONxGQYjyXAU+q/NjgyAKAewaX4n0TW9g0zVLS7ZoxLsimBcLxyV+8OozkcdDikXxRobG/8A+JrZqunyLHds8yqsLHAAYk+pxnpuBHUEDzYxarJ8dbO4c2OlvJYCUw7y0k8OWUpJtwHm4zgEqoQEFwnNfwp4OttT+JPjUa3aRTRJI6i3lUPxO7OrhgflOwdRyN3UGgD2GzvINQsYL21ffb3EayxPgjcrDIODyOD3qnq2s6folstzqV5DaQNIsSvK2AWY4A/qfQAk8AmrsEMVvbRwQRpHDEoSNEUKqqOAABwBivMbIf2l+0Jqf2v97/Zumj7IOnlgrHngfez50nXP3vYUAR2Go6RffHFbzRp3uY7vTHS5ltCJELo5U+YT91cRJgrjJ2dQxJ0/ilc2d14Y/s+TxBY6dG93GLzzTvkMYwxVEUFiwLxvgY4wSQDmqUGlabpPxzRbW3tke80uS6cyzEuZmkbc8e7JLEDGAV+UuRwMHjvA9r4h8WJqmpLF4X1W4kuAZv7agMkyNt4K7VyEI4Azt+U7QOcgHoN5pGjx/Bm80+z8qewh06WRGhufOQyoC5IkXG7Eik9AMjGAOKZ8HJWk+HtqjLcgJLKg86MKpG4n92RgsmTyT/FuA4GBkaH4R1rwf8O/F9pqd3ZzW8tlLLCtuWO1vKcOWZlB5ATuenbqedutQn0j9nnThaO6HUrt4ZyZGyFLykhecDIjUEDg5bPLE0Ab2vnwj4x8fLPqfiSwk0nTLSMG3e5Aimkk8wtscMoyAIiSuc8AkYxXp+p61p2hWJu9UvIbWBcjfK4GSATgDqzYBwBknsK8Vn8Ba7qfgnT7eOTwrb6XAovUvo2nSRlZcs7u68BhtJ4H3V6AADW+I0q2PiXwTe+J1t7qxCMt3aKh8mOQFN8gIyzqCynYQciP/aNAHpcXi/w5cTpBBr2lySyMEREvIyWY8AAZ5PTgU/UvE2iaPdRW2o6paWs03KJNKFOMMdxz0X5T8x4zxnOK8xlt9O8X/HCG4sbKDUNMs7QC/m2RyQu5STac8hz80YGeQUPGFJqW6W3034oazNYpceItXvrVoptLa3WKOFCIT+8mb5du0AD5Tn5QTnkgHoV34w0a08KP4l+0+fpgjEiyQqWL5O0KB6liBg4wc5xg4w/A3xAt/F8U5nNnZXhuWjt7H7QrSsixqS3OC3O/oBwB6EnjfCGl29t8K/HEE9iscsU13G6S7ZHQxRAoC4GGKtkggYzkjFbXwm8M6SPAtpqMloj3t00xNxtCyxjLRbY3GHQbV7HOS2MUAa/w78N6X4fsNRGj69/a9ncXOU2SLJHEAOF+UkbyCNx4yAvAxXUnXdMS9ksft1u15Eu6S3WUGRBxglM5A5HX1FeS+DdZbS/hN4p1a1vUglS+mkgne1XBZljCfulJVSxIAHKqSOCBium+GXhjTrPwPY3ccNpJe3MbSS3UXzsQWyE3HpgKqso43Ke/JAO9a+to7RruSZI4FQu0jsAqqBkkk8AADk1BJrmlxSW8cmo2iSXEjRQo06gyOrbWVRnkhjtIHOeK8uNzceJ/hr4sGrLFqL2F5ci2MsRt/KESKysq43KygsQG5OdrHBrKHhfT9Q+A0d/a2f2nUII2uVuZvlePZK3mAfMfkC+Z8o4PLbQxoA91DZGaWuf8E3U974K0a4upnnme0jLyujKzHHU7iST/ALXRvvDgiugoAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAEKg9a881L4e6/qPiqHxH/wl0NvqFvF5UBh0obY1wwPDSHOd7HnPLfQD0Mtg8/nSbwKAI4I5EgjWZ0eUKN7Im1WbHJCknAz7k+5rh9T+G0h8Vy+JPD2vTaLfz7vPC2ySxvkAH5cqOSCx3bssc8EV3wOaKAOZ8MeD49AnvNQu7x9S1q9Ytc6hKgVmGeEVckIoAHA9B2CgVdL8Ez6L4z1DWtP1cQWGoS+bdaeLUN5jbW58wsSPnYtgAenSuwooA4jwn8Pf+ERs9aWx1Pbd6j/AKuRLfEdrgNs2ozMWwXP3mOQAD0JNnwH4Lk8E6Xc6edRS9hlm89SLcxFWIAIPzsCPlXAwMc9c8ddRQA0rnHt0rjtK8AjSfiBqHiiLVXK3iOrWgtkX7xUnLDqMjPABJwSxO7d2dFAHl+ofCiS18Upq/hXW30PzGBlijiyq9WO0AgMpZUzGfl6noAtdX4L8KQeDvDyaZDMZ2MjyyzbSvmMeAdpJ24UKOPTPeuk2jOe9NBAAXrigDjPitE918OtTt4o2lllaBEjQEl2M6YAA5J9AOtcz/wgXijxF4S0bTL/AMSi308WcbSWpsAsiuACqP8AMN20Ng9BmNcrnJHfeI/Ctj4ptYI7qe8t3t5BLBNaXBjeJwRhgOVLDGAWBIycYyat6JpcukaTFYzahc37RtIRcXLFpGVnZgGJPJAIGe+Og6AA474geA9Q8VQ6LY6Zd29lp1mx82JtwUL8oUrGowSoDYGV+9joTXV6loNrr2iHTtXjin3xbWkWIDZIVK+ZGG3bGGSR1I9TWsTjjmjcOP50AeV+HPhvq3hme4EniSU6XAxmhgtR5fnuyqH85WyMAKABknnIKnOel0LTvtFs4kjSSCRCkiMuVdT1BB6g559a6HVHKadMwJBArO8JHOl59hQBX8beD7Txb4fmtZI1+2RozWc2cGOTHAJAPynABGOQPUAjl/Dfwy1FdQg1LxdrdxqdzYzCSzhW5eSNMc7iXGc5C8DA+XncDgenkfLmlC8DFAHBzeDdXg+KQ8T6Ze28VlcwrFfRz5d3wMEIuOBhIzndwc9RlT3IX5Qec9RntT9oIx29KWgDyzxb8KnuNTt9X8IXEOj3yDZIiM8Me3GNyFBlWxwQODnPBzm5o/wuhtPCmrafqOoTXOoaxGpvLhyWVZlLMrqDhmwzZJJ+bHQZxXorHB6/59aVVOPT2oA5D4f6FrnhzQjp+sXVjKsLbbZLOPAjTHIY4AJJ56ZzuJZs8Vvi5g/DPWFP/TEYJ/6bJ/jXc7cdzWB4q8M23irSf7Lu7m7gt/MWRhbOFL4zhWyCCvfB7qKAPOrPwn4x8T+C9B0281Gx/sRxbzylJWWcwY+VABGEwFI4bd8y53YwBs+JfhhJfJpF9oeoPbatpEFvb2rXWDGUiJILYQ/Nk5zgg4Axya7nQdIi0LQ7XTILm5uIrdSiSXT75NuSQCcDoOB6AAVohRwe/r3oA82/4QXxIvivTPEza7by3qJbw3cU0AKqgRRN5TEHBYhzgKn325HObvhXwTf6F431rXLm6sXhvkGEt4SrFyQzMdxYoM5+UMQdwPG0Ad5tPrSZA/QUAL/D3/GvPfFXgbVp/EqeJvCeppp+ruvlXInJ8uVAuAejDOABgjHAI2kZPoSkbRQVyc5oA4DQ/B/iK18fz+I9W1qK7jltnhEUSlNq+ZlECsDtQKA3BDbieW5LZmt/D7xJB4k1HUvBuqw6bBqcZN4k0zgmRmJYqNh29iCDuBZsFRxXqW3J60pXNAHHyeEby38FahpVtqlze6jdWjQtd6jLJMHYg5wpYiMfMQMdOCd2Oc3w78OxF4Bl8MeIYLGUee8kc1lu3AkfLIWIB8wZIzjG0AHIzn0Hb70oXH0oA4PwR4S1jw9pt9o2r3lnf6SPks4lQcRlnMgcEd9ynBLemaxfG/23WfHen6Jo17d2+oRWM3nLLZB7QwuhzuJHzKzIiHIZeVx8ykH1bHvXJ+K/h1oXjCaK41BbiO5jURiaCXBKDJ2ENlSMnPTPA5oAfZWV1phkgsbG3igjDeTCuIoy3XHAO0EnJ44z0rlz4C1/TvGurXmh6msGm61DMbqWTcZLeRmz8iqy5YMxKMThQWzzjd3Fv4ZtI20qa6mur690tXW2u7qTMnzja27btVsgAZI7epJrXCDFAHmfgbwNqui6b4l8O6rLv0m7+W1uICgZw6MkjgHJVtoQYbIBHGepvfDrwbrfg3+0bK71Czn0yWTzLdIkIk39CxPG3Kqvy/Nz3GOfQNvXk0Y96APO/h94Jv8AQfDOr6Frgt5ra6mfasBbEiPEqsd2QeR8uMLjB6gjFDQPD/jnwWtxoekra6pp8pWS1vLuXyo7U8l1Makudx6BTgEhu7CvUtgGcdT3xQVB/wDr0AedJ4An0j4X3nh7T1ivL++2Gb7UwaJZH2K7L8oIVcF14JBGRk4FFx4X8Rv8Jo/DltL5epDbbytLOXDx+aQxVxtKptwQMEhPkxmvRNvOc9sUuwYx29MUAcz4C07U9F8H2OnatDbx3NupGIGB+UncN2FAD84OM5I3ZOa6ikC470oGBigAooooAKKKKACiiigAooooAKKKKACiiigAooooAQrk574xXkF2t1b/ALQulwTaleXcBilmijnUqtuWhcFYxgKw+VfmUeoJLAk+wV4zc3c9x+0tbRTSZS2jMUIwBtX7Kzke/wAzsec9fpQB61c6pYWM9vb3V5bW81w2yCOWVUaVsgYUE5Y5K9PUetWg+TwOPWvHtAv219NcurbwbH4mtjqlxJBd3dzDgsSgCKsq7o1EQT15AHT7u58J9B8R+HtIvrLXknhTzFa1hd43VAcltrK5PJPKnAHUElmIAPRS4HXioYL61utv2e4ilzGk37tw37t87X4/hO04PfB9DXK/E2yvtS8AajZafZTXc82w7Itvyqrh2JBIzwuMLkkkYHccj4DTwTqHiLTp7a1m0fxNYRNHNp5Vo0kcRCNztbcTjLYG4OSCWBIJoA9ae5iieJJHRWlYpGC4BdgCdo9ThWP0B9Kk3Dv/ADrweDR9V1zxl4k1O58NS+JraG9ubGFZtTWJbcbjlQH54DjbjAXkjnGH6XYeL/A3wx8Ui7V7AloHtHiljdtzsEkIKEkfLtx0x1HNAHt8d9bTXU9rDcQyXFvt86JZAXi3DK7h1XI5GetTbuOleSSfC/TPEfw20FtNjtbHUVtI7g3JQnzmePcyuwOcFmByd20ZwKy/i9YXkGreEHfUb6e+ZTbtLbLhvMVoyZYogRh2L9AwztQZ4oA9v38cjFcGlv4g1H4tXV0b57fRNLgjjFvHI5S4Z0J+ZQdoZS5JyM4EXBDBq5P4g6avgDQbu70fW79NS1y/R7l5JY0kZFEjts2KpUbnXJHTIHQ1RuPCfiq0XTpfDXhC50TULNdj3SavDIblc7j5o+UMdwB54xwQRtwAerX/AIojsPFmi6B5Syy6ikzs3mgNAsaFgSmCSGIIzxyO/St7zBkjH5V4n4p8OWGs/GrRbLUIAgvrJLi9SGcsHkRZOAxAO3EQXICkgZGCcjR+IFtbR+PtPvPERe60f7I0NnpkFuzyXMrEo6qM4DLvRt/yn7gUMQTQB60zcd8kdB1rm9CsvFNnrOoyaxrFlfac+DarDbCJkJySOvCjpglyRtORghuD+CkMVvqniyCCO5iiSaFUiuQFlUBpcBwOjgdff6U/4UpcWXjfxpYKJp7eO52vdzTguXWSRV3f3i4LEsOhX3FAHqGoj7Rp80cYJbB6j9ap+HLaWx0tUnXax4AryT4faYt58PdSOoX819ps0nkDTNzqkLIwfcTwQxJBIQ4wfmycBe98KC31fS9StJrOJLe73C5SNfL80uuGJK4yT69fyFAHbmQbBx1p24KPp615T8H/AA54i8Ptq8Grwvb2u+PZC+H3S4yzIQ23oVBODk4GRsIrr/H2oalpPgjUr/R2dL+BFeN44hIVG9Q7bSDkBc9RwOe1AHT+YKTzQenJ9M14NrOkaO/wNttTa7+0X8lz9r+0yn5pbh32yod+ScKCCVIDGIN61J4kRrP4ceBvDVnFdTrqpSZwtwI2kLFWMWSNoBeYYLZAKDIPJoA9Ki0C+l+I13r0+pX8dnFBHFDaKqJDKNrdSrlnCs8jYdQQzDBIFdWJAF9QOvfFeNf2P4ouvHfh2/tPC0ukR6VHDayZvo5oxa7iuFJAyQhkBwWbG04GQTSTRILn47a1pkV19ktLm2l+0os2HlEsALquc7jvk37eQApOOBQB7n5gyQOoOPxrkfiAniK60i0tPDErxXd1dCGSZQAI4Sj7nLYJQDA+ZeegGSQK4Pw80Pgb4h+M7CwVn02z0tr0WryDLMio4UMckAeY4HXgjO7GawtO8Of8JP8AD/XfFOoW95q2vz3OyEQShnBygzsUEA/McqwHyoNu0EGgD3zTYXsNJtLSe6e6lggSN7iTO6VgACxyTyTz1zzVvzADivn/AMUy6u3wT0aHWLOa0uLXUFhjEo2s8SxyBGKYBXA+UZGTtz3rqtF8DyLbQeMrG9uLjWZ9DVreO5kMjLdtAFDh2bBGCRtcEDJ5AwAAerCQEe+M4rzv4x6te6R4Ttbiwm8uSS8EMgZFdJI2ikDIyMCrKe4IPQeleZ3CWWneDrbXdHu5J/Fmn3ytqV/BJLIEEhlxuY/IwOApYZDHjJ3c998cwP8AhCbH0/tGMcdx5cvTt0oA73wz9rPhXSDe+d9rNlD53nZ379g3bs87s5z71rr0rN8PfZ/+EZ0v7JIklt9ki8p0VlVk2DaQGJYAjGAxJx1Oa0h0oAWiiigAooooAKQ5zS0UAN5pw6UUUAFFFFABSUtFACUtFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRTf4qAHUUUhoAXNeYL4V1pPjnN4iOmo+kyIFF0ZhlCLcLkKGBzuyvIIwx9iPSXK93Aqs17aoxVn+Yd6APMdU8PeOPDPjW91LweHv9Pvme6ltrmZBEJZCdw2F1yQQpDDBxhcnBz33hjTNW03T5f7c1b+07+eQSvIIwiR/Io2IBj5QVJzgZ3E4yTV/wC32Z/5aHHpSrqUOdoPFAGH4+tvEtzoCDwpN5eox3EchVWRWkRSSVBYbeu0nJAIBHfB5q68P+IPEPjvRdWm0O20EWD/AGi5vIbpJnusiPER2qrEgAoc5XBbBIxu9H+0QSDlxz608PHwQ4oA8d1Dwz448H+MtQ13w2sWo2mpXLvJbknHztkCRCR91mOHU8BSSVBIruP+EXk1zwRPY63c3Umo6jaILuSSUsIpgMjYiEIAj9lxu2jcWPJ6vgnIbJpwUdyaAPG7GL4q6ZpVp4Zs7SGHyJMQ6oJUkTyVJDBt+75fnQqAqsFQgKecanxF8N69qmt+Hf7I0ea8stJHmNK2oiN5CWXKb3beDtjH7zJOXz1Br1ArgcGl25we9AHK+NfDP/CaeEXsin2W7IS4g+0H/VSgdH2kjoWU/eAzkbiBXH2KfFTWopNF1GWHSSsYd9SWJGeVWfaUBRtoYKWYbQCDGuWXcGr1rYMY7UbeetAHmHjzSdes/H3h/wAU6Jp0mpvEptHtlGAmd2CWB+UESONxG1SuTnOKguPDWpaV8b7LW1srnUbG+Vj9oEYAtG8soQSCFwq7cFhkgkAMwzXq2Pek2+9AHlvg7R9f0X4peJvOspjpN7K0pnCgRlmbzIzlsFsKzqdgOGPPHNQeAtC1628VeINT1LRptPXVJZfLmXyXe3O9yQGLZ2524+Rg+EboOfWdvJ5zn1ppA3he2KAPJvhvpWpaP4HuINY097WOe8MkazAiQgqqnchHyjK8c8+mACbOtWnjPw9LY6j4blTUYrqXyZdP+yghSc7GLj5guByxYANz0bC9j4pk2WUSnB3Sqfxzj+tbdmuLOIe1AHLeCbPxA+mf2p4gvLgXV+zSnTmiVI7VTgIoGN6/KucFhjccjdkm547u7ey8B67LcSbEazliBIJ+d12L0/2mA/H0rpa5vxn4QtfGejf2dc3E1vsk86OSLBw4VlG4HqvzHjg+4oA8eg8P+L7SFZJvAGi3P9mrsBlgUlsRID8qSATk43ZIY7yQpB+UdPe2dz8RvBcl7pVrcabrunao8nl3VwzyJMoG6OORiDHnKkDCgMoGAAGrSuPh54ovUj06+8d3c+lyc3CrDslcAKmzduOVZM5ySN3JVixI7nRNB0zw9pq2Ok2kdrbBi+xcncx6kknJOMDnsAOgFAHG+HLz4g6jrtxba/YW2l2qW8UqPDGrqSJgWRTvbJdA6n+78hwMjdL/AMI5q1j8Yl12ytWl0y/svJvZ5JV/dMBwFXIb/llF2b7zdO3fbRjFKBQB4/4X0zxNffFPV9U1zQPslpd232a5jdVkh2Mi7FDFsPxGoJUNycFVz8sGkaB8QPAl7qdjoGmw6hpLyM9r500QXJKAMclXJ2Lt28LkkjI4Ps+MnrSbff8A+vQB474/8O+LpvAGnafMkmu3Ud013c3NsMtGTkbAhJLjMrAMqqAqj5RXT3+h63e/CBNEtoXtNVSwht2iaYKSU2hl3qSMMqsBzg7gDjJx3e3Hejb1yc57UAeL3Hhzxb/wpxvDw0hre5s598kfnRym7h3tIQgQsQyttOOCdvBYkit34jaTrnjHwTpMWnaPP9rlkju54XkRDb/u2yjbyp3ZbsP4T+PpZXPc+9ATCgA4A9KAKGgRzQ+H7CC4geGaGFYmRo40OVG3O2NmRQcZAUkAHFaI6UoGBgUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFISB1pabkE49KAFJAGTTfMUrnOPrUdxcpAmXNZM1xNqOYrcFQOpoAuzahHE+3dz7VV86+mc7EJjPQ1NZaWtuN0rF2960AgA4GKAM5bCabmVipqwmmQBQGXc3c1bBxxTqAKn9m239ymNpkJ6DFXqKAMt9GVukhFRtp0sK/u3JxWxSEjoaAMNbi8tzjyyali1dGfY5KuOoIrUMaPyRmqs9lDMjIoCv6gUAWI5VZc7galDAjg1zz2V3ZHerMw9KntNWaWTypl2470AbWRjNAORkVHHLG/CMDUg6UAFFLRQAmKYR+9H0qSm/wAdAHI+K3M1xBbRq5ZGR2JQhcbuzYwSMcjsME4BFdPaSo1qm09q5PxVcNFeqvlsqgAiQ42sSTwO+RgE8dCME9BY8K6i13cSQuT8nGDQB1eQRkUowRmmnrj1pwGBgUABXNGMUtFACUUtFACUUtFACUUtFACUtFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABSZpajb5jweR1oAfmql5dR2kZYn5j0xTLy8WKIohy+KqWVpNcMXuRlTyM0ANhjlv23yg+XWpDCsMQES09EWP5VGF9KkAwKAI1VhyfyqQcjmlooAawJPFKvTmlooAKKKKACkKgnNLRQA3GKMf5xTqKAGEEDpmqlxYxzxn5QjnuKvU1wSKAOVMN3pNwZuXi69a3rHU4LyJSpw+OVParEscc0ZVxwaw7qwktG82AfLnPFAHQ7hS1kafqyT/ALuQ4cetaqnCjNACkgUncGgjNJ059BQBwniK6S51WaARyI0EgjJdQA+Ar5U9x8xGfUEY71J4XjW11RmZ0XzpCkQZgDI23dgA9TtDHHoDVXWX83WnPo1XPDlx5WoohSWQ3EpjLIuQmEZgzeg+UjPPLKMc5oA7XepOM8iniot204wfxqQHIoAWiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAoopO9ACCRS2B1qjqN4tpESOWbsKkvLuO2Qt/EOazLKCS9umnn5jblQaAFsLeW5l+0TL8lbScrgD5e1Cosa7VHFPHA4oAaBg0+iigAooooAKKKKACiiigAooooAKKKKACkzzilooAYYwabt3ZRlytS0hoA5rVNMuLe7jns1i8oRuXz9/fldmPbG/Pvtq7pGpx3UKQs3+kKPnU9jWrJEsqlW5BHSuY1rTY7dJCpmVZTljDM8TjnsyEEfgeRwaAOpDDIHrSP8Acc+1ZumapDeyPbh83UUaSyJg/Krlgpz7lG/KtGQ/uXPtQB5zdknVZ27Zq/4OUvqVwyscBsH24rNmk3ajP9TW54Nt/LaeTH32/pQB12SoA25pw6U0cqKfQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUU3OTigBcio5JVjVmc4HankhetYt3O93cGCPOFOKAESL7bdndkx961oYxGoiVcKvSkt7cQwBQAGxyamQHYN3WgBQMUo6UUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABSD7xpaKAGHO4YqGSFbpXSRQeeKs00+1AHIfaX03VZoySUhTzXRMs6qc4O0cnO1gMA5KkDnOepkcSWbOpypQnNZ2uWRmtWli3+cqlVAdtpyRnKg4J+UYJGRzjqc4/h7UJmtrizuWO+JWU5+lAHOKTJfzsOm7H6V13hu0jCyT/aGZ0XymhWQbI2IDHco/iIKfezgYwBuOeOtXyt0x6iQY/Ku58NwxRWZmjTbJcsJZWyTuYKqZ9vlRRx6UAbcfCAGn0mO1LQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAU04Bp1Vry6W1hMjfhQBT1K58tlRT8xHAqaxtvLQSlcSNyaqWkJvpvtMnQfdrZHTigBOoyacORRRQAUUUUAFFFFABRRRQAhYDrWRN4s8OW0zw3GvaXFLG5R45LyNWVgcFSCeCDkYrXxznvXjWlaLoQ+PGt6ZPpunC0+wqLe1e3j8vfshb5FIxuxvOB23HtQB6jaeJtCv7lLaz1nTri4fO2KG7jdjgZPAJ6DmtTOa4iXwp4J1LxFbwWcVnZ6vo1wlyYbFY4ZONjjemPmT5kOccHIBBJFa9x418PWmrXmlT6ikd9ZwNcTQsjAhFQOccYYhSDgZOM+hoAv61r+meHdPa+1a6W2tlYLvYFizHoAoBJPU4APAJ7Gr0E8VzbxzwSJLDIodJEbcrqRkEEdQR3rgdV8SeDvF3gUXesC5t9NuXOwyW7edG6kKJF2BujMo3jK5YKepWukn8SaBofhi01WW6itNIaKP7OwjIBRlBQIgGfu84A4APQCgDezSFvauc0zxtpWp6s2lFLuy1D5mit7+3aB54wfvoGHI4bg4b5TkAAmuixnnpQBnxeIdGn1A6fFq1jJfBmQ2yXKNLuXO4bAc5GDkY4wa0c14H4+0ieD4g6j4g8P2Nsx0NrW6vY0LkmRt0nmOuBxhBu2H0Y8ltvtWg6rFrWg2GowyLKtzAshZF2jdj5hjc20g5BXJwQRk4oAk1HW9L0fy/7T1KzsvNJEf2mdY9+MZxuIzjI/OrcM8VxAk8MiSRSKHR0OVZSMgg9x7188+Obo+JPFeg+IbkWDaLfzG0tVad4vMgin2s0zFfkDFicgfKvuK99t7ez0uwS2sraG3t0B8uGCMIoySeFHAyST+NAEb65psepJpz3kC3sg3JA0gDsvPIXqRwfyNWzMi5LHj19K+fte8SXMni628Y2UR/s+GZbe1cxspuIwGL84IGcuAcA4xwSpx73ayRX2nxXETpJHIgZHUhlII4Ixx0NAFE+J9D88QHUrXzmlMQjMqgmQEApjP3hlcjryPWud1yZNK1BpiQn2hS3HftXAw2FnB8dhZxWtulvFKGjiCAKjC33AgdAQeQfXnqK7D4jQu2o6dg/KIzkfjQBlQzxhNm7mRx+Nel6cqWOmxeZ/AuDivJrtF+3WUcT871z+del+I1W38L3cc0yxRrbuGleLzAvynLFDwwA6jv070AWX8U6LGksj6hAqRf6xi4AX5ivJ7fMCOe4xV611G1vY99vKrqCykg5AKnDDPseDXkvwp0jRb7wzdzalp1pcyLduqvPCrnbsTjJH1/Ou38KaRpdndXt5ossf9n3m1ljhbdGHVn3OvJAzkKQAANlAHWg5GaWmgcU4dKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigApMjJHpS1HJuOAvc80AP3DBPYVh3jHULsQx8op5qfVL77Oghj++wqbTbXy4hK332GTQBYjj+zxJGi5GMVOBgYphJ3VJQAUUUUAFFFFABRRRQAUUUUAIWweleNQ6RpPir44+J7TU7P7TamyQ7JFZCGTyBuB4Yd8EHkHuDXspXJ56Vwf/AArWSHxNeeIrTxLqVvqlz55LhUdBvP7tdrA5RFwNpPOAQUxigB1p4S8K/Du9vfE8U1zZ2xgEEkbM0sUYZ0GQAC5JZV6k9T0HTjchv2mgcjGMjJBGPsf+f0rq7H4ZSjXdM1HWvEt9rEemKDbQ3AIKy5DFi24kjfyB1wEUsQuDfPw/i/4WOnjFdRcTBmLWxiBUr5AiADZ4IO4k4OcgYGMkAwPjFZWtj8OYLWzsrOK3ivU2xLiMR5Dk7EBALEnkYPDMccbhR8Xxx2vxi8GRTQEaXHFGltGSyQrIHYDZsBGQfJ4AAPyAkKcjufHHhJvGWgjSxfJZjzllaVrYTHAB4XJBU5I5BzgEdCaZqPge113wha6BreoXl6YNjfbNwWUuuRu6EdCRyDwcklvmoAualpWg3Ov6Xe3wiTV4d32JxO0UrADLAAMN4AzkHIwx7E1uA4A9a4Twx8KtH0K6g1C/ml1bU4SpjuLjhY9oKrtTJxhdoGS2CgIxXdBMKACR70AedaHa2+r/ABM8eFZLeSFobe1dxEsrrui2sATlQMoQyFTkqM424PnGnax4h0bRdY+G6Wc1xqdxcfZ7bYOBG2fNxv48tlAYHCjEjMSK9Y0bwLqmleNLrX5PFE11HdZWe2a0RPNULtjDFSBuUbfmCg8HpuOdGLwVYQ+PJ/Fiyu93PCYnikRWVGwihkOMqdqMD1zvPToQDz74hWj6JffDeyS48ySxlESymB33Mhtxu8pTubpnaDk9BzXZ+P8AUdRs9E8jRkmbULiWOKIxxq4U7sktngLgEEnjLD61n+LvhtqPirxFHqn/AAlM1nHb7TawJbZ+zkYJZWDj5iw3Zxnp6Ct278P6hJp/lHVXmvMOFvHhUMMk7CVXCkqCB0AOCcDJoA871DwP4qPg5dJNrpDRw5dSskhlYj5soWGFYnfkkgYbHyius+Fuv3es+Fv9KZpZraVoDIz5LgAEE8ehxzk8ZJ5rrYdPn/su3t7m58+eONVkl2bA7AYLbRwMnJx71xvhv4fX/hnXbm7ttaDWc7kyWv2NF3j5tg3A8Ebv4QucdAOKAOdVDa/Hpv3+43S5KwykbMQ/dkAHom7HH3lOT0re8bajBH4l0qwuY/luy8KSc/Iw27eAD1LKPbOaii+GWojxcfEEviOZpy5bctrGJMbdo+Y5XOMc7PXgE5rb1jwMmta7Z6jdXkwFmyyQwxhQA+7LFiQSQcKMDHQ+vABwKW3keJIxKxwHBXgnvXp3iu88rw1e3kLMRDA8mUYA/KCffH5HtVG68GJNfrcg5YdcjrTrzw3qF3YajZPqs0kFzC0USSRp/o5IYHBUAsMFeDn7vXmgDg/hp4S0rXfDMtze7pp1uJEURzyp5YKKCMAhckdTzkEA9MDu/Ciad4bgh8NpeCW4iSSZVIw3lmQnJ7dWwOmcEgdqztG8AXmg2M1tpuvXttE8wl2CKFsDChhyh5wDg8YyMg4OdHRfBkdprD61fXc+oakwKJNOFAiTJwEVQApwcE9+eBuIoA64HcoI70DpSAbVAFKOlAC0UUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFQtIsYkYnhetTVk6vceUghXlpKAK9nEup3JuTyqnitwDAwBwKqWFqLS0RQOe9XaAGsO460q52jPWlooAKKKKACiiigAooooAKKKKACkpaKAEopaKAEopaKAEpaKKACkpaKAEpAMk5p1FACYPrTSCTjNPooAQDFIQecU6igBqZOdwoVcEn1p1FADcEjFAGFAp1FADCDTh0paKACiiigAooooAKKKKACiimluaAHUUzdTgcigBaKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigBCQBkngVgc32sZHMaH8q2p32QyH/ZqhpEQKGbH3+aANLPBFLHnYM9aD3NKpyoJoAWiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigApMClooATApaKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooApaiSLOQj0qtojsdOjHtV27j32bKKz9IlVFNv3WgDX52kmhOUFIMLnPenDGOOlAC0UUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFACEZUiudvreezuPPiX5Sea6OoZYfOBVuRQBUtdRhu4wob5+9X1wFrIuNNaL5oBg+1RQ6lcW7COZCcd6AN0MD0papRahBKMbgDVhXQjIcc0ASEgUm4UduMGgZx0oAUHNLTMt2Wl5NADqKTB9aUdKACiikoAXNGaSigBc0ZpKKAFzRmkooAXNFJS0AFFFJQAuaM0lFAC5ozSUUALmjNJRQAuaKSloAKKM0UAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUhzS0UAMyw7Zpj20cyneg5qaigDLk0dCSUbBqubG6i+5kge9blISOhoAwWutQg4WIn8aautXCnbJGQR1rdMaNzio/ssGeUGaAM+PWx/EhqwupxMoPI/CrH2WD/AJ5j8qT7HEeQooAi/tGP1P5Uw6rbg8vg/SrH2KL+6PyqNtOiJJwPyoAj/tW2/wCen6VIup2pUZk/Sk/s2L0H5U4adEB0FAB/adr/AM9P0o/tK1/56fpR/Z8XoKPsEXpQAv8AaNr/AM9P0pP7Stf+en6UfYIvSj+z4vQUAH9p2v8Az0/SlGo2xH+s/Sk/s+L0FNOnpngcUAP/ALQtv+en6Uov7f8Av/pUX9nrSHTVPO7FAE/2+3/v01tRth1eov7MX+9TW0pG/ioAmGpWp/5afpQdStQcGT9KrjSEB+9U66dEFAIzQAv9p2v/AD0/Sj+07X/np+lH9nxego/s+L0FAB/adr/z0/Sj+07X/np+lH9nxego/s+L0FACf2na/wDPT9Ka2owY3b8Cn/2fD6VFJpUb5+bHtQBC+u2Ued0v6VYi1iydFYTDmqMvh2KTJLCqU/hmTB8qQ8DgCgDoY7+2lYKkgJNWa4Kwsb+01ZA5YoDXeLnaM9aAFooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigApCoJzRRQAm2lA4oooAWkOc0UUAHNAoooAWkxRRQAYoxRRQAYFGKKKACjmiigA59KQgk9aKKADafU0mw5zmiigBSufagDAxRRQAtGKKKADFGKKKAExRg+tFFABhs/ephVw2QfrRRQApjUsGKjIqQdKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigD/2Q=="/>
     </div>
    </section>

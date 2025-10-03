@@ -36,7 +36,7 @@ from arretify.types import PageElementOrString, DocumentContext
 from arretify.semantic_tag_schemas import (
     DOCUMENT_REFERENCE_SCHEMA,
 )
-from arretify.utils.html_create import make_data_tag
+from arretify.utils.html_semantic import make_semantic_tag
 from arretify.utils.html_split_merge import make_regex_tree_splitter
 from arretify.utils.split_merge import split_elements, map_splitted_elements
 from arretify.law_data.types import (
@@ -139,7 +139,7 @@ def _render_eu_act_reference(
         num=match_dict["num"],
         date=render_year_str(year),
     )
-    return make_data_tag(
+    return make_semantic_tag(
         soup,
         DOCUMENT_REFERENCE_SCHEMA,
         data=document.get_data_attributes(),
