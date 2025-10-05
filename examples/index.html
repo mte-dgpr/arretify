@@ -1,0 +1,73 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link href="https://cdn.jsdelivr.net/npm/@gouvfr/dsfr@1.13.0/dist/dsfr.css" rel="stylesheet" />
+    <title>Exemples de traitements réalisés avec Arrêtify</title>
+    <style>
+        body {
+            justify-content: flex-start;
+            min-height: 100vh;
+        }
+        body, ul, li, h1 {
+            margin: 0;
+            padding: 0;
+        }
+        body > * {
+            max-width: 600px;
+            width: 100%;
+            margin: auto;
+        }
+        body > ul > li {
+            padding-left: 0;
+        }
+        ul {
+            list-style: none;
+        }
+        li {
+            padding-left: 2rem;
+            margin-bottom: 1.2rem;
+        }
+        h1 {
+            text-align: left;
+            font-size: 2.5rem;
+            margin: 2rem auto;
+        }
+        a { 
+            color: var(--text-action-high-blue-france)
+        }
+                .dir {
+            font-weight: bold;
+            margin-top: 0.5em;
+        }
+        .file {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            font-weight: normal;
+            margin-bottom: 0.3em;
+        }
+        .notes {
+            font-style: italic;
+            margin-bottom: 1.5rem;
+        }
+        .spacer {
+            flex: 1;
+            border-bottom: 1px black dotted;
+            margin: 0 1rem;
+            position: relative;
+            bottom: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <h1>Exemples de traitements réalisés avec Arrêtify</h1>
+    <p class="notes">Ces fichiers font partie du jeu de tests que nous utilisons pour le développement d'Arrêtify.
+        Ils contiennent une majorité d'arrêtés préfectoraux ICPE (la réglementation des ICPE étant l'un des objets 
+        principaux de la DGPR), mais aussi quelques autres exemples.
+    </p>
+    <p class="notes"><b>pdf</b> : arrêté avant traitement | <b>html</b> : arrêté après traitement</p>
+    <ul><li class="file"><span>arrete_bilan_ars</span><span class="spacer"></span> <span><a href="arretes_pdf/arrete_bilan_ars.pdf">pdf</a> | <a href="arretes_html/arrete_bilan_ars_mistral.html">html</a></span></li><li class="file"><span>arrete_chambre_agriculture</span><span class="spacer"></span> <span><a href="arretes_pdf/arrete_chambre_agriculture.pdf">pdf</a> | <a href="arretes_html/arrete_chambre_agriculture_mistral.html">html</a></span></li><li class="file"><span>arrete_circulation</span><span class="spacer"></span> <span><a href="arretes_pdf/arrete_circulation.pdf">pdf</a> | <a href="arretes_html/arrete_circulation_mistral.html">html</a></span></li><li class="file"><span>arrete_nomination</span><span class="spacer"></span> <span><a href="arretes_pdf/arrete_nomination.pdf">pdf</a> | <a href="arretes_html/arrete_nomination_mistral.html">html</a></span></li><li class="file"><span>arrete_ppr</span><span class="spacer"></span> <span><a href="arretes_pdf/arrete_ppr.pdf">pdf</a> | <a href="arretes_html/arrete_ppr_mistral.html">html</a></span></li><li class="file"><span>arrete_rectorat</span><span class="spacer"></span> <span><a href="arretes_pdf/arrete_rectorat.pdf">pdf</a> | <a href="arretes_html/arrete_rectorat_mistral.html">html</a></span></li><li class="file"><span>arrete_sentiers_randonnee</span><span class="spacer"></span> <span><a href="arretes_pdf/arrete_sentiers_randonnee.pdf">pdf</a> | <a href="arretes_html/arrete_sentiers_randonnee_mistral.html">html</a></span></li><li class="dir">arretes_icpe<ul><li class="dir">0003013459<ul><li class="file"><span>2020-04-20_AP</span><span class="spacer"></span> <span><a href="arretes_pdf/arretes_icpe/0003013459/2020-04-20_AP.pdf">pdf</a> | <a href="arretes_html/arretes_icpe/0003013459/2020-04-20_AP_mistral.html">html</a></span></li><li class="file"><span>2021-09-24_AP</span><span class="spacer"></span> <span><a href="arretes_pdf/arretes_icpe/0003013459/2021-09-24_AP.pdf">pdf</a> | <a href="arretes_html/arretes_icpe/0003013459/2021-09-24_AP_mistral.html">html</a></span></li><li class="file"><span>2023-02-22_APC</span><span class="spacer"></span> <span><a href="arretes_pdf/arretes_icpe/0003013459/2023-02-22_APC.pdf">pdf</a> | <a href="arretes_html/arretes_icpe/0003013459/2023-02-22_APC_mistral.html">html</a></span></li></ul></li><li class="dir">0005302394<ul><li class="file"><span>2008-12-10_AP</span><span class="spacer"></span> <span><a href="arretes_pdf/arretes_icpe/0005302394/2008-12-10_AP.pdf">pdf</a> | <a href="arretes_html/arretes_icpe/0005302394/2008-12-10_AP_mistral.html">html</a></span></li><li class="file"><span>2009-12-18_AP</span><span class="spacer"></span> <span><a href="arretes_pdf/arretes_icpe/0005302394/2009-12-18_AP.pdf">pdf</a> | <a href="arretes_html/arretes_icpe/0005302394/2009-12-18_AP_mistral.html">html</a></span></li><li class="file"><span>2010-12-24_AP</span><span class="spacer"></span> <span><a href="arretes_pdf/arretes_icpe/0005302394/2010-12-24_AP.pdf">pdf</a> | <a href="arretes_html/arretes_icpe/0005302394/2010-12-24_AP_mistral.html">html</a></span></li><li class="file"><span>2012-04-03_AP</span><span class="spacer"></span> <span><a href="arretes_pdf/arretes_icpe/0005302394/2012-04-03_AP.pdf">pdf</a> | <a href="arretes_html/arretes_icpe/0005302394/2012-04-03_AP_mistral.html">html</a></span></li><li class="file"><span>2012-12-07_AP</span><span class="spacer"></span> <span><a href="arretes_pdf/arretes_icpe/0005302394/2012-12-07_AP.pdf">pdf</a> | <a href="arretes_html/arretes_icpe/0005302394/2012-12-07_AP_mistral.html">html</a></span></li><li class="file"><span>2020-12-22_AP</span><span class="spacer"></span> <span><a href="arretes_pdf/arretes_icpe/0005302394/2020-12-22_AP.pdf">pdf</a> | <a href="arretes_html/arretes_icpe/0005302394/2020-12-22_AP_mistral.html">html</a></span></li></ul></li><li class="dir">0005800425<ul><li class="file"><span>2003-09-09_AP</span><span class="spacer"></span> <span><a href="arretes_pdf/arretes_icpe/0005800425/2003-09-09_AP.pdf">pdf</a> | <a href="arretes_html/arretes_icpe/0005800425/2003-09-09_AP_mistral.html">html</a></span></li><li class="file"><span>2005-11-08_AP</span><span class="spacer"></span> <span><a href="arretes_pdf/arretes_icpe/0005800425/2005-11-08_AP.pdf">pdf</a> | <a href="arretes_html/arretes_icpe/0005800425/2005-11-08_AP_mistral.html">html</a></span></li><li class="file"><span>2007-04-19_AP</span><span class="spacer"></span> <span><a href="arretes_pdf/arretes_icpe/0005800425/2007-04-19_AP.pdf">pdf</a> | <a href="arretes_html/arretes_icpe/0005800425/2007-04-19_AP_mistral.html">html</a></span></li><li class="file"><span>2010-03-29_AP</span><span class="spacer"></span> <span><a href="arretes_pdf/arretes_icpe/0005800425/2010-03-29_AP.pdf">pdf</a> | <a href="arretes_html/arretes_icpe/0005800425/2010-03-29_AP_mistral.html">html</a></span></li><li class="file"><span>2012-09-03_AP</span><span class="spacer"></span> <span><a href="arretes_pdf/arretes_icpe/0005800425/2012-09-03_AP.pdf">pdf</a> | <a href="arretes_html/arretes_icpe/0005800425/2012-09-03_AP_mistral.html">html</a></span></li><li class="file"><span>2025-02-24_APC</span><span class="spacer"></span> <span><a href="arretes_pdf/arretes_icpe/0005800425/2025-02-24_APC.pdf">pdf</a> | <a href="arretes_html/arretes_icpe/0005800425/2025-02-24_APC_mistral.html">html</a></span></li></ul></li><li class="dir">0005804239<ul><li class="file"><span>2009-12-08_AP</span><span class="spacer"></span> <span><a href="arretes_pdf/arretes_icpe/0005804239/2009-12-08_AP.pdf">pdf</a> | <a href="arretes_html/arretes_icpe/0005804239/2009-12-08_AP_mistral.html">html</a></span></li><li class="file"><span>2012-04-02_AP</span><span class="spacer"></span> <span><a href="arretes_pdf/arretes_icpe/0005804239/2012-04-02_AP.pdf">pdf</a> | <a href="arretes_html/arretes_icpe/0005804239/2012-04-02_AP_mistral.html">html</a></span></li><li class="file"><span>2013-07-19_Autre</span><span class="spacer"></span> <span><a href="arretes_pdf/arretes_icpe/0005804239/2013-07-19_Autre.pdf">pdf</a> | <a href="arretes_html/arretes_icpe/0005804239/2013-07-19_Autre_mistral.html">html</a></span></li><li class="file"><span>2014-01-09_APC</span><span class="spacer"></span> <span><a href="arretes_pdf/arretes_icpe/0005804239/2014-01-09_APC.pdf">pdf</a> | <a href="arretes_html/arretes_icpe/0005804239/2014-01-09_APC_mistral.html">html</a></span></li><li class="file"><span>2014-12-11_APC</span><span class="spacer"></span> <span><a href="arretes_pdf/arretes_icpe/0005804239/2014-12-11_APC.pdf">pdf</a> | <a href="arretes_html/arretes_icpe/0005804239/2014-12-11_APC_mistral.html">html</a></span></li><li class="file"><span>2020-04-30_APC</span><span class="spacer"></span> <span><a href="arretes_pdf/arretes_icpe/0005804239/2020-04-30_APC.pdf">pdf</a> | <a href="arretes_html/arretes_icpe/0005804239/2020-04-30_APC_mistral.html">html</a></span></li><li class="file"><span>2023-12-04_APC</span><span class="spacer"></span> <span><a href="arretes_pdf/arretes_icpe/0005804239/2023-12-04_APC.pdf">pdf</a> | <a href="arretes_html/arretes_icpe/0005804239/2023-12-04_APC_mistral.html">html</a></span></li><li class="file"><span>2024-09-27_APC</span><span class="spacer"></span> <span><a href="arretes_pdf/arretes_icpe/0005804239/2024-09-27_APC.pdf">pdf</a> | <a href="arretes_html/arretes_icpe/0005804239/2024-09-27_APC_mistral.html">html</a></span></li></ul></li></ul></li></ul>
+</body>
+</html>

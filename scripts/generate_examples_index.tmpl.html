@@ -1,0 +1,73 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link href="https://cdn.jsdelivr.net/npm/@gouvfr/dsfr@1.13.0/dist/dsfr.css" rel="stylesheet" />
+    <title>Exemples de traitements réalisés avec Arrêtify</title>
+    <style>
+        body {
+            justify-content: flex-start;
+            min-height: 100vh;
+        }
+        body, ul, li, h1 {
+            margin: 0;
+            padding: 0;
+        }
+        body > * {
+            max-width: 600px;
+            width: 100%;
+            margin: auto;
+        }
+        body > ul > li {
+            padding-left: 0;
+        }
+        ul {
+            list-style: none;
+        }
+        li {
+            padding-left: 2rem;
+            margin-bottom: 1.2rem;
+        }
+        h1 {
+            text-align: left;
+            font-size: 2.5rem;
+            margin: 2rem auto;
+        }
+        a { 
+            color: var(--text-action-high-blue-france)
+        }
+                .dir {
+            font-weight: bold;
+            margin-top: 0.5em;
+        }
+        .file {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            font-weight: normal;
+            margin-bottom: 0.3em;
+        }
+        .notes {
+            font-style: italic;
+            margin-bottom: 1.5rem;
+        }
+        .spacer {
+            flex: 1;
+            border-bottom: 1px black dotted;
+            margin: 0 1rem;
+            position: relative;
+            bottom: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <h1>Exemples de traitements réalisés avec Arrêtify</h1>
+    <p class="notes">Ces fichiers font partie du jeu de tests que nous utilisons pour le développement d'Arrêtify.
+        Ils contiennent une majorité d'arrêtés préfectoraux ICPE (la réglementation des ICPE étant l'un des objets 
+        principaux de la DGPR), mais aussi quelques autres exemples.
+    </p>
+    <p class="notes"><b>pdf</b> : arrêté avant traitement | <b>html</b> : arrêté après traitement</p>
+    {{examples_tree}}
+</body>
+</html>
