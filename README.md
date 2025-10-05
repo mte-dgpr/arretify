@@ -26,11 +26,7 @@
     - *détection de références* - droit français, droit européen, arrêtés connexes
     - *opérations de modification* - abrogation, modification, d'arrêtés connexes
 
-### → Exemples en ligne
-
-* [Arrêté ICPE](https://mte-dgpr.github.io/arretify/examples/arretes_html/arretes_icpe/0005801105/2023-03-30_AP_mistral.html)
-* [Arrêté de circulation](https://mte-dgpr.github.io/arretify/examples/arretes_html/arrete_circulation_mistral.html)
-
+### → [Exemples en ligne](https://mte-dgpr.github.io/arretify/examples/)
 
 
 ## Démarrage rapide
