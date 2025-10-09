@@ -35,7 +35,11 @@ def is_semantic_tag(
     tag_name_in: Sequence[str] | None = None,
 ) -> TypeGuard[Tag]:
     """
-    Check if a tag is a semantic tag, i.e. has a CSS class starting with "arretify-".
+    Check if a tag is a semantic tag.
+
+    Optionally this function checks also that :
+    - tag name is included in the given `tag_name_in` list.
+    - semantic tag schema is included in the given `schema_in` list.
     """
     if not is_tag(tag, tag_name_in=tag_name_in):
         return False

@@ -110,7 +110,10 @@ def is_tag(
     tag_name_in: Sequence[str] | None = None,
 ) -> TypeGuard[Tag]:
     """
-    Check if a tag has any of the specified CSS classes.
+    Check if element is a tag.
+
+    Optionally this function checks also that tag name is included
+    in the given `tag_name_in` list.
     """
     if not isinstance(tag, Tag):
         return False
