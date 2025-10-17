@@ -23,19 +23,17 @@ from typing import (
 )
 
 from arretify.types import (
-    ElementGroupId,
+    TagGroupId,
     DocumentContext,
     SectionType,
-)
-from arretify.parsing_utils.numbering import ROMAN_NUMERALS_PATTERN_S
-from arretify.semantic_tag_schemas import (
-    SECTION_REFERENCE_SCHEMA,
-)
-from arretify.utils.html import (
-    make_group_id,
-    set_group_id,
     PageElementOrString,
 )
+from arretify.parsing_utils.numbering import ROMAN_NUMERALS_PATTERN_S
+from arretify.semantic_tag_specs import (
+    SectionReferenceData,
+    SectionReferenceSpec,
+)
+from arretify.utils.html import make_group_id, set_group_id
 from arretify.utils.html_semantic import make_semantic_tag
 from arretify.utils.html_split_merge import make_regex_tree_splitter
 from arretify.utils.split_merge import (
@@ -59,9 +57,6 @@ from arretify.regex_utils import (
     filter_regex_tree_match_children,
     repeated_with_separator,
     named_group,
-)
-from arretify.law_data.types import (
-    Section,
 )
 
 # TODO :
@@ -232,7 +227,7 @@ def _extract_section_number(match: regex_tree.Match) -> SectionNumber:
 
 def _extract_section(
     section_reference_match: regex_tree.Match,
-) -> Section:
+) -> SectionReferenceData:
     article_matches = filter_regex_tree_match_children(
         section_reference_match, ["__article_number"]
     )
@@ -277,7 +272,7 @@ def _extract_section(
         section_matches = appendix_matches
         section_type = SectionType.ANNEXE
     elif len(appendix_no_number_matches) in [1, 2]:
-        return Section(
+        return SectionReferenceData(
             type=SectionType.ANNEXE,
             start_num=None,
             end_num=None,
@@ -292,7 +287,7 @@ def _extract_section(
     if len(section_matches) == 2:
         section_end = _extract_section_number(section_matches[1])
 
-    return Section(
+    return SectionReferenceData(
         type=section_type,
         start_num=section_start,
         end_num=section_end,
@@ -302,16 +297,13 @@ def _extract_section(
 def _render_section_reference(
     document_context: DocumentContext,
     section_reference_match: regex_tree.Match,
-    group_id: ElementGroupId | None = None,
+    group_id: TagGroupId | None = None,
 ) -> Tag:
     section = _extract_section(section_reference_match)
     section_tag = make_semantic_tag(
         document_context.soup,
-        SECTION_REFERENCE_SCHEMA,
-        data=dict(
-            parent_reference=None,
-            **section.get_data_attributes(),
-        ),
+        SectionReferenceSpec,
+        data=section,
         contents=iter_regex_tree_match_page_elements_or_strings(section_reference_match),
     )
     if group_id is not None:

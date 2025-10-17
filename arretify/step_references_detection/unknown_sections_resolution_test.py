@@ -18,9 +18,11 @@
 #
 import unittest
 
+from arretify.semantic_tag_specs import SectionReferenceSpec
+from arretify.utils.html_semantic import get_semantic_tag_data
 from arretify.utils.testing import create_document_context
 from arretify.utils.references import build_reference_tree
-from arretify.law_data.types import Section, SectionType
+from arretify.types import SectionType
 from arretify.utils.testing import make_testing_function_for_children_list
 from .unknown_sections_resolution import resolve_unknown_sections, remove_misdetected_sections
 
@@ -67,8 +69,8 @@ class TestResolveUnknownSections(unittest.TestCase):
         section_reference_tag = document_context.soup.select_one(
             "[data-schema='section_reference']"
         )
-        section = Section.from_tag(section_reference_tag)
-        assert section.type == SectionType.ARTICLE
+        section_reference = get_semantic_tag_data(SectionReferenceSpec, section_reference_tag)
+        assert section_reference.type == SectionType.ARTICLE
 
     def test_resolve_unknown_sub_section(self):
         # Arrange
@@ -109,8 +111,8 @@ class TestResolveUnknownSections(unittest.TestCase):
         section_reference_tag = document_context.soup.select_one(
             "[data-schema='section_reference'][data-element_id='1']"
         )
-        section = Section.from_tag(section_reference_tag)
-        assert section.type == SectionType.ALINEA
+        section_reference = get_semantic_tag_data(SectionReferenceSpec, section_reference_tag)
+        assert section_reference.type == SectionType.ALINEA
 
 
 class TestRemoveMisdetectedSections(unittest.TestCase):

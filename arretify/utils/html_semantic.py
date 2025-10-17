@@ -16,22 +16,126 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import Iterable, Sequence, TypeGuard
+from enum import Enum
+from typing import Iterable, Sequence, TypeGuard, Annotated, TypeVar, Type, Protocol
+
+from pydantic import (
+    BaseModel,
+    BeforeValidator,
+    SerializerFunctionWrapHandler,
+    ConfigDict,
+    model_serializer,
+)
+from pydantic.functional_serializers import PlainSerializer
 from bs4 import BeautifulSoup, Tag
-from arretify.types import DataElementDataDict, PageElementOrString, SemanticTagSchema
-from arretify.utils.html import is_tag
+
+from arretify.errors import ErrorCodes
+from arretify.types import PageElementOrString
+from arretify.utils.html import GROUP_ID_ATTR, TAG_ID_ATTR, is_tag
 from arretify.utils.html_create import make_new_tag
 
 
-SCHEMA_NAME_DATA_ATTR = "data-schema"
-SHARED_DATA_KEYS = [
-    "error_codes",
+_SPEC_DATA_ATTR = "data-schema"
+# TODO:RENAME : rename to data-spec
+
+_RESERVED_DATA_ATTRIBUTES = [_SPEC_DATA_ATTR, TAG_ID_ATTR, GROUP_ID_ATTR]
+_RESERVED_DATA_FIELD_NAMES = [key[len("data-") :] for key in _RESERVED_DATA_ATTRIBUTES]
+
+
+def _serialize_bool(v: bool) -> str:
+    return "true" if v else None
+
+
+def _parse_str_list(v: list[str] | str) -> list[str]:
+    if isinstance(v, list):
+        return v
+    if isinstance(v, str):
+        return [item.strip() for item in v.split(",") if item.strip()]
+    raise ValueError(f'Invalid string list value: "{v}"')
+
+
+def _serialize_str_list(v: list[str]) -> str:
+    if isinstance(v, list):
+        for item in v:
+            if "," in item:
+                raise ValueError(f'String list items cannot contain commas: "{item}"')
+        return ",".join(v)
+    raise ValueError(f'Invalid string list value: "{v}"')
+
+
+def _serialize_enum_list(v: list[Enum]) -> str:
+    return _serialize_str_list([e.value for e in v])
+
+
+def _serialize_enum(v: Enum) -> str:
+    return v.value
+
+
+enum_serializer = PlainSerializer(_serialize_enum, return_type=str)
+enum_list_serializer = PlainSerializer(_serialize_enum_list, return_type=str)
+
+
+Bool = Annotated[bool, PlainSerializer(_serialize_bool, return_type=str)]
+
+
+StrList = Annotated[
+    list[str],
+    BeforeValidator(_parse_str_list),
+    PlainSerializer(_serialize_str_list, return_type=str),
 ]
+
+
+class SemanticTagData(BaseModel):
+    error_codes: Annotated[list[ErrorCodes], enum_list_serializer] | None = None
+
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    @classmethod
+    def __pydantic_init_subclass__(cls, **kwargs):
+        super().__pydantic_init_subclass__(**kwargs)
+        # Check if any forbidden field names are defined in the subclass
+        for field_name in cls.model_fields:
+            if field_name in _RESERVED_DATA_FIELD_NAMES:
+                raise ValueError(
+                    f"Field name '{field_name}' is reserved and cannot be used in {cls.__name__}."
+                )
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler: SerializerFunctionWrapHandler) -> dict[str, object]:
+        # Custom serialization to remove None values
+        serialized = handler(self)
+        for key in list(serialized):
+            if serialized[key] is None:
+                del serialized[key]
+        return serialized
+
+
+TSemanticTagData = TypeVar("TSemanticTagData", bound=SemanticTagData)
+
+
+class SemanticTagSpec(Protocol[TSemanticTagData]):
+    spec_name: str
+    tag_name: str
+    data_model: Type[TSemanticTagData] | None
+
+
+class SemanticTagSpecNoCustomData(SemanticTagSpec[SemanticTagData]):
+    spec_name = "IMPLEMENT_ME"
+    tag_name = "IMPLEMENT_ME"
+    data_model = SemanticTagData
+
+
+_REGISTRY: dict[str, Type[SemanticTagSpec]] = {}
+
+
+def register_spec(cls: Type[SemanticTagSpec]):
+    _REGISTRY[cls.spec_name] = cls
+    return cls
 
 
 def is_semantic_tag(
     tag: PageElementOrString,
-    schema_in: Sequence[SemanticTagSchema] | None = None,
+    spec_in: Sequence[Type[SemanticTagSpec[SemanticTagData]]] | None = None,
     tag_name_in: Sequence[str] | None = None,
 ) -> TypeGuard[Tag]:
     """
@@ -39,50 +143,82 @@ def is_semantic_tag(
 
     Optionally this function checks also that :
     - tag name is included in the given `tag_name_in` list.
-    - semantic tag schema is included in the given `schema_in` list.
+    - semantic tag is included in the given `spec_in` list.
     """
     if not is_tag(tag, tag_name_in=tag_name_in):
         return False
 
-    actual_schema_name = tag.get(SCHEMA_NAME_DATA_ATTR, None)
-    if actual_schema_name is None:
+    actual_semantic_name = tag.get(_SPEC_DATA_ATTR, None)
+    if actual_semantic_name is None:
         return False
 
-    if schema_in is not None:
-        schema_name_in = {schema.name for schema in schema_in}
-        if actual_schema_name not in schema_name_in:
+    if spec_in is not None:
+        semantic_name_in = {tag_spec.spec_name for tag_spec in spec_in}
+        if actual_semantic_name not in semantic_name_in:
             return False
     return True
 
 
-def css_selector(schema: SemanticTagSchema) -> str:
-    return f'[{SCHEMA_NAME_DATA_ATTR}="{schema.name}"]'
+def css_selector(spec: Type[SemanticTagSpec[TSemanticTagData]]) -> str:
+    return f'[{_SPEC_DATA_ATTR}="{spec.spec_name}"]'
 
 
 def make_semantic_tag(
     soup: BeautifulSoup,
-    schema: SemanticTagSchema,
+    spec: Type[SemanticTagSpec[TSemanticTagData]],
     contents: Iterable[PageElementOrString] | None = None,
-    data: DataElementDataDict | None = None,
+    data: TSemanticTagData | None = None,
 ) -> Tag:
     if contents is None:
         contents = []
+
+    # Create data instance if not provided
     if data is None:
-        data = {}
-    element = make_new_tag(soup, schema.tag_name, contents=contents)
-    element[SCHEMA_NAME_DATA_ATTR] = schema.name
-    for key in schema.data_keys:
-        try:
-            data_value = data[key]
-        except KeyError:
-            raise KeyError(f'Missing key "{key}" for schema "{schema.name}"')
-        if data_value is not None:
-            element[f"data-{key}"] = data_value
+        data = spec.data_model()
 
-    for key in SHARED_DATA_KEYS:
-        if key in data:
-            data_value = data[key]
-            if data_value is not None:
-                element[f"data-{key}"] = data_value
+    # Create the HTML tag
+    tag = make_new_tag(soup, spec.tag_name, contents=contents)
+    tag[_SPEC_DATA_ATTR] = spec.spec_name
 
-    return element
+    # Set data attributes from the validated data instance
+    set_semantic_tag_data(spec, tag, data)
+
+    return tag
+
+
+def get_semantic_tag_data(
+    spec: Type[SemanticTagSpec[TSemanticTagData]], tag: Tag
+) -> TSemanticTagData:
+    _ensure_matching_spec(spec, tag)
+    raw_data: dict[str, str] = {}
+    for key, value in tag.attrs.items():
+        if key in _RESERVED_DATA_ATTRIBUTES:
+            continue
+        if key.startswith("data-"):
+            data_key = key[len("data-") :]
+            raw_data[data_key] = value
+    return spec.data_model.model_validate(raw_data)
+
+
+def set_semantic_tag_data(
+    spec: Type[SemanticTagSpec[TSemanticTagData]], tag: Tag, data: TSemanticTagData
+) -> None:
+    _ensure_matching_spec(spec, tag)
+    for key, value in data.model_dump().items():
+        tag[f"data-{key}"] = str(value)
+
+
+def _ensure_matching_spec(
+    spec: Type[SemanticTagSpec[SemanticTagData]],
+    tag: Tag,
+) -> None:
+    if not is_semantic_tag(tag, spec_in=[spec]):
+        raise ValueError(f"Expected semantic tag {spec.spec_name}")
+
+
+def update_data(obj: TSemanticTagData, **kwargs) -> TSemanticTagData:
+    """
+    Replace properties of a SemanticTagData object, returning
+    a new instance and running validation.
+    """
+    return type(obj).model_validate(obj.model_dump() | kwargs)

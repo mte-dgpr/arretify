@@ -20,10 +20,11 @@ from typing import Iterator, Sequence
 
 from bs4 import Tag
 
-from arretify.semantic_tag_schemas import (
-    PAGE_FOOTER_SCHEMA,
-    TABLE_OF_CONTENTS_SCHEMA,
-    PAGE_SEPARATOR_SCHEMA,
+from arretify.semantic_tag_specs import (
+    PageSeparatorData,
+    TableOfContentsSpec,
+    PageSeparatorSpec,
+    PageFooterSpec,
 )
 from arretify.regex_utils import (
     PatternProxy,
@@ -177,7 +178,7 @@ def render_table_of_contents(
             raise ValueError(f"Unexpected element in table of contents: {element}")
     return make_semantic_tag(
         context.soup,
-        TABLE_OF_CONTENTS_SCHEMA,
+        TableOfContentsSpec,
         contents=wrap_in_tag(context.soup, page_elements, "div"),
     )
 
@@ -188,7 +189,7 @@ def render_page_footer(
 ) -> Tag:
     return make_semantic_tag(
         context.soup,
-        PAGE_FOOTER_SCHEMA,
+        PageFooterSpec,
         contents=wrap_in_tag(context.soup, [get_string(tag)], "div"),
     )
 
@@ -199,6 +200,6 @@ def render_page_separator(
 ) -> Tag:
     return make_semantic_tag(
         context.soup,
-        PAGE_SEPARATOR_SCHEMA,
-        data=dict(page_index=str(read_segmentation_tag_data(tag)["page_index"])),
+        PageSeparatorSpec,
+        data=PageSeparatorData(page_index=read_segmentation_tag_data(tag)["page_index"]),
     )

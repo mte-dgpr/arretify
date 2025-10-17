@@ -20,16 +20,19 @@ from typing import Iterable, Tuple, Iterator
 
 from bs4 import BeautifulSoup, Tag
 
-from arretify.semantic_tag_schemas import (
-    DOCUMENT_REFERENCE_SCHEMA,
-    SECTION_REFERENCE_SCHEMA,
+from arretify.semantic_tag_specs import (
+    DocumentReferenceData,
+    DocumentReferenceSpec,
+    SectionReferenceData,
+    SectionReferenceSpec,
 )
-from arretify.law_data.types import Document, Section
-from arretify.utils.html_semantic import css_selector, is_semantic_tag
+from arretify.utils.html_semantic import css_selector, is_semantic_tag, get_semantic_tag_data
 
 
 ReferenceTree = list[list[Tag]]
-ReferenceTreeTraversal = Iterable[Tuple[Tag, Document | None, list[Section]]]
+ReferenceTreeTraversal = Iterable[
+    Tuple[Tag, DocumentReferenceData | None, list[SectionReferenceData]]
+]
 
 
 def build_and_traverse_reference_tree(
@@ -107,9 +110,9 @@ def build_reference_tree(
         for tag in section_reference_tag.parent.children
         if is_semantic_tag(
             tag,
-            schema_in=[
-                DOCUMENT_REFERENCE_SCHEMA,
-                SECTION_REFERENCE_SCHEMA,
+            spec_in=[
+                DocumentReferenceSpec,
+                SectionReferenceSpec,
             ],
         )
     ]
@@ -165,22 +168,24 @@ def traverse_reference_tree(
     """
     seen: list[Tag] = []
     for branch in reference_tree:
-        document: Document | None = None
-        sections: list[Section] = []
+        document_reference: DocumentReferenceData | None = None
+        section_references: list[SectionReferenceData] = []
         for reference_tag in branch:
             if not is_semantic_tag(
                 reference_tag,
-                schema_in=[
-                    SECTION_REFERENCE_SCHEMA,
-                    DOCUMENT_REFERENCE_SCHEMA,
+                spec_in=[
+                    SectionReferenceSpec,
+                    DocumentReferenceSpec,
                 ],
             ):
                 raise ValueError(f"Unexpected tag in reference branch: {reference_tag}")
 
-            if is_semantic_tag(reference_tag, schema_in=[SECTION_REFERENCE_SCHEMA]):
-                sections.append(Section.from_tag(reference_tag))
-            elif is_semantic_tag(reference_tag, schema_in=[DOCUMENT_REFERENCE_SCHEMA]):
-                document = Document.from_tag(reference_tag)
+            if is_semantic_tag(reference_tag, spec_in=[SectionReferenceSpec]):
+                section_references.append(
+                    get_semantic_tag_data(SectionReferenceSpec, reference_tag)
+                )
+            elif is_semantic_tag(reference_tag, spec_in=[DocumentReferenceSpec]):
+                document_reference = get_semantic_tag_data(DocumentReferenceSpec, reference_tag)
 
             # Avoid handling the same section multiple times
             if any([reference_tag is other_tag for other_tag in seen]):
@@ -189,13 +194,13 @@ def traverse_reference_tree(
             seen.append(reference_tag)
             # Send a copy of the sections list otherwise
             # it will be modified in the next iteration
-            yield reference_tag, document, sections[:]
+            yield reference_tag, document_reference, section_references[:]
 
 
 def iter_reference_trees(soup: BeautifulSoup) -> Iterator[ReferenceTree]:
     processed: list[Tag] = []
     for reference_tag in soup.select(
-        f"{css_selector(DOCUMENT_REFERENCE_SCHEMA)}, {css_selector(SECTION_REFERENCE_SCHEMA)}"
+        f"{css_selector(DocumentReferenceSpec)}, {css_selector(SectionReferenceSpec)}"
     ):
         if reference_tag in processed:
             # Skip already processed tags

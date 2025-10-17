@@ -17,10 +17,9 @@
 # limitations under the License.
 #
 
-from arretify.types import DocumentContext
-from arretify.law_data.types import DocumentType, Document
-from arretify.semantic_tag_schemas import DOCUMENT_REFERENCE_SCHEMA
-from arretify.utils.html_semantic import css_selector
+from arretify.types import DocumentContext, DocumentType
+from arretify.semantic_tag_specs import DocumentReferenceSpec
+from arretify.utils.html_semantic import css_selector, get_semantic_tag_data
 from arretify.utils.references import build_and_traverse_reference_tree
 from .codes_resolution import (
     resolve_code_article_legifrance_id,
@@ -45,17 +44,15 @@ from .eu_acts_resolution import (
 def step_legifrance_references_resolution(
     document_context: DocumentContext,
 ) -> DocumentContext:
-    for document_reference_tag in document_context.soup.select(
-        css_selector(DOCUMENT_REFERENCE_SCHEMA)
-    ):
-        document = Document.from_tag(document_reference_tag)
-        if document.type is DocumentType.arrete_ministeriel:
+    for document_reference_tag in document_context.soup.select(css_selector(DocumentReferenceSpec)):
+        document_reference = get_semantic_tag_data(DocumentReferenceSpec, document_reference_tag)
+        if document_reference.type is DocumentType.arrete_ministeriel:
             resolve_arrete_ministeriel_legifrance_id(document_context, document_reference_tag)
-        elif document.type is DocumentType.decret:
+        elif document_reference.type is DocumentType.decret:
             resolve_decret_legifrance_id(document_context, document_reference_tag)
-        elif document.type is DocumentType.circulaire:
+        elif document_reference.type is DocumentType.circulaire:
             resolve_circulaire_legifrance_id(document_context, document_reference_tag)
-        elif document.type is DocumentType.code:
+        elif document_reference.type is DocumentType.code:
             resolve_code_legifrance_id(document_context, document_reference_tag)
             for (
                 section_reference_tag,
@@ -75,10 +72,8 @@ def step_legifrance_references_resolution(
 
 
 def step_eurlex_references_resolution(document_context: DocumentContext) -> DocumentContext:
-    for document_reference_tag in document_context.soup.select(
-        css_selector(DOCUMENT_REFERENCE_SCHEMA)
-    ):
-        document = Document.from_tag(document_reference_tag)
+    for document_reference_tag in document_context.soup.select(css_selector(DocumentReferenceSpec)):
+        document = get_semantic_tag_data(DocumentReferenceSpec, document_reference_tag)
         if document.type is DocumentType.eu_decision:
             resolve_eu_decision_eurlex_url(document_context, document_reference_tag)
         elif document.type is DocumentType.eu_regulation:

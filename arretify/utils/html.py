@@ -16,93 +16,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import Sequence, cast, TypeGuard, Literal, Iterable, Iterator
+from typing import Literal, Sequence, TypeGuard, Iterable, Iterator
 
 from bs4 import Tag
 
 from arretify.types import (
-    DataElementDataDict,
-    PageElementOrString,
-    ElementId,
-    ElementGroupId,
     IdCounters,
+    PageElementOrString,
+    TagGroupId,
+    TagId,
 )
 from arretify.utils.functional import iter_func_to_list
 
 
 INLINE_TAG_TYPES = ["br"]
 
-
-_Id = str
-_IdName = Literal["element_id", "group_id"]
-
-
-def ensure_element_id(id_counters: IdCounters, tag: Tag) -> ElementId:
-    current_id = _get_id_from_tag(tag, "element_id")
-    if current_id is not None:
-        return cast(ElementId, current_id)
-    return _set_id_to_tag(tag, "element_id", _make_id(id_counters, "element_id"))
-
-
-def set_group_id(tag: Tag, group_id: ElementGroupId) -> ElementGroupId:
-    return _set_id_to_tag(tag, "group_id", group_id)
-
-
-def make_group_id(id_counters: IdCounters) -> ElementGroupId:
-    return _make_id(id_counters, "group_id")
-
-
-def get_group_id(tag: Tag) -> ElementGroupId | None:
-    return _get_id_from_tag(tag, "group_id")
-
-
-def _make_id(
-    id_counters: IdCounters,
-    name: _IdName,
-) -> _Id:
-    setattr(id_counters, name, getattr(id_counters, name) + 1)
-    return f"{getattr(id_counters, name)}"
-
-
-def _set_id_to_tag(
-    tag: Tag,
-    name: _IdName,
-    id_value: _Id,
-) -> _Id:
-    tag[f"data-{name}"] = id_value
-    return id_value
-
-
-def _get_id_from_tag(tag: Tag, name: _IdName) -> _Id | None:
-    id_value = tag.get(f"data-{name}")
-    if id_value is not None:
-        return cast(_Id, id_value)
-    return None
-
-
-def parse_bool_attribute(value: str) -> bool:
-    return value == "true"
-
-
-def render_bool_attribute(value: bool) -> str:
-    return "true" if value else "false"
-
-
-def parse_str_list_attribute(value: str) -> list[str]:
-    return value.split(",")
-
-
-def render_str_list_attribute(value: Sequence[str]) -> str:
-    for item in value:
-        if "," in item:
-            raise ValueError(f'Invalid item "{item}" in list')
-    return ",".join(value)
-
-
-def set_data_attributes(tag: Tag, data: DataElementDataDict) -> None:
-    for key, value in data.items():
-        if value is not None:
-            tag[f"data-{key}"] = value
+TAG_ID_ATTR = "data-element_id"
+# TODO:RENAME : rename to data-tag_id
+GROUP_ID_ATTR = "data-group_id"
 
 
 def is_tag(
@@ -132,3 +63,34 @@ def filter_out_inline_tags(
     for element in elements:
         if not is_tag(element, tag_name_in=INLINE_TAG_TYPES):
             yield element
+
+
+def ensure_tag_id(id_counters: IdCounters, tag: Tag) -> TagId:
+    current_tag_id = tag.get(TAG_ID_ATTR, None)
+    if current_tag_id is None:
+        tag[TAG_ID_ATTR] = _make_id(id_counters, "element_id")
+    return tag[TAG_ID_ATTR]
+
+
+def make_group_id(id_counters: IdCounters) -> TagGroupId:
+    return _make_id(id_counters, "group_id")
+
+
+def set_group_id(tag: Tag, group_id: TagGroupId) -> TagGroupId:
+    current_group_id = tag.get(GROUP_ID_ATTR, None)
+    if current_group_id is not None and current_group_id != group_id:
+        raise ValueError(f"Tag already has a different group_id: {current_group_id}")
+    tag[GROUP_ID_ATTR] = group_id
+    return group_id
+
+
+def get_group_id(tag: Tag) -> TagGroupId | None:
+    return tag.get(GROUP_ID_ATTR, None)
+
+
+def _make_id(
+    id_counters: IdCounters,
+    name: Literal["element_id", "group_id"],
+) -> str:
+    setattr(id_counters, name, getattr(id_counters, name) + 1)
+    return f"{getattr(id_counters, name)}"

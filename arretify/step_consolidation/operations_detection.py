@@ -27,21 +27,16 @@ from arretify.regex_utils import (
     filter_regex_tree_match_children,
     join_with_or,
 )
-from arretify.utils.html import (
-    render_str_list_attribute,
-    render_bool_attribute,
-)
 from arretify.utils.html_semantic import make_semantic_tag
 from arretify.utils.html_create import make_new_tag
 from arretify.utils.strings import merge_strings
 from arretify.utils.html_split_merge import make_regex_tree_splitter
 from arretify.utils.split_merge import split_elements, map_splitted_elements
-from arretify.semantic_tag_schemas import OPERATION_SCHEMA
+from arretify.semantic_tag_specs import OperationData, OperationSpec
 from arretify.types import (
     OperationType,
     PageElementOrString,
     DocumentContext,
-    DataElementDataDict,
 )
 
 from arretify.parsing_utils.numbering import COUNT_PATTERN_S
@@ -337,7 +332,7 @@ def _render_operation_match(
 ) -> Tag:
     return make_semantic_tag(
         soup,
-        OPERATION_SCHEMA,
+        OperationSpec,
         contents=flat_map_regex_tree_match(
             operation_match.children,
             lambda group_match: _render_group_match(soup, group_match),
@@ -346,12 +341,7 @@ def _render_operation_match(
                 *OPERATION_TYPES_GROUP_NAMES,
             ],
         ),
-        data=dict(
-            **_extract_operation_data(operation_match),
-            references=render_str_list_attribute([]),
-            direction="rtl",
-            operand="",
-        ),
+        data=_extract_operation_data(operation_match),
     )
 
 
@@ -372,7 +362,7 @@ def _render_group_match(
 
 def _extract_operation_data(
     operation_match: regex_tree.Match,
-) -> DataElementDataDict:
+) -> OperationData:
     operation_type_groups = filter_regex_tree_match_children(
         operation_match,
         OPERATION_TYPES_GROUP_NAMES,
@@ -383,8 +373,11 @@ def _extract_operation_data(
 
     has_operand = len(filter_regex_tree_match_children(operation_match, ["__has_operand"])) > 0
 
-    return dict(
+    return OperationData(
         operation_type=operation_type_group.group_name,
         keyword=merge_strings(iter_regex_tree_match_page_elements_or_strings(operation_type_group)),
-        has_operand=render_bool_attribute(has_operand),
+        has_operand=has_operand,
+        references=None,
+        direction="rtl",
+        operand=None,
     )

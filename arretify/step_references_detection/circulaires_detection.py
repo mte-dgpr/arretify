@@ -30,15 +30,15 @@ from arretify.parsing_utils.dates import (
     render_date_regex_tree_match,
 )
 from arretify.types import PageElementOrString, DocumentContext
-from arretify.semantic_tag_schemas import (
-    DOCUMENT_REFERENCE_SCHEMA,
+from arretify.semantic_tag_specs import (
+    DocumentReferenceData,
+    DocumentReferenceSpec,
 )
 from arretify.utils.html import is_tag
 from arretify.utils.html_split_merge import make_regex_tree_splitter
 from arretify.utils.split_merge import split_elements, map_splitted_elements
 from arretify.utils.html_semantic import make_semantic_tag
-from arretify.law_data.types import (
-    Document,
+from arretify.types import (
     DocumentType,
 )
 
@@ -114,15 +114,13 @@ def _render_circulaire_container(
     if circulaire_date is None:
         _LOGGER.warning(f"Could not find date for circulaire: {circulaire_tag_contents}")
 
-    document = Document(
-        type=DocumentType.circulaire,
-        num=circulaire_match.match_dict.get("identifier", None),
-        date=circulaire_date,
-    )
-
     return make_semantic_tag(
         soup,
-        DOCUMENT_REFERENCE_SCHEMA,
-        data=document.get_data_attributes(),
+        DocumentReferenceSpec,
+        data=DocumentReferenceData(
+            type=DocumentType.circulaire,
+            num=circulaire_match.match_dict.get("identifier", None),
+            date=circulaire_date,
+        ),
         contents=circulaire_tag_contents,
     )

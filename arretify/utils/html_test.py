@@ -20,39 +20,12 @@ import unittest
 
 from bs4 import BeautifulSoup
 
-from .html import ensure_element_id, is_tag
 from arretify.types import IdCounters
 
-
-class TestAssignElementId(unittest.TestCase):
-
-    def test_simple(self):
-        # Arrange
-        soup = BeautifulSoup("", "html.parser")
-        tag = soup.new_tag("div")
-        id_counters = IdCounters()
-
-        # Act
-        ensure_element_id(id_counters, tag)
-
-        # Assert
-        assert tag["data-element_id"] == "1"
-
-    def test_already_has_element_id(self):
-        # Arrange
-        soup = BeautifulSoup("", "html.parser")
-        tag = soup.new_tag("div")
-        id_counters = IdCounters()
-        tag["data-element_id"] = "42"
-
-        # Act
-        ensure_element_id(id_counters, tag)
-
-        # Assert
-        assert tag["data-element_id"] == "42"
+from .html import ensure_tag_id, get_group_id, is_tag, make_group_id, set_group_id
 
 
-class TestIsTagAndMatches(unittest.TestCase):
+class TestIsTag(unittest.TestCase):
 
     def test_tag_name_in(self):
         # Arrange
@@ -76,3 +49,50 @@ class TestIsTagAndMatches(unittest.TestCase):
 
         # Assert
         assert result is False
+
+
+class TestAssignElementId(unittest.TestCase):
+
+    def setUp(self):
+        self.soup = BeautifulSoup("", "html.parser")
+        self.tag = self.soup.new_tag("div")
+        self.id_counters = IdCounters()
+
+    def test_simple(self):
+        # Act
+        ensure_tag_id(self.id_counters, self.tag)
+
+        # Assert
+        assert self.tag["data-element_id"] == "1"
+
+    def test_already_has_element_id(self):
+        # Arrange
+        self.tag["data-element_id"] = "42"
+        self.id_counters = IdCounters()
+
+        # Act
+        ensure_tag_id(self.id_counters, self.tag)
+
+        # Assert
+        assert self.tag["data-element_id"] == "42"
+
+
+class TestGroupId(unittest.TestCase):
+
+    def setUp(self):
+        self.soup = BeautifulSoup("", "html.parser")
+        self.tag = self.soup.new_tag("div")
+        self.id_counters = IdCounters()
+
+    def test_make_set_get_group_id(self):
+        # ARRANGE
+        id_counters = IdCounters()
+
+        # ACT
+        group_id = make_group_id(id_counters)
+        set_group_id(self.tag, group_id)
+        retrieved_id = get_group_id(self.tag)
+
+        # ASSERT
+        assert retrieved_id == group_id
+        assert retrieved_id == "1"

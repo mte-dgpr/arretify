@@ -16,29 +16,32 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import cast
 import logging
 
 from bs4 import Tag
 
 from arretify.types import DocumentContext
-from arretify.semantic_tag_schemas import (
-    SECTION_REFERENCE_SCHEMA,
-    DOCUMENT_REFERENCE_SCHEMA,
-    PAGE_SEPARATOR_SCHEMA,
-    PAGE_FOOTER_SCHEMA,
+from arretify.semantic_tag_specs import (
+    OperationSpec,
+    SectionReferenceSpec,
+    DocumentReferenceSpec,
+    PageSeparatorSpec,
+    PageFooterSpec,
 )
 from arretify.utils.html import (
-    ensure_element_id,
-    render_str_list_attribute,
-    parse_bool_attribute,
+    ensure_tag_id,
     is_tag,
 )
 from arretify.utils.element_ranges import (
     get_contiguous_elements_left,
     get_contiguous_elements_right,
 )
-from arretify.utils.html_semantic import is_semantic_tag
+from arretify.utils.html_semantic import (
+    is_semantic_tag,
+    get_semantic_tag_data,
+    set_semantic_tag_data,
+    update_data,
+)
 from arretify.utils.references import build_reference_tree
 
 
@@ -47,31 +50,34 @@ _LOGGER = logging.getLogger(__name__)
 
 # TODO : refactor to factorize with list in step_segmentation
 INLINE_TAG_SCHEMAS = [
-    PAGE_FOOTER_SCHEMA,
-    PAGE_SEPARATOR_SCHEMA,
+    PageFooterSpec,
+    PageSeparatorSpec,
 ]
 
 
 def resolve_references_and_operands(document_context: DocumentContext, operation_tag: Tag) -> None:
-    if operation_tag["data-direction"] != "rtl":
+    operation_data = get_semantic_tag_data(OperationSpec, operation_tag)
+    if operation_data.direction != "rtl":
         raise ValueError("Only right-to-left is supported so far")
 
     reference_tags: list[Tag] = _find_left_references(document_context, operation_tag)
     if len(reference_tags) == 0:
         _LOGGER.warning("No references found in operation")
         return
-    operation_tag["data-references"] = render_str_list_attribute(
-        [ensure_element_id(document_context.id_counters, tag) for tag in reference_tags]
+    operation_data = update_data(
+        operation_data,
+        references=[ensure_tag_id(document_context.id_counters, tag) for tag in reference_tags],
     )
+    set_semantic_tag_data(OperationSpec, operation_tag, operation_data)
 
-    has_operand = parse_bool_attribute(cast(str, operation_tag["data-has_operand"]))
-    if has_operand:
+    if operation_data.has_operand:
         operand_tag: Tag | None = _find_right_operand(document_context, operation_tag)
         if operand_tag is None:
             _LOGGER.warning("No right operand found for operation")
             return
-        element_id = ensure_element_id(document_context.id_counters, operand_tag)
-        operation_tag["data-operand"] = element_id
+        operand_tag_id = ensure_tag_id(document_context.id_counters, operand_tag)
+        operation_data = update_data(operation_data, operand=operand_tag_id)
+    set_semantic_tag_data(OperationSpec, operation_tag, operation_data)
 
 
 def _find_right_operand(document_context: DocumentContext, start_tag: Tag) -> Tag | None:
@@ -88,7 +94,7 @@ def _find_right_operand(document_context: DocumentContext, start_tag: Tag) -> Ta
 
         # We ignore inline tags like page separators and footers
         # and look recursively for the next neighbouring element.
-        elif is_semantic_tag(element, schema_in=INLINE_TAG_SCHEMAS):
+        elif is_semantic_tag(element, spec_in=INLINE_TAG_SCHEMAS):
             return _find_right_operand(document_context, element)
     return None
 
@@ -100,9 +106,9 @@ def _find_left_references(document_context: DocumentContext, start_tag: Tag) -> 
     for element in contiguous_elements_left:
         if is_semantic_tag(
             element,
-            schema_in=[
-                SECTION_REFERENCE_SCHEMA,
-                DOCUMENT_REFERENCE_SCHEMA,
+            spec_in=[
+                SectionReferenceSpec,
+                DocumentReferenceSpec,
             ],
         ):
             # Take the leaves of the reference tree, i.e. the most
@@ -117,12 +123,12 @@ def _find_left_references(document_context: DocumentContext, start_tag: Tag) -> 
 
         # We ignore inline tags like page separators and footers
         # and look recursively for the next neighbouring element.
-        elif is_semantic_tag(element, schema_in=INLINE_TAG_SCHEMAS):
+        elif is_semantic_tag(element, spec_in=INLINE_TAG_SCHEMAS):
             return _find_left_references(document_context, element)
 
     if len(reference_tags) == 0:
         for element in contiguous_elements_left:
-            if is_semantic_tag(element, schema_in=[DOCUMENT_REFERENCE_SCHEMA]):
+            if is_semantic_tag(element, spec_in=[DocumentReferenceSpec]):
                 reference_tags = [element]
                 break
 

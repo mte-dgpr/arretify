@@ -29,18 +29,15 @@ from arretify.parsing_utils.dates import (
     DATE_NODE,
     render_date_regex_tree_match,
 )
-from arretify.types import PageElementOrString, DocumentContext
-from arretify.semantic_tag_schemas import (
-    DOCUMENT_REFERENCE_SCHEMA,
+from arretify.types import PageElementOrString, DocumentContext, DocumentType
+from arretify.semantic_tag_specs import (
+    DocumentReferenceData,
+    DocumentReferenceSpec,
 )
 from arretify.utils.html import is_tag
 from arretify.utils.html_split_merge import make_regex_tree_splitter
 from arretify.utils.split_merge import split_elements, map_splitted_elements
 from arretify.utils.html_semantic import make_semantic_tag
-from arretify.law_data.types import (
-    Document,
-    DocumentType,
-)
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -97,15 +94,13 @@ def _render_decret_container(
     if decret_date is None:
         _LOGGER.warning(f"Could not find date for decret {decret_tag_contents}")
 
-    document = Document(
-        type=DocumentType.decret,
-        date=decret_date,
-        num=decret_match.match_dict.get("identifier", None),
-    )
-
     return make_semantic_tag(
         soup,
-        DOCUMENT_REFERENCE_SCHEMA,
-        data=document.get_data_attributes(),
+        DocumentReferenceSpec,
+        data=DocumentReferenceData(
+            type=DocumentType.decret,
+            date=decret_date,
+            num=decret_match.match_dict.get("identifier", None),
+        ),
         contents=decret_tag_contents,
     )

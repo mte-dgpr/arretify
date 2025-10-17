@@ -19,10 +19,10 @@
 from typing import Iterator, Callable, Sequence
 
 from arretify.types import DocumentContext, SectionType, PageElementOrString
-from arretify.semantic_tag_schemas import (
-    HEADER_SCHEMA,
-    MAIN_SCHEMA,
-    APPENDIX_SCHEMA,
+from arretify.semantic_tag_specs import (
+    AppendixSpec,
+    HeaderSpec,
+    MainSpec,
 )
 from arretify.utils.html_semantic import make_semantic_tag
 from arretify.utils.html_create import replace_children
@@ -108,15 +108,15 @@ def render_arrete(
     for element in elements:
         if is_segmentation_tag(element, tag_name_in=["header"]):
             yield make_semantic_tag(
-                context.soup, HEADER_SCHEMA, contents=render_header(context, element.contents)
+                context.soup, HeaderSpec, contents=render_header(context, element.contents)
             )
         elif is_segmentation_tag(element, tag_name_in=["main"]):
             yield make_semantic_tag(
-                context.soup, MAIN_SCHEMA, contents=render_content(context, element.contents)
+                context.soup, MainSpec, contents=render_content(context, element.contents)
             )
         elif is_segmentation_tag(element, tag_name_in=["appendix"]):
             yield make_semantic_tag(
-                context.soup, APPENDIX_SCHEMA, contents=render_content(context, element.contents)
+                context.soup, AppendixSpec, contents=render_content(context, element.contents)
             )
 
 

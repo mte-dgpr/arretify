@@ -24,19 +24,15 @@ from arretify.types import PageElementOrString, DocumentContext
 from arretify.utils.element_ranges import (
     iter_collapsed_range_right,
 )
-from arretify.utils.html import (
-    ensure_element_id,
-    get_group_id,
-)
-from arretify.semantic_tag_schemas import (
-    SECTION_REFERENCE_SCHEMA,
-    DOCUMENT_REFERENCE_SCHEMA,
+from arretify.semantic_tag_specs import (
+    SectionReferenceSpec,
+    DocumentReferenceSpec,
 )
 from arretify.regex_utils import regex_tree
 from arretify.utils.html_semantic import is_semantic_tag
 from arretify.utils.split_merge import split_elements, map_splitted_elements
 from arretify.utils.html_split_merge import group_strings_splitter
-from arretify.utils.html import filter_out_inline_tags
+from arretify.utils.html import ensure_tag_id, filter_out_inline_tags, get_group_id
 from arretify.utils.strings import merge_strings
 
 
@@ -67,7 +63,7 @@ def match_sections_to_parents(
     document_context.soup
     children = list(children)
     section_references = [
-        tag for tag in children if is_semantic_tag(tag, schema_in=[SECTION_REFERENCE_SCHEMA])
+        tag for tag in children if is_semantic_tag(tag, spec_in=[SectionReferenceSpec])
     ]
 
     for section_reference_tag in section_references:
@@ -84,9 +80,7 @@ def match_sections_to_parents(
             section_references_in_group = [section_reference_tag]
 
         for section_reference_tag in section_references_in_group:
-            document_element_id = ensure_element_id(
-                document_context.id_counters, parent_reference_tag
-            )
+            document_element_id = ensure_tag_id(document_context.id_counters, parent_reference_tag)
             section_reference_tag["data-parent_reference"] = document_element_id
 
     return children
@@ -137,9 +131,9 @@ def _search_parent_reference_tag(
             parent_reference_tag = element_range_with_merged_strings[2]
             if not is_semantic_tag(
                 parent_reference_tag,
-                schema_in=[
-                    DOCUMENT_REFERENCE_SCHEMA,
-                    SECTION_REFERENCE_SCHEMA,
+                spec_in=[
+                    DocumentReferenceSpec,
+                    SectionReferenceSpec,
                 ],
             ):
                 return None

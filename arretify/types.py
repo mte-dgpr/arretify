@@ -16,8 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-import re
-from typing import Sequence, Union, Tuple, Optional, Type, TypeVar, Dict
+from typing import Sequence, Union, Tuple, Optional, Type, TypeVar
 from enum import Enum
 from dataclasses import dataclass, fields, field
 from uuid import uuid4
@@ -30,30 +29,43 @@ from arretify._vendor import mistralai
 from arretify.settings import Settings
 
 
-ELEMENT_NAME_PATTERN = re.compile(r"^[a-z0-9_]+$")
 DocumentContextType = TypeVar("DocumentContextType", bound="DocumentContext")
 
 PageLineColumn = Tuple[int, int, int]
 """Tuple page, line and column number. All values are 0-indexed."""
 
 
-@dataclass(frozen=True, kw_only=True)
-class SemanticTagSchema:
-    name: str
-    tag_name: str
-    data_keys: Sequence[str]
+class DocumentType(Enum):
+    unknown = "unknown"
 
-    def __post_init__(self):
-        matched = ELEMENT_NAME_PATTERN.match(self.name)
-        if not matched:
-            raise ValueError(f"Invalid name: {self.name}")
-        if "element_id" in self.data_keys:
-            raise ValueError("element_id is a reserved key")
-        if "group_id" in self.data_keys:
-            raise ValueError("group_id is a reserved key")
+    self = "self"
+    """Self reference"""
 
+    unknown_arrete = "arrete"
+    arrete_prefectoral = "arrete-prefectoral"
+    arrete_ministeriel = "arrete-ministeriel"
+    decret = "decret"
+    circulaire = "circulaire"
+    code = "code"
+    """Code juridique (https://www.legifrance.gouv.fr/liste/code)"""
 
-DataElementDataDict = Dict[str, str | None]
+    eu_regulation = "eu-regulation"
+    """
+    EU regulation. (https://style-guide.europa.eu &
+    https://style-guide.europa.eu/fr/content/-/isg/topic?identifier=1.2.1-classification-of-acts)
+    """
+
+    eu_directive = "eu-directive"
+    """
+    EU directive. (https://style-guide.europa.eu &
+    https://style-guide.europa.eu/fr/content/-/isg/topic?identifier=1.2.1-classification-of-acts)
+    """
+
+    eu_decision = "eu-decision"
+    """
+    EU decision. (https://style-guide.europa.eu &
+    https://style-guide.europa.eu/fr/content/-/isg/topic?identifier=1.2.1-classification-of-acts)
+    """
 
 
 class SectionType(Enum):
@@ -163,15 +175,15 @@ PageElementOrString = Union[PageElement, str]
 
 ExternalURL = str
 
-ElementId = str
+TagId = str
 """
-A unique id assigned to elements in the DOM as `data-element_id` attribute.
-This provides an alternative to referencing an element in the DOM
+A unique id assigned to tags in the DOM as `data-tag_id` attribute.
+This provides an alternative to referencing a tag in the DOM
 using its `id` attribute, because `id` has meaning in HTML which
 we don't want to interfere with.
 """
 
-ElementGroupId = str
+TagGroupId = str
 """
-A unique id assigned to groups of elements in the DOM as `data-group_id` attribute.
+A unique id assigned to groups of tags in the DOM as `data-group_id` attribute.
 """

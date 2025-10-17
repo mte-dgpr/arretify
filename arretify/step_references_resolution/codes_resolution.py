@@ -17,21 +17,24 @@
 # limitations under the License.
 #
 from typing import Sequence
-from dataclasses import replace as dataclass_replace
 import logging
 
 from bs4 import Tag
 
+from arretify.semantic_tag_specs import (
+    DocumentReferenceData,
+    DocumentReferenceSpec,
+    SectionReferenceData,
+)
 from arretify.types import (
     DocumentContext,
     SectionType,
-    DataElementDataDict,
 )
-from arretify.law_data.types import Section, Document
 from arretify.law_data.legifrance_constants import (
     get_code_id_with_title,
     get_code_article_id_from_article_num,
 )
+from arretify.utils.html_semantic import get_semantic_tag_data, update_data
 
 from .core import update_document_reference_tag_href, update_section_reference_tag_href
 
@@ -40,65 +43,57 @@ _LOGGER = logging.getLogger(__name__)
 
 
 def resolve_code_article_legifrance_id(
-    document_context: DocumentContext,
+    _: DocumentContext,
     code_article_reference_tag: Tag,
-    document: Document,
-    sections: Sequence[Section],
+    document_reference: DocumentReferenceData,
+    section_references: Sequence[SectionReferenceData],
 ) -> None:
-    if document.id is None:
+    if document_reference.id is None:
         return
 
-    resolved_sections: list[Section] = []
-    for section in sections:
+    resolved_section_references: list[SectionReferenceData] = []
+    for section in section_references:
         if section.type == SectionType.ARTICLE:
-            new_fields: DataElementDataDict = dict(
-                start_id=None,
-                end_id=None,
-            )
-
             for num_key, id_key in (
                 ("start_num", "start_id"),
                 ("end_num", "end_id"),
             ):
                 if getattr(section, num_key) is not None:
                     article_id = get_code_article_id_from_article_num(
-                        document.id, getattr(section, num_key)
+                        document_reference.id, getattr(section, num_key)
                     )
                     if article_id:
-                        new_fields[id_key] = article_id
+                        section = update_data(
+                            section,
+                            **{id_key: article_id},
+                        )
                     else:
                         _LOGGER.warning(
                             f"Could not find legifrance article id for "
-                            f"code {document.id} article {getattr(section, num_key)}"
+                            f"code {document_reference.id} article {getattr(section, num_key)}"
                         )
 
-            section = dataclass_replace(
-                section,
-                start_id=new_fields["start_id"],
-                end_id=new_fields["end_id"],
-            )
-
-        resolved_sections.append(section)
+        resolved_section_references.append(section)
 
     update_section_reference_tag_href(
         code_article_reference_tag,
-        document,
-        *resolved_sections,
+        document_reference,
+        *resolved_section_references,
     )
 
 
 def resolve_code_legifrance_id(
-    document_context: DocumentContext,
+    _: DocumentContext,
     code_reference_tag: Tag,
 ) -> None:
-    document = Document.from_tag(code_reference_tag)
-    if document.title is None:
+    document_reference = get_semantic_tag_data(DocumentReferenceSpec, code_reference_tag)
+    if document_reference.title is None:
         raise ValueError("Could not find code title")
-    code_id = get_code_id_with_title(document.title)
+    code_id = get_code_id_with_title(document_reference.title)
     if code_id is None:
-        raise ValueError(f"Could not find code id for title {document.title}")
+        raise ValueError(f"Could not find code id for title {document_reference.title}")
 
     update_document_reference_tag_href(
         code_reference_tag,
-        dataclass_replace(document, id=code_id),
+        update_data(document_reference, id=code_id),
     )
