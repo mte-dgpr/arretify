@@ -16,18 +16,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from dataclasses import replace as dataclass_replace
 import logging
 
 from bs4 import Tag
 
-from arretify.parsing_utils.dates import parse_date_str
+from arretify.utils.dates import parse_date_str
+from arretify.semantic_tag_specs import DocumentReferenceSpec
 from arretify.types import DocumentContext
 from arretify.law_data.apis.legifrance import (
     get_decret_legifrance_id,
 )
-from arretify.law_data.types import Document
 from arretify.errors import catch_and_log_arretify_error
+from arretify.utils.html_semantic import get_semantic_tag_data, update_data
 from .core import (
     update_document_reference_tag_href,
     get_title_sample_next_sibling,
@@ -42,35 +42,36 @@ def resolve_decret_legifrance_id(
     document_context: DocumentContext,
     document_reference_tag: Tag,
 ) -> None:
-    document = Document.from_tag(document_reference_tag)
+    document_reference = get_semantic_tag_data(DocumentReferenceSpec, document_reference_tag)
 
-    if document.date is None:
-        _LOGGER.warning(f"Decret {document} has no date")
+    if document_reference.date is None:
+        _LOGGER.warning(f"Decret {document_reference} has no date")
         return
 
     title = get_title_sample_next_sibling(document_reference_tag)
-    if title is None and document.num is None:
+    if title is None and document_reference.num is None:
         _LOGGER.warning(f"Could not resolve decret {document_reference_tag}. No title or num")
         return
 
-    date_object = parse_date_str(document.date)
+    date_object = parse_date_str(document_reference.date)
     decret_id = get_decret_legifrance_id(
         document_context,
         date_object,
         title=title,
-        num=document.num,
+        num=document_reference.num,
     )
     if decret_id is None:
         _LOGGER.warning(
             f"Could not find legifrance decret id for "
-            f'date {date_object}{' n°' + document.num if document.num else ''} "{title}"'
+            f"date {date_object}"
+            f'{' n°' + document_reference.num if document_reference.num else ''} "{title}"'
         )
         return
 
     update_document_reference_tag_href(
         document_reference_tag,
-        dataclass_replace(
-            document,
+        update_data(
+            document_reference,
             id=decret_id,
         ),
     )

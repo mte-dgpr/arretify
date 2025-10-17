@@ -20,7 +20,8 @@ import unittest
 
 from bs4 import BeautifulSoup
 
-from arretify.law_data.types import Document, DocumentType, SectionType, Section
+from arretify.types import DocumentType, SectionType
+from arretify.semantic_tag_specs import DocumentReferenceData, SectionReferenceData
 from .references import build_reference_tree, traverse_reference_tree, iter_reference_trees
 
 
@@ -222,13 +223,15 @@ class TestTraverseReferenceTree(unittest.TestCase):
 
         document_reference_tag, document, sections = results[0]
         assert document_reference_tag["data-element_id"] == "2"
-        assert document == Document(type=DocumentType.unknown_arrete, id="L123")
+        assert document == DocumentReferenceData(type=DocumentType.unknown_arrete, id="L123")
         assert sections == []
 
         section_reference_tag, document, sections = results[1]
         assert section_reference_tag["data-element_id"] == "1"
-        assert document == Document(type=DocumentType.unknown_arrete, id="L123")
-        assert sections == [Section(type=SectionType.ARTICLE, start_num="456")]
+        assert document == DocumentReferenceData(type=DocumentType.unknown_arrete, id="L123")
+        assert sections == [
+            SectionReferenceData(type=SectionType.ARTICLE, start_num="456", parent_reference="2")
+        ]
 
     def test_traverse_section_as_root(self):
         # Arrange
@@ -273,15 +276,15 @@ class TestTraverseReferenceTree(unittest.TestCase):
         article_reference_tag, document, sections = results[0]
         assert article_reference_tag["data-element_id"] == "2"
         assert document is None
-        assert sections == [Section(type=SectionType.ARTICLE, start_num="L123")]
+        assert sections == [SectionReferenceData(type=SectionType.ARTICLE, start_num="L123")]
 
         alinea_reference_tag, document, sections = results[1]
         assert alinea_reference_tag["data-element_id"] == "1"
         assert document is None
         assert len(sections) == 2
         assert sections == [
-            Section(type=SectionType.ARTICLE, start_num="L123"),
-            Section(type=SectionType.ALINEA, start_num="456"),
+            SectionReferenceData(type=SectionType.ARTICLE, start_num="L123"),
+            SectionReferenceData(type=SectionType.ALINEA, start_num="456", parent_reference="2"),
         ]
 
 

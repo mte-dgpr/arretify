@@ -17,17 +17,12 @@
 # limitations under the License.
 #
 import unittest
-from datetime import date
 
 from bs4 import BeautifulSoup
 
 from .dates import (
     DATE_NODE,
-    parse_date_str,
-    render_date_str,
     render_date_regex_tree_match,
-    parse_year_str,
-    render_year_str,
 )
 from arretify.types import PageElementOrString
 from arretify.utils.split_merge import (
@@ -37,28 +32,6 @@ from arretify.utils.split_merge import (
 from arretify.utils.html_split_merge import (
     make_regex_tree_splitter,
 )
-
-
-class TestStrToDateAndDateToStr(unittest.TestCase):
-    def test_parse_date_str(self):
-        assert parse_date_str("1997-09-12") == date(year=1997, month=9, day=12)
-
-    def test_render_date_str(self):
-        assert render_date_str(date(year=2001, month=1, day=31)) == "2001-01-31"
-
-
-class TestParseYearStrAndRenderYearStr(unittest.TestCase):
-    def test_parse_year_2digits(self):
-        assert parse_year_str("00") == 2000
-        assert parse_year_str("99") == 1999
-
-    def test_parse_year_4digits(self):
-        assert parse_year_str("2000") == 2000
-        assert parse_year_str("1999") == 1999
-
-    def test_render_year_str(self):
-        assert render_year_str(2000) == "2000"
-        assert render_year_str(1999) == "1999"
 
 
 class TestRenderDateRegexTreeMatch(unittest.TestCase):

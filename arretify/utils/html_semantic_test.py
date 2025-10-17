@@ -16,28 +16,109 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+from enum import Enum
+from typing import Annotated
 import unittest
 
 from bs4 import BeautifulSoup
 
-from arretify.types import SemanticTagSchema
-from .html_semantic import is_semantic_tag
+from .html_semantic import (
+    SemanticTagData,
+    SemanticTagSpec,
+    SemanticTagSpecNoCustomData,
+    is_semantic_tag,
+    Bool,
+    StrList,
+    enum_serializer,
+    register_spec,
+    update_data,
+    make_semantic_tag,
+    set_semantic_tag_data,
+    get_semantic_tag_data,
+    enum_list_serializer,
+    css_selector,
+)
+
+
+class SemanticTagDataTestCase(unittest.TestCase):
+
+    def setUp(self):
+        @register_spec
+        class SpecNoData(SemanticTagSpecNoCustomData):
+            spec_name = "test_no_data"
+            tag_name = "div"
+
+        class CustomData(SemanticTagData):
+            value: str
+
+        @register_spec
+        class SpecWithData(SemanticTagSpec[CustomData]):
+            spec_name = "test_with_data"
+            tag_name = "div"
+            data_model = CustomData
+
+        self.soup = BeautifulSoup("", "html.parser")
+
+        self.spec_no_data = SpecNoData
+        self.tag_no_data = self.soup.new_tag("div")
+        self.tag_no_data["data-schema"] = SpecNoData.spec_name
+
+        self.spec_with_data = SpecWithData
+        self.tag_with_data = self.soup.new_tag("div")
+        self.tag_with_data["data-schema"] = SpecWithData.spec_name
+
+
+class TestCssSelector(unittest.TestCase):
+
+    def test_returns_attribute_selector(self):
+        # ARRANGE
+        class SpecTest(SemanticTagSpecNoCustomData):
+            spec_name = "test_spec"
+            tag_name = "div"
+
+        # ACT
+        selector = css_selector(SpecTest)
+
+        # ASSERT
+        assert selector == '[data-schema="test_spec"]'
+
+
+class TestMakeSemanticTag(SemanticTagDataTestCase):
+
+    def test_creates_tag_with_spec_name(self):
+        # ACT
+        tag = make_semantic_tag(self.soup, self.spec_no_data)
+
+        # ASSERT
+        assert tag.name == "div"
+        assert tag["data-schema"] == "test_no_data"
+
+    def test_creates_tag_with_custom_data(self):
+        # ARRANGE
+        data = self.spec_with_data.data_model(value="hello")
+
+        # ACT
+        tag = make_semantic_tag(self.soup, self.spec_with_data, data=data)
+
+        # ASSERT
+        assert tag["data-value"] == "hello"
 
 
 class TestIsSemanticTag(unittest.TestCase):
 
     def setUp(self):
         self.soup = BeautifulSoup("", "html.parser")
-        self.schema_bla = SemanticTagSchema(
-            name="bla",
-            tag_name="div",
-            data_keys=[],
-        )
-        self.schema_bli = SemanticTagSchema(
-            name="bli",
-            tag_name="div",
-            data_keys=[],
-        )
+
+        class SpecBla(SemanticTagSpecNoCustomData):
+            spec_name = "bla"
+            tag_name = "div"
+
+        class SpecBli(SemanticTagSpecNoCustomData):
+            spec_name = "bli"
+            tag_name = "div"
+
+        self.model_bla = SpecBla
+        self.model_bli = SpecBli
 
     def test_any_semantic_tag(self):
         # Arrange
@@ -60,14 +141,14 @@ class TestIsSemanticTag(unittest.TestCase):
         # Assert
         assert result is False
 
-    def test_schema_name_in(self):
+    def test_spec_in(self):
         # Arrange
         tag = self.soup.new_tag("div")
         tag["data-schema"] = "bla"
 
         # Act
-        result1 = is_semantic_tag(tag, schema_in=[self.schema_bla])
-        result2 = is_semantic_tag(tag, schema_in=[self.schema_bli])
+        result1 = is_semantic_tag(tag, spec_in=[self.model_bla])
+        result2 = is_semantic_tag(tag, spec_in=[self.model_bli])
 
         # Assert
         assert result1 is True
@@ -85,3 +166,145 @@ class TestIsSemanticTag(unittest.TestCase):
         # Assert
         assert result1 is True
         assert result2 is False
+
+
+class TestSemanticTagData(unittest.TestCase):
+
+    def setUp(self):
+        class Color(Enum):
+            RED = "red"
+            GREEN = "green"
+
+        class Model(SemanticTagData):
+            flag: Bool
+            items: StrList
+            color: Annotated[Color, enum_serializer]
+            color_choices: Annotated[list[Color], enum_list_serializer]
+
+        self.Model = Model
+        self.Color = Color
+
+    def test_forbidden_field_names(self):
+        # ACT & ASSERT
+        with self.assertRaises(ValueError) as cm:
+
+            class BadModel1(SemanticTagData):
+                element_id: str
+
+        assert "element_id" in str(cm.exception)
+
+    def test_none_is_removed(self) -> None:
+        # Arrange
+        class Model(SemanticTagData):
+            bla: Bool | None = None
+
+        # Act
+        m = Model()
+
+        # Assert
+        assert m.model_dump() == {}
+
+    def test_build_with_native_values(self) -> None:
+        # Act
+        m = self.Model(
+            flag=True,
+            items=["a", "b"],
+            color=self.Color.RED,
+            color_choices=[self.Color.RED, self.Color.GREEN],
+        )
+
+        # Assert
+        assert m.flag is True
+        assert m.items == ["a", "b"]
+        assert m.color == self.Color.RED
+        assert m.model_dump() == {
+            "flag": "true",
+            "items": "a,b",
+            "color": "red",
+            "color_choices": "red,green",
+        }
+
+    def test_build_with_string_values(self) -> None:
+        # Act
+        m = self.Model(flag="false", items="a, b", color="green", color_choices=["green", "red"])
+
+        # Assert
+        assert m.flag is False
+        assert m.items == ["a", "b"]
+        assert m.color == self.Color.GREEN
+        assert m.model_dump() == {"items": "a,b", "color": "green", "color_choices": "green,red"}
+
+    def test_error_if_string_item_with_comma(self) -> None:
+        # Arrange
+        m = self.Model(flag=True, items=["a,"], color="red", color_choices=["red", "green"])
+
+        # Act & Assert
+        with self.assertRaises(ValueError):
+            m.model_dump()
+
+
+class TestGetSemanticTagData(SemanticTagDataTestCase):
+
+    def test_get_data_attributes(self):
+        # ARRANGE
+        self.tag_with_data["data-value"] = "hello"
+
+        # ACT
+        data = get_semantic_tag_data(self.spec_with_data, self.tag_with_data)
+
+        # ASSERT
+        assert data.value == "hello"
+
+    def test_with_reserved_data_attribute(self):
+        # ARRANGE
+        self.tag_with_data["data-group_id"] = "bla"
+        self.tag_with_data["data-value"] = "coucou"
+
+        # ACT
+        data = get_semantic_tag_data(self.spec_with_data, self.tag_with_data)
+
+        # ASSERT
+        assert data.value == "coucou"
+
+
+class TestSetSemanticTagData(SemanticTagDataTestCase):
+
+    def test_set_data_attributes(self):
+        # ARRANGE
+        data = self.spec_with_data.data_model(value="hello")
+
+        # ACT
+        set_semantic_tag_data(self.spec_with_data, self.tag_with_data, data)
+
+        # ASSERT
+        assert self.tag_with_data["data-value"] == "hello"
+
+
+class TestUpdateData(unittest.TestCase):
+
+    def test_update_single_field(self):
+        # ARRANGE
+        class Model(SemanticTagData):
+            name: str
+            age: int
+
+        original = Model(name="Alice", age=30)
+
+        # ACT
+        updated = update_data(original, age=31)
+
+        # ASSERT
+        assert updated.name == "Alice"
+        assert updated.age == 31
+        assert updated is not original  # New instance
+
+    def test_validation_runs_on_update(self):
+        # ARRANGE
+        class Model(SemanticTagData):
+            age: int
+
+        original = Model(age=30)
+
+        # ACT & ASSERT
+        with self.assertRaises(Exception):  # Validation error
+            update_data(original, age="not-a-number")

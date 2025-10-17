@@ -16,18 +16,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from dataclasses import replace as dataclass_replace
 import logging
 
 from bs4 import Tag
 
+from arretify.semantic_tag_specs import DocumentReferenceSpec
 from arretify.types import DocumentContext
-from arretify.parsing_utils.dates import parse_date_str
-from arretify.law_data.types import Document
+from arretify.utils.dates import parse_date_str
 from arretify.law_data.apis.legifrance import (
     get_arrete_legifrance_id,
 )
 from arretify.errors import catch_and_log_arretify_error
+from arretify.utils.html_semantic import get_semantic_tag_data, update_data
 from .core import (
     update_document_reference_tag_href,
     get_title_sample_next_sibling,
@@ -42,18 +42,18 @@ def resolve_arrete_ministeriel_legifrance_id(
     document_context: DocumentContext,
     document_reference_tag: Tag,
 ) -> None:
-    document = Document.from_tag(document_reference_tag)
+    document_reference = get_semantic_tag_data(DocumentReferenceSpec, document_reference_tag)
 
-    if document.date is None:
-        _LOGGER.warning(f"Arrete ministeriel {document} has no date")
+    if document_reference.date is None:
+        _LOGGER.warning(f"Arrete ministeriel {document_reference} has no date")
         return
 
     title = get_title_sample_next_sibling(document_reference_tag)
     if title is None:
-        _LOGGER.warning(f"Arrete ministeriel {document} has no title")
+        _LOGGER.warning(f"Arrete ministeriel {document_reference} has no title")
         return
 
-    date_object = parse_date_str(document.date)
+    date_object = parse_date_str(document_reference.date)
     arrete_id = get_arrete_legifrance_id(
         document_context,
         date_object,
@@ -66,5 +66,5 @@ def resolve_arrete_ministeriel_legifrance_id(
 
     update_document_reference_tag_href(
         document_reference_tag,
-        dataclass_replace(document, id=arrete_id),
+        update_data(document_reference, id=arrete_id),
     )

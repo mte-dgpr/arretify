@@ -18,6 +18,7 @@
 #
 import unittest
 
+from arretify.semantic_tag_specs import DocumentReferenceData, SectionReferenceData
 from arretify.utils.testing import (
     make_testing_function_for_single_tag,
     normalized_html_str,
@@ -27,7 +28,7 @@ from .codes_resolution import (
     resolve_code_article_legifrance_id,
     resolve_code_legifrance_id,
 )
-from arretify.law_data.types import Document, Section, DocumentType, SectionType
+from arretify.types import DocumentType, SectionType
 
 process_code_document_reference = make_testing_function_for_single_tag(resolve_code_legifrance_id)
 
@@ -49,12 +50,12 @@ class TestResolveSectionsDocuments(unittest.TestCase):
         section_reference_tag = document_context.soup.select_one(
             "[data-schema='section_reference']"
         )
-        document = Document(
+        document = DocumentReferenceData(
             type=DocumentType.code,
             id="LEGITEXT000006074220",
         )
         sections = [
-            Section(
+            SectionReferenceData(
                 type=SectionType.ARTICLE,
                 start_num="R541-15",
             ),
@@ -97,12 +98,12 @@ class TestResolveSectionsDocuments(unittest.TestCase):
         section_reference_tag = document_context.soup.select_one(
             "[data-schema='section_reference']"
         )
-        document = Document(
+        document = DocumentReferenceData(
             type=DocumentType.code,
             id="LEGITEXT000006074220",
         )
         sections = [
-            Section(
+            SectionReferenceData(
                 type=SectionType.ARTICLE,
                 start_num="R541-15",
                 end_num="R541-20",

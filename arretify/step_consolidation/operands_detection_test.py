@@ -18,7 +18,7 @@
 #
 import unittest
 
-from arretify.semantic_tag_schemas import OPERATION_SCHEMA
+from arretify.semantic_tag_specs import OperationSpec
 from arretify.utils.html_semantic import css_selector
 from arretify.utils.testing import normalized_html_str, create_document_context
 
@@ -69,7 +69,6 @@ class TestParseOperations(unittest.TestCase):
                     </a>
                     <span
                         data-direction="rtl"
-                        data-has_operand=""
                         data-keyword="supprimés"
                         data-operand=""
                         data-operation_type="delete"
@@ -84,7 +83,7 @@ class TestParseOperations(unittest.TestCase):
                 """  # noqa: E501
             )
         )
-        tag = document_context.soup.select_one(css_selector(OPERATION_SCHEMA))
+        tag = document_context.soup.select_one(css_selector(OperationSpec))
 
         # Act
         resolve_references_and_operands(document_context, tag)
@@ -133,7 +132,6 @@ class TestParseOperations(unittest.TestCase):
                 </a>
                 <span
                     data-direction="rtl"
-                    data-has_operand=""
                     data-keyword="supprimés"
                     data-operand=""
                     data-operation_type="delete"
@@ -197,7 +195,7 @@ class TestParseOperations(unittest.TestCase):
                 """  # noqa: E501
             )
         )
-        tag = document_context.soup.select_one(css_selector(OPERATION_SCHEMA))
+        tag = document_context.soup.select_one(css_selector(OperationSpec))
 
         # Act
         resolve_references_and_operands(document_context, tag)
@@ -270,7 +268,6 @@ class TestParseOperations(unittest.TestCase):
                     </a>
                     <span
                         data-direction="rtl"
-                        data-has_operand=""
                         data-keyword="abrogées"
                         data-operand=""
                         data-operation_type="delete"
@@ -286,7 +283,7 @@ class TestParseOperations(unittest.TestCase):
                 """  # noqa: E501
             )
         )
-        tag = document_context.soup.select_one(css_selector(OPERATION_SCHEMA))
+        tag = document_context.soup.select_one(css_selector(OperationSpec))
 
         # Act
         resolve_references_and_operands(document_context, tag)
@@ -310,7 +307,6 @@ class TestParseOperations(unittest.TestCase):
                 </a>
                 <span
                     data-direction="rtl"
-                    data-has_operand=""
                     data-keyword="abrogées"
                     data-operand=""
                     data-operation_type="delete"
@@ -366,7 +362,7 @@ class TestParseOperations(unittest.TestCase):
                 """  # noqa: E501
             )
         )
-        tag = document_context.soup.select_one(css_selector(OPERATION_SCHEMA))
+        tag = document_context.soup.select_one(css_selector(OperationSpec))
 
         # Act
         resolve_references_and_operands(document_context, tag)

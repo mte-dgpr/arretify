@@ -28,13 +28,14 @@ from arretify.regex_utils import (
     PatternProxy,
     safe_group,
 )
-from arretify.law_data.types import (
-    Document,
-    DocumentType,
-    Section,
+from arretify.semantic_tag_specs import (
+    DocumentReferenceData,
+    DocumentReferenceSpec,
+    SectionReferenceData,
+    SectionReferenceSpec,
 )
-from arretify.utils.html import set_data_attributes
-from arretify.types import ExternalURL, SectionType
+from arretify.utils.html_semantic import set_semantic_tag_data
+from arretify.types import ExternalURL, SectionType, DocumentType
 
 
 # Regex for searching an act with its title.
@@ -43,55 +44,55 @@ TITLE_SAMPLE_PATTERN = PatternProxy(r"^\s*([^\.;\s]+\s+){3,15}([^\.;\s]+)")
 
 
 def resolve_external_url(
-    document: Document,
-    *sections: Section,
+    document_reference: DocumentReferenceData,
+    *section_references: SectionReferenceData,
 ) -> ExternalURL | None:
-    if document.type in [
+    if document_reference.type in [
         DocumentType.arrete_ministeriel,
         DocumentType.decret,
         DocumentType.circulaire,
     ]:
-        if document.id is not None:
-            return build_jorf_url(document.id)
+        if document_reference.id is not None:
+            return build_jorf_url(document_reference.id)
 
-    elif document.type == DocumentType.code:
-        if document.id is None:
+    elif document_reference.type == DocumentType.code:
+        if document_reference.id is None:
             return None
 
         elif (
-            sections
-            and sections[0].type == SectionType.ARTICLE
-            and sections[0].start_id is not None
+            section_references
+            and section_references[0].type == SectionType.ARTICLE
+            and section_references[0].start_id is not None
         ):
-            return build_code_article_site_url(sections[0].start_id)
+            return build_code_article_site_url(section_references[0].start_id)
 
         else:
-            return build_code_site_url(document.id)
+            return build_code_site_url(document_reference.id)
 
-    elif document.type in [
+    elif document_reference.type in [
         DocumentType.eu_decision,
         DocumentType.eu_regulation,
         DocumentType.eu_directive,
     ]:
-        return document.id
+        return document_reference.id
 
     return None
 
 
-def update_document_reference_tag_href(tag: Tag, document: Document) -> None:
-    set_data_attributes(tag, document.get_data_attributes())
-    external_url = resolve_external_url(document)
+def update_document_reference_tag_href(tag: Tag, document_reference: DocumentReferenceData) -> None:
+    set_semantic_tag_data(DocumentReferenceSpec, tag, document_reference)
+    external_url = resolve_external_url(document_reference)
     if external_url is not None:
         tag["href"] = external_url
 
 
 def update_section_reference_tag_href(
     tag: Tag,
-    document: Document,
-    *sections: Section,
+    document_reference: DocumentReferenceData,
+    *section_references: SectionReferenceData,
 ) -> None:
-    set_data_attributes(tag, sections[-1].get_data_attributes())
-    external_url = resolve_external_url(document, *sections)
+    set_semantic_tag_data(SectionReferenceSpec, tag, section_references[-1])
+    external_url = resolve_external_url(document_reference, *section_references)
     if external_url is not None:
         tag["href"] = external_url
 

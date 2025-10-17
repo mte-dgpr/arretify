@@ -28,21 +28,18 @@ from arretify.regex_utils.helpers import (
     join_with_or,
     lookup_normalized_version,
 )
-from arretify.parsing_utils.dates import (
+from arretify.utils.dates import (
     parse_year_str,
     render_year_str,
 )
-from arretify.types import PageElementOrString, DocumentContext
-from arretify.semantic_tag_schemas import (
-    DOCUMENT_REFERENCE_SCHEMA,
+from arretify.types import PageElementOrString, DocumentContext, DocumentType
+from arretify.semantic_tag_specs import (
+    DocumentReferenceData,
+    DocumentReferenceSpec,
 )
 from arretify.utils.html_semantic import make_semantic_tag
 from arretify.utils.html_split_merge import make_regex_tree_splitter
 from arretify.utils.split_merge import split_elements, map_splitted_elements
-from arretify.law_data.types import (
-    Document,
-    DocumentType,
-)
 from arretify.law_data.eurlex_constants import (
     EU_ACT_DOMAINS,
     EU_ACT_TYPES,
@@ -134,14 +131,13 @@ def _render_eu_act_reference(
         raise ValueError(f"Unknown EU act type {act_type}")
 
     year = parse_year_str(match_dict["year"])
-    document = Document(
-        type=document_type,
-        num=match_dict["num"],
-        date=render_year_str(year),
-    )
     return make_semantic_tag(
         soup,
-        DOCUMENT_REFERENCE_SCHEMA,
-        data=document.get_data_attributes(),
+        DocumentReferenceSpec,
+        data=DocumentReferenceData(
+            type=document_type,
+            num=match_dict["num"],
+            date=render_year_str(year),
+        ),
         contents=iter_regex_tree_match_page_elements_or_strings(eu_act_group_match),
     )

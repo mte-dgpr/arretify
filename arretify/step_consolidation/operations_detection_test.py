@@ -36,9 +36,7 @@ class TestReplaceOperations(unittest.TestCase):
                     data-direction="rtl"
                     data-has_operand="true"
                     data-keyword="remplacées"
-                    data-operand=""
                     data-operation_type="replace"
-                    data-references=""
                     data-schema="operation"
                 >
                     sont <b>remplacées</b> comme suit :
@@ -58,9 +56,7 @@ class TestReplaceOperations(unittest.TestCase):
                     data-direction="rtl"
                     data-has_operand="true"
                     data-keyword="substitué"
-                    data-operand=""
                     data-operation_type="replace"
-                    data-references=""
                     data-schema="operation"
                 >
                     Le deuxième alinéa de l'article 4.3.8 de l'arrêté préfectoral précité
@@ -81,9 +77,7 @@ class TestReplaceOperations(unittest.TestCase):
                     data-direction="rtl"
                     data-has_operand="true"
                     data-keyword="annulées et remplacées"
-                    data-operand=""
                     data-operation_type="replace"
-                    data-references=""
                     data-schema="operation"
                 >
                     Les prescriptions suivantes sont <b>annulées et remplacées</b> par
@@ -103,9 +97,7 @@ class TestReplaceOperations(unittest.TestCase):
                     data-direction="rtl"
                     data-has_operand="true"
                     data-keyword="abrogées et remplacées"
-                    data-operand=""
                     data-operation_type="replace"
-                    data-references=""
                     data-schema="operation"
                 >
                     Les prescriptions de cet article sont <b>abrogées et remplacées</b> par celles
@@ -125,9 +117,7 @@ class TestReplaceOperations(unittest.TestCase):
                     data-direction="rtl"
                     data-has_operand="true"
                     data-keyword="supprimé et remplacé"
-                    data-operand=""
                     data-operation_type="replace"
-                    data-references=""
                     data-schema="operation"
                 >
                     L' article 1 .2 .2 SITUATION DE L'ÉTABLISSEMENT est <b>supprimé et remplacé</b>
@@ -148,9 +138,7 @@ class TestReplaceOperations(unittest.TestCase):
                     data-direction="rtl"
                     data-has_operand="true"
                     data-keyword="modifié et remplacé"
-                    data-operand=""
                     data-operation_type="replace"
-                    data-references=""
                     data-schema="operation"
                 >
                     2 .4 .2 L' article 15 .2 de l' arrêté préfectoral du 19 mars 2003 est
@@ -171,9 +159,7 @@ class TestReplaceOperations(unittest.TestCase):
                     data-direction="rtl"
                     data-has_operand="true"
                     data-keyword="modifié et complété"
-                    data-operand=""
                     data-operation_type="replace"
-                    data-references=""
                     data-schema="operation"
                 >
                     L'article 5 des prescriptions techniques annexées à l'arrêté préfectoral du
@@ -195,9 +181,7 @@ class TestReplaceOperations(unittest.TestCase):
                     data-direction="rtl"
                     data-has_operand="true"
                     data-keyword="modifiées, complétées, ou annulées"
-                    data-operand=""
                     data-operation_type="replace"
-                    data-references=""
                     data-schema="operation"
                 >
                     Les dispositions de l'arrêté préfectoral n09-0150 du 20 janvier 2009 susvisé
@@ -219,9 +203,7 @@ class TestReplaceOperations(unittest.TestCase):
                     data-direction="rtl"
                     data-has_operand="true"
                     data-keyword="remplacée"
-                    data-operand=""
                     data-operation_type="replace"
-                    data-references=""
                     data-schema="operation"
                 >
                     La dernière phrase de l'article 8.1.1.2 de l'arrêté préfectoral du 10 décembre
@@ -242,9 +224,7 @@ class TestReplaceOperations(unittest.TestCase):
                     data-direction="rtl"
                     data-has_operand="true"
                     data-keyword="modifiée"
-                    data-operand=""
                     data-operation_type="replace"
-                    data-references=""
                     data-schema="operation"
                 >
                     La dernière phrase de l'article 8.1.1.2 de l'arrêté préfectoral du 10 décembre
@@ -265,9 +245,7 @@ class TestReplaceOperations(unittest.TestCase):
                     data-direction="rtl"
                     data-has_operand="true"
                     data-keyword="supprimées et sont remplacées"
-                    data-operand=""
                     data-operation_type="replace"
-                    data-references=""
                     data-schema="operation"
                 >
                     Les dispositions de l'article 2.8 - Arrêtés types sont <b>supprimées et sont
@@ -288,9 +266,7 @@ class TestReplaceOperations(unittest.TestCase):
                     data-direction="rtl"
                     data-has_operand="true"
                     data-keyword="mis à jour"
-                    data-operand=""
                     data-operation_type="replace"
-                    data-references=""
                     data-schema="operation"
                 >
                     Le tableau de l'article 1.2.1 de l'arrêté préfectoral du 10 décembre 2008
@@ -312,9 +288,7 @@ class TestAddOperations(unittest.TestCase):
                     data-direction="rtl"
                     data-has_operand="true"
                     data-keyword="complété"
-                    data-operand=""
                     data-operation_type="add"
-                    data-references=""
                     data-schema="operation"
                 >
                     Le paragraphe 4.14 - Postes de chargement -déchargement est
@@ -332,11 +306,8 @@ class TestAddOperations(unittest.TestCase):
                 """
                 <span
                     data-direction="rtl"
-                    data-has_operand="false"
                     data-keyword="complété"
-                    data-operand=""
                     data-operation_type="add"
-                    data-references=""
                     data-schema="operation"
                 >
                     Le paragraphe 4.19.1 - Réseau d'eau incendie est <b>complété</b> ainsi
@@ -355,11 +326,8 @@ class TestAddOperations(unittest.TestCase):
                 """
                 <span
                     data-direction="rtl"
-                    data-has_operand="false"
                     data-keyword="complétés"
-                    data-operand=""
                     data-operation_type="add"
-                    data-references=""
                     data-schema="operation"
                 >
                     Les prescriptions de l' article 8.3. dispositions spécifiques à l'installation
@@ -378,11 +346,8 @@ class TestAddOperations(unittest.TestCase):
                 """
                 <span
                     data-direction="rtl"
-                    data-has_operand="false"
                     data-keyword="créé"
-                    data-operand=""
                     data-operation_type="add"
-                    data-references=""
                     data-schema="operation"
                 >
                     Il est <b>créé</b> un
@@ -402,11 +367,8 @@ class TestAddOperations(unittest.TestCase):
                 """
                 <span
                     data-direction="rtl"
-                    data-has_operand="false"
                     data-keyword="créé"
-                    data-operand=""
                     data-operation_type="add"
-                    data-references=""
                     data-schema="operation"
                 >
                     Un article additionnel 8.2.5 relatif au fonctionnement du casier VIII en mode
@@ -427,11 +389,8 @@ class TestAddOperations(unittest.TestCase):
                 """
                 <span
                     data-direction="rtl"
-                    data-has_operand="false"
                     data-keyword="créé"
-                    data-operand=""
                     data-operation_type="add"
-                    data-references=""
                     data-schema="operation"
                 >
                     Il est <b>créé</b> un nouveau
@@ -449,11 +408,8 @@ class TestAddOperations(unittest.TestCase):
                 """
                 <span
                     data-direction="rtl"
-                    data-has_operand="false"
                     data-keyword="créé"
-                    data-operand=""
                     data-operation_type="add"
-                    data-references=""
                     data-schema="operation"
                 >
                     Il est <b>créé</b> un nouvel
@@ -474,9 +430,7 @@ class TestAddOperations(unittest.TestCase):
                     data-direction="rtl"
                     data-has_operand="true"
                     data-keyword="créé"
-                    data-operand=""
                     data-operation_type="add"
-                    data-references=""
                     data-schema="operation"
                 >
                     Sous le tableau de la liste des activités autorisées,
@@ -497,9 +451,7 @@ class TestAddOperations(unittest.TestCase):
                     data-direction="rtl"
                     data-has_operand="true"
                     data-keyword="ajouté"
-                    data-operand=""
                     data-operation_type="add"
-                    data-references=""
                     data-schema="operation"
                 >
                     Paragraphe 4.25 -Cuyes de stockages de TDI/MOI. Il est
@@ -517,9 +469,7 @@ class TestAddOperations(unittest.TestCase):
                     data-direction="rtl"
                     data-has_operand="true"
                     data-keyword="ajouté"
-                    data-operand=""
                     data-operation_type="add"
-                    data-references=""
                     data-schema="operation"
                 >
                     L' article 8 .6 suivant est <b>ajouté</b> à l'arrêté préfectoral
@@ -539,9 +489,7 @@ class TestAddOperations(unittest.TestCase):
                     data-direction="rtl"
                     data-has_operand="true"
                     data-keyword="modifié par l'ajout"
-                    data-operand=""
                     data-operation_type="add"
-                    data-references=""
                     data-schema="operation"
                 >
                     Le chapitre 6.7 relatif aux déchets produits par l'établissement de l'arrêté
@@ -560,11 +508,8 @@ class TestAddOperations(unittest.TestCase):
                 """
                 <span
                     data-direction="rtl"
-                    data-has_operand="false"
                     data-keyword="inséré"
-                    data-operand=""
                     data-operation_type="add"
-                    data-references=""
                     data-schema="operation"
                 >
                     2.4.3 Le paragraphe suivant est <b>inséré</b> au début de
@@ -585,9 +530,7 @@ class TestAddOperations(unittest.TestCase):
                     data-direction="rtl"
                     data-has_operand="true"
                     data-keyword="insérées"
-                    data-operand=""
                     data-operation_type="add"
-                    data-references=""
                     data-schema="operation"
                 >
                     A la suite du 1er  alinéa de l' article 14.5 de l' arrêté préfectoral
@@ -608,9 +551,7 @@ class TestAddOperations(unittest.TestCase):
                     data-direction="rtl"
                     data-has_operand="true"
                     data-keyword="inséré"
-                    data-operand=""
                     data-operation_type="add"
-                    data-references=""
                     data-schema="operation"
                 >
                     Après le 4ème alinéa de l'article 4.3.8 de l'arrêté préfectoral précité,
@@ -631,9 +572,7 @@ class TestAddOperations(unittest.TestCase):
                     data-direction="rtl"
                     data-has_operand="true"
                     data-keyword="inséré"
-                    data-operand=""
                     data-operation_type="add"
-                    data-references=""
                     data-schema="operation"
                 >
                     Après lé 6ème alinéa de l'article 4.3.8 de l'arrêté préfectoral précité,
@@ -653,11 +592,8 @@ class TestAddOperations(unittest.TestCase):
                 """
                 <span
                     data-direction="rtl"
-                    data-has_operand="false"
                     data-keyword="inséré"
-                    data-operand=""
                     data-operation_type="add"
-                    data-references=""
                     data-schema="operation"
                 >
                     Un article numéroté 7.7.6.3. est <b>inséré</b> à la suite de
@@ -677,11 +613,8 @@ class TestAddOperations(unittest.TestCase):
                 """
                 <span
                     data-direction="rtl"
-                    data-has_operand="false"
                     data-keyword="insérée"
-                    data-operand=""
                     data-operation_type="add"
-                    data-references=""
                     data-schema="operation"
                 >
                     Un article numéroté 12.4.1. intitulé Dispositions spécifiques a l'atelier est
@@ -702,9 +635,7 @@ class TestAddOperations(unittest.TestCase):
                     data-direction="rtl"
                     data-has_operand="true"
                     data-keyword="inséré"
-                    data-operand=""
                     data-operation_type="add"
-                    data-references=""
                     data-schema="operation"
                 >
                     un article numéroté 11.4.5. est <b>inséré</b> et est ainsi rédigé :
@@ -724,9 +655,7 @@ class TestAddOperations(unittest.TestCase):
                     data-direction="rtl"
                     data-has_operand="true"
                     data-keyword="inséré"
-                    data-operand=""
                     data-operation_type="add"
-                    data-references=""
                     data-schema="operation"
                 >
                     Un titre 15, intitulé Dispositions particulières - Fabrication de crème
@@ -746,11 +675,8 @@ class TestDeleteOperations(unittest.TestCase):
                 """
                 <span
                     data-direction="rtl"
-                    data-has_operand="false"
                     data-keyword="abrogé"
-                    data-operand=""
                     data-operation_type="delete"
-                    data-references=""
                     data-schema="operation"
                 >
                     Le dernier alinéa de l' article 1 .2 .2 de l'arrêté préfectoral précité
@@ -770,11 +696,8 @@ class TestDeleteOperations(unittest.TestCase):
                 """
                 <span
                     data-direction="rtl"
-                    data-has_operand="false"
                     data-keyword="supprimé"
-                    data-operand=""
                     data-operation_type="delete"
-                    data-references=""
                     data-schema="operation"
                 >
                     L' article 11.1.2 relatif à la dérivation du bassin d'orage n° 1 vers le n° 2
@@ -793,11 +716,8 @@ class TestDeleteOperations(unittest.TestCase):
                 """
                 <span
                     data-direction="rtl"
-                    data-has_operand="false"
                     data-keyword="annulé"
-                    data-operand=""
                     data-operation_type="delete"
-                    data-references=""
                     data-schema="operation"
                 >
                     L' article 2.13  Arrêté type  des prescriptions annexées à l' arrêté préfectoral

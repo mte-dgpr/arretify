@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import Sequence, Tuple, Iterator, cast
+from typing import Sequence, Tuple, Iterator
 import logging
 
 from bs4 import Tag
@@ -24,9 +24,6 @@ from bs4 import Tag
 from arretify.parsing_utils.patterns import is_continuing_sentence
 from arretify.types import DocumentContext, PageElementOrString
 from arretify.utils.functional import iter_func_to_list, chain_functions
-from arretify.utils.html import (
-    render_str_list_attribute,
-)
 from arretify.utils.html_semantic import (
     make_semantic_tag,
 )
@@ -50,7 +47,7 @@ from arretify.regex_utils import (
     normalize_string,
 )
 from arretify.errors import ErrorCodes
-from arretify.semantic_tag_schemas import ERROR_SCHEMA
+from arretify.semantic_tag_specs import ErrorSpec
 from arretify.regex_utils import split_string_with_regex
 from arretify.regex_utils import map_matches
 from arretify.utils.split_merge import (
@@ -671,11 +668,7 @@ def render_error(
 ) -> Tag:
     return make_semantic_tag(
         context.soup,
-        ERROR_SCHEMA,
-        data=dict(
-            error_codes=render_str_list_attribute(
-                cast(list[str], read_segmentation_tag_data(tag)["error_codes"])
-            )
-        ),
+        ErrorSpec,
+        data=ErrorSpec.data_model(error_codes=read_segmentation_tag_data(tag)["error_codes"]),
         contents=[get_string(n) for n in tag.contents],
     )

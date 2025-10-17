@@ -16,17 +16,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from dataclasses import replace as dataclass_replace
 import logging
 
 from bs4 import Tag
 
+from arretify.semantic_tag_specs import DocumentReferenceSpec
 from arretify.types import DocumentContext
-from arretify.law_data.types import Document
 from arretify.law_data.apis.eurlex import (
     get_eu_act_url_with_year_and_num,
     ActType,
 )
+from arretify.utils.html_semantic import get_semantic_tag_data, update_data
 from .core import update_document_reference_tag_href
 
 
@@ -59,19 +59,22 @@ def _resolve_eu_act_eurlex_url(
     act_type: ActType,
     eu_act_reference_tag: Tag,
 ) -> None:
-    document = Document.from_tag(eu_act_reference_tag)
+    document_reference = get_semantic_tag_data(DocumentReferenceSpec, eu_act_reference_tag)
 
-    if document.num is None or document.date is None:
-        raise ValueError(f"Could not find num or date for document {document}")
+    if document_reference.num is None or document_reference.date is None:
+        raise ValueError(f"Could not find num or date for document {document_reference}")
 
     eurlex_url = get_eu_act_url_with_year_and_num(
-        document_context, act_type, int(document.date), int(document.num)
+        document_context, act_type, int(document_reference.date), int(document_reference.num)
     )
     if eurlex_url is None:
-        _LOGGER.warning(f"Could not find eurlex url for {act_type} {document.date}/{document.num}")
+        _LOGGER.warning(
+            f"Could not find eurlex url for {act_type} "
+            f"{document_reference.date}/{document_reference.num}"
+        )
         return
 
     update_document_reference_tag_href(
         eu_act_reference_tag,
-        dataclass_replace(document, id=eurlex_url),
+        update_data(document_reference, id=eurlex_url),
     )

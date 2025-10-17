@@ -38,8 +38,9 @@ from arretify.utils.html import (
 )
 from arretify.utils.html_semantic import make_semantic_tag
 from arretify.utils.html_split_merge import make_regex_tree_splitter
-from arretify.semantic_tag_schemas import (
-    DOCUMENT_REFERENCE_SCHEMA,
+from arretify.semantic_tag_specs import (
+    DocumentReferenceData,
+    DocumentReferenceSpec,
 )
 from arretify.parsing_utils.patterns import (
     ET_VIRGULE_PATTERN_S,
@@ -52,8 +53,7 @@ from arretify.regex_utils import (
     regex_tree,
     map_regex_tree_match,
 )
-from arretify.law_data.types import (
-    Document,
+from arretify.types import (
     DocumentType,
 )
 
@@ -222,17 +222,15 @@ def _render_arrete_container(
     else:
         document_type = DocumentType.unknown_arrete
 
-    document = Document(
-        type=document_type,
-        num=_extract_identifier(arrete_match),
-        date=arrete_date,
-    )
-
     # Render the arrete tag
     return make_semantic_tag(
         soup,
-        DOCUMENT_REFERENCE_SCHEMA,
-        data=document.get_data_attributes(),
+        DocumentReferenceSpec,
+        data=DocumentReferenceData(
+            type=document_type,
+            num=_extract_identifier(arrete_match),
+            date=arrete_date,
+        ),
         contents=arrete_tag_contents,
     )
 

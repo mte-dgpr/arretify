@@ -18,23 +18,26 @@
 #
 
 from typing import Iterator, Sequence
-from dataclasses import replace as dataclass_replace
 
 from arretify.types import DocumentContext, PageElementOrString
-from arretify.law_data.types import SectionType, Section
-from arretify.utils.html_semantic import is_semantic_tag
+from arretify.types import SectionType
+from arretify.utils.html_semantic import (
+    is_semantic_tag,
+    get_semantic_tag_data,
+    set_semantic_tag_data,
+    update_data,
+)
 from arretify.utils.references import (
     traverse_reference_tree,
     build_reference_tree,
     ReferenceTree,
 )
 from arretify.utils.functional import iter_func_to_list
-from arretify.utils.html import set_data_attributes
-from arretify.semantic_tag_schemas import SECTION_REFERENCE_SCHEMA
+from arretify.semantic_tag_specs import SectionReferenceSpec
 
 
 def resolve_unknown_sections(
-    document_context: DocumentContext,
+    _: DocumentContext,
     reference_tree: ReferenceTree,
 ) -> None:
     for reference_tag, document, sections in traverse_reference_tree(reference_tree):
@@ -58,10 +61,7 @@ def resolve_unknown_sections(
             # In the section type hierarchy, alineas represent the deepest
             # type just below articles
             if parent_section.type == SectionType.ARTICLE:
-                current_section = dataclass_replace(
-                    current_section,
-                    type=SectionType.ALINEA,
-                )
+                current_section = update_data(current_section, type=SectionType.ALINEA)
 
         # Current section is root or has a parent document
         else:
@@ -72,37 +72,35 @@ def resolve_unknown_sections(
             # When unknown is the sole section reference from a document,
             # it should be present in the document as a section title,
             # which means it is at least an article
-            current_section = dataclass_replace(
-                current_section,
-                type=SectionType.ARTICLE,
-            )
+            current_section = update_data(current_section, type=SectionType.ARTICLE)
 
-        set_data_attributes(
+        set_semantic_tag_data(
+            SectionReferenceSpec,
             reference_tag,
-            current_section.get_data_attributes(),
+            current_section,
         )
 
 
 @iter_func_to_list
 def remove_misdetected_sections(
-    document_context: DocumentContext,
+    _: DocumentContext,
     children: Sequence[PageElementOrString],
 ) -> Iterator[PageElementOrString]:
     for section_reference_tag in children:
-        if not is_semantic_tag(section_reference_tag, schema_in=[SECTION_REFERENCE_SCHEMA]):
+        if not is_semantic_tag(section_reference_tag, spec_in=[SectionReferenceSpec]):
             yield section_reference_tag
             continue
 
-        section = Section.from_tag(section_reference_tag)
-        if section.type is SectionType.ANNEXE:
+        section_reference = get_semantic_tag_data(SectionReferenceSpec, section_reference_tag)
+        if section_reference.type is SectionType.ANNEXE:
             reference_tree = build_reference_tree(section_reference_tag)
             # If section is an appendix, but with no detected number or id,
             # and that furthermore it is not connected to a chain of other
             # references (sections or documents), such as "en annexe du présent arrêté",
             # we can assume it is a misdetected section.
             if (
-                section.start_num is None
-                and section.start_id is None
+                section_reference.start_num is None
+                and section_reference.start_id is None
                 and len(reference_tree) == 1
                 and len(reference_tree[0]) == 1
             ):

@@ -23,17 +23,14 @@ from arretify.regex_utils import (
     regex_tree,
     iter_regex_tree_match_page_elements_or_strings,
 )
-from arretify.types import PageElementOrString, DocumentContext
-from arretify.semantic_tag_schemas import (
-    DOCUMENT_REFERENCE_SCHEMA,
+from arretify.types import PageElementOrString, DocumentContext, DocumentType
+from arretify.semantic_tag_specs import (
+    DocumentReferenceData,
+    DocumentReferenceSpec,
 )
 from arretify.utils.html_split_merge import make_regex_tree_splitter
 from arretify.utils.split_merge import split_elements, map_splitted_elements
 from arretify.utils.html_semantic import make_semantic_tag
-from arretify.law_data.types import (
-    Document,
-    DocumentType,
-)
 
 
 SELF_NODE = regex_tree.Group(
@@ -50,7 +47,6 @@ def parse_self_references(
     document_context: DocumentContext,
     children: Sequence[PageElementOrString],
 ) -> list[PageElementOrString]:
-    document = Document(type=DocumentType.self)
     return map_splitted_elements(
         split_elements(
             children,
@@ -58,8 +54,10 @@ def parse_self_references(
         ),
         lambda self_group_match: make_semantic_tag(
             document_context.soup,
-            DOCUMENT_REFERENCE_SCHEMA,
-            data=document.get_data_attributes(),
+            DocumentReferenceSpec,
+            data=DocumentReferenceData(
+                type=DocumentType.self,
+            ),
             contents=iter_regex_tree_match_page_elements_or_strings(self_group_match),
         ),
     )

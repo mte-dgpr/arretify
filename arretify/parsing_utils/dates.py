@@ -17,14 +17,14 @@
 # limitations under the License.
 #
 import logging
-from datetime import date, datetime
+from datetime import date
 from typing import Sequence, TypedDict
 
 from bs4 import BeautifulSoup, Tag
 
-from arretify.semantic_tag_schemas import DATE_SCHEMA
-from arretify.utils.html import render_str_list_attribute
-from arretify.utils.html_semantic import make_semantic_tag
+from arretify.semantic_tag_specs import DateSpec
+from arretify.utils.dates import DATE_STR_LENGTH, parse_year_str, render_date_str
+from arretify.utils.html_semantic import make_semantic_tag, update_data
 from arretify.regex_utils import (
     regex_tree,
     join_with_or,
@@ -33,14 +33,11 @@ from arretify.regex_utils import (
 from arretify.regex_utils.helpers import (
     lookup_normalized_version,
 )
-from arretify.types import DataElementDataDict
 from arretify.errors import ErrorCodes
 
 
 _LOGGER = logging.getLogger(__name__)
 
-
-DATE_FORMAT = "%Y-%m-%d"
 
 MONTH_NAMES = [
     "janvier",
@@ -176,34 +173,11 @@ def _get_month_index(month: str, month_strings: Sequence[str]) -> int:
         raise RuntimeError(f'couldnt find month for "{match_month}"')
 
 
-def render_year_str(year: int) -> str:
-    year_str = str(year)
-    if len(year_str) != 4:
-        raise ValueError(f"Invalid year {year}")
-    return year_str
-
-
-def parse_year_str(year_str: str) -> int:
-    if len(year_str) == 4:
-        return int(year_str)
-    if len(year_str) == 2:
-        return int(year_str) + (1900 if int(year_str) > (date.today().year - 2000 + 5) else 2000)
-    else:
-        raise ValueError(f"Invalid year string {year_str}")
-
-
-def render_date_str(date_object: date) -> str:
-    return date_object.strftime(DATE_FORMAT)
-
-
-def parse_date_str(date_str: str) -> date:
-    return datetime.strptime(date_str, DATE_FORMAT).date()
-
-
 def render_date_regex_tree_match(soup: BeautifulSoup, regex_tree_match: regex_tree.Match) -> Tag:
     date_dict = _handle_date_match_dict(regex_tree_match.match_dict)
-    data_dict: DataElementDataDict = dict()
+    date_data = DateSpec.data_model()
 
+    is_invalid_date = False
     try:
         date_str = render_date_str(
             date(
@@ -214,7 +188,10 @@ def render_date_regex_tree_match(soup: BeautifulSoup, regex_tree_match: regex_tr
         )
 
     except ValueError:
-        data_dict["error_codes"] = render_str_list_attribute([ErrorCodes.non_existant_date.value])
+        is_invalid_date = True
+
+    if is_invalid_date:
+        date_data = update_data(date_data, error_codes=[ErrorCodes.non_existant_date.value])
         date_str = render_date_str(
             date(
                 year=1,
@@ -226,14 +203,14 @@ def render_date_regex_tree_match(soup: BeautifulSoup, regex_tree_match: regex_tr
         # Date formating requires a 4-digit year, so we pad it with zeros if necessary
         # This is a workaround for inconsistencies across different platforms :
         # https://stackoverflow.com/questions/79588208/why-does-strftimey-not-yield-a-4-digit-year-for-dates-1000-ad-in-python
-        if len(date_str) < len("YYYY-MM-DD"):
-            date_str = date_str.rjust(len("YYYY-MM-DD"), "0")
+        if len(date_str) < DATE_STR_LENGTH:
+            date_str = date_str.rjust(DATE_STR_LENGTH, "0")
 
     date_container = make_semantic_tag(
         soup,
-        DATE_SCHEMA,
+        DateSpec,
         contents=iter_regex_tree_match_page_elements_or_strings(regex_tree_match),
-        data=data_dict,
+        data=date_data,
     )
     date_container["datetime"] = date_str
     return date_container

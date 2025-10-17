@@ -16,13 +16,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import Dict, Literal, Sequence, Iterator
+from typing import Dict, Literal, Sequence, Iterator, Type
 
 from bs4 import Tag
 
 from arretify.utils.functional import iter_func_to_list, chain_functions
 from arretify.parsing_utils.dates import DATE_NODE, render_date_regex_tree_match
 from arretify.utils.html_semantic import (
+    SemanticTagSpec,
     make_semantic_tag,
 )
 from arretify.utils.html_create import (
@@ -30,17 +31,17 @@ from arretify.utils.html_create import (
     make_new_tag,
 )
 from arretify.utils.html_split_merge import make_regex_tree_splitter
-from arretify.types import DocumentContext, PageElementOrString, SemanticTagSchema
+from arretify.types import DocumentContext, PageElementOrString
 from arretify.parsing_utils.patterns import join_split_pile_with_pattern
-from arretify.semantic_tag_schemas import (
-    EMBLEM_SCHEMA,
-    ENTITY_SCHEMA,
-    IDENTIFICATION_SCHEMA,
-    ARRETE_TITLE_SCHEMA,
-    HONORARY_SCHEMA,
-    VISA_SCHEMA,
-    MOTIF_SCHEMA,
-    SUPPLEMENTARY_MOTIF_INFORMATION_SCHEMA,
+from arretify.semantic_tag_specs import (
+    EmblemSpec,
+    EntitySpec,
+    IdentificationSpec,
+    ArreteSpec,
+    HonorarySpec,
+    VisaSpec,
+    MotifSpec,
+    SupplementaryMotifInfoSpec,
 )
 from arretify.regex_utils import (
     PatternProxy,
@@ -181,15 +182,15 @@ HEADER_ELEMENTS_RENDER_PATTERNS: Dict[str, PatternProxy | None] = dict(
     supplementary_motif_info=None,
 )
 
-HEADER_ELEMENTS_SCHEMAS: Dict[str, SemanticTagSchema] = dict(
-    emblem=EMBLEM_SCHEMA,
-    entity=ENTITY_SCHEMA,
-    identification=IDENTIFICATION_SCHEMA,
-    arrete_title=ARRETE_TITLE_SCHEMA,
-    honorary=HONORARY_SCHEMA,
-    visa=VISA_SCHEMA,
-    motif=MOTIF_SCHEMA,
-    supplementary_motif_info=SUPPLEMENTARY_MOTIF_INFORMATION_SCHEMA,
+HEADER_ELEMENTS_SPECS: Dict[str, Type[SemanticTagSpec[None]]] = dict(
+    emblem=EmblemSpec,
+    entity=EntitySpec,
+    identification=IdentificationSpec,
+    arrete_title=ArreteSpec,
+    honorary=HonorarySpec,
+    visa=VisaSpec,
+    motif=MotifSpec,
+    supplementary_motif_info=SupplementaryMotifInfoSpec,
 )
 
 HEADER_ELEMENTS_PROBES: Dict[str, Probe[PageElementOrString]] = dict(
@@ -573,7 +574,7 @@ def render_header(
             content.append(render_visa_motif(context, element))
         # All header elements other than the ones above
         # are treated in a generic way.
-        elif is_segmentation_tag(element, tag_name_in=list(HEADER_ELEMENTS_SCHEMAS.keys())):
+        elif is_segmentation_tag(element, tag_name_in=list(HEADER_ELEMENTS_SPECS.keys())):
             content.append(render_header_element(context, element))
         elif is_segmentation_tag(element, tag_name_in=["table_of_contents"]):
             content.append(render_table_of_contents(context, element))
@@ -608,7 +609,8 @@ def render_header_element(
 ) -> Tag:
     input_elements: Sequence[PageElementOrString] = tag.contents
     elements: list[PageElementOrString] = []
-    pattern = HEADER_ELEMENTS_RENDER_PATTERNS[read_segmentation_tag_name(tag)]
+    tag_name = read_segmentation_tag_name(tag)
+    pattern = HEADER_ELEMENTS_RENDER_PATTERNS[tag_name]
 
     for splitted_element in split_elements(
         input_elements,
@@ -626,7 +628,7 @@ def render_header_element(
 
     return make_semantic_tag(
         context.soup,
-        HEADER_ELEMENTS_SCHEMAS[read_segmentation_tag_name(tag)],
+        HEADER_ELEMENTS_SPECS[tag_name],
         contents=wrap_in_tag(context.soup, elements, "div"),
     )
 
@@ -637,6 +639,8 @@ def render_visa_motif(
 ) -> Tag:
     assert is_segmentation_tag(tag, tag_name_in=["visa", "motif"])
     elements: list[PageElementOrString] = []
+    tag_name = read_segmentation_tag_name(tag)
+
     for element in tag.contents:
         if is_segmentation_tag(element, tag_name_in=["text_span"]):
             elements.append(get_string(element))
@@ -648,7 +652,7 @@ def render_visa_motif(
             raise ValueError(f"Unexpected element {element} in visa/motif")
     return make_semantic_tag(
         context.soup,
-        HEADER_ELEMENTS_SCHEMAS[read_segmentation_tag_name(tag)],
+        HEADER_ELEMENTS_SPECS[tag_name],
         contents=elements,
     )
 
@@ -669,6 +673,6 @@ def render_arrete_title(
     )
     return make_semantic_tag(
         context.soup,
-        ARRETE_TITLE_SCHEMA,
+        ArreteSpec,
         contents=[make_new_tag(context.soup, "h1", contents=elements)],
     )

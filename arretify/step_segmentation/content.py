@@ -23,22 +23,23 @@ from bs4 import (
     Tag,
 )
 
-from arretify.types import DocumentContext, SectionType, PageElementOrString, DataElementDataDict
-from arretify.utils.html import (
-    render_str_list_attribute,
-)
+from arretify.types import DocumentContext, SectionType, PageElementOrString
 from arretify.utils.html_semantic import (
+    SemanticTagData,
     make_semantic_tag,
+    update_data,
 )
 from arretify.utils.html_create import (
     make_new_tag,
 )
 from arretify.utils.functional import iter_func_to_list, chain_functions
 from arretify.utils.split import split_at_first_verb
-from arretify.semantic_tag_schemas import (
-    SECTION_SCHEMA,
-    SECTION_TITLE_SCHEMAS,
-    ALINEA_SCHEMA,
+from arretify.semantic_tag_specs import (
+    AlineaData,
+    SectionData,
+    SectionSpec,
+    SectionTitleSpecs,
+    AlineaSpec,
 )
 from arretify.errors import ErrorCodes
 from .basic_elements import (
@@ -402,18 +403,19 @@ def render_section_title(
     if not is_segmentation_tag(tag, tag_name_in=["section_title"]):
         raise ValueError("Tag must be a section title")
 
-    data: DataElementDataDict = dict()
     segmentation_tag_data = read_segmentation_tag_data(tag)
+    SectionTitleSpec = SectionTitleSpecs[cast(int, segmentation_tag_data["level"])]
+    section_title_data = SemanticTagData()
     if "error_codes" in segmentation_tag_data:
-        data["error_codes"] = render_str_list_attribute(
-            cast(list[str], segmentation_tag_data["error_codes"])
+        section_title_data = update_data(
+            section_title_data, error_codes=segmentation_tag_data["error_codes"]
         )
 
     return make_semantic_tag(
         context.soup,
-        SECTION_TITLE_SCHEMAS[cast(int, segmentation_tag_data["level"])],
+        SectionTitleSpec,
         contents=[get_string(tag)],
-        data=cast(DataElementDataDict, segmentation_tag_data),
+        data=section_title_data,
     )
 
 
@@ -451,8 +453,8 @@ def render_section(
     section_segmentation_tag_data = read_segmentation_tag_data(section_title)
     return make_semantic_tag(
         context.soup,
-        SECTION_SCHEMA,
-        data=dict(
+        SectionSpec,
+        data=SectionData(
             type=str(section_segmentation_tag_data["type"]),
             number=str(section_segmentation_tag_data["number"]),
             title=(
@@ -550,7 +552,7 @@ def render_alinea(
     alinea_segmentation_tag_data = read_segmentation_tag_data(tag)
     return make_semantic_tag(
         context.soup,
-        ALINEA_SCHEMA,
-        data=dict(number=str(alinea_segmentation_tag_data["number"])),
+        AlineaSpec,
+        data=AlineaData(number=alinea_segmentation_tag_data["number"]),
         contents=contents,
     )
