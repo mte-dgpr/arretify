@@ -25,12 +25,10 @@ from bs4 import BeautifulSoup
 from .html_semantic import (
     SemanticTagData,
     SemanticTagSpec,
-    SemanticTagSpecNoCustomData,
     is_semantic_tag,
     Bool,
     StrList,
     enum_serializer,
-    register_spec,
     update_data,
     make_semantic_tag,
     set_semantic_tag_data,
@@ -43,41 +41,37 @@ from .html_semantic import (
 class SemanticTagDataTestCase(unittest.TestCase):
 
     def setUp(self):
-        @register_spec
-        class SpecNoData(SemanticTagSpecNoCustomData):
-            spec_name = "test_no_data"
-            tag_name = "div"
+        self.spec_no_data = SemanticTagSpec(
+            spec_name="test_no_data",
+            tag_name="div",
+        )
 
         class CustomData(SemanticTagData):
             value: str
 
-        @register_spec
-        class SpecWithData(SemanticTagSpec[CustomData]):
-            spec_name = "test_with_data"
-            tag_name = "div"
-            data_model = CustomData
+        self.spec_with_data = SemanticTagSpec(
+            spec_name="test_with_data",
+            tag_name="div",
+            data_model=CustomData,
+        )
 
         self.soup = BeautifulSoup("", "html.parser")
 
-        self.spec_no_data = SpecNoData
-        self.tag_no_data = self.soup.new_tag("div")
-        self.tag_no_data["data-schema"] = SpecNoData.spec_name
-
-        self.spec_with_data = SpecWithData
         self.tag_with_data = self.soup.new_tag("div")
-        self.tag_with_data["data-schema"] = SpecWithData.spec_name
+        self.tag_with_data["data-schema"] = self.spec_with_data.spec_name
 
 
 class TestCssSelector(unittest.TestCase):
 
     def test_returns_attribute_selector(self):
         # ARRANGE
-        class SpecTest(SemanticTagSpecNoCustomData):
-            spec_name = "test_spec"
-            tag_name = "div"
+        spec_test = SemanticTagSpec(
+            spec_name="test_spec",
+            tag_name="div",
+        )
 
         # ACT
-        selector = css_selector(SpecTest)
+        selector = css_selector(spec_test)
 
         # ASSERT
         assert selector == '[data-schema="test_spec"]'
@@ -109,16 +103,17 @@ class TestIsSemanticTag(unittest.TestCase):
     def setUp(self):
         self.soup = BeautifulSoup("", "html.parser")
 
-        class SpecBla(SemanticTagSpecNoCustomData):
-            spec_name = "bla"
-            tag_name = "div"
+        self.model_bla = SemanticTagSpec(
+            spec_name="bla",
+            tag_name="div",
+            data_model=SemanticTagData,
+        )
 
-        class SpecBli(SemanticTagSpecNoCustomData):
-            spec_name = "bli"
-            tag_name = "div"
-
-        self.model_bla = SpecBla
-        self.model_bli = SpecBli
+        self.model_bli = SemanticTagSpec(
+            spec_name="bli",
+            tag_name="div",
+            data_model=SemanticTagData,
+        )
 
     def test_any_semantic_tag(self):
         # Arrange

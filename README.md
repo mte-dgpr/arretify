@@ -4,7 +4,7 @@
 
 <br/>
 
-**Arrêtify** est une librairie Python permettant la conversion d’arrêtés préfectoraux français en **HTML sémantique**. Le document résultant est structuré au moyen de [classes CSS sémantiques](./arretify/html_schemas.py) (ex. `.arretify-header`, `.arretify-section`, etc.) et enrichi de nombreuses métadonnées (dates, références juridiques, titres d’articles, etc.). 
+**Arrêtify** est une librairie Python permettant la conversion d’arrêtés préfectoraux français en **HTML sémantique**. [Le document résultant est structuré](./arretify/semantic_tag_specs.py) au moyen de **data attributes** (ex. `data-schema="header"`, `data-schema="section"`, etc.) et enrichi de nombreuses métadonnées (dates, références juridiques, titres d’articles, etc.). 
 
 *⚠️ Statut : **ALPHA**, développement actif. N’hésitez pas à l’essayer, à nous faire vos retours et à contribuer ! À ce stade, nous déconseillons un usage en production.*
 
