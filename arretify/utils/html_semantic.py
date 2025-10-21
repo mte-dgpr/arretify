@@ -16,8 +16,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+from dataclasses import dataclass
 from enum import Enum
-from typing import Iterable, Sequence, TypeGuard, Annotated, TypeVar, Type, Protocol
+from typing import Iterable, Sequence, TypeGuard, Annotated, TypeVar, Type, Generic
 
 from pydantic import (
     BaseModel,
@@ -42,6 +43,7 @@ _RESERVED_DATA_ATTRIBUTES = [_SPEC_DATA_ATTR, TAG_ID_ATTR, GROUP_ID_ATTR]
 _RESERVED_DATA_FIELD_NAMES = [key[len("data-") :] for key in _RESERVED_DATA_ATTRIBUTES]
 
 
+# -------------------- Pydantic fields -------------------- #
 def _serialize_bool(v: bool) -> str:
     return "true" if v else None
 
@@ -85,6 +87,10 @@ StrList = Annotated[
 ]
 
 
+# -------------------- Base models -------------------- #
+_REGISTRY: dict[str, "SemanticTagSpec"] = {}
+
+
 class SemanticTagData(BaseModel):
     error_codes: Annotated[list[ErrorCodes], enum_list_serializer] | None = None
 
@@ -113,29 +119,29 @@ class SemanticTagData(BaseModel):
 TSemanticTagData = TypeVar("TSemanticTagData", bound=SemanticTagData)
 
 
-class SemanticTagSpec(Protocol[TSemanticTagData]):
+@dataclass(frozen=True)
+class SemanticTagSpec(Generic[TSemanticTagData]):
+    """
+    Defines the structure and behavior of a semantic HTML tag type.
+
+    Attributes:
+        spec_name: Unique identifier for the semantic tag type
+        tag_name: HTML tag name to use (e.g., 'div', 'span', 'section')
+        data_model: Pydantic model class for validating tag data attributes
+    """
+
     spec_name: str
     tag_name: str
-    data_model: Type[TSemanticTagData] | None
+    data_model: Type[TSemanticTagData] = SemanticTagData
+
+    def __post_init__(self):
+        _REGISTRY[self.spec_name] = self
 
 
-class SemanticTagSpecNoCustomData(SemanticTagSpec[SemanticTagData]):
-    spec_name = "IMPLEMENT_ME"
-    tag_name = "IMPLEMENT_ME"
-    data_model = SemanticTagData
-
-
-_REGISTRY: dict[str, Type[SemanticTagSpec]] = {}
-
-
-def register_spec(cls: Type[SemanticTagSpec]):
-    _REGISTRY[cls.spec_name] = cls
-    return cls
-
-
+# -------------------- Semantic html utils -------------------- #
 def is_semantic_tag(
     tag: PageElementOrString,
-    spec_in: Sequence[Type[SemanticTagSpec[SemanticTagData]]] | None = None,
+    spec_in: Sequence[SemanticTagSpec] | None = None,
     tag_name_in: Sequence[str] | None = None,
 ) -> TypeGuard[Tag]:
     """
@@ -159,13 +165,13 @@ def is_semantic_tag(
     return True
 
 
-def css_selector(spec: Type[SemanticTagSpec[TSemanticTagData]]) -> str:
+def css_selector(spec: SemanticTagSpec[TSemanticTagData]) -> str:
     return f'[{_SPEC_DATA_ATTR}="{spec.spec_name}"]'
 
 
 def make_semantic_tag(
     soup: BeautifulSoup,
-    spec: Type[SemanticTagSpec[TSemanticTagData]],
+    spec: SemanticTagSpec[TSemanticTagData],
     contents: Iterable[PageElementOrString] | None = None,
     data: TSemanticTagData | None = None,
 ) -> Tag:
@@ -186,9 +192,7 @@ def make_semantic_tag(
     return tag
 
 
-def get_semantic_tag_data(
-    spec: Type[SemanticTagSpec[TSemanticTagData]], tag: Tag
-) -> TSemanticTagData:
+def get_semantic_tag_data(spec: SemanticTagSpec[TSemanticTagData], tag: Tag) -> TSemanticTagData:
     _ensure_matching_spec(spec, tag)
     raw_data: dict[str, str] = {}
     for key, value in tag.attrs.items():
@@ -201,7 +205,7 @@ def get_semantic_tag_data(
 
 
 def set_semantic_tag_data(
-    spec: Type[SemanticTagSpec[TSemanticTagData]], tag: Tag, data: TSemanticTagData
+    spec: SemanticTagSpec[TSemanticTagData], tag: Tag, data: TSemanticTagData
 ) -> None:
     _ensure_matching_spec(spec, tag)
     for key, value in data.model_dump().items():
@@ -209,7 +213,7 @@ def set_semantic_tag_data(
 
 
 def _ensure_matching_spec(
-    spec: Type[SemanticTagSpec[SemanticTagData]],
+    spec: SemanticTagSpec,
     tag: Tag,
 ) -> None:
     if not is_semantic_tag(tag, spec_in=[spec]):

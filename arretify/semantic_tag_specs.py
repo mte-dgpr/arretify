@@ -29,10 +29,8 @@ from arretify.utils.html_semantic import (
     SemanticTagSpec,
     SemanticTagData,
     Bool,
-    SemanticTagSpecNoCustomData,
     StrList,
     enum_serializer,
-    register_spec,
 )
 from arretify.types import OperationType, SectionType
 
@@ -40,99 +38,89 @@ from arretify.types import OperationType, SectionType
 # -------------------- Parts -------------------- #
 
 
-@register_spec
-class HeaderSpec(SemanticTagSpecNoCustomData):
-    spec_name = "header"
-    tag_name = "header"
+HeaderSpec = SemanticTagSpec(
+    spec_name="header",
+    tag_name="header",
+)
 
+MainSpec = SemanticTagSpec(
+    spec_name="main",
+    tag_name="main",
+)
 
-@register_spec
-class MainSpec(SemanticTagSpecNoCustomData):
-    spec_name = "main"
-    tag_name = "main"
-
-
-@register_spec
-class AppendixSpec(SemanticTagSpecNoCustomData):
-    spec_name = "appendix"
-    tag_name = "footer"
+AppendixSpec = SemanticTagSpec(
+    spec_name="appendix",
+    tag_name="footer",
+)
 
 
 # -------------------- Document -------------------- #
 
 
-@register_spec
-class PageFooterSpec(SemanticTagSpecNoCustomData):
-    spec_name = "page_footer"
-    tag_name = "div"
+PageFooterSpec = SemanticTagSpec(
+    spec_name="page_footer",
+    tag_name="div",
+)
 
 
 class PageSeparatorData(SemanticTagData):
     page_index: int
 
 
-@register_spec
-class PageSeparatorSpec(SemanticTagSpec[PageSeparatorData]):
-    spec_name = "page_separator"
-    tag_name = "a"
-    data_model = PageSeparatorData
+PageSeparatorSpec = SemanticTagSpec(
+    spec_name="page_separator",
+    tag_name="a",
+    data_model=PageSeparatorData,
+)
 
-
-@register_spec
-class TableOfContentsSpec(SemanticTagSpecNoCustomData):
-    spec_name = "table_of_contents"
-    tag_name = "div"
+TableOfContentsSpec = SemanticTagSpec(
+    spec_name="table_of_contents",
+    tag_name="div",
+)
 
 
 # -------------------- Header -------------------- #
 
 
-@register_spec
-class EmblemSpec(SemanticTagSpecNoCustomData):
-    spec_name = "emblem"
-    tag_name = "div"
+EmblemSpec = SemanticTagSpec(
+    spec_name="emblem",
+    tag_name="div",
+)
 
+EntitySpec = SemanticTagSpec(
+    spec_name="entity",
+    tag_name="div",
+)
 
-@register_spec
-class EntitySpec(SemanticTagSpecNoCustomData):
-    spec_name = "entity"
-    tag_name = "div"
+IdentificationSpec = SemanticTagSpec(
+    spec_name="identification",
+    tag_name="div",
+)
 
+ArreteSpec = SemanticTagSpec(
+    spec_name="arrete_title",
+    tag_name="div",
+)
 
-@register_spec
-class IdentificationSpec(SemanticTagSpecNoCustomData):
-    spec_name = "identification"
-    tag_name = "div"
+HonorarySpec = SemanticTagSpec(
+    spec_name="honorary",
+    tag_name="div",
+)
 
+VisaSpec = SemanticTagSpec(
+    spec_name="visa",
+    tag_name="div",
+)
 
-@register_spec
-class ArreteSpec(SemanticTagSpecNoCustomData):
-    spec_name = "arrete_title"
-    tag_name = "div"
+MotifSpec = SemanticTagSpec(
+    spec_name="motifs",
+    tag_name="div",
+)
 
-
-@register_spec
-class HonorarySpec(SemanticTagSpecNoCustomData):
-    spec_name = "honorary"
-    tag_name = "div"
-
-
-@register_spec
-class VisaSpec(SemanticTagSpecNoCustomData):
-    spec_name = "visa"
-    tag_name = "div"
-
-
-@register_spec
-class MotifSpec(SemanticTagSpecNoCustomData):
-    spec_name = "motifs"
-    tag_name = "div"
-
-
-@register_spec
-class SupplementaryMotifInfoSpec(SemanticTagSpecNoCustomData):
-    spec_name = "supplementary_motif_info"
-    tag_name = "div"
+SupplementaryMotifInfoSpec = SemanticTagSpec(
+    spec_name="supplementary_motif_info",
+    tag_name="div",
+)
 
 
 # -------------------- Main and appendix -------------------- #
@@ -144,47 +132,46 @@ class SectionData(SemanticTagData):
     type: str
 
 
-@register_spec
-class SectionSpec(SemanticTagSpec[SectionData]):
-    spec_name = "section"
-    tag_name = "section"
-    data_model = SectionData
+SectionSpec = SemanticTagSpec(
+    spec_name="section",
+    tag_name="section",
+    data_model=SectionData,
+)
 
+SectionTitle1Spec = SemanticTagSpec(
+    spec_name="section_title",
+    tag_name="h2",
+)
 
-@register_spec
-class SectionTitle1Spec(SemanticTagSpecNoCustomData):
-    spec_name = "section_title"
-    tag_name = "h2"
+SectionTitle2Spec = SemanticTagSpec(
+    spec_name="section_title",
+    tag_name="h3",
+)
 
+SectionTitle3Spec = SemanticTagSpec(
+    spec_name="section_title",
+    tag_name="h4",
+)
 
-@register_spec
-class SectionTitle2Spec(SectionTitle1Spec):
-    tag_name = "h3"
+SectionTitle4Spec = SemanticTagSpec(
+    spec_name="section_title",
+    tag_name="h5",
+)
 
+SectionTitle5Spec = SemanticTagSpec(
+    spec_name="section_title",
+    tag_name="h6",
+)
 
-@register_spec
-class SectionTitle3Spec(SectionTitle1Spec):
-    tag_name = "h4"
+SectionTitle6Spec = SemanticTagSpec(
+    spec_name="section_title",
+    tag_name="h7",
+)
 
-
-@register_spec
-class SectionTitle4Spec(SectionTitle1Spec):
-    tag_name = "h5"
-
-
-@register_spec
-class SectionTitle5Spec(SectionTitle1Spec):
-    tag_name = "h6"
-
-
-@register_spec
-class SectionTitle6Spec(SectionTitle1Spec):
-    tag_name = "h7"
-
-
-@register_spec
-class SectionTitle7Spec(SectionTitle1Spec):
-    tag_name = "h8"
+SectionTitle7Spec = SemanticTagSpec(
+    spec_name="section_title",
+    tag_name="h8",
+)
 
 
 SectionTitleSpecs = [
@@ -202,11 +189,11 @@ class AlineaData(SemanticTagData):
     number: str
 
 
-@register_spec
-class AlineaSpec(SemanticTagSpec[AlineaData]):
-    spec_name = "alinea"
-    tag_name = "div"
-    data_model = AlineaData
+AlineaSpec = SemanticTagSpec(
+    spec_name="alinea",
+    tag_name="div",
+    data_model=AlineaData,
+)
 
 
 # -------------------- References -------------------- #
@@ -249,11 +236,11 @@ class DocumentReferenceData(SemanticTagData):
         return self
 
 
-@register_spec
-class DocumentReferenceSpec(SemanticTagSpec[DocumentReferenceData]):
-    spec_name = "document_reference"
-    tag_name = "a"
-    data_model = DocumentReferenceData
+DocumentReferenceSpec = SemanticTagSpec(
+    spec_name="document_reference",
+    tag_name="a",
+    data_model=DocumentReferenceData,
+)
 
 
 class SectionReferenceData(SemanticTagData):
@@ -265,17 +252,16 @@ class SectionReferenceData(SemanticTagData):
     end_num: str | None = None
 
 
-@register_spec
-class SectionReferenceSpec(SemanticTagSpec[SectionReferenceData]):
-    spec_name = "section_reference"
-    tag_name = "a"
-    data_model = SectionReferenceData
+SectionReferenceSpec = SemanticTagSpec(
+    spec_name="section_reference",
+    tag_name="a",
+    data_model=SectionReferenceData,
+)
 
-
-@register_spec
-class DateSpec(SemanticTagSpecNoCustomData):
-    spec_name = "date"
-    tag_name = "time"
+DateSpec = SemanticTagSpec(
+    spec_name="date",
+    tag_name="time",
+)
 
 
 # -------------------- Operations -------------------- #
@@ -290,17 +276,17 @@ class OperationData(SemanticTagData):
     operand: str | None = None
 
 
-@register_spec
-class OperationSpec(SemanticTagSpec[OperationData]):
-    spec_name = "operation"
-    tag_name = "span"
-    data_model = OperationData
+OperationSpec = SemanticTagSpec(
+    spec_name="operation",
+    tag_name="span",
+    data_model=OperationData,
+)
 
 
 # -------------------- Errors -------------------- #
 
 
-@register_spec
-class ErrorSpec(SemanticTagSpecNoCustomData):
-    spec_name = "error"
-    tag_name = "span"
+ErrorSpec = SemanticTagSpec(
+    spec_name="error",
+    tag_name="span",
+)
