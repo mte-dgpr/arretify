@@ -59,7 +59,7 @@ class SemanticTagDataTestCase(unittest.TestCase):
         self.soup = BeautifulSoup("", "html.parser")
 
         self.tag_with_data = self.soup.new_tag("div")
-        self.tag_with_data["data-schema"] = self.spec_with_data.spec_name
+        self.tag_with_data["data-spec"] = self.spec_with_data.spec_name
 
 
 class TestCssSelector(unittest.TestCase):
@@ -75,7 +75,7 @@ class TestCssSelector(unittest.TestCase):
         selector = css_selector(spec_test)
 
         # ASSERT
-        assert selector == '[data-schema="test_spec"]'
+        assert selector == '[data-spec="test_spec"]'
 
 
 class TestMakeSemanticTag(SemanticTagDataTestCase):
@@ -86,7 +86,7 @@ class TestMakeSemanticTag(SemanticTagDataTestCase):
 
         # ASSERT
         assert tag.name == "div"
-        assert tag["data-schema"] == "test_no_data"
+        assert tag["data-spec"] == "test_no_data"
 
     def test_creates_tag_with_custom_data(self):
         # ARRANGE
@@ -119,7 +119,7 @@ class TestIsSemanticTag(unittest.TestCase):
     def test_any_semantic_tag(self):
         # Arrange
         tag = self.soup.new_tag("div")
-        tag["data-schema"] = "arretify-test"
+        tag["data-spec"] = "arretify-test"
 
         # Act
         result = is_semantic_tag(tag)
@@ -140,7 +140,7 @@ class TestIsSemanticTag(unittest.TestCase):
     def test_spec_in(self):
         # Arrange
         tag = self.soup.new_tag("div")
-        tag["data-schema"] = "bla"
+        tag["data-spec"] = "bla"
 
         # Act
         result1 = is_semantic_tag(tag, spec_in=[self.model_bla])
@@ -153,7 +153,7 @@ class TestIsSemanticTag(unittest.TestCase):
     def test_tag_name_in(self):
         # Arrange
         tag = self.soup.new_tag("div")
-        tag["data-schema"] = "bla"
+        tag["data-spec"] = "bla"
 
         # Act
         result1 = is_semantic_tag(tag, tag_name_in=["div"])
@@ -185,9 +185,9 @@ class TestSemanticTagData(unittest.TestCase):
         with self.assertRaises(ValueError) as cm:
 
             class BadModel1(SemanticTagData):
-                element_id: str
+                tag_id: str
 
-        assert "element_id" in str(cm.exception)
+        assert "tag_id" in str(cm.exception)
 
     def test_none_is_removed(self) -> None:
         # Arrange

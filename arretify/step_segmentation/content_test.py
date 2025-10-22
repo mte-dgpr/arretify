@@ -589,7 +589,7 @@ class TestRenderAlinea(BaseTestCase):
         # Assert
         assert normalized_html_str(str(result)) == normalized_html_str(
             """
-            <div data-schema="alinea" data-number="1">
+            <div data-spec="alinea" data-number="1">
                 This is an alinea.
             </div>
             """
@@ -630,11 +630,11 @@ class TestRenderSection(BaseTestCase):
         # Assert
         assert normalized_html_str(str(result)) == normalized_html_str(
             """
-            <section data-schema="section" data-number="1" data-title="Disposition" data-type="article">
-                <h2 data-schema="section_title">
+            <section data-spec="section" data-number="1" data-title="Disposition" data-type="article">
+                <h2 data-spec="section_title">
                     Article 1 : Disposition
                 </h2>
-                <div data-schema="alinea" data-number="1">
+                <div data-spec="alinea" data-number="1">
                     Bla bla bla ...
                 </div>
             </section>
@@ -664,7 +664,7 @@ class TestRenderSectionTitle(BaseTestCase):
         # Assert
         assert normalized_html_str(str(result)) == normalized_html_str(
             """
-            <h2 data-schema="section_title">
+            <h2 data-spec="section_title">
                 Titre I - Introduction
             </h2>
             """

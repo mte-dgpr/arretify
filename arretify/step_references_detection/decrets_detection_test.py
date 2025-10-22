@@ -37,11 +37,11 @@ class TestParseDecretsReferences(unittest.TestCase):
                 <a
                     data-date="2005-05-30"
                     data-num="2005-635"
-                    data-schema="document_reference"
+                    data-spec="document_reference"
                     data-type="decret"
                 >
                     décret n°2005-635 du
-                    <time data-schema="date" datetime="2005-05-30">
+                    <time data-spec="date" datetime="2005-05-30">
                         30 mai 2005
                     </time>
                 </a>

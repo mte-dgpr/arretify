@@ -33,7 +33,7 @@
                 padding: 0.5rem;
             }
 
-            a[data-schema="document_reference"], a[data-schema="section_reference"] {
+            a[data-spec="document_reference"], a[data-spec="section_reference"] {
                 color: var(--text-action-high-blue-france);
             }
 
@@ -42,14 +42,14 @@
                 background-color: #ffd0d0 !important;
             }
 
-            [data-schema="alinea"]::before, [data-schema="visa"]::before, [data-schema="motifs"]::before {
+            [data-spec="alinea"]::before, [data-spec="visa"]::before, [data-spec="motifs"]::before {
                 color: var(--text-disabled-grey);
                 position: absolute;
                 top: 0;
                 left: -1rem;
             }
 
-            [data-schema="debug_keyword"] {
+            [data-spec="debug_keyword"] {
                 color: var(--warning-425-625);
             }
 
@@ -78,28 +78,28 @@
                 margin-bottom: var(--spacing-1);
             }
 
-            [data-schema="emblem"], [data-schema="entity"], [data-schema="identification"], [data-schema="arrete_title"], [data-schema="honorary"] {
+            [data-spec="emblem"], [data-spec="entity"], [data-spec="identification"], [data-spec="arrete_title"], [data-spec="honorary"] {
                 padding: var(--spacing-1);
                 background-color: var(--background-alt-grey);
                 text-align: center;
             }
 
-            [data-schema="arrete_title"] {
+            [data-spec="arrete_title"] {
                 color: var(--text-title-grey);
             }
 
-            [data-schema="emblem"], [data-schema="entity"], [data-schema="identification"], [data-schema="honorary"] {
+            [data-spec="emblem"], [data-spec="entity"], [data-spec="identification"], [data-spec="honorary"] {
                 color: var(--text-title-blue-france);
                 font-size: 120%;
             }
 
-            [data-schema="visa"], [data-schema="motifs"], [data-schema="supplementary_motif_info"], [data-schema="table_of_contents"] {
+            [data-spec="visa"], [data-spec="motifs"], [data-spec="supplementary_motif_info"], [data-spec="table_of_contents"] {
                 position: relative;
                 margin-top: var(--spacing-1);
                 padding-bottom: 0;
             }
 
-            [data-schema="visa"]::before, [data-schema="motifs"]::before {
+            [data-spec="visa"]::before, [data-spec="motifs"]::before {
                 content: '⮞';
             }
 
@@ -109,24 +109,24 @@
             }
 
             /**************** MAIN CONTENT AND APPENDIX ****************/
-            [data-schema="table"] {
+            [data-spec="table"] {
                 font-family: monospace;
             }
 
-            [data-schema="section"] {
+            [data-spec="section"] {
                 padding: var(--spacing-0p5) 0;
             }
 
-            [data-schema="alinea"] {
+            [data-spec="alinea"] {
                 position: relative;
                 margin-top: var(--spacing-0p5);
             }
 
-            [data-schema="alinea"]::before {
+            [data-spec="alinea"]::before {
                 content: '¶';
             }
 
-            [data-schema="alinea"] img {
+            [data-spec="alinea"] img {
                 max-width: 100%;
             }
 
@@ -134,7 +134,7 @@
                 list-style: none;
             }
 
-            [data-schema="operation"] {
+            [data-spec="operation"] {
                 background-color: var(--background-action-low-blue-france);
             }
         </style>
@@ -143,7 +143,7 @@
                 // Page separators are inline elements, so they can be anywhere in the tree.
                 // To ensure proper layout, we therefore create a separate visual element
                 // for each page separator.
-                const pageSeparators = Array.from(document.querySelectorAll('[data-schema="page_separator"]'))
+                const pageSeparators = Array.from(document.querySelectorAll('[data-spec="page_separator"]'))
                 
                 const refreshPageSeparator = () => {
                     document.querySelectorAll('.visual_page_separator')

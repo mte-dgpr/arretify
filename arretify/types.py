@@ -104,12 +104,12 @@ class SessionContext:
 class IdCounters:
     """
     Container for the counters used to assign unique IDs to elements in the DOM.
-    This is used to ensure that each element has a unique ID.
+    This is used to ensure that each tag has a unique ID.
     """
 
-    element_id: int = 0
+    tag_id: int = 0
     """
-    Counter for the `data-element_id` attribute.
+    Counter for the `data-tag_id` attribute.
     This is used to assign unique IDs to elements in the DOM.
     """
 

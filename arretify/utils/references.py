@@ -81,14 +81,14 @@ def build_reference_tree(
         </a>
         de
         <a
-            data-element_id="3"
+            data-tag_id="3"
             data-parent_reference="4"
         >
             l'article 5
         </a>
         du
         <a
-            data-element_id="4"
+            data-tag_id="4"
         >
             présent arrêté
         </a>
@@ -122,7 +122,7 @@ def build_reference_tree(
         parent_reference_tag_matches = [
             tag
             for tag in reference_tags
-            if tag.get("data-element_id", None) == root_reference_tag["data-parent_reference"]
+            if tag.get("data-tag_id", None) == root_reference_tag["data-parent_reference"]
         ]
         if len(parent_reference_tag_matches) != 1:
             raise RuntimeError("Found more than one parent reference tag, which is not expected")
@@ -135,16 +135,16 @@ def build_reference_tree(
         new_reference_branches: list[list[Tag]] = []
         for branch in reference_tree:
             parent_reference_tag = branch[-1]
-            # If the parent reference tag has no data-element_id,
+            # If the parent reference tag has no data-tag_id,
             # it can't be referenced, so can't have children.
-            if parent_reference_tag.get("data-element_id", None) is None:
+            if parent_reference_tag.get("data-tag_id", None) is None:
                 new_reference_branches.append(branch)
                 continue
 
             children_reference_tags = [
                 tag
                 for tag in reference_tags
-                if tag.get("data-parent_reference", None) == parent_reference_tag["data-element_id"]
+                if tag.get("data-parent_reference", None) == parent_reference_tag["data-tag_id"]
             ]
 
             # if no children, we have reached a leaf.

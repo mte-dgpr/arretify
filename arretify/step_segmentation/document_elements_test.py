@@ -146,7 +146,7 @@ class TestRenderTableOfContents(BaseTestCase):
         # Assert
         assert normalized_html_str(str(rendered)) == normalized_html_str(
             """
-            <div data-schema="table_of_contents">
+            <div data-spec="table_of_contents">
                 <div>Sommaire</div>
                 <div>bla ..... page 1</div>
                 <div>blo ..... page 2</div>

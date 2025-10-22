@@ -39,12 +39,12 @@ class TestResolveArreteMinisterielLegifranceId(unittest.TestCase):
             process_arrete_document_reference(
                 """
                 <a
-                    data-schema="document_reference"
+                    data-spec="document_reference"
                     data-date="1998-02-02"
                     data-type="arrete-ministeriel"
                 >
                     arrêté ministériel du
-                    <time data-schema="date" datetime="1998-02-02">
+                    <time data-spec="date" datetime="1998-02-02">
                         2 février 1998
                     </time>
                 </a>
@@ -52,19 +52,19 @@ class TestResolveArreteMinisterielLegifranceId(unittest.TestCase):
                 qu'aux émissions de toute nature des installations classées
                 pour la protection de l'environnement soumises à autorisation
             """,
-                css_selector="[data-schema='document_reference']",
+                css_selector="[data-spec='document_reference']",
             )
             == normalized_html_str(
                 """
             <a
-                data-schema="document_reference"
+                data-spec="document_reference"
                 data-date="1998-02-02"
                 data-id="JORFTEXT000000204891"
                 data-type="arrete-ministeriel"
                 href="https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000000204891"
             >
                 arrêté ministériel du
-                <time data-schema="date" datetime="1998-02-02">
+                <time data-spec="date" datetime="1998-02-02">
                     2 février 1998
                 </time>
             </a>

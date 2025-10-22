@@ -35,7 +35,7 @@ class TestParseCodesReferences(unittest.TestCase):
             normalized_html_str(
                 """
                 <a
-                    data-schema="document_reference"
+                    data-spec="document_reference"
                     data-title="Code de l'environnement"
                     data-type="code"
                 >
