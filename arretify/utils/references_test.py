@@ -33,29 +33,29 @@ class TestBuildReferenceTree(unittest.TestCase):
             """
             <div>
                 <a
-                    data-schema="section_reference"
-                    data-element_id="1"
+                    data-spec="section_reference"
+                    data-tag_id="1"
                     data-parent_reference="3"
                 >
                     Section 1.1
                 </a>
                 <a
-                    data-schema="section_reference"
-                    data-element_id="2"
+                    data-spec="section_reference"
+                    data-tag_id="2"
                     data-parent_reference="3"
                 >
                     Section 1.2
                 </a>
                 <a
-                    data-schema="section_reference"
-                    data-element_id="3"
+                    data-spec="section_reference"
+                    data-tag_id="3"
                     data-parent_reference="4"
                 >
                     Section 1
                 </a>
                 <a
-                    data-schema="document_reference"
-                    data-element_id="4"
+                    data-spec="document_reference"
+                    data-tag_id="4"
                 >
                     Some Document
                 </a>
@@ -63,15 +63,15 @@ class TestBuildReferenceTree(unittest.TestCase):
             """,
             features="html.parser",
         )
-        section_reference_tag = soup.select_one("a[data-element_id='3']")
+        section_reference_tag = soup.select_one("a[data-tag_id='3']")
 
         # Act
         branches = build_reference_tree(section_reference_tag)
 
         # Assert
         assert len(branches) == 2
-        assert [tag["data-element_id"] for tag in branches[0]] == ["4", "3", "1"]
-        assert [tag["data-element_id"] for tag in branches[1]] == ["4", "3", "2"]
+        assert [tag["data-tag_id"] for tag in branches[0]] == ["4", "3", "1"]
+        assert [tag["data-tag_id"] for tag in branches[1]] == ["4", "3", "2"]
 
     def test_leaf_no_element_id(self):
         # Arrange
@@ -80,15 +80,15 @@ class TestBuildReferenceTree(unittest.TestCase):
             <div>
                 <a
                     id="tag1"
-                    data-schema="section_reference"
+                    data-spec="section_reference"
                     data-parent_reference="1"
                 >
                     Section 1.1
                 </a>
                 <a
                     id="tag2"
-                    data-schema="section_reference"
-                    data-element_id="1"
+                    data-spec="section_reference"
+                    data-tag_id="1"
                 >
                     Section 1
                 </a>
@@ -96,7 +96,7 @@ class TestBuildReferenceTree(unittest.TestCase):
             """,
             features="html.parser",
         )
-        section_reference_tag = soup.select_one("[data-schema='section_reference']")
+        section_reference_tag = soup.select_one("[data-spec='section_reference']")
 
         # Act
         branches = build_reference_tree(section_reference_tag)
@@ -111,29 +111,29 @@ class TestBuildReferenceTree(unittest.TestCase):
             """
             <div>
                 <a
-                    data-schema="section_reference"
-                    data-element_id="1"
+                    data-spec="section_reference"
+                    data-tag_id="1"
                     data-parent_reference="3"
                 >
                     Section 1.1
                 </a>
                 <a
-                    data-schema="section_reference"
-                    data-element_id="2"
+                    data-spec="section_reference"
+                    data-tag_id="2"
                     data-parent_reference="3"
                 >
                     Section 1.2
                 </a>
                 <a
-                    data-schema="section_reference"
-                    data-element_id="3"
+                    data-spec="section_reference"
+                    data-tag_id="3"
                     data-parent_reference="4"
                 >
                     Section 1
                 </a>
                 <a
-                    data-schema="document_reference"
-                    data-element_id="4"
+                    data-spec="document_reference"
+                    data-tag_id="4"
                 >
                     Some Document
                 </a>
@@ -141,7 +141,7 @@ class TestBuildReferenceTree(unittest.TestCase):
             """,
             features="html.parser",
         )
-        section_reference_tag = soup.select_one("a[data-element_id='4']")
+        section_reference_tag = soup.select_one("a[data-tag_id='4']")
 
         # Act
         branches = build_reference_tree(section_reference_tag)
@@ -157,15 +157,15 @@ class TestBuildReferenceTree(unittest.TestCase):
             """
             <div>
                 <a
-                    data-schema="section_reference"
-                    data-element_id="1"
+                    data-spec="section_reference"
+                    data-tag_id="1"
                     data-parent_reference="2"
                 >
                     Section 1
                 </a>
                 <a
-                    data-schema="section_reference"
-                    data-element_id="2"
+                    data-spec="section_reference"
+                    data-tag_id="2"
                 >
                     Parent Document
                 </a>
@@ -173,14 +173,14 @@ class TestBuildReferenceTree(unittest.TestCase):
             """,
             features="html.parser",
         )
-        section_reference_tag = soup.select_one("a[data-element_id='1']")
+        section_reference_tag = soup.select_one("a[data-tag_id='1']")
 
         # Act
         branches = build_reference_tree(section_reference_tag)
 
         # Assert
         assert len(branches) == 1
-        assert [tag["data-element_id"] for tag in branches[0]] == ["2", "1"]
+        assert [tag["data-tag_id"] for tag in branches[0]] == ["2", "1"]
 
 
 class TestTraverseReferenceTree(unittest.TestCase):
@@ -191,8 +191,8 @@ class TestTraverseReferenceTree(unittest.TestCase):
             """
             <div>
                 <a
-                    data-schema="section_reference"
-                    data-element_id="1"
+                    data-spec="section_reference"
+                    data-tag_id="1"
                     data-parent_reference="2"
                     data-start_num="456"
                     data-type="article"
@@ -200,8 +200,8 @@ class TestTraverseReferenceTree(unittest.TestCase):
                     Section 1
                 </a>
                 <a
-                    data-schema="document_reference"
-                    data-element_id="2"
+                    data-spec="document_reference"
+                    data-tag_id="2"
                     data-id="L123"
                     data-type="arrete"
                 >
@@ -211,8 +211,8 @@ class TestTraverseReferenceTree(unittest.TestCase):
             """,
             features="html.parser",
         )
-        document_reference_tag = soup.select_one("[data-schema='document_reference']")
-        section_reference_tag = soup.select_one("[data-schema='section_reference']")
+        document_reference_tag = soup.select_one("[data-spec='document_reference']")
+        section_reference_tag = soup.select_one("[data-spec='section_reference']")
         reference_tree = [[document_reference_tag, section_reference_tag]]
 
         # Act
@@ -222,12 +222,12 @@ class TestTraverseReferenceTree(unittest.TestCase):
         assert len(results) == 2
 
         document_reference_tag, document, sections = results[0]
-        assert document_reference_tag["data-element_id"] == "2"
+        assert document_reference_tag["data-tag_id"] == "2"
         assert document == DocumentReferenceData(type=DocumentType.unknown_arrete, id="L123")
         assert sections == []
 
         section_reference_tag, document, sections = results[1]
-        assert section_reference_tag["data-element_id"] == "1"
+        assert section_reference_tag["data-tag_id"] == "1"
         assert document == DocumentReferenceData(type=DocumentType.unknown_arrete, id="L123")
         assert sections == [
             SectionReferenceData(type=SectionType.ARTICLE, start_num="456", parent_reference="2")
@@ -239,8 +239,8 @@ class TestTraverseReferenceTree(unittest.TestCase):
             """
             <div>
                 <a
-                    data-schema="section_reference"
-                    data-element_id="1"
+                    data-spec="section_reference"
+                    data-tag_id="1"
                     data-parent_reference="2"
                     data-start_num="456"
                     data-type="alinea"
@@ -248,8 +248,8 @@ class TestTraverseReferenceTree(unittest.TestCase):
                     Section 1
                 </a>
                 <a
-                    data-schema="section_reference"
-                    data-element_id="2"
+                    data-spec="section_reference"
+                    data-tag_id="2"
                     data-start_num="L123"
                     data-type="article"
                 >
@@ -259,12 +259,8 @@ class TestTraverseReferenceTree(unittest.TestCase):
             """,
             features="html.parser",
         )
-        section_reference_tag1 = soup.select_one(
-            "[data-schema='section_reference'][data-element_id='1']"
-        )
-        section_reference_tag2 = soup.select_one(
-            "[data-schema='section_reference'][data-element_id='2']"
-        )
+        section_reference_tag1 = soup.select_one("[data-spec='section_reference'][data-tag_id='1']")
+        section_reference_tag2 = soup.select_one("[data-spec='section_reference'][data-tag_id='2']")
         reference_tree = [[section_reference_tag2, section_reference_tag1]]
 
         # Act
@@ -274,12 +270,12 @@ class TestTraverseReferenceTree(unittest.TestCase):
         assert len(results) == 2
 
         article_reference_tag, document, sections = results[0]
-        assert article_reference_tag["data-element_id"] == "2"
+        assert article_reference_tag["data-tag_id"] == "2"
         assert document is None
         assert sections == [SectionReferenceData(type=SectionType.ARTICLE, start_num="L123")]
 
         alinea_reference_tag, document, sections = results[1]
-        assert alinea_reference_tag["data-element_id"] == "1"
+        assert alinea_reference_tag["data-tag_id"] == "1"
         assert document is None
         assert len(sections) == 2
         assert sections == [
@@ -296,31 +292,31 @@ class TestIterReferenceTrees(unittest.TestCase):
             """
             <div>
                 <a
-                    data-schema="section_reference"
-                    data-element_id="1"
+                    data-spec="section_reference"
+                    data-tag_id="1"
                     data-parent_reference="2"
                     data-type="article"
                 >
                     Section 1
                 </a>
                 <a
-                    data-schema="document_reference"
-                    data-element_id="2"
+                    data-spec="document_reference"
+                    data-tag_id="2"
                     data-type="arrete"
                 >
                     Parent Document
                 </a>
                 <a
-                    data-schema="section_reference"
-                    data-element_id="3"
+                    data-spec="section_reference"
+                    data-tag_id="3"
                     data-parent_reference="4"
                     data-type="article"
                 >
                     Section 2
                 </a>
                 <a
-                    data-schema="document_reference"
-                    data-element_id="4"
+                    data-spec="document_reference"
+                    data-tag_id="4"
                     data-type="arrete"
                 >
                     Another Document
@@ -337,7 +333,7 @@ class TestIterReferenceTrees(unittest.TestCase):
         assert len(reference_trees) == 2
 
         assert len(reference_trees[0]) == 1
-        assert [tag["data-element_id"] for tag in reference_trees[0][0]] == ["2", "1"]
+        assert [tag["data-tag_id"] for tag in reference_trees[0][0]] == ["2", "1"]
 
         assert len(reference_trees[1]) == 1
-        assert [tag["data-element_id"] for tag in reference_trees[1][0]] == ["4", "3"]
+        assert [tag["data-tag_id"] for tag in reference_trees[1][0]] == ["4", "3"]

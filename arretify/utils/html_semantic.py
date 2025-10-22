@@ -36,9 +36,7 @@ from arretify.utils.html import GROUP_ID_ATTR, TAG_ID_ATTR, is_tag
 from arretify.utils.html_create import make_new_tag
 
 
-_SPEC_DATA_ATTR = "data-schema"
-# TODO:RENAME : rename to data-spec
-
+_SPEC_DATA_ATTR = "data-spec"
 _RESERVED_DATA_ATTRIBUTES = [_SPEC_DATA_ATTR, TAG_ID_ATTR, GROUP_ID_ATTR]
 _RESERVED_DATA_FIELD_NAMES = [key[len("data-") :] for key in _RESERVED_DATA_ATTRIBUTES]
 

@@ -31,8 +31,7 @@ from arretify.utils.functional import iter_func_to_list
 
 INLINE_TAG_TYPES = ["br"]
 
-TAG_ID_ATTR = "data-element_id"
-# TODO:RENAME : rename to data-tag_id
+TAG_ID_ATTR = "data-tag_id"
 GROUP_ID_ATTR = "data-group_id"
 
 
@@ -68,7 +67,7 @@ def filter_out_inline_tags(
 def ensure_tag_id(id_counters: IdCounters, tag: Tag) -> TagId:
     current_tag_id = tag.get(TAG_ID_ATTR, None)
     if current_tag_id is None:
-        tag[TAG_ID_ATTR] = _make_id(id_counters, "element_id")
+        tag[TAG_ID_ATTR] = _make_id(id_counters, "tag_id")
     return cast(str, tag[TAG_ID_ATTR])
 
 
@@ -90,7 +89,7 @@ def get_group_id(tag: Tag) -> TagGroupId | None:
 
 def _make_id(
     id_counters: IdCounters,
-    name: Literal["element_id", "group_id"],
+    name: Literal["tag_id", "group_id"],
 ) -> str:
     setattr(id_counters, name, getattr(id_counters, name) + 1)
     return f"{getattr(id_counters, name)}"

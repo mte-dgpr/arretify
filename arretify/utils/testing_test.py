@@ -57,13 +57,13 @@ class TestHtmlNormalization(unittest.TestCase):
             normalized_html_str(
                 """
                     arrêté ministériel du
-                    <time data-schema="date" datetime="1998-02-02">
+                    <time data-spec="date" datetime="1998-02-02">
                         2 février 1998
                     </time>
                 """
             )
             == (
-                'arrêté ministériel du <time data-schema="date" datetime="1998-02-02">'
+                'arrêté ministériel du <time data-spec="date" datetime="1998-02-02">'
                 "2 février 1998</time>"
             )
         )
@@ -72,14 +72,14 @@ class TestHtmlNormalization(unittest.TestCase):
         assert (
             normalized_html_str(
                 """
-                    <time data-schema="date" datetime="1998-02-02">
+                    <time data-spec="date" datetime="1998-02-02">
                         2 février 1998
                     </time>
                     arrêté ministériel du
                 """
             )
             == (
-                '<time data-schema="date" datetime="1998-02-02">'
+                '<time data-spec="date" datetime="1998-02-02">'
                 "2 février 1998</time> arrêté ministériel du"
             )
         )

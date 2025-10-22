@@ -36,11 +36,11 @@ class TestParseCirculairesReferences(unittest.TestCase):
                 """
                 <a
                     data-date="2005-05-30"
-                    data-schema="document_reference"
+                    data-spec="document_reference"
                     data-type="circulaire"
                 >
                     circulaire du
-                    <time data-schema="date" datetime="2005-05-30">
+                    <time data-spec="date" datetime="2005-05-30">
                         30 mai 2005
                     </time>
                 </a>
@@ -56,11 +56,11 @@ class TestParseCirculairesReferences(unittest.TestCase):
                 """
                 <a
                     data-date="2005-05-30"
-                    data-schema="document_reference"
+                    data-spec="document_reference"
                     data-type="circulaire"
                 >
                     circulaire ministérielle du
-                    <time data-schema="date" datetime="2005-05-30">
+                    <time data-spec="date" datetime="2005-05-30">
                         30 mai 2005
                     </time>
                 </a>
@@ -76,11 +76,11 @@ class TestParseCirculairesReferences(unittest.TestCase):
                 """
                 <a
                     data-date="2005-05-30"
-                    data-schema="document_reference"
+                    data-spec="document_reference"
                     data-type="circulaire"
                 >
                     circulaire DPPR/DE du
-                    <time data-schema="date" datetime="2005-05-30">
+                    <time data-spec="date" datetime="2005-05-30">
                         30 mai 2005
                     </time>
                 </a>
@@ -97,11 +97,11 @@ class TestParseCirculairesReferences(unittest.TestCase):
                 <a
                     data-date="2005-05-30"
                     data-num="2005-12"
-                    data-schema="document_reference"
+                    data-spec="document_reference"
                     data-type="circulaire"
                 >
                     circulaire n°2005-12 du
-                    <time data-schema="date" datetime="2005-05-30">
+                    <time data-spec="date" datetime="2005-05-30">
                         30 mai 2005
                     </time>
                 </a>

@@ -63,18 +63,18 @@ class TestAssignElementId(unittest.TestCase):
         ensure_tag_id(self.id_counters, self.tag)
 
         # Assert
-        assert self.tag["data-element_id"] == "1"
+        assert self.tag["data-tag_id"] == "1"
 
     def test_already_has_element_id(self):
         # Arrange
-        self.tag["data-element_id"] = "42"
+        self.tag["data-tag_id"] = "42"
         self.id_counters = IdCounters()
 
         # Act
         ensure_tag_id(self.id_counters, self.tag)
 
         # Assert
-        assert self.tag["data-element_id"] == "42"
+        assert self.tag["data-tag_id"] == "42"
 
 
 class TestGroupId(unittest.TestCase):

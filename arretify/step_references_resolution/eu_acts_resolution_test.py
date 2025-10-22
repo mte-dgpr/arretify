@@ -45,7 +45,7 @@ class TestResolveEuActUrls(unittest.TestCase):
             process_eu_directive_document_reference(
                 """
             <a
-                data-schema="document_reference"
+                data-spec="document_reference"
                 data-date="2010"
                 data-num="75"
                 data-type="eu-directive"
@@ -57,7 +57,7 @@ class TestResolveEuActUrls(unittest.TestCase):
             == normalized_html_str(
                 """
             <a
-                data-schema="document_reference"
+                data-spec="document_reference"
                 data-date="2010"
                 data-id="https://eur-lex.europa.eu/legal-content/FR/TXT/HTML/?uri=cellar:c7191b72-4e07-4712-86d6-d3ae5e4f0082"
                 data-num="75"
@@ -75,7 +75,7 @@ class TestResolveEuActUrls(unittest.TestCase):
             process_eu_decision_document_reference(
                 """
             <a
-                data-schema="document_reference"
+                data-spec="document_reference"
                 data-date="2020"
                 data-num="2019"
                 data-type="eu-decision"
@@ -87,7 +87,7 @@ class TestResolveEuActUrls(unittest.TestCase):
             == normalized_html_str(
                 """
             <a
-                data-schema="document_reference"
+                data-spec="document_reference"
                 data-date="2020"
                 data-id="https://eur-lex.europa.eu/legal-content/FR/TXT/HTML/?uri=cellar:8e42e417-3ab2-11eb-b27b-01aa75ed71a1"
                 data-num="2019"
@@ -105,7 +105,7 @@ class TestResolveEuActUrls(unittest.TestCase):
             process_eu_regulation_document_reference(
                 """
             <a
-                data-schema="document_reference"
+                data-spec="document_reference"
                 data-date="2012"
                 data-num="601"
                 data-type="eu-regulation"
@@ -117,7 +117,7 @@ class TestResolveEuActUrls(unittest.TestCase):
             == normalized_html_str(
                 """
             <a
-                data-schema="document_reference"
+                data-spec="document_reference"
                 data-date="2012"
                 data-id="https://eur-lex.europa.eu/legal-content/FR/TXT/HTML/?uri=cellar:a025c83e-c7f9-4f94-87bb-3522f4ff930d"
                 data-num="601"

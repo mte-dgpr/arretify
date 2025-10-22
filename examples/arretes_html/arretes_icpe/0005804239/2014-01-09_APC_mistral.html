@@ -33,7 +33,7 @@
                 padding: 0.5rem;
             }
 
-            a[data-schema="document_reference"], a[data-schema="section_reference"] {
+            a[data-spec="document_reference"], a[data-spec="section_reference"] {
                 color: var(--text-action-high-blue-france);
             }
 
@@ -42,14 +42,14 @@
                 background-color: #ffd0d0 !important;
             }
 
-            [data-schema="alinea"]::before, [data-schema="visa"]::before, [data-schema="motifs"]::before {
+            [data-spec="alinea"]::before, [data-spec="visa"]::before, [data-spec="motifs"]::before {
                 color: var(--text-disabled-grey);
                 position: absolute;
                 top: 0;
                 left: -1rem;
             }
 
-            [data-schema="debug_keyword"] {
+            [data-spec="debug_keyword"] {
                 color: var(--warning-425-625);
             }
 
@@ -78,28 +78,28 @@
                 margin-bottom: var(--spacing-1);
             }
 
-            [data-schema="emblem"], [data-schema="entity"], [data-schema="identification"], [data-schema="arrete_title"], [data-schema="honorary"] {
+            [data-spec="emblem"], [data-spec="entity"], [data-spec="identification"], [data-spec="arrete_title"], [data-spec="honorary"] {
                 padding: var(--spacing-1);
                 background-color: var(--background-alt-grey);
                 text-align: center;
             }
 
-            [data-schema="arrete_title"] {
+            [data-spec="arrete_title"] {
                 color: var(--text-title-grey);
             }
 
-            [data-schema="emblem"], [data-schema="entity"], [data-schema="identification"], [data-schema="honorary"] {
+            [data-spec="emblem"], [data-spec="entity"], [data-spec="identification"], [data-spec="honorary"] {
                 color: var(--text-title-blue-france);
                 font-size: 120%;
             }
 
-            [data-schema="visa"], [data-schema="motifs"], [data-schema="supplementary_motif_info"], [data-schema="table_of_contents"] {
+            [data-spec="visa"], [data-spec="motifs"], [data-spec="supplementary_motif_info"], [data-spec="table_of_contents"] {
                 position: relative;
                 margin-top: var(--spacing-1);
                 padding-bottom: 0;
             }
 
-            [data-schema="visa"]::before, [data-schema="motifs"]::before {
+            [data-spec="visa"]::before, [data-spec="motifs"]::before {
                 content: '⮞';
             }
 
@@ -109,24 +109,24 @@
             }
 
             /**************** MAIN CONTENT AND APPENDIX ****************/
-            [data-schema="table"] {
+            [data-spec="table"] {
                 font-family: monospace;
             }
 
-            [data-schema="section"] {
+            [data-spec="section"] {
                 padding: var(--spacing-0p5) 0;
             }
 
-            [data-schema="alinea"] {
+            [data-spec="alinea"] {
                 position: relative;
                 margin-top: var(--spacing-0p5);
             }
 
-            [data-schema="alinea"]::before {
+            [data-spec="alinea"]::before {
                 content: '¶';
             }
 
-            [data-schema="alinea"] img {
+            [data-spec="alinea"] img {
                 max-width: 100%;
             }
 
@@ -134,7 +134,7 @@
                 list-style: none;
             }
 
-            [data-schema="operation"] {
+            [data-spec="operation"] {
                 background-color: var(--background-action-low-blue-france);
             }
   </style>
@@ -143,7 +143,7 @@
                 // Page separators are inline elements, so they can be anywhere in the tree.
                 // To ensure proper layout, we therefore create a separate visual element
                 // for each page separator.
-                const pageSeparators = Array.from(document.querySelectorAll('[data-schema="page_separator"]'))
+                const pageSeparators = Array.from(document.querySelectorAll('[data-spec="page_separator"]'))
                 
                 const refreshPageSeparator = () => {
                     document.querySelectorAll('.visual_page_separator')
@@ -174,10 +174,10 @@
   </script>
  </head>
  <body>
-  <header data-schema="header">
-   <a data-page_index="0" data-schema="page_separator">
+  <header data-spec="header">
+   <a data-page_index="0" data-spec="page_separator">
    </a>
-   <div data-schema="entity">
+   <div data-spec="entity">
     <div>
      PRÉFET DE LA SEINE-MARITIME
     </div>
@@ -191,12 +191,12 @@
      Affaire suivie par: Sabrina LE ROL Tél. 02.35.19.32.84 Fax 02.35.19.32.99 Mél. : sabrina.le-rol@development-durable.gouv.fr
     </div>
    </div>
-   <div data-schema="arrete_title">
+   <div data-spec="arrete_title">
     <h1>
      Arrêté complémentaire du - 9 JAN. 2014 modifiant une installation de traitement des huiles usagées pour la société OSILUB à GONFREVILLE-L'ORCHER
     </h1>
    </div>
-   <div data-schema="honorary">
+   <div data-spec="honorary">
     <div>
      Le préfet de la région Haute-Normandie, préfet de la Seine-Maritime,
     </div>
@@ -204,105 +204,105 @@
      COMMANDEUR de la LÉGION D'HONNEUR,
     </div>
    </div>
-   <div data-schema="visa">
+   <div data-spec="visa">
     Vu le
-    <a data-id="LEGITEXT000006074220" data-schema="document_reference" data-title="Code de l'environnement" data-type="code" href="https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006074220">
+    <a data-id="LEGITEXT000006074220" data-spec="document_reference" data-title="Code de l'environnement" data-type="code" href="https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006074220">
      code de l'environnement
     </a>
     notamment son livre V ;
    </div>
-   <div data-schema="visa">
+   <div data-spec="visa">
     Vu le
-    <a data-date="2004-04-29" data-id="JORFTEXT000000249712" data-num="2004-374" data-schema="document_reference" data-type="decret" href="https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000000249712">
+    <a data-date="2004-04-29" data-id="JORFTEXT000000249712" data-num="2004-374" data-spec="document_reference" data-type="decret" href="https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000000249712">
      décret n° 2004-374 du
-     <time data-schema="date" datetime="2004-04-29">
+     <time data-spec="date" datetime="2004-04-29">
       29 avril 2004
      </time>
     </a>
     modifié relatif aux pouvoirs des préfets, à l'organisation et à l'action des services de l'État dans les régions et les départements ;
    </div>
-   <div data-schema="visa">
+   <div data-spec="visa">
     Vu le décret du Président de la République en date du 17 janvier 2013 nommant M. PierreHenry MACCIONI préfet de la région Haute-Normandie, préfet de la Seine-Maritime ;
    </div>
-   <div data-schema="visa">
+   <div data-spec="visa">
     Vu l'
-    <a data-date="2013-04-25" data-num="13-196" data-schema="document_reference" data-type="arrete">
+    <a data-date="2013-04-25" data-num="13-196" data-spec="document_reference" data-type="arrete">
      arrêté n° 13-196 du
-     <time data-schema="date" datetime="2013-04-25">
+     <time data-spec="date" datetime="2013-04-25">
       25 avril 2013
      </time>
      modifié
     </a>
     portant délégation de signature à M. Éric MAIRE, secrétaire général de la préfecture de la Seine-Maritime ;
    </div>
-   <div data-schema="visa">
+   <div data-spec="visa">
     Vu l'
-    <a data-date="2009-12-08" data-schema="document_reference" data-type="arrete-prefectoral">
+    <a data-date="2009-12-08" data-spec="document_reference" data-type="arrete-prefectoral">
      arrêté préfectoral du
-     <time data-schema="date" datetime="2009-12-08">
+     <time data-spec="date" datetime="2009-12-08">
       08 décembre 2009
      </time>
     </a>
     autorisant la société OSILUB à exercer l'activité de traitement des huiles usagées ;
    </div>
-   <div data-schema="visa">
+   <div data-spec="visa">
     Vu l'agrément préfectoral du 08 décembre 2009 autorisant la société OSILUB à exercer l'activité de traitement des huiles usagées ;
    </div>
-   <div data-schema="visa">
+   <div data-spec="visa">
     Vu la demande en date du 18 mars 2013, par laquelle la société OSILUB, dont le siège social est 4991 route de la Plaine à GONFREVILLE L'ORCHER, sollicite la modification de l'autorisation d'exploiter une installation de traitement des huiles usagées sise route de la Plaine sur la commune de GONFREVILLE-L'ORCHER ;
    </div>
-   <div data-schema="visa">
+   <div data-spec="visa">
     Vu le rapport des installations classées en date du 14 novembre 2013 ;
    </div>
-   <div data-schema="visa">
+   <div data-spec="visa">
     Vu la délibération de conseil départemental de l'environnement et des risques sanitaires et technologiques en date du 10 décembre 2013 ;
    </div>
-   <div data-schema="visa">
+   <div data-spec="visa">
     Vu la transmission du projet d'arrêté faite à l'exploitant le 12 décembre 2013 ;
    </div>
-   <a data-page_index="1" data-schema="page_separator">
+   <a data-page_index="1" data-spec="page_separator">
    </a>
-   <div data-schema="motifs">
+   <div data-spec="motifs">
     Considérant: que la société OSILUB a sollicité la modification de l'autorisation d'exploiter une installation de traitement des huiles usagées, installations situées sur le territoire de la commune de GONFREVILLE-L'ORCHER (76700) - route de la Plaine ;
    </div>
-   <div data-schema="motifs">
+   <div data-spec="motifs">
     Considérant : que la demande de modification porte sur l'origine et la nature des huiles usagées autorisées à être traitées sur le site ;
    </div>
-   <div data-schema="motifs">
+   <div data-spec="motifs">
     Considérant: qu'aux termes de l'
-    <a data-parent_reference="1" data-schema="section_reference" data-start_id="LEGIARTI000006838708" data-start_num="R512-31" data-type="article" href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000006838708">
+    <a data-parent_reference="1" data-spec="section_reference" data-start_id="LEGIARTI000006838708" data-start_num="R512-31" data-type="article" href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000006838708">
      article R. 512-31
     </a>
     du
-    <a data-element_id="1" data-id="LEGITEXT000006074220" data-schema="document_reference" data-title="Code de l'environnement" data-type="code" href="https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006074220">
+    <a data-id="LEGITEXT000006074220" data-spec="document_reference" data-tag_id="1" data-title="Code de l'environnement" data-type="code" href="https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006074220">
      code de l'environnement
     </a>
     , des prescriptions additionnelles que la protection des intérêts mentionnés à l'
-    <a data-schema="section_reference" data-start_num="L511-1" data-type="article">
+    <a data-spec="section_reference" data-start_num="L511-1" data-type="article">
      article L. 511-1
     </a>
     sont nécessaires que spécifie l'arrêté préfectoral complémentaire ;
    </div>
-   <div data-schema="motifs">
+   <div data-spec="motifs">
     Considérant : que les conditions légales de délivrance de l'autorisation sont réunies ;
    </div>
-   <div data-schema="supplementary_motif_info">
+   <div data-spec="supplementary_motif_info">
     <div>
      Sur proposition du secrétaire général de la préfecture
     </div>
    </div>
-   <div data-schema="arrete_title">
+   <div data-spec="arrete_title">
     <h1>
      ARRETE
     </h1>
    </div>
   </header>
-  <main data-schema="main">
-   <section data-number="1" data-schema="section" data-type="article">
-    <h2 data-schema="section_title">
+  <main data-spec="main">
+   <section data-number="1" data-spec="section" data-type="article">
+    <h2 data-spec="section_title">
      Article 1er  -
     </h2>
-    <div data-number="1" data-schema="alinea">
+    <div data-number="1" data-spec="alinea">
      La société OSILUB, dont le siège social est
      <address>
       4991 route de la Plaine
@@ -310,120 +310,120 @@
      - 76700 GONFREVILLE L'ORCHER, est tenue de respecter, les prescriptions complémentaires ci-annexées dans le cadre de l'exploitation de ces installations sur le site sis à la même adresse.
     </div>
    </section>
-   <section data-number="2" data-schema="section" data-type="article">
-    <h2 data-schema="section_title">
+   <section data-number="2" data-spec="section" data-type="article">
+    <h2 data-spec="section_title">
      Article 2 -
     </h2>
-    <div data-number="1" data-schema="alinea">
+    <div data-number="1" data-spec="alinea">
      Une copie du
-     <a data-schema="document_reference" data-type="self">
+     <a data-spec="document_reference" data-type="self">
       présent arrêté
      </a>
      doit être tenue au siège de l'exploitation, à la disposition des autorités chargées d'en contrôler l'exécution. Par ailleurs, ce même arrêté doit être affiché en permanence de façon visible à l'intérieur du site.
     </div>
    </section>
-   <section data-number="3" data-schema="section" data-type="article">
-    <h2 data-schema="section_title">
+   <section data-number="3" data-spec="section" data-type="article">
+    <h2 data-spec="section_title">
      Article 3 -
     </h2>
-    <div data-number="1" data-schema="alinea">
+    <div data-number="1" data-spec="alinea">
      En cas de contraventions dûment constatées aux dispositions qui précèdent, le titulaire du
-     <a data-schema="document_reference" data-type="self">
+     <a data-spec="document_reference" data-type="self">
       présent arrêté
      </a>
      pourra faire l'objet, indépendamment des sanctions pénales encourues, des sanctions administratives prévues par la législation sur les installations classées.
     </div>
-    <div data-number="2" data-schema="alinea">
+    <div data-number="2" data-spec="alinea">
      Sauf cas de force majeure,
-     <a data-schema="document_reference" data-type="self">
+     <a data-spec="document_reference" data-type="self">
       le présent arrêté
      </a>
      cesse de produire effet si l'établissement n'est pas exploité pendant deux années consécutives.
     </div>
    </section>
-   <section data-number="4" data-schema="section" data-type="article">
-    <h2 data-schema="section_title">
+   <section data-number="4" data-spec="section" data-type="article">
+    <h2 data-spec="section_title">
      Article 4 -
     </h2>
-    <div data-number="1" data-schema="alinea">
+    <div data-number="1" data-spec="alinea">
      Au cas où la société serait amenée à céder son exploitation, le nouvel exploitant ou son représentant devra en faire la déclaration aux services préfectoraux, dans le mois suivant la prise en charge de l'exploitation.
     </div>
-    <div data-number="2" data-schema="alinea">
+    <div data-number="2" data-spec="alinea">
      S'il est mis un terme au fonctionnement de l'activité, l'exploitant est tenu d'en faire la déclaration au moins trois mois avant la date de cessation, dans les formes prévues à l'
-     <a data-parent_reference="2" data-schema="section_reference" data-start_id="LEGIARTI000049913828" data-start_num="R512-74" data-type="article" href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000049913828">
+     <a data-parent_reference="2" data-spec="section_reference" data-start_id="LEGIARTI000049913828" data-start_num="R512-74" data-type="article" href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000049913828">
       article R.512-74
      </a>
      du
-     <a data-element_id="2" data-id="LEGITEXT000006074220" data-schema="document_reference" data-title="Code de l'environnement" data-type="code" href="https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006074220">
+     <a data-id="LEGITEXT000006074220" data-spec="document_reference" data-tag_id="2" data-title="Code de l'environnement" data-type="code" href="https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006074220">
       code de l'environnement
      </a>
      , et de prendre les mesures qui s'imposent pour remettre le site dans un état tel qu'il ne s'y manifeste aucun des dangers ou inconvénients mentionnés à l'
-     <a data-parent_reference="3" data-schema="section_reference" data-start_id="LEGIARTI000043978078" data-start_num="L511-1" data-type="article" href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000043978078">
+     <a data-parent_reference="3" data-spec="section_reference" data-start_id="LEGIARTI000043978078" data-start_num="L511-1" data-type="article" href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000043978078">
       article L. 511-1
      </a>
      du
-     <a data-element_id="3" data-id="LEGITEXT000006074220" data-schema="document_reference" data-title="Code de l'environnement" data-type="code" href="https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006074220">
+     <a data-id="LEGITEXT000006074220" data-spec="document_reference" data-tag_id="3" data-title="Code de l'environnement" data-type="code" href="https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006074220">
       code de l'environnement
      </a>
      .
     </div>
    </section>
-   <section data-number="5" data-schema="section" data-type="article">
-    <h2 data-schema="section_title">
+   <section data-number="5" data-spec="section" data-type="article">
+    <h2 data-spec="section_title">
      Article 5 -
     </h2>
-    <div data-number="1" data-schema="alinea">
+    <div data-number="1" data-spec="alinea">
      Conformément à l'
-     <a data-parent_reference="4" data-schema="section_reference" data-start_id="LEGIARTI000033933152" data-start_num="L514-6" data-type="article" href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000033933152">
+     <a data-parent_reference="4" data-spec="section_reference" data-start_id="LEGIARTI000033933152" data-start_num="L514-6" data-type="article" href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000033933152">
       article L.514-6
      </a>
      du
-     <a data-element_id="4" data-id="LEGITEXT000006074220" data-schema="document_reference" data-title="Code de l'environnement" data-type="code" href="https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006074220">
+     <a data-id="LEGITEXT000006074220" data-spec="document_reference" data-tag_id="4" data-title="Code de l'environnement" data-type="code" href="https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006074220">
       code de l'environnement
      </a>
      , la présente décision peut être déférée au tribunal administratif de ROUEN. Le délai de recours est de deux mois pour l'exploitant à compter du jour où la présente décision lui a été notifiée et d'un an pour les tiers à compter du jour de sa publication.
     </div>
-    <a data-page_index="2" data-schema="page_separator">
+    <a data-page_index="2" data-spec="page_separator">
     </a>
    </section>
-   <section data-number="6" data-schema="section" data-type="article">
-    <h2 data-schema="section_title">
+   <section data-number="6" data-spec="section" data-type="article">
+    <h2 data-spec="section_title">
      Article 6 -
     </h2>
-    <div data-number="1" data-schema="alinea">
+    <div data-number="1" data-spec="alinea">
      Le secrétaire général de la préfecture de la Seine-Maritime, le sous-préfet de l'arrondissement du Havre, le maire de la commune de GONFREVILLE-L'ORCHER, le directeur régional de l'environnement, de l'aménagement et du logement de Haute-Normandie, ainsi que tous les agents habilités des services précités sont chargés de l'exécution du
-     <a data-schema="document_reference" data-type="self">
+     <a data-spec="document_reference" data-type="self">
       présent arrêté
      </a>
      , dont copie est affichée pendant une durée minimum d'un mois aux portes de la mairie de GONFREVILLE L'ORCHER.
     </div>
-    <div data-number="2" data-schema="alinea">
+    <div data-number="2" data-spec="alinea">
      Un avis est inséré aux frais de la société intéressée dans deux journaux d'annonces légales du département.
     </div>
-    <div data-number="3" data-schema="alinea">
+    <div data-number="3" data-spec="alinea">
      Fait à ROUEN, le -9 JAN. 2014
     </div>
-    <div data-number="4" data-schema="alinea">
+    <div data-number="4" data-spec="alinea">
      <img alt="img-0.jpeg" src="data:image/jpeg;base64,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"/>
     </div>
-    <a data-page_index="3" data-schema="page_separator">
+    <a data-page_index="3" data-spec="page_separator">
     </a>
-    <div data-number="5" data-schema="alinea">
+    <div data-number="5" data-spec="alinea">
      PRESCRIPTIONS ANNEXÉES À L'ARRÊTÉ PRÉFECTORAL en date du
     </div>
-    <div data-number="6" data-schema="alinea">
+    <div data-number="6" data-spec="alinea">
      L'
-     <a data-schema="section_reference" data-start_num="1.1.1.1" data-type="article">
+     <a data-spec="section_reference" data-start_num="1.1.1.1" data-type="article">
       article 1.1.1.1
      </a>
      relatif aux conditions de l'agrément d'éliminateur d'huiles usagées de l'
-     <a data-date="2009-12-08" data-element_id="7" data-schema="document_reference" data-type="arrete-prefectoral">
+     <a data-date="2009-12-08" data-spec="document_reference" data-tag_id="7" data-type="arrete-prefectoral">
       arrêté préfectoral d'autorisation du
-      <time data-schema="date" datetime="2009-12-08">
+      <time data-spec="date" datetime="2009-12-08">
        08 décembre 2009
       </time>
      </a>
-     <span data-direction="rtl" data-has_operand="true" data-keyword="abrogé et remplacé" data-operation_type="replace" data-references="7" data-schema="operation">
+     <span data-direction="rtl" data-has_operand="true" data-keyword="abrogé et remplacé" data-operation_type="replace" data-references="7" data-spec="operation">
       est
       <b>
        abrogé et remplacé
@@ -431,11 +431,11 @@
       par les dispositions suivantes:
      </span>
     </div>
-    <section data-number="1.1.1.1" data-schema="section" data-title="Conditions de l'agrément d'éliminateur huiles usagées" data-type="article">
-     <h5 data-error_codes="non_contiguous_titles" data-schema="section_title">
+    <section data-number="1.1.1.1" data-spec="section" data-title="Conditions de l'agrément d'éliminateur huiles usagées" data-type="article">
+     <h5 data-error_codes="non_contiguous_titles" data-spec="section_title">
       Article 1.1.1.1. Conditions de l'agrément d'éliminateur huiles usagées
      </h5>
-     <div data-number="1" data-schema="alinea">
+     <div data-number="1" data-spec="alinea">
       <table>
        <thead>
         <tr>
@@ -448,11 +448,11 @@
           - huiles usagées non chlorées (teneur en chlore inférieure à 0,6 % )
           <br/>
           - huiles usagées dont la teneur en substances dites PCB est inférieure au seuil ( &lt;50 ppm ) définie à l'
-          <a data-parent_reference="5" data-schema="section_reference" data-start_num="R543-17" data-type="article" href="https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006074220">
+          <a data-parent_reference="5" data-spec="section_reference" data-start_num="R543-17" data-type="article" href="https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006074220">
            article R.543-17
           </a>
           du
-          <a data-element_id="5" data-id="LEGITEXT000006074220" data-schema="document_reference" data-title="Code de l'environnement" data-type="code" href="https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006074220">
+          <a data-id="LEGITEXT000006074220" data-spec="document_reference" data-tag_id="5" data-title="Code de l'environnement" data-type="code" href="https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006074220">
            Code de l'environnement
           </a>
           .
@@ -466,11 +466,11 @@
          </td>
          <td style="text-align: center;">
           Le principe de proximité (au sens de l'
-          <a data-parent_reference="6" data-schema="section_reference" data-start_id="LEGIARTI000043974936" data-start_num="L541-1" data-type="article" href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000043974936">
+          <a data-parent_reference="6" data-spec="section_reference" data-start_id="LEGIARTI000043974936" data-start_num="L541-1" data-type="article" href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000043974936">
            article L.541-1
           </a>
           du
-          <a data-element_id="6" data-id="LEGITEXT000006074220" data-schema="document_reference" data-title="Code de l'environnement" data-type="code" href="https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006074220">
+          <a data-id="LEGITEXT000006074220" data-spec="document_reference" data-tag_id="6" data-title="Code de l'environnement" data-type="code" href="https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006074220">
            Code de l'environnement
           </a>
           ) est privilégié :
@@ -498,7 +498,7 @@
          </td>
          <td style="text-align: center;">
           Fixées par les prescriptions du
-          <a data-schema="document_reference" data-type="self">
+          <a data-spec="document_reference" data-type="self">
            présent arrêté
           </a>
          </td>
@@ -506,18 +506,18 @@
        </tbody>
       </table>
      </div>
-     <div data-number="2" data-schema="alinea">
+     <div data-number="2" data-spec="alinea">
       L'exploitant transmet chaque mois à l'agence de l'environnement et de la maîtrise de l'énergie (ADEME) les statistiques techniques et économiques relatives à son activité d'élimination des huiles usagées, notamment les tonnages réceptionnés et traités, le ou les prix de reprise correspondant à ces tonnages.
      </div>
-     <div data-number="3" data-schema="alinea">
+     <div data-number="3" data-spec="alinea">
       Le chapitre 6.7 relatif aux déchets produits par l'établissement de l'
-      <a data-date="2009-12-08" data-element_id="8" data-schema="document_reference" data-type="arrete-prefectoral">
+      <a data-date="2009-12-08" data-spec="document_reference" data-tag_id="8" data-type="arrete-prefectoral">
        arrêté préfectoral d'autorisation du
-       <time data-schema="date" datetime="2009-12-08">
+       <time data-spec="date" datetime="2009-12-08">
         08 décembre 2009
        </time>
       </a>
-      <span data-direction="rtl" data-has_operand="true" data-keyword="modifié par l'ajout" data-operation_type="add" data-references="8" data-schema="operation">
+      <span data-direction="rtl" data-has_operand="true" data-keyword="modifié par l'ajout" data-operation_type="add" data-references="8" data-spec="operation">
        est
        <b>
         modifié par l'ajout
@@ -525,10 +525,10 @@
        du paragraphe suivant :
       </span>
      </div>
-     <div data-number="4" data-schema="alinea">
+     <div data-number="4" data-spec="alinea">
       Les résidus asphaltés font l'objet d'une analyse systématique de leur teneur en PCB avant toute valorisation.
      </div>
-     <div data-number="5" data-schema="alinea">
+     <div data-number="5" data-spec="alinea">
       Les résidus ne sont valorisables que pour une teneur en PCB inférieure à 50 ppm dans le cas contraire ceux-ci sont éliminés dans une installation autorisée pour les traiter. Les résultats de ces analyses sont tenus à la disposition des installations classées.
      </div>
     </section>
