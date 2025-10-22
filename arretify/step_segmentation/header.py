@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import Dict, Literal, Sequence, Iterator, Type
+from typing import Dict, Literal, Sequence, Iterator
 
 from bs4 import Tag
 
@@ -182,7 +182,7 @@ HEADER_ELEMENTS_RENDER_PATTERNS: Dict[str, PatternProxy | None] = dict(
     supplementary_motif_info=None,
 )
 
-HEADER_ELEMENTS_SPECS: Dict[str, Type[SemanticTagSpec[None]]] = dict(
+HEADER_ELEMENTS_SPECS: Dict[str, SemanticTagSpec] = dict(
     emblem=EmblemSpec,
     entity=EntitySpec,
     identification=IdentificationSpec,

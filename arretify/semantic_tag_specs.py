@@ -30,6 +30,7 @@ from arretify.utils.html_semantic import (
     SemanticTagData,
     Bool,
     StrList,
+    create_semantic_tag_spec_no_data,
     enum_serializer,
 )
 from arretify.types import OperationType, SectionType
@@ -38,17 +39,17 @@ from arretify.types import OperationType, SectionType
 # -------------------- Parts -------------------- #
 
 
-HeaderSpec = SemanticTagSpec(
+HeaderSpec: SemanticTagSpec[SemanticTagData] = create_semantic_tag_spec_no_data(
     spec_name="header",
     tag_name="header",
 )
 
-MainSpec = SemanticTagSpec(
+MainSpec: SemanticTagSpec[SemanticTagData] = create_semantic_tag_spec_no_data(
     spec_name="main",
     tag_name="main",
 )
 
-AppendixSpec = SemanticTagSpec(
+AppendixSpec: SemanticTagSpec[SemanticTagData] = create_semantic_tag_spec_no_data(
     spec_name="appendix",
     tag_name="footer",
 )
@@ -57,7 +58,7 @@ AppendixSpec = SemanticTagSpec(
 # -------------------- Document -------------------- #
 
 
-PageFooterSpec = SemanticTagSpec(
+PageFooterSpec: SemanticTagSpec[SemanticTagData] = create_semantic_tag_spec_no_data(
     spec_name="page_footer",
     tag_name="div",
 )
@@ -67,13 +68,13 @@ class PageSeparatorData(SemanticTagData):
     page_index: int
 
 
-PageSeparatorSpec = SemanticTagSpec(
+PageSeparatorSpec: SemanticTagSpec[PageSeparatorData] = SemanticTagSpec(
     spec_name="page_separator",
     tag_name="a",
     data_model=PageSeparatorData,
 )
 
-TableOfContentsSpec = SemanticTagSpec(
+TableOfContentsSpec: SemanticTagSpec[SemanticTagData] = create_semantic_tag_spec_no_data(
     spec_name="table_of_contents",
     tag_name="div",
 )
@@ -82,42 +83,42 @@ TableOfContentsSpec = SemanticTagSpec(
 # -------------------- Header -------------------- #
 
 
-EmblemSpec = SemanticTagSpec(
+EmblemSpec: SemanticTagSpec[SemanticTagData] = create_semantic_tag_spec_no_data(
     spec_name="emblem",
     tag_name="div",
 )
 
-EntitySpec = SemanticTagSpec(
+EntitySpec: SemanticTagSpec[SemanticTagData] = create_semantic_tag_spec_no_data(
     spec_name="entity",
     tag_name="div",
 )
 
-IdentificationSpec = SemanticTagSpec(
+IdentificationSpec: SemanticTagSpec[SemanticTagData] = create_semantic_tag_spec_no_data(
     spec_name="identification",
     tag_name="div",
 )
 
-ArreteSpec = SemanticTagSpec(
+ArreteSpec: SemanticTagSpec[SemanticTagData] = create_semantic_tag_spec_no_data(
     spec_name="arrete_title",
     tag_name="div",
 )
 
-HonorarySpec = SemanticTagSpec(
+HonorarySpec: SemanticTagSpec[SemanticTagData] = create_semantic_tag_spec_no_data(
     spec_name="honorary",
     tag_name="div",
 )
 
-VisaSpec = SemanticTagSpec(
+VisaSpec: SemanticTagSpec[SemanticTagData] = create_semantic_tag_spec_no_data(
     spec_name="visa",
     tag_name="div",
 )
 
-MotifSpec = SemanticTagSpec(
+MotifSpec: SemanticTagSpec[SemanticTagData] = create_semantic_tag_spec_no_data(
     spec_name="motifs",
     tag_name="div",
 )
 
-SupplementaryMotifInfoSpec = SemanticTagSpec(
+SupplementaryMotifInfoSpec: SemanticTagSpec[SemanticTagData] = create_semantic_tag_spec_no_data(
     spec_name="supplementary_motif_info",
     tag_name="div",
 )
@@ -132,43 +133,43 @@ class SectionData(SemanticTagData):
     type: str
 
 
-SectionSpec = SemanticTagSpec(
+SectionSpec: SemanticTagSpec[SectionData] = SemanticTagSpec(
     spec_name="section",
     tag_name="section",
     data_model=SectionData,
 )
 
-SectionTitle1Spec = SemanticTagSpec(
+SectionTitle1Spec: SemanticTagSpec[SemanticTagData] = create_semantic_tag_spec_no_data(
     spec_name="section_title",
     tag_name="h2",
 )
 
-SectionTitle2Spec = SemanticTagSpec(
+SectionTitle2Spec: SemanticTagSpec[SemanticTagData] = create_semantic_tag_spec_no_data(
     spec_name="section_title",
     tag_name="h3",
 )
 
-SectionTitle3Spec = SemanticTagSpec(
+SectionTitle3Spec: SemanticTagSpec[SemanticTagData] = create_semantic_tag_spec_no_data(
     spec_name="section_title",
     tag_name="h4",
 )
 
-SectionTitle4Spec = SemanticTagSpec(
+SectionTitle4Spec: SemanticTagSpec[SemanticTagData] = create_semantic_tag_spec_no_data(
     spec_name="section_title",
     tag_name="h5",
 )
 
-SectionTitle5Spec = SemanticTagSpec(
+SectionTitle5Spec: SemanticTagSpec[SemanticTagData] = create_semantic_tag_spec_no_data(
     spec_name="section_title",
     tag_name="h6",
 )
 
-SectionTitle6Spec = SemanticTagSpec(
+SectionTitle6Spec: SemanticTagSpec[SemanticTagData] = create_semantic_tag_spec_no_data(
     spec_name="section_title",
     tag_name="h7",
 )
 
-SectionTitle7Spec = SemanticTagSpec(
+SectionTitle7Spec: SemanticTagSpec[SemanticTagData] = create_semantic_tag_spec_no_data(
     spec_name="section_title",
     tag_name="h8",
 )
@@ -189,7 +190,7 @@ class AlineaData(SemanticTagData):
     number: str
 
 
-AlineaSpec = SemanticTagSpec(
+AlineaSpec: SemanticTagSpec[AlineaData] = SemanticTagSpec(
     spec_name="alinea",
     tag_name="div",
     data_model=AlineaData,
@@ -236,7 +237,7 @@ class DocumentReferenceData(SemanticTagData):
         return self
 
 
-DocumentReferenceSpec = SemanticTagSpec(
+DocumentReferenceSpec: SemanticTagSpec[DocumentReferenceData] = SemanticTagSpec(
     spec_name="document_reference",
     tag_name="a",
     data_model=DocumentReferenceData,
@@ -252,13 +253,13 @@ class SectionReferenceData(SemanticTagData):
     end_num: str | None = None
 
 
-SectionReferenceSpec = SemanticTagSpec(
+SectionReferenceSpec: SemanticTagSpec[SectionReferenceData] = SemanticTagSpec(
     spec_name="section_reference",
     tag_name="a",
     data_model=SectionReferenceData,
 )
 
-DateSpec = SemanticTagSpec(
+DateSpec: SemanticTagSpec[SemanticTagData] = create_semantic_tag_spec_no_data(
     spec_name="date",
     tag_name="time",
 )
@@ -276,7 +277,7 @@ class OperationData(SemanticTagData):
     operand: str | None = None
 
 
-OperationSpec = SemanticTagSpec(
+OperationSpec: SemanticTagSpec[OperationData] = SemanticTagSpec(
     spec_name="operation",
     tag_name="span",
     data_model=OperationData,
@@ -286,7 +287,7 @@ OperationSpec = SemanticTagSpec(
 # -------------------- Errors -------------------- #
 
 
-ErrorSpec = SemanticTagSpec(
+ErrorSpec: SemanticTagSpec[SemanticTagData] = create_semantic_tag_spec_no_data(
     spec_name="error",
     tag_name="span",
 )
