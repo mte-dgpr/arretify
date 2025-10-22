@@ -32,12 +32,12 @@ class TestParseOperations(unittest.TestCase):
         document_context = create_document_context(
             normalized_html_str(
                 """
-                <div data-schema="alinea">
+                <div data-spec="alinea">
                     Les
                     <a
                         data-group_id="11"
                         data-parent_reference="123"
-                        data-schema="section_reference"
+                        data-spec="section_reference"
                     >
                         paragraphes 3
                     </a>
@@ -45,25 +45,25 @@ class TestParseOperations(unittest.TestCase):
                     <a
                         data-group_id="11"
                         data-parent_reference="123"
-                        data-schema="section_reference"
+                        data-spec="section_reference"
                     >
                         4
                     </a>
                     de l'
                     <a
-                        data-element_id="123"
+                        data-tag_id="123"
                         data-parent_reference="456"
-                        data-schema="section_reference"
+                        data-spec="section_reference"
                     >
                         article 8.5.1.1
                     </a>
                     de l'
                     <a
-                        data-schema="document_reference"
-                        data-element_id="456"
+                        data-spec="document_reference"
+                        data-tag_id="456"
                     >
                         arrêté préfectoral du
-                        <time data-schema="date" datetime="2008-12-10">
+                        <time data-spec="date" datetime="2008-12-10">
                             10 décembre 2008
                         </time>
                     </a>
@@ -72,7 +72,7 @@ class TestParseOperations(unittest.TestCase):
                         data-keyword="supprimés"
                         data-operand=""
                         data-operation_type="delete"
-                        data-schema="operation"
+                        data-spec="operation"
                     >
                         sont
                         <b>
@@ -90,43 +90,43 @@ class TestParseOperations(unittest.TestCase):
 
         # Assert
         assert str(document_context.soup) == normalized_html_str(
-            # Check that element_id was added to both references, and that the references were
+            # Check that tag_id was added to both references, and that the references were
             # added to the operation
             """
-            <div data-schema="alinea">
+            <div data-spec="alinea">
                 Les
                 <a
-                    data-element_id="1"
+                    data-tag_id="1"
                     data-group_id="11"
                     data-parent_reference="123"
-                    data-schema="section_reference"
+                    data-spec="section_reference"
                 >
                     paragraphes 3
                 </a>
                 et
                 <a
-                    data-element_id="2"
+                    data-tag_id="2"
                     data-group_id="11"
                     data-parent_reference="123"
-                    data-schema="section_reference"
+                    data-spec="section_reference"
                 >
                     4
                 </a>
                 de l'
                 <a
-                    data-element_id="123"
+                    data-tag_id="123"
                     data-parent_reference="456"
-                    data-schema="section_reference"
+                    data-spec="section_reference"
                 >
                     article 8.5.1.1
                 </a>
                 de l'
                 <a
-                    data-element_id="456"
-                    data-schema="document_reference"
+                    data-tag_id="456"
+                    data-spec="document_reference"
                 >
                     arrêté préfectoral du
-                    <time data-schema="date" datetime="2008-12-10">
+                    <time data-spec="date" datetime="2008-12-10">
                         10 décembre 2008
                     </time>
                 </a>
@@ -136,7 +136,7 @@ class TestParseOperations(unittest.TestCase):
                     data-operand=""
                     data-operation_type="delete"
                     data-references="1,2"
-                    data-schema="operation"
+                    data-spec="operation"
                 >
                     sont
                     <b>
@@ -152,23 +152,23 @@ class TestParseOperations(unittest.TestCase):
         document_context = create_document_context(
             normalized_html_str(
                 """
-                <div data-schema="alinea">
+                <div data-spec="alinea">
                     La dernière phrase de l'
                     <a
                         data-parent_reference="123"
-                        data-schema="section_reference"
+                        data-spec="section_reference"
                     >
                         article 8.1.1.2
                     </a>
                     de l'
                     <a
-                        data-schema="document_reference"
-                        data-element_id="123"
+                        data-spec="document_reference"
+                        data-tag_id="123"
                     >
                         arrêté préfectoral du
                         <time
                             datetime="2008-12-10"
-                            data-schema="date"
+                            data-spec="date"
                         >
                                 10 décembre 2008
                         </time>
@@ -179,7 +179,7 @@ class TestParseOperations(unittest.TestCase):
                         data-keyword="remplacée"
                         data-operand=""
                         data-operation_type="replace"
-                        data-schema="operation"
+                        data-spec="operation"
                     >
                         est
                         <b>
@@ -203,24 +203,24 @@ class TestParseOperations(unittest.TestCase):
         # Assert
         assert str(document_context.soup) == normalized_html_str(
             """
-            <div data-schema="alinea">
+            <div data-spec="alinea">
                 La dernière phrase de l'
                 <a
-                    data-element_id="1"
+                    data-tag_id="1"
                     data-parent_reference="123"
-                    data-schema="section_reference"
+                    data-spec="section_reference"
                 >
                     article 8.1.1.2
                 </a>
                 de l'
                 <a
-                    data-element_id="123"
-                    data-schema="document_reference"
+                    data-tag_id="123"
+                    data-spec="document_reference"
                 >
                     arrêté préfectoral du
                     <time
                         datetime="2008-12-10"
-                        data-schema="date"
+                        data-spec="date"
                     >
                             10 décembre 2008
                     </time>
@@ -232,7 +232,7 @@ class TestParseOperations(unittest.TestCase):
                     data-operand="2"
                     data-operation_type="replace"
                     data-references="1"
-                    data-schema="operation"
+                    data-spec="operation"
                 >
                     est
                     <b>
@@ -241,7 +241,7 @@ class TestParseOperations(unittest.TestCase):
                     par la disposition suivante :
                 </span>
                 <q
-                    data-element_id="2"
+                    data-tag_id="2"
                 >
                     Un relevé hebdomadaire de chacun des compteurs d'eau est réalisé par l'exploitant
                 </q>
@@ -255,13 +255,13 @@ class TestParseOperations(unittest.TestCase):
         document_context = create_document_context(
             normalized_html_str(
                 """
-                <div data-schema="alinea">
+                <div data-spec="alinea">
                     Les prescriptions de l'
-                    <a data-schema="document_reference">
+                    <a data-spec="document_reference">
                         arrêté préfectoral du
                         <time
                             datetime="2008-12-10"
-                            data-schema="date"
+                            data-spec="date"
                         >
                                 10 décembre 2008
                         </time>
@@ -271,7 +271,7 @@ class TestParseOperations(unittest.TestCase):
                         data-keyword="abrogées"
                         data-operand=""
                         data-operation_type="delete"
-                        data-schema="operation"
+                        data-spec="operation"
                     >
                         sont
                         <b>
@@ -291,16 +291,16 @@ class TestParseOperations(unittest.TestCase):
         # Assert
         assert str(document_context.soup) == normalized_html_str(
             """
-            <div data-schema="alinea">
+            <div data-spec="alinea">
                 Les prescriptions de l'
                 <a
-                    data-element_id="1"
-                    data-schema="document_reference"
+                    data-tag_id="1"
+                    data-spec="document_reference"
                 >
                     arrêté préfectoral du
                     <time
                         datetime="2008-12-10"
-                        data-schema="date"
+                        data-spec="date"
                     >
                             10 décembre 2008
                     </time>
@@ -311,7 +311,7 @@ class TestParseOperations(unittest.TestCase):
                     data-operand=""
                     data-operation_type="delete"
                     data-references="1"
-                    data-schema="operation"
+                    data-spec="operation"
                 >
                     sont
                     <b>
@@ -328,25 +328,25 @@ class TestParseOperations(unittest.TestCase):
         document_context = create_document_context(
             normalized_html_str(
                 """
-                <div data-schema="alinea">
+                <div data-spec="alinea">
                     Les dispositions de l'
-                    <a data-schema="document_reference">
+                    <a data-spec="document_reference">
                         arrêté préfectoral du
                         <time
                             datetime="2008-12-10"
-                            data-schema="date"
+                            data-spec="date"
                         >
                                 10 décembre 2008
                         </time>
                     </a>
-                    <a data-schema="page_separator"></a>
+                    <a data-spec="page_separator"></a>
                     <span
                         data-direction="rtl"
                         data-has_operand="true"
                         data-keyword="remplacées"
                         data-operand=""
                         data-operation_type="replace"
-                        data-schema="operation"
+                        data-spec="operation"
                     >
                         sont
                         <b>
@@ -354,7 +354,7 @@ class TestParseOperations(unittest.TestCase):
                         </b>
                         par la disposition suivante :
                     </span>
-                    <a data-schema="page_separator"></a>
+                    <a data-spec="page_separator"></a>
                     <q>
                         Un relevé hebdomadaire de chacun des compteurs d'eau est réalisé par l'exploitant
                     </q>
@@ -370,21 +370,21 @@ class TestParseOperations(unittest.TestCase):
         # Assert
         assert str(document_context.soup) == normalized_html_str(
             """
-            <div data-schema="alinea">
+            <div data-spec="alinea">
                 Les dispositions de l'
                 <a
-                    data-element_id="1"
-                    data-schema="document_reference"
+                    data-tag_id="1"
+                    data-spec="document_reference"
                 >
                     arrêté préfectoral du
                     <time
                         datetime="2008-12-10"
-                        data-schema="date"
+                        data-spec="date"
                     >
                             10 décembre 2008
                     </time>
                 </a>
-                <a data-schema="page_separator"></a>
+                <a data-spec="page_separator"></a>
                 <span
                     data-direction="rtl"
                     data-has_operand="true"
@@ -392,7 +392,7 @@ class TestParseOperations(unittest.TestCase):
                     data-operand="2"
                     data-operation_type="replace"
                     data-references="1"
-                    data-schema="operation"
+                    data-spec="operation"
                 >
                     sont
                     <b>
@@ -400,8 +400,8 @@ class TestParseOperations(unittest.TestCase):
                     </b>
                     par la disposition suivante :
                 </span>
-                <a data-schema="page_separator"></a>
-                <q data-element_id="2">
+                <a data-spec="page_separator"></a>
+                <q data-tag_id="2">
                     Un relevé hebdomadaire de chacun des compteurs d'eau est réalisé par l'exploitant
                 </q>
             </div>

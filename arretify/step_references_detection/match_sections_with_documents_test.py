@@ -36,13 +36,13 @@ class TestConnectParentSections(unittest.TestCase):
             process_match_sections_to_parents(
                 """
             <a
-                data-schema="section_reference"
+                data-spec="section_reference"
             >
                 2ème alinéa
             </a>
             de l'
             <a
-                data-schema="document_reference"
+                data-spec="document_reference"
             >
                 article 1
             </a>
@@ -53,7 +53,7 @@ class TestConnectParentSections(unittest.TestCase):
                     """
                 <a
                     data-parent_reference="1"
-                    data-schema="section_reference"
+                    data-spec="section_reference"
                 >
                     2ème alinéa
                 </a>
@@ -63,8 +63,8 @@ class TestConnectParentSections(unittest.TestCase):
                 normalized_html_str(
                     """
                 <a
-                    data-element_id="1"
-                    data-schema="document_reference"
+                    data-tag_id="1"
+                    data-spec="document_reference"
                 >
                     article 1
                 </a>
@@ -78,16 +78,16 @@ class TestConnectParentSections(unittest.TestCase):
             process_match_sections_to_parents(
                 """
                 <a
-                    data-schema="section_reference"
+                    data-spec="section_reference"
                 >
                     article 5
                 </a>
                 de l’
                 <a
-                    data-schema="document_reference"
+                    data-spec="document_reference"
                 >
                     arrêté du
-                    <time data-schema="date" datetime="2016-05-23">
+                    <time data-spec="date" datetime="2016-05-23">
                         23 mai 2016
                     </time>
                 </a>
@@ -98,7 +98,7 @@ class TestConnectParentSections(unittest.TestCase):
                     """
                     <a
                         data-parent_reference="1"
-                        data-schema="section_reference"
+                        data-spec="section_reference"
                     >
                         article 5
                     </a>
@@ -108,11 +108,11 @@ class TestConnectParentSections(unittest.TestCase):
                 normalized_html_str(
                     """
                     <a
-                        data-element_id="1"
-                        data-schema="document_reference"
+                        data-tag_id="1"
+                        data-spec="document_reference"
                     >
                         arrêté du
-                        <time data-schema="date" datetime="2016-05-23">
+                        <time data-spec="date" datetime="2016-05-23">
                             23 mai 2016
                         </time>
                     </a>
@@ -127,20 +127,20 @@ class TestConnectParentSections(unittest.TestCase):
                 """
                 <a
                     data-group_id="111"
-                    data-schema="section_reference"
+                    data-spec="section_reference"
                 >
                     articles R. 512 - 74
                 </a>
                 et
                 <a
                     data-group_id="111"
-                    data-schema="section_reference"
+                    data-spec="section_reference"
                 >
                     R. 512 39-1 à R.512-39-3
                 </a>
                 du
                 <a
-                    data-schema="document_reference"
+                    data-spec="document_reference"
                 >
                     code de l'environnement
                 </a>
@@ -152,7 +152,7 @@ class TestConnectParentSections(unittest.TestCase):
                     <a
                         data-group_id="111"
                         data-parent_reference="1"
-                        data-schema="section_reference"
+                        data-spec="section_reference"
                     >
                         articles R. 512 - 74
                     </a>
@@ -164,7 +164,7 @@ class TestConnectParentSections(unittest.TestCase):
                     <a
                         data-parent_reference="1"
                         data-group_id="111"
-                        data-schema="section_reference"
+                        data-spec="section_reference"
                     >
                         R. 512 39-1 à R.512-39-3
                     </a>
@@ -174,8 +174,8 @@ class TestConnectParentSections(unittest.TestCase):
                 normalized_html_str(
                     """
                     <a
-                        data-element_id="1"
-                        data-schema="document_reference"
+                        data-tag_id="1"
+                        data-spec="document_reference"
                     >
                         code de l'environnement
                     </a>
@@ -189,19 +189,19 @@ class TestConnectParentSections(unittest.TestCase):
             process_match_sections_to_parents(
                 """
                 <a
-                    data-schema="section_reference"
+                    data-spec="section_reference"
                 >
                     alinéa 3
                 </a>
                 de l'
                 <a
-                    data-schema="section_reference"
+                    data-spec="section_reference"
                 >
                     article R121-1
                 </a>
                 du
                 <a
-                    data-schema="document_reference"
+                    data-spec="document_reference"
                 >
                     code de l'environnement
                 </a>
@@ -211,7 +211,7 @@ class TestConnectParentSections(unittest.TestCase):
                 normalized_html_str(
                     """
                     <a
-                        data-schema="section_reference"
+                        data-spec="section_reference"
                         data-parent_reference="1"
                     >
                         alinéa 3
@@ -222,9 +222,9 @@ class TestConnectParentSections(unittest.TestCase):
                 normalized_html_str(
                     """
                     <a
-                        data-element_id="1"
+                        data-tag_id="1"
                         data-parent_reference="2"
-                        data-schema="section_reference"
+                        data-spec="section_reference"
                     >
                         article R121-1
                     </a>
@@ -234,8 +234,8 @@ class TestConnectParentSections(unittest.TestCase):
                 normalized_html_str(
                     """
                     <a
-                        data-element_id="2"
-                        data-schema="document_reference"
+                        data-tag_id="2"
+                        data-spec="document_reference"
                     >
                         code de l'environnement
                     </a>
@@ -249,15 +249,15 @@ class TestConnectParentSections(unittest.TestCase):
             process_match_sections_to_parents(
                 """
             <a
-                data-element_id="1"
-                data-schema="section_reference"
+                data-tag_id="1"
+                data-spec="section_reference"
             >
                 annexe III
             </a>
             de <br/> l'
             <a
-                data-schema="document_reference"
-                data-element_id="2"
+                data-spec="document_reference"
+                data-tag_id="2"
             >
                 arrêté ministériel du 23 mai 2016
             </a>
@@ -267,9 +267,9 @@ class TestConnectParentSections(unittest.TestCase):
                 normalized_html_str(
                     """
                 <a
-                    data-element_id="1"
+                    data-tag_id="1"
                     data-parent_reference="2"
-                    data-schema="section_reference"
+                    data-spec="section_reference"
                 >
                     annexe III
                 </a>
@@ -281,8 +281,8 @@ class TestConnectParentSections(unittest.TestCase):
                 normalized_html_str(
                     """
                 <a
-                    data-element_id="2"
-                    data-schema="document_reference"
+                    data-tag_id="2"
+                    data-spec="document_reference"
                 >
                     arrêté ministériel du 23 mai 2016
                 </a>

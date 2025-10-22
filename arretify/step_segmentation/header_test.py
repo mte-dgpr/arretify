@@ -474,7 +474,7 @@ class TestRenderHeaderElement(BaseTestCase):
         # Assert
         assert normalized_html_str(str(rendered)) == normalized_html_str(
             """
-            <div data-schema="emblem">
+            <div data-spec="emblem">
                 <div>liberté</div>
                 <div>égalité</div>
                 <div>fraternité</div>
@@ -570,7 +570,7 @@ class TestRenderVisaMotif(BaseTestCase):
         # Assert
         assert normalized_html_str(str(rendered)) == normalized_html_str(
             """
-            <div data-schema="visa">
+            <div data-spec="visa">
                 Vu le code de l'environnement, et notamment ses titres
                 1er et 4 des parties réglementaires et législatives du livre V ;
             </div>
@@ -597,9 +597,9 @@ class TestRenderArreteTitle(BaseTestCase):
         # Assert
         assert normalized_html_str(str(rendered)) == normalized_html_str(
             """
-            <div data-schema="arrete_title">
+            <div data-spec="arrete_title">
                 <h1>Arrêté du
-                    <time data-schema="date" datetime="2020-01-01">
+                    <time data-spec="date" datetime="2020-01-01">
                         1er janvier 2020
                     </time>
                 </h1>

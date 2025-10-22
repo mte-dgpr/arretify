@@ -37,7 +37,7 @@ class TestParseEuActsReferences(unittest.TestCase):
                 <a
                     data-date="2006"
                     data-num="1013"
-                    data-schema="document_reference"
+                    data-spec="document_reference"
                     data-type="eu-directive"
                 >
                     directive (CE) n° 1013/2006
@@ -55,7 +55,7 @@ class TestParseEuActsReferences(unittest.TestCase):
                 <a
                     data-date="2010"
                     data-num="75"
-                    data-schema="document_reference"
+                    data-spec="document_reference"
                     data-type="eu-directive"
                 >
                     directive 2010/75/UE
@@ -73,7 +73,7 @@ class TestParseEuActsReferences(unittest.TestCase):
                 <a
                     data-date="1996"
                     data-num="75"
-                    data-schema="document_reference"
+                    data-spec="document_reference"
                     data-type="eu-directive"
                 >
                     directive 96/75/UE
@@ -91,7 +91,7 @@ class TestParseEuActsReferences(unittest.TestCase):
                 <a
                     data-date="2006"
                     data-num="1013"
-                    data-schema="document_reference"
+                    data-spec="document_reference"
                     data-type="eu-regulation"
                 >
                     règlement européen (CE) n° 1013/2006
@@ -109,7 +109,7 @@ class TestParseEuActsReferences(unittest.TestCase):
                 <a
                     data-date="1996"
                     data-num="1013"
-                    data-schema="document_reference"
+                    data-spec="document_reference"
                     data-type="eu-directive"
                 >
                     directive (CE) n° 1013/96

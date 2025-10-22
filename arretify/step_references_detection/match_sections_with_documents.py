@@ -96,13 +96,13 @@ def _search_parent_reference_tag(
     For example, with :
 
         <a
-            data-schema="section_reference"
+            data-spec="section_reference"
         >
             l'article 5
         </a>
         du
         <a
-            data-schema="section_reference"
+            data-spec="section_reference"
         >
             présent arrêté
         </a>

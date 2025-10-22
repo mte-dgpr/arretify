@@ -499,13 +499,13 @@ class TestRenderTable(BaseTestCase):
                 <thead>
                     <tr>
                         <th>Column 1</th>
-                        <th>Column 2<a data-schema="page_separator" data-page_index="1"></a></th>
+                        <th>Column 2<a data-spec="page_separator" data-page_index="1"></a></th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
                         <td>Row 1</td>
-                        <td>Data 1<a data-schema="page_separator" data-page_index="2"></a></td>
+                        <td>Data 1<a data-spec="page_separator" data-page_index="2"></a></td>
                     </tr>
                     <tr>
                         <td>Row 2</td>
@@ -540,7 +540,7 @@ class TestRenderTableDescription(BaseTestCase):
             [
                 "<br/>",
                 "This is a description of the table.",
-                '<a data-page_index="1" data-schema="page_separator"></a>',
+                '<a data-page_index="1" data-spec="page_separator"></a>',
                 "<br/>",
                 "This is another part of the description.",
             ],
@@ -568,7 +568,7 @@ class TestRenderList(BaseTestCase):
         assert normalized_html_str(str(list_tag)) == normalized_html_str(
             """
             <ul>
-                <li>- Item 1<a data-schema="page_separator" data-page_index="1"></a></li>
+                <li>- Item 1<a data-spec="page_separator" data-page_index="1"></a></li>
                 <li>- Item 2</li>
             </ul>
             """
