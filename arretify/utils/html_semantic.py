@@ -44,7 +44,7 @@ _RESERVED_DATA_FIELD_NAMES = [key[len("data-") :] for key in _RESERVED_DATA_ATTR
 
 
 # -------------------- Pydantic fields -------------------- #
-def _serialize_bool(v: bool) -> str:
+def _serialize_bool(v: bool) -> str | None:
     return "true" if v else None
 
 
@@ -132,10 +132,24 @@ class SemanticTagSpec(Generic[TSemanticTagData]):
 
     spec_name: str
     tag_name: str
-    data_model: Type[TSemanticTagData] = SemanticTagData
+    data_model: Type[TSemanticTagData]
 
     def __post_init__(self):
         _REGISTRY[self.spec_name] = self
+
+
+def create_semantic_tag_spec_no_data(
+    spec_name: str,
+    tag_name: str,
+) -> SemanticTagSpec[SemanticTagData]:
+    """
+    Create a SemanticTagSpec with the default SemanticTagData model.
+    """
+    return SemanticTagSpec(
+        spec_name=spec_name,
+        tag_name=tag_name,
+        data_model=SemanticTagData,
+    )
 
 
 # -------------------- Semantic html utils -------------------- #

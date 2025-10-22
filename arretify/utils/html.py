@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import Literal, Sequence, TypeGuard, Iterable, Iterator
+from typing import Literal, Sequence, TypeGuard, Iterable, Iterator, cast
 
 from bs4 import Tag
 
@@ -69,7 +69,7 @@ def ensure_tag_id(id_counters: IdCounters, tag: Tag) -> TagId:
     current_tag_id = tag.get(TAG_ID_ATTR, None)
     if current_tag_id is None:
         tag[TAG_ID_ATTR] = _make_id(id_counters, "element_id")
-    return tag[TAG_ID_ATTR]
+    return cast(str, tag[TAG_ID_ATTR])
 
 
 def make_group_id(id_counters: IdCounters) -> TagGroupId:
@@ -85,7 +85,7 @@ def set_group_id(tag: Tag, group_id: TagGroupId) -> TagGroupId:
 
 
 def get_group_id(tag: Tag) -> TagGroupId | None:
-    return tag.get(GROUP_ID_ATTR, None)
+    return cast(str | None, tag.get(GROUP_ID_ATTR, None))
 
 
 def _make_id(

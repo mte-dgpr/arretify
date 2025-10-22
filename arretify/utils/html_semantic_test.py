@@ -25,6 +25,7 @@ from bs4 import BeautifulSoup
 from .html_semantic import (
     SemanticTagData,
     SemanticTagSpec,
+    create_semantic_tag_spec_no_data,
     is_semantic_tag,
     Bool,
     StrList,
@@ -40,8 +41,8 @@ from .html_semantic import (
 
 class SemanticTagDataTestCase(unittest.TestCase):
 
-    def setUp(self):
-        self.spec_no_data = SemanticTagSpec(
+    def setUp(self) -> None:
+        self.spec_no_data = create_semantic_tag_spec_no_data(
             spec_name="test_no_data",
             tag_name="div",
         )
@@ -65,7 +66,7 @@ class TestCssSelector(unittest.TestCase):
 
     def test_returns_attribute_selector(self):
         # ARRANGE
-        spec_test = SemanticTagSpec(
+        spec_test = create_semantic_tag_spec_no_data(
             spec_name="test_spec",
             tag_name="div",
         )
@@ -165,7 +166,7 @@ class TestIsSemanticTag(unittest.TestCase):
 
 class TestSemanticTagData(unittest.TestCase):
 
-    def setUp(self):
+    def setUp(self) -> None:
         class Color(Enum):
             RED = "red"
             GREEN = "green"
@@ -179,7 +180,7 @@ class TestSemanticTagData(unittest.TestCase):
         self.Model = Model
         self.Color = Color
 
-    def test_forbidden_field_names(self):
+    def test_forbidden_field_names(self) -> None:
         # ACT & ASSERT
         with self.assertRaises(ValueError) as cm:
 
@@ -277,7 +278,7 @@ class TestSetSemanticTagData(SemanticTagDataTestCase):
 
 class TestUpdateData(unittest.TestCase):
 
-    def test_update_single_field(self):
+    def test_update_single_field(self) -> None:
         # ARRANGE
         class Model(SemanticTagData):
             name: str
@@ -293,7 +294,7 @@ class TestUpdateData(unittest.TestCase):
         assert updated.age == 31
         assert updated is not original  # New instance
 
-    def test_validation_runs_on_update(self):
+    def test_validation_runs_on_update(self) -> None:
         # ARRANGE
         class Model(SemanticTagData):
             age: int

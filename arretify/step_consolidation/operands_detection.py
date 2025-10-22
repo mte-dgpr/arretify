@@ -37,6 +37,7 @@ from arretify.utils.element_ranges import (
     get_contiguous_elements_right,
 )
 from arretify.utils.html_semantic import (
+    SemanticTagSpec,
     is_semantic_tag,
     get_semantic_tag_data,
     set_semantic_tag_data,
@@ -49,7 +50,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 # TODO : refactor to factorize with list in step_segmentation
-INLINE_TAG_SCHEMAS = [
+INLINE_TAG_SCHEMAS: list[SemanticTagSpec] = [
     PageFooterSpec,
     PageSeparatorSpec,
 ]
