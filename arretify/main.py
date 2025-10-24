@@ -146,7 +146,10 @@ def main(args: list[str]) -> None:
         for i, input_path in enumerate(all_input_file_paths):
             output_dir = root_output_path / input_path.parent.relative_to(root_input_path)
             output_dir.mkdir(parents=True, exist_ok=True)
-            output_path = output_dir / f"{input_path.stem}.html"
+            if input_path.is_dir():
+                output_path = output_dir / f"{input_path.name}.html"
+            else:
+                output_path = output_dir / f"{input_path.stem}.html"
 
             _LOGGER.info(f"\n\n[{i + 1}/{len(all_input_file_paths)}] processing {input_path} ...")
 
