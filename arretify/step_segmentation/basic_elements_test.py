@@ -19,23 +19,21 @@
 import unittest
 
 from arretify.semantic_tag_specs import (
+    AddressSpec,
     PageSeparatorData,
     PageSeparatorSpec,
 )
 from arretify.step_segmentation.semantic_tag_specs import (
     SEGMENTATION_TAG_NAME,
-    TableSpec,
-    TableDescriptionSpec,
-    ListSpec,
-    BlockquoteSpec,
-    ImageSpec,
-    AddressSpec,
-    TextSpanData,
-    TextSpanSpec,
+    TableSegmentationSpec,
+    TableDescriptionSegmentationSpec,
+    ListSegmentationSpec,
+    BlockquoteSegmentationSpec,
+    ImageSegmentationSpec,
+    TextSpanSegmentationData,
+    TextSpanSegmentationSpec,
 )
 from arretify.utils.html_semantic import (
-    SemanticTagData,
-    SemanticTagSpec,
     create_semantic_tag_spec_no_data,
     make_semantic_tag,
 )
@@ -51,7 +49,6 @@ from .basic_elements import (
     render_table,
     render_table_description,
     render_list,
-    render_address,
     render_blockquote,
 )
 from .testing import assert_elements_equal, make_text_spans
@@ -63,7 +60,7 @@ from arretify.utils.testing import (
 from arretify.law_data.french_addresses import ALL_STREET_NAMES
 
 
-SomeTagSpec: SemanticTagSpec[SemanticTagData] = create_semantic_tag_spec_no_data(
+SomeTagSpec = create_semantic_tag_spec_no_data(
     spec_name="segmentation:some_tag",
     tag_name=SEGMENTATION_TAG_NAME,
 )
@@ -132,7 +129,7 @@ class TestParseTables(BaseTestCase):
             [
                 make_semantic_tag(
                     self.soup,
-                    TableSpec,
+                    TableSegmentationSpec,
                     contents=make_text_spans(
                         self.soup,
                         "| Polluant | Concentration maximale en mg/l |",
@@ -168,7 +165,7 @@ class TestParseTables(BaseTestCase):
             [
                 make_semantic_tag(
                     self.soup,
-                    TableSpec,
+                    TableSegmentationSpec,
                     contents=make_text_spans(
                         self.soup,
                         "| Polluant | Concentration maximale en mg/l |",
@@ -178,7 +175,7 @@ class TestParseTables(BaseTestCase):
                 ),
                 make_semantic_tag(
                     self.soup,
-                    TableDescriptionSpec,
+                    TableDescriptionSegmentationSpec,
                     contents=make_text_spans(
                         self.soup, "(*) bla bla", "Polluant : Matières en suspension (MES)"
                     ),
@@ -211,7 +208,7 @@ class TestParseTables(BaseTestCase):
             [
                 make_semantic_tag(
                     self.soup,
-                    TableSpec,
+                    TableSegmentationSpec,
                     contents=make_text_spans(
                         self.soup,
                         "| Polluant | Concentration maximale en mg/l |",
@@ -244,7 +241,7 @@ class TestParseList(BaseTestCase):
             [
                 make_semantic_tag(
                     self.soup,
-                    ListSpec,
+                    ListSegmentationSpec,
                     contents=make_text_spans(self.soup, "- Item 1", "- Item 2", "- Item 3"),
                 ),
                 *make_text_spans(self.soup, "END"),
@@ -271,7 +268,7 @@ class TestParseList(BaseTestCase):
             [
                 make_semantic_tag(
                     self.soup,
-                    ListSpec,
+                    ListSegmentationSpec,
                     contents=make_text_spans(
                         self.soup, "- Item 1", "  - Subitem 1.1", "  - Subitem 1.2", "- Item 2"
                     ),
@@ -299,16 +296,16 @@ class TestParseList(BaseTestCase):
             [
                 make_semantic_tag(
                     self.soup,
-                    ListSpec,
+                    ListSegmentationSpec,
                     contents=[
                         make_semantic_tag(
                             self.soup,
-                            TextSpanSpec,
+                            TextSpanSegmentationSpec,
                             contents=[
                                 "- Item 1",
                                 " this is a continuation of the previous sentence.",
                             ],
-                            data=TextSpanData(start=[0, 0, 0], end=[0, 1, 48]),
+                            data=TextSpanSegmentationData(start=[0, 0, 0], end=[0, 1, 48]),
                         ),
                         *make_text_spans(self.soup, "- Item 2"),
                     ],
@@ -344,7 +341,7 @@ class TestParseBlockQuote(BaseTestCase):
                 make_semantic_tag(self.soup, SomeTagSpec),
                 make_semantic_tag(
                     self.soup,
-                    BlockquoteSpec,
+                    BlockquoteSegmentationSpec,
                     contents=make_text_spans(self.soup, "This is", "a blockquote"),
                 ),
                 *make_text_spans(self.soup, "END"),
@@ -372,7 +369,7 @@ class TestParseBlockQuote(BaseTestCase):
             [
                 make_semantic_tag(
                     self.soup,
-                    BlockquoteSpec,
+                    BlockquoteSegmentationSpec,
                     contents=[
                         *make_text_spans(
                             self.soup,
@@ -381,7 +378,7 @@ class TestParseBlockQuote(BaseTestCase):
                         ),
                         make_semantic_tag(
                             self.soup,
-                            ListSpec,
+                            ListSegmentationSpec,
                             contents=make_text_spans(
                                 self.soup,
                                 "- Item 1",
@@ -414,7 +411,7 @@ class TestParseBlockQuote(BaseTestCase):
             [
                 make_semantic_tag(
                     self.soup,
-                    BlockquoteSpec,
+                    BlockquoteSegmentationSpec,
                     contents=make_text_spans(self.soup, "bla bla", '"blo blo"', "bli bli"),
                 ),
                 *make_text_spans(self.soup, "END"),
@@ -441,7 +438,7 @@ class TestParseBlockQuote(BaseTestCase):
             [
                 make_semantic_tag(
                     self.soup,
-                    BlockquoteSpec,
+                    BlockquoteSegmentationSpec,
                     contents=make_text_spans(
                         self.soup,
                         "bla bla",
@@ -471,7 +468,7 @@ class TestParseBlockQuote(BaseTestCase):
             [
                 make_semantic_tag(
                     self.soup,
-                    BlockquoteSpec,
+                    BlockquoteSegmentationSpec,
                     contents=make_text_spans(self.soup, "bla bla"),
                 ),
                 *make_text_spans(self.soup, "END"),
@@ -503,7 +500,7 @@ class TestRenderTable(BaseTestCase):
         # Arrange
         tag = make_semantic_tag(
             self.soup,
-            TableSpec,
+            TableSegmentationSpec,
             contents=[
                 *make_text_spans(self.soup, "| Column 1 | Column 2 |", "|----------|----------|"),
                 make_semantic_tag(
@@ -557,7 +554,7 @@ class TestRenderTableDescription(BaseTestCase):
         # Arrange
         tag = make_semantic_tag(
             self.soup,
-            TableDescriptionSpec,
+            TableDescriptionSegmentationSpec,
             contents=[
                 *make_text_spans(self.soup, "This is a description of the table."),
                 make_semantic_tag(
@@ -589,7 +586,7 @@ class TestRenderList(BaseTestCase):
         # Arrange
         tag = make_semantic_tag(
             self.soup,
-            ListSpec,
+            ListSegmentationSpec,
             contents=[
                 *make_text_spans(self.soup, "- Item 1"),
                 make_semantic_tag(
@@ -616,7 +613,7 @@ class TestRenderList(BaseTestCase):
         # Arrange
         tag = make_semantic_tag(
             self.soup,
-            ListSpec,
+            ListSegmentationSpec,
             contents=[
                 *make_text_spans(
                     self.soup, "- Item 1", "  - Subitem 1.1", "  - Subitem 1.2", "- Item 2"
@@ -646,13 +643,13 @@ class TestRenderList(BaseTestCase):
         # Arrange
         tag = make_semantic_tag(
             self.soup,
-            ListSpec,
+            ListSegmentationSpec,
             contents=[
                 make_semantic_tag(
                     self.soup,
-                    TextSpanSpec,
+                    TextSpanSegmentationSpec,
                     contents=["- Item 1", " This is a continuation of the previous sentence."],
-                    data=TextSpanData(start=[0, 0, 0], end=[0, 1, 48]),
+                    data=TextSpanSegmentationData(start=[0, 0, 0], end=[0, 1, 48]),
                 ),
                 *make_text_spans(self.soup, "- Item 2"),
             ],
@@ -691,7 +688,7 @@ class TestParseImage(BaseTestCase):
             [
                 make_semantic_tag(
                     self.soup,
-                    ImageSpec,
+                    ImageSegmentationSpec,
                     contents=make_text_spans(self.soup, "![Image description](image_url.jpg)"),
                 ),
                 *make_text_spans(self.soup, "END"),
@@ -746,30 +743,13 @@ class TestParseAddresses(BaseTestCase):
         )
 
 
-class TestRenderAddress(BaseTestCase):
-
-    def test_render_address(self):
-        # Arrange
-        tag = make_semantic_tag(self.soup, AddressSpec, contents=["123 bis rue de la Paix"])
-
-        # Act
-        address_tag = render_address(self.context, tag)
-
-        # Assert
-        assert normalized_html_str(str(address_tag)) == normalized_html_str(
-            """
-            <address>123 bis rue de la Paix</address>
-            """
-        )
-
-
 class TestRenderBlockQuote(BaseTestCase):
 
     def test_render_blockquote(self):
         # Arrange
         tag = make_semantic_tag(
             self.soup,
-            BlockquoteSpec,
+            BlockquoteSegmentationSpec,
             contents=make_text_spans(self.soup, "This is", "a blockquote"),
         )
 
