@@ -18,7 +18,7 @@
 #
 from dataclasses import dataclass
 from enum import Enum
-from typing import Iterable, Sequence, TypeGuard, Annotated, TypeVar, Type, Generic
+from typing import Iterable, Sequence, TypeGuard, Annotated, TypeVar, Type, Generic, cast
 
 from pydantic import (
     BaseModel,
@@ -234,7 +234,7 @@ def get_semantic_tag_spec(tag: Tag) -> SemanticTagSpec:
     if actual_spec_name is None:
         raise ValueError("Tag is not a semantic tag (missing spec attribute)")
 
-    spec = _REGISTRY.get(actual_spec_name, None)
+    spec = _REGISTRY.get(cast(str, actual_spec_name), None)
     if spec is None:
         raise ValueError(f"Unknown semantic tag spec: {actual_spec_name}")
 

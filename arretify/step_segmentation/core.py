@@ -25,8 +25,11 @@ from typing import (
 from bs4 import Tag
 
 from arretify.parsing_utils.patterns import is_continuing_sentence
-from arretify.semantic_tag_specs import PageFooterSpec, PageSeparatorSpec
-from arretify.step_segmentation.semantic_tag_specs import AddressSpec, TextSpanData, TextSpanSpec
+from arretify.semantic_tag_specs import AddressSpec, PageFooterSpec, PageSeparatorSpec
+from arretify.step_segmentation.semantic_tag_specs import (
+    TextSpanSegmentationData,
+    TextSpanSegmentationSpec,
+)
 from arretify.types import DocumentContext, PageElementOrString
 from arretify.utils.functional import iter_func_to_list
 from arretify.regex_utils import PatternProxy, MatchProxy
@@ -50,12 +53,12 @@ from arretify.utils.split_merge import (
 )
 
 
-TRANSPARENT_TAG_SPECS = [PageSeparatorSpec, PageFooterSpec]
+TRANSPARENT_TAG_SPECS: list[SemanticTagSpec] = [PageSeparatorSpec, PageFooterSpec]
 """
 List of tag names that are considered transparent for text extraction purposes.
 """
 
-INLINE_TAG_SPECS = [AddressSpec]
+INLINE_TAG_SPECS: list[SemanticTagSpec] = [AddressSpec]
 """
 List of tag names that contains specific bits of text information inside a text_span.
 """
@@ -105,7 +108,7 @@ def pick_text_spans(
 ) -> Probe[PageElementOrString]:
     def _probe(elements: Sequence[PageElementOrString], index: int) -> bool:
         element = elements[index]
-        if is_semantic_tag(element, spec_in=[TextSpanSpec]):
+        if is_semantic_tag(element, spec_in=[TextSpanSegmentationSpec]):
             return probe(elements, index)
         return False
 
@@ -251,7 +254,7 @@ def make_recombine_interrupted_lines_splitter(
                             is_semantic_tag(element, spec_in=[PageSeparatorSpec])
                             for element in elements[:i]
                         )
-                        and is_semantic_tag(elements[i], spec_in=[TextSpanSpec])
+                        and is_semantic_tag(elements[i], spec_in=[TextSpanSegmentationSpec])
                         and is_continuing_sentence(previous_text, get_string(elements[i]))
                     ),
                 )
@@ -296,7 +299,7 @@ def get_string(element: PageElementOrString) -> str:
 def _get_string(element: PageElementOrString) -> str:
     if isinstance(element, str):
         return element
-    elif is_semantic_tag(element, spec_in=[TextSpanSpec, *INLINE_TAG_SPECS]):
+    elif is_semantic_tag(element, spec_in=[TextSpanSegmentationSpec, *INLINE_TAG_SPECS]):
         return merge_strings(_get_string(child) for child in element.contents)
     elif is_semantic_tag(element, spec_in=TRANSPARENT_TAG_SPECS):
         return ""
@@ -307,7 +310,7 @@ def _get_string(element: PageElementOrString) -> str:
 @iter_func_to_list
 def get_strings(tags: Sequence[PageElementOrString]) -> Iterator[str]:
     for tag in tags:
-        if is_semantic_tag(tag, spec_in=[TextSpanSpec]):
+        if is_semantic_tag(tag, spec_in=[TextSpanSegmentationSpec]):
             yield get_string(tag)
         elif is_semantic_tag(tag, spec_in=TRANSPARENT_TAG_SPECS):
             continue
@@ -326,7 +329,7 @@ def combine_text_spans(
     first_text_span: Tag | None = None
     last_text_span: Tag | None = None
     for element in elements:
-        if is_semantic_tag(element, spec_in=[TextSpanSpec]):
+        if is_semantic_tag(element, spec_in=[TextSpanSegmentationSpec]):
             if first_text_span is None:
                 first_text_span = element
             last_text_span = element
@@ -347,10 +350,10 @@ def combine_text_spans(
     assert first_text_span is not None and last_text_span is not None, "No text_span found"
     return make_semantic_tag(
         context.soup,
-        TextSpanSpec,
+        TextSpanSegmentationSpec,
         contents=children,
-        data=TextSpanData(
-            start=get_semantic_tag_data(TextSpanSpec, first_text_span).start,
-            end=get_semantic_tag_data(TextSpanSpec, last_text_span).end,
+        data=TextSpanSegmentationData(
+            start=get_semantic_tag_data(TextSpanSegmentationSpec, first_text_span).start,
+            end=get_semantic_tag_data(TextSpanSegmentationSpec, last_text_span).end,
         ),
     )
