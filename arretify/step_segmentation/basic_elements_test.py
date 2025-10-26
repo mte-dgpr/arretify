@@ -18,7 +18,28 @@
 #
 import unittest
 
-from .core import make_segmentation_tag
+from arretify.semantic_tag_specs import (
+    PageSeparatorData,
+    PageSeparatorSpec,
+)
+from arretify.step_segmentation.semantic_tag_specs import (
+    SEGMENTATION_TAG_NAME,
+    TableSpec,
+    TableDescriptionSpec,
+    ListSpec,
+    BlockquoteSpec,
+    ImageSpec,
+    AddressSpec,
+    TextSpanData,
+    TextSpanSpec,
+)
+from arretify.utils.html_semantic import (
+    SemanticTagData,
+    SemanticTagSpec,
+    create_semantic_tag_spec_no_data,
+    make_semantic_tag,
+)
+
 from .basic_elements import (
     _list_indentation,
     parse_lists,
@@ -40,6 +61,12 @@ from arretify.utils.testing import (
     assert_html_list_equal,
 )
 from arretify.law_data.french_addresses import ALL_STREET_NAMES
+
+
+SomeTagSpec: SemanticTagSpec[SemanticTagData] = create_semantic_tag_spec_no_data(
+    spec_name="segmentation:some_tag",
+    tag_name=SEGMENTATION_TAG_NAME,
+)
 
 
 class BaseTestCase(unittest.TestCase):
@@ -103,9 +130,9 @@ class TestParseTables(BaseTestCase):
         assert_elements_equal(
             elements,
             [
-                make_segmentation_tag(
+                make_semantic_tag(
                     self.soup,
-                    "table",
+                    TableSpec,
                     contents=make_text_spans(
                         self.soup,
                         "| Polluant | Concentration maximale en mg/l |",
@@ -139,9 +166,9 @@ class TestParseTables(BaseTestCase):
         assert_elements_equal(
             result,
             [
-                make_segmentation_tag(
+                make_semantic_tag(
                     self.soup,
-                    "table",
+                    TableSpec,
                     contents=make_text_spans(
                         self.soup,
                         "| Polluant | Concentration maximale en mg/l |",
@@ -149,9 +176,9 @@ class TestParseTables(BaseTestCase):
                         "| MES     | 35                               |",
                     ),
                 ),
-                make_segmentation_tag(
+                make_semantic_tag(
                     self.soup,
-                    "table_description",
+                    TableDescriptionSpec,
                     contents=make_text_spans(
                         self.soup, "(*) bla bla", "Polluant : Matières en suspension (MES)"
                     ),
@@ -171,7 +198,7 @@ class TestParseTables(BaseTestCase):
                 "| MES     | 35                               |",
                 "| DCO     | 125                              |",
             ),
-            make_segmentation_tag(self.soup, "page_separator", data=dict(page_index=1)),
+            make_semantic_tag(self.soup, PageSeparatorSpec, data=PageSeparatorData(page_index=1)),
             *make_text_spans(self.soup, "END"),
         ]
 
@@ -182,9 +209,9 @@ class TestParseTables(BaseTestCase):
         assert_elements_equal(
             result,
             [
-                make_segmentation_tag(
+                make_semantic_tag(
                     self.soup,
-                    "table",
+                    TableSpec,
                     contents=make_text_spans(
                         self.soup,
                         "| Polluant | Concentration maximale en mg/l |",
@@ -193,7 +220,9 @@ class TestParseTables(BaseTestCase):
                         "| DCO     | 125                              |",
                     ),
                 ),
-                make_segmentation_tag(self.soup, "page_separator", data=dict(page_index=1)),
+                make_semantic_tag(
+                    self.soup, PageSeparatorSpec, data=PageSeparatorData(page_index=1)
+                ),
                 *make_text_spans(self.soup, "END"),
             ],
             ignore_text_span_data=True,
@@ -213,9 +242,9 @@ class TestParseList(BaseTestCase):
         assert_elements_equal(
             result,
             [
-                make_segmentation_tag(
+                make_semantic_tag(
                     self.soup,
-                    "list",
+                    ListSpec,
                     contents=make_text_spans(self.soup, "- Item 1", "- Item 2", "- Item 3"),
                 ),
                 *make_text_spans(self.soup, "END"),
@@ -240,9 +269,9 @@ class TestParseList(BaseTestCase):
         assert_elements_equal(
             result,
             [
-                make_segmentation_tag(
+                make_semantic_tag(
                     self.soup,
-                    "list",
+                    ListSpec,
                     contents=make_text_spans(
                         self.soup, "- Item 1", "  - Subitem 1.1", "  - Subitem 1.2", "- Item 2"
                     ),
@@ -268,17 +297,18 @@ class TestParseList(BaseTestCase):
         assert_elements_equal(
             result,
             [
-                make_segmentation_tag(
+                make_semantic_tag(
                     self.soup,
-                    "list",
+                    ListSpec,
                     contents=[
-                        make_segmentation_tag(
+                        make_semantic_tag(
                             self.soup,
-                            "text_span",
+                            TextSpanSpec,
                             contents=[
                                 "- Item 1",
                                 " this is a continuation of the previous sentence.",
                             ],
+                            data=TextSpanData(start=[0, 0, 0], end=[0, 1, 48]),
                         ),
                         *make_text_spans(self.soup, "- Item 2"),
                     ],
@@ -295,7 +325,7 @@ class TestParseBlockQuote(BaseTestCase):
     def test_simple_blockquote(self):
         # Arrange
         elements = [
-            make_segmentation_tag(self.soup, "some_tag"),
+            make_semantic_tag(self.soup, SomeTagSpec),
             *make_text_spans(
                 self.soup,
                 '"This is',
@@ -311,10 +341,10 @@ class TestParseBlockQuote(BaseTestCase):
         assert_elements_equal(
             result,
             [
-                make_segmentation_tag(self.soup, "some_tag"),
-                make_segmentation_tag(
+                make_semantic_tag(self.soup, SomeTagSpec),
+                make_semantic_tag(
                     self.soup,
-                    "blockquote",
+                    BlockquoteSpec,
                     contents=make_text_spans(self.soup, "This is", "a blockquote"),
                 ),
                 *make_text_spans(self.soup, "END"),
@@ -340,18 +370,18 @@ class TestParseBlockQuote(BaseTestCase):
         assert_elements_equal(
             result,
             [
-                make_segmentation_tag(
+                make_semantic_tag(
                     self.soup,
-                    "blockquote",
+                    BlockquoteSpec,
                     contents=[
                         *make_text_spans(
                             self.soup,
                             "bla bla",
                             "blo blo :",
                         ),
-                        make_segmentation_tag(
+                        make_semantic_tag(
                             self.soup,
-                            "list",
+                            ListSpec,
                             contents=make_text_spans(
                                 self.soup,
                                 "- Item 1",
@@ -382,9 +412,9 @@ class TestParseBlockQuote(BaseTestCase):
         assert_elements_equal(
             result,
             [
-                make_segmentation_tag(
+                make_semantic_tag(
                     self.soup,
-                    "blockquote",
+                    BlockquoteSpec,
                     contents=make_text_spans(self.soup, "bla bla", '"blo blo"', "bli bli"),
                 ),
                 *make_text_spans(self.soup, "END"),
@@ -409,9 +439,9 @@ class TestParseBlockQuote(BaseTestCase):
         assert_elements_equal(
             result,
             [
-                make_segmentation_tag(
+                make_semantic_tag(
                     self.soup,
-                    "blockquote",
+                    BlockquoteSpec,
                     contents=make_text_spans(
                         self.soup,
                         "bla bla",
@@ -439,9 +469,9 @@ class TestParseBlockQuote(BaseTestCase):
         assert_elements_equal(
             result,
             [
-                make_segmentation_tag(
+                make_semantic_tag(
                     self.soup,
-                    "blockquote",
+                    BlockquoteSpec,
                     contents=make_text_spans(self.soup, "bla bla"),
                 ),
                 *make_text_spans(self.soup, "END"),
@@ -471,17 +501,21 @@ class TestRenderTable(BaseTestCase):
 
     def test_render_table_with_page_separators(self):
         # Arrange
-        tag = make_segmentation_tag(
+        tag = make_semantic_tag(
             self.soup,
-            "table",
+            TableSpec,
             contents=[
                 *make_text_spans(self.soup, "| Column 1 | Column 2 |", "|----------|----------|"),
-                make_segmentation_tag(self.soup, "page_separator", data=dict(page_index=1)),
+                make_semantic_tag(
+                    self.soup, PageSeparatorSpec, data=PageSeparatorData(page_index=1)
+                ),
                 *make_text_spans(
                     self.soup,
                     "| Row 1    | Data 1   |",
                 ),
-                make_segmentation_tag(self.soup, "page_separator", data=dict(page_index=2)),
+                make_semantic_tag(
+                    self.soup, PageSeparatorSpec, data=PageSeparatorData(page_index=2)
+                ),
                 *make_text_spans(
                     self.soup,
                     "| Row 2    | Data 2   |",
@@ -521,12 +555,14 @@ class TestRenderTableDescription(BaseTestCase):
 
     def test_render_table_description_with_page_separators(self):
         # Arrange
-        tag = make_segmentation_tag(
+        tag = make_semantic_tag(
             self.soup,
-            "table_description",
+            TableDescriptionSpec,
             contents=[
                 *make_text_spans(self.soup, "This is a description of the table."),
-                make_segmentation_tag(self.soup, "page_separator", data=dict(page_index=1)),
+                make_semantic_tag(
+                    self.soup, PageSeparatorSpec, data=PageSeparatorData(page_index=1)
+                ),
                 *make_text_spans(self.soup, "This is another part of the description."),
             ],
         )
@@ -551,12 +587,14 @@ class TestRenderList(BaseTestCase):
 
     def test_render_list_with_page_separator(self):
         # Arrange
-        tag = make_segmentation_tag(
+        tag = make_semantic_tag(
             self.soup,
-            "list",
+            ListSpec,
             contents=[
                 *make_text_spans(self.soup, "- Item 1"),
-                make_segmentation_tag(self.soup, "page_separator", data=dict(page_index=1)),
+                make_semantic_tag(
+                    self.soup, PageSeparatorSpec, data=PageSeparatorData(page_index=1)
+                ),
                 *make_text_spans(self.soup, "- Item 2"),
             ],
         )
@@ -576,9 +614,9 @@ class TestRenderList(BaseTestCase):
 
     def test_render_nested_list(self):
         # Arrange
-        tag = make_segmentation_tag(
+        tag = make_semantic_tag(
             self.soup,
-            "list",
+            ListSpec,
             contents=[
                 *make_text_spans(
                     self.soup, "- Item 1", "  - Subitem 1.1", "  - Subitem 1.2", "- Item 2"
@@ -606,14 +644,15 @@ class TestRenderList(BaseTestCase):
 
     def test_render_list_text_span(self):
         # Arrange
-        tag = make_segmentation_tag(
+        tag = make_semantic_tag(
             self.soup,
-            "list",
+            ListSpec,
             contents=[
-                make_segmentation_tag(
+                make_semantic_tag(
                     self.soup,
-                    "text_span",
+                    TextSpanSpec,
                     contents=["- Item 1", " This is a continuation of the previous sentence."],
+                    data=TextSpanData(start=[0, 0, 0], end=[0, 1, 48]),
                 ),
                 *make_text_spans(self.soup, "- Item 2"),
             ],
@@ -650,11 +689,10 @@ class TestParseImage(BaseTestCase):
         assert_elements_equal(
             result,
             [
-                make_segmentation_tag(
+                make_semantic_tag(
                     self.soup,
-                    "image",
+                    ImageSpec,
                     contents=make_text_spans(self.soup, "![Image description](image_url.jpg)"),
-                    data=dict(),
                 ),
                 *make_text_spans(self.soup, "END"),
             ],
@@ -677,7 +715,7 @@ class TestParseAddresses(BaseTestCase):
             result,
             [
                 "Some text before ",
-                make_segmentation_tag(self.soup, "address", contents=["123 bis rue de la Paix"]),
+                make_semantic_tag(self.soup, AddressSpec, contents=["123 bis rue de la Paix"]),
                 ", 75002 Paris. Some text after",
             ],
             ignore_text_span_data=True,
@@ -701,7 +739,7 @@ class TestParseAddresses(BaseTestCase):
             result,
             [
                 "Some text before ",
-                make_segmentation_tag(self.soup, "address", contents=["123 bis rue jean moulin"]),
+                make_semantic_tag(self.soup, AddressSpec, contents=["123 bis rue jean moulin"]),
                 ", 75002 Paris. Some text after",
             ],
             ignore_text_span_data=True,
@@ -712,7 +750,7 @@ class TestRenderAddress(BaseTestCase):
 
     def test_render_address(self):
         # Arrange
-        tag = make_segmentation_tag(self.soup, "address", contents=["123 bis rue de la Paix"])
+        tag = make_semantic_tag(self.soup, AddressSpec, contents=["123 bis rue de la Paix"])
 
         # Act
         address_tag = render_address(self.context, tag)
@@ -729,9 +767,9 @@ class TestRenderBlockQuote(BaseTestCase):
 
     def test_render_blockquote(self):
         # Arrange
-        tag = make_segmentation_tag(
+        tag = make_semantic_tag(
             self.soup,
-            "blockquote",
+            BlockquoteSpec,
             contents=make_text_spans(self.soup, "This is", "a blockquote"),
         )
 
