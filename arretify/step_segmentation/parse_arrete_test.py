@@ -19,9 +19,27 @@
 import unittest
 
 from arretify.utils.testing import create_document_context
+from arretify.utils.html_semantic import make_semantic_tag
+from arretify.semantic_tag_specs import (
+    AlineaData,
+    HeaderSpec,
+    MainSpec,
+    AppendixSpec,
+    PageSeparatorData,
+    PageSeparatorSpec,
+    ArreteSpec,
+    AlineaSpec,
+)
+from .semantic_tag_specs import (
+    SegmentationSectionSpec,
+    SegmentationSectionTitleData,
+    SegmentationSectionTitleSpec,
+    TextSpanData,
+    TextSpanSpec,
+    AddressSpec,
+)
 from .parse_arrete import parse_arrete
 from .testing import make_text_spans, assert_elements_equal
-from .core import make_segmentation_tag
 
 
 class BaseTestCase(unittest.TestCase):
@@ -51,57 +69,73 @@ class TestParseArrete(BaseTestCase):
         assert_elements_equal(
             elements,
             [
-                make_segmentation_tag(
+                make_semantic_tag(
                     self.soup,
-                    "header",
+                    HeaderSpec,
                     contents=[
-                        make_segmentation_tag(self.soup, "page_separator"),
-                        make_segmentation_tag(
+                        make_semantic_tag(
+                            self.soup, PageSeparatorSpec, data=PageSeparatorData(page_index=0)
+                        ),
+                        make_semantic_tag(
                             self.soup,
-                            "arrete_title",
+                            ArreteSpec,
                             contents=make_text_spans(self.soup, "Arrêté n° 123"),
                         ),
                     ],
                 ),
-                make_segmentation_tag(
+                make_semantic_tag(
                     self.soup,
-                    "main",
+                    MainSpec,
                     contents=[
-                        make_segmentation_tag(
+                        make_semantic_tag(
                             self.soup,
-                            "section",
+                            SegmentationSectionSpec,
                             contents=[
-                                make_segmentation_tag(
+                                make_semantic_tag(
                                     self.soup,
-                                    "section_title",
+                                    SegmentationSectionTitleSpec,
                                     contents=make_text_spans(self.soup, "Article 1 : Disposition"),
+                                    data=SegmentationSectionTitleData(
+                                        number="1",
+                                        type="article",
+                                        level=0,
+                                        title="Disposition",
+                                    ),
                                 ),
-                                make_segmentation_tag(
+                                make_semantic_tag(
                                     self.soup,
-                                    "alinea",
+                                    AlineaSpec,
                                     contents=make_text_spans(self.soup, "Bla bla bla ..."),
+                                    data=AlineaData(number=1),
                                 ),
                             ],
                         ),
                     ],
                 ),
-                make_segmentation_tag(
+                make_semantic_tag(
                     self.soup,
-                    "appendix",
+                    AppendixSpec,
                     contents=[
-                        make_segmentation_tag(
+                        make_semantic_tag(
                             self.soup,
-                            "section",
+                            SegmentationSectionSpec,
                             contents=[
-                                make_segmentation_tag(
+                                make_semantic_tag(
                                     self.soup,
-                                    "section_title",
+                                    SegmentationSectionTitleSpec,
                                     contents=make_text_spans(self.soup, "Annexe 1 : Détails"),
+                                    data=SegmentationSectionTitleData(
+                                        number="1",
+                                        type="annexe",
+                                        level=0,
+                                        title="Détails",
+                                    ),
                                 ),
-                                make_segmentation_tag(
+                                make_semantic_tag(
                                     self.soup,
-                                    "alinea",
+                                    AlineaSpec,
                                     contents=make_text_spans(self.soup, "Bla bla bla ..."),
+                                    data=AlineaData(number=1),
                                 ),
                             ],
                         ),
@@ -131,49 +165,62 @@ class TestParseArrete(BaseTestCase):
         assert_elements_equal(
             elements,
             [
-                make_segmentation_tag(
+                make_semantic_tag(
                     self.soup,
-                    "header",
+                    HeaderSpec,
                     contents=[
-                        make_segmentation_tag(self.soup, "page_separator"),
-                        make_segmentation_tag(
+                        make_semantic_tag(
+                            self.soup, PageSeparatorSpec, data=PageSeparatorData(page_index=0)
+                        ),
+                        make_semantic_tag(
                             self.soup,
-                            "arrete_title",
+                            ArreteSpec,
                             contents=make_text_spans(self.soup, "Arrêté n° 123"),
                         ),
                     ],
                 ),
-                make_segmentation_tag(
+                make_semantic_tag(
                     self.soup,
-                    "main",
+                    MainSpec,
                     contents=[
-                        make_segmentation_tag(
+                        make_semantic_tag(
                             self.soup,
-                            "section",
+                            SegmentationSectionSpec,
                             contents=[
-                                make_segmentation_tag(
+                                make_semantic_tag(
                                     self.soup,
-                                    "section_title",
+                                    SegmentationSectionTitleSpec,
                                     contents=make_text_spans(self.soup, "Article 1 : Disposition"),
+                                    data=SegmentationSectionTitleData(
+                                        number="1",
+                                        type="article",
+                                        level=0,
+                                        title="Disposition",
+                                    ),
                                 ),
-                                make_segmentation_tag(
+                                make_semantic_tag(
                                     self.soup,
-                                    "alinea",
+                                    AlineaSpec,
                                     contents=[
-                                        make_segmentation_tag(
+                                        make_semantic_tag(
                                             self.soup,
-                                            "text_span",
+                                            TextSpanSpec,
                                             contents=[
                                                 "Bla bla, ",
-                                                make_segmentation_tag(
+                                                make_semantic_tag(
                                                     self.soup,
-                                                    "address",
+                                                    AddressSpec,
                                                     contents=["123 rue de la Paix"],
                                                 ),
                                                 ", bla ...",
                                             ],
+                                            data=TextSpanData(
+                                                start=[0, 0, 0],
+                                                end=[0, 0, 0],
+                                            ),
                                         )
                                     ],
+                                    data=AlineaData(number=1),
                                 ),
                             ],
                         ),

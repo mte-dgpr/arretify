@@ -16,17 +16,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import Dict, Literal, Sequence, Iterator
+from typing import Dict, Sequence, Iterator
 
 from bs4 import Tag
 
 from arretify.utils.functional import iter_func_to_list, chain_functions
 from arretify.parsing_utils.dates import DATE_NODE, render_date_regex_tree_match
+from arretify.utils.html import is_tag
 from arretify.utils.html_semantic import (
     SemanticTagSpec,
     make_semantic_tag,
+    is_semantic_tag,
+    get_semantic_tag_spec,
 )
 from arretify.utils.html_create import (
+    replace_children,
     wrap_in_tag,
     make_new_tag,
 )
@@ -42,6 +46,14 @@ from arretify.semantic_tag_specs import (
     VisaSpec,
     MotifSpec,
     SupplementaryMotifInfoSpec,
+    PageSeparatorSpec,
+    PageFooterSpec,
+    TableOfContentsSpec,
+)
+from arretify.step_segmentation.semantic_tag_specs import (
+    ListSpec,
+    TextSpanSpec,
+    ImageSpec,
 )
 from arretify.regex_utils import (
     PatternProxy,
@@ -54,8 +66,6 @@ from arretify.utils.split_merge import (
     Probe,
 )
 from .core import (
-    is_segmentation_tag,
-    make_segmentation_tag,
     make_recombine_interrupted_lines_splitter,
     make_while_splitter_for_text_spans,
     make_single_line_splitter_for_text_spans,
@@ -63,12 +73,10 @@ from .core import (
     make_probe_from_pattern_proxy,
     get_string,
     get_strings,
-    TRANSPARENT_TAG_TYPES,
-    read_segmentation_tag_name,
+    TRANSPARENT_TAG_SPECS,
 )
 from .document_elements import (
     render_page_footer,
-    render_page_separator,
     render_table_of_contents,
 )
 from .basic_elements import parse_lists, render_image, render_list, render_text_span
@@ -165,62 +173,53 @@ SUPPLEMENTARY_MOTIF_INFORMATION_PATTERN = PatternProxy(
 )
 """Detect all other information that can be part of the motifs."""
 
-HEADER_ELEMENTS_PATTERNS: Dict[str, PatternProxy] = dict(
-    emblem=EMBLEM_PATTERN,
-    entity=ENTITY_PATTERN,
-    identification=IDENTIFICATION_PATTERN,
-    arrete_title=ARRETE_TITLE_PATTERN,
-    honorary=HONORARY_PATTERN,
-    visa=VISA_PATTERN,
-    motif=MOTIF_PATTERN,
-    supplementary_motif_info=SUPPLEMENTARY_MOTIF_INFORMATION_PATTERN,
-)
+HEADER_ELEMENTS_PATTERNS: Dict[SemanticTagSpec, PatternProxy] = {
+    EmblemSpec: EMBLEM_PATTERN,
+    EntitySpec: ENTITY_PATTERN,
+    IdentificationSpec: IDENTIFICATION_PATTERN,
+    ArreteSpec: ARRETE_TITLE_PATTERN,
+    HonorarySpec: HONORARY_PATTERN,
+    VisaSpec: VISA_PATTERN,
+    MotifSpec: MOTIF_PATTERN,
+    SupplementaryMotifInfoSpec: SUPPLEMENTARY_MOTIF_INFORMATION_PATTERN,
+}
 
-HEADER_ELEMENTS_RENDER_PATTERNS: Dict[str, PatternProxy | None] = dict(
-    HEADER_ELEMENTS_PATTERNS,
-    honorary=PatternProxy(join_with_or(HONORARIES_LIST)),
-    supplementary_motif_info=None,
-)
+HEADER_ELEMENTS_RENDER_PATTERNS: Dict[SemanticTagSpec, PatternProxy | None] = {
+    **HEADER_ELEMENTS_PATTERNS,
+    HonorarySpec: PatternProxy(join_with_or(HONORARIES_LIST)),
+    SupplementaryMotifInfoSpec: None,
+}
 
-HEADER_ELEMENTS_SPECS: Dict[str, SemanticTagSpec] = dict(
-    emblem=EmblemSpec,
-    entity=EntitySpec,
-    identification=IdentificationSpec,
-    arrete_title=ArreteSpec,
-    honorary=HonorarySpec,
-    visa=VisaSpec,
-    motif=MotifSpec,
-    supplementary_motif_info=SupplementaryMotifInfoSpec,
-)
+HEADER_ELEMENTS_PROBES: Dict[SemanticTagSpec, Probe[PageElementOrString]] = {
+    EmblemSpec: make_probe_from_pattern_proxy(EMBLEM_PATTERN),
+    IdentificationSpec: make_probe_from_pattern_proxy(IDENTIFICATION_PATTERN),
+    HonorarySpec: make_probe_from_pattern_proxy(HONORARY_PATTERN),
+    SupplementaryMotifInfoSpec: make_probe_from_pattern_proxy(
+        SUPPLEMENTARY_MOTIF_INFORMATION_PATTERN
+    ),
+}
 
-HEADER_ELEMENTS_PROBES: Dict[str, Probe[PageElementOrString]] = dict(
-    emblem=make_probe_from_pattern_proxy(EMBLEM_PATTERN),
-    identification=make_probe_from_pattern_proxy(IDENTIFICATION_PATTERN),
-    honorary=make_probe_from_pattern_proxy(HONORARY_PATTERN),
-    supplementary_motif_info=make_probe_from_pattern_proxy(SUPPLEMENTARY_MOTIF_INFORMATION_PATTERN),
-)
+HEADER_ELEMENTS_FUZZY_PROBES: Dict[SemanticTagSpec, Probe[PageElementOrString]] = {
+    EntitySpec: make_probe_from_pattern_proxy(ENTITY_PATTERN),
+    ArreteSpec: make_probe_from_pattern_proxy(ARRETE_TITLE_PATTERN),
+}
 
-HEADER_ELEMENTS_FUZZY_PROBES: Dict[str, Probe[PageElementOrString]] = dict(
-    entity=make_probe_from_pattern_proxy(ENTITY_PATTERN),
-    arrete_title=make_probe_from_pattern_proxy(ARRETE_TITLE_PATTERN),
-)
+VISA_MOTIFS_PATTERNS: Dict[SemanticTagSpec, PatternProxy] = {
+    VisaSpec: VISA_PATTERN,
+    MotifSpec: MOTIF_PATTERN,
+}
 
-VISA_MOTIFS_PATTERNS: Dict[str, PatternProxy] = dict(
-    visa=VISA_PATTERN,
-    motif=MOTIF_PATTERN,
-)
-
-VISA_MOTIFS_PROBES: Dict[str, Probe[PageElementOrString]] = dict(
-    visa=make_probe_from_pattern_proxy(VISA_PATTERN),
-    motif=make_probe_from_pattern_proxy(MOTIF_PATTERN),
-)
+VISA_MOTIFS_PROBES: Dict[SemanticTagSpec, Probe[PageElementOrString]] = {
+    VisaSpec: make_probe_from_pattern_proxy(VISA_PATTERN),
+    MotifSpec: make_probe_from_pattern_proxy(MOTIF_PATTERN),
+}
 
 
-def _is_nothing_else_than(name: str, element: PageElementOrString) -> bool:
-    return is_segmentation_tag(element, tag_name_in=["text_span"]) and not any(
-        bool(HEADER_ELEMENTS_PATTERNS[other_name].match(get_string(element)))
-        for other_name in HEADER_ELEMENTS_PATTERNS
-        if other_name != name
+def _is_nothing_else_than(spec: SemanticTagSpec, element: PageElementOrString) -> bool:
+    return is_semantic_tag(element, spec_in=[TextSpanSpec]) and not any(
+        bool(HEADER_ELEMENTS_PATTERNS[other_spec].match(get_string(element)))
+        for other_spec in HEADER_ELEMENTS_PATTERNS
+        if other_spec != spec
     )
 
 
@@ -254,7 +253,7 @@ def parse_header(
 def _parse_header_element(
     context: DocumentContext,
     elements: Sequence[PageElementOrString],
-    tag_type: str,
+    spec: SemanticTagSpec,
 ) -> list[PageElementOrString]:
     """
     Generic function to parse header elements.
@@ -265,17 +264,17 @@ def _parse_header_element(
         split_elements(
             elements,
             make_while_splitter_for_text_spans(
-                HEADER_ELEMENTS_PROBES[tag_type], HEADER_ELEMENTS_PROBES[tag_type]
+                HEADER_ELEMENTS_PROBES[spec], HEADER_ELEMENTS_PROBES[spec]
             ),
         ),
-        lambda children: make_segmentation_tag(context.soup, tag_type, contents=children),
+        lambda children: make_semantic_tag(context.soup, spec, contents=children),
     )
 
 
 def _parse_header_element_fuzzy(
     context: DocumentContext,
     elements: Sequence[PageElementOrString],
-    tag_type: str,
+    spec: SemanticTagSpec,
 ) -> list[PageElementOrString]:
     """
     Generic function to parse header elements with a fuzzy match.
@@ -286,11 +285,11 @@ def _parse_header_element_fuzzy(
         split_elements(
             elements,
             make_while_splitter_for_text_spans(
-                HEADER_ELEMENTS_FUZZY_PROBES[tag_type],
-                lambda elements, index: _is_nothing_else_than(tag_type, elements[index]),
+                HEADER_ELEMENTS_FUZZY_PROBES[spec],
+                lambda elements, index: _is_nothing_else_than(spec, elements[index]),
             ),
         ),
-        lambda children: make_segmentation_tag(context.soup, tag_type, contents=children),
+        lambda children: make_semantic_tag(context.soup, spec, contents=children),
     )
 
 
@@ -298,7 +297,7 @@ def parse_emblem_element(
     context: DocumentContext,
     elements: Sequence[PageElementOrString],
 ) -> list[PageElementOrString]:
-    return _parse_header_element(context, elements, "emblem")
+    return _parse_header_element(context, elements, EmblemSpec)
 
 
 def parse_entity_element(
@@ -308,7 +307,7 @@ def parse_entity_element(
     return _parse_header_element_fuzzy(
         context,
         elements,
-        "entity",
+        EntitySpec,
     )
 
 
@@ -316,7 +315,7 @@ def parse_identification_element(
     context: DocumentContext,
     elements: Sequence[PageElementOrString],
 ) -> list[PageElementOrString]:
-    return _parse_header_element(context, elements, "identification")
+    return _parse_header_element(context, elements, IdentificationSpec)
 
 
 def parse_arrete_title_element(
@@ -326,7 +325,7 @@ def parse_arrete_title_element(
     return _parse_header_element_fuzzy(
         context,
         elements,
-        "arrete_title",
+        ArreteSpec,
     )
 
 
@@ -334,7 +333,7 @@ def parse_honorary_element(
     context: DocumentContext,
     elements: Sequence[PageElementOrString],
 ) -> list[PageElementOrString]:
-    return _parse_header_element(context, elements, "honorary")
+    return _parse_header_element(context, elements, HonorarySpec)
 
 
 def parse_supplementary_motif_info_element(
@@ -344,7 +343,7 @@ def parse_supplementary_motif_info_element(
     return _parse_header_element(
         context,
         elements,
-        "supplementary_motif_info",
+        SupplementaryMotifInfoSpec,
     )
 
 
@@ -352,27 +351,27 @@ def parse_visa_and_motif_elements(
     context: DocumentContext,
     elements: Sequence[PageElementOrString],
 ) -> list[PageElementOrString]:
-    elements = _parse_visa_and_motif_elements_pass1(context, elements, "visa")
-    elements = _parse_visa_and_motif_elements_pass1(context, elements, "motif")
+    elements = _parse_visa_and_motif_elements_pass1(context, elements, VisaSpec)
+    elements = _parse_visa_and_motif_elements_pass1(context, elements, MotifSpec)
     elements = _parse_visa_and_motif_elements_pass2(
         context,
         elements,
-        tag_type="visa",
+        spec=VisaSpec,
     )
     elements = _parse_visa_and_motif_elements_pass3(
         context,
         elements,
-        tag_type="visa",
+        spec=VisaSpec,
     )
     elements = _parse_visa_and_motif_elements_pass2(
         context,
         elements,
-        tag_type="motif",
+        spec=MotifSpec,
     )
     elements = _parse_visa_and_motif_elements_pass3(
         context,
         elements,
-        tag_type="motif",
+        spec=MotifSpec,
     )
     return elements
 
@@ -381,7 +380,7 @@ def parse_visa_and_motif_elements(
 def _parse_visa_and_motif_elements_pass1(
     context: DocumentContext,
     elements: Sequence[PageElementOrString],
-    tag_type: Literal["visa", "motif"],
+    spec: SemanticTagSpec,
 ) -> Iterator[PageElementOrString]:
     """
     Pass 1 of parsing visa and motif elements.
@@ -392,9 +391,9 @@ def _parse_visa_and_motif_elements_pass1(
     elements = map_splitted_elements(
         split_elements(
             elements,
-            make_single_line_splitter_for_text_spans(VISA_MOTIFS_PROBES[tag_type]),
+            make_single_line_splitter_for_text_spans(VISA_MOTIFS_PROBES[spec]),
         ),
-        lambda children: make_segmentation_tag(context.soup, tag_type, contents=children),
+        lambda children: make_semantic_tag(context.soup, spec, contents=children),
     )
 
     # Visas or motifs that are in form :
@@ -405,17 +404,15 @@ def _parse_visa_and_motif_elements_pass1(
     # into visa or motif tags.
     for element in elements:
         is_list_of_visas_or_motifs = False
-        if is_segmentation_tag(element, tag_name_in=["list"]):
+        if is_semantic_tag(element, spec_in=[ListSpec]):
             assert len(element.contents) > 0, "List tag should not be empty"
-            is_list_of_visas_or_motifs = VISA_MOTIFS_PROBES[tag_type](element.contents, 0)
+            is_list_of_visas_or_motifs = VISA_MOTIFS_PROBES[spec](element.contents, 0)
 
         if is_list_of_visas_or_motifs:
-            assert is_segmentation_tag(element)
+            assert is_tag(element)
             for list_item_element in element.contents:
-                if is_segmentation_tag(list_item_element, tag_name_in=["text_span"]):
-                    yield make_segmentation_tag(
-                        context.soup, tag_type, contents=[list_item_element]
-                    )
+                if is_semantic_tag(list_item_element, spec_in=[TextSpanSpec]):
+                    yield make_semantic_tag(context.soup, spec, contents=[list_item_element])
                 else:
                     raise ValueError(f"Unexpected element {list_item_element}")
         else:
@@ -426,7 +423,7 @@ def _parse_visa_and_motif_elements_pass1(
 def _parse_visa_and_motif_elements_pass2(
     context: DocumentContext,
     elements: Sequence[PageElementOrString],
-    tag_type: Literal["visa", "motif"],
+    spec: SemanticTagSpec,
 ) -> Iterator[PageElementOrString]:
     """
     Pass 2 of parsing visa and motif elements.
@@ -439,18 +436,14 @@ def _parse_visa_and_motif_elements_pass2(
     elements = list(elements)
 
     # Skip tags until we find the first tag of type 'visa' or 'motif'.
-    while elements and not is_segmentation_tag(elements[0], tag_name_in=[tag_type]):
+    while elements and not is_semantic_tag(elements[0], spec_in=[spec]):
         yield elements.pop(0)
     if not elements:
         return
     first_tag = elements.pop(0)
-    assert (
-        is_segmentation_tag(first_tag, tag_name_in=[tag_type])
-        and len(first_tag.contents) > 0
-        and is_segmentation_tag(first_tag.contents[0])
-    )
+    assert is_semantic_tag(first_tag, spec_in=[spec]) and len(first_tag.contents) > 0
 
-    first_tag_match = VISA_MOTIFS_PATTERNS[tag_type].match(get_string(first_tag))
+    first_tag_match = VISA_MOTIFS_PATTERNS[spec].match(get_string(first_tag))
     # 1. Variant "simple" :
     #   Vu que blabla
     #   Vu que bloblo
@@ -461,7 +454,7 @@ def _parse_visa_and_motif_elements_pass2(
         #   <page_separator>
         #   continues on the next page.
         elements = map_splitted_elements(
-            split_elements(elements, make_recombine_interrupted_lines_splitter(tag_type)),
+            split_elements(elements, make_recombine_interrupted_lines_splitter(spec)),
             _recombine_visa_motif_with_next_if_continuing_sentence,
         )
         yield from elements
@@ -470,25 +463,23 @@ def _parse_visa_and_motif_elements_pass2(
     #   Vu :
     #   - blabla
     #   - bloblo
-    elif elements and is_segmentation_tag(elements[0], tag_name_in=["list"]):
+    elif elements and is_semantic_tag(elements[0], spec_in=[ListSpec]):
         # Add the "Vu :" to the header
         yield from first_tag.children
         while elements:
             element = elements[0]
             # We're a bit lenient here and accept a few unassigned_line tags,
             # as random text sometimes interferes with the parsing.
-            if is_segmentation_tag(
-                element, tag_name_in=TRANSPARENT_TAG_TYPES
-            ) or is_segmentation_tag(element, tag_name_in=["text_span"]):
+            if is_semantic_tag(element, spec_in=TRANSPARENT_TAG_SPECS) or is_semantic_tag(
+                element, spec_in=[TextSpanSpec]
+            ):
                 yield elements.pop(0)
 
-            elif is_segmentation_tag(element, tag_name_in=["list"]):
+            elif is_semantic_tag(element, spec_in=[ListSpec]):
                 elements.pop(0)
                 for list_item_element in element.children:
-                    if is_segmentation_tag(list_item_element, tag_name_in=["text_span"]):
-                        yield make_segmentation_tag(
-                            context.soup, tag_type, contents=[list_item_element]
-                        )
+                    if is_semantic_tag(list_item_element, spec_in=[TextSpanSpec]):
+                        yield make_semantic_tag(context.soup, spec, contents=[list_item_element])
                     else:
                         yield list_item_element
             else:
@@ -507,11 +498,11 @@ def _parse_visa_and_motif_elements_pass2(
 
             # Lists will be handled in the next pass and appended to the visa or motif tag
             # if applicable.
-            if is_segmentation_tag(element, tag_name_in=["list", *TRANSPARENT_TAG_TYPES]):
+            if is_semantic_tag(element, spec_in=[ListSpec, *TRANSPARENT_TAG_SPECS]):
                 yield elements.pop(0)
 
-            elif is_segmentation_tag(element, tag_name_in=["text_span"]):
-                yield make_segmentation_tag(context.soup, tag_type, contents=[element])
+            elif is_semantic_tag(element, spec_in=[TextSpanSpec]):
+                yield make_semantic_tag(context.soup, spec, contents=[element])
                 elements.pop(0)
             else:
                 break
@@ -521,7 +512,7 @@ def _parse_visa_and_motif_elements_pass2(
 def _recombine_visa_motif_with_next_if_continuing_sentence(
     elements: Sequence[PageElementOrString],
 ) -> Tag:
-    assert len(elements) > 0 and is_segmentation_tag(elements[0], tag_name_in=["visa", "motif"])
+    assert len(elements) > 0 and is_semantic_tag(elements[0], spec_in=[VisaSpec, MotifSpec])
     elements[0].extend(elements[1:])
     return elements[0]
 
@@ -530,7 +521,7 @@ def _recombine_visa_motif_with_next_if_continuing_sentence(
 def _parse_visa_and_motif_elements_pass3(
     context: DocumentContext,
     elements: Sequence[PageElementOrString],
-    tag_type: Literal["visa", "motif"],
+    spec: SemanticTagSpec,
 ) -> Iterator[PageElementOrString]:
     """
     Pass 3 of parsing visa and motif elements.
@@ -542,13 +533,13 @@ def _parse_visa_and_motif_elements_pass3(
 
     while elements:
         element = elements.pop(0)
-        if is_segmentation_tag(element, tag_name_in=[tag_type]):
+        if is_semantic_tag(element, spec_in=[spec]):
             transparent_tags_pile: list[Tag] = []
-            while elements and is_segmentation_tag(elements[0], tag_name_in=TRANSPARENT_TAG_TYPES):
+            while elements and is_semantic_tag(elements[0], spec_in=TRANSPARENT_TAG_SPECS):
                 transparent_tags_pile.append(elements[0])
                 elements.pop(0)
 
-            if elements and is_segmentation_tag(elements[0], tag_name_in=["list"]):
+            if elements and is_semantic_tag(elements[0], spec_in=[ListSpec]):
                 if transparent_tags_pile:
                     element.extend(transparent_tags_pile)
                 element.append(elements.pop(0))
@@ -567,26 +558,38 @@ def render_header(
     elements: Sequence[PageElementOrString],
 ) -> Tag:
     content = context.soup.new_tag("div")
-    for element in elements:
-        if is_segmentation_tag(element, tag_name_in=["arrete_title"]):
+    for element in list(elements):
+        if is_semantic_tag(element, spec_in=[ArreteSpec]):
             content.append(render_arrete_title(context, element))
-        elif is_segmentation_tag(element, tag_name_in=["visa", "motif"]):
+        elif is_semantic_tag(element, spec_in=[VisaSpec, MotifSpec]):
             content.append(render_visa_motif(context, element))
         # All header elements other than the ones above
         # are treated in a generic way.
-        elif is_segmentation_tag(element, tag_name_in=list(HEADER_ELEMENTS_SPECS.keys())):
+        elif is_semantic_tag(
+            element,
+            spec_in=[
+                EmblemSpec,
+                EntitySpec,
+                IdentificationSpec,
+                ArreteSpec,
+                HonorarySpec,
+                VisaSpec,
+                MotifSpec,
+                SupplementaryMotifInfoSpec,
+            ],
+        ):
             content.append(render_header_element(context, element))
-        elif is_segmentation_tag(element, tag_name_in=["table_of_contents"]):
+        elif is_semantic_tag(element, spec_in=[TableOfContentsSpec]):
             content.append(render_table_of_contents(context, element))
-        elif is_segmentation_tag(element, tag_name_in=["page_separator"]):
-            content.append(render_page_separator(context, element))
-        elif is_segmentation_tag(element, tag_name_in=["page_footer"]):
+        elif is_semantic_tag(element, spec_in=[PageSeparatorSpec]):
+            content.append(element)
+        elif is_semantic_tag(element, spec_in=[PageFooterSpec]):
             content.append(render_page_footer(context, element))
-        elif is_segmentation_tag(element, tag_name_in=["image"]):
+        elif is_semantic_tag(element, spec_in=[ImageSpec]):
             content.append(render_image(context, element))
-        elif is_segmentation_tag(element, tag_name_in=["list"]):
+        elif is_semantic_tag(element, spec_in=[ListSpec]):
             content.append(render_list(context, element))
-        elif is_segmentation_tag(element, tag_name_in=["text_span"]):
+        elif is_semantic_tag(element, spec_in=[TextSpanSpec]):
             content.append(
                 make_new_tag(
                     context.soup,
@@ -595,7 +598,7 @@ def render_header(
                 )
             )
 
-        elif is_segmentation_tag(element):
+        elif is_semantic_tag(element):
             raise ValueError(f"Unexpected tag {element.type} in content")
 
         elif isinstance(element, str):
@@ -607,29 +610,27 @@ def render_header_element(
     context: DocumentContext,
     tag: Tag,
 ) -> Tag:
-    input_elements: Sequence[PageElementOrString] = tag.contents
-    elements: list[PageElementOrString] = []
-    tag_name = read_segmentation_tag_name(tag)
-    pattern = HEADER_ELEMENTS_RENDER_PATTERNS[tag_name]
+    contents: list[PageElementOrString] = []
+    spec = get_semantic_tag_spec(tag)
+    pattern = HEADER_ELEMENTS_RENDER_PATTERNS[spec]
 
     for splitted_element in split_elements(
-        input_elements,
+        tag.contents,
         group_text_span_tags_splitter,
     ):
         if isinstance(splitted_element, SplitMatch):
             strings = get_strings(splitted_element.value)
             if pattern is not None:
-                elements.extend(join_split_pile_with_pattern(strings, pattern))
+                contents.extend(join_split_pile_with_pattern(strings, pattern))
             else:
-                elements.extend(strings)
+                contents.extend(strings)
 
         else:
             raise ValueError(f"Unexpected element {splitted_element.value} in header elements")
 
-    return make_semantic_tag(
-        context.soup,
-        HEADER_ELEMENTS_SPECS[tag_name],
-        contents=wrap_in_tag(context.soup, elements, "div"),
+    return replace_children(
+        tag,
+        wrap_in_tag(context.soup, contents, "div"),
     )
 
 
@@ -637,23 +638,22 @@ def render_visa_motif(
     context: DocumentContext,
     tag: Tag,
 ) -> Tag:
-    assert is_segmentation_tag(tag, tag_name_in=["visa", "motif"])
-    elements: list[PageElementOrString] = []
-    tag_name = read_segmentation_tag_name(tag)
+    assert is_semantic_tag(tag, spec_in=[VisaSpec, MotifSpec])
+    contents: list[PageElementOrString] = []
 
     for element in tag.contents:
-        if is_segmentation_tag(element, tag_name_in=["text_span"]):
-            elements.append(get_string(element))
-        elif is_segmentation_tag(element, tag_name_in=["list"]):
-            elements.append(render_list(context, element))
-        elif is_segmentation_tag(element, tag_name_in=["page_separator"]):
-            elements.append(render_page_separator(context, element))
+        if is_semantic_tag(element, spec_in=[TextSpanSpec]):
+            contents.append(get_string(element))
+        elif is_semantic_tag(element, spec_in=[ListSpec]):
+            contents.append(render_list(context, element))
+        elif is_semantic_tag(element, spec_in=[PageSeparatorSpec]):
+            contents.append(element)
         else:
             raise ValueError(f"Unexpected element {element} in visa/motif")
-    return make_semantic_tag(
-        context.soup,
-        HEADER_ELEMENTS_SPECS[tag_name],
-        contents=elements,
+
+    return replace_children(
+        tag,
+        contents,
     )
 
 

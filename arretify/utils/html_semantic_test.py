@@ -23,6 +23,7 @@ import unittest
 from bs4 import BeautifulSoup
 
 from .html_semantic import (
+    IntList,
     SemanticTagData,
     SemanticTagSpec,
     create_semantic_tag_spec_no_data,
@@ -34,6 +35,7 @@ from .html_semantic import (
     make_semantic_tag,
     set_semantic_tag_data,
     get_semantic_tag_data,
+    enum_list_parser,
     enum_list_serializer,
     css_selector,
 )
@@ -173,9 +175,10 @@ class TestSemanticTagData(unittest.TestCase):
 
         class Model(SemanticTagData):
             flag: Bool
-            items: StrList
+            str_items: StrList
+            int_items: IntList
             color: Annotated[Color, enum_serializer]
-            color_choices: Annotated[list[Color], enum_list_serializer]
+            color_choices: Annotated[list[Color], enum_list_parser, enum_list_serializer]
 
         self.Model = Model
         self.Color = Color
@@ -204,35 +207,51 @@ class TestSemanticTagData(unittest.TestCase):
         # Act
         m = self.Model(
             flag=True,
-            items=["a", "b"],
+            str_items=["a", "b"],
+            int_items=[1, 2],
             color=self.Color.RED,
             color_choices=[self.Color.RED, self.Color.GREEN],
         )
 
         # Assert
         assert m.flag is True
-        assert m.items == ["a", "b"]
+        assert m.str_items == ["a", "b"]
         assert m.color == self.Color.RED
         assert m.model_dump() == {
             "flag": "true",
-            "items": "a,b",
+            "str_items": "a,b",
+            "int_items": "1,2",
             "color": "red",
             "color_choices": "red,green",
         }
 
     def test_build_with_string_values(self) -> None:
         # Act
-        m = self.Model(flag="false", items="a, b", color="green", color_choices=["green", "red"])
+        m = self.Model(
+            flag="false",
+            str_items="a, b",
+            int_items="1,2",
+            color="green",
+            color_choices="green,red",
+        )
 
         # Assert
         assert m.flag is False
-        assert m.items == ["a", "b"]
+        assert m.str_items == ["a", "b"]
+        assert m.int_items == [1, 2]
         assert m.color == self.Color.GREEN
-        assert m.model_dump() == {"items": "a,b", "color": "green", "color_choices": "green,red"}
+        assert m.model_dump() == {
+            "str_items": "a,b",
+            "int_items": "1,2",
+            "color": "green",
+            "color_choices": "green,red",
+        }
 
     def test_error_if_string_item_with_comma(self) -> None:
         # Arrange
-        m = self.Model(flag=True, items=["a,"], color="red", color_choices=["red", "green"])
+        m = self.Model(
+            flag=True, str_items=["a,"], int_items=[1], color="red", color_choices=["red", "green"]
+        )
 
         # Act & Assert
         with self.assertRaises(ValueError):

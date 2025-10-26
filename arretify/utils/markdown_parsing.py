@@ -92,7 +92,7 @@ def parse_markdown_table(lines: Sequence[str]) -> Tag:
         return make_semantic_tag(
             soup,
             ErrorSpec,
-            data=ErrorSpec.data_model(error_codes=[ErrorCodes.markdown_parsing.value]),
+            data=ErrorSpec.data_model(error_codes=[ErrorCodes.markdown_parsing]),
             contents=[markdown_str],
         )
 

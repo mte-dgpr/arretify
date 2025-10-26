@@ -187,7 +187,7 @@ SectionTitleSpecs = [
 
 
 class AlineaData(SemanticTagData):
-    number: str
+    number: int
 
 
 AlineaSpec: SemanticTagSpec[AlineaData] = SemanticTagSpec(
