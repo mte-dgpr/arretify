@@ -20,12 +20,14 @@ from typing import Sequence
 
 from bs4 import Tag
 
-from .core import (
-    PageElementOrString,
-    is_segmentation_tag,
-    read_segmentation_tag_name,
-    read_segmentation_tag_data,
-    make_segmentation_tag,
+from arretify.step_segmentation.semantic_tag_specs import TextSpanData, TextSpanSpec
+from arretify.types import PageElementOrString
+from arretify.utils.html import is_tag
+from arretify.utils.html_semantic import (
+    get_semantic_tag_data,
+    get_semantic_tag_spec,
+    is_semantic_tag,
+    make_semantic_tag,
 )
 
 
@@ -41,10 +43,12 @@ def assert_elements_equal(
     ), f"[{path}] Expected {[type(el) for el in expected]} tags, got {[type(el) for el in actual]}"
     for i, (a, e) in enumerate(zip(actual, expected)):
         child_path = f"{path}/{i}"
-        if is_segmentation_tag(e):
-            assert is_segmentation_tag(
-                a, tag_name_in=[read_segmentation_tag_name(e)]
-            ), f"[{child_path}] Expected {e}, got {a}"
+        if is_semantic_tag(e):
+            assert is_semantic_tag(a), f"[{child_path}] Expected semantic tag, got : {a}"
+            assert get_semantic_tag_spec(a) == get_semantic_tag_spec(e), (
+                f"[{child_path}] Expected tag spec '{get_semantic_tag_spec(e)}', "
+                f"got '{get_semantic_tag_spec(a)}'"
+            )
             # if `ignore_data_if_omitted` is True, test data only
             # if defined in test expectations.
             _assert_data_equal(
@@ -61,9 +65,18 @@ def assert_elements_equal(
                 ignore_data_if_omitted=ignore_data_if_omitted,
                 ignore_text_span_data=ignore_text_span_data,
             )
+        elif is_tag(a):
+            assert is_tag(e), f"[{child_path}] Expected Tag, got : {e}"
+            assert a.name == e.name, f"[{child_path}] Expected tag name '{e.name}', got '{a.name}'"
+            assert_elements_equal(
+                a.contents,
+                e.contents,
+                path=child_path,
+                ignore_data_if_omitted=ignore_data_if_omitted,
+                ignore_text_span_data=ignore_text_span_data,
+            )
         else:
-            assert isinstance(a, str), f"[{child_path}] Expected str, got {a}"
-            assert isinstance(e, str)
+            assert isinstance(a, type(e)), f"[{child_path}] Expected {type(e)}, got {type(a)}"
             assert a == e, f"[{child_path}] Expected {e}, got {a}"
 
 
@@ -74,22 +87,23 @@ def _assert_data_equal(
     ignore_text_span_data: bool = False,
     path="",
 ):
-    actual_data = read_segmentation_tag_data(actual)
-    expected_data = read_segmentation_tag_data(expected)
+    spec = get_semantic_tag_spec(expected)
+    actual_data = get_semantic_tag_data(spec, actual)
+    expected_data = get_semantic_tag_data(spec, expected)
     if ignore_data_if_omitted is True and not expected_data:
         return
-    if is_segmentation_tag(expected, tag_name_in=["text_span"]) and ignore_text_span_data is True:
+    if is_semantic_tag(expected, spec_in=[TextSpanSpec]) and ignore_text_span_data is True:
         return
     assert actual_data == expected_data, f"[{path}] Expected {expected_data}, got {actual_data}"
 
 
 def make_text_spans(soup, *lines: str) -> list[Tag]:
     return [
-        make_segmentation_tag(
+        make_semantic_tag(
             soup,
-            "text_span",
+            TextSpanSpec,
             contents=[line],
-            data=dict(start=[0, 0, 0], end=[0, 0, 0]),
+            data=TextSpanData(start=[0, 0, 0], end=[0, 0, 0]),
         )
         for line in lines
     ]

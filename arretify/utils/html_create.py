@@ -53,7 +53,7 @@ def make_new_tag(
     # We must be careful not to move elements from one part of the tree to another
     # because that might have unexpected side-effects.
     # For example, if iterating over the children of a tag and moving one of them
-    # to a new tag, the list currenlty being iterated is modified.
+    # to a new tag, the list currently being iterated is modified.
     # This is why we work with copies here.
     cloned_contents: list[PageElementOrString]
     if contents is None:

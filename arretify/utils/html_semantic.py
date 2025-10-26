@@ -63,6 +63,21 @@ def _serialize_str_list(v: list[str]) -> str:
     raise ValueError(f'Invalid string list value: "{v}"')
 
 
+def _parse_int_list(v: list[int] | str) -> list[int]:
+    if isinstance(v, list):
+        return v
+    if isinstance(v, str):
+        str_items = _parse_str_list(v)
+        return [int(item) for item in str_items]
+    raise ValueError(f'Invalid integer list value: "{v}"')
+
+
+def _serialize_int_list(v: list[int]) -> str:
+    if isinstance(v, list):
+        return _serialize_str_list([str(item) for item in v])
+    raise ValueError(f'Invalid integer list value: "{v}"')
+
+
 def _serialize_enum_list(v: list[Enum]) -> str:
     return _serialize_str_list([e.value for e in v])
 
@@ -72,6 +87,7 @@ def _serialize_enum(v: Enum) -> str:
 
 
 enum_serializer = PlainSerializer(_serialize_enum, return_type=str)
+enum_list_parser = BeforeValidator(_parse_str_list)
 enum_list_serializer = PlainSerializer(_serialize_enum_list, return_type=str)
 
 
@@ -85,12 +101,19 @@ StrList = Annotated[
 ]
 
 
+IntList = Annotated[
+    list[int],
+    BeforeValidator(_parse_int_list),
+    PlainSerializer(_serialize_int_list, return_type=str),
+]
+
+
 # -------------------- Base models -------------------- #
 _REGISTRY: dict[str, "SemanticTagSpec"] = {}
 
 
 class SemanticTagData(BaseModel):
-    error_codes: Annotated[list[ErrorCodes], enum_list_serializer] | None = None
+    error_codes: Annotated[list[ErrorCodes], enum_list_parser, enum_list_serializer] | None = None
 
     model_config = ConfigDict(extra="forbid", frozen=True)
 
@@ -117,7 +140,9 @@ class SemanticTagData(BaseModel):
 TSemanticTagData = TypeVar("TSemanticTagData", bound=SemanticTagData)
 
 
-@dataclass(frozen=True)
+# Set both frozen and eq to True to make dataclass hashable.
+# This is required to use SemanticTagSpec as dict keys if needed.
+@dataclass(frozen=True, eq=True)
 class SemanticTagSpec(Generic[TSemanticTagData]):
     """
     Defines the structure and behavior of a semantic HTML tag type.
@@ -166,13 +191,13 @@ def is_semantic_tag(
     if not is_tag(tag, tag_name_in=tag_name_in):
         return False
 
-    actual_semantic_name = tag.get(_SPEC_DATA_ATTR, None)
-    if actual_semantic_name is None:
+    actual_spec_name = tag.get(_SPEC_DATA_ATTR, None)
+    if actual_spec_name is None:
         return False
 
     if spec_in is not None:
-        semantic_name_in = {tag_spec.spec_name for tag_spec in spec_in}
-        if actual_semantic_name not in semantic_name_in:
+        spec_name_in = {tag_spec.spec_name for tag_spec in spec_in}
+        if actual_spec_name not in spec_name_in:
             return False
     return True
 
@@ -202,6 +227,18 @@ def make_semantic_tag(
     set_semantic_tag_data(spec, tag, data)
 
     return tag
+
+
+def get_semantic_tag_spec(tag: Tag) -> SemanticTagSpec:
+    actual_spec_name = tag.get(_SPEC_DATA_ATTR, None)
+    if actual_spec_name is None:
+        raise ValueError("Tag is not a semantic tag (missing spec attribute)")
+
+    spec = _REGISTRY.get(actual_spec_name, None)
+    if spec is None:
+        raise ValueError(f"Unknown semantic tag spec: {actual_spec_name}")
+
+    return spec
 
 
 def get_semantic_tag_data(spec: SemanticTagSpec[TSemanticTagData], tag: Tag) -> TSemanticTagData:

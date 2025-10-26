@@ -22,9 +22,21 @@ import logging
 from bs4 import Tag
 
 from arretify.parsing_utils.patterns import is_continuing_sentence
+from arretify.step_segmentation.semantic_tag_specs import (
+    ListSpec,
+    TableDescriptionSpec,
+    TableSpec,
+    BlockquoteSpec,
+    AddressSpec,
+    ImageSpec,
+    TextSpanSpec,
+)
 from arretify.types import DocumentContext, PageElementOrString
 from arretify.utils.functional import iter_func_to_list, chain_functions
 from arretify.utils.html_semantic import (
+    SemanticTagData,
+    get_semantic_tag_data,
+    is_semantic_tag,
     make_semantic_tag,
 )
 from arretify.utils.html_create import (
@@ -47,7 +59,12 @@ from arretify.regex_utils import (
     normalize_string,
 )
 from arretify.errors import ErrorCodes
-from arretify.semantic_tag_specs import ErrorSpec
+from arretify.semantic_tag_specs import (
+    ErrorSpec,
+    PageSeparatorSpec,
+    PageFooterSpec,
+    TableOfContentsSpec,
+)
 from arretify.regex_utils import split_string_with_regex
 from arretify.regex_utils import map_matches
 from arretify.utils.split_merge import (
@@ -68,9 +85,6 @@ from arretify.law_data.french_addresses import (
 )
 
 from .core import (
-    is_segmentation_tag,
-    make_segmentation_tag,
-    read_segmentation_tag_data,
     make_single_line_splitter_for_text_spans,
     get_string,
     get_strings,
@@ -80,7 +94,7 @@ from .core import (
     pick_if_transparent_tag_followed_by_match,
     make_pattern_splitter,
 )
-from .document_elements import render_table_of_contents, render_page_footer, render_page_separator
+from .document_elements import render_table_of_contents, render_page_footer
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -121,11 +135,9 @@ def _make_table_tags(
     context: DocumentContext, match: _TableSplitterMatch
 ) -> Iterator[PageElementOrString]:
     table_pile, table_description_pile = match
-    yield make_segmentation_tag(context.soup, "table", contents=table_pile)
+    yield make_semantic_tag(context.soup, TableSpec, contents=table_pile)
     if table_description_pile:
-        yield make_segmentation_tag(
-            context.soup, "table_description", contents=table_description_pile
-        )
+        yield make_semantic_tag(context.soup, TableDescriptionSpec, contents=table_description_pile)
 
 
 def _table_splitter(
@@ -161,12 +173,12 @@ def render_table(
     has_table_header = False
     transparent_tags: list[Tuple[int, Tag]] = []
     for element in tag.children:
-        if is_segmentation_tag(element, tag_name_in=["text_span"]):
+        if is_semantic_tag(element, spec_in=[TextSpanSpec]):
             element_str = get_string(element)
             pile.append(element_str)
             if bool(TABLE_HEADER_SEPARATOR_PATTERN.match(element_str)):
                 has_table_header = True
-        elif is_segmentation_tag(element, tag_name_in=["page_separator"]):
+        elif is_semantic_tag(element, spec_in=[PageSeparatorSpec]):
             table_tag = parse_markdown_table(pile)
             # Get the right table row for inserting the transparent tag.
             # If the table has a header, the `pile` contains a header
@@ -183,9 +195,7 @@ def render_table(
     table_rows = table_tag.find_all("tr")
     for row_index, transparent_tag in transparent_tags:
         if row_index < len(table_rows) and row_index >= 0:
-            table_rows[row_index].select("td, th")[-1].append(
-                render_page_separator(context, transparent_tag)
-            )
+            table_rows[row_index].select("td, th")[-1].append(transparent_tag)
         else:
             raise ValueError(f"Invalid index {row_index} in table rendering. ")
 
@@ -197,11 +207,11 @@ def render_table_description(
     tag: Tag,
 ) -> Iterator[PageElementOrString]:
     for element in tag.children:
-        if is_segmentation_tag(element, tag_name_in=["text_span"]):
+        if is_semantic_tag(element, spec_in=[TextSpanSpec]):
             yield context.soup.new_tag("br")
             yield get_string(element)
-        elif is_segmentation_tag(element, tag_name_in=["page_separator"]):
-            yield render_page_separator(context, element)
+        elif is_semantic_tag(element, spec_in=[PageSeparatorSpec]):
+            yield element
         else:
             raise ValueError(
                 f"Unexpected element type {type(element)} in table description rendering."
@@ -256,10 +266,10 @@ def _make_list_splitter(
 
             # If we get a line that does not match the list pattern,
             # we check if it continues the previous sentence.
-            elif is_segmentation_tag(element, tag_name_in=["text_span"]):
+            elif is_semantic_tag(element, spec_in=[TextSpanSpec]):
                 # First get the previous list element in the pile.
                 j = len(pile) - 1
-                while j >= 0 and not is_segmentation_tag(pile[j], tag_name_in=["text_span"]):
+                while j >= 0 and not is_semantic_tag(pile[j], spec_in=[TextSpanSpec]):
                     j -= 1
                 if j < 0:
                     raise RuntimeError("Expected to find a list element in the pile.")
@@ -297,7 +307,7 @@ def parse_lists(
             elements,
             _make_list_splitter(context),
         ),
-        lambda pile: make_segmentation_tag(context.soup, "list", contents=pile),
+        lambda pile: make_semantic_tag(context.soup, ListSpec, contents=pile),
     )
 
 
@@ -322,11 +332,11 @@ def _render_list(
     while elements:
         element = elements[0]
 
-        if is_segmentation_tag(element, tag_name_in=["page_separator"]):
-            list_pile[-1].append(render_page_separator(context, element))
+        if is_semantic_tag(element, spec_in=[PageSeparatorSpec]):
+            list_pile[-1].append(element)
             elements.pop(0)
 
-        elif is_segmentation_tag(element, tag_name_in=["text_span"]):
+        elif is_semantic_tag(element, spec_in=[TextSpanSpec]):
             current_indentation = _list_indentation(get_string(element))
 
             if current_indentation == ref_indentation:
@@ -390,10 +400,13 @@ def _make_blockquote_tag(context: DocumentContext, match: _BlockquoteSplitterMat
     pile, error_code = match
     if error_code is None:
         contents = chain_functions(context, pile, [parse_tables, parse_lists, parse_images])
-        return make_segmentation_tag(context.soup, "blockquote", contents=contents)
+        return make_semantic_tag(context.soup, BlockquoteSpec, contents=contents)
     else:
-        return make_segmentation_tag(
-            context.soup, "error", contents=pile, data=dict(error_codes=[error_code.value])
+        return make_semantic_tag(
+            context.soup,
+            ErrorSpec,
+            contents=get_strings(pile),
+            data=SemanticTagData(error_codes=[error_code]),
         )
 
 
@@ -407,15 +420,15 @@ def _blockquote_splitter(
 
     # At this point, we know that the first element is a blockquote start
     element = elements[0]
-    assert is_segmentation_tag(element, tag_name_in=["text_span"])
+    assert is_semantic_tag(element, spec_in=[TextSpanSpec])
     first_str_index, first_str = _get_first_str(element)
-    blockquote_start = read_segmentation_tag_data(element)["start"]
+    blockquote_start = get_semantic_tag_data(TextSpanSpec, element).start
     # Remove opening quote
     element.contents[first_str_index].replace_with(BLOCKQUOTE_START_PATTERN.sub("", first_str))
     quotes_depth_count = 1
 
     for i, element in enumerate(elements):
-        if not is_segmentation_tag(element, tag_name_in=["text_span"]):
+        if not is_semantic_tag(element, spec_in=[TextSpanSpec]):
             continue
 
         # Ignore case when the line contains a balanced number of quotes.
@@ -468,8 +481,8 @@ def render_blockquote(
     tag: Tag,
 ) -> Tag:
     blockquote_tag = context.soup.new_tag("blockquote")
-    for element in tag.contents:
-        if is_segmentation_tag(element, tag_name_in=["text_span"]):
+    for element in list(tag.contents):
+        if is_semantic_tag(element, spec_in=[TextSpanSpec]):
             blockquote_tag.append(
                 make_new_tag(
                     context.soup,
@@ -479,7 +492,7 @@ def render_blockquote(
                     contents=render_inline_quotes(context, get_string(element)),
                 )
             )
-        elif is_segmentation_tag(element):
+        elif is_semantic_tag(element):
             blockquote_tag.extend(render_basic_elements(context, element))
 
     return blockquote_tag
@@ -498,7 +511,7 @@ def parse_images(
             elements,
             make_single_line_splitter_for_text_spans(_is_image),
         ),
-        lambda children: make_segmentation_tag(context.soup, "image", contents=children),
+        lambda children: make_semantic_tag(context.soup, ImageSpec, contents=children),
     )
 
 
@@ -545,7 +558,7 @@ def parse_addresses(
             elements,
             _address_splitter,
         ),
-        lambda address: make_segmentation_tag(context.soup, "address", contents=[address]),
+        lambda address: make_semantic_tag(context.soup, AddressSpec, contents=[address]),
     )
 
 
@@ -626,9 +639,9 @@ def render_text_span(
         if isinstance(element, str):
             # If this is not the last element, we add a space as separator.
             yield element + " " * int(i < len(tag.contents) - 1)
-        elif is_segmentation_tag(element, tag_name_in=["page_separator"]):
-            yield render_page_separator(context, element)
-        elif is_segmentation_tag(element, tag_name_in=["address"]):
+        elif is_semantic_tag(element, spec_in=[PageSeparatorSpec]):
+            yield element
+        elif is_semantic_tag(element, spec_in=[AddressSpec]):
             yield render_address(context, element)
         else:
             raise ValueError(f"Unexpected element type {type(element)} in text span rendering.")
@@ -638,37 +651,25 @@ def render_basic_elements(
     context: DocumentContext,
     tag: Tag,
 ) -> Iterator[PageElementOrString]:
-    if is_segmentation_tag(tag, tag_name_in=["list"]):
+    if is_semantic_tag(tag, spec_in=[ListSpec]):
         yield render_list(context, tag)
-    elif is_segmentation_tag(tag, tag_name_in=["table"]):
+    elif is_semantic_tag(tag, spec_in=[TableSpec]):
         yield render_table(context, tag)
-    elif is_segmentation_tag(tag, tag_name_in=["table_description"]):
+    elif is_semantic_tag(tag, spec_in=[TableDescriptionSpec]):
         yield from render_table_description(context, tag)
-    elif is_segmentation_tag(tag, tag_name_in=["blockquote"]):
+    elif is_semantic_tag(tag, spec_in=[BlockquoteSpec]):
         yield render_blockquote(context, tag)
-    elif is_segmentation_tag(tag, tag_name_in=["table_of_contents"]):
+    elif is_semantic_tag(tag, spec_in=[TableOfContentsSpec]):
         yield render_table_of_contents(context, tag)
-    elif is_segmentation_tag(tag, tag_name_in=["page_footer"]):
+    elif is_semantic_tag(tag, spec_in=[PageFooterSpec]):
         yield render_page_footer(context, tag)
-    elif is_segmentation_tag(tag, tag_name_in=["page_separator"]):
-        yield render_page_separator(context, tag)
-    elif is_segmentation_tag(tag, tag_name_in=["image"]):
+    elif is_semantic_tag(tag, spec_in=[PageSeparatorSpec]):
+        yield tag
+    elif is_semantic_tag(tag, spec_in=[ImageSpec]):
         yield render_image(context, tag)
-    elif is_segmentation_tag(tag, tag_name_in=["error"]):
-        yield render_error(context, tag)
-    elif is_segmentation_tag(tag, tag_name_in=["text_span"]):
+    elif is_semantic_tag(tag, spec_in=[ErrorSpec]):
+        yield tag
+    elif is_semantic_tag(tag, spec_in=[TextSpanSpec]):
         yield from render_text_span(context, tag)
     else:
         raise ValueError(f"Unknown tag type '{tag.name}' in render_basic_elements.")
-
-
-def render_error(
-    context: DocumentContext,
-    tag: Tag,
-) -> Tag:
-    return make_semantic_tag(
-        context.soup,
-        ErrorSpec,
-        data=ErrorSpec.data_model(error_codes=read_segmentation_tag_data(tag)["error_codes"]),
-        contents=[get_string(n) for n in tag.contents],
-    )

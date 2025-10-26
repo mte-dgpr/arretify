@@ -25,7 +25,9 @@ from .document_elements import (
 )
 from .testing import assert_elements_equal, make_text_spans
 from arretify.utils.testing import create_document_context, normalized_html_str
-from .core import make_segmentation_tag
+from arretify.utils.html_semantic import make_semantic_tag
+from arretify.semantic_tag_specs import PageSeparatorData, PageSeparatorSpec, TableOfContentsSpec
+from .semantic_tag_specs import TextSpanData, TextSpanSpec
 
 
 class BaseTestCase(unittest.TestCase):
@@ -51,44 +53,50 @@ class TestInitializeDocumentStructure(BaseTestCase):
         assert_elements_equal(
             result,
             [
-                make_segmentation_tag(self.soup, "page_separator", data=dict(page_index=0)),
-                make_segmentation_tag(
+                make_semantic_tag(
+                    self.soup, PageSeparatorSpec, data=PageSeparatorData(page_index=0)
+                ),
+                make_semantic_tag(
                     self.soup,
-                    "text_span",
+                    TextSpanSpec,
                     contents=["Line 1"],
-                    data=dict(start=(0, 0, 0), end=(0, 0, 5)),
+                    data=TextSpanData(start=[0, 0, 0], end=[0, 0, 5]),
                 ),
-                make_segmentation_tag(
+                make_semantic_tag(
                     self.soup,
-                    "text_span",
+                    TextSpanSpec,
                     contents=["Line 2"],
-                    data=dict(start=(0, 1, 0), end=(0, 1, 5)),
+                    data=TextSpanData(start=[0, 1, 0], end=[0, 1, 5]),
                 ),
-                make_segmentation_tag(
+                make_semantic_tag(
                     self.soup,
-                    "text_span",
+                    TextSpanSpec,
                     contents=["Line 3"],
-                    data=dict(start=(0, 2, 0), end=(0, 2, 5)),
+                    data=TextSpanData(start=[0, 2, 0], end=[0, 2, 5]),
                 ),
-                make_segmentation_tag(self.soup, "page_separator", data=dict(page_index=1)),
-                make_segmentation_tag(
+                make_semantic_tag(
+                    self.soup, PageSeparatorSpec, data=PageSeparatorData(page_index=1)
+                ),
+                make_semantic_tag(
                     self.soup,
-                    "text_span",
+                    TextSpanSpec,
                     contents=["Line 4"],
-                    data=dict(start=(1, 0, 0), end=(1, 0, 5)),
+                    data=TextSpanData(start=[1, 0, 0], end=[1, 0, 5]),
                 ),
-                make_segmentation_tag(
+                make_semantic_tag(
                     self.soup,
-                    "text_span",
+                    TextSpanSpec,
                     contents=["Line 5"],
-                    data=dict(start=(1, 1, 0), end=(1, 1, 5)),
+                    data=TextSpanData(start=[1, 1, 0], end=[1, 1, 5]),
                 ),
-                make_segmentation_tag(self.soup, "page_separator", data=dict(page_index=2)),
-                make_segmentation_tag(
+                make_semantic_tag(
+                    self.soup, PageSeparatorSpec, data=PageSeparatorData(page_index=2)
+                ),
+                make_semantic_tag(
                     self.soup,
-                    "text_span",
+                    TextSpanSpec,
                     contents=["Line 6"],
-                    data=dict(start=(2, 0, 0), end=(2, 0, 5)),
+                    data=TextSpanData(start=[2, 0, 0], end=[2, 0, 5]),
                 ),
             ],
         )
@@ -110,9 +118,9 @@ class TestParseTablesOfContents(BaseTestCase):
             elements,
             [
                 *make_text_spans(self.soup, "Line 1"),
-                make_segmentation_tag(
+                make_semantic_tag(
                     self.soup,
-                    "table_of_contents",
+                    TableOfContentsSpec,
                     contents=make_text_spans(
                         self.soup,
                         "Sommaire",
@@ -130,13 +138,28 @@ class TestRenderTableOfContents(BaseTestCase):
 
     def test_simple_render(self):
         # Arrange
-        tag = make_segmentation_tag(
+        tag = make_semantic_tag(
             self.soup,
-            "table_of_contents",
+            TableOfContentsSpec,
             contents=[
-                make_segmentation_tag(self.soup, "text_span", contents=["Sommaire"]),
-                make_segmentation_tag(self.soup, "text_span", contents=["bla ..... page 1"]),
-                make_segmentation_tag(self.soup, "text_span", contents=["blo ..... page 2"]),
+                make_semantic_tag(
+                    self.soup,
+                    TextSpanSpec,
+                    contents=["Sommaire"],
+                    data=TextSpanData(start=[0, 0, 0], end=[0, 0, 5]),
+                ),
+                make_semantic_tag(
+                    self.soup,
+                    TextSpanSpec,
+                    contents=["bla ..... page 1"],
+                    data=TextSpanData(start=[0, 1, 0], end=[0, 1, 5]),
+                ),
+                make_semantic_tag(
+                    self.soup,
+                    TextSpanSpec,
+                    contents=["blo ..... page 2"],
+                    data=TextSpanData(start=[0, 2, 0], end=[0, 2, 5]),
+                ),
             ],
         )
 

@@ -26,6 +26,7 @@ from arretify.semantic_tag_specs import (
     PageSeparatorSpec,
     PageFooterSpec,
 )
+from arretify.step_segmentation.semantic_tag_specs import TextSpanData, TextSpanSpec
 from arretify.regex_utils import (
     PatternProxy,
     join_with_or,
@@ -35,6 +36,7 @@ from arretify.types import DocumentContext, PageElementOrString
 from arretify.utils.strings import split_on_newlines
 from arretify.utils.html_semantic import (
     make_semantic_tag,
+    is_semantic_tag,
 )
 from arretify.utils.html_create import (
     wrap_in_tag,
@@ -45,9 +47,6 @@ from arretify.utils.split_merge import (
     map_splitted_elements,
 )
 from .core import (
-    is_segmentation_tag,
-    make_segmentation_tag,
-    read_segmentation_tag_data,
     make_while_splitter_for_text_spans,
     make_probe_from_pattern_proxy,
     get_string,
@@ -98,9 +97,7 @@ def parse_tables_of_contents(
                 _table_of_contents_while_condition,
             ),
         ),
-        lambda pile: make_segmentation_tag(
-            context.soup, "table_of_contents", contents=pile, data=None
-        ),
+        lambda pile: make_semantic_tag(context.soup, TableOfContentsSpec, contents=pile),
     )
 
 
@@ -119,7 +116,7 @@ def _table_of_contents_while_condition(elements: Sequence[PageElementOrString], 
     # between text segments.
     next_elements = elements[index : index + 3]
     if any(
-        is_segmentation_tag(next_elements[i], tag_name_in=["text_span"])
+        is_semantic_tag(next_elements[i], spec_in=[TextSpanSpec])
         and _is_table_of_contents(next_elements, i)
         for i in range(len(next_elements))
     ):
@@ -136,9 +133,7 @@ def parse_page_footers(
             elements,
             make_while_splitter_for_text_spans(_is_page_footer, _is_page_footer),
         ),
-        lambda children: make_segmentation_tag(
-            context.soup, "page_footer", contents=children, data=None
-        ),
+        lambda children: make_semantic_tag(context.soup, PageFooterSpec, contents=children),
     )
 
 
@@ -148,16 +143,19 @@ def initialize_document_structure(
     pages: Sequence[str],
 ) -> Iterator[PageElementOrString]:
     for page_index, page_text in enumerate(pages):
-        yield make_segmentation_tag(
-            context.soup, "page_separator", contents=[], data=dict(page_index=page_index)
+        yield make_semantic_tag(
+            context.soup,
+            PageSeparatorSpec,
+            contents=[],
+            data=PageSeparatorData(page_index=page_index),
         )
         page_lines = split_on_newlines(page_text)
         for line_index, line in enumerate(page_lines):
-            yield make_segmentation_tag(
+            yield make_semantic_tag(
                 context.soup,
-                "text_span",
+                TextSpanSpec,
                 contents=[line],
-                data=dict(
+                data=TextSpanData(
                     start=[page_index, line_index, 0],
                     end=[page_index, line_index, len(line) - 1],
                 ),
@@ -168,18 +166,18 @@ def render_table_of_contents(
     context: DocumentContext,
     tag: Tag,
 ) -> Tag:
-    page_elements: list[PageElementOrString] = []
-    for element in tag.children:
-        if is_segmentation_tag(element, tag_name_in=["text_span"]):
-            page_elements.append(get_string(element))
-        elif is_segmentation_tag(element, tag_name_in=["page_separator"]):
-            page_elements.append(render_page_separator(context, element))
+    contents: list[PageElementOrString] = []
+    for element in tag.contents:
+        if is_semantic_tag(element, spec_in=[TextSpanSpec]):
+            contents.append(get_string(element))
+        elif is_semantic_tag(element, spec_in=[PageSeparatorSpec]):
+            contents.append(element)
         else:
             raise ValueError(f"Unexpected element in table of contents: {element}")
     return make_semantic_tag(
         context.soup,
         TableOfContentsSpec,
-        contents=wrap_in_tag(context.soup, page_elements, "div"),
+        contents=wrap_in_tag(context.soup, contents, "div"),
     )
 
 
@@ -191,15 +189,4 @@ def render_page_footer(
         context.soup,
         PageFooterSpec,
         contents=wrap_in_tag(context.soup, [get_string(tag)], "div"),
-    )
-
-
-def render_page_separator(
-    context: DocumentContext,
-    tag: Tag,
-) -> Tag:
-    return make_semantic_tag(
-        context.soup,
-        PageSeparatorSpec,
-        data=PageSeparatorData(page_index=read_segmentation_tag_data(tag)["page_index"]),
     )
