@@ -26,7 +26,10 @@ from arretify.semantic_tag_specs import (
     PageSeparatorSpec,
     PageFooterSpec,
 )
-from arretify.step_segmentation.semantic_tag_specs import TextSpanData, TextSpanSpec
+from arretify.step_segmentation.semantic_tag_specs import (
+    TextSpanSegmentationData,
+    TextSpanSegmentationSpec,
+)
 from arretify.regex_utils import (
     PatternProxy,
     join_with_or,
@@ -116,7 +119,7 @@ def _table_of_contents_while_condition(elements: Sequence[PageElementOrString], 
     # between text segments.
     next_elements = elements[index : index + 3]
     if any(
-        is_semantic_tag(next_elements[i], spec_in=[TextSpanSpec])
+        is_semantic_tag(next_elements[i], spec_in=[TextSpanSegmentationSpec])
         and _is_table_of_contents(next_elements, i)
         for i in range(len(next_elements))
     ):
@@ -153,9 +156,9 @@ def initialize_document_structure(
         for line_index, line in enumerate(page_lines):
             yield make_semantic_tag(
                 context.soup,
-                TextSpanSpec,
+                TextSpanSegmentationSpec,
                 contents=[line],
-                data=TextSpanData(
+                data=TextSpanSegmentationData(
                     start=[page_index, line_index, 0],
                     end=[page_index, line_index, len(line) - 1],
                 ),
@@ -168,7 +171,7 @@ def render_table_of_contents(
 ) -> Tag:
     contents: list[PageElementOrString] = []
     for element in tag.contents:
-        if is_semantic_tag(element, spec_in=[TextSpanSpec]):
+        if is_semantic_tag(element, spec_in=[TextSpanSegmentationSpec]):
             contents.append(get_string(element))
         elif is_semantic_tag(element, spec_in=[PageSeparatorSpec]):
             contents.append(element)

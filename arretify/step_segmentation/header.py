@@ -51,9 +51,9 @@ from arretify.semantic_tag_specs import (
     TableOfContentsSpec,
 )
 from arretify.step_segmentation.semantic_tag_specs import (
-    ListSpec,
-    TextSpanSpec,
-    ImageSpec,
+    ListSegmentationSpec,
+    TextSpanSegmentationSpec,
+    ImageSegmentationSpec,
 )
 from arretify.regex_utils import (
     PatternProxy,
@@ -216,7 +216,7 @@ VISA_MOTIFS_PROBES: Dict[SemanticTagSpec, Probe[PageElementOrString]] = {
 
 
 def _is_nothing_else_than(spec: SemanticTagSpec, element: PageElementOrString) -> bool:
-    return is_semantic_tag(element, spec_in=[TextSpanSpec]) and not any(
+    return is_semantic_tag(element, spec_in=[TextSpanSegmentationSpec]) and not any(
         bool(HEADER_ELEMENTS_PATTERNS[other_spec].match(get_string(element)))
         for other_spec in HEADER_ELEMENTS_PATTERNS
         if other_spec != spec
@@ -404,14 +404,14 @@ def _parse_visa_and_motif_elements_pass1(
     # into visa or motif tags.
     for element in elements:
         is_list_of_visas_or_motifs = False
-        if is_semantic_tag(element, spec_in=[ListSpec]):
+        if is_semantic_tag(element, spec_in=[ListSegmentationSpec]):
             assert len(element.contents) > 0, "List tag should not be empty"
             is_list_of_visas_or_motifs = VISA_MOTIFS_PROBES[spec](element.contents, 0)
 
         if is_list_of_visas_or_motifs:
             assert is_tag(element)
             for list_item_element in element.contents:
-                if is_semantic_tag(list_item_element, spec_in=[TextSpanSpec]):
+                if is_semantic_tag(list_item_element, spec_in=[TextSpanSegmentationSpec]):
                     yield make_semantic_tag(context.soup, spec, contents=[list_item_element])
                 else:
                     raise ValueError(f"Unexpected element {list_item_element}")
@@ -463,7 +463,7 @@ def _parse_visa_and_motif_elements_pass2(
     #   Vu :
     #   - blabla
     #   - bloblo
-    elif elements and is_semantic_tag(elements[0], spec_in=[ListSpec]):
+    elif elements and is_semantic_tag(elements[0], spec_in=[ListSegmentationSpec]):
         # Add the "Vu :" to the header
         yield from first_tag.children
         while elements:
@@ -471,14 +471,14 @@ def _parse_visa_and_motif_elements_pass2(
             # We're a bit lenient here and accept a few unassigned_line tags,
             # as random text sometimes interferes with the parsing.
             if is_semantic_tag(element, spec_in=TRANSPARENT_TAG_SPECS) or is_semantic_tag(
-                element, spec_in=[TextSpanSpec]
+                element, spec_in=[TextSpanSegmentationSpec]
             ):
                 yield elements.pop(0)
 
-            elif is_semantic_tag(element, spec_in=[ListSpec]):
+            elif is_semantic_tag(element, spec_in=[ListSegmentationSpec]):
                 elements.pop(0)
                 for list_item_element in element.children:
-                    if is_semantic_tag(list_item_element, spec_in=[TextSpanSpec]):
+                    if is_semantic_tag(list_item_element, spec_in=[TextSpanSegmentationSpec]):
                         yield make_semantic_tag(context.soup, spec, contents=[list_item_element])
                     else:
                         yield list_item_element
@@ -498,10 +498,10 @@ def _parse_visa_and_motif_elements_pass2(
 
             # Lists will be handled in the next pass and appended to the visa or motif tag
             # if applicable.
-            if is_semantic_tag(element, spec_in=[ListSpec, *TRANSPARENT_TAG_SPECS]):
+            if is_semantic_tag(element, spec_in=[ListSegmentationSpec, *TRANSPARENT_TAG_SPECS]):
                 yield elements.pop(0)
 
-            elif is_semantic_tag(element, spec_in=[TextSpanSpec]):
+            elif is_semantic_tag(element, spec_in=[TextSpanSegmentationSpec]):
                 yield make_semantic_tag(context.soup, spec, contents=[element])
                 elements.pop(0)
             else:
@@ -539,7 +539,7 @@ def _parse_visa_and_motif_elements_pass3(
                 transparent_tags_pile.append(elements[0])
                 elements.pop(0)
 
-            if elements and is_semantic_tag(elements[0], spec_in=[ListSpec]):
+            if elements and is_semantic_tag(elements[0], spec_in=[ListSegmentationSpec]):
                 if transparent_tags_pile:
                     element.extend(transparent_tags_pile)
                 element.append(elements.pop(0))
@@ -585,11 +585,11 @@ def render_header(
             content.append(element)
         elif is_semantic_tag(element, spec_in=[PageFooterSpec]):
             content.append(render_page_footer(context, element))
-        elif is_semantic_tag(element, spec_in=[ImageSpec]):
+        elif is_semantic_tag(element, spec_in=[ImageSegmentationSpec]):
             content.append(render_image(context, element))
-        elif is_semantic_tag(element, spec_in=[ListSpec]):
+        elif is_semantic_tag(element, spec_in=[ListSegmentationSpec]):
             content.append(render_list(context, element))
-        elif is_semantic_tag(element, spec_in=[TextSpanSpec]):
+        elif is_semantic_tag(element, spec_in=[TextSpanSegmentationSpec]):
             content.append(
                 make_new_tag(
                     context.soup,
@@ -614,8 +614,9 @@ def render_header_element(
     spec = get_semantic_tag_spec(tag)
     pattern = HEADER_ELEMENTS_RENDER_PATTERNS[spec]
 
+    elements: Sequence[PageElementOrString] = tag.contents
     for splitted_element in split_elements(
-        tag.contents,
+        elements,
         group_text_span_tags_splitter,
     ):
         if isinstance(splitted_element, SplitMatch):
@@ -642,9 +643,9 @@ def render_visa_motif(
     contents: list[PageElementOrString] = []
 
     for element in tag.contents:
-        if is_semantic_tag(element, spec_in=[TextSpanSpec]):
+        if is_semantic_tag(element, spec_in=[TextSpanSegmentationSpec]):
             contents.append(get_string(element))
-        elif is_semantic_tag(element, spec_in=[ListSpec]):
+        elif is_semantic_tag(element, spec_in=[ListSegmentationSpec]):
             contents.append(render_list(context, element))
         elif is_semantic_tag(element, spec_in=[PageSeparatorSpec]):
             contents.append(element)

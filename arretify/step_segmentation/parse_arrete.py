@@ -37,7 +37,7 @@ from .core import (
     pick_text_spans,
     get_string,
 )
-from .semantic_tag_specs import TextSpanSpec
+from .semantic_tag_specs import TextSpanSegmentationSpec
 from .basic_elements import parse_images, parse_addresses
 from .document_elements import (
     parse_page_footers,
@@ -125,7 +125,7 @@ def _make_text_span_parser(
         context: DocumentContext, elements: Sequence[PageElementOrString]
     ) -> Iterator[PageElementOrString]:
         for element in elements:
-            if is_semantic_tag(element, spec_in=[TextSpanSpec]):
+            if is_semantic_tag(element, spec_in=[TextSpanSegmentationSpec]):
                 yield replace_children(element, func(context, element.contents))
             else:
                 yield element

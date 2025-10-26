@@ -30,43 +30,37 @@ Name of the tag used for segmentation tags.
 """
 
 
-TableSpec: SemanticTagSpec[SemanticTagData] = create_semantic_tag_spec_no_data(
+TableSegmentationSpec = create_semantic_tag_spec_no_data(
     spec_name="segmentation:table",
     tag_name=SEGMENTATION_TAG_NAME,
 )
 
 
-TableDescriptionSpec: SemanticTagSpec[SemanticTagData] = create_semantic_tag_spec_no_data(
+TableDescriptionSegmentationSpec = create_semantic_tag_spec_no_data(
     spec_name="segmentation:table_description",
     tag_name=SEGMENTATION_TAG_NAME,
 )
 
 
-ListSpec: SemanticTagSpec[SemanticTagData] = create_semantic_tag_spec_no_data(
+ListSegmentationSpec = create_semantic_tag_spec_no_data(
     spec_name="segmentation:list",
     tag_name=SEGMENTATION_TAG_NAME,
 )
 
 
-BlockquoteSpec: SemanticTagSpec[SemanticTagData] = create_semantic_tag_spec_no_data(
+BlockquoteSegmentationSpec = create_semantic_tag_spec_no_data(
     spec_name="segmentation:blockquote",
     tag_name=SEGMENTATION_TAG_NAME,
 )
 
 
-ImageSpec: SemanticTagSpec[SemanticTagData] = create_semantic_tag_spec_no_data(
+ImageSegmentationSpec = create_semantic_tag_spec_no_data(
     spec_name="segmentation:image",
     tag_name=SEGMENTATION_TAG_NAME,
 )
 
 
-AddressSpec: SemanticTagSpec[SemanticTagData] = create_semantic_tag_spec_no_data(
-    spec_name="segmentation:address",
-    tag_name=SEGMENTATION_TAG_NAME,
-)
-
-
-class TextSpanData(SemanticTagData):
+class TextSpanSegmentationData(SemanticTagData):
     """Data model for text_span segmentation tags."""
 
     start: IntList
@@ -82,28 +76,28 @@ class TextSpanData(SemanticTagData):
         return value
 
 
-TextSpanSpec: SemanticTagSpec[TextSpanData] = SemanticTagSpec(
+TextSpanSegmentationSpec: SemanticTagSpec[TextSpanSegmentationData] = SemanticTagSpec(
     spec_name="segmentation:text_span",
     tag_name=SEGMENTATION_TAG_NAME,
-    data_model=TextSpanData,
+    data_model=TextSpanSegmentationData,
 )
 
 
-class SegmentationSectionTitleData(SemanticTagData):
+class SectionTitleSegmentationData(SemanticTagData):
     number: str | None = None
     type: str | None = None
     level: int | None = None
     title: str | None = None
 
 
-SegmentationSectionTitleSpec: SemanticTagSpec[SegmentationSectionTitleData] = SemanticTagSpec(
+SectionTitleSegmentationSpec: SemanticTagSpec[SectionTitleSegmentationData] = SemanticTagSpec(
     spec_name="segmentation:section_title",
     tag_name=SEGMENTATION_TAG_NAME,
-    data_model=SegmentationSectionTitleData,
+    data_model=SectionTitleSegmentationData,
 )
 
 
-SegmentationSectionSpec: SemanticTagSpec[SemanticTagData] = create_semantic_tag_spec_no_data(
+SectionSegmentationSpec = create_semantic_tag_spec_no_data(
     spec_name="segmentation:section",
     tag_name=SEGMENTATION_TAG_NAME,
 )
