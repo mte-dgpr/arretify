@@ -39,17 +39,17 @@ from arretify.types import OperationType, SectionType
 # -------------------- Parts -------------------- #
 
 
-HeaderSpec: SemanticTagSpec[SemanticTagData] = create_semantic_tag_spec_no_data(
+HeaderSpec = create_semantic_tag_spec_no_data(
     spec_name="header",
     tag_name="header",
 )
 
-MainSpec: SemanticTagSpec[SemanticTagData] = create_semantic_tag_spec_no_data(
+MainSpec = create_semantic_tag_spec_no_data(
     spec_name="main",
     tag_name="main",
 )
 
-AppendixSpec: SemanticTagSpec[SemanticTagData] = create_semantic_tag_spec_no_data(
+AppendixSpec = create_semantic_tag_spec_no_data(
     spec_name="appendix",
     tag_name="footer",
 )
@@ -58,7 +58,7 @@ AppendixSpec: SemanticTagSpec[SemanticTagData] = create_semantic_tag_spec_no_dat
 # -------------------- Document -------------------- #
 
 
-PageFooterSpec: SemanticTagSpec[SemanticTagData] = create_semantic_tag_spec_no_data(
+PageFooterSpec = create_semantic_tag_spec_no_data(
     spec_name="page_footer",
     tag_name="div",
 )
@@ -74,7 +74,7 @@ PageSeparatorSpec: SemanticTagSpec[PageSeparatorData] = SemanticTagSpec(
     data_model=PageSeparatorData,
 )
 
-TableOfContentsSpec: SemanticTagSpec[SemanticTagData] = create_semantic_tag_spec_no_data(
+TableOfContentsSpec = create_semantic_tag_spec_no_data(
     spec_name="table_of_contents",
     tag_name="div",
 )
@@ -83,42 +83,42 @@ TableOfContentsSpec: SemanticTagSpec[SemanticTagData] = create_semantic_tag_spec
 # -------------------- Header -------------------- #
 
 
-EmblemSpec: SemanticTagSpec[SemanticTagData] = create_semantic_tag_spec_no_data(
+EmblemSpec = create_semantic_tag_spec_no_data(
     spec_name="emblem",
     tag_name="div",
 )
 
-EntitySpec: SemanticTagSpec[SemanticTagData] = create_semantic_tag_spec_no_data(
+EntitySpec = create_semantic_tag_spec_no_data(
     spec_name="entity",
     tag_name="div",
 )
 
-IdentificationSpec: SemanticTagSpec[SemanticTagData] = create_semantic_tag_spec_no_data(
+IdentificationSpec = create_semantic_tag_spec_no_data(
     spec_name="identification",
     tag_name="div",
 )
 
-ArreteSpec: SemanticTagSpec[SemanticTagData] = create_semantic_tag_spec_no_data(
+ArreteSpec = create_semantic_tag_spec_no_data(
     spec_name="arrete_title",
     tag_name="div",
 )
 
-HonorarySpec: SemanticTagSpec[SemanticTagData] = create_semantic_tag_spec_no_data(
+HonorarySpec = create_semantic_tag_spec_no_data(
     spec_name="honorary",
     tag_name="div",
 )
 
-VisaSpec: SemanticTagSpec[SemanticTagData] = create_semantic_tag_spec_no_data(
+VisaSpec = create_semantic_tag_spec_no_data(
     spec_name="visa",
     tag_name="div",
 )
 
-MotifSpec: SemanticTagSpec[SemanticTagData] = create_semantic_tag_spec_no_data(
+MotifSpec = create_semantic_tag_spec_no_data(
     spec_name="motifs",
     tag_name="div",
 )
 
-SupplementaryMotifInfoSpec: SemanticTagSpec[SemanticTagData] = create_semantic_tag_spec_no_data(
+SupplementaryMotifInfoSpec = create_semantic_tag_spec_no_data(
     spec_name="supplementary_motif_info",
     tag_name="div",
 )
@@ -139,37 +139,37 @@ SectionSpec: SemanticTagSpec[SectionData] = SemanticTagSpec(
     data_model=SectionData,
 )
 
-SectionTitle1Spec: SemanticTagSpec[SemanticTagData] = create_semantic_tag_spec_no_data(
+SectionTitle1Spec = create_semantic_tag_spec_no_data(
     spec_name="section_title",
     tag_name="h2",
 )
 
-SectionTitle2Spec: SemanticTagSpec[SemanticTagData] = create_semantic_tag_spec_no_data(
+SectionTitle2Spec = create_semantic_tag_spec_no_data(
     spec_name="section_title",
     tag_name="h3",
 )
 
-SectionTitle3Spec: SemanticTagSpec[SemanticTagData] = create_semantic_tag_spec_no_data(
+SectionTitle3Spec = create_semantic_tag_spec_no_data(
     spec_name="section_title",
     tag_name="h4",
 )
 
-SectionTitle4Spec: SemanticTagSpec[SemanticTagData] = create_semantic_tag_spec_no_data(
+SectionTitle4Spec = create_semantic_tag_spec_no_data(
     spec_name="section_title",
     tag_name="h5",
 )
 
-SectionTitle5Spec: SemanticTagSpec[SemanticTagData] = create_semantic_tag_spec_no_data(
+SectionTitle5Spec = create_semantic_tag_spec_no_data(
     spec_name="section_title",
     tag_name="h6",
 )
 
-SectionTitle6Spec: SemanticTagSpec[SemanticTagData] = create_semantic_tag_spec_no_data(
+SectionTitle6Spec = create_semantic_tag_spec_no_data(
     spec_name="section_title",
     tag_name="h7",
 )
 
-SectionTitle7Spec: SemanticTagSpec[SemanticTagData] = create_semantic_tag_spec_no_data(
+SectionTitle7Spec = create_semantic_tag_spec_no_data(
     spec_name="section_title",
     tag_name="h8",
 )
@@ -259,11 +259,6 @@ SectionReferenceSpec: SemanticTagSpec[SectionReferenceData] = SemanticTagSpec(
     data_model=SectionReferenceData,
 )
 
-DateSpec: SemanticTagSpec[SemanticTagData] = create_semantic_tag_spec_no_data(
-    spec_name="date",
-    tag_name="time",
-)
-
 
 # -------------------- Operations -------------------- #
 
@@ -284,10 +279,25 @@ OperationSpec: SemanticTagSpec[OperationData] = SemanticTagSpec(
 )
 
 
+# -------------------- Other -------------------- #
+
+
+DateSpec = create_semantic_tag_spec_no_data(
+    spec_name="date",
+    tag_name="time",
+)
+
+
+AddressSpec = create_semantic_tag_spec_no_data(
+    spec_name="address",
+    tag_name="address",
+)
+
+
 # -------------------- Errors -------------------- #
 
 
-ErrorSpec: SemanticTagSpec[SemanticTagData] = create_semantic_tag_spec_no_data(
+ErrorSpec = create_semantic_tag_spec_no_data(
     spec_name="error",
     tag_name="span",
 )

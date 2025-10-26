@@ -30,7 +30,7 @@ from arretify.semantic_tag_specs import (
     EntitySpec,
     ArreteSpec,
 )
-from arretify.step_segmentation.semantic_tag_specs import ListSpec
+from arretify.step_segmentation.semantic_tag_specs import ListSegmentationSpec
 from .header import (
     parse_visa_and_motif_elements,
     _parse_header_element,
@@ -129,7 +129,7 @@ class TestParseVisaAndMotifs(BaseTestCase):
         elements = [
             make_semantic_tag(
                 self.soup,
-                ListSpec,
+                ListSegmentationSpec,
                 contents=make_text_spans(
                     self.soup,
                     "- Considérant que blabla ;",
@@ -291,7 +291,7 @@ class TestParseVisaAndMotifs(BaseTestCase):
             *make_text_spans(self.soup, "Vu : "),
             make_semantic_tag(
                 self.soup,
-                ListSpec,
+                ListSegmentationSpec,
                 contents=make_text_spans(
                     self.soup,
                     "- le code de l'environnement ;",
@@ -330,13 +330,13 @@ class TestParseVisaAndMotifs(BaseTestCase):
             *make_text_spans(self.soup, "Vu : "),
             make_semantic_tag(
                 self.soup,
-                ListSpec,
+                ListSegmentationSpec,
                 contents=make_text_spans(self.soup, "- le code de l'environnement ;"),
             ),
             *make_text_spans(self.soup, "Ceci est du texte aléatoire qui n'est pas un visa."),
             make_semantic_tag(
                 self.soup,
-                ListSpec,
+                ListSegmentationSpec,
                 contents=make_text_spans(
                     self.soup, "- la nomenclature des installations classées ;"
                 ),
@@ -374,7 +374,7 @@ class TestParseVisaAndMotifs(BaseTestCase):
             *make_text_spans(self.soup, "Vu : "),
             make_semantic_tag(
                 self.soup,
-                ListSpec,
+                ListSegmentationSpec,
                 contents=make_text_spans(
                     self.soup,
                     "- le code de l'environnement ;",
@@ -426,7 +426,7 @@ class TestParseVisaAndMotifs(BaseTestCase):
             make_semantic_tag(self.soup, PageSeparatorSpec, data=PageSeparatorData(page_index=1)),
             make_semantic_tag(
                 self.soup,
-                ListSpec,
+                ListSegmentationSpec,
                 contents=make_text_spans(
                     self.soup,
                     "- la modification de l'installation de stockage de déchets non dangereux ;",
@@ -456,7 +456,7 @@ class TestParseVisaAndMotifs(BaseTestCase):
                         ),
                         make_semantic_tag(
                             self.soup,
-                            ListSpec,
+                            ListSegmentationSpec,
                             contents=make_text_spans(
                                 self.soup,
                                 (

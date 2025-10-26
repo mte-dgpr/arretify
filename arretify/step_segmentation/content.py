@@ -38,12 +38,12 @@ from arretify.utils.html_create import (
 from arretify.utils.functional import iter_func_to_list, chain_functions
 from arretify.utils.split import split_at_first_verb
 from arretify.step_segmentation.semantic_tag_specs import (
-    SegmentationSectionTitleData,
-    SegmentationSectionTitleSpec,
-    TableDescriptionSpec,
-    TableSpec,
-    SegmentationSectionSpec,
-    TextSpanSpec,
+    SectionTitleSegmentationData,
+    SectionTitleSegmentationSpec,
+    TableDescriptionSegmentationSpec,
+    TableSegmentationSpec,
+    SectionSegmentationSpec,
+    TextSpanSegmentationSpec,
 )
 from arretify.semantic_tag_specs import (
     AlineaData,
@@ -98,7 +98,7 @@ _is_title_string = make_probe_from_pattern_proxy(
 
 def is_title(elements: Sequence[PageElementOrString], index: int) -> bool:
     element = elements[index]
-    assert is_semantic_tag(element, spec_in=[TextSpanSpec])
+    assert is_semantic_tag(element, spec_in=[TextSpanSegmentationSpec])
     # Exclude text_span tags that start with an inline tag.
     # This excludes cases when a line starts with an address
     # or another inline element, which cannot be a title.
@@ -130,7 +130,7 @@ def render_content(
 ) -> Tag:
     content = make_new_tag(context.soup, "div")
     for tag in list(elements):
-        if is_semantic_tag(tag, spec_in=[SegmentationSectionSpec]):
+        if is_semantic_tag(tag, spec_in=[SectionSegmentationSpec]):
             content.append(render_section(context, tag))
         elif is_semantic_tag(tag, spec_in=[TableOfContentsSpec]):
             content.append(render_table_of_contents(context, tag))
@@ -154,7 +154,7 @@ def parse_section_titles(
     # Then collect all section titles in list
     tag_list = _create_section_title_tags(context, elements)
     section_title_tags: list[Tag] = [
-        e for e in tag_list if is_semantic_tag(e, spec_in=[SegmentationSectionTitleSpec])
+        e for e in tag_list if is_semantic_tag(e, spec_in=[SectionTitleSegmentationSpec])
     ]
 
     # Ancestry order from root to the current section in the parsing context
@@ -224,9 +224,9 @@ def parse_section_titles(
             )
 
         set_semantic_tag_data(
-            SegmentationSectionTitleSpec,
+            SectionTitleSegmentationSpec,
             section_title_tag,
-            SegmentationSectionTitleData(
+            SectionTitleSegmentationData(
                 type=new_section_type.value,
                 level=new_schema_level,
                 number=title_info.number,
@@ -243,7 +243,7 @@ def _fix_titles_containing_alineas(
     context: DocumentContext, elements: Sequence[PageElementOrString]
 ) -> Iterator[PageElementOrString]:
     for element in elements:
-        if not is_semantic_tag(element, spec_in=[TextSpanSpec]):
+        if not is_semantic_tag(element, spec_in=[TextSpanSegmentationSpec]):
             yield element
             continue
 
@@ -267,16 +267,16 @@ def _fix_titles_containing_alineas(
 
         # As we don't know exactly the split position in the original text,
         # we use an approximation of original position for source mapping.
-        text_span_data = get_semantic_tag_data(TextSpanSpec, element)
+        text_span_data = get_semantic_tag_data(TextSpanSegmentationSpec, element)
         yield make_semantic_tag(
             context.soup,
-            TextSpanSpec,
+            TextSpanSegmentationSpec,
             contents=[title_text],
             data=text_span_data,
         )
         yield make_semantic_tag(
             context.soup,
-            TextSpanSpec,
+            TextSpanSegmentationSpec,
             contents=[alinea_text],
             data=text_span_data,
         )
@@ -293,7 +293,7 @@ def _create_section_title_tags(
         ),
         lambda contents: make_semantic_tag(
             context.soup,
-            SegmentationSectionTitleSpec,
+            SectionTitleSegmentationSpec,
             contents=contents,
         ),
     )
@@ -343,7 +343,7 @@ def parse_sections(
     # - when there is content before the first section title (this is a special
     #       case and rarely happens).
     pile = []
-    while elements and not is_semantic_tag(elements[0], spec_in=[SegmentationSectionTitleSpec]):
+    while elements and not is_semantic_tag(elements[0], spec_in=[SectionTitleSegmentationSpec]):
         pile.append(elements.pop(0))
     if pile:
         yield from parse_alineas(context, pile)
@@ -361,8 +361,9 @@ def parse_sections(
     #       <Title 3>
     pile = []
     while elements:
-        if is_semantic_tag(elements[0], spec_in=[SegmentationSectionTitleSpec]):
-            element_level = get_semantic_tag_data(SegmentationSectionTitleSpec, elements[0]).level
+        if is_semantic_tag(elements[0], spec_in=[SectionTitleSegmentationSpec]):
+            element_level = get_semantic_tag_data(SectionTitleSegmentationSpec, elements[0]).level
+            assert element_level is not None
             if element_level == level:
                 break
             elif element_level > level:
@@ -384,10 +385,11 @@ def parse_sections(
         # Fill-in the pile until we find next section title
         # of the same level
         while elements:
-            if is_semantic_tag(elements[0], spec_in=[SegmentationSectionTitleSpec]):
+            if is_semantic_tag(elements[0], spec_in=[SectionTitleSegmentationSpec]):
                 element_level = get_semantic_tag_data(
-                    SegmentationSectionTitleSpec, elements[0]
+                    SectionTitleSegmentationSpec, elements[0]
                 ).level
+                assert element_level is not None
                 if element_level == level:
                     break
                 elif element_level < level:
@@ -398,7 +400,7 @@ def parse_sections(
             section_title, section_children = pile[0], pile[1:]
             yield make_semantic_tag(
                 context.soup,
-                SegmentationSectionSpec,
+                SectionSegmentationSpec,
                 contents=[section_title]
                 + list(parse_sections(context, section_children, level=level + 1)),
             )
@@ -409,10 +411,10 @@ def render_section_title(
     context: DocumentContext,
     tag: Tag,
 ) -> Tag:
-    if not is_semantic_tag(tag, spec_in=[SegmentationSectionTitleSpec]):
+    if not is_semantic_tag(tag, spec_in=[SectionTitleSegmentationSpec]):
         raise ValueError("Tag must be a section title")
 
-    segmentation_section_data = get_semantic_tag_data(SegmentationSectionTitleSpec, tag)
+    segmentation_section_data = get_semantic_tag_data(SectionTitleSegmentationSpec, tag)
     SectionTitleSpec = SectionTitleSpecs[cast(int, segmentation_section_data.level)]
     section_title_data = SemanticTagData(error_codes=segmentation_section_data.error_codes)
 
@@ -428,19 +430,19 @@ def render_section(
     context: DocumentContext,
     tag: Tag,
 ) -> Tag:
-    if not is_semantic_tag(tag, spec_in=[SegmentationSectionSpec]):
+    if not is_semantic_tag(tag, spec_in=[SectionSegmentationSpec]):
         raise ValueError("Tag must be a section")
 
     assert is_semantic_tag(
-        tag.contents[0], spec_in=[SegmentationSectionTitleSpec]
+        tag.contents[0], spec_in=[SectionTitleSegmentationSpec]
     ), "First tag must be a section title"
     section_title: Tag = tag.contents[0]
 
     contents: list[PageElementOrString] = []
     for element in tag.contents:
-        if is_semantic_tag(element, spec_in=[SegmentationSectionTitleSpec]):
+        if is_semantic_tag(element, spec_in=[SectionTitleSegmentationSpec]):
             contents.append(render_section_title(context, element))
-        elif is_semantic_tag(element, spec_in=[SegmentationSectionSpec]):
+        elif is_semantic_tag(element, spec_in=[SectionSegmentationSpec]):
             contents.append(render_section(context, element))
         elif is_semantic_tag(element, spec_in=[AlineaSpec]):
             contents.append(render_alinea(context, element))
@@ -455,7 +457,7 @@ def render_section(
         elif is_semantic_tag(element):
             raise ValueError(f"Unexpected tag {element.type} in section contents")
 
-    section_data = get_semantic_tag_data(SegmentationSectionTitleSpec, section_title)
+    section_data = get_semantic_tag_data(SectionTitleSegmentationSpec, section_title)
     return make_semantic_tag(
         context.soup,
         SectionSpec,
@@ -494,7 +496,7 @@ def parse_alineas(
     elements = map_splitted_elements(
         split_elements(
             elements,
-            make_recombine_interrupted_lines_splitter(TextSpanSpec),
+            make_recombine_interrupted_lines_splitter(TextSpanSegmentationSpec),
         ),
         lambda grouped_elements: combine_text_spans(context, grouped_elements),
     )
@@ -510,9 +512,11 @@ def parse_alineas(
             continue
 
         alinea_children: list[PageElementOrString] = []
-        if is_semantic_tag(element, spec_in=[TableSpec]):
+        if is_semantic_tag(element, spec_in=[TableSegmentationSpec]):
             alinea_children = [element]
-            while elements and is_semantic_tag(elements[0], spec_in=[TableDescriptionSpec]):
+            while elements and is_semantic_tag(
+                elements[0], spec_in=[TableDescriptionSegmentationSpec]
+            ):
                 alinea_children.append(elements[0])
                 elements.pop(0)
 
@@ -535,7 +539,7 @@ def render_alinea(
 ) -> Tag:
     contents: list[PageElementOrString] = []
     for element in tag.contents:
-        if is_semantic_tag(element, spec_in=[TextSpanSpec]):
+        if is_semantic_tag(element, spec_in=[TextSpanSegmentationSpec]):
             # TODO : move render_inline_quotes inside render_text_span
             text_span_elements = render_text_span(context, element)
             for text_span_element in text_span_elements:

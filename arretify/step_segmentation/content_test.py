@@ -19,6 +19,7 @@
 import unittest
 
 from arretify.semantic_tag_specs import (
+    AddressSpec,
     PageSeparatorData,
     PageSeparatorSpec,
     AlineaSpec,
@@ -39,12 +40,11 @@ from .testing import (
     make_text_spans,
 )
 from .semantic_tag_specs import (
-    AddressSpec,
-    SegmentationSectionSpec,
-    SegmentationSectionTitleData,
-    SegmentationSectionTitleSpec,
-    TextSpanData,
-    TextSpanSpec,
+    SectionSegmentationSpec,
+    SectionTitleSegmentationData,
+    SectionTitleSegmentationSpec,
+    TextSpanSegmentationData,
+    TextSpanSegmentationSpec,
 )
 
 
@@ -80,9 +80,9 @@ class TestParseSectionTitles(BaseTestCase):
             [
                 make_semantic_tag(
                     self.soup,
-                    SegmentationSectionTitleSpec,
+                    SectionTitleSegmentationSpec,
                     contents=make_text_spans(self.soup, "Titre I - Introduction"),
-                    data=SegmentationSectionTitleData(
+                    data=SectionTitleSegmentationData(
                         level=0,
                         number="I",
                         title="Introduction",
@@ -91,9 +91,9 @@ class TestParseSectionTitles(BaseTestCase):
                 ),
                 make_semantic_tag(
                     self.soup,
-                    SegmentationSectionTitleSpec,
+                    SectionTitleSegmentationSpec,
                     contents=make_text_spans(self.soup, "1. Contexte"),
-                    data=SegmentationSectionTitleData(
+                    data=SectionTitleSegmentationData(
                         level=1,
                         number="1",
                         title="Contexte",
@@ -103,9 +103,9 @@ class TestParseSectionTitles(BaseTestCase):
                 *make_text_spans(self.soup, "bla bla bla"),
                 make_semantic_tag(
                     self.soup,
-                    SegmentationSectionTitleSpec,
+                    SectionTitleSegmentationSpec,
                     contents=make_text_spans(self.soup, "2. Objectifs"),
-                    data=SegmentationSectionTitleData(
+                    data=SectionTitleSegmentationData(
                         level=1,
                         number="2",
                         title="Objectifs",
@@ -119,9 +119,9 @@ class TestParseSectionTitles(BaseTestCase):
                 ),
                 make_semantic_tag(
                     self.soup,
-                    SegmentationSectionTitleSpec,
+                    SectionTitleSegmentationSpec,
                     contents=make_text_spans(self.soup, "Titre II - Méthodologie"),
-                    data=SegmentationSectionTitleData(
+                    data=SectionTitleSegmentationData(
                         level=0,
                         number="II",
                         title="Méthodologie",
@@ -146,7 +146,7 @@ class TestParseSectionTitles(BaseTestCase):
             ),
             make_semantic_tag(
                 self.soup,
-                TextSpanSpec,
+                TextSpanSegmentationSpec,
                 contents=[
                     make_semantic_tag(
                         self.soup,
@@ -154,7 +154,7 @@ class TestParseSectionTitles(BaseTestCase):
                         contents=make_text_spans(self.soup, "1 rue de l'avenir"),
                     )
                 ],
-                data=TextSpanData(start=[0, 0, 0], end=[0, 0, 0]),
+                data=TextSpanSegmentationData(start=[0, 0, 0], end=[0, 0, 0]),
             ),
         ]
 
@@ -167,9 +167,9 @@ class TestParseSectionTitles(BaseTestCase):
             [
                 make_semantic_tag(
                     self.soup,
-                    SegmentationSectionTitleSpec,
+                    SectionTitleSegmentationSpec,
                     contents=make_text_spans(self.soup, "Titre I - Introduction"),
-                    data=SegmentationSectionTitleData(
+                    data=SectionTitleSegmentationData(
                         level=0,
                         number="I",
                         title="Introduction",
@@ -178,7 +178,7 @@ class TestParseSectionTitles(BaseTestCase):
                 ),
                 make_semantic_tag(
                     self.soup,
-                    TextSpanSpec,
+                    TextSpanSegmentationSpec,
                     contents=[
                         make_semantic_tag(
                             self.soup,
@@ -186,7 +186,7 @@ class TestParseSectionTitles(BaseTestCase):
                             contents=make_text_spans(self.soup, "1 rue de l'avenir"),
                         )
                     ],
-                    data=TextSpanData(start=[0, 0, 0], end=[0, 0, 0]),
+                    data=TextSpanSegmentationData(start=[0, 0, 0], end=[0, 0, 0]),
                 ),
             ],
             ignore_text_span_data=True,
@@ -201,22 +201,22 @@ class TestParseSections(BaseTestCase):
             *make_text_spans(self.soup, "bly bly bly"),
             make_semantic_tag(
                 self.soup,
-                SegmentationSectionTitleSpec,
+                SectionTitleSegmentationSpec,
                 contents=make_text_spans(self.soup, "Titre I - Introduction"),
-                data=SegmentationSectionTitleData(level=1),
+                data=SectionTitleSegmentationData(level=1),
             ),
             make_semantic_tag(
                 self.soup,
-                SegmentationSectionTitleSpec,
+                SectionTitleSegmentationSpec,
                 contents=make_text_spans(self.soup, "1. Contexte"),
-                data=SegmentationSectionTitleData(level=2),
+                data=SectionTitleSegmentationData(level=2),
             ),
             *make_text_spans(self.soup, "bla bla bla"),
             make_semantic_tag(
                 self.soup,
-                SegmentationSectionTitleSpec,
+                SectionTitleSegmentationSpec,
                 contents=make_text_spans(self.soup, "2. Objectifs"),
-                data=SegmentationSectionTitleData(level=2),
+                data=SectionTitleSegmentationData(level=2),
             ),
             *make_text_spans(
                 self.soup,
@@ -225,9 +225,9 @@ class TestParseSections(BaseTestCase):
             ),
             make_semantic_tag(
                 self.soup,
-                SegmentationSectionTitleSpec,
+                SectionTitleSegmentationSpec,
                 contents=make_text_spans(self.soup, "Titre II - Méthodologie"),
-                data=SegmentationSectionTitleData(level=1),
+                data=SectionTitleSegmentationData(level=1),
             ),
             *make_text_spans(
                 self.soup,
@@ -251,25 +251,25 @@ class TestParseSections(BaseTestCase):
                 ),
                 make_semantic_tag(
                     self.soup,
-                    SegmentationSectionSpec,
+                    SectionSegmentationSpec,
                     contents=[
                         make_semantic_tag(
                             self.soup,
-                            SegmentationSectionTitleSpec,
+                            SectionTitleSegmentationSpec,
                             contents=make_text_spans(self.soup, "Titre I - Introduction"),
-                            data=SegmentationSectionTitleData(
+                            data=SectionTitleSegmentationData(
                                 level=1,
                             ),
                         ),
                         make_semantic_tag(
                             self.soup,
-                            SegmentationSectionSpec,
+                            SectionSegmentationSpec,
                             contents=[
                                 make_semantic_tag(
                                     self.soup,
-                                    SegmentationSectionTitleSpec,
+                                    SectionTitleSegmentationSpec,
                                     contents=make_text_spans(self.soup, "1. Contexte"),
-                                    data=SegmentationSectionTitleData(
+                                    data=SectionTitleSegmentationData(
                                         level=2,
                                     ),
                                 ),
@@ -283,13 +283,13 @@ class TestParseSections(BaseTestCase):
                         ),
                         make_semantic_tag(
                             self.soup,
-                            SegmentationSectionSpec,
+                            SectionSegmentationSpec,
                             contents=[
                                 make_semantic_tag(
                                     self.soup,
-                                    SegmentationSectionTitleSpec,
+                                    SectionTitleSegmentationSpec,
                                     contents=make_text_spans(self.soup, "2. Objectifs"),
-                                    data=SegmentationSectionTitleData(
+                                    data=SectionTitleSegmentationData(
                                         level=2,
                                     ),
                                 ),
@@ -311,13 +311,13 @@ class TestParseSections(BaseTestCase):
                 ),
                 make_semantic_tag(
                     self.soup,
-                    SegmentationSectionSpec,
+                    SectionSegmentationSpec,
                     contents=[
                         make_semantic_tag(
                             self.soup,
-                            SegmentationSectionTitleSpec,
+                            SectionTitleSegmentationSpec,
                             contents=make_text_spans(self.soup, "Titre II - Méthodologie"),
-                            data=SegmentationSectionTitleData(
+                            data=SectionTitleSegmentationData(
                                 level=1,
                             ),
                         ),
@@ -345,16 +345,16 @@ class TestParseSections(BaseTestCase):
         elements = [
             make_semantic_tag(
                 self.soup,
-                SegmentationSectionTitleSpec,
+                SectionTitleSegmentationSpec,
                 contents=["1. Bla"],
-                data=SegmentationSectionTitleData(level=0),
+                data=SectionTitleSegmentationData(level=0),
             ),
             "bla bla bla",
             make_semantic_tag(
                 self.soup,
-                SegmentationSectionTitleSpec,
+                SectionTitleSegmentationSpec,
                 contents=["1.1. Blabla"],
-                data=SegmentationSectionTitleData(level=1),
+                data=SectionTitleSegmentationData(level=1),
             ),
             "bli bli bli",
         ]
@@ -368,13 +368,13 @@ class TestParseSections(BaseTestCase):
             [
                 make_semantic_tag(
                     self.soup,
-                    SegmentationSectionSpec,
+                    SectionSegmentationSpec,
                     contents=[
                         make_semantic_tag(
                             self.soup,
-                            SegmentationSectionTitleSpec,
+                            SectionTitleSegmentationSpec,
                             contents=["1. Bla"],
-                            data=SegmentationSectionTitleData(level=0),
+                            data=SectionTitleSegmentationData(level=0),
                         ),
                         make_semantic_tag(
                             self.soup,
@@ -384,13 +384,13 @@ class TestParseSections(BaseTestCase):
                         ),
                         make_semantic_tag(
                             self.soup,
-                            SegmentationSectionSpec,
+                            SectionSegmentationSpec,
                             contents=[
                                 make_semantic_tag(
                                     self.soup,
-                                    SegmentationSectionTitleSpec,
+                                    SectionTitleSegmentationSpec,
                                     contents=["1.1. Blabla"],
-                                    data=SegmentationSectionTitleData(level=1),
+                                    data=SectionTitleSegmentationData(level=1),
                                 ),
                                 make_semantic_tag(
                                     self.soup,
@@ -412,15 +412,15 @@ class TestParseSections(BaseTestCase):
         elements = [
             make_semantic_tag(
                 self.soup,
-                SegmentationSectionTitleSpec,
+                SectionTitleSegmentationSpec,
                 contents=["1. Bla"],
-                data=SegmentationSectionTitleData(level=0),
+                data=SectionTitleSegmentationData(level=0),
             ),
             make_semantic_tag(
                 self.soup,
-                SegmentationSectionTitleSpec,
+                SectionTitleSegmentationSpec,
                 contents=["1.1.1. Blabla"],
-                data=SegmentationSectionTitleData(level=2),
+                data=SectionTitleSegmentationData(level=2),
             ),
         ]
 
@@ -433,23 +433,23 @@ class TestParseSections(BaseTestCase):
             [
                 make_semantic_tag(
                     self.soup,
-                    SegmentationSectionSpec,
+                    SectionSegmentationSpec,
                     contents=[
                         make_semantic_tag(
                             self.soup,
-                            SegmentationSectionTitleSpec,
+                            SectionTitleSegmentationSpec,
                             contents=["1. Bla"],
-                            data=SegmentationSectionTitleData(level=0),
+                            data=SectionTitleSegmentationData(level=0),
                         ),
                         make_semantic_tag(
                             self.soup,
-                            SegmentationSectionSpec,
+                            SectionSegmentationSpec,
                             contents=[
                                 make_semantic_tag(
                                     self.soup,
-                                    SegmentationSectionTitleSpec,
+                                    SectionTitleSegmentationSpec,
                                     contents=["1.1.1. Blabla"],
-                                    data=SegmentationSectionTitleData(level=2),
+                                    data=SectionTitleSegmentationData(level=2),
                                 ),
                             ],
                         ),
@@ -465,33 +465,33 @@ class TestParseSections(BaseTestCase):
         elements = [
             make_semantic_tag(
                 self.soup,
-                SegmentationSectionTitleSpec,
+                SectionTitleSegmentationSpec,
                 contents=["1.1. bla"],
-                data=SegmentationSectionTitleData(level=1),
+                data=SectionTitleSegmentationData(level=1),
             ),
             make_semantic_tag(
                 self.soup,
-                SegmentationSectionTitleSpec,
+                SectionTitleSegmentationSpec,
                 contents=["1.1.1. bla"],
-                data=SegmentationSectionTitleData(level=2),
+                data=SectionTitleSegmentationData(level=2),
             ),
             make_semantic_tag(
                 self.soup,
-                SegmentationSectionTitleSpec,
+                SectionTitleSegmentationSpec,
                 contents=["1.2. bla"],
-                data=SegmentationSectionTitleData(level=1),
+                data=SectionTitleSegmentationData(level=1),
             ),
             make_semantic_tag(
                 self.soup,
-                SegmentationSectionTitleSpec,
+                SectionTitleSegmentationSpec,
                 contents=["2. bla"],
-                data=SegmentationSectionTitleData(level=0),
+                data=SectionTitleSegmentationData(level=0),
             ),
             make_semantic_tag(
                 self.soup,
-                SegmentationSectionTitleSpec,
+                SectionTitleSegmentationSpec,
                 contents=["2.1. bla"],
-                data=SegmentationSectionTitleData(level=1),
+                data=SectionTitleSegmentationData(level=1),
             ),
         ]
 
@@ -504,23 +504,23 @@ class TestParseSections(BaseTestCase):
             [
                 make_semantic_tag(
                     self.soup,
-                    SegmentationSectionSpec,
+                    SectionSegmentationSpec,
                     contents=[
                         make_semantic_tag(
                             self.soup,
-                            SegmentationSectionTitleSpec,
+                            SectionTitleSegmentationSpec,
                             contents=["1.1. bla"],
-                            data=SegmentationSectionTitleData(level=1),
+                            data=SectionTitleSegmentationData(level=1),
                         ),
                         make_semantic_tag(
                             self.soup,
-                            SegmentationSectionSpec,
+                            SectionSegmentationSpec,
                             contents=[
                                 make_semantic_tag(
                                     self.soup,
-                                    SegmentationSectionTitleSpec,
+                                    SectionTitleSegmentationSpec,
                                     contents=["1.1.1. bla"],
-                                    data=SegmentationSectionTitleData(level=2),
+                                    data=SectionTitleSegmentationData(level=2),
                                 ),
                             ],
                         ),
@@ -528,35 +528,35 @@ class TestParseSections(BaseTestCase):
                 ),
                 make_semantic_tag(
                     self.soup,
-                    SegmentationSectionSpec,
+                    SectionSegmentationSpec,
                     contents=[
                         make_semantic_tag(
                             self.soup,
-                            SegmentationSectionTitleSpec,
+                            SectionTitleSegmentationSpec,
                             contents=["1.2. bla"],
-                            data=SegmentationSectionTitleData(level=1),
+                            data=SectionTitleSegmentationData(level=1),
                         ),
                     ],
                 ),
                 make_semantic_tag(
                     self.soup,
-                    SegmentationSectionSpec,
+                    SectionSegmentationSpec,
                     contents=[
                         make_semantic_tag(
                             self.soup,
-                            SegmentationSectionTitleSpec,
+                            SectionTitleSegmentationSpec,
                             contents=["2. bla"],
-                            data=SegmentationSectionTitleData(level=0),
+                            data=SectionTitleSegmentationData(level=0),
                         ),
                         make_semantic_tag(
                             self.soup,
-                            SegmentationSectionSpec,
+                            SectionSegmentationSpec,
                             contents=[
                                 make_semantic_tag(
                                     self.soup,
-                                    SegmentationSectionTitleSpec,
+                                    SectionTitleSegmentationSpec,
                                     contents=["2.1. bla"],
-                                    data=SegmentationSectionTitleData(level=1),
+                                    data=SectionTitleSegmentationData(level=1),
                                 ),
                             ],
                         ),
@@ -591,7 +591,7 @@ class TestParseAlineas(BaseTestCase):
                     contents=[
                         make_semantic_tag(
                             self.soup,
-                            TextSpanSpec,
+                            TextSpanSegmentationSpec,
                             contents=[
                                 "This is a sentence that ",
                                 make_semantic_tag(
@@ -601,7 +601,7 @@ class TestParseAlineas(BaseTestCase):
                                 ),
                                 "continues on the next page.",
                             ],
-                            data=TextSpanData(start=[0, 0, 0], end=[0, 0, 0]),
+                            data=TextSpanSegmentationData(start=[0, 0, 0], end=[0, 0, 0]),
                         )
                     ],
                     data=AlineaData(number=1),
@@ -642,13 +642,13 @@ class TestRenderSection(BaseTestCase):
         # Arrange
         tag = make_semantic_tag(
             self.soup,
-            SegmentationSectionSpec,
+            SectionSegmentationSpec,
             contents=[
                 make_semantic_tag(
                     self.soup,
-                    SegmentationSectionTitleSpec,
+                    SectionTitleSegmentationSpec,
                     contents=make_text_spans(self.soup, "Article 1 : Disposition"),
-                    data=SegmentationSectionTitleData(
+                    data=SectionTitleSegmentationData(
                         level=0,
                         number="1",
                         title="Disposition",
@@ -688,9 +688,9 @@ class TestRenderSectionTitle(BaseTestCase):
         # Arrange
         section_title = make_semantic_tag(
             self.soup,
-            SegmentationSectionTitleSpec,
+            SectionTitleSegmentationSpec,
             contents=make_text_spans(self.soup, "Titre I - Introduction"),
-            data=SegmentationSectionTitleData(
+            data=SectionTitleSegmentationData(
                 level=0,
                 number="I",
                 title="Introduction",

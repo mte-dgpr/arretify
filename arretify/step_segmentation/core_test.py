@@ -25,8 +25,12 @@ from arretify.utils.html_semantic import (
     create_semantic_tag_spec_no_data,
     make_semantic_tag,
 )
-from arretify.semantic_tag_specs import PageSeparatorData, PageSeparatorSpec
-from .semantic_tag_specs import SEGMENTATION_TAG_NAME, TextSpanData, TextSpanSpec, AddressSpec
+from arretify.semantic_tag_specs import AddressSpec, PageSeparatorData, PageSeparatorSpec
+from .semantic_tag_specs import (
+    SEGMENTATION_TAG_NAME,
+    TextSpanSegmentationData,
+    TextSpanSegmentationSpec,
+)
 from .core import (
     make_while_splitter_for_text_spans,
     pick_text_spans,
@@ -143,15 +147,15 @@ class TestGroupTextSpanTagsSplitter(BaseTestCase):
             make_new_tag(self.soup, "some-tag"),
             make_semantic_tag(
                 self.soup,
-                TextSpanSpec,
+                TextSpanSegmentationSpec,
                 contents=["line1"],
-                data=TextSpanData(start=[0, 0, 0], end=[0, 0, 0]),
+                data=TextSpanSegmentationData(start=[0, 0, 0], end=[0, 0, 0]),
             ),
             make_semantic_tag(
                 self.soup,
-                TextSpanSpec,
+                TextSpanSegmentationSpec,
                 contents=["line2", "line3"],
-                data=TextSpanData(start=[0, 0, 0], end=[0, 0, 0]),
+                data=TextSpanSegmentationData(start=[0, 0, 0], end=[0, 0, 0]),
             ),
             make_new_tag(self.soup, "some-other-tag"),
         ]
@@ -167,15 +171,15 @@ class TestGroupTextSpanTagsSplitter(BaseTestCase):
             [
                 make_semantic_tag(
                     self.soup,
-                    TextSpanSpec,
+                    TextSpanSegmentationSpec,
                     contents=["line1"],
-                    data=TextSpanData(start=[0, 0, 0], end=[0, 0, 0]),
+                    data=TextSpanSegmentationData(start=[0, 0, 0], end=[0, 0, 0]),
                 ),
                 make_semantic_tag(
                     self.soup,
-                    TextSpanSpec,
+                    TextSpanSegmentationSpec,
                     contents=["line2", "line3"],
-                    data=TextSpanData(start=[0, 0, 0], end=[0, 0, 0]),
+                    data=TextSpanSegmentationData(start=[0, 0, 0], end=[0, 0, 0]),
                 ),
             ],
             [
@@ -218,17 +222,17 @@ class TestPickTextSpans(BaseTestCase):
         elements = [
             make_semantic_tag(
                 self.soup,
-                TextSpanSpec,
+                TextSpanSegmentationSpec,
                 contents=["bla1"],
-                data=TextSpanData(start=[0, 0, 0], end=[0, 0, 3]),
+                data=TextSpanSegmentationData(start=[0, 0, 0], end=[0, 0, 3]),
             ),
             make_new_tag(self.soup, "some-tag"),
             "bla2",
             make_semantic_tag(
                 self.soup,
-                TextSpanSpec,
+                TextSpanSegmentationSpec,
                 contents=["blo4", "bla5"],
-                data=TextSpanData(start=[0, 0, 0], end=[0, 0, 3]),
+                data=TextSpanSegmentationData(start=[0, 0, 0], end=[0, 0, 3]),
             ),
         ]
 
@@ -377,9 +381,9 @@ class TestGetString(BaseTestCase):
                 "This is",
                 make_semantic_tag(
                     self.soup,
-                    TextSpanSpec,
+                    TextSpanSegmentationSpec,
                     contents=[" a test"],
-                    data=TextSpanData(start=[0, 0, 0], end=[0, 0, 5]),
+                    data=TextSpanSegmentationData(start=[0, 0, 0], end=[0, 0, 5]),
                 ),
             ],
         )
@@ -410,13 +414,13 @@ class TestGetString(BaseTestCase):
         # Arrange
         tag = make_semantic_tag(
             self.soup,
-            TextSpanSpec,
+            TextSpanSegmentationSpec,
             contents=[
                 "Viens au ",
                 make_semantic_tag(self.soup, AddressSpec, contents=["123 rue de la Paix"]),
                 ", à 12h",
             ],
-            data=TextSpanData(start=[0, 0, 0], end=[0, 0, 0]),
+            data=TextSpanSegmentationData(start=[0, 0, 0], end=[0, 0, 0]),
         )
 
         # Act
@@ -433,15 +437,15 @@ class TestCombineTextSpans(BaseTestCase):
         elements = [
             make_semantic_tag(
                 self.soup,
-                TextSpanSpec,
+                TextSpanSegmentationSpec,
                 contents=["This is"],
-                data=TextSpanData(start=[1, 2, 3], end=[4, 5, 6]),
+                data=TextSpanSegmentationData(start=[1, 2, 3], end=[4, 5, 6]),
             ),
             make_semantic_tag(
                 self.soup,
-                TextSpanSpec,
+                TextSpanSegmentationSpec,
                 contents=[" a test", " with multiple lines."],
-                data=TextSpanData(start=[7, 8, 9], end=[16, 17, 18]),
+                data=TextSpanSegmentationData(start=[7, 8, 9], end=[16, 17, 18]),
             ),
         ]
 
@@ -454,13 +458,13 @@ class TestCombineTextSpans(BaseTestCase):
             [
                 make_semantic_tag(
                     self.soup,
-                    TextSpanSpec,
+                    TextSpanSegmentationSpec,
                     contents=[
                         "This is",
                         " a test",
                         " with multiple lines.",
                     ],
-                    data=TextSpanData(start=[1, 2, 3], end=[16, 17, 18]),
+                    data=TextSpanSegmentationData(start=[1, 2, 3], end=[16, 17, 18]),
                 )
             ],
         )
@@ -470,19 +474,19 @@ class TestCombineTextSpans(BaseTestCase):
         elements = [
             make_semantic_tag(
                 self.soup,
-                TextSpanSpec,
+                TextSpanSegmentationSpec,
                 contents=["This is"],
-                data=TextSpanData(start=[1, 2, 3], end=[4, 5, 6]),
+                data=TextSpanSegmentationData(start=[1, 2, 3], end=[4, 5, 6]),
             ),
             make_semantic_tag(
                 self.soup,
-                TextSpanSpec,
+                TextSpanSegmentationSpec,
                 contents=[
                     " a test ",
                     make_semantic_tag(self.soup, AddressSpec, contents=["123 rue de la Paix"]),
                     " with multiple lines.",
                 ],
-                data=TextSpanData(start=[7, 8, 9], end=[16, 17, 18]),
+                data=TextSpanSegmentationData(start=[7, 8, 9], end=[16, 17, 18]),
             ),
         ]
 
@@ -495,14 +499,14 @@ class TestCombineTextSpans(BaseTestCase):
             [
                 make_semantic_tag(
                     self.soup,
-                    TextSpanSpec,
+                    TextSpanSegmentationSpec,
                     contents=[
                         "This is",
                         " a test ",
                         make_semantic_tag(self.soup, AddressSpec, contents=["123 rue de la Paix"]),
                         " with multiple lines.",
                     ],
-                    data=TextSpanData(start=[1, 2, 3], end=[16, 17, 18]),
+                    data=TextSpanSegmentationData(start=[1, 2, 3], end=[16, 17, 18]),
                 )
             ],
         )

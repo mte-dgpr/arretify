@@ -29,14 +29,14 @@ from arretify.semantic_tag_specs import (
     PageSeparatorSpec,
     ArreteSpec,
     AlineaSpec,
+    AddressSpec,
 )
 from .semantic_tag_specs import (
-    SegmentationSectionSpec,
-    SegmentationSectionTitleData,
-    SegmentationSectionTitleSpec,
-    TextSpanData,
-    TextSpanSpec,
-    AddressSpec,
+    SectionSegmentationSpec,
+    SectionTitleSegmentationData,
+    SectionTitleSegmentationSpec,
+    TextSpanSegmentationData,
+    TextSpanSegmentationSpec,
 )
 from .parse_arrete import parse_arrete
 from .testing import make_text_spans, assert_elements_equal
@@ -89,13 +89,13 @@ class TestParseArrete(BaseTestCase):
                     contents=[
                         make_semantic_tag(
                             self.soup,
-                            SegmentationSectionSpec,
+                            SectionSegmentationSpec,
                             contents=[
                                 make_semantic_tag(
                                     self.soup,
-                                    SegmentationSectionTitleSpec,
+                                    SectionTitleSegmentationSpec,
                                     contents=make_text_spans(self.soup, "Article 1 : Disposition"),
-                                    data=SegmentationSectionTitleData(
+                                    data=SectionTitleSegmentationData(
                                         number="1",
                                         type="article",
                                         level=0,
@@ -118,13 +118,13 @@ class TestParseArrete(BaseTestCase):
                     contents=[
                         make_semantic_tag(
                             self.soup,
-                            SegmentationSectionSpec,
+                            SectionSegmentationSpec,
                             contents=[
                                 make_semantic_tag(
                                     self.soup,
-                                    SegmentationSectionTitleSpec,
+                                    SectionTitleSegmentationSpec,
                                     contents=make_text_spans(self.soup, "Annexe 1 : Détails"),
-                                    data=SegmentationSectionTitleData(
+                                    data=SectionTitleSegmentationData(
                                         number="1",
                                         type="annexe",
                                         level=0,
@@ -185,13 +185,13 @@ class TestParseArrete(BaseTestCase):
                     contents=[
                         make_semantic_tag(
                             self.soup,
-                            SegmentationSectionSpec,
+                            SectionSegmentationSpec,
                             contents=[
                                 make_semantic_tag(
                                     self.soup,
-                                    SegmentationSectionTitleSpec,
+                                    SectionTitleSegmentationSpec,
                                     contents=make_text_spans(self.soup, "Article 1 : Disposition"),
-                                    data=SegmentationSectionTitleData(
+                                    data=SectionTitleSegmentationData(
                                         number="1",
                                         type="article",
                                         level=0,
@@ -204,7 +204,7 @@ class TestParseArrete(BaseTestCase):
                                     contents=[
                                         make_semantic_tag(
                                             self.soup,
-                                            TextSpanSpec,
+                                            TextSpanSegmentationSpec,
                                             contents=[
                                                 "Bla bla, ",
                                                 make_semantic_tag(
@@ -214,7 +214,7 @@ class TestParseArrete(BaseTestCase):
                                                 ),
                                                 ", bla ...",
                                             ],
-                                            data=TextSpanData(
+                                            data=TextSpanSegmentationData(
                                                 start=[0, 0, 0],
                                                 end=[0, 0, 0],
                                             ),

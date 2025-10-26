@@ -27,7 +27,7 @@ from .testing import assert_elements_equal, make_text_spans
 from arretify.utils.testing import create_document_context, normalized_html_str
 from arretify.utils.html_semantic import make_semantic_tag
 from arretify.semantic_tag_specs import PageSeparatorData, PageSeparatorSpec, TableOfContentsSpec
-from .semantic_tag_specs import TextSpanData, TextSpanSpec
+from .semantic_tag_specs import TextSpanSegmentationData, TextSpanSegmentationSpec
 
 
 class BaseTestCase(unittest.TestCase):
@@ -58,45 +58,45 @@ class TestInitializeDocumentStructure(BaseTestCase):
                 ),
                 make_semantic_tag(
                     self.soup,
-                    TextSpanSpec,
+                    TextSpanSegmentationSpec,
                     contents=["Line 1"],
-                    data=TextSpanData(start=[0, 0, 0], end=[0, 0, 5]),
+                    data=TextSpanSegmentationData(start=[0, 0, 0], end=[0, 0, 5]),
                 ),
                 make_semantic_tag(
                     self.soup,
-                    TextSpanSpec,
+                    TextSpanSegmentationSpec,
                     contents=["Line 2"],
-                    data=TextSpanData(start=[0, 1, 0], end=[0, 1, 5]),
+                    data=TextSpanSegmentationData(start=[0, 1, 0], end=[0, 1, 5]),
                 ),
                 make_semantic_tag(
                     self.soup,
-                    TextSpanSpec,
+                    TextSpanSegmentationSpec,
                     contents=["Line 3"],
-                    data=TextSpanData(start=[0, 2, 0], end=[0, 2, 5]),
+                    data=TextSpanSegmentationData(start=[0, 2, 0], end=[0, 2, 5]),
                 ),
                 make_semantic_tag(
                     self.soup, PageSeparatorSpec, data=PageSeparatorData(page_index=1)
                 ),
                 make_semantic_tag(
                     self.soup,
-                    TextSpanSpec,
+                    TextSpanSegmentationSpec,
                     contents=["Line 4"],
-                    data=TextSpanData(start=[1, 0, 0], end=[1, 0, 5]),
+                    data=TextSpanSegmentationData(start=[1, 0, 0], end=[1, 0, 5]),
                 ),
                 make_semantic_tag(
                     self.soup,
-                    TextSpanSpec,
+                    TextSpanSegmentationSpec,
                     contents=["Line 5"],
-                    data=TextSpanData(start=[1, 1, 0], end=[1, 1, 5]),
+                    data=TextSpanSegmentationData(start=[1, 1, 0], end=[1, 1, 5]),
                 ),
                 make_semantic_tag(
                     self.soup, PageSeparatorSpec, data=PageSeparatorData(page_index=2)
                 ),
                 make_semantic_tag(
                     self.soup,
-                    TextSpanSpec,
+                    TextSpanSegmentationSpec,
                     contents=["Line 6"],
-                    data=TextSpanData(start=[2, 0, 0], end=[2, 0, 5]),
+                    data=TextSpanSegmentationData(start=[2, 0, 0], end=[2, 0, 5]),
                 ),
             ],
         )
@@ -144,21 +144,21 @@ class TestRenderTableOfContents(BaseTestCase):
             contents=[
                 make_semantic_tag(
                     self.soup,
-                    TextSpanSpec,
+                    TextSpanSegmentationSpec,
                     contents=["Sommaire"],
-                    data=TextSpanData(start=[0, 0, 0], end=[0, 0, 5]),
+                    data=TextSpanSegmentationData(start=[0, 0, 0], end=[0, 0, 5]),
                 ),
                 make_semantic_tag(
                     self.soup,
-                    TextSpanSpec,
+                    TextSpanSegmentationSpec,
                     contents=["bla ..... page 1"],
-                    data=TextSpanData(start=[0, 1, 0], end=[0, 1, 5]),
+                    data=TextSpanSegmentationData(start=[0, 1, 0], end=[0, 1, 5]),
                 ),
                 make_semantic_tag(
                     self.soup,
-                    TextSpanSpec,
+                    TextSpanSegmentationSpec,
                     contents=["blo ..... page 2"],
-                    data=TextSpanData(start=[0, 2, 0], end=[0, 2, 5]),
+                    data=TextSpanSegmentationData(start=[0, 2, 0], end=[0, 2, 5]),
                 ),
             ],
         )
