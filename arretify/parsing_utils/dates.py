@@ -191,7 +191,7 @@ def render_date_regex_tree_match(soup: BeautifulSoup, regex_tree_match: regex_tr
         is_invalid_date = True
 
     if is_invalid_date:
-        date_data = update_data(date_data, error_codes=[ErrorCodes.non_existant_date.value])
+        date_data = update_data(date_data, error_codes=[ErrorCodes.non_existant_date])
         date_str = render_date_str(
             date(
                 year=1,

@@ -19,7 +19,14 @@
 import unittest
 
 from arretify.regex_utils import PatternProxy
+from arretify.utils.html_create import make_new_tag
 from arretify.utils.testing import create_document_context
+from arretify.utils.html_semantic import (
+    create_semantic_tag_spec_no_data,
+    make_semantic_tag,
+)
+from arretify.semantic_tag_specs import PageSeparatorData, PageSeparatorSpec
+from .semantic_tag_specs import SEGMENTATION_TAG_NAME, TextSpanData, TextSpanSpec, AddressSpec
 from .core import (
     make_while_splitter_for_text_spans,
     pick_text_spans,
@@ -30,11 +37,14 @@ from .core import (
     combine_text_spans,
     make_pattern_splitter,
     make_recombine_interrupted_lines_splitter,
-    is_segmentation_tag,
-    make_segmentation_tag,
-    read_segmentation_tag_data,
 )
 from .testing import make_text_spans, assert_elements_equal
+
+
+SomeTagSpec = create_semantic_tag_spec_no_data(
+    spec_name="segmentation:some_tag",
+    tag_name=SEGMENTATION_TAG_NAME,
+)
 
 
 class BaseTestCase(unittest.TestCase):
@@ -55,9 +65,9 @@ class TestMakeWhileSplitterForTextSpans(BaseTestCase):
             probe,
         )
         elements = [
-            make_segmentation_tag(self.soup, "non_text"),
+            make_new_tag(self.soup, "some-tag"),
             *make_text_spans(self.soup, "match this"),
-            make_segmentation_tag(self.soup, "another_non_text"),
+            make_new_tag(self.soup, "some-other-tag"),
         ]
 
         # Act
@@ -96,8 +106,8 @@ class TestMakeWhileSplitterForTextSpans(BaseTestCase):
             while_condition,
         )
         elements = [
-            make_segmentation_tag(self.soup, "some_tag"),
-            *make_text_spans(self.soup, "match this", "match that", "no match"),
+            make_new_tag(self.soup, "some-tag"),
+            *make_text_spans(self.soup, "match this", "match that", "but not this"),
         ]
 
         # Act
@@ -114,7 +124,7 @@ class TestMakeWhileSplitterForTextSpans(BaseTestCase):
         splitter = make_while_splitter_for_text_spans(probe, probe)
         elements = [
             *make_text_spans(self.soup, "match this"),
-            make_segmentation_tag(self.soup, "page_separator"),
+            make_semantic_tag(self.soup, PageSeparatorSpec, data=PageSeparatorData(page_index=0)),
             *make_text_spans(self.soup, "match this too", "but not this"),
         ]
 
@@ -130,10 +140,20 @@ class TestGroupTextSpanTagsSplitter(BaseTestCase):
     def test_simple(self):
         # Arrange
         elements = [
-            make_segmentation_tag(self.soup, "tag1"),
-            make_segmentation_tag(self.soup, "text_span", contents=["line1"]),
-            make_segmentation_tag(self.soup, "text_span", contents=["line2", "line3"]),
-            make_segmentation_tag(self.soup, "tag2"),
+            make_new_tag(self.soup, "some-tag"),
+            make_semantic_tag(
+                self.soup,
+                TextSpanSpec,
+                contents=["line1"],
+                data=TextSpanData(start=[0, 0, 0], end=[0, 0, 0]),
+            ),
+            make_semantic_tag(
+                self.soup,
+                TextSpanSpec,
+                contents=["line2", "line3"],
+                data=TextSpanData(start=[0, 0, 0], end=[0, 0, 0]),
+            ),
+            make_new_tag(self.soup, "some-other-tag"),
         ]
 
         # Act
@@ -142,14 +162,24 @@ class TestGroupTextSpanTagsSplitter(BaseTestCase):
         # Assert
         assert result == (
             [
-                make_segmentation_tag(self.soup, "tag1"),
+                make_new_tag(self.soup, "some-tag"),
             ],
             [
-                make_segmentation_tag(self.soup, "text_span", contents=["line1"]),
-                make_segmentation_tag(self.soup, "text_span", contents=["line2", "line3"]),
+                make_semantic_tag(
+                    self.soup,
+                    TextSpanSpec,
+                    contents=["line1"],
+                    data=TextSpanData(start=[0, 0, 0], end=[0, 0, 0]),
+                ),
+                make_semantic_tag(
+                    self.soup,
+                    TextSpanSpec,
+                    contents=["line2", "line3"],
+                    data=TextSpanData(start=[0, 0, 0], end=[0, 0, 0]),
+                ),
             ],
             [
-                make_segmentation_tag(self.soup, "tag2"),
+                make_new_tag(self.soup, "some-other-tag"),
             ],
         )
 
@@ -186,10 +216,20 @@ class TestPickTextSpans(BaseTestCase):
     def test_simple(self):
         # Arrange
         elements = [
-            make_segmentation_tag(self.soup, "text_span", contents=["bla1"]),
-            make_segmentation_tag(self.soup, "some_tag"),
+            make_semantic_tag(
+                self.soup,
+                TextSpanSpec,
+                contents=["bla1"],
+                data=TextSpanData(start=[0, 0, 0], end=[0, 0, 3]),
+            ),
+            make_new_tag(self.soup, "some-tag"),
             "bla2",
-            make_segmentation_tag(self.soup, "text_span", contents=["blo4", "bla5"]),
+            make_semantic_tag(
+                self.soup,
+                TextSpanSpec,
+                contents=["blo4", "bla5"],
+                data=TextSpanData(start=[0, 0, 0], end=[0, 0, 3]),
+            ),
         ]
 
         # Act
@@ -208,7 +248,7 @@ class TestPickStr(BaseTestCase):
         # Arrange
         elements = [
             "bla1",
-            make_segmentation_tag(self.soup, "some_tag"),
+            make_new_tag(self.soup, "some-tag"),
             "blo4",
         ]
 
@@ -225,16 +265,16 @@ class TestMakeRecombineInterruptedLinesSplitter(BaseTestCase):
 
     def test_multiple_lines_and_page_separators(self):
         # Arrange
-        splitter = make_recombine_interrupted_lines_splitter("some_type")
+        splitter = make_recombine_interrupted_lines_splitter(SomeTagSpec)
         elements = [
-            make_segmentation_tag(self.soup, "some_type", contents=["This is a line"]),
-            make_segmentation_tag(self.soup, "page_separator", data=dict(page_index=1)),
+            make_semantic_tag(self.soup, SomeTagSpec, contents=["This is a line"]),
+            make_semantic_tag(self.soup, PageSeparatorSpec, data=PageSeparatorData(page_index=1)),
             *make_text_spans(
                 self.soup,
                 " that continues ",
             ),
-            make_segmentation_tag(self.soup, "page_separator", data=dict(page_index=2)),
-            make_segmentation_tag(self.soup, "page_separator", data=dict(page_index=3)),
+            make_semantic_tag(self.soup, PageSeparatorSpec, data=PageSeparatorData(page_index=2)),
+            make_semantic_tag(self.soup, PageSeparatorSpec, data=PageSeparatorData(page_index=3)),
             *make_text_spans(
                 self.soup,
                 " and continues again.",
@@ -251,14 +291,20 @@ class TestMakeRecombineInterruptedLinesSplitter(BaseTestCase):
         assert_elements_equal(
             match,
             (
-                make_segmentation_tag(self.soup, "some_type", contents=["This is a line"]),
-                make_segmentation_tag(self.soup, "page_separator", data=dict(page_index=1)),
+                make_semantic_tag(self.soup, SomeTagSpec, contents=["This is a line"]),
+                make_semantic_tag(
+                    self.soup, PageSeparatorSpec, data=PageSeparatorData(page_index=1)
+                ),
                 *make_text_spans(
                     self.soup,
                     " that continues ",
                 ),
-                make_segmentation_tag(self.soup, "page_separator", data=dict(page_index=2)),
-                make_segmentation_tag(self.soup, "page_separator", data=dict(page_index=3)),
+                make_semantic_tag(
+                    self.soup, PageSeparatorSpec, data=PageSeparatorData(page_index=2)
+                ),
+                make_semantic_tag(
+                    self.soup, PageSeparatorSpec, data=PageSeparatorData(page_index=3)
+                ),
                 *make_text_spans(
                     self.soup,
                     " and continues again.",
@@ -269,10 +315,10 @@ class TestMakeRecombineInterruptedLinesSplitter(BaseTestCase):
 
     def test_line_is_not_continuing(self):
         # Arrange
-        splitter = make_recombine_interrupted_lines_splitter("some_type")
+        splitter = make_recombine_interrupted_lines_splitter(SomeTagSpec)
         elements = [
-            make_segmentation_tag(self.soup, "some_type", contents=["This is a line."]),
-            make_segmentation_tag(self.soup, "page_separator", data=dict(page_index=1)),
+            make_semantic_tag(self.soup, SomeTagSpec, contents=["This is a line."]),
+            make_semantic_tag(self.soup, PageSeparatorSpec, data=PageSeparatorData(page_index=1)),
             *make_text_spans(
                 self.soup,
                 "blo blo blo",
@@ -287,9 +333,9 @@ class TestMakeRecombineInterruptedLinesSplitter(BaseTestCase):
 
     def test_line_is_continuing_but_no_page_separator(self):
         # Arrange
-        splitter = make_recombine_interrupted_lines_splitter("some_type")
+        splitter = make_recombine_interrupted_lines_splitter(SomeTagSpec)
         elements = [
-            make_segmentation_tag(self.soup, "some_type", contents=["This is a line"]),
+            make_semantic_tag(self.soup, SomeTagSpec, contents=["This is a line"]),
             *make_text_spans(self.soup, " that continues."),
         ]
 
@@ -314,7 +360,7 @@ class TestGetString(BaseTestCase):
 
     def test_tag_with_string_children(self):
         # Arrange
-        tag = make_segmentation_tag(self.soup, "some_tag", contents=["This is", " a test"])
+        tag = make_semantic_tag(self.soup, SomeTagSpec, contents=["This is", " a test"])
 
         # Act
         result = get_string(tag)
@@ -324,12 +370,17 @@ class TestGetString(BaseTestCase):
 
     def test_tag_with_text_spans(self):
         # Arrange
-        tag = make_segmentation_tag(
+        tag = make_semantic_tag(
             self.soup,
-            "some_tag",
+            SomeTagSpec,
             contents=[
                 "This is",
-                make_segmentation_tag(self.soup, "text_span", contents=[" a test"]),
+                make_semantic_tag(
+                    self.soup,
+                    TextSpanSpec,
+                    contents=[" a test"],
+                    data=TextSpanData(start=[0, 0, 0], end=[0, 0, 5]),
+                ),
             ],
         )
 
@@ -341,12 +392,12 @@ class TestGetString(BaseTestCase):
 
     def test_tag_with_non_text_child(self):
         # Arrange
-        tag = make_segmentation_tag(
+        tag = make_semantic_tag(
             self.soup,
-            "some_tag",
+            SomeTagSpec,
             contents=[
                 "This is",
-                make_segmentation_tag(self.soup, "non_text"),
+                make_new_tag(self.soup, "not-a-string"),
                 " a test",
             ],
         )
@@ -357,14 +408,15 @@ class TestGetString(BaseTestCase):
 
     def test_inline_tags_inside_text_span(self):
         # Arrange
-        tag = make_segmentation_tag(
+        tag = make_semantic_tag(
             self.soup,
-            "text_span",
+            TextSpanSpec,
             contents=[
                 "Viens au ",
-                make_segmentation_tag(self.soup, "address", contents=["123 rue de la Paix"]),
+                make_semantic_tag(self.soup, AddressSpec, contents=["123 rue de la Paix"]),
                 ", à 12h",
             ],
+            data=TextSpanData(start=[0, 0, 0], end=[0, 0, 0]),
         )
 
         # Act
@@ -379,17 +431,17 @@ class TestCombineTextSpans(BaseTestCase):
     def test_combine_text_spans(self):
         # Arrange
         elements = [
-            make_segmentation_tag(
+            make_semantic_tag(
                 self.soup,
-                "text_span",
+                TextSpanSpec,
                 contents=["This is"],
-                data=dict(start=(1, 2, 3), end=(4, 5, 6)),
+                data=TextSpanData(start=[1, 2, 3], end=[4, 5, 6]),
             ),
-            make_segmentation_tag(
+            make_semantic_tag(
                 self.soup,
-                "text_span",
+                TextSpanSpec,
                 contents=[" a test", " with multiple lines."],
-                data=dict(start=(7, 8, 9), end=(16, 17, 18)),
+                data=TextSpanData(start=[7, 8, 9], end=[16, 17, 18]),
             ),
         ]
 
@@ -400,15 +452,15 @@ class TestCombineTextSpans(BaseTestCase):
         assert_elements_equal(
             [result],
             [
-                make_segmentation_tag(
+                make_semantic_tag(
                     self.soup,
-                    "text_span",
+                    TextSpanSpec,
                     contents=[
                         "This is",
                         " a test",
                         " with multiple lines.",
                     ],
-                    data=dict(start=(1, 2, 3), end=(16, 17, 18)),
+                    data=TextSpanData(start=[1, 2, 3], end=[16, 17, 18]),
                 )
             ],
         )
@@ -416,21 +468,21 @@ class TestCombineTextSpans(BaseTestCase):
     def test_containing_inline_tag(self):
         # Arrange
         elements = [
-            make_segmentation_tag(
+            make_semantic_tag(
                 self.soup,
-                "text_span",
+                TextSpanSpec,
                 contents=["This is"],
-                data=dict(start=(1, 2, 3), end=(4, 5, 6)),
+                data=TextSpanData(start=[1, 2, 3], end=[4, 5, 6]),
             ),
-            make_segmentation_tag(
+            make_semantic_tag(
                 self.soup,
-                "text_span",
+                TextSpanSpec,
                 contents=[
                     " a test ",
-                    make_segmentation_tag(self.soup, "address", contents=["123 rue de la Paix"]),
+                    make_semantic_tag(self.soup, AddressSpec, contents=["123 rue de la Paix"]),
                     " with multiple lines.",
                 ],
-                data=dict(start=(7, 8, 9), end=(16, 17, 18)),
+                data=TextSpanData(start=[7, 8, 9], end=[16, 17, 18]),
             ),
         ]
 
@@ -441,18 +493,16 @@ class TestCombineTextSpans(BaseTestCase):
         assert_elements_equal(
             [result],
             [
-                make_segmentation_tag(
+                make_semantic_tag(
                     self.soup,
-                    "text_span",
+                    TextSpanSpec,
                     contents=[
                         "This is",
                         " a test ",
-                        make_segmentation_tag(
-                            self.soup, "address", contents=["123 rue de la Paix"]
-                        ),
+                        make_semantic_tag(self.soup, AddressSpec, contents=["123 rue de la Paix"]),
                         " with multiple lines.",
                     ],
-                    data=dict(start=(1, 2, 3), end=(16, 17, 18)),
+                    data=TextSpanData(start=[1, 2, 3], end=[16, 17, 18]),
                 )
             ],
         )
@@ -466,9 +516,9 @@ class TestMakePatternSplitter(BaseTestCase):
         splitter = make_pattern_splitter(pattern)
         elements = [
             "abc",
-            make_segmentation_tag(self.soup, "some_type"),
+            make_new_tag(self.soup, "some-tag"),
             "def123ghi",
-            make_segmentation_tag(self.soup, "some_type"),
+            make_new_tag(self.soup, "some-tag"),
             "jkl",
         ]
 
@@ -482,7 +532,7 @@ class TestMakePatternSplitter(BaseTestCase):
             before,
             [
                 "abc",
-                make_segmentation_tag(self.soup, "some_type"),
+                make_new_tag(self.soup, "some-tag"),
                 "def",
             ],
         )
@@ -490,7 +540,7 @@ class TestMakePatternSplitter(BaseTestCase):
             after,
             [
                 "ghi",
-                make_segmentation_tag(self.soup, "some_type"),
+                make_new_tag(self.soup, "some-tag"),
                 "jkl",
             ],
         )
@@ -555,57 +605,3 @@ class TestMakePatternSplitter(BaseTestCase):
         assert_elements_equal(before, ["abc"])
         assert_elements_equal(after, ["jkl"])
         assert match.group(0) == "defghi"
-
-
-class TestMakeSegmentationTag(BaseTestCase):
-
-    def test_simple(self):
-        # Act
-        tag = make_segmentation_tag(
-            self.soup,
-            "some_type",
-            contents=["This is a test"],
-            data=dict(start=(1, 2, 3), end=(4, 5, 6)),
-        )
-
-        # Assert
-        assert tag.name == "arretify-segmentation"
-        assert tag["data-tag_name"] == "some_type"
-        assert tag["data-start"] == "[1, 2, 3]"
-        assert tag["data-end"] == "[4, 5, 6]"
-        assert tag.contents == ["This is a test"]
-
-
-class TestIsSegmentationTag(BaseTestCase):
-
-    def test_true(self):
-        tag = make_segmentation_tag(self.soup, "bla")
-        assert is_segmentation_tag(tag) is True
-
-    def test_false_different_tag_name(self):
-        tag = self.soup.new_tag("div")
-        assert is_segmentation_tag(tag) is False
-
-    def test_false_not_a_tag(self):
-        assert is_segmentation_tag("some string") is False
-
-    def test_true_with_tag_name_check(self):
-        tag = make_segmentation_tag(self.soup, "bla")
-        assert is_segmentation_tag(tag, tag_name_in=["bla"]) is True
-
-    def test_false_with_name_check(self):
-        tag = make_segmentation_tag(self.soup, "bla")
-        assert is_segmentation_tag(tag, tag_name_in=["blo"]) is False
-
-
-class TestReadSegmentationTagData(BaseTestCase):
-
-    def test_simple(self):
-        tag = make_segmentation_tag(
-            self.soup,
-            "some_type",
-            contents=["This is a test"],
-            data=dict(start=(1, 2, 3), end=(4, 5, 6)),
-        )
-        data = read_segmentation_tag_data(tag)
-        assert data == dict(start=[1, 2, 3], end=[4, 5, 6])
