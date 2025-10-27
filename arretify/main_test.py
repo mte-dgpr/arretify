@@ -57,29 +57,50 @@ class TestWalkInputDir(unittest.TestCase):
             ARRETES_OCR_DIR / "arrete_ppr_mistral.md",
             ARRETES_OCR_DIR / "arrete_rectorat_mistral.md",
             ARRETES_OCR_DIR / "arrete_sentiers_randonnee_mistral.md",
-            ARRETES_OCR_DIR / "arretes_icpe/0003013459/2020-04-20_AP_mistral",
-            ARRETES_OCR_DIR / "arretes_icpe/0003013459/2021-09-24_AP_mistral",
-            ARRETES_OCR_DIR / "arretes_icpe/0003013459/2023-02-22_APC_mistral",
-            ARRETES_OCR_DIR / "arretes_icpe/0005302394/2008-12-10_AP_mistral",
-            ARRETES_OCR_DIR / "arretes_icpe/0005302394/2009-12-18_AP_mistral",
-            ARRETES_OCR_DIR / "arretes_icpe/0005302394/2010-12-24_AP_mistral",
-            ARRETES_OCR_DIR / "arretes_icpe/0005302394/2012-04-03_AP_mistral",
-            ARRETES_OCR_DIR / "arretes_icpe/0005302394/2012-12-07_AP_mistral",
-            ARRETES_OCR_DIR / "arretes_icpe/0005302394/2020-12-22_AP_mistral",
-            ARRETES_OCR_DIR / "arretes_icpe/0005800425/2003-09-09_AP_mistral",
-            ARRETES_OCR_DIR / "arretes_icpe/0005800425/2005-11-08_AP_mistral",
-            ARRETES_OCR_DIR / "arretes_icpe/0005800425/2007-04-19_AP_mistral",
-            ARRETES_OCR_DIR / "arretes_icpe/0005800425/2010-03-29_AP_mistral",
-            ARRETES_OCR_DIR / "arretes_icpe/0005800425/2012-09-03_AP_mistral",
-            ARRETES_OCR_DIR / "arretes_icpe/0005800425/2025-02-24_APC_mistral",
-            ARRETES_OCR_DIR / "arretes_icpe/0005804239/2009-12-08_AP_mistral",
-            ARRETES_OCR_DIR / "arretes_icpe/0005804239/2012-04-02_AP_mistral",
-            ARRETES_OCR_DIR / "arretes_icpe/0005804239/2013-07-19_Autre_mistral",
-            ARRETES_OCR_DIR / "arretes_icpe/0005804239/2014-01-09_APC_mistral",
-            ARRETES_OCR_DIR / "arretes_icpe/0005804239/2014-12-11_APC_mistral",
-            ARRETES_OCR_DIR / "arretes_icpe/0005804239/2020-04-30_APC_mistral",
-            ARRETES_OCR_DIR / "arretes_icpe/0005804239/2023-12-04_APC_mistral",
-            ARRETES_OCR_DIR / "arretes_icpe/0005804239/2024-09-27_APC_mistral",
+            ARRETES_OCR_DIR
+            / "arretes_icpe/0003013459/2020-04-20_arrêté préfectoral_portant autorisation_ocr",  # noqa
+            ARRETES_OCR_DIR
+            / "arretes_icpe/0003013459/2021-09-24_arrêté préfectoral_Nouveau document_ocr",  # noqa
+            ARRETES_OCR_DIR
+            / "arretes_icpe/0003013459/2023-02-22_ap prescriptions complémentaires_13450_2023_02_22_B+T energie_APCmod_.pdf_ocr",  # noqa
+            ARRETES_OCR_DIR
+            / "arretes_icpe/0005302394/2008-12-10_arrêté préfectoral_AP d'autorisation_ocr",  # noqa
+            ARRETES_OCR_DIR
+            / "arretes_icpe/0005302394/2009-12-18_arrêté préfectoral_APC du 18-12-2009_ocr",  # noqa
+            ARRETES_OCR_DIR
+            / "arretes_icpe/0005302394/2010-12-24_arrêté préfectoral_AP complémentaire (Art. R. 512-31)_ocr",  # noqa
+            ARRETES_OCR_DIR
+            / "arretes_icpe/0005302394/2012-04-03_arrêté préfectoral_Arrêté de prescriptions complémentaires_ocr",  # noqa
+            ARRETES_OCR_DIR
+            / "arretes_icpe/0005302394/2012-12-07_arrêté préfectoral_Arrêté préfectoral complémentaire RSDE_ocr",  # noqa
+            ARRETES_OCR_DIR
+            / "arretes_icpe/0005302394/2020-12-22_arrêté préfectoral_Arrêté préfectoral complémentaire_ocr",  # noqa
+            ARRETES_OCR_DIR
+            / "arretes_icpe/0005800425/2003-09-09_arrêté préfectoral_Régularisation fabrication mousse polyuréthane_ocr",  # noqa
+            ARRETES_OCR_DIR
+            / "arretes_icpe/0005800425/2005-11-08_arrêté préfectoral_modification de l'arrêté du 09-09-03_ocr",  # noqa
+            ARRETES_OCR_DIR
+            / "arretes_icpe/0005800425/2007-04-19_arrêté préfectoral_PC - Augmentation MDI et anticipation date remise étude dangers_ocr",  # noqa
+            ARRETES_OCR_DIR
+            / "arretes_icpe/0005800425/2010-03-29_arrêté préfectoral_Prescriptions complémentaires-RSDE_ocr",  # noqa
+            ARRETES_OCR_DIR
+            / "arretes_icpe/0005800425/2012-09-03_arrêté préfectoral_Prescriptions complémentaires-Etude de dangers du site_ocr",  # noqa
+            ARRETES_OCR_DIR
+            / "arretes_icpe/0005800425/2025-02-24_ap prescriptions complémentaires_2025-02-24 - AP n°UBDEO ERA 25-13 sté CARPENTER - LOUVIERS_ocr",  # noqa
+            ARRETES_OCR_DIR
+            / "arretes_icpe/0005804239/2009-12-08_ap d'autorisation_20091208_APpub_UniteRegenerationHuilesUsagees_ocr",  # noqa
+            ARRETES_OCR_DIR
+            / "arretes_icpe/0005804239/2012-04-02_arrêté préfectoral_Prescriptions complémentaires-Détention d'une source scellée_ocr",  # noqa
+            ARRETES_OCR_DIR
+            / "arretes_icpe/0005804239/2014-01-09_ap prescriptions complémentaires_20140109_APCModifInstallationHuilesUsagees_ocr",  # noqa
+            ARRETES_OCR_DIR
+            / "arretes_icpe/0005804239/2014-12-11_ap prescriptions complémentaires_20141211_APC_GarantiesFinancieres_ocr",  # noqa
+            ARRETES_OCR_DIR
+            / "arretes_icpe/0005804239/2020-04-30_ap prescriptions complémentaires_20200430_APC_OSILUB_GF_ocr",  # noqa
+            ARRETES_OCR_DIR
+            / "arretes_icpe/0005804239/2023-12-04_ap prescriptions complémentaires_AP du 04.12.2023_OSILUB à Gonfreville-l'Orcher_ocr",  # noqa
+            ARRETES_OCR_DIR
+            / "arretes_icpe/0005804239/2024-09-27_ap prescriptions complémentaires_Arrêté complémentaire relatif au projet de réutilisation des eaux usées_ocr",  # noqa
         ]
 
 
