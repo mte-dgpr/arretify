@@ -173,6 +173,18 @@ SUPPLEMENTARY_MOTIF_INFORMATION_PATTERN = PatternProxy(
 )
 """Detect all other information that can be part of the motifs."""
 
+HEADER_ELEMENTS_SPECS: Sequence[SemanticTagSpec] = [
+    EmblemSpec,
+    EntitySpec,
+    IdentificationSpec,
+    ArreteSpec,
+    HonorarySpec,
+    VisaSpec,
+    MotifSpec,
+    SupplementaryMotifInfoSpec,
+]
+
+
 HEADER_ELEMENTS_PATTERNS: Dict[SemanticTagSpec, PatternProxy] = {
     EmblemSpec: EMBLEM_PATTERN,
     EntitySpec: ENTITY_PATTERN,
@@ -567,16 +579,7 @@ def render_header(
         # are treated in a generic way.
         elif is_semantic_tag(
             element,
-            spec_in=[
-                EmblemSpec,
-                EntitySpec,
-                IdentificationSpec,
-                ArreteSpec,
-                HonorarySpec,
-                VisaSpec,
-                MotifSpec,
-                SupplementaryMotifInfoSpec,
-            ],
+            spec_in=HEADER_ELEMENTS_SPECS,
         ):
             content.append(render_header_element(context, element))
         elif is_semantic_tag(element, spec_in=[TableOfContentsSpec]):
