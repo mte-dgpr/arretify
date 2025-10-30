@@ -18,8 +18,6 @@
 #
 from typing import Iterator, Sequence
 
-from bs4 import Tag
-
 from arretify.semantic_tag_specs import (
     PageSeparatorData,
     TableOfContentsSpec,
@@ -35,7 +33,7 @@ from arretify.regex_utils import (
     join_with_or,
 )
 
-from arretify.types import DocumentContext, PageElementOrString
+from arretify.types import DocumentContext, ProtectedTagOrStr, ProtectedTag
 from arretify.utils.strings import split_on_newlines
 from arretify.utils.html_semantic import (
     make_semantic_tag,
@@ -90,8 +88,8 @@ _is_page_footer = make_probe_from_pattern_proxy(PAGE_FOOTER_PATTERN)
 
 def parse_tables_of_contents(
     context: DocumentContext,
-    elements: Sequence[PageElementOrString],
-) -> list[PageElementOrString]:
+    elements: Sequence[ProtectedTagOrStr],
+) -> list[ProtectedTagOrStr]:
     return map_splitted_elements(
         split_elements(
             elements,
@@ -100,11 +98,11 @@ def parse_tables_of_contents(
                 _table_of_contents_while_condition,
             ),
         ),
-        lambda pile: make_semantic_tag(context.soup, TableOfContentsSpec, contents=pile),
+        lambda pile: make_semantic_tag(context.protected_soup, TableOfContentsSpec, contents=pile),
     )
 
 
-def _table_of_contents_while_condition(elements: Sequence[PageElementOrString], index: int) -> bool:
+def _table_of_contents_while_condition(elements: Sequence[ProtectedTagOrStr], index: int) -> bool:
     # Instead of checking just the first line, we check the next few lines.
     # This allows to deal with case when TOC contains lines that are not
     # easily recognizable as TOC, e.g.:
@@ -129,14 +127,16 @@ def _table_of_contents_while_condition(elements: Sequence[PageElementOrString], 
 
 def parse_page_footers(
     context: DocumentContext,
-    elements: Sequence[PageElementOrString],
-) -> list[PageElementOrString]:
+    elements: Sequence[ProtectedTagOrStr],
+) -> list[ProtectedTagOrStr]:
     return map_splitted_elements(
         split_elements(
             elements,
             make_while_splitter_for_text_spans(_is_page_footer, _is_page_footer),
         ),
-        lambda children: make_semantic_tag(context.soup, PageFooterSpec, contents=children),
+        lambda children: make_semantic_tag(
+            context.protected_soup, PageFooterSpec, contents=children
+        ),
     )
 
 
@@ -144,10 +144,10 @@ def parse_page_footers(
 def initialize_document_structure(
     context: DocumentContext,
     pages: Sequence[str],
-) -> Iterator[PageElementOrString]:
+) -> Iterator[ProtectedTagOrStr]:
     for page_index, page_text in enumerate(pages):
         yield make_semantic_tag(
-            context.soup,
+            context.protected_soup,
             PageSeparatorSpec,
             contents=[],
             data=PageSeparatorData(page_index=page_index),
@@ -155,7 +155,7 @@ def initialize_document_structure(
         page_lines = split_on_newlines(page_text)
         for line_index, line in enumerate(page_lines):
             yield make_semantic_tag(
-                context.soup,
+                context.protected_soup,
                 TextSpanSegmentationSpec,
                 contents=[line],
                 data=TextSpanSegmentationData(
@@ -167,9 +167,9 @@ def initialize_document_structure(
 
 def render_table_of_contents(
     context: DocumentContext,
-    tag: Tag,
-) -> Tag:
-    contents: list[PageElementOrString] = []
+    tag: ProtectedTag,
+) -> ProtectedTag:
+    contents: list[ProtectedTagOrStr] = []
     for element in tag.contents:
         if is_semantic_tag(element, spec_in=[TextSpanSegmentationSpec]):
             contents.append(get_string(element))
@@ -178,18 +178,18 @@ def render_table_of_contents(
         else:
             raise ValueError(f"Unexpected element in table of contents: {element}")
     return make_semantic_tag(
-        context.soup,
+        context.protected_soup,
         TableOfContentsSpec,
-        contents=wrap_in_tag(context.soup, contents, "div"),
+        contents=wrap_in_tag(context.protected_soup, contents, "div"),
     )
 
 
 def render_page_footer(
     context: DocumentContext,
-    tag: Tag,
-) -> Tag:
+    tag: ProtectedTag,
+) -> ProtectedTag:
     return make_semantic_tag(
-        context.soup,
+        context.protected_soup,
         PageFooterSpec,
-        contents=wrap_in_tag(context.soup, [get_string(tag)], "div"),
+        contents=wrap_in_tag(context.protected_soup, [get_string(tag)], "div"),
     )

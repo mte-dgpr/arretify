@@ -33,7 +33,7 @@ from arretify.utils.split_merge import (
     flat_map_splitted_elements,
     merge_splitted_elements,
 )
-from arretify.types import PageElementOrString
+from arretify.types import ProtectedTagOrStr
 from arretify.regex_utils import safe_group, MatchProxy, PatternProxy
 from arretify.regex_utils.regex_tree.types import (
     Node,
@@ -54,8 +54,8 @@ T = TypeVar("T")
 
 # -------------------- Split / merge for html -------------------- #
 def pick_if_inline_tag_followed_by_match(
-    is_matching: Probe[PageElementOrString],
-) -> Probe[PageElementOrString]:
+    is_matching: Probe[ProtectedTagOrStr],
+) -> Probe[ProtectedTagOrStr]:
     """
     Builds a function that returns True for an inline tag,
     only if it is followed by an element that matches the provided `is_matching` function.
@@ -70,7 +70,7 @@ def pick_if_inline_tag_followed_by_match(
     ...     Tag(type="br"),
     ...     Tag(type="other_type"),
     ... ]
-    >>> def is_string(elements: Sequence[PageElementOrString], index: int) -> bool:
+    >>> def is_string(elements: Sequence[ProtectedTagOrStr], index: int) -> bool:
     ...     return isinstance(elements[index], str)
     >>> probe = pick_if_inline_tag_followed_by_match(is_string)
     >>> probe(elements, 0) # -> directly calls `is_string`
@@ -81,7 +81,7 @@ def pick_if_inline_tag_followed_by_match(
     False
     """
 
-    def _pick_inline_tags_probe(elements: Sequence[PageElementOrString], index: int) -> bool:
+    def _pick_inline_tags_probe(elements: Sequence[ProtectedTagOrStr], index: int) -> bool:
         for next_index, next_element in enumerate(elements[index:], start=index):
             if is_tag(next_element, tag_name_in=INLINE_TAG_TYPES):
                 continue
@@ -93,9 +93,9 @@ def pick_if_inline_tag_followed_by_match(
 
 
 def pick_string(
-    probe: Probe[PageElementOrString],
-) -> Probe[PageElementOrString]:
-    def _string_probe(elements: Sequence[PageElementOrString], index: int) -> bool:
+    probe: Probe[ProtectedTagOrStr],
+) -> Probe[ProtectedTagOrStr]:
+    def _string_probe(elements: Sequence[ProtectedTagOrStr], index: int) -> bool:
         element = elements[index]
         if isinstance(element, str):
             return probe(elements, index)
@@ -113,11 +113,11 @@ Splitter to enable grouping of string elements.
 """
 
 
-group_strings_and_inline_tags_splitter: Splitter[
-    PageElementOrString, Sequence[PageElementOrString]
-] = make_while_splitter(
-    pick_string(lambda elements, index: True),
-    pick_if_inline_tag_followed_by_match(pick_string(lambda elements, index: True)),
+group_strings_and_inline_tags_splitter: Splitter[ProtectedTagOrStr, Sequence[ProtectedTagOrStr]] = (
+    make_while_splitter(
+        pick_string(lambda elements, index: True),
+        pick_if_inline_tag_followed_by_match(pick_string(lambda elements, index: True)),
+    )
 )
 """
 Splitter to enable grouping of string elements and inline tags,
@@ -127,15 +127,15 @@ when these are preceded and followed by strings.
 
 def make_regex_tree_splitter(
     node: GroupNode,
-) -> Splitter[PageElementOrString, RegexTreeMatch]:
+) -> Splitter[ProtectedTagOrStr, RegexTreeMatch]:
     """
     Splits a list of elements based on a regex tree node.
     """
     pattern_splitter = make_pattern_splitter_ignoring_inline_tags(node.pattern)
 
     def _splitter(
-        elements: Sequence[PageElementOrString],
-    ) -> RawSplit[PageElementOrString, RegexTreeMatch] | None:
+        elements: Sequence[ProtectedTagOrStr],
+    ) -> RawSplit[ProtectedTagOrStr, RegexTreeMatch] | None:
         split = pattern_splitter(elements)
         if not split:
             return None
@@ -154,16 +154,16 @@ def make_regex_tree_splitter(
 
 @dataclass(frozen=True)
 class _PatternSplitterMatch:
-    elements: Sequence[PageElementOrString]
+    elements: Sequence[ProtectedTagOrStr]
     match_proxy: MatchProxy
 
 
 def make_pattern_splitter_ignoring_inline_tags(
     pattern: PatternProxy,
-) -> Splitter[PageElementOrString, _PatternSplitterMatch]:
+) -> Splitter[ProtectedTagOrStr, _PatternSplitterMatch]:
     def _splitter(
-        elements: Sequence[PageElementOrString],
-    ) -> RawSplit[PageElementOrString, _PatternSplitterMatch] | None:
+        elements: Sequence[ProtectedTagOrStr],
+    ) -> RawSplit[ProtectedTagOrStr, _PatternSplitterMatch] | None:
         grouped_strings = split_elements(elements, group_strings_and_inline_tags_splitter)
 
         for i, splitted_element in enumerate(grouped_strings):
@@ -199,8 +199,8 @@ def make_pattern_splitter_ignoring_inline_tags(
 
 
 def _trim_strings_before_merging(
-    elements: Sequence[PageElementOrString],
-) -> list[PageElementOrString]:
+    elements: Sequence[ProtectedTagOrStr],
+) -> list[ProtectedTagOrStr]:
     """
     Trims spaces in string elements before and after an inline tag in order
     to avoid double spaces. Example:
@@ -278,11 +278,11 @@ class NoMatch(Exception):
 
 @dataclass(frozen=True)
 class _NamedGroupSplitterMatch:
-    elements: Sequence[PageElementOrString]
+    elements: Sequence[ProtectedTagOrStr]
     group_name: GroupName
 
 
-def regex_tree_match(elements: Sequence[PageElementOrString], node: GroupNode) -> RegexTreeMatch:
+def regex_tree_match(elements: Sequence[ProtectedTagOrStr], node: GroupNode) -> RegexTreeMatch:
     try:
         results = list(_regex_tree_match_recursive(elements, node, None))
     except NoMatch:
@@ -295,7 +295,7 @@ def regex_tree_match(elements: Sequence[PageElementOrString], node: GroupNode) -
 
 
 def _regex_tree_match_recursive(
-    elements: Sequence[PageElementOrString],
+    elements: Sequence[ProtectedTagOrStr],
     node: Node,
     current_group: RegexTreeMatch | None,
 ) -> RegexTreeMatchFlow:
@@ -373,8 +373,8 @@ def _regex_tree_match_recursive(
 @iter_func_to_list
 def _split_match_by_named_groups(
     match_proxy: MatchProxy,
-    elements: Sequence[PageElementOrString],
-) -> Iterator[SplittedElement[PageElementOrString, _NamedGroupSplitterMatch]]:
+    elements: Sequence[ProtectedTagOrStr],
+) -> Iterator[SplittedElement[ProtectedTagOrStr, _NamedGroupSplitterMatch]]:
     safe_group(match_proxy, 0)
     # Offset in original text
     match_proxy.start(0)

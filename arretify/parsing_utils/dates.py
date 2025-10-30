@@ -20,9 +20,8 @@ import logging
 from datetime import date
 from typing import Sequence, TypedDict
 
-from bs4 import BeautifulSoup, Tag
-
 from arretify.semantic_tag_specs import DateSpec
+from arretify.types import ProtectedSoup, ProtectedTag
 from arretify.utils.dates import DATE_STR_LENGTH, parse_year_str, render_date_str
 from arretify.utils.html_semantic import make_semantic_tag, update_data
 from arretify.regex_utils import (
@@ -173,7 +172,9 @@ def _get_month_index(month: str, month_strings: Sequence[str]) -> int:
         raise RuntimeError(f'couldnt find month for "{match_month}"')
 
 
-def render_date_regex_tree_match(soup: BeautifulSoup, regex_tree_match: regex_tree.Match) -> Tag:
+def render_date_regex_tree_match(
+    soup: ProtectedSoup, regex_tree_match: regex_tree.Match
+) -> ProtectedTag:
     date_dict = _handle_date_match_dict(regex_tree_match.match_dict)
     date_data = DateSpec.data_model()
 

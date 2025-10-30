@@ -17,7 +17,6 @@
 # limitations under the License.
 #
 
-from bs4 import Tag
 from arretify._vendor.clients_api_droit.clients_api_droit.legifrance import (
     build_jorf_url,
     build_code_site_url,
@@ -35,7 +34,7 @@ from arretify.semantic_tag_specs import (
     SectionReferenceSpec,
 )
 from arretify.utils.html_semantic import set_semantic_tag_data
-from arretify.types import ExternalURL, SectionType, DocumentType
+from arretify.types import ExternalURL, ProtectedTag, SectionType, DocumentType
 
 
 # Regex for searching an act with its title.
@@ -79,7 +78,9 @@ def resolve_external_url(
     return None
 
 
-def update_document_reference_tag_href(tag: Tag, document_reference: DocumentReferenceData) -> None:
+def update_document_reference_tag_href(
+    tag: ProtectedTag, document_reference: DocumentReferenceData
+) -> None:
     set_semantic_tag_data(DocumentReferenceSpec, tag, document_reference)
     external_url = resolve_external_url(document_reference)
     if external_url is not None:
@@ -87,7 +88,7 @@ def update_document_reference_tag_href(tag: Tag, document_reference: DocumentRef
 
 
 def update_section_reference_tag_href(
-    tag: Tag,
+    tag: ProtectedTag,
     document_reference: DocumentReferenceData,
     *section_references: SectionReferenceData,
 ) -> None:
@@ -98,7 +99,7 @@ def update_section_reference_tag_href(
 
 
 def get_title_sample_next_sibling(
-    document_reference_tag: Tag,
+    document_reference_tag: ProtectedTag,
 ) -> str | None:
     title_element = document_reference_tag.next_sibling
     if title_element is None or not isinstance(title_element, str):

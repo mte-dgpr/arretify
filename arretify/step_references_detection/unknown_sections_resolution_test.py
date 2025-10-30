@@ -59,14 +59,16 @@ class TestResolveUnknownSections(unittest.TestCase):
             """
         )
         reference_tree = build_reference_tree(
-            document_context.soup.select_one("[data-spec='document_reference']")
+            document_context.protected_soup.select_one("[data-spec='document_reference']")
         )
 
         # Act
         resolve_unknown_sections(document_context, reference_tree)
 
         # Assert
-        section_reference_tag = document_context.soup.select_one("[data-spec='section_reference']")
+        section_reference_tag = document_context.protected_soup.select_one(
+            "[data-spec='section_reference']"
+        )
         section_reference = get_semantic_tag_data(SectionReferenceSpec, section_reference_tag)
         assert section_reference.type == SectionType.ARTICLE
 
@@ -97,14 +99,16 @@ class TestResolveUnknownSections(unittest.TestCase):
             """
         )
         reference_tree = build_reference_tree(
-            document_context.soup.select_one("[data-spec='section_reference'][data-tag_id='1']")
+            document_context.protected_soup.select_one(
+                "[data-spec='section_reference'][data-tag_id='1']"
+            )
         )
 
         # Act
         resolve_unknown_sections(document_context, reference_tree)
 
         # Assert
-        section_reference_tag = document_context.soup.select_one(
+        section_reference_tag = document_context.protected_soup.select_one(
             "[data-spec='section_reference'][data-tag_id='1']"
         )
         section_reference = get_semantic_tag_data(SectionReferenceSpec, section_reference_tag)

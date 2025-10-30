@@ -18,11 +18,9 @@
 #
 import logging
 
-from bs4 import Tag
-
 from arretify.utils.dates import parse_date_str
 from arretify.semantic_tag_specs import DocumentReferenceSpec
-from arretify.types import DocumentContext
+from arretify.types import DocumentContext, ProtectedTag
 from arretify.errors import catch_and_log_arretify_error
 from arretify.utils.html_semantic import get_semantic_tag_data, update_data
 
@@ -41,7 +39,7 @@ _LOGGER = logging.getLogger(__name__)
 @catch_and_log_arretify_error(_LOGGER)
 def resolve_circulaire_legifrance_id(
     document_context: DocumentContext,
-    document_reference_tag: Tag,
+    document_reference_tag: ProtectedTag,
 ) -> None:
     document_reference = get_semantic_tag_data(DocumentReferenceSpec, document_reference_tag)
 

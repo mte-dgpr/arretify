@@ -23,7 +23,7 @@ from arretify.regex_utils import (
     regex_tree,
     iter_regex_tree_match_page_elements_or_strings,
 )
-from arretify.types import PageElementOrString, DocumentContext, DocumentType
+from arretify.types import ProtectedTagOrStr, DocumentContext, DocumentType
 from arretify.semantic_tag_specs import (
     DocumentReferenceData,
     DocumentReferenceSpec,
@@ -45,15 +45,15 @@ SELF_NODE = regex_tree.Group(
 
 def parse_self_references(
     document_context: DocumentContext,
-    children: Sequence[PageElementOrString],
-) -> list[PageElementOrString]:
+    children: Sequence[ProtectedTagOrStr],
+) -> list[ProtectedTagOrStr]:
     return map_splitted_elements(
         split_elements(
             children,
             make_regex_tree_splitter(SELF_NODE),
         ),
         lambda self_group_match: make_semantic_tag(
-            document_context.soup,
+            document_context.protected_soup,
             DocumentReferenceSpec,
             data=DocumentReferenceData(
                 type=DocumentType.self,

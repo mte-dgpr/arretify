@@ -18,10 +18,13 @@
 #
 from typing import Sequence
 
-from bs4 import Tag
-
-from arretify.types import PageElementOrString, DocumentContext
-from arretify.utils.element_ranges import (
+from arretify.types import (
+    ProtectedTagOrStr,
+    DocumentContext,
+    ProtectedTag,
+    unprotect_page_element,
+)
+from arretify.utils.html_element_ranges import (
     iter_collapsed_range_right,
 )
 from arretify.semantic_tag_specs import (
@@ -58,9 +61,9 @@ CONNECTOR_SECTION_TO_PARENT_NODE = regex_tree.Group(
 
 def match_sections_to_parents(
     document_context: DocumentContext,
-    children: Sequence[PageElementOrString],
-) -> list[PageElementOrString]:
-    document_context.soup
+    children: Sequence[ProtectedTagOrStr],
+) -> list[ProtectedTagOrStr]:
+    document_context.protected_soup
     children = list(children)
     section_references = [
         tag for tag in children if is_semantic_tag(tag, spec_in=[SectionReferenceSpec])
@@ -87,8 +90,8 @@ def match_sections_to_parents(
 
 
 def _search_parent_reference_tag(
-    section_reference_tag: Tag,
-) -> Tag | None:
+    section_reference_tag: ProtectedTag,
+) -> ProtectedTag | None:
     """
     For a given section reference tag, this function searches for its parent reference tag,
     by looking for connector words in between.
@@ -111,7 +114,10 @@ def _search_parent_reference_tag(
     """
     for element_range in iter_collapsed_range_right(section_reference_tag):
         # Make sure all elements in the range are contiguous.
-        if element_range[-1].parent != section_reference_tag.parent:
+        if (
+            unprotect_page_element(element_range[-1]).parent
+            != unprotect_page_element(section_reference_tag).parent
+        ):
             return None
 
         # Filter out inline tags, and generate combined strings

@@ -24,7 +24,7 @@ from arretify.regex_utils import (
     split_string_with_regex,
     merge_matches_with_siblings,
 )
-from arretify.utils.html import PageElementOrString
+from arretify.types import ProtectedTagOrStr
 
 
 ET_VIRGULE_PATTERN_S = r"(\s*(,|,?et)\s*)"
@@ -47,7 +47,7 @@ SENTENCE_CONTINUES_AT_LINE_START_PATTERN = PatternProxy(r"^\s*[a-z]", Settings(i
 def join_split_pile_with_pattern(
     pile: Sequence[str],
     pattern: PatternProxy,
-) -> list[PageElementOrString]:
+) -> Sequence[ProtectedTagOrStr]:
     return list(
         merge_matches_with_siblings(
             split_string_with_regex(

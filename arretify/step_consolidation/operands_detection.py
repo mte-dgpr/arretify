@@ -18,9 +18,7 @@
 #
 import logging
 
-from bs4 import Tag
-
-from arretify.types import DocumentContext
+from arretify.types import DocumentContext, ProtectedTag
 from arretify.semantic_tag_specs import (
     OperationSpec,
     SectionReferenceSpec,
@@ -32,7 +30,7 @@ from arretify.utils.html import (
     ensure_tag_id,
     is_tag,
 )
-from arretify.utils.element_ranges import (
+from arretify.utils.html_element_ranges import (
     get_contiguous_elements_left,
     get_contiguous_elements_right,
 )
@@ -56,12 +54,14 @@ INLINE_TAG_SCHEMAS: list[SemanticTagSpec] = [
 ]
 
 
-def resolve_references_and_operands(document_context: DocumentContext, operation_tag: Tag) -> None:
+def resolve_references_and_operands(
+    document_context: DocumentContext, operation_tag: ProtectedTag
+) -> None:
     operation_data = get_semantic_tag_data(OperationSpec, operation_tag)
     if operation_data.direction != "rtl":
         raise ValueError("Only right-to-left is supported so far")
 
-    reference_tags: list[Tag] = _find_left_references(document_context, operation_tag)
+    reference_tags: list[ProtectedTag] = _find_left_references(document_context, operation_tag)
     if len(reference_tags) == 0:
         _LOGGER.warning("No references found in operation")
         return
@@ -72,7 +72,7 @@ def resolve_references_and_operands(document_context: DocumentContext, operation
     set_semantic_tag_data(OperationSpec, operation_tag, operation_data)
 
     if operation_data.has_operand:
-        operand_tag: Tag | None = _find_right_operand(document_context, operation_tag)
+        operand_tag: ProtectedTag | None = _find_right_operand(document_context, operation_tag)
         if operand_tag is None:
             _LOGGER.warning("No right operand found for operation")
             return
@@ -81,7 +81,9 @@ def resolve_references_and_operands(document_context: DocumentContext, operation
     set_semantic_tag_data(OperationSpec, operation_tag, operation_data)
 
 
-def _find_right_operand(document_context: DocumentContext, start_tag: Tag) -> Tag | None:
+def _find_right_operand(
+    document_context: DocumentContext, start_tag: ProtectedTag
+) -> ProtectedTag | None:
     for element in get_contiguous_elements_right(start_tag):
         if is_tag(
             element,
@@ -100,9 +102,11 @@ def _find_right_operand(document_context: DocumentContext, start_tag: Tag) -> Ta
     return None
 
 
-def _find_left_references(document_context: DocumentContext, start_tag: Tag) -> list[Tag]:
+def _find_left_references(
+    document_context: DocumentContext, start_tag: ProtectedTag
+) -> list[ProtectedTag]:
     contiguous_elements_left = get_contiguous_elements_left(start_tag)
-    reference_tags: list[Tag] = []
+    reference_tags: list[ProtectedTag] = []
 
     for element in contiguous_elements_left:
         if is_semantic_tag(

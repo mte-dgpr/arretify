@@ -50,7 +50,7 @@ class TestFileLoadingFunctions(unittest.TestCase):
         assert result is not None
         assert result.filename == "dummy_path"
         assert result.pdf == b"dummy pdf content"
-        assert result.soup is not None
+        assert result.protected_soup is not None
 
     def test_load_ocr_file(self):
         # Arrange
@@ -66,7 +66,7 @@ class TestFileLoadingFunctions(unittest.TestCase):
             assert result is not None
             assert result.filename == "dummy_path"
             assert result.pages == ["line1\nline2"]
-            assert result.soup is not None
+            assert result.protected_soup is not None
 
     def test_load_ocr_pages(self):
         """
@@ -108,4 +108,4 @@ class TestFileLoadingFunctions(unittest.TestCase):
                 "content of file 2",
                 "content of file 10",
             ]
-            assert result.soup is not None
+            assert result.protected_soup is not None
