@@ -33,6 +33,7 @@ from arretify.semantic_tag_specs import (
     SectionReferenceData,
     SectionReferenceSpec,
 )
+from arretify.utils.html import set_attribute
 from arretify.utils.html_semantic import set_semantic_tag_data
 from arretify.types import ExternalURL, ProtectedTag, SectionType, DocumentType
 
@@ -84,7 +85,7 @@ def update_document_reference_tag_href(
     set_semantic_tag_data(DocumentReferenceSpec, tag, document_reference)
     external_url = resolve_external_url(document_reference)
     if external_url is not None:
-        tag["href"] = external_url
+        set_attribute(tag, "href", external_url)
 
 
 def update_section_reference_tag_href(
@@ -95,7 +96,7 @@ def update_section_reference_tag_href(
     set_semantic_tag_data(SectionReferenceSpec, tag, section_references[-1])
     external_url = resolve_external_url(document_reference, *section_references)
     if external_url is not None:
-        tag["href"] = external_url
+        set_attribute(tag, "href", external_url)
 
 
 def get_title_sample_next_sibling(

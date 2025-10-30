@@ -26,6 +26,7 @@ from arretify.types import (
     ProtectedTag,
     TagGroupId,
     TagId,
+    unprotect_tag,
 )
 from arretify.utils.functional import iter_func_to_list
 
@@ -34,6 +35,8 @@ INLINE_TAG_TYPES = ["br"]
 
 TAG_ID_ATTR = "data-tag_id"
 GROUP_ID_ATTR = "data-group_id"
+
+RESERVED_ATTRS = [TAG_ID_ATTR, GROUP_ID_ATTR]
 
 
 def is_tag(
@@ -68,7 +71,7 @@ def filter_out_inline_tags(
 def ensure_tag_id(id_counters: IdCounters, tag: ProtectedTag) -> TagId:
     current_tag_id = tag.get(TAG_ID_ATTR, None)
     if current_tag_id is None:
-        tag[TAG_ID_ATTR] = _make_id(id_counters, "tag_id")
+        unprotect_tag(tag)[TAG_ID_ATTR] = _make_id(id_counters, "tag_id")
     return cast(str, tag[TAG_ID_ATTR])
 
 
@@ -80,8 +83,27 @@ def set_group_id(tag: ProtectedTag, group_id: TagGroupId) -> TagGroupId:
     current_group_id = tag.get(GROUP_ID_ATTR, None)
     if current_group_id is not None and current_group_id != group_id:
         raise ValueError(f"Tag already has a different group_id: {current_group_id}")
-    tag[GROUP_ID_ATTR] = group_id
+    unprotect_tag(tag)[GROUP_ID_ATTR] = group_id
     return group_id
+
+
+def set_attribute(
+    tag: ProtectedTag,
+    attr_name: str,
+    attr_value: str,
+) -> ProtectedTag:
+    if attr_name in RESERVED_ATTRS:
+        raise ValueError(f"Cannot set reserved attribute '{attr_name}' using this function")
+    return _set_attribute(tag, attr_name, attr_value)
+
+
+def _set_attribute(
+    tag: ProtectedTag,
+    attr_name: str,
+    attr_value: str,
+) -> ProtectedTag:
+    unprotect_tag(tag)[attr_name] = attr_value
+    return tag
 
 
 def get_group_id(tag: ProtectedTag) -> TagGroupId | None:

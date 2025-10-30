@@ -32,7 +32,12 @@ from arretify.semantic_tag_specs import (
     DocumentReferenceSpec,
 )
 from arretify.regex_utils import regex_tree
-from arretify.utils.html_semantic import is_semantic_tag
+from arretify.utils.html_semantic import (
+    get_semantic_tag_data,
+    is_semantic_tag,
+    set_semantic_tag_data,
+    update_data,
+)
 from arretify.utils.split_merge import split_elements, map_splitted_elements
 from arretify.utils.html_split_merge import group_strings_splitter
 from arretify.utils.html import ensure_tag_id, filter_out_inline_tags, get_group_id
@@ -84,7 +89,14 @@ def match_sections_to_parents(
 
         for section_reference_tag in section_references_in_group:
             document_element_id = ensure_tag_id(document_context.id_counters, parent_reference_tag)
-            section_reference_tag["data-parent_reference"] = document_element_id
+            set_semantic_tag_data(
+                SectionReferenceSpec,
+                section_reference_tag,
+                update_data(
+                    get_semantic_tag_data(SectionReferenceSpec, section_reference_tag),
+                    parent_reference=document_element_id,
+                ),
+            )
 
     return children
 
