@@ -20,10 +20,11 @@ import os
 import logging
 import time
 import csv
+from collections import defaultdict
+from dataclasses import dataclass
 from datetime import datetime
 from optparse import OptionParser
 from pathlib import Path
-from typing import Dict, Optional
 
 import requests
 
@@ -54,14 +55,25 @@ CATCHED_FILE_TYPES = [
     "autre",
 ]
 
-FILES_COUNTER: Dict[str, int] = {file_type: 0 for file_type in CATCHED_FILE_TYPES}
 
-FILES_NAMES: Dict[str, list[str]] = {file_type: [] for file_type in CATCHED_FILE_TYPES}
+@dataclass
+class FileMetadata:
+    code_aiot: str
+    date: str
+    type: str
+    name: str
+    written_on_disk: bool
 
-FILES_LIST: list[tuple[str, str, str, str]] = []
+
+def _group_by_key(items, key_func):
+    grouped = defaultdict(list)
+    for item in items:
+        key = key_func(item)
+        grouped[key].append(item)
+    return dict(grouped)
 
 
-def get_icpe_data(code_aiot: str) -> Dict:
+def get_icpe_data(code_aiot: str) -> dict:
 
     url = f"https://georisques.gouv.fr/api/v1/installations_classees?codeAIOT={code_aiot}"
 
@@ -78,17 +90,17 @@ def get_icpe_data(code_aiot: str) -> Dict:
 
 
 def process_icpe_data(
-    icpe_data: Dict, code_aiot: str, out_dir: Optional[Path], sleep_time: float = 0.5
+    icpe_data: dict,
+    code_aiot: str,
+    files_list: list[FileMetadata],
+    out_dir: Path,
+    sleep_time: float = 0.5,
+    dry_run: bool = False,
 ):
 
     icpe_documents = icpe_data.get("documentsHorsInspection", [])
     if not icpe_documents:
         _LOGGER.warning(f"No document found for ICPE {code_aiot}")
-
-    if out_dir:
-        icpe_dir = out_dir / code_aiot
-        if not icpe_dir.is_dir():
-            os.mkdir(icpe_dir)
 
     for document_data in icpe_documents:
 
@@ -101,41 +113,71 @@ def process_icpe_data(
             )
             raise KeyError(err_msg)
 
+        # Write filename for reporting
         file_name = document_data["nomFichier"]
         file_name = file_name.replace("/", "-")  # avoid issues with paths
         file_name = file_name.replace("*", "")  # avoid issues with paths
-        FILES_COUNTER[file_type] += 1
-        FILES_NAMES[file_type].append(file_name)
-        FILES_LIST.append((f"'{code_aiot}", file_date, file_type, file_name))
+        # We use "'" to avoid issues when reading AIOT codes starting with zeroes
+        file_aiot = f"'{code_aiot}"
+        written_on_disk = False
 
+        # Check if exists on disk
         file_name_save = f"{file_date}_{file_type}_{file_name}.pdf"
 
-        if out_dir:
+        icpe_dir = out_dir / code_aiot
+        file_path = icpe_dir / file_name_save
 
-            file_path = icpe_dir / file_name_save
-            if file_path.is_file():
-                _LOGGER.info(f"File {file_name_save} already exists, continue...")
-                continue
+        if file_path.is_file():
+            _LOGGER.info(f"File {file_name_save} already exists, continue...")
+            written_on_disk = True
+            files_list.append(
+                FileMetadata(file_aiot, file_date, file_type, file_name, written_on_disk)
+            )
+            continue
 
-            response = requests.get(document_data["urlFichier"], stream=True)
-
-            if response.status_code == 500:
-                _LOGGER.warning(f"File {file_name_save} not existing on server side, continue...")
-                time.sleep(sleep_time)  # avoid error 503
-                continue
-
-            with open(file_path, "wb") as f:
-                for chunk in response.iter_content(chunk_size=8192):
-                    f.write(chunk)
-            _LOGGER.info(f"Downloaded file {file_name_save}")
-            time.sleep(sleep_time)  # avoid error 503
-
-        else:
-
+        # Do not download if dry run
+        if dry_run:
             _LOGGER.info(f"Seen file {file_name_save}")
+            files_list.append(
+                FileMetadata(file_aiot, file_date, file_type, file_name, written_on_disk)
+            )
+            continue
+
+        # Download file
+        response = requests.get(document_data["urlFichier"], stream=True)
+
+        if response.status_code != 200:
+            _LOGGER.warning(
+                f"Failed downloading {file_name_save} with HTTP status {response.status_code}"
+                " continue..."
+            )
+            files_list.append(
+                FileMetadata(file_aiot, file_date, file_type, file_name, written_on_disk)
+            )
+            time.sleep(sleep_time)  # avoid error 503
+            continue
+
+        # Save file
+        if not out_dir.is_dir():
+            os.mkdir(out_dir)
+
+        if not icpe_dir.is_dir():
+            os.mkdir(icpe_dir)
+
+        with open(file_path, "wb") as f:
+            for chunk in response.iter_content(chunk_size=8192):
+                f.write(chunk)
+        _LOGGER.info(f"Downloaded file {file_name_save}")
+        written_on_disk = True
+        files_list.append(FileMetadata(file_aiot, file_date, file_type, file_name, written_on_disk))
+        time.sleep(sleep_time)  # avoid error 503
+
+    return files_list
 
 
-def download_one_icpe(code_aiot: str, out_dir: Optional[Path]):
+def download_one_icpe(
+    code_aiot: str, files_list: list[FileMetadata], out_dir: Path, dry_run: bool = False
+):
 
     try:
         icpe_data = get_icpe_data(code_aiot)
@@ -143,7 +185,7 @@ def download_one_icpe(code_aiot: str, out_dir: Optional[Path]):
         _LOGGER.warning(f"Failed to get ICPE {code_aiot} from georisques")
         _LOGGER.warning(err)
 
-    process_icpe_data(icpe_data, code_aiot, out_dir)
+    process_icpe_data(icpe_data, code_aiot, files_list, out_dir, dry_run=dry_run)
 
 
 def iter_icpe_file(file_path: Path):
@@ -152,56 +194,51 @@ def iter_icpe_file(file_path: Path):
             yield line.strip()
 
 
-def initialize_logger(log_dir: Optional[Path]):
+def initialize_logger():
 
     stream_handler = logging.StreamHandler()
     stream_handler.setFormatter(logging.Formatter("%(levelname)s - %(message)s"))
     handlers: list[logging.StreamHandler] = [stream_handler]
-
-    if log_dir and not log_dir.is_dir():
-        os.mkdir(log_dir)
-
-    if log_dir:
-        log_dir.mkdir(exist_ok=True)
-        log_file = log_dir / f"{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.log"
-        handlers.append(logging.FileHandler(log_file, encoding="utf-8"))
-
     logging.basicConfig(level=logging.INFO, handlers=handlers)
 
 
-def main(icpe_file: Optional[Path], out_dir: Optional[Path], log_dir: Optional[Path]):
+def main(icpe_file: Path, out_dir: Path, dry_run: bool = False, report: bool = True):
     """Run downloading of ICPE documents from georisques.gouv.fr
 
     Args:
-        icpe_file (Optional[Path]): Path to a file containing one ICPE code AIOT per line
-        out_dir (Optional[Path]): Dir where to save downloaded files, if None files are not saved
-        log_dir (Optional[Path]): Dir where to save log file, if None no log file is saved
+        icpe_file (Path): Path to a file containing one ICPE code AIOT per line
+        out_dir (Path): Dir where to save downloaded files, if None files are not saved
+        dry_run (bool, optional): If True, do not download files, only list them.
+        report (bool, optional): If True, generate a CSV report of downloaded files.
     """
-    if not icpe_file:
-        err_msg = "No file provided for ICPE list, please provide one with -i or --icpe-file"
-        raise KeyError(err_msg)
+    initialize_logger()
 
-    if out_dir and not out_dir.is_dir():
-        os.mkdir(out_dir)
-
-    initialize_logger(log_dir)
+    files_list: list[FileMetadata] = []
 
     for code_aiot in iter_icpe_file(icpe_file):
-
         _LOGGER.info(f"--- ICPE {code_aiot}")
-        download_one_icpe(code_aiot, out_dir)
+        download_one_icpe(code_aiot, files_list, out_dir, dry_run=dry_run)
 
     _LOGGER.info("--- Summary ---")
-    for file_type, count in FILES_COUNTER.items():
-        _LOGGER.info(f"Seen or downloaded {count} files of type '{file_type}'")
-        _LOGGER.info(f"Files: {FILES_NAMES[file_type]}")
+    files_by_type = _group_by_key(files_list, lambda f: f.type)
+    for file_type, files_type_list in files_by_type.items():
+        _LOGGER.info(f"Seen or downloaded {len(files_type_list)} files of type '{file_type}'")
 
-    if log_dir:
-        file_list_name = log_dir / f"{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.csv"
+    if report:
+        file_list_name = out_dir / f"{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}_report.csv"
         with open(file_list_name, mode="w", newline="", encoding="utf-8-sig") as f:
             writer = csv.writer(f, delimiter=";")
-            writer.writerow(["Code AIOT", "dateFichier", "typeFichier", "nomFichier"])
-            writer.writerows(FILES_LIST)
+            writer.writerow(["Code AIOT", "dateFichier", "typeFichier", "nomFichier", "Enregistré"])
+            for file_meta in files_list:
+                writer.writerow(
+                    [
+                        file_meta.code_aiot,
+                        file_meta.date,
+                        file_meta.type,
+                        file_meta.name,
+                        file_meta.written_on_disk,
+                    ]
+                )
 
 
 if __name__ == "__main__":
@@ -211,22 +248,31 @@ if __name__ == "__main__":
     parser.add_option(
         "-i",
         "--icpe-file",
-        default=None,
     )
     parser.add_option(
         "-o",
         "--out-dir",
-        default=None,
     )
     parser.add_option(
         "-l",
         "--log-dir",
         default=None,
     )
+    parser.add_option(
+        "--dry-run",
+        action="store_true",
+        default=False,
+    )
+    parser.add_option(
+        "--report",
+        action="store_true",
+        default=True,
+    )
     (options, args) = parser.parse_args()
 
-    icpe_file = Path(options.icpe_file) if options.icpe_file else None
-    out_dir = Path(options.out_dir) if options.out_dir else None
-    log_dir = Path(options.log_dir) if options.log_dir else None
+    icpe_file = Path(options.icpe_file)
+    out_dir = Path(options.out_dir)
+    dry_run = options.dry_run
+    report = options.report
 
-    main(icpe_file, out_dir, log_dir)
+    main(icpe_file, out_dir, dry_run=dry_run, report=report)
