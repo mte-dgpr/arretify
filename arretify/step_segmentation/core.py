@@ -22,15 +22,13 @@ from typing import (
     Iterator,
 )
 
-from bs4 import Tag
-
 from arretify.parsing_utils.patterns import is_continuing_sentence
 from arretify.semantic_tag_specs import AddressSpec, PageFooterSpec, PageSeparatorSpec
 from arretify.step_segmentation.semantic_tag_specs import (
     TextSpanSegmentationData,
     TextSpanSegmentationSpec,
 )
-from arretify.types import DocumentContext, PageElementOrString
+from arretify.types import DocumentContext, ProtectedTagOrStr, ProtectedTag
 from arretify.utils.functional import iter_func_to_list
 from arretify.regex_utils import PatternProxy, MatchProxy
 from arretify.utils.html_semantic import (
@@ -65,8 +63,8 @@ List of tag names that contains specific bits of text information inside a text_
 
 
 def pick_if_transparent_tag_followed_by_match(
-    is_matching: Probe[PageElementOrString],
-) -> Probe[PageElementOrString]:
+    is_matching: Probe[ProtectedTagOrStr],
+) -> Probe[ProtectedTagOrStr]:
     """
     Builds a function that returns True for a transparent tag,
     only if it is followed by an element that matches the provided `is_matching` function.
@@ -81,7 +79,7 @@ def pick_if_transparent_tag_followed_by_match(
     ...     <page_separator />,
     ...     <other_tag />,
     ... ]
-    >>> def is_string(elements: Sequence[PageElementOrString], index: int) -> bool:
+    >>> def is_string(elements: Sequence[ProtectedTagOrStr], index: int) -> bool:
     ...     return isinstance(elements[index], str)
     >>> probe = pick_if_transparent_tag_followed_by_match(is_string)
     >>> probe(elements, 0) # -> directly calls `is_string`
@@ -92,7 +90,7 @@ def pick_if_transparent_tag_followed_by_match(
     False
     """
 
-    def _probe(elements: Sequence[PageElementOrString], index: int) -> bool:
+    def _probe(elements: Sequence[ProtectedTagOrStr], index: int) -> bool:
         for next_index, next_element in enumerate(elements[index:], start=index):
             if is_semantic_tag(next_element, spec_in=TRANSPARENT_TAG_SPECS):
                 continue
@@ -104,9 +102,9 @@ def pick_if_transparent_tag_followed_by_match(
 
 
 def pick_text_spans(
-    probe: Probe[PageElementOrString],
-) -> Probe[PageElementOrString]:
-    def _probe(elements: Sequence[PageElementOrString], index: int) -> bool:
+    probe: Probe[ProtectedTagOrStr],
+) -> Probe[ProtectedTagOrStr]:
+    def _probe(elements: Sequence[ProtectedTagOrStr], index: int) -> bool:
         element = elements[index]
         if is_semantic_tag(element, spec_in=[TextSpanSegmentationSpec]):
             return probe(elements, index)
@@ -116,9 +114,9 @@ def pick_text_spans(
 
 
 def pick_str(
-    probe: Probe[PageElementOrString],
-) -> Probe[PageElementOrString]:
-    def _probe(elements: Sequence[PageElementOrString], index: int) -> bool:
+    probe: Probe[ProtectedTagOrStr],
+) -> Probe[ProtectedTagOrStr]:
+    def _probe(elements: Sequence[ProtectedTagOrStr], index: int) -> bool:
         element = elements[index]
         if isinstance(element, str):
             return probe(elements, index)
@@ -129,8 +127,8 @@ def pick_str(
 
 def make_probe_from_pattern_proxy(
     pattern: PatternProxy, use_search: bool = False
-) -> Probe[PageElementOrString]:
-    def _probe(elements: Sequence[PageElementOrString], index: int) -> bool:
+) -> Probe[ProtectedTagOrStr]:
+    def _probe(elements: Sequence[ProtectedTagOrStr], index: int) -> bool:
         string = get_string(elements[index])
         if use_search is False:
             match = pattern.match(string)
@@ -142,9 +140,9 @@ def make_probe_from_pattern_proxy(
 
 
 def make_while_splitter_for_text_spans(
-    start_condition: Probe[PageElementOrString],
-    while_condition: Probe[PageElementOrString],
-) -> Splitter[PageElementOrString, list[PageElementOrString]]:
+    start_condition: Probe[ProtectedTagOrStr],
+    while_condition: Probe[ProtectedTagOrStr],
+) -> Splitter[ProtectedTagOrStr, list[ProtectedTagOrStr]]:
     return make_while_splitter(
         pick_text_spans(start_condition),
         pick_if_transparent_tag_followed_by_match(pick_text_spans(while_condition)),
@@ -152,8 +150,8 @@ def make_while_splitter_for_text_spans(
 
 
 def make_single_line_splitter_for_text_spans(
-    is_matching: Probe[PageElementOrString],
-) -> Splitter[PageElementOrString, list[PageElementOrString]]:
+    is_matching: Probe[ProtectedTagOrStr],
+) -> Splitter[ProtectedTagOrStr, list[ProtectedTagOrStr]]:
     return make_single_line_splitter(
         is_matching=pick_text_spans(is_matching),
     )
@@ -161,10 +159,10 @@ def make_single_line_splitter_for_text_spans(
 
 def make_pattern_splitter(
     pattern: PatternProxy,
-) -> Splitter[PageElementOrString, MatchProxy]:
+) -> Splitter[ProtectedTagOrStr, MatchProxy]:
     def _splitter(
-        elements: Sequence[PageElementOrString],
-    ) -> RawSplit[PageElementOrString, MatchProxy] | None:
+        elements: Sequence[ProtectedTagOrStr],
+    ) -> RawSplit[ProtectedTagOrStr, MatchProxy] | None:
         splitted_elements = split_elements(elements, group_str_splitter)
         for i, splitted_element in enumerate(splitted_elements):
             if not isinstance(splitted_element, SplitMatch):
@@ -194,7 +192,7 @@ def make_pattern_splitter(
 
 
 group_text_span_tags_splitter = cast(
-    Splitter[PageElementOrString, Sequence[PageElementOrString]],
+    Splitter[ProtectedTagOrStr, Sequence[ProtectedTagOrStr]],
     make_while_splitter(
         pick_text_spans(lambda elements, index: True),
         pick_if_transparent_tag_followed_by_match(pick_text_spans(lambda elements, index: True)),
@@ -206,7 +204,7 @@ Splitter to enable grouping of text_span tags.
 
 
 group_str_splitter = cast(
-    Splitter[PageElementOrString, Sequence[PageElementOrString]],
+    Splitter[ProtectedTagOrStr, Sequence[ProtectedTagOrStr]],
     make_while_splitter(
         pick_str(lambda elements, index: True),
         pick_str(lambda elements, index: True),
@@ -219,15 +217,15 @@ Splitter to enable grouping of strings.
 
 def make_recombine_interrupted_lines_splitter(
     start_tag_spec: SemanticTagSpec,
-) -> Splitter[PageElementOrString, Sequence[PageElementOrString]]:
+) -> Splitter[ProtectedTagOrStr, Sequence[ProtectedTagOrStr]]:
     """
     Builds a splitter for groupping text that is interrupted by page separators.
     """
 
     def _splitter(
-        elements: Sequence[PageElementOrString],
-    ) -> RawSplit[PageElementOrString, list[PageElementOrString]] | None:
-        before: list[PageElementOrString] = []
+        elements: Sequence[ProtectedTagOrStr],
+    ) -> RawSplit[ProtectedTagOrStr, list[ProtectedTagOrStr]] | None:
+        before: list[ProtectedTagOrStr] = []
         while elements:
             # Find the next starting element
             before_start, elements = split_before_match(
@@ -280,7 +278,7 @@ def make_recombine_interrupted_lines_splitter(
     return _splitter
 
 
-def get_string(element: PageElementOrString) -> str:
+def get_string(element: ProtectedTagOrStr) -> str:
     """
     Extracts the string from a Tag.
     If the element is a str, it returns it.
@@ -296,7 +294,7 @@ def get_string(element: PageElementOrString) -> str:
         raise ValueError(f"Element '{element}' is neither a string nor a Tag")
 
 
-def _get_string(element: PageElementOrString) -> str:
+def _get_string(element: ProtectedTagOrStr) -> str:
     if isinstance(element, str):
         return element
     elif is_semantic_tag(element, spec_in=[TextSpanSegmentationSpec, *INLINE_TAG_SPECS]):
@@ -308,7 +306,7 @@ def _get_string(element: PageElementOrString) -> str:
 
 
 @iter_func_to_list
-def get_strings(tags: Sequence[PageElementOrString]) -> Iterator[str]:
+def get_strings(tags: Sequence[ProtectedTagOrStr]) -> Iterator[str]:
     for tag in tags:
         if is_semantic_tag(tag, spec_in=[TextSpanSegmentationSpec]):
             yield get_string(tag)
@@ -320,38 +318,38 @@ def get_strings(tags: Sequence[PageElementOrString]) -> Iterator[str]:
 
 def combine_text_spans(
     context: DocumentContext,
-    elements: Sequence[PageElementOrString],
-) -> Tag:
+    elements: Sequence[ProtectedTagOrStr],
+) -> ProtectedTag:
     """
     Combines a list of strings and text_span tags into a single text_span tag.
     """
-    children: list[PageElementOrString] = []
-    first_text_span: Tag | None = None
-    last_text_span: Tag | None = None
+    contents: list[ProtectedTagOrStr] = []
+    first_text_span: ProtectedTag | None = None
+    last_text_span: ProtectedTag | None = None
     for element in elements:
         if is_semantic_tag(element, spec_in=[TextSpanSegmentationSpec]):
             if first_text_span is None:
                 first_text_span = element
             last_text_span = element
-            for text_span_child in element.children:
+            for text_span_child in element.contents:
                 if isinstance(text_span_child, str) or is_semantic_tag(
                     text_span_child, spec_in=TRANSPARENT_TAG_SPECS + INLINE_TAG_SPECS
                 ):
-                    children.append(text_span_child)
+                    contents.append(text_span_child)
                 else:
                     raise ValueError(f"Unexpected child '{text_span_child}' in of text_span tag")
 
         elif is_semantic_tag(element, spec_in=TRANSPARENT_TAG_SPECS):
-            children.append(element)
+            contents.append(element)
 
         else:
             raise ValueError(f"Unexpected element '{element}' ")
 
     assert first_text_span is not None and last_text_span is not None, "No text_span found"
     return make_semantic_tag(
-        context.soup,
+        context.protected_soup,
         TextSpanSegmentationSpec,
-        contents=children,
+        contents=contents,
         data=TextSpanSegmentationData(
             start=get_semantic_tag_data(TextSpanSegmentationSpec, first_text_span).start,
             end=get_semantic_tag_data(TextSpanSegmentationSpec, last_text_span).end,

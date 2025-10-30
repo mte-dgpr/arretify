@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from bs4 import Tag, BeautifulSoup
+
 from typing import (
     Literal,
     Dict,
@@ -26,14 +26,14 @@ from typing import (
     cast,
 )
 
-from arretify.types import DocumentContext
+from arretify.types import DocumentContext, ProtectedSoup, ProtectedTag
 from arretify.utils.split_merge import (
     split_elements,
     map_splitted_elements,
     flat_map_splitted_elements,
 )
 from arretify.utils.html import (
-    PageElementOrString,
+    ProtectedTagOrStr,
     is_tag,
 )
 from arretify.utils.html_semantic import make_semantic_tag
@@ -177,11 +177,13 @@ ARRETE_MULTIPLE_NODE = regex_tree.Group(
 
 def parse_arretes_references(
     document_context: DocumentContext,
-    children: Sequence[PageElementOrString],
-) -> list[PageElementOrString]:
+    children: Sequence[ProtectedTagOrStr],
+) -> list[ProtectedTagOrStr]:
     # First check for multiple, cause it is the most exhaustive pattern
-    new_children = _parse_multiple_arretes_references(document_context.soup, list(children))
-    return _parse_arretes_references(document_context.soup, new_children)
+    new_children = _parse_multiple_arretes_references(
+        document_context.protected_soup, list(children)
+    )
+    return _parse_arretes_references(document_context.protected_soup, new_children)
 
 
 def _extract_identifier(
@@ -191,10 +193,10 @@ def _extract_identifier(
 
 
 def _render_arrete_container(
-    soup: BeautifulSoup,
+    soup: ProtectedSoup,
     arrete_match: regex_tree.Match,
     base_arrete_match: regex_tree.Match | None = None,
-) -> Tag:
+) -> ProtectedTag:
     if base_arrete_match is None:
         base_arrete_match = arrete_match
 
@@ -236,9 +238,9 @@ def _render_arrete_container(
 
 
 def _parse_arretes_references(
-    soup: BeautifulSoup,
-    children: Sequence[PageElementOrString],
-) -> list[PageElementOrString]:
+    soup: ProtectedSoup,
+    children: Sequence[ProtectedTagOrStr],
+) -> list[ProtectedTagOrStr]:
     return map_splitted_elements(
         split_elements(
             children,
@@ -252,9 +254,9 @@ def _parse_arretes_references(
 
 
 def _parse_multiple_arretes_references(
-    soup: BeautifulSoup,
-    children: Sequence[PageElementOrString],
-) -> list[PageElementOrString]:
+    soup: ProtectedSoup,
+    children: Sequence[ProtectedTagOrStr],
+) -> list[ProtectedTagOrStr]:
     # For multiple arretes, we need to first parse some of the attributes in common
     # before parsing each individual arrete reference.
     return flat_map_splitted_elements(

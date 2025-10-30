@@ -21,7 +21,7 @@ from typing import Dict, Sequence, Union, Iterable
 
 from ..core import PatternProxy
 from ..types import GroupName, Settings, QuantifierRange
-from arretify.types import PageElementOrString
+from arretify.types import ProtectedTag, ProtectedTagOrStr
 
 
 NodeMap = Dict[GroupName, "Node"]
@@ -79,9 +79,9 @@ class RepeatNode(BaseNode):
 
 @dataclass(frozen=True)
 class RegexTreeMatch:
-    children: Sequence[Union[PageElementOrString, "RegexTreeMatch"]]
+    children: Sequence[Union[ProtectedTag, str, "RegexTreeMatch"]]
     group_name: Union[GroupName, None]
     match_dict: MatchDict
 
 
-RegexTreeMatchFlow = Iterable[RegexTreeMatch | PageElementOrString]
+RegexTreeMatchFlow = Iterable[RegexTreeMatch | ProtectedTagOrStr]

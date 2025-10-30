@@ -22,6 +22,9 @@ import unittest
 
 from bs4 import BeautifulSoup
 
+from arretify.types import ProtectedSoup, protect_soup
+from arretify.utils.html_create import make_new_tag
+
 from .html_semantic import (
     IntList,
     SemanticTagData,
@@ -58,9 +61,9 @@ class SemanticTagDataTestCase(unittest.TestCase):
             data_model=CustomData,
         )
 
-        self.soup = BeautifulSoup("", "html.parser")
+        self.soup: ProtectedSoup = protect_soup(BeautifulSoup("", "html.parser"))
 
-        self.tag_with_data = self.soup.new_tag("div")
+        self.tag_with_data = make_new_tag(self.soup, "div")
         self.tag_with_data["data-spec"] = self.spec_with_data.spec_name
 
 
@@ -103,8 +106,8 @@ class TestMakeSemanticTag(SemanticTagDataTestCase):
 
 class TestIsSemanticTag(unittest.TestCase):
 
-    def setUp(self):
-        self.soup = BeautifulSoup("", "html.parser")
+    def setUp(self) -> None:
+        self.soup: ProtectedSoup = protect_soup(BeautifulSoup("", "html.parser"))
 
         self.model_bla = SemanticTagSpec(
             spec_name="bla",
@@ -120,7 +123,7 @@ class TestIsSemanticTag(unittest.TestCase):
 
     def test_any_semantic_tag(self):
         # Arrange
-        tag = self.soup.new_tag("div")
+        tag = make_new_tag(self.soup, "div")
         tag["data-spec"] = "arretify-test"
 
         # Act
@@ -141,7 +144,7 @@ class TestIsSemanticTag(unittest.TestCase):
 
     def test_spec_in(self):
         # Arrange
-        tag = self.soup.new_tag("div")
+        tag = make_new_tag(self.soup, "div")
         tag["data-spec"] = "bla"
 
         # Act
@@ -154,7 +157,7 @@ class TestIsSemanticTag(unittest.TestCase):
 
     def test_tag_name_in(self):
         # Arrange
-        tag = self.soup.new_tag("div")
+        tag = make_new_tag(self.soup, "div")
         tag["data-spec"] = "bla"
 
         # Act

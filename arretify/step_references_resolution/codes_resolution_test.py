@@ -47,7 +47,9 @@ class TestResolveSectionsDocuments(unittest.TestCase):
             </a>
         """
         )
-        section_reference_tag = document_context.soup.select_one("[data-spec='section_reference']")
+        section_reference_tag = document_context.protected_soup.select_one(
+            "[data-spec='section_reference']"
+        )
         document = DocumentReferenceData(
             type=DocumentType.code,
             id="LEGITEXT000006074220",
@@ -65,7 +67,7 @@ class TestResolveSectionsDocuments(unittest.TestCase):
         )
 
         # Assert
-        assert normalized_html_str(str(document_context.soup)) == normalized_html_str(
+        assert normalized_html_str(str(document_context.protected_soup)) == normalized_html_str(
             """
                 <a
                     data-spec="section_reference"
@@ -93,7 +95,9 @@ class TestResolveSectionsDocuments(unittest.TestCase):
             </a>
         """
         )
-        section_reference_tag = document_context.soup.select_one("[data-spec='section_reference']")
+        section_reference_tag = document_context.protected_soup.select_one(
+            "[data-spec='section_reference']"
+        )
         document = DocumentReferenceData(
             type=DocumentType.code,
             id="LEGITEXT000006074220",
@@ -111,7 +115,7 @@ class TestResolveSectionsDocuments(unittest.TestCase):
         )
 
         # Assert
-        assert normalized_html_str(str(document_context.soup)) == normalized_html_str(
+        assert normalized_html_str(str(document_context.protected_soup)) == normalized_html_str(
             """
             <a
                 data-spec="section_reference"

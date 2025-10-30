@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 
-from arretify.types import PageElementOrString, DocumentContext
+from arretify.types import ProtectedTagOrStr, DocumentContext
 from arretify.utils.html_create import replace_children
 from arretify.utils.html_semantic import css_selector
 from arretify.utils.html_split_merge import group_strings_splitter
@@ -63,43 +63,43 @@ REFERENCES_CONTAINER_SELECTOR = (
 
 
 def step_references_detection(document_context: DocumentContext) -> DocumentContext:
-    new_children: list[PageElementOrString]
+    contents: list[ProtectedTagOrStr]
 
     # Parse documents and sections references
-    for tag in document_context.soup.select(REFERENCES_CONTAINER_SELECTOR):
-        new_children = list(tag.children)
-        new_children = parse_arretes_references(document_context, new_children)
-        new_children = parse_decrets_references(document_context, new_children)
-        new_children = parse_circulaires_references(document_context, new_children)
-        new_children = parse_codes_references(document_context, new_children)
-        new_children = parse_self_references(document_context, new_children)
-        new_children = parse_eu_acts_references(document_context, new_children)
-        new_children = parse_section_references(document_context, new_children)
-        replace_children(tag, new_children)
+    for tag in document_context.protected_soup.select(REFERENCES_CONTAINER_SELECTOR):
+        contents = list(tag.contents)
+        contents = parse_arretes_references(document_context, contents)
+        contents = parse_decrets_references(document_context, contents)
+        contents = parse_circulaires_references(document_context, contents)
+        contents = parse_codes_references(document_context, contents)
+        contents = parse_self_references(document_context, contents)
+        contents = parse_eu_acts_references(document_context, contents)
+        contents = parse_section_references(document_context, contents)
+        replace_children(tag, contents)
 
     # Match sections with documents
-    for tag in document_context.soup.select(REFERENCES_CONTAINER_SELECTOR):
-        new_children = list(tag.children)
-        new_children = match_sections_to_parents(document_context, new_children)
-        replace_children(tag, new_children)
+    for tag in document_context.protected_soup.select(REFERENCES_CONTAINER_SELECTOR):
+        contents = list(tag.contents)
+        contents = match_sections_to_parents(document_context, contents)
+        replace_children(tag, contents)
 
-    for reference_tree in iter_reference_trees(document_context.soup):
+    for reference_tree in iter_reference_trees(document_context.protected_soup):
         resolve_unknown_sections(
             document_context,
             reference_tree,
         )
 
     # Cleaning steps
-    for tag in document_context.soup.select(REFERENCES_CONTAINER_SELECTOR):
-        new_children = list(tag.children)
-        new_children = list(remove_misdetected_sections(document_context, new_children))
-        new_children = map_splitted_elements(
+    for tag in document_context.protected_soup.select(REFERENCES_CONTAINER_SELECTOR):
+        contents = list(tag.contents)
+        contents = list(remove_misdetected_sections(document_context, contents))
+        contents = map_splitted_elements(
             split_elements(
-                new_children,
+                contents,
                 group_strings_splitter,
             ),
             merge_strings,
         )
-        replace_children(tag, new_children)
+        replace_children(tag, contents)
 
     return document_context

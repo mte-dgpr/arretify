@@ -18,7 +18,7 @@
 #
 from typing import Iterator, Callable, Sequence
 
-from arretify.types import DocumentContext, SectionType, PageElementOrString
+from arretify.types import DocumentContext, SectionType, ProtectedTagOrStr
 from arretify.semantic_tag_specs import (
     AppendixSpec,
     HeaderSpec,
@@ -49,7 +49,7 @@ from .document_elements import (
 _is_title_line = pick_text_spans(is_title)
 
 
-def _is_appendix_text_span_tag(elements: Sequence[PageElementOrString], index: int) -> bool:
+def _is_appendix_text_span_tag(elements: Sequence[ProtectedTagOrStr], index: int) -> bool:
     element = elements[index]
     assert is_semantic_tag(element)
     if _is_title_line(elements, index):
@@ -67,8 +67,8 @@ _is_appendix = pick_text_spans(_is_appendix_text_span_tag)
 
 
 @iter_func_to_list
-def parse_arrete(context: DocumentContext, pages: Sequence[str]) -> Iterator[PageElementOrString]:
-    elements: list[PageElementOrString] = initialize_document_structure(context, pages)
+def parse_arrete(context: DocumentContext, pages: Sequence[str]) -> Iterator[ProtectedTagOrStr]:
+    elements: list[ProtectedTagOrStr] = initialize_document_structure(context, pages)
 
     # Add basic document elements
     elements = chain_functions(
@@ -87,23 +87,25 @@ def parse_arrete(context: DocumentContext, pages: Sequence[str]) -> Iterator[Pag
 
     # Header
     pile, elements = split_before_match(elements, _is_title_line)
-    yield make_semantic_tag(context.soup, HeaderSpec, contents=parse_header(context, pile))
+    yield make_semantic_tag(
+        context.protected_soup, HeaderSpec, contents=parse_header(context, pile)
+    )
 
     # Main content
     pile, elements = split_before_match(elements, _is_appendix)
-    yield make_semantic_tag(context.soup, MainSpec, contents=parse_content(context, pile))
+    yield make_semantic_tag(context.protected_soup, MainSpec, contents=parse_content(context, pile))
 
     # Appendix
     if elements:
         yield make_semantic_tag(
-            context.soup, AppendixSpec, contents=parse_content(context, elements)
+            context.protected_soup, AppendixSpec, contents=parse_content(context, elements)
         )
 
 
 @iter_func_to_list
 def render_arrete(
-    context: DocumentContext, elements: Sequence[PageElementOrString]
-) -> Iterator[PageElementOrString]:
+    context: DocumentContext, elements: Sequence[ProtectedTagOrStr]
+) -> Iterator[ProtectedTagOrStr]:
     for element in elements:
         if is_semantic_tag(element, spec_in=[HeaderSpec]):
             yield replace_children(element, render_header(context, element.contents))
@@ -114,16 +116,16 @@ def render_arrete(
 
 
 def _make_text_span_parser(
-    func: Callable[[DocumentContext, Sequence[PageElementOrString]], list[PageElementOrString]],
-) -> Callable[[DocumentContext, Sequence[PageElementOrString]], list[PageElementOrString]]:
+    func: Callable[[DocumentContext, Sequence[ProtectedTagOrStr]], list[ProtectedTagOrStr]],
+) -> Callable[[DocumentContext, Sequence[ProtectedTagOrStr]], list[ProtectedTagOrStr]]:
     """
     Makes a function that uses `func` to parse the children of text_span tags.
     """
 
     @iter_func_to_list
     def _parse(
-        context: DocumentContext, elements: Sequence[PageElementOrString]
-    ) -> Iterator[PageElementOrString]:
+        context: DocumentContext, elements: Sequence[ProtectedTagOrStr]
+    ) -> Iterator[ProtectedTagOrStr]:
         for element in elements:
             if is_semantic_tag(element, spec_in=[TextSpanSegmentationSpec]):
                 yield replace_children(element, func(context, element.contents))

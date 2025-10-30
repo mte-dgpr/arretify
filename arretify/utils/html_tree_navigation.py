@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 
-from bs4 import Tag, PageElement
+from bs4 import PageElement, Tag
 
 
 def closest_common_ancestor(*elements: PageElement) -> Tag:

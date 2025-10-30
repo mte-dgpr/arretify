@@ -18,8 +18,6 @@
 #
 from typing import Sequence
 
-from bs4 import BeautifulSoup
-
 from arretify.regex_utils import (
     regex_tree,
     iter_regex_tree_match_page_elements_or_strings,
@@ -32,7 +30,7 @@ from arretify.utils.dates import (
     parse_year_str,
     render_year_str,
 )
-from arretify.types import PageElementOrString, DocumentContext, DocumentType
+from arretify.types import ProtectedTagOrStr, DocumentContext, DocumentType, ProtectedSoup
 from arretify.semantic_tag_specs import (
     DocumentReferenceData,
     DocumentReferenceSpec,
@@ -102,23 +100,23 @@ EU_ACT_NODE = regex_tree.Group(
 
 def parse_eu_acts_references(
     document_context: DocumentContext,
-    children: Sequence[PageElementOrString],
-) -> list[PageElementOrString]:
+    children: Sequence[ProtectedTagOrStr],
+) -> list[ProtectedTagOrStr]:
     return map_splitted_elements(
         split_elements(
             children,
             make_regex_tree_splitter(EU_ACT_NODE),
         ),
         lambda eu_act_group_match: _render_eu_act_reference(
-            document_context.soup, eu_act_group_match
+            document_context.protected_soup, eu_act_group_match
         ),
     )
 
 
 def _render_eu_act_reference(
-    soup: BeautifulSoup,
+    soup: ProtectedSoup,
     eu_act_group_match: regex_tree.Match,
-) -> PageElementOrString:
+) -> ProtectedTagOrStr:
     match_dict = eu_act_group_match.match_dict
     act_type = lookup_normalized_version(EU_ACT_TYPES, match_dict["act_type"])
     if act_type == "règlement":

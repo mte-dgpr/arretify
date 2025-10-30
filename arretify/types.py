@@ -16,12 +16,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import Sequence, Union, Tuple, Optional, Type, TypeVar
+from typing import Protocol, Sequence, Union, Tuple, Optional, Type, TypeVar, cast
 from enum import Enum
 from dataclasses import dataclass, fields, field
 from uuid import uuid4
 
-from bs4 import BeautifulSoup, PageElement
+from bs4 import BeautifulSoup, Tag, PageElement
+
 from arretify._vendor.clients_api_droit.clients_api_droit.legifrance import LegifranceClient
 from arretify._vendor.clients_api_droit.clients_api_droit.eurlex import EurlexClient
 from arretify._vendor import mistralai
@@ -33,6 +34,44 @@ DocumentContextType = TypeVar("DocumentContextType", bound="DocumentContext")
 
 PageLineColumn = Tuple[int, int, int]
 """Tuple page, line and column number. All values are 0-indexed."""
+
+
+class _ProtectedBase(Protocol):
+    @property
+    def contents(self) -> list["ProtectedTagOrStr"]: ...
+    def select(self, selector: str) -> list["ProtectedTag"]: ...
+
+
+class ProtectedTag(_ProtectedBase, Protocol):
+    """
+    A BeautifulSoup Tag that is protected against modifications of the tree.
+    This forces the use of utility functions to modify the tree.
+    """
+
+    @property
+    def name(self) -> str: ...
+
+    def get(self, key: str, default=None) -> str | None: ...
+    @property
+    def attrs(self) -> dict[str, str]: ...
+    def __getitem__(self, key: str) -> str: ...
+    def __setitem__(self, key: str, value: str) -> None: ...
+
+    @property
+    def parent(self) -> Union["ProtectedTag", "ProtectedSoup", None]: ...
+    @property
+    def next_sibling(self) -> Union["ProtectedTag", str, None]: ...
+    @property
+    def previous_sibling(self) -> Union["ProtectedTag", str, None]: ...
+
+
+class ProtectedSoup(_ProtectedBase, Protocol):
+    """
+    A protected BeautifulSoup object that exposes only ProtectedTags.
+    """
+
+    @property
+    def body(self) -> Optional[ProtectedTag]: ...
 
 
 class DocumentType(Enum):
@@ -149,6 +188,10 @@ class DocumentContext(SessionContext):
 
     id_counters: IdCounters = field(default_factory=IdCounters)
 
+    @property
+    def protected_soup(self) -> ProtectedSoup:
+        return cast(ProtectedSoup, self.soup)
+
     @classmethod
     def from_session_context(
         cls: Type[DocumentContextType],
@@ -171,7 +214,12 @@ class DocumentContext(SessionContext):
         )
 
 
-PageElementOrString = Union[PageElement, str]
+ProtectedTagOrStr = ProtectedTag | str
+"""
+A type that can be either a ProtectedTag or a string.
+Note that we cannot use a protected version of NavigableString, since
+we want to be able to use `isinstance` checks directly throughout the codebase.
+"""
 
 ExternalURL = str
 
@@ -187,3 +235,33 @@ TagGroupId = str
 """
 A unique id assigned to groups of tags in the DOM as `data-group_id` attribute.
 """
+
+
+# -------------------- Protect/Unprotect functions -------------------- #
+
+
+def protect_tag(tag: Tag) -> ProtectedTag:
+    return cast(ProtectedTag, tag)
+
+
+def protect_soup(soup: BeautifulSoup) -> ProtectedSoup:
+    return cast(ProtectedSoup, soup)
+
+
+def unprotect_tag(protected_tag: ProtectedTag) -> Tag:
+    return cast(Tag, protected_tag)
+
+
+def unprotect_soup(protected_soup: ProtectedSoup) -> BeautifulSoup:
+    return cast(BeautifulSoup, protected_soup)
+
+
+def unprotect_page_element(
+    protected_element: ProtectedTagOrStr,
+) -> PageElement:
+    """
+    Use with care, make sure that `protected_element` is indeed a PageElement,
+    and not a simple string which doesn't have the full PageElement functionality.
+    """
+    assert isinstance(protected_element, PageElement)
+    return cast(PageElement, protected_element)

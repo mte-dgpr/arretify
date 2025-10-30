@@ -18,10 +18,8 @@
 #
 import logging
 
-from bs4 import Tag
-
 from arretify.semantic_tag_specs import DocumentReferenceSpec
-from arretify.types import DocumentContext
+from arretify.types import DocumentContext, ProtectedTag
 from arretify.law_data.apis.eurlex import (
     get_eu_act_url_with_year_and_num,
     ActType,
@@ -35,21 +33,21 @@ _LOGGER = logging.getLogger(__name__)
 
 def resolve_eu_decision_eurlex_url(
     document_context: DocumentContext,
-    eu_act_reference_tag: Tag,
+    eu_act_reference_tag: ProtectedTag,
 ) -> None:
     return _resolve_eu_act_eurlex_url(document_context, "decision", eu_act_reference_tag)
 
 
 def resolve_eu_regulation_eurlex_url(
     document_context: DocumentContext,
-    eu_act_reference_tag: Tag,
+    eu_act_reference_tag: ProtectedTag,
 ) -> None:
     return _resolve_eu_act_eurlex_url(document_context, "regulation", eu_act_reference_tag)
 
 
 def resolve_eu_directive_eurlex_url(
     document_context: DocumentContext,
-    eu_act_reference_tag: Tag,
+    eu_act_reference_tag: ProtectedTag,
 ) -> None:
     return _resolve_eu_act_eurlex_url(document_context, "directive", eu_act_reference_tag)
 
@@ -57,7 +55,7 @@ def resolve_eu_directive_eurlex_url(
 def _resolve_eu_act_eurlex_url(
     document_context: DocumentContext,
     act_type: ActType,
-    eu_act_reference_tag: Tag,
+    eu_act_reference_tag: ProtectedTag,
 ) -> None:
     document_reference = get_semantic_tag_data(DocumentReferenceSpec, eu_act_reference_tag)
 

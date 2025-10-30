@@ -18,8 +18,6 @@
 #
 from typing import Iterator, Sequence
 
-from bs4 import BeautifulSoup, Tag
-
 from arretify.regex_utils import (
     regex_tree,
     flat_map_regex_tree_match,
@@ -35,8 +33,10 @@ from arretify.utils.split_merge import split_elements, map_splitted_elements
 from arretify.semantic_tag_specs import OperationData, OperationSpec
 from arretify.types import (
     OperationType,
-    PageElementOrString,
+    ProtectedTagOrStr,
     DocumentContext,
+    ProtectedSoup,
+    ProtectedTag,
 )
 
 from arretify.parsing_utils.numbering import COUNT_PATTERN_S
@@ -315,21 +315,23 @@ RTL_OPERATION_NODE = regex_tree.Group(
 
 def parse_operations(
     document_context: DocumentContext,
-    children: Sequence[PageElementOrString],
-) -> list[PageElementOrString]:
+    contents: Sequence[ProtectedTagOrStr],
+) -> list[ProtectedTagOrStr]:
     return map_splitted_elements(
         split_elements(
-            children,
+            contents,
             make_regex_tree_splitter(RTL_OPERATION_NODE),
         ),
-        lambda operation_match: _render_operation_match(document_context.soup, operation_match),
+        lambda operation_match: _render_operation_match(
+            document_context.protected_soup, operation_match
+        ),
     )
 
 
 def _render_operation_match(
-    soup: BeautifulSoup,
+    soup: ProtectedSoup,
     operation_match: regex_tree.Match,
-) -> Tag:
+) -> ProtectedTag:
     return make_semantic_tag(
         soup,
         OperationSpec,
@@ -346,8 +348,8 @@ def _render_operation_match(
 
 
 def _render_group_match(
-    soup: BeautifulSoup, group_match: regex_tree.Match
-) -> Iterator[PageElementOrString]:
+    soup: ProtectedSoup, group_match: regex_tree.Match
+) -> Iterator[ProtectedTagOrStr]:
     if group_match.group_name == "__has_operand":
         yield from iter_regex_tree_match_page_elements_or_strings(group_match)
     elif group_match.group_name in OPERATION_TYPES_GROUP_NAMES:
