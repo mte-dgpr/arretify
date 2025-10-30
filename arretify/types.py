@@ -44,8 +44,9 @@ class _ProtectedBase(Protocol):
 
 class ProtectedTag(_ProtectedBase, Protocol):
     """
-    A BeautifulSoup Tag that is protected against modifications of the tree.
-    This forces the use of utility functions to modify the tree.
+    A BeautifulSoup Tag that is protected against any modification.
+    This forces the use of utility functions to modify the tree and tag attributes,
+    and enables us to enforce validation and consistency when modifying the DOM.
     """
 
     @property
@@ -55,7 +56,6 @@ class ProtectedTag(_ProtectedBase, Protocol):
     @property
     def attrs(self) -> dict[str, str]: ...
     def __getitem__(self, key: str) -> str: ...
-    def __setitem__(self, key: str, value: str) -> None: ...
 
     @property
     def parent(self) -> Union["ProtectedTag", "ProtectedSoup", None]: ...
