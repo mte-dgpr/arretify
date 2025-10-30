@@ -16,10 +16,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import Sequence, Tuple, Iterator
+from typing import List, Sequence, Tuple, Iterator
 import logging
-
-from bs4 import Tag
 
 from arretify.parsing_utils.patterns import is_continuing_sentence
 from arretify.step_segmentation.semantic_tag_specs import (
@@ -30,7 +28,7 @@ from arretify.step_segmentation.semantic_tag_specs import (
     ImageSegmentationSpec,
     TextSpanSegmentationSpec,
 )
-from arretify.types import DocumentContext, PageElementOrString
+from arretify.types import DocumentContext, ProtectedTagOrStr, ProtectedTag
 from arretify.utils.functional import iter_func_to_list, chain_functions
 from arretify.utils.html_semantic import (
     SemanticTagData,
@@ -40,6 +38,7 @@ from arretify.utils.html_semantic import (
 )
 from arretify.utils.html_create import (
     make_new_tag,
+    replace_children,
 )
 from arretify.utils.markdown_parsing import (
     is_table_description,
@@ -101,7 +100,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 # -------------------- Tables -------------------- #
-_TableSplitterMatch = Tuple[list[PageElementOrString], list[PageElementOrString]]
+_TableSplitterMatch = Tuple[list[ProtectedTagOrStr], list[ProtectedTagOrStr]]
 """
 A match for the table splitter, in the form `(<table_elements>, <table_description_elements>)`.
 """
@@ -111,8 +110,8 @@ _is_table_start = pick_text_spans(_is_table)
 _is_table_end = negate(pick_if_transparent_tag_followed_by_match(pick_text_spans(_is_table)))
 
 
-def _make_table_description_end_probe(table_lines: Sequence[str]) -> Probe[PageElementOrString]:
-    def _is_table_description(elements: Sequence[PageElementOrString], index: int) -> bool:
+def _make_table_description_end_probe(table_lines: Sequence[str]) -> Probe[ProtectedTagOrStr]:
+    def _is_table_description(elements: Sequence[ProtectedTagOrStr], index: int) -> bool:
         if is_table_description(get_string(elements[index]), table_lines):
             return True
         return False
@@ -122,8 +121,8 @@ def _make_table_description_end_probe(table_lines: Sequence[str]) -> Probe[PageE
 
 def parse_tables(
     context: DocumentContext,
-    elements: Sequence[PageElementOrString],
-) -> list[PageElementOrString]:
+    elements: Sequence[ProtectedTagOrStr],
+) -> list[ProtectedTagOrStr]:
     return flat_map_splitted_elements(
         split_elements(elements, _table_splitter),
         lambda match: _make_table_tags(context, match),
@@ -133,18 +132,20 @@ def parse_tables(
 @iter_func_to_list
 def _make_table_tags(
     context: DocumentContext, match: _TableSplitterMatch
-) -> Iterator[PageElementOrString]:
+) -> Iterator[ProtectedTagOrStr]:
     table_pile, table_description_pile = match
-    yield make_semantic_tag(context.soup, TableSegmentationSpec, contents=table_pile)
+    yield make_semantic_tag(context.protected_soup, TableSegmentationSpec, contents=table_pile)
     if table_description_pile:
         yield make_semantic_tag(
-            context.soup, TableDescriptionSegmentationSpec, contents=table_description_pile
+            context.protected_soup,
+            TableDescriptionSegmentationSpec,
+            contents=table_description_pile,
         )
 
 
 def _table_splitter(
-    elements: Sequence[PageElementOrString],
-) -> RawSplit[PageElementOrString, _TableSplitterMatch] | None:
+    elements: Sequence[ProtectedTagOrStr],
+) -> RawSplit[ProtectedTagOrStr, _TableSplitterMatch] | None:
     before, elements = split_before_match(elements, _is_table_start)
     table_pile, elements = split_before_match(elements, _is_table_end)
 
@@ -169,12 +170,12 @@ def _table_splitter(
 
 def render_table(
     context: DocumentContext,
-    tag: Tag,
-) -> Tag:
+    tag: ProtectedTag,
+) -> ProtectedTag:
     pile: list[str] = []
     has_table_header = False
-    transparent_tags: list[Tuple[int, Tag]] = []
-    for element in tag.children:
+    transparent_tags: list[Tuple[int, ProtectedTag]] = []
+    for element in tag.contents:
         if is_semantic_tag(element, spec_in=[TextSpanSegmentationSpec]):
             element_str = get_string(element)
             pile.append(element_str)
@@ -194,10 +195,11 @@ def render_table(
     table_tag = parse_markdown_table(pile)
 
     # Insert transparent tags in their corresponding table rows.
-    table_rows = table_tag.find_all("tr")
+    table_rows = table_tag.select("tr")
     for row_index, transparent_tag in transparent_tags:
         if row_index < len(table_rows) and row_index >= 0:
-            table_rows[row_index].select("td, th")[-1].append(transparent_tag)
+            last_cell_tag = table_rows[row_index].select("td, th")[-1]
+            replace_children(last_cell_tag, last_cell_tag.contents + [transparent_tag])
         else:
             raise ValueError(f"Invalid index {row_index} in table rendering. ")
 
@@ -206,11 +208,11 @@ def render_table(
 
 def render_table_description(
     context: DocumentContext,
-    tag: Tag,
-) -> Iterator[PageElementOrString]:
-    for element in tag.children:
+    tag: ProtectedTag,
+) -> Iterator[ProtectedTagOrStr]:
+    for element in tag.contents:
         if is_semantic_tag(element, spec_in=[TextSpanSegmentationSpec]):
-            yield context.soup.new_tag("br")
+            yield make_new_tag(context.protected_soup, "br")
             yield get_string(element)
         elif is_semantic_tag(element, spec_in=[PageSeparatorSpec]):
             yield element
@@ -244,10 +246,10 @@ def _clean_leading_whitespaces(line: str) -> str:
 
 def _make_list_splitter(
     context: DocumentContext,
-) -> Splitter[PageElementOrString, list[PageElementOrString]]:
+) -> Splitter[ProtectedTagOrStr, list[ProtectedTagOrStr]]:
     def _splitter(
-        elements: Sequence[PageElementOrString],
-    ) -> RawSplit[PageElementOrString, list[PageElementOrString]] | None:
+        elements: Sequence[ProtectedTagOrStr],
+    ) -> RawSplit[ProtectedTagOrStr, list[ProtectedTagOrStr]] | None:
         """
         Split the input list into piles of list elements.
         Each pile is a list of elements that are part of the same list.
@@ -257,7 +259,7 @@ def _make_list_splitter(
         if not elements:
             return None
 
-        pile: list[PageElementOrString] = []
+        pile: list[ProtectedTagOrStr] = []
         while elements:
             element = elements[0]
 
@@ -281,7 +283,7 @@ def _make_list_splitter(
                     get_string(previous_list_element),
                     get_string(element),
                 ):
-                    element.insert(0, " ")
+                    element = replace_children(element, [" "] + element.contents)
                     pile[j] = combine_text_spans(context, [*pile[j:], element])
                     elements.pop(0)
                 else:
@@ -302,21 +304,21 @@ def _make_list_splitter(
 # - bli
 def parse_lists(
     context: DocumentContext,
-    elements: Sequence[PageElementOrString],
-) -> list[PageElementOrString]:
+    elements: Sequence[ProtectedTagOrStr],
+) -> list[ProtectedTagOrStr]:
     return map_splitted_elements(
         split_elements(
             elements,
             _make_list_splitter(context),
         ),
-        lambda pile: make_semantic_tag(context.soup, ListSegmentationSpec, contents=pile),
+        lambda pile: make_semantic_tag(context.protected_soup, ListSegmentationSpec, contents=pile),
     )
 
 
 def render_list(
     context: DocumentContext,
-    tag: Tag,
-) -> Tag:
+    tag: ProtectedTag,
+) -> ProtectedTag:
     elements, ul = _render_list(context, tag.contents)
     assert len(elements) == 0, "Expected all lines to be consumed in list rendering"
     return ul
@@ -324,10 +326,10 @@ def render_list(
 
 def _render_list(
     context: DocumentContext,
-    elements_: Sequence[PageElementOrString],
-) -> Tuple[list[PageElementOrString], Tag]:
+    elements_: Sequence[ProtectedTagOrStr],
+) -> Tuple[list[ProtectedTagOrStr], ProtectedTag]:
     elements = list(elements_)
-    list_pile: list[Tag] = []
+    list_pile: list[ProtectedTag] = []
     element = elements[0]
     ref_indentation = _list_indentation(get_string(element))
 
@@ -335,7 +337,7 @@ def _render_list(
         element = elements[0]
 
         if is_semantic_tag(element, spec_in=[PageSeparatorSpec]):
-            list_pile[-1].append(element)
+            list_pile[-1] = replace_children(list_pile[-1], list_pile[-1].contents + [element])
             elements.pop(0)
 
         elif is_semantic_tag(element, spec_in=[TextSpanSegmentationSpec]):
@@ -345,12 +347,14 @@ def _render_list(
                 li_contents = list(render_text_span(context, element))
                 if isinstance(li_contents[0], str):
                     li_contents[0] = _clean_leading_whitespaces(li_contents[0])
-                list_pile.append(make_new_tag(context.soup, "li", contents=li_contents))
+                list_pile.append(make_new_tag(context.protected_soup, "li", contents=li_contents))
                 elements.pop(0)
 
             elif current_indentation > ref_indentation:
                 elements, nested_ul = _render_list(context, elements)
-                list_pile[-1].append(nested_ul)
+                list_pile[-1] = replace_children(
+                    list_pile[-1], list_pile[-1].contents + [nested_ul]
+                )
 
             # If the indentation is less than the reference indentation,
             # we exit the function and go up one level.
@@ -360,11 +364,11 @@ def _render_list(
         else:
             raise ValueError(f"Unexpected element {element} in list rendering.")
 
-    return elements, make_new_tag(context.soup, "ul", contents=list_pile)
+    return elements, make_new_tag(context.protected_soup, "ul", contents=list_pile)
 
 
 # -------------------- Blockquotes -------------------- #
-_BlockquoteSplitterMatch = Tuple[list[PageElementOrString], ErrorCodes | None]
+_BlockquoteSplitterMatch = Tuple[list[ProtectedTagOrStr], ErrorCodes | None]
 """
 A match for the blockquote splitter, in the form `(<blockquote_elements>, <error_codes>)`.
 """
@@ -387,8 +391,8 @@ _is_blockquote_end = pick_text_spans(
 
 def parse_blockquotes(
     context: DocumentContext,
-    elements: Sequence[PageElementOrString],
-) -> list[PageElementOrString]:
+    elements: Sequence[ProtectedTagOrStr],
+) -> list[ProtectedTagOrStr]:
     return map_splitted_elements(
         split_elements(
             elements,
@@ -398,14 +402,16 @@ def parse_blockquotes(
     )
 
 
-def _make_blockquote_tag(context: DocumentContext, match: _BlockquoteSplitterMatch) -> Tag:
+def _make_blockquote_tag(context: DocumentContext, match: _BlockquoteSplitterMatch) -> ProtectedTag:
     pile, error_code = match
     if error_code is None:
         contents = chain_functions(context, pile, [parse_tables, parse_lists, parse_images])
-        return make_semantic_tag(context.soup, BlockquoteSegmentationSpec, contents=contents)
+        return make_semantic_tag(
+            context.protected_soup, BlockquoteSegmentationSpec, contents=contents
+        )
     else:
         return make_semantic_tag(
-            context.soup,
+            context.protected_soup,
             ErrorSpec,
             contents=get_strings(pile),
             data=SemanticTagData(error_codes=[error_code]),
@@ -413,8 +419,8 @@ def _make_blockquote_tag(context: DocumentContext, match: _BlockquoteSplitterMat
 
 
 def _blockquote_splitter(
-    elements: Sequence[PageElementOrString],
-) -> RawSplit[PageElementOrString, _BlockquoteSplitterMatch] | None:
+    elements: Sequence[ProtectedTagOrStr],
+) -> RawSplit[ProtectedTagOrStr, _BlockquoteSplitterMatch] | None:
     before, elements = split_before_match(elements, _is_blockquote_start)
 
     if not elements:
@@ -426,7 +432,12 @@ def _blockquote_splitter(
     first_str_index, first_str = _get_first_str(element)
     blockquote_start = get_semantic_tag_data(TextSpanSegmentationSpec, element).start
     # Remove opening quote
-    element.contents[first_str_index].replace_with(BLOCKQUOTE_START_PATTERN.sub("", first_str))
+    elements[0] = replace_children(
+        element,
+        element.contents[:first_str_index]
+        + [BLOCKQUOTE_START_PATTERN.sub("", first_str)]
+        + element.contents[first_str_index + 1 :],
+    )
     quotes_depth_count = 1
 
     for i, element in enumerate(elements):
@@ -447,8 +458,11 @@ def _blockquote_splitter(
             if quotes_depth_count <= 0:
                 last_str_index, last_str = _get_last_str(element)
                 # Remove the end quote
-                element.contents[last_str_index].replace_with(
-                    BLOCKQUOTE_END_PATTERN.sub("", last_str)
+                elements[i] = replace_children(
+                    element,
+                    element.contents[:last_str_index]
+                    + [BLOCKQUOTE_END_PATTERN.sub("", last_str)]
+                    + element.contents[last_str_index + 1 :],
                 )
                 break
 
@@ -461,7 +475,7 @@ def _blockquote_splitter(
 
 
 def _get_first_str(
-    text_span_tag: Tag,
+    text_span_tag: ProtectedTag,
 ) -> Tuple[int, str]:
     for i, element in enumerate(text_span_tag.contents):
         if isinstance(element, str):
@@ -470,7 +484,7 @@ def _get_first_str(
 
 
 def _get_last_str(
-    text_span_tag: Tag,
+    text_span_tag: ProtectedTag,
 ) -> Tuple[int, str]:
     for i, element in enumerate(reversed(text_span_tag.contents)):
         if isinstance(element, str):
@@ -480,14 +494,14 @@ def _get_last_str(
 
 def render_blockquote(
     context: DocumentContext,
-    tag: Tag,
-) -> Tag:
-    blockquote_tag = context.soup.new_tag("blockquote")
+    tag: ProtectedTag,
+) -> ProtectedTag:
+    contents: List[ProtectedTagOrStr] = []
     for element in list(tag.contents):
         if is_semantic_tag(element, spec_in=[TextSpanSegmentationSpec]):
-            blockquote_tag.append(
+            contents.append(
                 make_new_tag(
-                    context.soup,
+                    context.protected_soup,
                     "p",
                     # TODO : should be parsed like other tags, instead of being
                     # rendered here on the fly. This would also make parsing blockquote easier.
@@ -495,9 +509,9 @@ def render_blockquote(
                 )
             )
         elif is_semantic_tag(element):
-            blockquote_tag.extend(render_basic_elements(context, element))
+            contents.extend(render_basic_elements(context, element))
 
-    return blockquote_tag
+    return make_new_tag(context.protected_soup, "blockquote", contents=contents)
 
 
 # -------------------- Images -------------------- #
@@ -506,21 +520,23 @@ _is_image = make_probe_from_pattern_proxy(IMAGE_PATTERN)
 
 def parse_images(
     context: DocumentContext,
-    elements: Sequence[PageElementOrString],
-) -> list[PageElementOrString]:
+    elements: Sequence[ProtectedTagOrStr],
+) -> list[ProtectedTagOrStr]:
     return map_splitted_elements(
         split_elements(
             elements,
             make_single_line_splitter_for_text_spans(_is_image),
         ),
-        lambda children: make_semantic_tag(context.soup, ImageSegmentationSpec, contents=children),
+        lambda contents: make_semantic_tag(
+            context.protected_soup, ImageSegmentationSpec, contents=contents
+        ),
     )
 
 
 def render_image(
     context: DocumentContext,
-    tag: Tag,
-) -> Tag:
+    tag: ProtectedTag,
+) -> ProtectedTag:
     return parse_markdown_image(get_string(tag))
 
 
@@ -547,8 +563,8 @@ _address_detect_splitter = make_pattern_splitter(ADDRESS_DETECT_PATTERN)
 
 def parse_addresses(
     context: DocumentContext,
-    elements: Sequence[PageElementOrString],
-) -> list[PageElementOrString]:
+    elements: Sequence[ProtectedTagOrStr],
+) -> list[ProtectedTagOrStr]:
     """
     Parse French addresses.
 
@@ -560,13 +576,13 @@ def parse_addresses(
             elements,
             _address_splitter,
         ),
-        lambda address: make_semantic_tag(context.soup, AddressSpec, contents=[address]),
+        lambda address: make_semantic_tag(context.protected_soup, AddressSpec, contents=[address]),
     )
 
 
 def _address_splitter(
-    elements: Sequence[PageElementOrString],
-) -> RawSplit[PageElementOrString, str] | None:
+    elements: Sequence[ProtectedTagOrStr],
+) -> RawSplit[ProtectedTagOrStr, str] | None:
     split = _address_detect_splitter(elements)
     if not split:
         return None
@@ -608,11 +624,11 @@ INLINE_QUOTE_PATTERN = PatternProxy(r'"(?P<quoted>[^"]+)"')
 """Detect if a sentence has inline quotes."""
 
 
-def render_inline_quotes(context: DocumentContext, string: str) -> Iterator[PageElementOrString]:
+def render_inline_quotes(context: DocumentContext, string: str) -> Iterator[ProtectedTagOrStr]:
     return map_matches(
         split_string_with_regex(INLINE_QUOTE_PATTERN, string),
         lambda inline_quote_match: make_new_tag(
-            context.soup,
+            context.protected_soup,
             "q",
             contents=[str(inline_quote_match.group("quoted"))],
         ),
@@ -622,8 +638,8 @@ def render_inline_quotes(context: DocumentContext, string: str) -> Iterator[Page
 @iter_func_to_list
 def render_text_span(
     context: DocumentContext,
-    tag: Tag,
-) -> Iterator[PageElementOrString]:
+    tag: ProtectedTag,
+) -> Iterator[ProtectedTagOrStr]:
     for i, element in enumerate(tag.contents):
         if isinstance(element, str):
             # If this is not the last element, we add a space as separator.
@@ -636,8 +652,8 @@ def render_text_span(
 
 def render_basic_elements(
     context: DocumentContext,
-    tag: Tag,
-) -> Iterator[PageElementOrString]:
+    tag: ProtectedTag,
+) -> Iterator[ProtectedTagOrStr]:
     if is_semantic_tag(tag, spec_in=[ListSegmentationSpec]):
         yield render_list(context, tag)
     elif is_semantic_tag(tag, spec_in=[TableSegmentationSpec]):

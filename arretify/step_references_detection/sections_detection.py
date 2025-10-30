@@ -16,17 +16,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from bs4 import Tag
+
 from typing import (
     Iterator,
     Sequence,
 )
 
 from arretify.types import (
+    ProtectedTag,
     TagGroupId,
     DocumentContext,
     SectionType,
-    PageElementOrString,
+    ProtectedTagOrStr,
 )
 from arretify.parsing_utils.numbering import ROMAN_NUMERALS_PATTERN_S
 from arretify.semantic_tag_specs import (
@@ -67,8 +68,8 @@ SectionNumber = str
 
 def parse_section_references(
     document_context: DocumentContext,
-    children: Sequence[PageElementOrString],
-) -> list[PageElementOrString]:
+    children: Sequence[ProtectedTagOrStr],
+) -> list[ProtectedTagOrStr]:
     # First check for multiple, cause it is the most exhaustive pattern
     new_children = list(_parse_section_reference_multiple(document_context, children))
     return list(_parse_section_references(document_context, new_children))
@@ -298,10 +299,10 @@ def _render_section_reference(
     document_context: DocumentContext,
     section_reference_match: regex_tree.Match,
     group_id: TagGroupId | None = None,
-) -> Tag:
+) -> ProtectedTag:
     section = _extract_section(section_reference_match)
     section_tag = make_semantic_tag(
-        document_context.soup,
+        document_context.protected_soup,
         SectionReferenceSpec,
         data=section,
         contents=iter_regex_tree_match_page_elements_or_strings(section_reference_match),
@@ -314,7 +315,7 @@ def _render_section_reference(
 def _render_section_reference_multiple(
     document_context: DocumentContext,
     section_reference_multiple_match: regex_tree.Match,
-) -> Iterator[PageElementOrString]:
+) -> Iterator[ProtectedTagOrStr]:
     group_id = make_group_id(document_context.id_counters)
     return map_regex_tree_match(
         section_reference_multiple_match.children,
@@ -419,8 +420,8 @@ SECTION_REFERENCE_NODE = regex_tree.Group(
 
 def _parse_section_references(
     document_context: DocumentContext,
-    children: Sequence[PageElementOrString],
-) -> list[PageElementOrString]:
+    children: Sequence[ProtectedTagOrStr],
+) -> list[ProtectedTagOrStr]:
     return map_splitted_elements(
         split_elements(
             children,
@@ -520,8 +521,8 @@ SECTION_REFERENCE_MULTIPLE_NODE = regex_tree.Group(
 
 def _parse_section_reference_multiple(
     document_context: DocumentContext,
-    children: Sequence[PageElementOrString],
-) -> list[PageElementOrString]:
+    children: Sequence[ProtectedTagOrStr],
+) -> list[ProtectedTagOrStr]:
     # For multiple arretes, we need to first parse some of the attributes in common
     # before parsing each individual arrete reference.
     return flat_map_splitted_elements(

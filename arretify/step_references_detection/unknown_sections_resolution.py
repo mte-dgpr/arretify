@@ -19,7 +19,7 @@
 
 from typing import Iterator, Sequence
 
-from arretify.types import DocumentContext, PageElementOrString
+from arretify.types import DocumentContext, ProtectedTagOrStr
 from arretify.types import SectionType
 from arretify.utils.html_semantic import (
     is_semantic_tag,
@@ -84,9 +84,9 @@ def resolve_unknown_sections(
 @iter_func_to_list
 def remove_misdetected_sections(
     _: DocumentContext,
-    children: Sequence[PageElementOrString],
-) -> Iterator[PageElementOrString]:
-    for section_reference_tag in children:
+    contents: Sequence[ProtectedTagOrStr],
+) -> Iterator[ProtectedTagOrStr]:
+    for section_reference_tag in contents:
         if not is_semantic_tag(section_reference_tag, spec_in=[SectionReferenceSpec]):
             yield section_reference_tag
             continue
@@ -104,7 +104,7 @@ def remove_misdetected_sections(
                 and len(reference_tree) == 1
                 and len(reference_tree[0]) == 1
             ):
-                yield from section_reference_tag.children
+                yield from section_reference_tag.contents
                 continue
 
         yield section_reference_tag

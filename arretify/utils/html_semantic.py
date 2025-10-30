@@ -18,7 +18,7 @@
 #
 from dataclasses import dataclass
 from enum import Enum
-from typing import Iterable, Sequence, TypeGuard, Annotated, TypeVar, Type, Generic, cast
+from typing import Iterable, Sequence, TypeGuard, Annotated, TypeVar, Type, Generic, Union, cast
 
 from pydantic import (
     BaseModel,
@@ -28,10 +28,9 @@ from pydantic import (
     model_serializer,
 )
 from pydantic.functional_serializers import PlainSerializer
-from bs4 import BeautifulSoup, Tag
 
 from arretify.errors import ErrorCodes
-from arretify.types import PageElementOrString
+from arretify.types import ProtectedTagOrStr, ProtectedSoup, ProtectedTag
 from arretify.utils.html import GROUP_ID_ATTR, TAG_ID_ATTR, is_tag
 from arretify.utils.html_create import make_new_tag
 
@@ -109,6 +108,9 @@ IntList = Annotated[
 
 
 # -------------------- Base models -------------------- #
+TSemanticTagData = TypeVar("TSemanticTagData", bound="SemanticTagData")
+ContentsSpecs = tuple[Union[type[str], str, "SemanticTagSpec"], ...]
+
 _REGISTRY: dict[str, "SemanticTagSpec"] = {}
 
 
@@ -137,9 +139,6 @@ class SemanticTagData(BaseModel):
         return serialized
 
 
-TSemanticTagData = TypeVar("TSemanticTagData", bound=SemanticTagData)
-
-
 # Set both frozen and eq to True to make dataclass hashable.
 # This is required to use SemanticTagSpec as dict keys if needed.
 @dataclass(frozen=True, eq=True)
@@ -156,6 +155,7 @@ class SemanticTagSpec(Generic[TSemanticTagData]):
     spec_name: str
     tag_name: str
     data_model: Type[TSemanticTagData]
+    contents_specs: ContentsSpecs = tuple()
 
     def __post_init__(self):
         _REGISTRY[self.spec_name] = self
@@ -177,10 +177,10 @@ def create_semantic_tag_spec_no_data(
 
 # -------------------- Semantic html utils -------------------- #
 def is_semantic_tag(
-    tag: PageElementOrString,
+    tag: ProtectedTagOrStr,
     spec_in: Sequence[SemanticTagSpec] | None = None,
     tag_name_in: Sequence[str] | None = None,
-) -> TypeGuard[Tag]:
+) -> TypeGuard[ProtectedTag]:
     """
     Check if a tag is a semantic tag.
 
@@ -207,13 +207,16 @@ def css_selector(spec: SemanticTagSpec[TSemanticTagData]) -> str:
 
 
 def make_semantic_tag(
-    soup: BeautifulSoup,
+    soup: ProtectedSoup,
     spec: SemanticTagSpec[TSemanticTagData],
-    contents: Iterable[PageElementOrString] | None = None,
+    contents: Iterable[ProtectedTagOrStr] | None = None,
     data: TSemanticTagData | None = None,
-) -> Tag:
+) -> ProtectedTag:
     if contents is None:
         contents = []
+
+    # Validate contents
+    # _validate_contents(spec, list(contents))
 
     # Create data instance if not provided
     if data is None:
@@ -229,7 +232,7 @@ def make_semantic_tag(
     return tag
 
 
-def get_semantic_tag_spec(tag: Tag) -> SemanticTagSpec:
+def get_semantic_tag_spec(tag: ProtectedTag) -> SemanticTagSpec:
     actual_spec_name = tag.get(_SPEC_DATA_ATTR, None)
     if actual_spec_name is None:
         raise ValueError("Tag is not a semantic tag (missing spec attribute)")
@@ -241,7 +244,9 @@ def get_semantic_tag_spec(tag: Tag) -> SemanticTagSpec:
     return spec
 
 
-def get_semantic_tag_data(spec: SemanticTagSpec[TSemanticTagData], tag: Tag) -> TSemanticTagData:
+def get_semantic_tag_data(
+    spec: SemanticTagSpec[TSemanticTagData], tag: ProtectedTag
+) -> TSemanticTagData:
     _ensure_matching_spec(spec, tag)
     raw_data: dict[str, str] = {}
     for key, value in tag.attrs.items():
@@ -254,7 +259,7 @@ def get_semantic_tag_data(spec: SemanticTagSpec[TSemanticTagData], tag: Tag) -> 
 
 
 def set_semantic_tag_data(
-    spec: SemanticTagSpec[TSemanticTagData], tag: Tag, data: TSemanticTagData
+    spec: SemanticTagSpec[TSemanticTagData], tag: ProtectedTag, data: TSemanticTagData
 ) -> None:
     _ensure_matching_spec(spec, tag)
     for key, value in data.model_dump().items():
@@ -263,7 +268,7 @@ def set_semantic_tag_data(
 
 def _ensure_matching_spec(
     spec: SemanticTagSpec,
-    tag: Tag,
+    tag: ProtectedTag,
 ) -> None:
     if not is_semantic_tag(tag, spec_in=[spec]):
         raise ValueError(f"Expected semantic tag {spec.spec_name}")

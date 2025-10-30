@@ -18,13 +18,11 @@
 #
 from typing import Sequence
 
-from bs4 import Tag
-
 from arretify.step_segmentation.semantic_tag_specs import (
     TextSpanSegmentationData,
     TextSpanSegmentationSpec,
 )
-from arretify.types import PageElementOrString
+from arretify.types import ProtectedTagOrStr, ProtectedTag
 from arretify.utils.html import is_tag
 from arretify.utils.html_semantic import (
     get_semantic_tag_data,
@@ -35,8 +33,8 @@ from arretify.utils.html_semantic import (
 
 
 def assert_elements_equal(
-    actual: Sequence[PageElementOrString],
-    expected: Sequence[PageElementOrString],
+    actual: Sequence[ProtectedTagOrStr],
+    expected: Sequence[ProtectedTagOrStr],
     ignore_data_if_omitted: bool = False,
     ignore_text_span_data: bool = False,
     path="",
@@ -84,8 +82,8 @@ def assert_elements_equal(
 
 
 def _assert_data_equal(
-    actual: Tag,
-    expected: Tag,
+    actual: ProtectedTag,
+    expected: ProtectedTag,
     ignore_data_if_omitted: bool = False,
     ignore_text_span_data: bool = False,
     path="",
@@ -103,7 +101,7 @@ def _assert_data_equal(
     assert actual_data == expected_data, f"[{path}] Expected {expected_data}, got {actual_data}"
 
 
-def make_text_spans(soup, *lines: str) -> list[Tag]:
+def make_text_spans(soup, *lines: str) -> list[ProtectedTag]:
     return [
         make_semantic_tag(
             soup,

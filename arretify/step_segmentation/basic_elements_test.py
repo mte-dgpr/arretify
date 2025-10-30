@@ -69,7 +69,7 @@ SomeTagSpec = create_semantic_tag_spec_no_data(
 class BaseTestCase(unittest.TestCase):
     def setUp(self):
         self.context = create_document_context()
-        self.soup = self.context.soup
+        self.soup = self.context.protected_soup
 
 
 class TestListIndentation(BaseTestCase):

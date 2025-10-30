@@ -33,7 +33,7 @@ from .semantic_tag_specs import TextSpanSegmentationData, TextSpanSegmentationSp
 class BaseTestCase(unittest.TestCase):
     def setUp(self):
         self.context = create_document_context()
-        self.soup = self.context.soup
+        self.soup = self.context.protected_soup
 
 
 class TestInitializeDocumentStructure(BaseTestCase):

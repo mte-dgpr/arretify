@@ -18,12 +18,10 @@
 #
 from typing import Callable, Iterable, Iterator, Sequence, TypeVar, Union
 
-from bs4 import PageElement
-
 from .types import GroupName
 from .core import MatchFlow, MatchProxy
 from .regex_tree.types import RegexTreeMatch, RegexTreeMatchFlow
-from arretify.types import PageElementOrString
+from arretify.types import ProtectedTagOrStr
 
 
 R = TypeVar("R")
@@ -42,25 +40,25 @@ def map_matches(
 
 def flat_map_regex_tree_match(
     regex_tree_match_flow: RegexTreeMatchFlow,
-    map_func: Callable[[RegexTreeMatch], Iterable[PageElementOrString]],
+    map_func: Callable[[RegexTreeMatch], Iterable[ProtectedTagOrStr]],
     allowed_group_names: Sequence[GroupName] | None = None,
-) -> Iterator[PageElementOrString]:
+) -> Iterator[ProtectedTagOrStr]:
     for mapped in _map_regex_tree_match_generic(
         regex_tree_match_flow,
         map_func,
         allowed_group_names,
     ):
-        if isinstance(mapped, (str, PageElement)):
-            yield mapped
-        else:
+        if isinstance(mapped, Iterable):
             yield from mapped
+        else:
+            yield mapped
 
 
 def map_regex_tree_match(
     regex_tree_match_flow: RegexTreeMatchFlow,
-    map_func: Callable[[RegexTreeMatch], PageElementOrString],
+    map_func: Callable[[RegexTreeMatch], ProtectedTagOrStr],
     allowed_group_names: Sequence[GroupName] | None = None,
-) -> Iterator[PageElementOrString]:
+) -> Iterator[ProtectedTagOrStr]:
     return _map_regex_tree_match_generic(
         regex_tree_match_flow,
         map_func,
@@ -72,7 +70,7 @@ def _map_regex_tree_match_generic(
     regex_tree_match_flow: RegexTreeMatchFlow,
     map_func: Callable[[RegexTreeMatch], R],
     allowed_group_names: Sequence[GroupName] | None = None,
-) -> Iterator[R | PageElementOrString]:
+) -> Iterator[R | ProtectedTagOrStr]:
     for str_or_group in regex_tree_match_flow:
         if isinstance(str_or_group, RegexTreeMatch):
             if (
@@ -90,7 +88,7 @@ def _map_regex_tree_match_generic(
 
 def iter_regex_tree_match_page_elements_or_strings(
     match: RegexTreeMatch,
-) -> Iterator[PageElementOrString]:
+) -> Iterator[ProtectedTagOrStr]:
     """
     Iterates over the strings in a regex tree match by traversing the whole tree.
 

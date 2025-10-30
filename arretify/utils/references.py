@@ -18,25 +18,24 @@
 #
 from typing import Iterable, Tuple, Iterator
 
-from bs4 import BeautifulSoup, Tag
-
 from arretify.semantic_tag_specs import (
     DocumentReferenceData,
     DocumentReferenceSpec,
     SectionReferenceData,
     SectionReferenceSpec,
 )
+from arretify.types import ProtectedSoup, ProtectedTag
 from arretify.utils.html_semantic import css_selector, is_semantic_tag, get_semantic_tag_data
 
 
-ReferenceTree = list[list[Tag]]
+ReferenceTree = list[list[ProtectedTag]]
 ReferenceTreeTraversal = Iterable[
-    Tuple[Tag, DocumentReferenceData | None, list[SectionReferenceData]]
+    Tuple[ProtectedTag, DocumentReferenceData | None, list[SectionReferenceData]]
 ]
 
 
 def build_and_traverse_reference_tree(
-    section_reference_tag: Tag,
+    section_reference_tag: ProtectedTag,
 ) -> ReferenceTreeTraversal:
     """
     Traverse the reference tree formed by a chain of connected
@@ -57,7 +56,7 @@ def build_and_traverse_reference_tree(
 
 
 def build_reference_tree(
-    section_reference_tag: Tag,
+    section_reference_tag: ProtectedTag,
 ) -> ReferenceTree:
     """
     References appear in text as a chain of sub sections of a document,
@@ -107,7 +106,7 @@ def build_reference_tree(
     assert section_reference_tag.parent is not None, "section_reference_tag has no parent"
     reference_tags = [
         tag
-        for tag in section_reference_tag.parent.children
+        for tag in section_reference_tag.parent.contents
         if is_semantic_tag(
             tag,
             spec_in=[
@@ -128,11 +127,11 @@ def build_reference_tree(
             raise RuntimeError("Found more than one parent reference tag, which is not expected")
         root_reference_tag = parent_reference_tag_matches[0]
 
-    reference_tree: list[list[Tag]] = [[root_reference_tag]]
+    reference_tree: list[list[ProtectedTag]] = [[root_reference_tag]]
     should_continue = True
     while should_continue is True:
         should_continue = False
-        new_reference_branches: list[list[Tag]] = []
+        new_reference_branches: list[list[ProtectedTag]] = []
         for branch in reference_tree:
             parent_reference_tag = branch[-1]
             # If the parent reference tag has no data-tag_id,
@@ -166,7 +165,7 @@ def traverse_reference_tree(
     """
     Function allowing to traverse a reference tree (depth-first).
     """
-    seen: list[Tag] = []
+    seen: list[ProtectedTag] = []
     for branch in reference_tree:
         document_reference: DocumentReferenceData | None = None
         section_references: list[SectionReferenceData] = []
@@ -197,8 +196,8 @@ def traverse_reference_tree(
             yield reference_tag, document_reference, section_references[:]
 
 
-def iter_reference_trees(soup: BeautifulSoup) -> Iterator[ReferenceTree]:
-    processed: list[Tag] = []
+def iter_reference_trees(soup: ProtectedSoup) -> Iterator[ReferenceTree]:
+    processed: list[ProtectedTag] = []
     for reference_tag in soup.select(
         f"{css_selector(DocumentReferenceSpec)}, {css_selector(SectionReferenceSpec)}"
     ):

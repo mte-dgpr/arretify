@@ -45,7 +45,7 @@ from .testing import make_text_spans, assert_elements_equal
 class BaseTestCase(unittest.TestCase):
     def setUp(self):
         self.context = create_document_context()
-        self.soup = self.context.soup
+        self.soup = self.context.protected_soup
 
 
 class TestParseArrete(BaseTestCase):

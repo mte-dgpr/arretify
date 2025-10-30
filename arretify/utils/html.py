@@ -22,7 +22,8 @@ from bs4 import Tag
 
 from arretify.types import (
     IdCounters,
-    PageElementOrString,
+    ProtectedTagOrStr,
+    ProtectedTag,
     TagGroupId,
     TagId,
 )
@@ -36,9 +37,9 @@ GROUP_ID_ATTR = "data-group_id"
 
 
 def is_tag(
-    tag: PageElementOrString,
+    tag: ProtectedTagOrStr,
     tag_name_in: Sequence[str] | None = None,
-) -> TypeGuard[Tag]:
+) -> TypeGuard[ProtectedTag]:
     """
     Check if element is a tag.
 
@@ -57,14 +58,14 @@ def is_tag(
 
 @iter_func_to_list
 def filter_out_inline_tags(
-    elements: Iterable[PageElementOrString],
-) -> Iterator[PageElementOrString]:
+    elements: Iterable[ProtectedTagOrStr],
+) -> Iterator[ProtectedTagOrStr]:
     for element in elements:
         if not is_tag(element, tag_name_in=INLINE_TAG_TYPES):
             yield element
 
 
-def ensure_tag_id(id_counters: IdCounters, tag: Tag) -> TagId:
+def ensure_tag_id(id_counters: IdCounters, tag: ProtectedTag) -> TagId:
     current_tag_id = tag.get(TAG_ID_ATTR, None)
     if current_tag_id is None:
         tag[TAG_ID_ATTR] = _make_id(id_counters, "tag_id")
@@ -75,7 +76,7 @@ def make_group_id(id_counters: IdCounters) -> TagGroupId:
     return _make_id(id_counters, "group_id")
 
 
-def set_group_id(tag: Tag, group_id: TagGroupId) -> TagGroupId:
+def set_group_id(tag: ProtectedTag, group_id: TagGroupId) -> TagGroupId:
     current_group_id = tag.get(GROUP_ID_ATTR, None)
     if current_group_id is not None and current_group_id != group_id:
         raise ValueError(f"Tag already has a different group_id: {current_group_id}")
@@ -83,7 +84,7 @@ def set_group_id(tag: Tag, group_id: TagGroupId) -> TagGroupId:
     return group_id
 
 
-def get_group_id(tag: Tag) -> TagGroupId | None:
+def get_group_id(tag: ProtectedTag) -> TagGroupId | None:
     return cast(str | None, tag.get(GROUP_ID_ATTR, None))
 
 

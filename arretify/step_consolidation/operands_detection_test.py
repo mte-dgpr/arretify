@@ -83,13 +83,13 @@ class TestParseOperations(unittest.TestCase):
                 """  # noqa: E501
             )
         )
-        tag = document_context.soup.select_one(css_selector(OperationSpec))
+        tag = document_context.protected_soup.select_one(css_selector(OperationSpec))
 
         # Act
         resolve_references_and_operands(document_context, tag)
 
         # Assert
-        assert str(document_context.soup) == normalized_html_str(
+        assert str(document_context.protected_soup) == normalized_html_str(
             # Check that tag_id was added to both references, and that the references were
             # added to the operation
             """
@@ -195,13 +195,13 @@ class TestParseOperations(unittest.TestCase):
                 """  # noqa: E501
             )
         )
-        tag = document_context.soup.select_one(css_selector(OperationSpec))
+        tag = document_context.protected_soup.select_one(css_selector(OperationSpec))
 
         # Act
         resolve_references_and_operands(document_context, tag)
 
         # Assert
-        assert str(document_context.soup) == normalized_html_str(
+        assert str(document_context.protected_soup) == normalized_html_str(
             """
             <div data-spec="alinea">
                 La dernière phrase de l'
@@ -283,13 +283,13 @@ class TestParseOperations(unittest.TestCase):
                 """  # noqa: E501
             )
         )
-        tag = document_context.soup.select_one(css_selector(OperationSpec))
+        tag = document_context.protected_soup.select_one(css_selector(OperationSpec))
 
         # Act
         resolve_references_and_operands(document_context, tag)
 
         # Assert
-        assert str(document_context.soup) == normalized_html_str(
+        assert str(document_context.protected_soup) == normalized_html_str(
             """
             <div data-spec="alinea">
                 Les prescriptions de l'
@@ -362,13 +362,13 @@ class TestParseOperations(unittest.TestCase):
                 """  # noqa: E501
             )
         )
-        tag = document_context.soup.select_one(css_selector(OperationSpec))
+        tag = document_context.protected_soup.select_one(css_selector(OperationSpec))
 
         # Act
         resolve_references_and_operands(document_context, tag)
 
         # Assert
-        assert str(document_context.soup) == normalized_html_str(
+        assert str(document_context.protected_soup) == normalized_html_str(
             """
             <div data-spec="alinea">
                 Les dispositions de l'
