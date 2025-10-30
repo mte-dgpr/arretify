@@ -31,7 +31,7 @@ from pydantic.functional_serializers import PlainSerializer
 
 from arretify.errors import ErrorCodes
 from arretify.types import ProtectedTagOrStr, ProtectedSoup, ProtectedTag
-from arretify.utils.html import GROUP_ID_ATTR, TAG_ID_ATTR, is_tag
+from arretify.utils.html import GROUP_ID_ATTR, TAG_ID_ATTR, is_tag, set_attribute
 from arretify.utils.html_create import make_new_tag
 
 
@@ -224,7 +224,7 @@ def make_semantic_tag(
 
     # Create the HTML tag
     tag = make_new_tag(soup, spec.tag_name, contents=contents)
-    tag[_SPEC_DATA_ATTR] = spec.spec_name
+    set_attribute(tag, _SPEC_DATA_ATTR, spec.spec_name)
 
     # Set data attributes from the validated data instance
     set_semantic_tag_data(spec, tag, data)
@@ -263,7 +263,7 @@ def set_semantic_tag_data(
 ) -> None:
     _ensure_matching_spec(spec, tag)
     for key, value in data.model_dump().items():
-        tag[f"data-{key}"] = str(value)
+        set_attribute(tag, f"data-{key}", str(value))
 
 
 def _ensure_matching_spec(

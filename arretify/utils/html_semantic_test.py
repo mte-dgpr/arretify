@@ -23,6 +23,7 @@ import unittest
 from bs4 import BeautifulSoup
 
 from arretify.types import ProtectedSoup, protect_soup
+from arretify.utils.html import set_attribute
 from arretify.utils.html_create import make_new_tag
 
 from .html_semantic import (
@@ -64,7 +65,7 @@ class SemanticTagDataTestCase(unittest.TestCase):
         self.soup: ProtectedSoup = protect_soup(BeautifulSoup("", "html.parser"))
 
         self.tag_with_data = make_new_tag(self.soup, "div")
-        self.tag_with_data["data-spec"] = self.spec_with_data.spec_name
+        set_attribute(self.tag_with_data, "data-spec", self.spec_with_data.spec_name)
 
 
 class TestCssSelector(unittest.TestCase):
