@@ -19,8 +19,6 @@
 import logging
 from typing import Optional, Sequence, cast
 
-from bs4 import BeautifulSoup
-
 from arretify.regex_utils import (
     regex_tree,
     map_regex_tree_match,
@@ -29,7 +27,7 @@ from arretify.parsing_utils.dates import (
     DATE_NODE,
     render_date_regex_tree_match,
 )
-from arretify.types import PageElementOrString, DocumentContext
+from arretify.types import ProtectedTagOrStr, DocumentContext, ProtectedSoup
 from arretify.semantic_tag_specs import (
     DocumentReferenceData,
     DocumentReferenceSpec,
@@ -80,23 +78,23 @@ DECRET_NODE = regex_tree.Group(
 
 def parse_circulaires_references(
     document_context: DocumentContext,
-    children: Sequence[PageElementOrString],
-) -> list[PageElementOrString]:
+    children: Sequence[ProtectedTagOrStr],
+) -> list[ProtectedTagOrStr]:
     return map_splitted_elements(
         split_elements(
             children,
             make_regex_tree_splitter(DECRET_NODE),
         ),
         lambda circulaire_match: _render_circulaire_container(
-            document_context.soup, circulaire_match
+            document_context.protected_soup, circulaire_match
         ),
     )
 
 
 def _render_circulaire_container(
-    soup: BeautifulSoup,
+    soup: ProtectedSoup,
     circulaire_match: regex_tree.Match,
-) -> PageElementOrString:
+) -> ProtectedTagOrStr:
     # Parse date tag and extract date value
     circulaire_tag_contents = list(
         map_regex_tree_match(

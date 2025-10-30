@@ -16,6 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+from typing import cast
 import unittest
 
 from bs4 import BeautifulSoup
@@ -24,7 +25,7 @@ from .dates import (
     DATE_NODE,
     render_date_regex_tree_match,
 )
-from arretify.types import PageElementOrString
+from arretify.types import ProtectedSoup, ProtectedTagOrStr
 from arretify.utils.split_merge import (
     split_elements,
     map_splitted_elements,
@@ -138,8 +139,8 @@ class TestRenderDateRegexTreeMatch(unittest.TestCase):
 
 
 def _parsed_elements(string: str) -> list[str]:
-    soup = BeautifulSoup(string, features="html.parser")
-    elements: list[PageElementOrString] = [string]
+    soup = cast(ProtectedSoup, BeautifulSoup(string, features="html.parser"))
+    elements: list[ProtectedTagOrStr] = [string]
     elements = map_splitted_elements(
         split_elements(
             elements,

@@ -23,7 +23,7 @@ from arretify.semantic_tag_specs import (
     OperationSpec,
     SectionReferenceSpec,
 )
-from arretify.types import PageElementOrString, DocumentContext
+from arretify.types import ProtectedTagOrStr, DocumentContext
 from arretify.utils.html_create import replace_children
 from arretify.utils.html_semantic import css_selector
 
@@ -37,22 +37,22 @@ from .operands_detection import (
 
 def step_consolidation(document_context: DocumentContext) -> DocumentContext:
     # Find consolidation operations
-    for container_tag in document_context.soup.select(
+    for container_tag in document_context.protected_soup.select(
         f"{css_selector(AlineaSpec)}, {css_selector(AlineaSpec)} *"
     ):
-        new_children: list[PageElementOrString] = list(container_tag.children)
+        contents: list[ProtectedTagOrStr] = list(container_tag.contents)
         # Parse operations only if there's a document or section reference in the paragraph
         # Helps avoid many false positives during processing
         document_reference_tags = container_tag.select(
             f"{css_selector(DocumentReferenceSpec)}, {css_selector(SectionReferenceSpec)}"
         )
         if document_reference_tags:
-            new_children = parse_operations(document_context, new_children)
+            contents = parse_operations(document_context, contents)
 
-        replace_children(container_tag, new_children)
+        replace_children(container_tag, contents)
 
     # Resolve operation references and operands
-    for operation_tag in document_context.soup.select(css_selector(OperationSpec)):
+    for operation_tag in document_context.protected_soup.select(css_selector(OperationSpec)):
         resolve_references_and_operands(document_context, operation_tag)
 
     return document_context

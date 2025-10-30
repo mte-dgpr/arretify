@@ -18,8 +18,6 @@
 #
 from typing import Sequence
 
-from bs4 import BeautifulSoup
-
 from arretify.law_data.legifrance_constants import (
     get_code_titles,
 )
@@ -30,7 +28,7 @@ from arretify.regex_utils import (
 from arretify.regex_utils.helpers import (
     lookup_normalized_version,
 )
-from arretify.types import PageElementOrString, DocumentContext, DocumentType
+from arretify.types import ProtectedTagOrStr, DocumentContext, DocumentType, ProtectedSoup
 from arretify.semantic_tag_specs import (
     DocumentReferenceData,
     DocumentReferenceSpec,
@@ -49,24 +47,24 @@ CODE_NODE = regex_tree.Group(
 
 def parse_codes_references(
     document_context: DocumentContext,
-    children: Sequence[PageElementOrString],
-) -> list[PageElementOrString]:
+    children: Sequence[ProtectedTagOrStr],
+) -> list[ProtectedTagOrStr]:
     return map_splitted_elements(
         split_elements(
             children,
             make_regex_tree_splitter(CODE_NODE),
         ),
         lambda code_group_match: _render_code_reference(
-            document_context.soup,
+            document_context.protected_soup,
             code_group_match,
         ),
     )
 
 
 def _render_code_reference(
-    soup: BeautifulSoup,
+    soup: ProtectedSoup,
     code_group_match: regex_tree.Match,
-) -> PageElementOrString:
+) -> ProtectedTagOrStr:
     return make_semantic_tag(
         soup,
         DocumentReferenceSpec,

@@ -19,10 +19,12 @@
 import re
 from typing import Sequence
 
+from bs4 import BeautifulSoup
 import markdown
-from bs4 import BeautifulSoup, Tag
 
 from arretify.errors import ErrorCodes
+from arretify.types import ProtectedTag, protect_soup
+from arretify.utils.html_create import make_new_tag
 from arretify.utils.html_semantic import make_semantic_tag
 from arretify.semantic_tag_specs import ErrorSpec
 from arretify.regex_utils import PatternProxy, repeated_with_separator
@@ -83,10 +85,10 @@ def is_table_description(line: str, pile: Sequence[str]) -> bool:
     return False
 
 
-def parse_markdown_table(lines: Sequence[str]) -> Tag:
+def parse_markdown_table(lines: Sequence[str]) -> ProtectedTag:
     markdown_str = "\n".join(lines)
     html_str = markdown.markdown(markdown_str, extensions=["tables"])
-    soup = BeautifulSoup(html_str, features="html.parser")
+    soup = protect_soup(BeautifulSoup(html_str, features="html.parser"))
     table_result = soup.select("table")
     if len(table_result) != 1:
         return make_semantic_tag(
@@ -96,13 +98,11 @@ def parse_markdown_table(lines: Sequence[str]) -> Tag:
             contents=[markdown_str],
         )
 
-    table_element = soup.new_tag("table")
-    table_element.extend(list(table_result[0].children))
-    return table_element
+    return make_new_tag(soup, "table", contents=list(table_result[0].contents))
 
 
-def parse_markdown_image(line: str) -> Tag:
+def parse_markdown_image(line: str) -> ProtectedTag:
     html_str = markdown.markdown(line)
-    soup = BeautifulSoup(html_str, features="html.parser")
+    soup = protect_soup(BeautifulSoup(html_str, features="html.parser"))
     image_element = soup.select("img")[0]
     return image_element

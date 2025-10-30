@@ -51,7 +51,7 @@ class TestDocumentContext(unittest.TestCase):
 
         # Assert
         assert document_context.pages is pages
-        assert document_context.soup is soup
+        assert document_context.protected_soup is soup
         assert document_context.legifrance_client is legifrance_client
         assert document_context.eurlex_client is eurlex_client
         assert document_context.settings is settings

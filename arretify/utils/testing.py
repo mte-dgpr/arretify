@@ -19,11 +19,11 @@
 import re
 from typing import Callable, Sequence, TypeVar
 
-from bs4 import Tag, BeautifulSoup, PageElement, NavigableString
+from bs4 import NavigableString, BeautifulSoup, Tag
 
 from arretify.settings import Settings
-from arretify.types import PageElementOrString, DocumentContext
-from arretify.utils.html_create import replace_children
+from arretify.types import ProtectedTagOrStr, DocumentContext, ProtectedTag
+from arretify.utils.html import is_tag
 
 
 _INLINE_TAGS = [
@@ -62,26 +62,26 @@ _INLINE_TAGS = [
 _INDENTATION_PATTERN = re.compile(r"\n[\s\t]{2,}")
 _NO_CONTENT = re.compile(r"^[\s]*$")
 
-P = TypeVar("P", bound=Tag | BeautifulSoup)
+PageElementType = TypeVar("PageElementType", bound=Tag | BeautifulSoup)
 
 
 def make_testing_function_for_single_tag(
-    process_function: Callable[[DocumentContext, Tag], None],
+    process_function: Callable[[DocumentContext, ProtectedTag], None],
 ) -> Callable[[str], str]:
     def _testing_function(string: str, css_selector: str | None = None) -> str:
         document_context = create_document_context(normalized_html_str(string))
 
-        tag_list: list[PageElement]
+        tag_list: list[ProtectedTagOrStr]
         if css_selector is None:
-            tag_list = list(document_context.soup.children)
+            tag_list = list(document_context.protected_soup.contents)
         else:
-            tag_list = list(document_context.soup.select(css_selector))
-        tag_list = [tag for tag in tag_list if isinstance(tag, Tag)]
+            tag_list = list(document_context.protected_soup.select(css_selector))
+        tag_list = [tag for tag in tag_list if is_tag(tag)]
 
         if len(tag_list) != 1:
             raise ValueError("One and only one tag must be found")
 
-        if not isinstance(tag_list[0], Tag):
+        if not is_tag(tag_list[0]):
             raise ValueError("No tag found")
 
         tag = tag_list[0]
@@ -93,13 +93,15 @@ def make_testing_function_for_single_tag(
 
 def make_testing_function_for_children_list(
     process_function: Callable[
-        [DocumentContext, Sequence[PageElementOrString]],
-        list[PageElementOrString],
+        [DocumentContext, Sequence[ProtectedTagOrStr]],
+        list[ProtectedTagOrStr],
     ],
 ) -> Callable[[str], str]:
     def _testing_function(string: str):
         document_context = create_document_context(normalized_html_str(string))
-        elements = list(process_function(document_context, list(document_context.soup.children)))
+        elements = list(
+            process_function(document_context, list(document_context.protected_soup.contents))
+        )
         return _normalize_element_list(elements)
 
     return _testing_function
@@ -138,8 +140,8 @@ def normalized_soup(html: str) -> BeautifulSoup:
 
 
 def assert_html_list_equal(
-    actual: Sequence[PageElementOrString],
-    expected: Sequence[PageElementOrString],
+    actual: Sequence[ProtectedTagOrStr],
+    expected: Sequence[ProtectedTagOrStr],
 ) -> None:
     """
     Assert that two lists of HTML strings are equal after normalization.
@@ -155,10 +157,10 @@ def assert_html_list_equal(
 
 
 def _normalize_element_list(
-    html_list: Sequence[PageElementOrString],
-) -> list[PageElementOrString]:
+    html_list: Sequence[ProtectedTagOrStr],
+) -> list[ProtectedTagOrStr]:
     return [
-        normalized_html_str(str(element)) if isinstance(element, Tag) else str(element)
+        normalized_html_str(str(element)) if is_tag(element) else str(element)
         for element in html_list
     ]
 
@@ -228,14 +230,15 @@ def _normalize_string(nav_string: NavigableString) -> str | None:
     return string
 
 
-def _normalize_tag(tag: P) -> P:
-    new_children: list[PageElementOrString] = []
-    for child in tag.children:
+def _normalize_tag(tag: PageElementType) -> PageElementType:
+    new_children: list[Tag | str] = []
+    for child in tag.contents:
         if isinstance(child, NavigableString):
             normalized_string = _normalize_string(child)
             if normalized_string is not None:
                 new_children.append(normalized_string)
         elif isinstance(child, (Tag, BeautifulSoup)):
             new_children.append(_normalize_tag(child))
-    replace_children(tag, new_children)
+    tag.clear()
+    tag.extend(new_children)
     return tag

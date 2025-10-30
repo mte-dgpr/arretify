@@ -45,7 +45,7 @@ from .testing import assert_elements_equal, make_text_spans
 class BaseTestCase(unittest.TestCase):
     def setUp(self):
         self.context = create_document_context()
-        self.soup = self.context.soup
+        self.soup = self.context.protected_soup
 
 
 class TestParseVisaAndMotifs(BaseTestCase):

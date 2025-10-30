@@ -19,8 +19,6 @@
 from typing import Sequence
 import logging
 
-from bs4 import Tag
-
 from arretify.semantic_tag_specs import (
     DocumentReferenceData,
     DocumentReferenceSpec,
@@ -28,6 +26,7 @@ from arretify.semantic_tag_specs import (
 )
 from arretify.types import (
     DocumentContext,
+    ProtectedTag,
     SectionType,
 )
 from arretify.law_data.legifrance_constants import (
@@ -44,7 +43,7 @@ _LOGGER = logging.getLogger(__name__)
 
 def resolve_code_article_legifrance_id(
     _: DocumentContext,
-    code_article_reference_tag: Tag,
+    code_article_reference_tag: ProtectedTag,
     document_reference: DocumentReferenceData,
     section_references: Sequence[SectionReferenceData],
 ) -> None:
@@ -84,7 +83,7 @@ def resolve_code_article_legifrance_id(
 
 def resolve_code_legifrance_id(
     _: DocumentContext,
-    code_reference_tag: Tag,
+    code_reference_tag: ProtectedTag,
 ) -> None:
     document_reference = get_semantic_tag_data(DocumentReferenceSpec, code_reference_tag)
     if document_reference.title is None:
