@@ -254,11 +254,6 @@ if __name__ == "__main__":
         "--out-dir",
     )
     parser.add_option(
-        "-l",
-        "--log-dir",
-        default=None,
-    )
-    parser.add_option(
         "--dry-run",
         action="store_true",
         default=False,
