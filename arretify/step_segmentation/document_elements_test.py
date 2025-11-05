@@ -18,14 +18,15 @@
 #
 import unittest
 
+from arretify.utils.html_create import make_semantic_tag, wrap_in_tag
+
+
 from .document_elements import (
     initialize_document_structure,
     parse_tables_of_contents,
-    render_table_of_contents,
 )
 from .testing import assert_elements_equal, make_text_spans
-from arretify.utils.testing import create_document_context, normalized_html_str
-from arretify.utils.html_semantic import make_semantic_tag
+from arretify.utils.testing import create_document_context
 from arretify.semantic_tag_specs import PageSeparatorData, PageSeparatorSpec, TableOfContentsSpec
 from .semantic_tag_specs import TextSpanSegmentationData, TextSpanSegmentationSpec
 
@@ -121,58 +122,17 @@ class TestParseTablesOfContents(BaseTestCase):
                 make_semantic_tag(
                     self.soup,
                     TableOfContentsSpec,
-                    contents=make_text_spans(
+                    contents=wrap_in_tag(
                         self.soup,
-                        "Sommaire",
-                        "bla ..... page 1",
-                        "blo ..... page 2",
+                        "div",
+                        [
+                            "Sommaire",
+                            "bla ..... page 1",
+                            "blo ..... page 2",
+                        ],
                     ),
                 ),
                 *make_text_spans(self.soup, "Line 2"),
             ],
             ignore_text_span_data=True,
-        )
-
-
-class TestRenderTableOfContents(BaseTestCase):
-
-    def test_simple_render(self):
-        # Arrange
-        tag = make_semantic_tag(
-            self.soup,
-            TableOfContentsSpec,
-            contents=[
-                make_semantic_tag(
-                    self.soup,
-                    TextSpanSegmentationSpec,
-                    contents=["Sommaire"],
-                    data=TextSpanSegmentationData(start=[0, 0, 0], end=[0, 0, 5]),
-                ),
-                make_semantic_tag(
-                    self.soup,
-                    TextSpanSegmentationSpec,
-                    contents=["bla ..... page 1"],
-                    data=TextSpanSegmentationData(start=[0, 1, 0], end=[0, 1, 5]),
-                ),
-                make_semantic_tag(
-                    self.soup,
-                    TextSpanSegmentationSpec,
-                    contents=["blo ..... page 2"],
-                    data=TextSpanSegmentationData(start=[0, 2, 0], end=[0, 2, 5]),
-                ),
-            ],
-        )
-
-        # Act
-        rendered = render_table_of_contents(self.context, tag)
-
-        # Assert
-        assert normalized_html_str(str(rendered)) == normalized_html_str(
-            """
-            <div data-spec="table_of_contents">
-                <div>Sommaire</div>
-                <div>bla ..... page 1</div>
-                <div>blo ..... page 2</div>
-            </div>
-        """
         )

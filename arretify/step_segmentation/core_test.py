@@ -19,11 +19,11 @@
 import unittest
 
 from arretify.regex_utils import PatternProxy
-from arretify.utils.html_create import make_new_tag
+from arretify.utils.html_create import make_new_tag, make_semantic_tag
 from arretify.utils.testing import create_document_context
 from arretify.utils.html_semantic import (
+    Contents,
     create_semantic_tag_spec_no_data,
-    make_semantic_tag,
 )
 from arretify.semantic_tag_specs import AddressSpec, PageSeparatorData, PageSeparatorSpec
 from .semantic_tag_specs import (
@@ -48,6 +48,11 @@ from .testing import make_text_spans, assert_elements_equal
 SomeTagSpec = create_semantic_tag_spec_no_data(
     spec_name="segmentation:some_tag",
     tag_name=SEGMENTATION_TAG_NAME,
+    allowed_contents=(
+        Contents.Str(),
+        Contents.SemanticTag(TextSpanSegmentationSpec.spec_name),
+        Contents.Tag("some-tag"),
+    ),
 )
 
 
@@ -401,7 +406,7 @@ class TestGetString(BaseTestCase):
             SomeTagSpec,
             contents=[
                 "This is",
-                make_new_tag(self.soup, "not-a-string"),
+                make_new_tag(self.soup, "some-tag"),
                 " a test",
             ],
         )

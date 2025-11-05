@@ -164,6 +164,33 @@ def flat_map_splitted_elements(
             yield from splitted_element.value
 
 
+def split_and_map_elements(
+    elements: Sequence[T1],
+    splitter: Splitter[T1, T2],
+    map_func: Callable[[T2], T3],
+) -> list[T1 | T3]:
+    """
+    Convenience function that chains `split_elements` and `map_splitted_elements`.
+    Splits the input list using the provided splitter,
+    maps the matched elements using the provided map function,
+    and returns a new list with the mapped elements.
+
+    For example :
+
+    >>> some_numbers = [1, 3, 11, 10, 6, 23]
+    >>> def multiple_of_3(elements: Sequence[int]) -> RawSplit[int, int] | None:
+    ...     for i, element in enumerate(elements):
+    ...         if element % 3 == 0:
+    ...             return elements[:i], element, elements[i + 1:]
+    ...     return None
+    >>> def map_func(n: int) -> str:
+    ...     return f"Number {n} is multiple of 3"
+    >>> remap_elements(some_numbers, multiple_of_3, map_func)
+    [1, 'Number 3 is multiple of 3', 11, 10, 'Number 6 is multiple of 3', 23]
+    """  # noqa: E501
+    return map_splitted_elements(split_elements(elements, splitter), map_func)
+
+
 @iter_func_to_list
 def merge_splitted_elements(
     splitted_list: Sequence[SplittedElement[T1, Sequence[T1]]],

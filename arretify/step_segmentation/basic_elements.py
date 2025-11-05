@@ -25,19 +25,19 @@ from arretify.step_segmentation.semantic_tag_specs import (
     TableDescriptionSegmentationSpec,
     TableSegmentationSpec,
     BlockquoteSegmentationSpec,
-    ImageSegmentationSpec,
     TextSpanSegmentationSpec,
 )
 from arretify.types import DocumentContext, ProtectedTagOrStr, ProtectedTag
 from arretify.utils.functional import iter_func_to_list, chain_functions
+from arretify.utils.html import is_tag
 from arretify.utils.html_semantic import (
     SemanticTagData,
     get_semantic_tag_data,
     is_semantic_tag,
-    make_semantic_tag,
 )
 from arretify.utils.html_create import (
     make_new_tag,
+    make_semantic_tag,
     replace_children,
 )
 from arretify.utils.markdown_parsing import (
@@ -70,6 +70,7 @@ from arretify.utils.split_merge import (
     Probe,
     RawSplit,
     Splitter,
+    split_and_map_elements,
     split_elements,
     map_splitted_elements,
     flat_map_splitted_elements,
@@ -93,7 +94,6 @@ from .core import (
     pick_if_transparent_tag_followed_by_match,
     make_pattern_splitter,
 )
-from .document_elements import render_table_of_contents, render_page_footer
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -522,22 +522,11 @@ def parse_images(
     context: DocumentContext,
     elements: Sequence[ProtectedTagOrStr],
 ) -> list[ProtectedTagOrStr]:
-    return map_splitted_elements(
-        split_elements(
-            elements,
-            make_single_line_splitter_for_text_spans(_is_image),
-        ),
-        lambda contents: make_semantic_tag(
-            context.protected_soup, ImageSegmentationSpec, contents=contents
-        ),
+    return split_and_map_elements(
+        elements,
+        make_single_line_splitter_for_text_spans(_is_image),
+        lambda contents: parse_markdown_image(get_string(contents[0])),
     )
-
-
-def render_image(
-    context: DocumentContext,
-    tag: ProtectedTag,
-) -> ProtectedTag:
-    return parse_markdown_image(get_string(tag))
 
 
 # -------------------- Addresses -------------------- #
@@ -662,17 +651,13 @@ def render_basic_elements(
         yield from render_table_description(context, tag)
     elif is_semantic_tag(tag, spec_in=[BlockquoteSegmentationSpec]):
         yield render_blockquote(context, tag)
-    elif is_semantic_tag(tag, spec_in=[TableOfContentsSpec]):
-        yield render_table_of_contents(context, tag)
-    elif is_semantic_tag(tag, spec_in=[PageFooterSpec]):
-        yield render_page_footer(context, tag)
-    elif is_semantic_tag(tag, spec_in=[PageSeparatorSpec]):
-        yield tag
-    elif is_semantic_tag(tag, spec_in=[ImageSegmentationSpec]):
-        yield render_image(context, tag)
-    elif is_semantic_tag(tag, spec_in=[ErrorSpec]):
+    elif is_semantic_tag(
+        tag, spec_in=[PageFooterSpec, PageSeparatorSpec, TableOfContentsSpec, ErrorSpec]
+    ):
         yield tag
     elif is_semantic_tag(tag, spec_in=[TextSpanSegmentationSpec]):
         yield from render_text_span(context, tag)
+    elif is_tag(tag, tag_name_in=["img"]):
+        yield tag
     else:
         raise ValueError(f"Unknown tag type '{tag.name}' in render_basic_elements.")

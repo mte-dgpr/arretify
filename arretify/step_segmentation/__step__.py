@@ -16,8 +16,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+from arretify.semantic_tag_specs import ArreteSpec
 from arretify.types import DocumentContext
-from arretify.utils.html_create import replace_children
+from arretify.utils.html_create import replace_children, upgrade_to_semantic_tag
 from .parse_arrete import parse_arrete, render_arrete
 
 
@@ -25,12 +26,12 @@ def step_segmentation(document_context: DocumentContext) -> DocumentContext:
     if not document_context.pages:
         raise ValueError("Parsing context does not contain any pages to segment")
 
-    body = document_context.protected_soup.body
-    assert body
-
     pages = document_context.pages
     assert pages
 
+    body = document_context.protected_soup.body
+    assert body
+    upgrade_to_semantic_tag(body, ArreteSpec)
     replace_children(
         body,
         render_arrete(

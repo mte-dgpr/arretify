@@ -18,20 +18,20 @@
 #
 import unittest
 
+from arretify.utils.html_create import make_semantic_tag, wrap_in_tag
 from arretify.utils.testing import create_document_context
-from arretify.utils.html_semantic import make_semantic_tag
 from arretify.semantic_tag_specs import (
     AlineaData,
-    HeaderSpec,
-    MainSpec,
-    AppendixSpec,
     PageSeparatorData,
     PageSeparatorSpec,
-    ArreteSpec,
-    AlineaSpec,
+    ArreteTitleSpec,
     AddressSpec,
 )
 from .semantic_tag_specs import (
+    AlineaSegmentationSpec,
+    AppendixSegmentationSpec,
+    HeaderSegmentationSpec,
+    MainSegmentationSpec,
     SectionSegmentationSpec,
     SectionTitleSegmentationData,
     SectionTitleSegmentationSpec,
@@ -71,21 +71,21 @@ class TestParseArrete(BaseTestCase):
             [
                 make_semantic_tag(
                     self.soup,
-                    HeaderSpec,
+                    HeaderSegmentationSpec,
                     contents=[
                         make_semantic_tag(
                             self.soup, PageSeparatorSpec, data=PageSeparatorData(page_index=0)
                         ),
                         make_semantic_tag(
                             self.soup,
-                            ArreteSpec,
-                            contents=make_text_spans(self.soup, "Arrêté n° 123"),
+                            ArreteTitleSpec,
+                            contents=wrap_in_tag(self.soup, "h1", ["Arrêté n° 123"]),
                         ),
                     ],
                 ),
                 make_semantic_tag(
                     self.soup,
-                    MainSpec,
+                    MainSegmentationSpec,
                     contents=[
                         make_semantic_tag(
                             self.soup,
@@ -104,7 +104,7 @@ class TestParseArrete(BaseTestCase):
                                 ),
                                 make_semantic_tag(
                                     self.soup,
-                                    AlineaSpec,
+                                    AlineaSegmentationSpec,
                                     contents=make_text_spans(self.soup, "Bla bla bla ..."),
                                     data=AlineaData(number=1),
                                 ),
@@ -114,7 +114,7 @@ class TestParseArrete(BaseTestCase):
                 ),
                 make_semantic_tag(
                     self.soup,
-                    AppendixSpec,
+                    AppendixSegmentationSpec,
                     contents=[
                         make_semantic_tag(
                             self.soup,
@@ -133,7 +133,7 @@ class TestParseArrete(BaseTestCase):
                                 ),
                                 make_semantic_tag(
                                     self.soup,
-                                    AlineaSpec,
+                                    AlineaSegmentationSpec,
                                     contents=make_text_spans(self.soup, "Bla bla bla ..."),
                                     data=AlineaData(number=1),
                                 ),
@@ -167,21 +167,21 @@ class TestParseArrete(BaseTestCase):
             [
                 make_semantic_tag(
                     self.soup,
-                    HeaderSpec,
+                    HeaderSegmentationSpec,
                     contents=[
                         make_semantic_tag(
                             self.soup, PageSeparatorSpec, data=PageSeparatorData(page_index=0)
                         ),
                         make_semantic_tag(
                             self.soup,
-                            ArreteSpec,
-                            contents=make_text_spans(self.soup, "Arrêté n° 123"),
+                            ArreteTitleSpec,
+                            contents=wrap_in_tag(self.soup, "h1", ["Arrêté n° 123"]),
                         ),
                     ],
                 ),
                 make_semantic_tag(
                     self.soup,
-                    MainSpec,
+                    MainSegmentationSpec,
                     contents=[
                         make_semantic_tag(
                             self.soup,
@@ -200,7 +200,7 @@ class TestParseArrete(BaseTestCase):
                                 ),
                                 make_semantic_tag(
                                     self.soup,
-                                    AlineaSpec,
+                                    AlineaSegmentationSpec,
                                     contents=[
                                         make_semantic_tag(
                                             self.soup,

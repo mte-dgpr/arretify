@@ -25,8 +25,7 @@ from arretify.regex_utils import (
     filter_regex_tree_match_children,
     join_with_or,
 )
-from arretify.utils.html_semantic import make_semantic_tag
-from arretify.utils.html_create import make_new_tag
+from arretify.utils.html_create import make_new_tag, make_semantic_tag
 from arretify.utils.strings import merge_strings
 from arretify.utils.html_split_merge import make_regex_tree_splitter
 from arretify.utils.split_merge import split_elements, map_splitted_elements

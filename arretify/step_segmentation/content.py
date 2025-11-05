@@ -22,20 +22,19 @@ import logging
 from bs4 import Tag
 
 from arretify.types import DocumentContext, ProtectedTag, SectionType, ProtectedTagOrStr
+from arretify.utils.html_create import make_semantic_tag
 from arretify.utils.html_semantic import (
     SemanticTagData,
+    SemanticTagSpec,
     get_semantic_tag_data,
     get_semantic_tag_spec,
     is_semantic_tag,
-    make_semantic_tag,
     set_semantic_tag_data,
-)
-from arretify.utils.html_create import (
-    replace_children,
 )
 from arretify.utils.functional import iter_func_to_list, chain_functions
 from arretify.utils.split import split_at_first_verb
 from arretify.step_segmentation.semantic_tag_specs import (
+    AlineaSegmentationSpec,
     SectionTitleSegmentationData,
     SectionTitleSegmentationSpec,
     TableDescriptionSegmentationSpec,
@@ -45,12 +44,12 @@ from arretify.step_segmentation.semantic_tag_specs import (
 )
 from arretify.semantic_tag_specs import (
     AlineaData,
+    AlineaSpec,
     PageFooterSpec,
     PageSeparatorSpec,
     SectionData,
     SectionSpec,
     SectionTitleSpecs,
-    AlineaSpec,
     TableOfContentsSpec,
 )
 from arretify.errors import ErrorCodes
@@ -79,10 +78,6 @@ from .core import (
     make_single_line_splitter_for_text_spans,
     make_probe_from_pattern_proxy,
     get_string,
-)
-from .document_elements import (
-    render_page_footer,
-    render_table_of_contents,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -121,18 +116,24 @@ def parse_content(
     return elements
 
 
-@iter_func_to_list
 def render_content(
     context: DocumentContext,
+    spec: SemanticTagSpec,
     elements: Sequence[ProtectedTagOrStr],
-) -> Iterator[ProtectedTag]:
+) -> ProtectedTag:
+    contents: list[ProtectedTagOrStr] = []
     for tag in elements:
         if is_semantic_tag(tag, spec_in=[SectionSegmentationSpec]):
-            yield render_section(context, tag)
+            contents.append(render_section(context, tag))
         elif is_semantic_tag(tag, spec_in=[TableOfContentsSpec]):
-            yield render_table_of_contents(context, tag)
+            contents.append(tag)
         else:
             raise ValueError(f"Unexpected element {tag}")
+    return make_semantic_tag(
+        context.protected_soup,
+        spec,
+        contents=contents,
+    )
 
 
 def parse_section_titles(
@@ -438,13 +439,11 @@ def render_section(
             contents.append(render_section_title(context, element))
         elif is_semantic_tag(element, spec_in=[SectionSegmentationSpec]):
             contents.append(render_section(context, element))
-        elif is_semantic_tag(element, spec_in=[AlineaSpec]):
+        elif is_semantic_tag(element, spec_in=[AlineaSegmentationSpec]):
             contents.append(render_alinea(context, element))
-        elif is_semantic_tag(element, spec_in=[PageFooterSpec]):
-            contents.append(render_page_footer(context, element))
-        elif is_semantic_tag(element, spec_in=[TableOfContentsSpec]):
-            contents.append(render_table_of_contents(context, element))
-        elif is_semantic_tag(element, spec_in=[PageSeparatorSpec]):
+        elif is_semantic_tag(
+            element, spec_in=[PageFooterSpec, PageSeparatorSpec, TableOfContentsSpec]
+        ):
             contents.append(element)
         elif isinstance(element, str):
             contents.append(element)
@@ -520,7 +519,7 @@ def parse_alineas(
             alinea_children = [element]
         yield make_semantic_tag(
             context.protected_soup,
-            AlineaSpec,
+            AlineaSegmentationSpec,
             contents=alinea_children,
             data=AlineaData(
                 number=alinea_count,
@@ -549,4 +548,9 @@ def render_alinea(
             contents.extend(render_inline_quotes(context, element))
         else:
             raise ValueError(f"Unexpected tag {element} in alinea contents")
-    return replace_children(tag, contents)
+    return make_semantic_tag(
+        context.protected_soup,
+        AlineaSpec,
+        data=get_semantic_tag_data(AlineaSegmentationSpec, tag),
+        contents=contents,
+    )
