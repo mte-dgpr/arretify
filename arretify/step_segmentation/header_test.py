@@ -19,7 +19,7 @@
 import unittest
 
 from arretify.utils.html_create import make_new_tag, make_semantic_tag, wrap_in_tag
-from arretify.utils.testing import create_document_context, normalized_html_str
+from arretify.utils.testing import create_document_context
 from arretify.semantic_tag_specs import (
     DateSpec,
     HonorarySpec,
@@ -40,7 +40,6 @@ from arretify.step_segmentation.semantic_tag_specs import (
 from .header import (
     _render_header_element,
     parse_visa_and_motif_elements,
-    render_visa_motif,
     parse_arrete_title_element,
     parse_emblem_element,
     parse_entity_element,
@@ -699,32 +698,4 @@ class TestParseSupplementaryMotifInfo(BaseTestCase):
                 ),
             ],
             ignore_text_span_data=True,
-        )
-
-
-class TestRenderVisaMotif(BaseTestCase):
-
-    def test_render_simple(self):
-        # Arrange
-        tag = make_semantic_tag(
-            self.soup,
-            VisaSegmentationSpec,
-            contents=make_text_spans(
-                self.soup,
-                "Vu le code de l'environnement, et notamment ses titres "
-                "1er et 4 des parties réglementaires et législatives du livre V ;",
-            ),
-        )
-
-        # Act
-        rendered = render_visa_motif(self.context, tag)
-
-        # Assert
-        assert normalized_html_str(str(rendered)) == normalized_html_str(
-            """
-            <div data-spec="visa">
-                Vu le code de l'environnement, et notamment ses titres
-                1er et 4 des parties réglementaires et législatives du livre V ;
-            </div>
-            """
         )

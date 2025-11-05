@@ -24,7 +24,6 @@ from arretify.utils.html import is_tag
 from arretify.utils.html_semantic import (
     SemanticTagSpec,
     is_semantic_tag,
-    get_semantic_tag_spec,
 )
 from arretify.utils.html_create import (
     make_semantic_tag,
@@ -44,10 +43,6 @@ from arretify.semantic_tag_specs import (
     VisaSpec,
     MotifSpec,
     SupplementaryMotifInfoSpec,
-    PageSeparatorSpec,
-    PageFooterSpec,
-    TableOfContentsSpec,
-    HeaderSpec,
 )
 from arretify.step_segmentation.semantic_tag_specs import (
     ListSegmentationSpec,
@@ -75,7 +70,7 @@ from .core import (
     get_strings,
     TRANSPARENT_TAG_SPECS,
 )
-from .basic_elements import parse_lists, render_list, render_text_span
+from .basic_elements import parse_lists
 
 
 def parse_header(
@@ -103,54 +98,6 @@ def parse_header(
     )
     elements = parse_visa_and_motif_elements(context, elements)
     return elements
-
-
-def render_header(
-    context: DocumentContext,
-    elements: Sequence[ProtectedTagOrStr],
-) -> ProtectedTag:
-    contents: list[ProtectedTagOrStr] = []
-    for element in elements:
-        if is_semantic_tag(element, spec_in=[VisaSegmentationSpec, MotifSegmentationSpec]):
-            contents.append(render_visa_motif(context, element))
-        # All header elements other than the ones above
-        # are treated in a generic way.
-        elif is_semantic_tag(
-            element,
-            spec_in=HEADER_ELEMENTS_SPECS,
-        ):
-            contents.append(element)
-        elif is_semantic_tag(
-            element, spec_in=[PageSeparatorSpec, PageFooterSpec, TableOfContentsSpec]
-        ):
-            contents.append(element)
-        elif is_semantic_tag(element, spec_in=[ListSegmentationSpec]):
-            contents.append(render_list(context, element))
-        elif is_semantic_tag(element, spec_in=[TextSpanSegmentationSpec]):
-            contents.append(
-                make_new_tag(
-                    context.protected_soup,
-                    "div",
-                    contents=render_text_span(context, element),
-                )
-            )
-
-        elif is_tag(element, tag_name_in=["img"]):
-            contents.append(element)
-
-        elif is_semantic_tag(element):
-            raise ValueError(
-                f"Unexpected tag {get_semantic_tag_spec(element).spec_name} in content"
-            )
-
-        elif isinstance(element, str):
-            contents.extend(wrap_in_tag(context.protected_soup, "div", [element]))
-
-    return make_semantic_tag(
-        context.protected_soup,
-        HeaderSpec,
-        contents=contents,
-    )
 
 
 # -------------------- Header elements -------------------- #
@@ -647,28 +594,3 @@ def _parse_visa_and_motif_elements_pass3(
 
         else:
             yield element
-
-
-def render_visa_motif(
-    context: DocumentContext,
-    tag: ProtectedTag,
-) -> ProtectedTag:
-    assert is_semantic_tag(tag, spec_in=[VisaSegmentationSpec, MotifSegmentationSpec])
-    contents: list[ProtectedTagOrStr] = []
-    spec = get_semantic_tag_spec(tag)
-
-    for element in tag.contents:
-        if is_semantic_tag(element, spec_in=[TextSpanSegmentationSpec]):
-            contents.append(get_string(element))
-        elif is_semantic_tag(element, spec_in=[ListSegmentationSpec]):
-            contents.append(render_list(context, element))
-        elif is_semantic_tag(element, spec_in=[PageSeparatorSpec]):
-            contents.append(element)
-        else:
-            raise ValueError(f"Unexpected element {element} in visa/motif")
-
-    return make_semantic_tag(
-        context.protected_soup,
-        VISA_MOTIFS_RENDER_SPECS[spec],
-        contents=contents,
-    )

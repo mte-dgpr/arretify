@@ -124,6 +124,25 @@ def _table_of_contents_while_condition(elements: Sequence[ProtectedTagOrStr], in
     return False
 
 
+def _render_table_of_contents(
+    context: DocumentContext,
+    contents: Sequence[ProtectedTagOrStr],
+) -> ProtectedTag:
+    rendered_contents: list[ProtectedTagOrStr] = []
+    for element in contents:
+        if is_semantic_tag(element, spec_in=[TextSpanSegmentationSpec]):
+            rendered_contents.append(get_string(element))
+        elif is_semantic_tag(element, spec_in=[PageSeparatorSpec]):
+            rendered_contents.append(element)
+        else:
+            raise ValueError(f"Unexpected element in table of contents: {element}")
+    return make_semantic_tag(
+        context.protected_soup,
+        TableOfContentsSpec,
+        contents=wrap_in_tag(context.protected_soup, "div", rendered_contents),
+    )
+
+
 def parse_page_footers(
     context: DocumentContext,
     elements: Sequence[ProtectedTagOrStr],
@@ -168,22 +187,3 @@ def initialize_document_structure(
                     end=[page_index, line_index, len(line) - 1],
                 ),
             )
-
-
-def _render_table_of_contents(
-    context: DocumentContext,
-    contents: Sequence[ProtectedTagOrStr],
-) -> ProtectedTag:
-    rendered_contents: list[ProtectedTagOrStr] = []
-    for element in contents:
-        if is_semantic_tag(element, spec_in=[TextSpanSegmentationSpec]):
-            rendered_contents.append(get_string(element))
-        elif is_semantic_tag(element, spec_in=[PageSeparatorSpec]):
-            rendered_contents.append(element)
-        else:
-            raise ValueError(f"Unexpected element in table of contents: {element}")
-    return make_semantic_tag(
-        context.protected_soup,
-        TableOfContentsSpec,
-        contents=wrap_in_tag(context.protected_soup, "div", rendered_contents),
-    )

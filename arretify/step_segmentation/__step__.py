@@ -19,7 +19,8 @@
 from arretify.semantic_tag_specs import ArreteSpec
 from arretify.types import DocumentContext
 from arretify.utils.html_create import replace_children, upgrade_to_semantic_tag
-from .parse_arrete import parse_arrete, render_arrete
+from .parse_arrete import parse_arrete
+from .render_contents import render_contents
 
 
 def step_segmentation(document_context: DocumentContext) -> DocumentContext:
@@ -34,7 +35,7 @@ def step_segmentation(document_context: DocumentContext) -> DocumentContext:
     upgrade_to_semantic_tag(body, ArreteSpec)
     replace_children(
         body,
-        render_arrete(
+        render_contents(
             document_context,
             parse_arrete(document_context, pages),
         ),
