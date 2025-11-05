@@ -36,14 +36,15 @@ from arretify.regex_utils import (
 from arretify.types import DocumentContext, ProtectedTagOrStr, ProtectedTag
 from arretify.utils.strings import split_on_newlines
 from arretify.utils.html_semantic import (
-    make_semantic_tag,
     is_semantic_tag,
 )
 from arretify.utils.html_create import (
+    make_semantic_tag,
     wrap_in_tag,
 )
 from arretify.utils.functional import iter_func_to_list
 from arretify.utils.split_merge import (
+    split_and_map_elements,
     split_elements,
     map_splitted_elements,
 )
@@ -90,15 +91,13 @@ def parse_tables_of_contents(
     context: DocumentContext,
     elements: Sequence[ProtectedTagOrStr],
 ) -> list[ProtectedTagOrStr]:
-    return map_splitted_elements(
-        split_elements(
-            elements,
-            make_while_splitter_for_text_spans(
-                _is_table_of_contents,
-                _table_of_contents_while_condition,
-            ),
+    return split_and_map_elements(
+        elements,
+        make_while_splitter_for_text_spans(
+            _is_table_of_contents,
+            _table_of_contents_while_condition,
         ),
-        lambda pile: make_semantic_tag(context.protected_soup, TableOfContentsSpec, contents=pile),
+        lambda contents: _render_table_of_contents(context, contents),
     )
 
 
@@ -134,8 +133,14 @@ def parse_page_footers(
             elements,
             make_while_splitter_for_text_spans(_is_page_footer, _is_page_footer),
         ),
-        lambda children: make_semantic_tag(
-            context.protected_soup, PageFooterSpec, contents=children
+        lambda contents: make_semantic_tag(
+            context.protected_soup,
+            PageFooterSpec,
+            contents=wrap_in_tag(
+                context.protected_soup,
+                "div",
+                [get_string(e) for e in contents],
+            ),
         ),
     )
 
@@ -165,31 +170,20 @@ def initialize_document_structure(
             )
 
 
-def render_table_of_contents(
+def _render_table_of_contents(
     context: DocumentContext,
-    tag: ProtectedTag,
+    contents: Sequence[ProtectedTagOrStr],
 ) -> ProtectedTag:
-    contents: list[ProtectedTagOrStr] = []
-    for element in tag.contents:
+    rendered_contents: list[ProtectedTagOrStr] = []
+    for element in contents:
         if is_semantic_tag(element, spec_in=[TextSpanSegmentationSpec]):
-            contents.append(get_string(element))
+            rendered_contents.append(get_string(element))
         elif is_semantic_tag(element, spec_in=[PageSeparatorSpec]):
-            contents.append(element)
+            rendered_contents.append(element)
         else:
             raise ValueError(f"Unexpected element in table of contents: {element}")
     return make_semantic_tag(
         context.protected_soup,
         TableOfContentsSpec,
-        contents=wrap_in_tag(context.protected_soup, contents, "div"),
-    )
-
-
-def render_page_footer(
-    context: DocumentContext,
-    tag: ProtectedTag,
-) -> ProtectedTag:
-    return make_semantic_tag(
-        context.protected_soup,
-        PageFooterSpec,
-        contents=wrap_in_tag(context.protected_soup, [get_string(tag)], "div"),
+        contents=wrap_in_tag(context.protected_soup, "div", rendered_contents),
     )

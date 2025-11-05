@@ -29,13 +29,12 @@ from arretify.step_segmentation.semantic_tag_specs import (
     TableDescriptionSegmentationSpec,
     ListSegmentationSpec,
     BlockquoteSegmentationSpec,
-    ImageSegmentationSpec,
     TextSpanSegmentationData,
     TextSpanSegmentationSpec,
 )
+from arretify.utils.html_create import make_new_tag, make_semantic_tag
 from arretify.utils.html_semantic import (
     create_semantic_tag_spec_no_data,
-    make_semantic_tag,
 )
 
 from .basic_elements import (
@@ -686,10 +685,10 @@ class TestParseImage(BaseTestCase):
         assert_elements_equal(
             result,
             [
-                make_semantic_tag(
+                make_new_tag(
                     self.soup,
-                    ImageSegmentationSpec,
-                    contents=make_text_spans(self.soup, "![Image description](image_url.jpg)"),
+                    "img",
+                    attrs=dict(src="image_url.jpg", alt="Image description"),
                 ),
                 *make_text_spans(self.soup, "END"),
             ],
