@@ -19,18 +19,14 @@
 from typing import Iterator, Callable, Sequence
 
 from arretify.types import DocumentContext, SectionType, ProtectedTagOrStr
-from arretify.semantic_tag_specs import (
-    AppendixSpec,
-    MainSpec,
-)
 from arretify.utils.html_create import make_semantic_tag, replace_children, is_semantic_tag
 from arretify.utils.functional import chain_functions, iter_func_to_list
 from arretify.utils.split_merge import (
     split_before_match,
 )
-from .header import parse_header, render_header
+from .header import parse_header
 from .titles_detection import parse_title_info
-from .content import parse_content, render_content, is_title
+from .content import parse_content, is_title
 from .core import (
     pick_text_spans,
     get_string,
@@ -107,19 +103,6 @@ def parse_arrete(context: DocumentContext, pages: Sequence[str]) -> Iterator[Pro
             AppendixSegmentationSpec,
             contents=parse_content(context, elements),
         )
-
-
-@iter_func_to_list
-def render_arrete(
-    context: DocumentContext, elements: Sequence[ProtectedTagOrStr]
-) -> Iterator[ProtectedTagOrStr]:
-    for element in elements:
-        if is_semantic_tag(element, spec_in=[HeaderSegmentationSpec]):
-            yield render_header(context, element.contents)
-        elif is_semantic_tag(element, spec_in=[MainSegmentationSpec]):
-            yield render_content(context, MainSpec, element.contents)
-        elif is_semantic_tag(element, spec_in=[AppendixSegmentationSpec]):
-            yield render_content(context, AppendixSpec, element.contents)
 
 
 def _make_text_span_parser(
