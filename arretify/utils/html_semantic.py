@@ -18,7 +18,7 @@
 #
 from dataclasses import dataclass
 from enum import Enum
-from typing import Iterable, Sequence, TypeGuard, Annotated, TypeVar, Type, Generic, Union, cast
+from typing import Sequence, TypeGuard, Annotated, TypeVar, Type, Generic, cast
 
 from pydantic import (
     BaseModel,
@@ -30,9 +30,8 @@ from pydantic import (
 from pydantic.functional_serializers import PlainSerializer
 
 from arretify.errors import ErrorCodes
-from arretify.types import ProtectedTagOrStr, ProtectedSoup, ProtectedTag
+from arretify.types import ProtectedTagOrStr, ProtectedTag
 from arretify.utils.html import GROUP_ID_ATTR, TAG_ID_ATTR, is_tag, set_attribute
-from arretify.utils.html_create import make_new_tag
 
 
 _SPEC_DATA_ATTR = "data-spec"
@@ -109,7 +108,23 @@ IntList = Annotated[
 
 # -------------------- Base models -------------------- #
 TSemanticTagData = TypeVar("TSemanticTagData", bound="SemanticTagData")
-ContentsSpecs = tuple[Union[type[str], str, "SemanticTagSpec"], ...]
+
+
+class Contents:
+    @dataclass(frozen=True, eq=True)
+    class Str:
+        pass
+
+    @dataclass(frozen=True, eq=True)
+    class Tag:
+        tag_name: str
+
+    @dataclass(frozen=True, eq=True)
+    class SemanticTag:
+        spec_name: str
+
+    Any = tuple[Str | Tag | SemanticTag, ...]
+
 
 _REGISTRY: dict[str, "SemanticTagSpec"] = {}
 
@@ -155,7 +170,12 @@ class SemanticTagSpec(Generic[TSemanticTagData]):
     spec_name: str
     tag_name: str
     data_model: Type[TSemanticTagData]
-    contents_specs: ContentsSpecs = tuple()
+    allowed_contents: Contents.Any = tuple()
+    is_allowed_anywhere: bool = False
+    """
+    Whether this semantic tag can appear anywhere in the document.
+    If True, this tag is not subject to content restrictions.
+    """
 
     def __post_init__(self):
         _REGISTRY[self.spec_name] = self
@@ -164,6 +184,8 @@ class SemanticTagSpec(Generic[TSemanticTagData]):
 def create_semantic_tag_spec_no_data(
     spec_name: str,
     tag_name: str,
+    allowed_contents: Contents.Any = tuple(),
+    is_allowed_anywhere: bool = False,
 ) -> SemanticTagSpec[SemanticTagData]:
     """
     Create a SemanticTagSpec with the default SemanticTagData model.
@@ -172,6 +194,8 @@ def create_semantic_tag_spec_no_data(
         spec_name=spec_name,
         tag_name=tag_name,
         data_model=SemanticTagData,
+        allowed_contents=allowed_contents,
+        is_allowed_anywhere=is_allowed_anywhere,
     )
 
 
@@ -204,32 +228,6 @@ def is_semantic_tag(
 
 def css_selector(spec: SemanticTagSpec[TSemanticTagData]) -> str:
     return f'[{_SPEC_DATA_ATTR}="{spec.spec_name}"]'
-
-
-def make_semantic_tag(
-    soup: ProtectedSoup,
-    spec: SemanticTagSpec[TSemanticTagData],
-    contents: Iterable[ProtectedTagOrStr] | None = None,
-    data: TSemanticTagData | None = None,
-) -> ProtectedTag:
-    if contents is None:
-        contents = []
-
-    # Validate contents
-    # _validate_contents(spec, list(contents))
-
-    # Create data instance if not provided
-    if data is None:
-        data = spec.data_model()
-
-    # Create the HTML tag
-    tag = make_new_tag(soup, spec.tag_name, contents=contents)
-    set_attribute(tag, _SPEC_DATA_ATTR, spec.spec_name)
-
-    # Set data attributes from the validated data instance
-    set_semantic_tag_data(spec, tag, data)
-
-    return tag
 
 
 def get_semantic_tag_spec(tag: ProtectedTag) -> SemanticTagSpec:

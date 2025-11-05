@@ -27,6 +27,7 @@ from arretify.utils.html import set_attribute
 from arretify.utils.html_create import make_new_tag
 
 from .html_semantic import (
+    Contents,
     IntList,
     SemanticTagData,
     SemanticTagSpec,
@@ -36,7 +37,6 @@ from .html_semantic import (
     StrList,
     enum_serializer,
     update_data,
-    make_semantic_tag,
     set_semantic_tag_data,
     get_semantic_tag_data,
     enum_list_parser,
@@ -51,6 +51,7 @@ class SemanticTagDataTestCase(unittest.TestCase):
         self.spec_no_data = create_semantic_tag_spec_no_data(
             spec_name="test_no_data",
             tag_name="div",
+            allowed_contents=(Contents.Str(),),
         )
 
         class CustomData(SemanticTagData):
@@ -82,27 +83,6 @@ class TestCssSelector(unittest.TestCase):
 
         # ASSERT
         assert selector == '[data-spec="test_spec"]'
-
-
-class TestMakeSemanticTag(SemanticTagDataTestCase):
-
-    def test_creates_tag_with_spec_name(self):
-        # ACT
-        tag = make_semantic_tag(self.soup, self.spec_no_data)
-
-        # ASSERT
-        assert tag.name == "div"
-        assert tag["data-spec"] == "test_no_data"
-
-    def test_creates_tag_with_custom_data(self):
-        # ARRANGE
-        data = self.spec_with_data.data_model(value="hello")
-
-        # ACT
-        tag = make_semantic_tag(self.soup, self.spec_with_data, data=data)
-
-        # ASSERT
-        assert tag["data-value"] == "hello"
 
 
 class TestIsSemanticTag(unittest.TestCase):

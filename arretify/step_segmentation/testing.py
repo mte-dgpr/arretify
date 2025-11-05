@@ -24,11 +24,11 @@ from arretify.step_segmentation.semantic_tag_specs import (
 )
 from arretify.types import ProtectedTagOrStr, ProtectedTag
 from arretify.utils.html import is_tag
+from arretify.utils.html_create import make_semantic_tag
 from arretify.utils.html_semantic import (
     get_semantic_tag_data,
     get_semantic_tag_spec,
     is_semantic_tag,
-    make_semantic_tag,
 )
 
 

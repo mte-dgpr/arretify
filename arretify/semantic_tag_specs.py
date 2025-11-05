@@ -29,6 +29,7 @@ from arretify.utils.html_semantic import (
     SemanticTagSpec,
     SemanticTagData,
     Bool,
+    Contents,
     StrList,
     create_semantic_tag_spec_no_data,
     enum_serializer,
@@ -36,31 +37,14 @@ from arretify.utils.html_semantic import (
 from arretify.types import OperationType, SectionType
 
 
-# -------------------- Parts -------------------- #
-
-
-HeaderSpec = create_semantic_tag_spec_no_data(
-    spec_name="header",
-    tag_name="header",
-)
-
-MainSpec = create_semantic_tag_spec_no_data(
-    spec_name="main",
-    tag_name="main",
-)
-
-AppendixSpec = create_semantic_tag_spec_no_data(
-    spec_name="appendix",
-    tag_name="footer",
-)
-
-
-# -------------------- Document -------------------- #
+# -------------------- Page structure -------------------- #
 
 
 PageFooterSpec = create_semantic_tag_spec_no_data(
     spec_name="page_footer",
     tag_name="div",
+    allowed_contents=(Contents.Tag("div"),),
+    is_allowed_anywhere=True,
 )
 
 
@@ -72,128 +56,41 @@ PageSeparatorSpec: SemanticTagSpec[PageSeparatorData] = SemanticTagSpec(
     spec_name="page_separator",
     tag_name="a",
     data_model=PageSeparatorData,
+    is_allowed_anywhere=True,
 )
+
+
+# -------------------- Generic elements -------------------- #
+
+
+DateSpec = create_semantic_tag_spec_no_data(
+    spec_name="date",
+    tag_name="time",
+    allowed_contents=(Contents.Str(),),
+    is_allowed_anywhere=True,
+)
+
+
+AddressSpec = create_semantic_tag_spec_no_data(
+    spec_name="address",
+    tag_name="address",
+    allowed_contents=(Contents.Str(),),
+    is_allowed_anywhere=True,
+)
+
 
 TableOfContentsSpec = create_semantic_tag_spec_no_data(
     spec_name="table_of_contents",
     tag_name="div",
+    allowed_contents=(Contents.Tag("div"),),
 )
 
 
-# -------------------- Header -------------------- #
-
-
-EmblemSpec = create_semantic_tag_spec_no_data(
-    spec_name="emblem",
-    tag_name="div",
-)
-
-EntitySpec = create_semantic_tag_spec_no_data(
-    spec_name="entity",
-    tag_name="div",
-)
-
-IdentificationSpec = create_semantic_tag_spec_no_data(
-    spec_name="identification",
-    tag_name="div",
-)
-
-ArreteSpec = create_semantic_tag_spec_no_data(
-    spec_name="arrete_title",
-    tag_name="div",
-)
-
-HonorarySpec = create_semantic_tag_spec_no_data(
-    spec_name="honorary",
-    tag_name="div",
-)
-
-VisaSpec = create_semantic_tag_spec_no_data(
-    spec_name="visa",
-    tag_name="div",
-)
-
-MotifSpec = create_semantic_tag_spec_no_data(
-    spec_name="motifs",
-    tag_name="div",
-)
-
-SupplementaryMotifInfoSpec = create_semantic_tag_spec_no_data(
-    spec_name="supplementary_motif_info",
-    tag_name="div",
-)
-
-
-# -------------------- Main and appendix -------------------- #
-
-
-class SectionData(SemanticTagData):
-    title: str | None
-    number: str
-    type: str
-
-
-SectionSpec: SemanticTagSpec[SectionData] = SemanticTagSpec(
-    spec_name="section",
-    tag_name="section",
-    data_model=SectionData,
-)
-
-SectionTitle1Spec = create_semantic_tag_spec_no_data(
-    spec_name="section_title",
-    tag_name="h2",
-)
-
-SectionTitle2Spec = create_semantic_tag_spec_no_data(
-    spec_name="section_title",
-    tag_name="h3",
-)
-
-SectionTitle3Spec = create_semantic_tag_spec_no_data(
-    spec_name="section_title",
-    tag_name="h4",
-)
-
-SectionTitle4Spec = create_semantic_tag_spec_no_data(
-    spec_name="section_title",
-    tag_name="h5",
-)
-
-SectionTitle5Spec = create_semantic_tag_spec_no_data(
-    spec_name="section_title",
-    tag_name="h6",
-)
-
-SectionTitle6Spec = create_semantic_tag_spec_no_data(
-    spec_name="section_title",
-    tag_name="h7",
-)
-
-SectionTitle7Spec = create_semantic_tag_spec_no_data(
-    spec_name="section_title",
-    tag_name="h8",
-)
-
-
-SectionTitleSpecs = [
-    SectionTitle1Spec,
-    SectionTitle2Spec,
-    SectionTitle3Spec,
-    SectionTitle4Spec,
-    SectionTitle5Spec,
-    SectionTitle6Spec,
-    SectionTitle7Spec,
-]
-
-
-class AlineaData(SemanticTagData):
-    number: int
-
-
-AlineaSpec: SemanticTagSpec[AlineaData] = SemanticTagSpec(
-    spec_name="alinea",
-    tag_name="div",
-    data_model=AlineaData,
+ErrorSpec = create_semantic_tag_spec_no_data(
+    spec_name="error",
+    tag_name="span",
+    allowed_contents=(Contents.Str(),),
+    is_allowed_anywhere=True,
 )
 
 
@@ -241,13 +138,15 @@ DocumentReferenceSpec: SemanticTagSpec[DocumentReferenceData] = SemanticTagSpec(
     spec_name="document_reference",
     tag_name="a",
     data_model=DocumentReferenceData,
+    allowed_contents=(Contents.Str(),),
+    is_allowed_anywhere=True,
 )
 
 
 class SectionReferenceData(SemanticTagData):
-    type: Annotated[SectionType, enum_serializer] | None = None  # TODO:BETTER-TESTS
+    type: Annotated[SectionType, enum_serializer] | None = None
     parent_reference: str | None = None
-    start_num: str | None = None  # TODO:BETTER-TESTS
+    start_num: str | None = None
     start_id: str | None = None
     end_id: str | None = None
     end_num: str | None = None
@@ -257,6 +156,8 @@ SectionReferenceSpec: SemanticTagSpec[SectionReferenceData] = SemanticTagSpec(
     spec_name="section_reference",
     tag_name="a",
     data_model=SectionReferenceData,
+    allowed_contents=(Contents.Str(),),
+    is_allowed_anywhere=True,
 )
 
 
@@ -276,28 +177,188 @@ OperationSpec: SemanticTagSpec[OperationData] = SemanticTagSpec(
     spec_name="operation",
     tag_name="span",
     data_model=OperationData,
+    allowed_contents=(Contents.Str(),),
+    is_allowed_anywhere=True,
+)
+
+# -------------------- Header -------------------- #
+
+
+EmblemSpec = create_semantic_tag_spec_no_data(
+    spec_name="emblem",
+    tag_name="div",
+    allowed_contents=(Contents.Tag("div"),),
+)
+
+EntitySpec = create_semantic_tag_spec_no_data(
+    spec_name="entity",
+    tag_name="div",
+    allowed_contents=(Contents.Tag("div"),),
+)
+
+IdentificationSpec = create_semantic_tag_spec_no_data(
+    spec_name="identification",
+    tag_name="div",
+    allowed_contents=(Contents.Tag("div"),),
+)
+
+ArreteTitleSpec = create_semantic_tag_spec_no_data(
+    spec_name="arrete_title",
+    tag_name="div",
+    allowed_contents=(Contents.Tag("h1"),),
+)
+
+HonorarySpec = create_semantic_tag_spec_no_data(
+    spec_name="honorary",
+    tag_name="div",
+    allowed_contents=(Contents.Tag("div"),),
+)
+
+VisaSpec = create_semantic_tag_spec_no_data(
+    spec_name="visa",
+    tag_name="div",
+    allowed_contents=(
+        Contents.Str(),
+        Contents.Tag("ul"),
+    ),
+)
+
+MotifSpec = create_semantic_tag_spec_no_data(
+    spec_name="motifs",
+    tag_name="div",
+    allowed_contents=(
+        Contents.Str(),
+        Contents.Tag("ul"),
+    ),
+)
+
+SupplementaryMotifInfoSpec = create_semantic_tag_spec_no_data(
+    spec_name="supplementary_motif_info",
+    tag_name="div",
+    allowed_contents=(Contents.Tag("div"),),
+)
+
+HeaderSpec = create_semantic_tag_spec_no_data(
+    spec_name="header",
+    tag_name="header",
+    allowed_contents=(
+        Contents.SemanticTag(EmblemSpec.spec_name),
+        Contents.SemanticTag(EntitySpec.spec_name),
+        Contents.SemanticTag(IdentificationSpec.spec_name),
+        Contents.SemanticTag(ArreteTitleSpec.spec_name),
+        Contents.SemanticTag(HonorarySpec.spec_name),
+        Contents.SemanticTag(VisaSpec.spec_name),
+        Contents.SemanticTag(MotifSpec.spec_name),
+        Contents.SemanticTag(SupplementaryMotifInfoSpec.spec_name),
+        Contents.SemanticTag(TableOfContentsSpec.spec_name),
+        # For lines in the header that havent been recognized as a particular element
+        Contents.Tag("div"),
+        Contents.Tag("img"),
+    ),
 )
 
 
-# -------------------- Other -------------------- #
+# -------------------- Main + appendix structure -------------------- #
 
 
-DateSpec = create_semantic_tag_spec_no_data(
-    spec_name="date",
-    tag_name="time",
+SectionTitle1Spec = create_semantic_tag_spec_no_data(
+    spec_name="section_title", tag_name="h2", allowed_contents=(Contents.Str(),)
+)
+
+SectionTitle2Spec = create_semantic_tag_spec_no_data(
+    spec_name="section_title", tag_name="h3", allowed_contents=(Contents.Str(),)
+)
+
+SectionTitle3Spec = create_semantic_tag_spec_no_data(
+    spec_name="section_title", tag_name="h4", allowed_contents=(Contents.Str(),)
+)
+
+SectionTitle4Spec = create_semantic_tag_spec_no_data(
+    spec_name="section_title", tag_name="h5", allowed_contents=(Contents.Str(),)
+)
+
+SectionTitle5Spec = create_semantic_tag_spec_no_data(
+    spec_name="section_title", tag_name="h6", allowed_contents=(Contents.Str(),)
+)
+
+SectionTitle6Spec = create_semantic_tag_spec_no_data(
+    spec_name="section_title", tag_name="h7", allowed_contents=(Contents.Str(),)
+)
+
+SectionTitle7Spec = create_semantic_tag_spec_no_data(
+    spec_name="section_title", tag_name="h8", allowed_contents=(Contents.Str(),)
 )
 
 
-AddressSpec = create_semantic_tag_spec_no_data(
-    spec_name="address",
-    tag_name="address",
+SectionTitleSpecs = [
+    SectionTitle1Spec,
+    SectionTitle2Spec,
+    SectionTitle3Spec,
+    SectionTitle4Spec,
+    SectionTitle5Spec,
+    SectionTitle6Spec,
+    SectionTitle7Spec,
+]
+
+
+class AlineaData(SemanticTagData):
+    number: int
+
+
+AlineaSpec: SemanticTagSpec[AlineaData] = SemanticTagSpec(
+    spec_name="alinea",
+    tag_name="div",
+    data_model=AlineaData,
+    allowed_contents=(
+        Contents.Str(),
+        Contents.Tag("ul"),
+        Contents.Tag("table"),
+        Contents.Tag("blockquote"),
+        Contents.Tag("q"),
+        Contents.Tag("img"),
+    ),
 )
 
 
-# -------------------- Errors -------------------- #
+class SectionData(SemanticTagData):
+    title: str | None
+    number: str
+    type: str
 
 
-ErrorSpec = create_semantic_tag_spec_no_data(
-    spec_name="error",
-    tag_name="span",
+SectionSpec: SemanticTagSpec[SectionData] = SemanticTagSpec(
+    spec_name="section",
+    tag_name="section",
+    data_model=SectionData,
+    allowed_contents=(
+        Contents.SemanticTag("section_title"),
+        Contents.SemanticTag(AlineaSpec.spec_name),
+        Contents.SemanticTag("section"),
+        # Table of contents can be included in appendix sections
+        Contents.SemanticTag(TableOfContentsSpec.spec_name),
+    ),
+)
+
+MainSpec = create_semantic_tag_spec_no_data(
+    spec_name="main",
+    tag_name="main",
+    allowed_contents=(Contents.SemanticTag(SectionSpec.spec_name),),
+)
+
+AppendixSpec = create_semantic_tag_spec_no_data(
+    spec_name="appendix",
+    tag_name="footer",
+    allowed_contents=(Contents.SemanticTag(SectionSpec.spec_name),),
+)
+
+
+# -------------------- Arrete -------------------- #
+ArreteSpec = create_semantic_tag_spec_no_data(
+    spec_name="arrete",
+    tag_name="body",
+    allowed_contents=(
+        Contents.SemanticTag(HeaderSpec.spec_name),
+        Contents.SemanticTag(MainSpec.spec_name),
+        Contents.SemanticTag(AppendixSpec.spec_name),
+    ),
 )

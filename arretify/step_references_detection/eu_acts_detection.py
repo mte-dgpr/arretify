@@ -35,7 +35,7 @@ from arretify.semantic_tag_specs import (
     DocumentReferenceData,
     DocumentReferenceSpec,
 )
-from arretify.utils.html_semantic import make_semantic_tag
+from arretify.utils.html_create import make_semantic_tag
 from arretify.utils.html_split_merge import make_regex_tree_splitter
 from arretify.utils.split_merge import split_elements, map_splitted_elements
 from arretify.law_data.eurlex_constants import (

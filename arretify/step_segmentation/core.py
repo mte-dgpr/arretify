@@ -31,11 +31,11 @@ from arretify.step_segmentation.semantic_tag_specs import (
 from arretify.types import DocumentContext, ProtectedTagOrStr, ProtectedTag
 from arretify.utils.functional import iter_func_to_list
 from arretify.regex_utils import PatternProxy, MatchProxy
+from arretify.utils.html_create import make_semantic_tag
 from arretify.utils.html_semantic import (
     SemanticTagSpec,
     get_semantic_tag_data,
     is_semantic_tag,
-    make_semantic_tag,
 )
 from arretify.utils.strings import merge_strings
 from arretify.utils.split_merge import (
@@ -56,7 +56,7 @@ TRANSPARENT_TAG_SPECS: list[SemanticTagSpec] = [PageSeparatorSpec, PageFooterSpe
 List of tag names that are considered transparent for text extraction purposes.
 """
 
-INLINE_TAG_SPECS: list[SemanticTagSpec] = [AddressSpec]
+_STR_TAG_SPECS: list[SemanticTagSpec] = [AddressSpec]
 """
 List of tag names that contains specific bits of text information inside a text_span.
 """
@@ -297,7 +297,7 @@ def get_string(element: ProtectedTagOrStr) -> str:
 def _get_string(element: ProtectedTagOrStr) -> str:
     if isinstance(element, str):
         return element
-    elif is_semantic_tag(element, spec_in=[TextSpanSegmentationSpec, *INLINE_TAG_SPECS]):
+    elif is_semantic_tag(element, spec_in=[TextSpanSegmentationSpec, *_STR_TAG_SPECS]):
         return merge_strings(_get_string(child) for child in element.contents)
     elif is_semantic_tag(element, spec_in=TRANSPARENT_TAG_SPECS):
         return ""
@@ -333,7 +333,7 @@ def combine_text_spans(
             last_text_span = element
             for text_span_child in element.contents:
                 if isinstance(text_span_child, str) or is_semantic_tag(
-                    text_span_child, spec_in=TRANSPARENT_TAG_SPECS + INLINE_TAG_SPECS
+                    text_span_child, spec_in=TRANSPARENT_TAG_SPECS + _STR_TAG_SPECS
                 ):
                     contents.append(text_span_child)
                 else:

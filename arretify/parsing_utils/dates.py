@@ -24,7 +24,8 @@ from arretify.semantic_tag_specs import DateSpec
 from arretify.types import ProtectedSoup, ProtectedTag
 from arretify.utils.dates import DATE_STR_LENGTH, parse_year_str, render_date_str
 from arretify.utils.html import set_attribute
-from arretify.utils.html_semantic import make_semantic_tag, update_data
+from arretify.utils.html_create import make_semantic_tag
+from arretify.utils.html_semantic import update_data
 from arretify.regex_utils import (
     regex_tree,
     join_with_or,
@@ -214,5 +215,4 @@ def render_date_regex_tree_match(
         contents=iter_regex_tree_match_page_elements_or_strings(regex_tree_match),
         data=date_data,
     )
-    set_attribute(date_container, "datetime", date_str)
-    return date_container
+    return set_attribute(date_container, "datetime", date_str)
