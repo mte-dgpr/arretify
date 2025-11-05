@@ -25,14 +25,11 @@ from arretify.semantic_tag_specs import (
     AlineaData,
 )
 from arretify.utils.html_create import make_semantic_tag
-from arretify.utils.testing import create_document_context, normalized_html_str
+from arretify.utils.testing import create_document_context
 from .content import (
     parse_section_titles,
     parse_sections,
     parse_alineas,
-    render_alinea,
-    render_section_title,
-    render_section,
 )
 from .testing import (
     assert_elements_equal,
@@ -609,103 +606,4 @@ class TestParseAlineas(BaseTestCase):
             ],
             ignore_text_span_data=True,
             ignore_data_if_omitted=True,
-        )
-
-
-class TestRenderAlinea(BaseTestCase):
-
-    def test_simple(self):
-        # Arrange
-        alinea = make_semantic_tag(
-            self.soup,
-            AlineaSegmentationSpec,
-            contents=make_text_spans(self.soup, "This is an alinea."),
-            data=AlineaData(number="1"),
-        )
-
-        # Act
-        result = render_alinea(self.context, alinea)
-
-        # Assert
-        assert normalized_html_str(str(result)) == normalized_html_str(
-            """
-            <div data-spec="alinea" data-number="1">
-                This is an alinea.
-            </div>
-            """
-        )
-
-
-class TestRenderSection(BaseTestCase):
-
-    def test_simple(self):
-        # Arrange
-        tag = make_semantic_tag(
-            self.soup,
-            SectionSegmentationSpec,
-            contents=[
-                make_semantic_tag(
-                    self.soup,
-                    SectionTitleSegmentationSpec,
-                    contents=make_text_spans(self.soup, "Article 1 : Disposition"),
-                    data=SectionTitleSegmentationData(
-                        level=0,
-                        number="1",
-                        title="Disposition",
-                        type="article",
-                    ),
-                ),
-                make_semantic_tag(
-                    self.soup,
-                    AlineaSegmentationSpec,
-                    contents=make_text_spans(self.soup, "Bla bla bla ..."),
-                    data=AlineaData(number="1"),
-                ),
-            ],
-        )
-
-        # Act
-        result = render_section(self.context, tag)
-
-        # Assert
-        assert normalized_html_str(str(result)) == normalized_html_str(
-            """
-            <section data-spec="section" data-number="1" data-title="Disposition" data-type="article">
-                <h2 data-spec="section_title">
-                    Article 1 : Disposition
-                </h2>
-                <div data-spec="alinea" data-number="1">
-                    Bla bla bla ...
-                </div>
-            </section>
-            """  # noqa: E501
-        )
-
-
-class TestRenderSectionTitle(BaseTestCase):
-
-    def test_simple(self):
-        # Arrange
-        section_title = make_semantic_tag(
-            self.soup,
-            SectionTitleSegmentationSpec,
-            contents=make_text_spans(self.soup, "Titre I - Introduction"),
-            data=SectionTitleSegmentationData(
-                level=0,
-                number="I",
-                title="Introduction",
-                type="titre",
-            ),
-        )
-
-        # Act
-        result = render_section_title(self.context, section_title)
-
-        # Assert
-        assert normalized_html_str(str(result)) == normalized_html_str(
-            """
-            <h2 data-spec="section_title">
-                Titre I - Introduction
-            </h2>
-            """
         )
