@@ -24,6 +24,7 @@ from .split_merge import (
     make_while_splitter,
     negate,
     split_before_match,
+    split_and_map_elements,
     SplitMatch,
     SplitNotAMatch,
 )
@@ -168,6 +169,40 @@ class TestSplitElements(unittest.TestCase):
             SplitMatch(elements[2:3]),
         ]
         assert result == expected
+
+
+class TestSplitAndMapElements(unittest.TestCase):
+
+    def test_split_and_map(self):
+        # Arrange
+        some_numbers = [1, 3, 11, 10, 6, 23]
+
+        def multiple_of_3(elements):
+            for i, element in enumerate(elements):
+                if element % 3 == 0:
+                    return elements[:i], element, elements[i + 1 :]
+            return None
+
+        def map_func(n):
+            return f"Number {n} is multiple of 3"
+
+        # Act
+        result = list(
+            split_and_map_elements(
+                some_numbers,
+                multiple_of_3,
+                map_func,
+            )
+        )
+        # Assert
+        assert result == [
+            1,
+            "Number 3 is multiple of 3",
+            11,
+            10,
+            "Number 6 is multiple of 3",
+            23,
+        ]
 
 
 class TestMakeSingleLineSplitter(unittest.TestCase):

@@ -21,11 +21,9 @@ from typing import Iterator, Callable, Sequence
 from arretify.types import DocumentContext, SectionType, ProtectedTagOrStr
 from arretify.semantic_tag_specs import (
     AppendixSpec,
-    HeaderSpec,
     MainSpec,
 )
-from arretify.utils.html_semantic import make_semantic_tag, is_semantic_tag
-from arretify.utils.html_create import replace_children
+from arretify.utils.html_create import make_semantic_tag, replace_children, is_semantic_tag
 from arretify.utils.functional import chain_functions, iter_func_to_list
 from arretify.utils.split_merge import (
     split_before_match,
@@ -37,7 +35,12 @@ from .core import (
     pick_text_spans,
     get_string,
 )
-from .semantic_tag_specs import TextSpanSegmentationSpec
+from .semantic_tag_specs import (
+    AppendixSegmentationSpec,
+    HeaderSegmentationSpec,
+    MainSegmentationSpec,
+    TextSpanSegmentationSpec,
+)
 from .basic_elements import parse_images, parse_addresses
 from .document_elements import (
     parse_page_footers,
@@ -88,17 +91,21 @@ def parse_arrete(context: DocumentContext, pages: Sequence[str]) -> Iterator[Pro
     # Header
     pile, elements = split_before_match(elements, _is_title_line)
     yield make_semantic_tag(
-        context.protected_soup, HeaderSpec, contents=parse_header(context, pile)
+        context.protected_soup, HeaderSegmentationSpec, contents=parse_header(context, pile)
     )
 
     # Main content
     pile, elements = split_before_match(elements, _is_appendix)
-    yield make_semantic_tag(context.protected_soup, MainSpec, contents=parse_content(context, pile))
+    yield make_semantic_tag(
+        context.protected_soup, MainSegmentationSpec, contents=parse_content(context, pile)
+    )
 
     # Appendix
     if elements:
         yield make_semantic_tag(
-            context.protected_soup, AppendixSpec, contents=parse_content(context, elements)
+            context.protected_soup,
+            AppendixSegmentationSpec,
+            contents=parse_content(context, elements),
         )
 
 
@@ -107,12 +114,12 @@ def render_arrete(
     context: DocumentContext, elements: Sequence[ProtectedTagOrStr]
 ) -> Iterator[ProtectedTagOrStr]:
     for element in elements:
-        if is_semantic_tag(element, spec_in=[HeaderSpec]):
-            yield replace_children(element, render_header(context, element.contents))
-        elif is_semantic_tag(element, spec_in=[MainSpec]):
-            yield replace_children(element, render_content(context, element.contents))
-        elif is_semantic_tag(element, spec_in=[AppendixSpec]):
-            yield replace_children(element, render_content(context, element.contents))
+        if is_semantic_tag(element, spec_in=[HeaderSegmentationSpec]):
+            yield render_header(context, element.contents)
+        elif is_semantic_tag(element, spec_in=[MainSegmentationSpec]):
+            yield render_content(context, MainSpec, element.contents)
+        elif is_semantic_tag(element, spec_in=[AppendixSegmentationSpec]):
+            yield render_content(context, AppendixSpec, element.contents)
 
 
 def _make_text_span_parser(

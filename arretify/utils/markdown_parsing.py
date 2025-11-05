@@ -24,8 +24,7 @@ import markdown
 
 from arretify.errors import ErrorCodes
 from arretify.types import ProtectedTag, protect_soup
-from arretify.utils.html_create import make_new_tag
-from arretify.utils.html_semantic import make_semantic_tag
+from arretify.utils.html_create import make_new_tag, make_semantic_tag
 from arretify.semantic_tag_specs import ErrorSpec
 from arretify.regex_utils import PatternProxy, repeated_with_separator
 
