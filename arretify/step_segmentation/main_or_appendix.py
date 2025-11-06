@@ -52,8 +52,7 @@ from .basic_elements import (
     parse_blockquotes,
 )
 from arretify.utils.split_merge import (
-    map_splitted_elements,
-    split_elements,
+    split_and_map_elements,
 )
 from .titles_detection import (
     parse_title_text,
@@ -250,11 +249,9 @@ def _create_section_title_tags(
     context: DocumentContext,
     elements: Sequence[ProtectedTagOrStr],
 ) -> list[ProtectedTagOrStr]:
-    return map_splitted_elements(
-        split_elements(
-            elements,
-            make_single_line_splitter_for_text_spans(is_title),
-        ),
+    return split_and_map_elements(
+        elements,
+        make_single_line_splitter_for_text_spans(is_title),
         lambda contents: make_semantic_tag(
             context.protected_soup,
             SectionTitleSegmentationSpec,
@@ -394,11 +391,9 @@ def parse_alineas(
     #   This is an alinea that
     #   <page_separator>
     #   continues on the next page.
-    elements = map_splitted_elements(
-        split_elements(
-            elements,
-            make_recombine_interrupted_lines_splitter(TextSpanSegmentationSpec),
-        ),
+    elements = split_and_map_elements(
+        elements,
+        make_recombine_interrupted_lines_splitter(TextSpanSegmentationSpec),
         lambda grouped_elements: combine_text_spans(context, grouped_elements),
     )
 

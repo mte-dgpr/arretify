@@ -18,10 +18,10 @@
 #
 
 from arretify.types import ProtectedTagOrStr, DocumentContext
-from arretify.utils.html_create import replace_children
+from arretify.utils.html_create import replace_contents
 from arretify.utils.html_semantic import css_selector
 from arretify.utils.html_split_merge import group_strings_splitter
-from arretify.utils.split_merge import split_elements, map_splitted_elements
+from arretify.utils.split_merge import split_and_map_elements
 from arretify.semantic_tag_specs import (
     AlineaSpec,
     MotifSpec,
@@ -75,13 +75,13 @@ def step_references_detection(document_context: DocumentContext) -> DocumentCont
         contents = parse_self_references(document_context, contents)
         contents = parse_eu_acts_references(document_context, contents)
         contents = parse_section_references(document_context, contents)
-        replace_children(tag, contents)
+        replace_contents(tag, contents)
 
     # Match sections with documents
     for tag in document_context.protected_soup.select(REFERENCES_CONTAINER_SELECTOR):
         contents = list(tag.contents)
         contents = match_sections_to_parents(document_context, contents)
-        replace_children(tag, contents)
+        replace_contents(tag, contents)
 
     for reference_tree in iter_reference_trees(document_context.protected_soup):
         resolve_unknown_sections(
@@ -93,13 +93,11 @@ def step_references_detection(document_context: DocumentContext) -> DocumentCont
     for tag in document_context.protected_soup.select(REFERENCES_CONTAINER_SELECTOR):
         contents = list(tag.contents)
         contents = list(remove_misdetected_sections(document_context, contents))
-        contents = map_splitted_elements(
-            split_elements(
-                contents,
-                group_strings_splitter,
-            ),
+        contents = split_and_map_elements(
+            contents,
+            group_strings_splitter,
             merge_strings,
         )
-        replace_children(tag, contents)
+        replace_contents(tag, contents)
 
     return document_context

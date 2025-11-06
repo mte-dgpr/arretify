@@ -25,7 +25,7 @@ from arretify.law_data.apis.legifrance import (
     get_decret_legifrance_id,
 )
 from arretify.errors import catch_and_log_arretify_error
-from arretify.utils.html_semantic import get_semantic_tag_data, update_data
+from arretify.utils.html_semantic import get_semantic_tag_data
 from .core import (
     update_document_reference_tag_href,
     get_title_sample_next_sibling,
@@ -68,8 +68,5 @@ def resolve_decret_legifrance_id(
 
     update_document_reference_tag_href(
         document_reference_tag,
-        update_data(
-            document_reference,
-            id=decret_id,
-        ),
+        id=decret_id,
     )

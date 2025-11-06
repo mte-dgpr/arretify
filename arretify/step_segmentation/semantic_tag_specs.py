@@ -40,12 +40,11 @@ SEGMENTATION_TAG_NAME = "arretify-segmentation"
 Name of the tag used for segmentation tags.
 """
 
+
 # -------------------- Basic elements -------------------- #
 
 
 class TextSpanSegmentationData(SemanticTagData):
-    """Data model for text_span segmentation tags."""
-
     start: IntList
     end: IntList
 
@@ -102,7 +101,7 @@ BlockquoteSegmentationSpec = create_semantic_tag_spec_no_data(
     ),
 )
 
-# -------------------- Arrete segmentation -------------------- #
+# -------------------- Header -------------------- #
 
 VisaSegmentationSpec = create_semantic_tag_spec_no_data(
     spec_name="segmentation:visa",
@@ -122,6 +121,29 @@ MotifSegmentationSpec = create_semantic_tag_spec_no_data(
         Contents.SemanticTag(ListSegmentationSpec.spec_name),
     ),
 )
+
+
+HeaderSegmentationSpec = create_semantic_tag_spec_no_data(
+    spec_name="segmentation:header",
+    tag_name=SEGMENTATION_TAG_NAME,
+    allowed_contents=(
+        Contents.SemanticTag(EmblemSpec.spec_name),
+        Contents.SemanticTag(EntitySpec.spec_name),
+        Contents.SemanticTag(IdentificationSpec.spec_name),
+        Contents.SemanticTag(ArreteTitleSpec.spec_name),
+        Contents.SemanticTag(HonorarySpec.spec_name),
+        Contents.SemanticTag(VisaSegmentationSpec.spec_name),
+        Contents.SemanticTag(MotifSegmentationSpec.spec_name),
+        Contents.SemanticTag(SupplementaryMotifInfoSpec.spec_name),
+        # For lines in the header that havent been recognized as a particular element
+        Contents.SemanticTag(TextSpanSegmentationSpec.spec_name),
+        Contents.SemanticTag(TableOfContentsSpec.spec_name),
+        Contents.Tag("img"),
+    ),
+)
+
+
+# -------------------- Main + appendix structure -------------------- #
 
 
 class SectionTitleSegmentationData(SemanticTagData):
@@ -163,26 +185,6 @@ SectionSegmentationSpec = create_semantic_tag_spec_no_data(
         Contents.SemanticTag("segmentation:section"),
         # Table of contents can be included in appendix sections
         Contents.SemanticTag(TableOfContentsSpec.spec_name),
-    ),
-)
-
-
-HeaderSegmentationSpec = create_semantic_tag_spec_no_data(
-    spec_name="segmentation:header",
-    tag_name=SEGMENTATION_TAG_NAME,
-    allowed_contents=(
-        Contents.SemanticTag(EmblemSpec.spec_name),
-        Contents.SemanticTag(EntitySpec.spec_name),
-        Contents.SemanticTag(IdentificationSpec.spec_name),
-        Contents.SemanticTag(ArreteTitleSpec.spec_name),
-        Contents.SemanticTag(HonorarySpec.spec_name),
-        Contents.SemanticTag(VisaSegmentationSpec.spec_name),
-        Contents.SemanticTag(MotifSegmentationSpec.spec_name),
-        Contents.SemanticTag(SupplementaryMotifInfoSpec.spec_name),
-        # For lines in the header that havent been recognized as a particular element
-        Contents.SemanticTag(TextSpanSegmentationSpec.spec_name),
-        Contents.SemanticTag(TableOfContentsSpec.spec_name),
-        Contents.Tag("img"),
     ),
 )
 

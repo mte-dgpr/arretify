@@ -34,9 +34,9 @@ from .html_create import (
     _unprotect_page_elements,
     _validate_semantic_tag_contents,
     _validate_tag_contents,
-    make_new_tag,
+    make_tag,
     make_semantic_tag,
-    replace_children,
+    replace_contents,
     upgrade_to_semantic_tag,
 )
 
@@ -58,7 +58,7 @@ class TestMakeNewTag(unittest.TestCase):
         # Act
         elements = []
         for child in soup.contents:
-            elements.append(make_new_tag(self.soup, "div", contents=[child]))
+            elements.append(make_tag(self.soup, "div", contents=[child]))
 
         # Assert
         assert len(elements) == 2
@@ -70,7 +70,7 @@ class TestMakeNewTag(unittest.TestCase):
         contents = (f"Item {i}" for i in range(3))
 
         # ACT
-        tag = make_new_tag(self.soup, "ul", contents=contents)
+        tag = make_tag(self.soup, "ul", contents=contents)
 
         # ASSERT
         assert str(tag) == "<ul>Item 0Item 1Item 2</ul>"
@@ -89,11 +89,11 @@ class TestMakeNewTag(unittest.TestCase):
 
         # ACT & ASSERT
         with self.assertRaises(InvalidContentsError):
-            make_new_tag(self.soup, "p", contents=contents)
+            make_tag(self.soup, "p", contents=contents)
 
     def test_attrs_parameter(self):
         # ACT
-        tag = make_new_tag(
+        tag = make_tag(
             self.soup,
             "div",
             contents=["text"],
@@ -108,7 +108,7 @@ class TestMakeNewTag(unittest.TestCase):
     def test_attrs_parameter_with_data_attribute_raises(self):
         # ACT & ASSERT
         with self.assertRaises(ValueError):
-            make_new_tag(
+            make_tag(
                 self.soup,
                 "div",
                 contents=["text"],
@@ -146,7 +146,7 @@ class TestMakeSemanticTag(SemanticTagDataTestCase):
         contents = [
             "blabla ",
             # <span> not allowed in spec
-            make_new_tag(self.soup, "span", contents=["text"]),
+            make_tag(self.soup, "span", contents=["text"]),
         ]
 
         # ACT & ASSERT
@@ -193,7 +193,7 @@ class TestUpgradeToSemanticTag(unittest.TestCase):
 
     def test_upgrades_plain_tag_to_semantic_tag(self):
         # ARRANGE
-        plain_tag = make_new_tag(self.soup, "span", contents=["text"])
+        plain_tag = make_tag(self.soup, "span", contents=["text"])
 
         # ACT
         semantic_tag = upgrade_to_semantic_tag(plain_tag, self.some_spec)
@@ -226,7 +226,7 @@ class TestValidateSemanticTagContents(unittest.TestCase):
 
         str_contents = ["some text"]
         semantic_tag_contents = [make_semantic_tag(self.soup, self.some_spec)]
-        tag_contents = [make_new_tag(self.soup, "span")]
+        tag_contents = [make_tag(self.soup, "span")]
 
         # ACT & ASSERT
         _validate_semantic_tag_contents(spec_only_str, str_contents)
@@ -255,7 +255,7 @@ class TestValidateSemanticTagContents(unittest.TestCase):
         allowed_semantic_tag_contents = [make_semantic_tag(self.soup, self.some_spec)]
         other_semantic_tag_contents = [make_semantic_tag(self.soup, other_spec)]
         str_contents = ["some text"]
-        tag_contents = [make_new_tag(self.soup, "span")]
+        tag_contents = [make_tag(self.soup, "span")]
 
         # ACT & ASSERT
         _validate_semantic_tag_contents(spec_only_specs, allowed_semantic_tag_contents)
@@ -278,10 +278,10 @@ class TestValidateSemanticTagContents(unittest.TestCase):
             allowed_contents=(Contents.Tag(tag_name="span"), Contents.Tag(tag_name="ul")),
         )
 
-        allowed_tag_contents = [make_new_tag(self.soup, "span")]
+        allowed_tag_contents = [make_tag(self.soup, "span")]
         str_contents = ["some text"]
         semantic_tag_contents = [make_semantic_tag(self.soup, self.some_spec)]
-        wrong_tag_contents = [make_new_tag(self.soup, "ol")]
+        wrong_tag_contents = [make_tag(self.soup, "ol")]
 
         # ACT & ASSERT
         _validate_semantic_tag_contents(spec_only_tags, allowed_tag_contents)
@@ -307,7 +307,7 @@ class TestValidateSemanticTagContents(unittest.TestCase):
         empty_contents: list = []
         str_contents = ["text"]
         semantic_tag_contents = [make_semantic_tag(self.soup, self.some_spec)]
-        tag_contents = [make_new_tag(self.soup, "span")]
+        tag_contents = [make_tag(self.soup, "span")]
 
         # ACT & ASSERT
         _validate_semantic_tag_contents(spec_nothing, empty_contents)
@@ -336,11 +336,11 @@ class TestValidateSemanticTagContents(unittest.TestCase):
 
         str_contents = ["text"]
         allowed_semantic_tag_contents = [make_semantic_tag(self.soup, self.some_spec)]
-        allowed_tag_contents = [make_new_tag(self.soup, "span")]
+        allowed_tag_contents = [make_tag(self.soup, "span")]
         mixed_contents: list[ProtectedTagOrStr] = [
             "text",
             make_semantic_tag(self.soup, self.some_spec),
-            make_new_tag(self.soup, "span"),
+            make_tag(self.soup, "span"),
         ]
 
         # ACT & ASSERT
@@ -374,12 +374,12 @@ class TestValidateSemanticTagContents(unittest.TestCase):
         )
 
         contents = [
-            make_new_tag(self.soup, "b"),
-            make_new_tag(self.soup, "i"),
-            make_new_tag(self.soup, "u"),
-            make_new_tag(self.soup, "strong"),
-            make_new_tag(self.soup, "em"),
-            make_new_tag(self.soup, "br"),
+            make_tag(self.soup, "b"),
+            make_tag(self.soup, "i"),
+            make_tag(self.soup, "u"),
+            make_tag(self.soup, "strong"),
+            make_tag(self.soup, "em"),
+            make_tag(self.soup, "br"),
         ]
 
         # ACT & ASSERT
@@ -395,7 +395,7 @@ class TestValidateSemanticTagContents(unittest.TestCase):
         )
 
         contents = [
-            make_new_tag(self.soup, "b"),
+            make_tag(self.soup, "b"),
         ]
 
         # ACT & ASSERT
@@ -416,10 +416,10 @@ class TestValidateTagContents(unittest.TestCase):
 
     def test_valid_plain_tags_and_strings(self) -> None:
         # ARRANGE
-        div_tag = make_new_tag(self.soup, "div", contents=["text"])
-        span_tag = make_new_tag(self.soup, "span", contents=["emphasized"])
-        nested_tag = make_new_tag(self.soup, "p")
-        nested_tag = replace_children(nested_tag, [span_tag, " more text"])
+        div_tag = make_tag(self.soup, "div", contents=["text"])
+        span_tag = make_tag(self.soup, "span", contents=["emphasized"])
+        nested_tag = make_tag(self.soup, "p")
+        nested_tag = replace_contents(nested_tag, [span_tag, " more text"])
 
         # ACT & ASSERT
         _validate_tag_contents(["text"])
@@ -438,7 +438,7 @@ class TestValidateTagContents(unittest.TestCase):
     def test_invalid_nested_semantic_tag(self) -> None:
         # ARRANGE
         semantic_tag = make_semantic_tag(self.soup, self.some_spec)
-        div_tag = make_new_tag(self.soup, "div")
+        div_tag = make_tag(self.soup, "div")
         # Bypass validation by directly manipulating the tag
         unprotect_tag(div_tag).extend(_unprotect_page_elements([semantic_tag]))
 

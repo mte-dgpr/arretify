@@ -35,7 +35,7 @@ from arretify.semantic_tag_specs import (
 from arretify.utils.html import is_tag
 from arretify.utils.html_create import make_semantic_tag
 from arretify.utils.html_split_merge import make_regex_tree_splitter
-from arretify.utils.split_merge import split_elements, map_splitted_elements
+from arretify.utils.split_merge import split_and_map_elements
 from arretify.types import (
     DocumentType,
 )
@@ -78,13 +78,11 @@ DECRET_NODE = regex_tree.Group(
 
 def parse_circulaires_references(
     document_context: DocumentContext,
-    children: Sequence[ProtectedTagOrStr],
+    contents: Sequence[ProtectedTagOrStr],
 ) -> list[ProtectedTagOrStr]:
-    return map_splitted_elements(
-        split_elements(
-            children,
-            make_regex_tree_splitter(DECRET_NODE),
-        ),
+    return split_and_map_elements(
+        contents,
+        make_regex_tree_splitter(DECRET_NODE),
         lambda circulaire_match: _render_circulaire_container(
             document_context.protected_soup, circulaire_match
         ),
