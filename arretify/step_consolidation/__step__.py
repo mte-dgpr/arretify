@@ -24,7 +24,7 @@ from arretify.semantic_tag_specs import (
     SectionReferenceSpec,
 )
 from arretify.types import ProtectedTagOrStr, DocumentContext
-from arretify.utils.html_create import replace_children
+from arretify.utils.html_create import replace_contents
 from arretify.utils.html_semantic import css_selector
 
 from .operations_detection import (
@@ -49,7 +49,7 @@ def step_consolidation(document_context: DocumentContext) -> DocumentContext:
         if document_reference_tags:
             contents = parse_operations(document_context, contents)
 
-        replace_children(container_tag, contents)
+        replace_contents(container_tag, contents)
 
     # Resolve operation references and operands
     for operation_tag in document_context.protected_soup.select(css_selector(OperationSpec)):

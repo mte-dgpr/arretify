@@ -27,9 +27,9 @@ from arretify.utils.html_semantic import (
 )
 from arretify.utils.html_create import (
     make_semantic_tag,
-    replace_children,
+    replace_contents,
     wrap_in_tag,
-    make_new_tag,
+    make_tag,
 )
 from arretify.utils.html_split_merge import make_regex_tree_splitter
 from arretify.types import DocumentContext, ProtectedTagOrStr, ProtectedTag
@@ -57,8 +57,6 @@ from arretify.regex_utils import (
 from arretify.utils.split_merge import (
     Splitter,
     split_and_map_elements,
-    split_elements,
-    map_splitted_elements,
     Probe,
 )
 from .core import (
@@ -336,7 +334,7 @@ def _render_arrete_title(
     return make_semantic_tag(
         context.protected_soup,
         ArreteTitleSpec,
-        contents=[make_new_tag(context.protected_soup, "h1", contents=elements)],
+        contents=[make_tag(context.protected_soup, "h1", contents=elements)],
     )
 
 
@@ -428,11 +426,9 @@ def _parse_visa_and_motif_elements_pass1(
     It creates tags of type 'visa' or 'motif' for each segment that matches
     the pattern.
     """
-    elements = map_splitted_elements(
-        split_elements(
-            elements,
-            make_single_line_splitter_for_text_spans(VISA_MOTIFS_PROBES[spec]),
-        ),
+    elements = split_and_map_elements(
+        elements,
+        make_single_line_splitter_for_text_spans(VISA_MOTIFS_PROBES[spec]),
         lambda contents: make_semantic_tag(context.protected_soup, spec, contents=contents),
     )
 
@@ -495,8 +491,9 @@ def _parse_visa_and_motif_elements_pass2(
         #   Vu que blabla
         #   <page_separator>
         #   continues on the next page.
-        elements = map_splitted_elements(
-            split_elements(elements, make_recombine_interrupted_lines_splitter(spec)),
+        elements = split_and_map_elements(
+            elements,
+            make_recombine_interrupted_lines_splitter(spec),
             _recombine_visa_motif_with_next_if_continuing_sentence,
         )
         yield from elements
@@ -558,7 +555,7 @@ def _recombine_visa_motif_with_next_if_continuing_sentence(
     assert len(elements) > 0 and is_semantic_tag(
         elements[0], spec_in=[VisaSegmentationSpec, MotifSegmentationSpec]
     )
-    return replace_children(elements[0], elements[0].contents + list(elements[1:]))
+    return replace_contents(elements[0], elements[0].contents + list(elements[1:]))
 
 
 @iter_func_to_list
@@ -584,7 +581,7 @@ def _parse_visa_and_motif_elements_pass3(
                 elements.pop(0)
 
             if elements and is_semantic_tag(elements[0], spec_in=[ListSegmentationSpec]):
-                yield replace_children(
+                yield replace_contents(
                     element, element.contents + transparent_tags_pile + [elements.pop(0)]
                 )
 

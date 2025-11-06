@@ -38,8 +38,7 @@ from arretify.utils.html_semantic import (
     SemanticTagSpec,
     is_semantic_tag,
     get_semantic_tag_data,
-    set_semantic_tag_data,
-    update_data,
+    update_semantic_tag_data,
 )
 from arretify.utils.references import build_reference_tree
 
@@ -65,20 +64,22 @@ def resolve_references_and_operands(
     if len(reference_tags) == 0:
         _LOGGER.warning("No references found in operation")
         return
-    operation_data = update_data(
-        operation_data,
+    operation_data = update_semantic_tag_data(
+        OperationSpec,
+        operation_tag,
         references=[ensure_tag_id(document_context.id_counters, tag) for tag in reference_tags],
     )
-    set_semantic_tag_data(OperationSpec, operation_tag, operation_data)
 
     if operation_data.has_operand:
         operand_tag: ProtectedTag | None = _find_right_operand(document_context, operation_tag)
         if operand_tag is None:
             _LOGGER.warning("No right operand found for operation")
             return
-        operand_tag_id = ensure_tag_id(document_context.id_counters, operand_tag)
-        operation_data = update_data(operation_data, operand=operand_tag_id)
-    set_semantic_tag_data(OperationSpec, operation_tag, operation_data)
+        operation_data = update_semantic_tag_data(
+            OperationSpec,
+            operation_tag,
+            operand=ensure_tag_id(document_context.id_counters, operand_tag),
+        )
 
 
 def _find_right_operand(
