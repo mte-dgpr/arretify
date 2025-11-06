@@ -22,6 +22,7 @@ from arretify.semantic_tag_specs import (
     AddressSpec,
     PageSeparatorData,
     PageSeparatorSpec,
+    TableOfContentsSpec,
 )
 from arretify.step_segmentation.semantic_tag_specs import (
     SEGMENTATION_TAG_NAME,
@@ -32,7 +33,7 @@ from arretify.step_segmentation.semantic_tag_specs import (
     TextSpanSegmentationData,
     TextSpanSegmentationSpec,
 )
-from arretify.utils.html_create import make_new_tag, make_semantic_tag
+from arretify.utils.html_create import make_tag, make_semantic_tag, wrap_in_tag
 from arretify.utils.html_semantic import (
     create_semantic_tag_spec_no_data,
 )
@@ -43,6 +44,7 @@ from .basic_elements import (
     parse_blockquotes,
     parse_images,
     parse_addresses,
+    parse_tables_of_contents,
 )
 from .testing import assert_elements_equal, make_text_spans
 from arretify.utils.testing import (
@@ -451,7 +453,7 @@ class TestParseImage(BaseTestCase):
         assert_elements_equal(
             result,
             [
-                make_new_tag(
+                make_tag(
                     self.soup,
                     "img",
                     attrs=dict(src="image_url.jpg", alt="Image description"),
@@ -503,6 +505,45 @@ class TestParseAddresses(BaseTestCase):
                 "Some text before ",
                 make_semantic_tag(self.soup, AddressSpec, contents=["123 bis rue jean moulin"]),
                 ", 75002 Paris. Some text after",
+            ],
+            ignore_text_span_data=True,
+        )
+
+
+class TestParseTablesOfContents(unittest.TestCase):
+
+    def setUp(self):
+        self.context = create_document_context()
+        self.soup = self.context.protected_soup
+
+    def test_parse_tables_of_contents(self):
+        # Arrange
+        lines = make_text_spans(
+            self.soup, "Line 1", "Sommaire", "bla ..... page 1", "blo ..... page 2", "Line 2"
+        )
+
+        # Act
+        elements = parse_tables_of_contents(self.context, lines)
+
+        # Assert
+        assert_elements_equal(
+            elements,
+            [
+                *make_text_spans(self.soup, "Line 1"),
+                make_semantic_tag(
+                    self.soup,
+                    TableOfContentsSpec,
+                    contents=wrap_in_tag(
+                        self.soup,
+                        "div",
+                        [
+                            "Sommaire",
+                            "bla ..... page 1",
+                            "blo ..... page 2",
+                        ],
+                    ),
+                ),
+                *make_text_spans(self.soup, "Line 2"),
             ],
             ignore_text_span_data=True,
         )

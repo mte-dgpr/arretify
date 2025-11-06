@@ -29,8 +29,7 @@ from arretify.regex_utils import (
 )
 from arretify.utils.strings import merge_strings
 from arretify.utils.split_merge import (
-    split_elements,
-    map_splitted_elements,
+    split_and_map_elements,
     Splitter,
 )
 from arretify.utils.html_split_merge import make_regex_tree_splitter
@@ -163,13 +162,11 @@ def _render_point_abbreviation_month(match: regex_tree.Match) -> str:
 
 def _clean_failed_month_abbreviations(line_contents: str) -> str:
     return merge_strings(
-        map_splitted_elements(
-            split_elements(
-                [line_contents],
-                cast(
-                    Splitter[str, regex_tree.Match],
-                    make_regex_tree_splitter(FAILED_MONTH_POINT_ABBREVIATIONS),
-                ),
+        split_and_map_elements(
+            [line_contents],
+            cast(
+                Splitter[str, regex_tree.Match],
+                make_regex_tree_splitter(FAILED_MONTH_POINT_ABBREVIATIONS),
             ),
             _render_point_abbreviation_month,
         )

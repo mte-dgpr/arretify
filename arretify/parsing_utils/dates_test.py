@@ -27,8 +27,7 @@ from .dates import (
 )
 from arretify.types import ProtectedSoup, ProtectedTagOrStr
 from arretify.utils.split_merge import (
-    split_elements,
-    map_splitted_elements,
+    split_and_map_elements,
 )
 from arretify.utils.html_split_merge import (
     make_regex_tree_splitter,
@@ -141,11 +140,9 @@ class TestRenderDateRegexTreeMatch(unittest.TestCase):
 def _parsed_elements(string: str) -> list[str]:
     soup = cast(ProtectedSoup, BeautifulSoup(string, features="html.parser"))
     elements: list[ProtectedTagOrStr] = [string]
-    elements = map_splitted_elements(
-        split_elements(
-            elements,
-            make_regex_tree_splitter(DATE_NODE),
-        ),
+    elements = split_and_map_elements(
+        elements,
+        make_regex_tree_splitter(DATE_NODE),
         lambda regex_tree_match: render_date_regex_tree_match(soup, regex_tree_match),
     )
     return [str(element) for element in elements]

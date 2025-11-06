@@ -24,7 +24,7 @@ from bs4 import BeautifulSoup
 
 from arretify.types import ProtectedSoup, protect_soup
 from arretify.utils.html import set_attribute
-from arretify.utils.html_create import make_new_tag
+from arretify.utils.html_create import make_tag
 
 from .html_semantic import (
     Contents,
@@ -39,6 +39,7 @@ from .html_semantic import (
     update_data,
     set_semantic_tag_data,
     get_semantic_tag_data,
+    update_semantic_tag_data,
     enum_list_parser,
     enum_list_serializer,
     css_selector,
@@ -65,8 +66,9 @@ class SemanticTagDataTestCase(unittest.TestCase):
 
         self.soup: ProtectedSoup = protect_soup(BeautifulSoup("", "html.parser"))
 
-        self.tag_with_data = make_new_tag(self.soup, "div")
+        self.tag_with_data = make_tag(self.soup, "div")
         set_attribute(self.tag_with_data, "data-spec", self.spec_with_data.spec_name)
+        set_attribute(self.tag_with_data, "data-value", "EMPTY")
 
 
 class TestCssSelector(unittest.TestCase):
@@ -104,7 +106,7 @@ class TestIsSemanticTag(unittest.TestCase):
 
     def test_any_semantic_tag(self):
         # Arrange
-        tag = make_new_tag(self.soup, "div")
+        tag = make_tag(self.soup, "div")
         tag["data-spec"] = "arretify-test"
 
         # Act
@@ -125,7 +127,7 @@ class TestIsSemanticTag(unittest.TestCase):
 
     def test_spec_in(self):
         # Arrange
-        tag = make_new_tag(self.soup, "div")
+        tag = make_tag(self.soup, "div")
         tag["data-spec"] = "bla"
 
         # Act
@@ -138,7 +140,7 @@ class TestIsSemanticTag(unittest.TestCase):
 
     def test_tag_name_in(self):
         # Arrange
-        tag = make_new_tag(self.soup, "div")
+        tag = make_tag(self.soup, "div")
         tag["data-spec"] = "bla"
 
         # Act
@@ -277,6 +279,19 @@ class TestSetSemanticTagData(SemanticTagDataTestCase):
 
         # ASSERT
         assert self.tag_with_data["data-value"] == "hello"
+
+
+class TestUpdateSemanticTagData(SemanticTagDataTestCase):
+
+    def test_update_single_field(self):
+        # ACT
+        updated_data = update_semantic_tag_data(
+            self.spec_with_data, self.tag_with_data, value="coucou"
+        )
+
+        # ASSERT
+        assert self.tag_with_data["data-value"] == "coucou"
+        assert updated_data.value == "coucou"
 
 
 class TestUpdateData(unittest.TestCase):

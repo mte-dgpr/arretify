@@ -264,6 +264,21 @@ def set_semantic_tag_data(
         set_attribute(tag, f"data-{key}", str(value))
 
 
+def update_semantic_tag_data(
+    spec: SemanticTagSpec[TSemanticTagData],
+    tag: ProtectedTag,
+    **kwargs,
+) -> TSemanticTagData:
+    """
+    Update properties of the semantic tag data, by replacing
+    the existing data with a new instance with updated fields.
+    """
+    current_data = get_semantic_tag_data(spec, tag)
+    new_data = update_data(current_data, **kwargs)
+    set_semantic_tag_data(spec, tag, new_data)
+    return new_data
+
+
 def _ensure_matching_spec(
     spec: SemanticTagSpec,
     tag: ProtectedTag,

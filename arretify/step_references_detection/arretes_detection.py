@@ -27,10 +27,11 @@ from typing import (
 )
 
 from arretify.types import DocumentContext, ProtectedSoup, ProtectedTag
+from arretify.utils.functional import chain_functions
 from arretify.utils.html_create import make_semantic_tag
 from arretify.utils.split_merge import (
+    split_and_map_elements,
     split_elements,
-    map_splitted_elements,
     flat_map_splitted_elements,
 )
 from arretify.utils.html import (
@@ -177,13 +178,17 @@ ARRETE_MULTIPLE_NODE = regex_tree.Group(
 
 def parse_arretes_references(
     document_context: DocumentContext,
-    children: Sequence[ProtectedTagOrStr],
+    contents: Sequence[ProtectedTagOrStr],
 ) -> list[ProtectedTagOrStr]:
-    # First check for multiple, cause it is the most exhaustive pattern
-    new_children = _parse_multiple_arretes_references(
-        document_context.protected_soup, list(children)
+    return chain_functions(
+        document_context.protected_soup,
+        contents,
+        [
+            # First check for multiple, cause it is the most exhaustive pattern
+            _parse_multiple_arretes_references,
+            _parse_arretes_references,
+        ],
     )
-    return _parse_arretes_references(document_context.protected_soup, new_children)
 
 
 def _extract_identifier(
@@ -239,13 +244,11 @@ def _render_arrete_container(
 
 def _parse_arretes_references(
     soup: ProtectedSoup,
-    children: Sequence[ProtectedTagOrStr],
+    contents: Sequence[ProtectedTagOrStr],
 ) -> list[ProtectedTagOrStr]:
-    return map_splitted_elements(
-        split_elements(
-            children,
-            make_regex_tree_splitter(ARRETE_NODE),
-        ),
+    return split_and_map_elements(
+        contents,
+        make_regex_tree_splitter(ARRETE_NODE),
         lambda match_tree: _render_arrete_container(
             soup,
             match_tree,
@@ -255,13 +258,13 @@ def _parse_arretes_references(
 
 def _parse_multiple_arretes_references(
     soup: ProtectedSoup,
-    children: Sequence[ProtectedTagOrStr],
+    contents: Sequence[ProtectedTagOrStr],
 ) -> list[ProtectedTagOrStr]:
     # For multiple arretes, we need to first parse some of the attributes in common
     # before parsing each individual arrete reference.
     return flat_map_splitted_elements(
         split_elements(
-            children,
+            contents,
             make_regex_tree_splitter(ARRETE_MULTIPLE_NODE),
         ),
         lambda match_tree: map_regex_tree_match(

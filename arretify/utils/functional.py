@@ -19,17 +19,16 @@
 from typing import Iterable, Iterator, Sequence, Union, Callable, TypeVar, ParamSpec
 from functools import wraps, reduce
 
-from arretify.types import DocumentContext
 
-
-P = TypeVar("P")
-T = ParamSpec("T")
+T1 = TypeVar("T1")
+T2 = TypeVar("T2")
+P = ParamSpec("P")
 
 
 def flat_map_string(
-    elements: Iterable[Union[P, str]],
-    map_func: Callable[[str], Iterable[P | str]],
-) -> Iterator[P | str]:
+    elements: Iterable[Union[T1, str]],
+    map_func: Callable[[str], Iterable[T1 | str]],
+) -> Iterator[T1 | str]:
     """
     Example:
         >>> elements = ["string", 2, "another", 3]
@@ -44,7 +43,7 @@ def flat_map_string(
             yield element
 
 
-def iter_func_to_list(func: Callable[T, Iterable[P]]) -> Callable[T, list[P]]:
+def iter_func_to_list(func: Callable[P, Iterable[T1]]) -> Callable[P, list[T1]]:
     """
     Converts a function that returns an iterable into a function that returns a list.
 
@@ -58,17 +57,17 @@ def iter_func_to_list(func: Callable[T, Iterable[P]]) -> Callable[T, list[P]]:
     """
 
     @wraps(func)
-    def wrapped(*args: T.args, **kwargs: T.kwargs) -> list[P]:
+    def wrapped(*args: P.args, **kwargs: P.kwargs) -> list[T1]:
         return list(func(*args, **kwargs))
 
     return wrapped
 
 
 def chain_functions(
-    context: DocumentContext,
-    elements: P,
-    functions: Sequence[Callable[[DocumentContext, P], P]],
-) -> P:
+    context: T1,
+    elements: T2,
+    functions: Sequence[Callable[[T1, T2], T2]],
+) -> T2:
     """
     Chains a list of functions to be applied sequentially to an initial value.
     Each function in the list takes the output of the previous function as input.

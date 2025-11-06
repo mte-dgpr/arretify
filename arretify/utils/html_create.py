@@ -40,8 +40,7 @@ from arretify.utils.html_semantic import (
     set_semantic_tag_data,
 )
 from arretify.utils.split_merge import (
-    split_elements,
-    map_splitted_elements,
+    split_and_map_elements,
 )
 from arretify.utils.html_split_merge import group_strings_splitter
 from arretify.utils.strings import (
@@ -64,13 +63,13 @@ def wrap_in_tag(
     wrapped: list[ProtectedTag] = []
     for element in elements:
         if isinstance(element, str) and element.strip():
-            container = make_new_tag(soup, tag_name)
+            container = make_tag(soup, tag_name)
             wrapped.append(container)
             unprotect_tag(container).append(element)
     return wrapped
 
 
-def make_new_tag(
+def make_tag(
     soup: ProtectedSoup,
     tag_name: str,
     contents: Iterable[ProtectedTagOrStr] | None = None,
@@ -82,7 +81,7 @@ def make_new_tag(
     else:
         contents = list(contents)
     _validate_tag_contents(contents)
-    return _make_new_tag(soup, tag_name, contents=contents, attrs=attrs)
+    return _make_tag(soup, tag_name, contents=contents, attrs=attrs)
 
 
 def make_semantic_tag(
@@ -99,7 +98,7 @@ def make_semantic_tag(
         contents = list(contents)
 
     # Create the HTML tag
-    tag = _make_new_tag(soup, spec.tag_name, contents=contents, attrs=attrs)
+    tag = _make_tag(soup, spec.tag_name, contents=contents, attrs=attrs)
 
     return upgrade_to_semantic_tag(tag, spec, data)
 
@@ -117,7 +116,7 @@ def upgrade_to_semantic_tag(
     return protected_tag
 
 
-def _make_new_tag(
+def _make_tag(
     soup: ProtectedSoup,
     tag_name: str,
     contents: Iterable[ProtectedTagOrStr],
@@ -133,11 +132,9 @@ def _make_new_tag(
     element = unprotect_soup(soup).new_tag(tag_name)
     element.extend(
         _unprotect_page_elements(
-            map_splitted_elements(
-                split_elements(
-                    cloned_contents,
-                    group_strings_splitter,
-                ),
+            split_and_map_elements(
+                cloned_contents,
+                group_strings_splitter,
                 merge_strings,
             )
         )
@@ -152,7 +149,7 @@ def _make_new_tag(
     return protect_tag(element)
 
 
-def replace_children(
+def replace_contents(
     protected_tag: ProtectedTag,
     contents: Sequence[ProtectedTagOrStr],
 ) -> ProtectedTag:

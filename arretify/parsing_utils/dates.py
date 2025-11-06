@@ -23,7 +23,6 @@ from typing import Sequence, TypedDict
 from arretify.semantic_tag_specs import DateSpec
 from arretify.types import ProtectedSoup, ProtectedTag
 from arretify.utils.dates import DATE_STR_LENGTH, parse_year_str, render_date_str
-from arretify.utils.html import set_attribute
 from arretify.utils.html_create import make_semantic_tag
 from arretify.utils.html_semantic import update_data
 from arretify.regex_utils import (
@@ -209,10 +208,10 @@ def render_date_regex_tree_match(
         if len(date_str) < DATE_STR_LENGTH:
             date_str = date_str.rjust(DATE_STR_LENGTH, "0")
 
-    date_container = make_semantic_tag(
+    return make_semantic_tag(
         soup,
         DateSpec,
         contents=iter_regex_tree_match_page_elements_or_strings(regex_tree_match),
         data=date_data,
+        attrs=dict(datetime=date_str),
     )
-    return set_attribute(date_container, "datetime", date_str)

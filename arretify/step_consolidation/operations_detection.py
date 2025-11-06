@@ -25,10 +25,10 @@ from arretify.regex_utils import (
     filter_regex_tree_match_children,
     join_with_or,
 )
-from arretify.utils.html_create import make_new_tag, make_semantic_tag
+from arretify.utils.html_create import make_tag, make_semantic_tag
 from arretify.utils.strings import merge_strings
 from arretify.utils.html_split_merge import make_regex_tree_splitter
-from arretify.utils.split_merge import split_elements, map_splitted_elements
+from arretify.utils.split_merge import split_and_map_elements
 from arretify.semantic_tag_specs import OperationData, OperationSpec
 from arretify.types import (
     OperationType,
@@ -316,11 +316,9 @@ def parse_operations(
     document_context: DocumentContext,
     contents: Sequence[ProtectedTagOrStr],
 ) -> list[ProtectedTagOrStr]:
-    return map_splitted_elements(
-        split_elements(
-            contents,
-            make_regex_tree_splitter(RTL_OPERATION_NODE),
-        ),
+    return split_and_map_elements(
+        contents,
+        make_regex_tree_splitter(RTL_OPERATION_NODE),
         lambda operation_match: _render_operation_match(
             document_context.protected_soup, operation_match
         ),
@@ -352,7 +350,7 @@ def _render_group_match(
     if group_match.group_name == "__has_operand":
         yield from iter_regex_tree_match_page_elements_or_strings(group_match)
     elif group_match.group_name in OPERATION_TYPES_GROUP_NAMES:
-        yield make_new_tag(
+        yield make_tag(
             soup,
             "b",
             contents=iter_regex_tree_match_page_elements_or_strings(group_match),

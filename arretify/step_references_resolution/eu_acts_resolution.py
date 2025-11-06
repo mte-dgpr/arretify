@@ -24,7 +24,7 @@ from arretify.law_data.apis.eurlex import (
     get_eu_act_url_with_year_and_num,
     ActType,
 )
-from arretify.utils.html_semantic import get_semantic_tag_data, update_data
+from arretify.utils.html_semantic import get_semantic_tag_data
 from .core import update_document_reference_tag_href
 
 
@@ -74,5 +74,5 @@ def _resolve_eu_act_eurlex_url(
 
     update_document_reference_tag_href(
         eu_act_reference_tag,
-        update_data(document_reference, id=eurlex_url),
+        id=eurlex_url,
     )

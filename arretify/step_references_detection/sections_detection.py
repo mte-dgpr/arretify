@@ -34,12 +34,13 @@ from arretify.semantic_tag_specs import (
     SectionReferenceData,
     SectionReferenceSpec,
 )
+from arretify.utils.functional import chain_functions
 from arretify.utils.html import make_group_id, set_group_id
 from arretify.utils.html_create import make_semantic_tag
 from arretify.utils.html_split_merge import make_regex_tree_splitter
 from arretify.utils.split_merge import (
+    split_and_map_elements,
     split_elements,
-    map_splitted_elements,
     flat_map_splitted_elements,
 )
 from arretify.parsing_utils.patterns import (
@@ -68,11 +69,17 @@ SectionNumber = str
 
 def parse_section_references(
     document_context: DocumentContext,
-    children: Sequence[ProtectedTagOrStr],
+    contents: Sequence[ProtectedTagOrStr],
 ) -> list[ProtectedTagOrStr]:
-    # First check for multiple, cause it is the most exhaustive pattern
-    new_children = list(_parse_section_reference_multiple(document_context, children))
-    return list(_parse_section_references(document_context, new_children))
+    return chain_functions(
+        document_context,
+        contents,
+        [
+            # First check for multiple, cause it is the most exhaustive pattern
+            _parse_section_reference_multiple,
+            _parse_section_references,
+        ],
+    )
 
 
 # -------------------- Shared -------------------- #
@@ -420,13 +427,11 @@ SECTION_REFERENCE_NODE = regex_tree.Group(
 
 def _parse_section_references(
     document_context: DocumentContext,
-    children: Sequence[ProtectedTagOrStr],
+    contents: Sequence[ProtectedTagOrStr],
 ) -> list[ProtectedTagOrStr]:
-    return map_splitted_elements(
-        split_elements(
-            children,
-            make_regex_tree_splitter(SECTION_REFERENCE_NODE),
-        ),
+    return split_and_map_elements(
+        contents,
+        make_regex_tree_splitter(SECTION_REFERENCE_NODE),
         lambda section_reference_match: _render_section_reference(
             document_context,
             section_reference_match,
@@ -521,13 +526,13 @@ SECTION_REFERENCE_MULTIPLE_NODE = regex_tree.Group(
 
 def _parse_section_reference_multiple(
     document_context: DocumentContext,
-    children: Sequence[ProtectedTagOrStr],
+    contents: Sequence[ProtectedTagOrStr],
 ) -> list[ProtectedTagOrStr]:
     # For multiple arretes, we need to first parse some of the attributes in common
     # before parsing each individual arrete reference.
     return flat_map_splitted_elements(
         split_elements(
-            children,
+            contents,
             make_regex_tree_splitter(SECTION_REFERENCE_MULTIPLE_NODE),
         ),
         lambda section_reference_multiple_match: _render_section_reference_multiple(

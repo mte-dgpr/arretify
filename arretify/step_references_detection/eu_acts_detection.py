@@ -37,7 +37,7 @@ from arretify.semantic_tag_specs import (
 )
 from arretify.utils.html_create import make_semantic_tag
 from arretify.utils.html_split_merge import make_regex_tree_splitter
-from arretify.utils.split_merge import split_elements, map_splitted_elements
+from arretify.utils.split_merge import split_and_map_elements
 from arretify.law_data.eurlex_constants import (
     EU_ACT_DOMAINS,
     EU_ACT_TYPES,
@@ -100,13 +100,11 @@ EU_ACT_NODE = regex_tree.Group(
 
 def parse_eu_acts_references(
     document_context: DocumentContext,
-    children: Sequence[ProtectedTagOrStr],
+    contents: Sequence[ProtectedTagOrStr],
 ) -> list[ProtectedTagOrStr]:
-    return map_splitted_elements(
-        split_elements(
-            children,
-            make_regex_tree_splitter(EU_ACT_NODE),
-        ),
+    return split_and_map_elements(
+        contents,
+        make_regex_tree_splitter(EU_ACT_NODE),
         lambda eu_act_group_match: _render_eu_act_reference(
             document_context.protected_soup, eu_act_group_match
         ),

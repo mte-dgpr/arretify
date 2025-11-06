@@ -30,7 +30,7 @@ from arretify.semantic_tag_specs import (
 )
 from arretify.utils.html_create import make_semantic_tag
 from arretify.utils.html_split_merge import make_regex_tree_splitter
-from arretify.utils.split_merge import split_elements, map_splitted_elements
+from arretify.utils.split_merge import split_and_map_elements
 
 
 SELF_NODE = regex_tree.Group(
@@ -45,13 +45,11 @@ SELF_NODE = regex_tree.Group(
 
 def parse_self_references(
     document_context: DocumentContext,
-    children: Sequence[ProtectedTagOrStr],
+    contents: Sequence[ProtectedTagOrStr],
 ) -> list[ProtectedTagOrStr]:
-    return map_splitted_elements(
-        split_elements(
-            children,
-            make_regex_tree_splitter(SELF_NODE),
-        ),
+    return split_and_map_elements(
+        contents,
+        make_regex_tree_splitter(SELF_NODE),
         lambda self_group_match: make_semantic_tag(
             document_context.protected_soup,
             DocumentReferenceSpec,
