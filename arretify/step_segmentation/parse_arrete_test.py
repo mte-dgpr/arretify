@@ -38,7 +38,7 @@ from .semantic_tag_specs import (
     TextSpanSegmentationData,
     TextSpanSegmentationSpec,
 )
-from .parse_arrete import parse_arrete
+from .parse_arrete import initialize_document_structure, parse_arrete
 from .testing import make_text_spans, assert_elements_equal
 
 
@@ -229,4 +229,74 @@ class TestParseArrete(BaseTestCase):
             ],
             ignore_data_if_omitted=True,
             ignore_text_span_data=True,
+        )
+
+
+class TestInitializeDocumentStructure(unittest.TestCase):
+
+    def setUp(self):
+        self.context = create_document_context()
+        self.soup = self.context.protected_soup
+
+    def test_page_separators_inserted_and_text_spans_created(self):
+        # Arrange
+        pages = [
+            "Line 1\nLine 2\nLine 3",
+            "Line 4\nLine 5",
+            "Line 6",
+        ]
+
+        # Act
+        result = initialize_document_structure(self.context, pages)
+
+        # Assert
+        assert_elements_equal(
+            result,
+            [
+                make_semantic_tag(
+                    self.soup, PageSeparatorSpec, data=PageSeparatorData(page_index=0)
+                ),
+                make_semantic_tag(
+                    self.soup,
+                    TextSpanSegmentationSpec,
+                    contents=["Line 1"],
+                    data=TextSpanSegmentationData(start=[0, 0, 0], end=[0, 0, 5]),
+                ),
+                make_semantic_tag(
+                    self.soup,
+                    TextSpanSegmentationSpec,
+                    contents=["Line 2"],
+                    data=TextSpanSegmentationData(start=[0, 1, 0], end=[0, 1, 5]),
+                ),
+                make_semantic_tag(
+                    self.soup,
+                    TextSpanSegmentationSpec,
+                    contents=["Line 3"],
+                    data=TextSpanSegmentationData(start=[0, 2, 0], end=[0, 2, 5]),
+                ),
+                make_semantic_tag(
+                    self.soup, PageSeparatorSpec, data=PageSeparatorData(page_index=1)
+                ),
+                make_semantic_tag(
+                    self.soup,
+                    TextSpanSegmentationSpec,
+                    contents=["Line 4"],
+                    data=TextSpanSegmentationData(start=[1, 0, 0], end=[1, 0, 5]),
+                ),
+                make_semantic_tag(
+                    self.soup,
+                    TextSpanSegmentationSpec,
+                    contents=["Line 5"],
+                    data=TextSpanSegmentationData(start=[1, 1, 0], end=[1, 1, 5]),
+                ),
+                make_semantic_tag(
+                    self.soup, PageSeparatorSpec, data=PageSeparatorData(page_index=2)
+                ),
+                make_semantic_tag(
+                    self.soup,
+                    TextSpanSegmentationSpec,
+                    contents=["Line 6"],
+                    data=TextSpanSegmentationData(start=[2, 0, 0], end=[2, 0, 5]),
+                ),
+            ],
         )

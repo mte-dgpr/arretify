@@ -18,7 +18,7 @@
 #
 import unittest
 
-from arretify.utils.html_create import make_new_tag, make_semantic_tag, wrap_in_tag
+from arretify.utils.html_create import make_tag, make_semantic_tag, wrap_in_tag
 from arretify.utils.testing import create_document_context
 from arretify.semantic_tag_specs import (
     DateSpec,
@@ -528,7 +528,7 @@ class TestParseArreteTitle(BaseTestCase):
                     self.soup,
                     ArreteTitleSpec,
                     contents=[
-                        make_new_tag(
+                        make_tag(
                             self.soup,
                             "h1",
                             contents=[

@@ -36,7 +36,8 @@ from arretify.utils.html_semantic import (
 )
 from arretify.utils.html_create import (
     make_semantic_tag,
-    replace_children,
+    replace_contents,
+    wrap_in_tag,
 )
 from arretify.utils.markdown_parsing import (
     is_table_description,
@@ -56,6 +57,9 @@ from arretify.errors import ErrorCodes
 from arretify.semantic_tag_specs import (
     ErrorSpec,
     AddressSpec,
+    PageFooterSpec,
+    PageSeparatorSpec,
+    TableOfContentsSpec,
 )
 from arretify.utils.split_merge import (
     Probe,
@@ -63,7 +67,6 @@ from arretify.utils.split_merge import (
     Splitter,
     split_and_map_elements,
     split_elements,
-    map_splitted_elements,
     flat_map_splitted_elements,
     split_before_match,
     negate,
@@ -81,6 +84,7 @@ from .core import (
     get_strings,
     combine_text_spans,
     make_probe_from_pattern_proxy,
+    make_while_splitter_for_text_spans,
     pick_text_spans,
     pick_if_transparent_tag_followed_by_match,
     make_pattern_splitter,
@@ -204,7 +208,7 @@ def _make_list_splitter(
                     get_string(previous_list_element),
                     get_string(element),
                 ):
-                    element = replace_children(element, [" "] + element.contents)
+                    element = replace_contents(element, [" "] + element.contents)
                     pile[j] = combine_text_spans(context, [*pile[j:], element])
                     elements.pop(0)
                 else:
@@ -227,11 +231,9 @@ def parse_lists(
     context: DocumentContext,
     elements: Sequence[ProtectedTagOrStr],
 ) -> list[ProtectedTagOrStr]:
-    return map_splitted_elements(
-        split_elements(
-            elements,
-            _make_list_splitter(context),
-        ),
+    return split_and_map_elements(
+        elements,
+        _make_list_splitter(context),
         lambda pile: make_semantic_tag(context.protected_soup, ListSegmentationSpec, contents=pile),
     )
 
@@ -262,11 +264,9 @@ def parse_blockquotes(
     context: DocumentContext,
     elements: Sequence[ProtectedTagOrStr],
 ) -> list[ProtectedTagOrStr]:
-    return map_splitted_elements(
-        split_elements(
-            elements,
-            _blockquote_splitter,
-        ),
+    return split_and_map_elements(
+        elements,
+        _blockquote_splitter,
         lambda match: _make_blockquote_tag(context, match),
     )
 
@@ -301,7 +301,7 @@ def _blockquote_splitter(
     first_str_index, first_str = _get_first_str(element)
     blockquote_start = get_semantic_tag_data(TextSpanSegmentationSpec, element).start
     # Remove opening quote
-    elements[0] = replace_children(
+    elements[0] = replace_contents(
         element,
         element.contents[:first_str_index]
         + [BLOCKQUOTE_START_PATTERN.sub("", first_str)]
@@ -327,7 +327,7 @@ def _blockquote_splitter(
             if quotes_depth_count <= 0:
                 last_str_index, last_str = _get_last_str(element)
                 # Remove the end quote
-                elements[i] = replace_children(
+                elements[i] = replace_contents(
                     element,
                     element.contents[:last_str_index]
                     + [BLOCKQUOTE_END_PATTERN.sub("", last_str)]
@@ -407,11 +407,9 @@ def parse_addresses(
     Right now we detect only the street number and street name.
     e.g. : in "12bis rue Jean Moulin, 75000 Paris", we detect only "12bis rue Jean Moulin".
     """
-    return map_splitted_elements(
-        split_elements(
-            elements,
-            _address_splitter,
-        ),
+    return split_and_map_elements(
+        elements,
+        _address_splitter,
         lambda address: make_semantic_tag(context.protected_soup, AddressSpec, contents=[address]),
     )
 
@@ -452,4 +450,115 @@ def _address_splitter(
         # Recompose address by re-adding street number
         street_number + street_name_and_remainder[0 : len(candidate)],
         after_elements,
+    )
+
+
+# -------------------- Table of contents and page footers -------------------- #
+PAGE_FOOTERS_LIST = [
+    # "X/Y"
+    r"\d+/\d+\s*",
+    # "Page X/Y"
+    r"page\s+\d+/\d+\s*",
+    # "Page X sur Y"
+    r"page\s+\d+\s+sur\s+\d+\s*",
+    # "Page X"
+    r"page\s+\d+",
+]
+
+PAGE_FOOTER_PATTERN = PatternProxy(rf"^{join_with_or(PAGE_FOOTERS_LIST)}")
+"""Detect page footer."""
+
+_is_page_footer = make_probe_from_pattern_proxy(PAGE_FOOTER_PATTERN)
+
+
+def parse_page_footers(
+    context: DocumentContext,
+    elements: Sequence[ProtectedTagOrStr],
+) -> list[ProtectedTagOrStr]:
+    return split_and_map_elements(
+        elements,
+        make_while_splitter_for_text_spans(_is_page_footer, _is_page_footer),
+        lambda contents: make_semantic_tag(
+            context.protected_soup,
+            PageFooterSpec,
+            contents=wrap_in_tag(
+                context.protected_soup,
+                "div",
+                [get_string(e) for e in contents],
+            ),
+        ),
+    )
+
+
+# -------------------- Table of contents -------------------- #
+TABLE_OF_CONTENTS_PAGING_PATTERN_S = r"\.{5}\s+(page\s+)?\d+"
+"""Detect table of contents paging, e.g. "..... page 1" or "..... 1"."""
+
+TABLE_OF_CONTENTS_LIST = [
+    r"sommaire",
+    r"table des matieres",
+    r"liste des (chapitres|articles)",
+    rf".*?\s+{TABLE_OF_CONTENTS_PAGING_PATTERN_S}$",
+]
+
+TABLE_OF_CONTENTS_PATTERN = PatternProxy(rf"^{join_with_or(TABLE_OF_CONTENTS_LIST)}")
+"""Detect all table of contents starting sentences."""
+
+
+_is_table_of_contents = make_probe_from_pattern_proxy(TABLE_OF_CONTENTS_PATTERN)
+
+
+def parse_tables_of_contents(
+    context: DocumentContext,
+    elements: Sequence[ProtectedTagOrStr],
+) -> list[ProtectedTagOrStr]:
+    return split_and_map_elements(
+        elements,
+        make_while_splitter_for_text_spans(
+            _is_table_of_contents,
+            _table_of_contents_while_condition,
+        ),
+        lambda contents: _render_table_of_contents(context, contents),
+    )
+
+
+def _table_of_contents_while_condition(elements: Sequence[ProtectedTagOrStr], index: int) -> bool:
+    # Instead of checking just the first line, we check the next few lines.
+    # This allows to deal with case when TOC contains lines that are not
+    # easily recognizable as TOC, e.g.:
+    #
+    #   Title 1
+    #       article 1.1 ..... page 1
+    #       article 1.2 ..... page 2
+    #   Title 2
+    #       article 2.1 ..... page 3
+    #
+    # Aditionnally, this takes in tags such as `page_separator` that might appear
+    # between text segments.
+    next_elements = elements[index : index + 3]
+    if any(
+        is_semantic_tag(next_elements[i], spec_in=[TextSpanSegmentationSpec])
+        and _is_table_of_contents(next_elements, i)
+        for i in range(len(next_elements))
+    ):
+        return True
+    return False
+
+
+def _render_table_of_contents(
+    context: DocumentContext,
+    contents: Sequence[ProtectedTagOrStr],
+) -> ProtectedTag:
+    rendered_contents: list[ProtectedTagOrStr] = []
+    for element in contents:
+        if is_semantic_tag(element, spec_in=[TextSpanSegmentationSpec]):
+            rendered_contents.append(get_string(element))
+        elif is_semantic_tag(element, spec_in=[PageSeparatorSpec]):
+            rendered_contents.append(element)
+        else:
+            raise ValueError(f"Unexpected element in table of contents: {element}")
+    return make_semantic_tag(
+        context.protected_soup,
+        TableOfContentsSpec,
+        contents=wrap_in_tag(context.protected_soup, "div", rendered_contents),
     )

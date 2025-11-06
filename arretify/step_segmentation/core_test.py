@@ -19,7 +19,7 @@
 import unittest
 
 from arretify.regex_utils import PatternProxy
-from arretify.utils.html_create import make_new_tag, make_semantic_tag
+from arretify.utils.html_create import make_tag, make_semantic_tag
 from arretify.utils.testing import create_document_context
 from arretify.utils.html_semantic import (
     Contents,
@@ -74,9 +74,9 @@ class TestMakeWhileSplitterForTextSpans(BaseTestCase):
             probe,
         )
         elements = [
-            make_new_tag(self.soup, "some-tag"),
+            make_tag(self.soup, "some-tag"),
             *make_text_spans(self.soup, "match this"),
-            make_new_tag(self.soup, "some-other-tag"),
+            make_tag(self.soup, "some-other-tag"),
         ]
 
         # Act
@@ -115,7 +115,7 @@ class TestMakeWhileSplitterForTextSpans(BaseTestCase):
             while_condition,
         )
         elements = [
-            make_new_tag(self.soup, "some-tag"),
+            make_tag(self.soup, "some-tag"),
             *make_text_spans(self.soup, "match this", "match that", "but not this"),
         ]
 
@@ -149,7 +149,7 @@ class TestGroupTextSpanTagsSplitter(BaseTestCase):
     def test_simple(self):
         # Arrange
         elements = [
-            make_new_tag(self.soup, "some-tag"),
+            make_tag(self.soup, "some-tag"),
             make_semantic_tag(
                 self.soup,
                 TextSpanSegmentationSpec,
@@ -162,7 +162,7 @@ class TestGroupTextSpanTagsSplitter(BaseTestCase):
                 contents=["line2", "line3"],
                 data=TextSpanSegmentationData(start=[0, 0, 0], end=[0, 0, 0]),
             ),
-            make_new_tag(self.soup, "some-other-tag"),
+            make_tag(self.soup, "some-other-tag"),
         ]
 
         # Act
@@ -171,7 +171,7 @@ class TestGroupTextSpanTagsSplitter(BaseTestCase):
         # Assert
         assert result == (
             [
-                make_new_tag(self.soup, "some-tag"),
+                make_tag(self.soup, "some-tag"),
             ],
             [
                 make_semantic_tag(
@@ -188,7 +188,7 @@ class TestGroupTextSpanTagsSplitter(BaseTestCase):
                 ),
             ],
             [
-                make_new_tag(self.soup, "some-other-tag"),
+                make_tag(self.soup, "some-other-tag"),
             ],
         )
 
@@ -231,7 +231,7 @@ class TestPickTextSpans(BaseTestCase):
                 contents=["bla1"],
                 data=TextSpanSegmentationData(start=[0, 0, 0], end=[0, 0, 3]),
             ),
-            make_new_tag(self.soup, "some-tag"),
+            make_tag(self.soup, "some-tag"),
             "bla2",
             make_semantic_tag(
                 self.soup,
@@ -257,7 +257,7 @@ class TestPickStr(BaseTestCase):
         # Arrange
         elements = [
             "bla1",
-            make_new_tag(self.soup, "some-tag"),
+            make_tag(self.soup, "some-tag"),
             "blo4",
         ]
 
@@ -406,7 +406,7 @@ class TestGetString(BaseTestCase):
             SomeTagSpec,
             contents=[
                 "This is",
-                make_new_tag(self.soup, "some-tag"),
+                make_tag(self.soup, "some-tag"),
                 " a test",
             ],
         )
@@ -525,9 +525,9 @@ class TestMakePatternSplitter(BaseTestCase):
         splitter = make_pattern_splitter(pattern)
         elements = [
             "abc",
-            make_new_tag(self.soup, "some-tag"),
+            make_tag(self.soup, "some-tag"),
             "def123ghi",
-            make_new_tag(self.soup, "some-tag"),
+            make_tag(self.soup, "some-tag"),
             "jkl",
         ]
 
@@ -541,7 +541,7 @@ class TestMakePatternSplitter(BaseTestCase):
             before,
             [
                 "abc",
-                make_new_tag(self.soup, "some-tag"),
+                make_tag(self.soup, "some-tag"),
                 "def",
             ],
         )
@@ -549,7 +549,7 @@ class TestMakePatternSplitter(BaseTestCase):
             after,
             [
                 "ghi",
-                make_new_tag(self.soup, "some-tag"),
+                make_tag(self.soup, "some-tag"),
                 "jkl",
             ],
         )

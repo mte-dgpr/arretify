@@ -7,6 +7,7 @@
    :root {
                 --spacing-1: 1rem;
                 --spacing-0p5: 0.5rem;
+                --spacing-2: 2rem;
             }
 
             header, main, footer {
@@ -15,13 +16,18 @@
                 padding: var(--spacing-1);
             }
 
+            ul, ol { 
+                list-style: none;
+            }
+
             blockquote {
                 border-left: 1px solid var(--border-plain-grey);
                 padding-left: var(--spacing-1);
             }
 
             table {
-                border-collapse: collapse
+                border-collapse: collapse;
+                width: 100%;
             }
 
             th {
@@ -49,33 +55,14 @@
                 left: -1rem;
             }
 
-            [data-spec="debug_keyword"] {
-                color: var(--warning-425-625);
-            }
-
-            .visual_page_separator {
-                position: absolute;
-                left: 0;
-                width: 100vw;
-                height: 0.3em;
-                background-color: var(--grey-950-100);
-                z-index: -1;
-            }
-
-            a.visual_page_separator > span {
-                position: absolute;
-                font-size: 75%;
-                color: var(--grey-625-425);
-            }
-
             address {
                 display: inline;
             }
 
             /**************** HEADER ****************/
             header {
-                padding-bottom: var(--spacing-1);
-                margin-bottom: var(--spacing-1);
+                padding-bottom: 0;
+                margin-bottom: 0;
             }
 
             [data-spec="emblem"], [data-spec="entity"], [data-spec="identification"], [data-spec="arrete_title"], [data-spec="honorary"] {
@@ -86,6 +73,11 @@
 
             [data-spec="arrete_title"] {
                 color: var(--text-title-grey);
+                margin-top: var(--spacing-2);
+            }
+
+            [data-spec="arrete_title"] h1 {
+                margin: 0;
             }
 
             [data-spec="emblem"], [data-spec="entity"], [data-spec="identification"], [data-spec="honorary"] {
@@ -109,10 +101,6 @@
             }
 
             /**************** MAIN CONTENT AND APPENDIX ****************/
-            [data-spec="table"] {
-                font-family: monospace;
-            }
-
             [data-spec="section"] {
                 padding: var(--spacing-0p5) 0;
             }
@@ -130,12 +118,24 @@
                 max-width: 100%;
             }
 
-            ul, ol { 
-                list-style: none;
-            }
-
             [data-spec="operation"] {
                 background-color: var(--background-action-low-blue-france);
+            }
+
+            /**************** visual_page_separator ****************/
+            .visual_page_separator {
+                position: absolute;
+                left: 0;
+                width: 100vw;
+                height: 0.3em;
+                background-color: var(--grey-950-100);
+                z-index: -1;
+            }
+
+            a.visual_page_separator > span {
+                position: absolute;
+                font-size: 75%;
+                color: var(--grey-625-425);
             }
   </style>
   <script>

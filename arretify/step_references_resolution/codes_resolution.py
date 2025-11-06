@@ -94,5 +94,5 @@ def resolve_code_legifrance_id(
 
     update_document_reference_tag_href(
         code_reference_tag,
-        update_data(document_reference, id=code_id),
+        id=code_id,
     )

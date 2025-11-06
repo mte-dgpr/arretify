@@ -18,15 +18,17 @@
 #
 from typing import Iterator, Callable, Sequence
 
+from arretify.semantic_tag_specs import PageSeparatorData, PageSeparatorSpec
 from arretify.types import DocumentContext, SectionType, ProtectedTagOrStr
-from arretify.utils.html_create import make_semantic_tag, replace_children, is_semantic_tag
+from arretify.utils.html_create import make_semantic_tag, replace_contents, is_semantic_tag
 from arretify.utils.functional import chain_functions, iter_func_to_list
 from arretify.utils.split_merge import (
     split_before_match,
 )
+from arretify.utils.strings import split_on_newlines
 from .header import parse_header
 from .titles_detection import parse_title_info
-from .content import parse_content, is_title
+from .main_or_appendix import parse_content, is_title
 from .core import (
     pick_text_spans,
     get_string,
@@ -35,13 +37,14 @@ from .semantic_tag_specs import (
     AppendixSegmentationSpec,
     HeaderSegmentationSpec,
     MainSegmentationSpec,
+    TextSpanSegmentationData,
     TextSpanSegmentationSpec,
 )
-from .basic_elements import parse_images, parse_addresses
-from .document_elements import (
+from .basic_elements import (
+    parse_images,
+    parse_addresses,
     parse_page_footers,
     parse_tables_of_contents,
-    initialize_document_structure,
 )
 
 
@@ -105,6 +108,31 @@ def parse_arrete(context: DocumentContext, pages: Sequence[str]) -> Iterator[Pro
         )
 
 
+@iter_func_to_list
+def initialize_document_structure(
+    context: DocumentContext,
+    pages: Sequence[str],
+) -> Iterator[ProtectedTagOrStr]:
+    for page_index, page_text in enumerate(pages):
+        yield make_semantic_tag(
+            context.protected_soup,
+            PageSeparatorSpec,
+            contents=[],
+            data=PageSeparatorData(page_index=page_index),
+        )
+        page_lines = split_on_newlines(page_text)
+        for line_index, line in enumerate(page_lines):
+            yield make_semantic_tag(
+                context.protected_soup,
+                TextSpanSegmentationSpec,
+                contents=[line],
+                data=TextSpanSegmentationData(
+                    start=[page_index, line_index, 0],
+                    end=[page_index, line_index, len(line) - 1],
+                ),
+            )
+
+
 def _make_text_span_parser(
     func: Callable[[DocumentContext, Sequence[ProtectedTagOrStr]], list[ProtectedTagOrStr]],
 ) -> Callable[[DocumentContext, Sequence[ProtectedTagOrStr]], list[ProtectedTagOrStr]]:
@@ -118,7 +146,7 @@ def _make_text_span_parser(
     ) -> Iterator[ProtectedTagOrStr]:
         for element in elements:
             if is_semantic_tag(element, spec_in=[TextSpanSegmentationSpec]):
-                yield replace_children(element, func(context, element.contents))
+                yield replace_contents(element, func(context, element.contents))
             else:
                 yield element
 

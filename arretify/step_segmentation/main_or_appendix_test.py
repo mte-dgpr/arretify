@@ -26,7 +26,7 @@ from arretify.semantic_tag_specs import (
 )
 from arretify.utils.html_create import make_semantic_tag
 from arretify.utils.testing import create_document_context
-from .content import (
+from .main_or_appendix import (
     parse_section_titles,
     parse_sections,
     parse_alineas,

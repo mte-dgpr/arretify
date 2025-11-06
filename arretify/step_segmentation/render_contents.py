@@ -17,6 +17,8 @@
 # limitations under the License.
 #
 from typing import Iterator, List, Sequence, Tuple
+
+from bs4 import Tag
 from arretify.regex_utils.core import PatternProxy
 from arretify.regex_utils.functional import map_matches
 from arretify.regex_utils.split import split_string_with_regex
@@ -49,7 +51,7 @@ from arretify.step_segmentation.semantic_tag_specs import (
 )
 from arretify.types import DocumentContext, ProtectedTag, ProtectedTagOrStr
 from arretify.utils.functional import iter_func_to_list
-from arretify.utils.html_create import make_new_tag, make_semantic_tag, replace_children
+from arretify.utils.html_create import make_tag, make_semantic_tag, replace_contents
 from arretify.utils.html_semantic import (
     SemanticTagData,
     get_semantic_tag_data,
@@ -195,7 +197,7 @@ def render_header(
     for element in render_contents(context, tag.contents):
         if is_semantic_tag(element, spec_in=[TextSpanSegmentationSpec]):
             contents.append(
-                make_new_tag(
+                make_tag(
                     context.protected_soup,
                     "div",
                     contents=render_text_span(context, element),
@@ -234,7 +236,7 @@ def render_visa_motif(
 
 def render_main(
     context: DocumentContext,
-    tag: ProtectedTagOrStr,
+    tag: Tag,
 ) -> ProtectedTag:
     return make_semantic_tag(
         context.protected_soup,
@@ -245,7 +247,7 @@ def render_main(
 
 def render_appendix(
     context: DocumentContext,
-    tag: ProtectedTagOrStr,
+    tag: Tag,
 ) -> ProtectedTag:
     return make_semantic_tag(
         context.protected_soup,
@@ -296,7 +298,7 @@ def _render_list(
         element = elements[0]
 
         if is_semantic_tag(element, spec_in=[PageSeparatorSpec]):
-            list_pile[-1] = replace_children(list_pile[-1], list_pile[-1].contents + [element])
+            list_pile[-1] = replace_contents(list_pile[-1], list_pile[-1].contents + [element])
             elements.pop(0)
 
         elif is_semantic_tag(element, spec_in=[TextSpanSegmentationSpec]):
@@ -306,12 +308,12 @@ def _render_list(
                 li_contents = list(render_text_span(context, element))
                 if isinstance(li_contents[0], str):
                     li_contents[0] = _clean_leading_whitespaces(li_contents[0])
-                list_pile.append(make_new_tag(context.protected_soup, "li", contents=li_contents))
+                list_pile.append(make_tag(context.protected_soup, "li", contents=li_contents))
                 elements.pop(0)
 
             elif current_indentation > ref_indentation:
                 elements, nested_ul = _render_list(context, elements)
-                list_pile[-1] = replace_children(
+                list_pile[-1] = replace_contents(
                     list_pile[-1], list_pile[-1].contents + [nested_ul]
                 )
 
@@ -323,7 +325,7 @@ def _render_list(
         else:
             raise ValueError(f"Unexpected element {element} in list rendering.")
 
-    return elements, make_new_tag(context.protected_soup, "ul", contents=list_pile)
+    return elements, make_tag(context.protected_soup, "ul", contents=list_pile)
 
 
 # -------------------- Table -------------------- #
@@ -360,7 +362,7 @@ def render_table(
     for row_index, transparent_tag in transparent_tags:
         if row_index < len(table_rows) and row_index >= 0:
             last_cell_tag = table_rows[row_index].select("td, th")[-1]
-            replace_children(last_cell_tag, last_cell_tag.contents + [transparent_tag])
+            replace_contents(last_cell_tag, last_cell_tag.contents + [transparent_tag])
         else:
             raise ValueError(f"Invalid index {row_index} in table rendering. ")
 
@@ -373,7 +375,7 @@ def render_table_description(
 ) -> Iterator[ProtectedTagOrStr]:
     for element in tag.contents:
         if is_semantic_tag(element, spec_in=[TextSpanSegmentationSpec]):
-            yield make_new_tag(context.protected_soup, "br")
+            yield make_tag(context.protected_soup, "br")
             yield get_string(element)
         elif is_semantic_tag(element, spec_in=[PageSeparatorSpec]):
             yield element
@@ -394,7 +396,7 @@ def render_blockquote(
     for element in render_contents(context, tag.contents):
         if is_semantic_tag(element, spec_in=[TextSpanSegmentationSpec]):
             contents.append(
-                make_new_tag(
+                make_tag(
                     context.protected_soup,
                     "p",
                     # TODO : should be parsed like other tags, instead of being
@@ -405,7 +407,7 @@ def render_blockquote(
         else:
             contents.append(element)
 
-    return make_new_tag(context.protected_soup, "blockquote", contents=contents)
+    return make_tag(context.protected_soup, "blockquote", contents=contents)
 
 
 # -------------------- Misc -------------------- #
@@ -416,7 +418,7 @@ INLINE_QUOTE_PATTERN = PatternProxy(r'"(?P<quoted>[^"]+)"')
 def render_inline_quotes(context: DocumentContext, string: str) -> Iterator[ProtectedTagOrStr]:
     return map_matches(
         split_string_with_regex(INLINE_QUOTE_PATTERN, string),
-        lambda inline_quote_match: make_new_tag(
+        lambda inline_quote_match: make_tag(
             context.protected_soup,
             "q",
             contents=[str(inline_quote_match.group("quoted"))],

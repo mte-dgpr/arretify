@@ -24,7 +24,7 @@ import markdown
 
 from arretify.errors import ErrorCodes
 from arretify.types import ProtectedTag, protect_soup
-from arretify.utils.html_create import make_new_tag, make_semantic_tag
+from arretify.utils.html_create import make_tag, make_semantic_tag
 from arretify.semantic_tag_specs import ErrorSpec
 from arretify.regex_utils import PatternProxy, repeated_with_separator
 
@@ -97,7 +97,7 @@ def parse_markdown_table(lines: Sequence[str]) -> ProtectedTag:
             contents=[markdown_str],
         )
 
-    return make_new_tag(soup, "table", contents=list(table_result[0].contents))
+    return make_tag(soup, "table", contents=list(table_result[0].contents))
 
 
 def parse_markdown_image(line: str) -> ProtectedTag:

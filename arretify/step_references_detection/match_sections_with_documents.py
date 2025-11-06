@@ -33,12 +33,10 @@ from arretify.semantic_tag_specs import (
 )
 from arretify.regex_utils import regex_tree
 from arretify.utils.html_semantic import (
-    get_semantic_tag_data,
     is_semantic_tag,
-    set_semantic_tag_data,
-    update_data,
+    update_semantic_tag_data,
 )
-from arretify.utils.split_merge import split_elements, map_splitted_elements
+from arretify.utils.split_merge import split_and_map_elements
 from arretify.utils.html_split_merge import group_strings_splitter
 from arretify.utils.html import ensure_tag_id, filter_out_inline_tags, get_group_id
 from arretify.utils.strings import merge_strings
@@ -66,12 +64,12 @@ CONNECTOR_SECTION_TO_PARENT_NODE = regex_tree.Group(
 
 def match_sections_to_parents(
     document_context: DocumentContext,
-    children: Sequence[ProtectedTagOrStr],
+    contents: Sequence[ProtectedTagOrStr],
 ) -> list[ProtectedTagOrStr]:
     document_context.protected_soup
-    children = list(children)
+    contents = list(contents)
     section_references = [
-        tag for tag in children if is_semantic_tag(tag, spec_in=[SectionReferenceSpec])
+        tag for tag in contents if is_semantic_tag(tag, spec_in=[SectionReferenceSpec])
     ]
 
     for section_reference_tag in section_references:
@@ -88,17 +86,13 @@ def match_sections_to_parents(
             section_references_in_group = [section_reference_tag]
 
         for section_reference_tag in section_references_in_group:
-            document_element_id = ensure_tag_id(document_context.id_counters, parent_reference_tag)
-            set_semantic_tag_data(
+            update_semantic_tag_data(
                 SectionReferenceSpec,
                 section_reference_tag,
-                update_data(
-                    get_semantic_tag_data(SectionReferenceSpec, section_reference_tag),
-                    parent_reference=document_element_id,
-                ),
+                parent_reference=ensure_tag_id(document_context.id_counters, parent_reference_tag),
             )
 
-    return children
+    return contents
 
 
 def _search_parent_reference_tag(
@@ -133,11 +127,9 @@ def _search_parent_reference_tag(
             return None
 
         # Filter out inline tags, and generate combined strings
-        element_range_with_merged_strings = map_splitted_elements(
-            split_elements(
-                filter_out_inline_tags(element_range),
-                group_strings_splitter,
-            ),
+        element_range_with_merged_strings = split_and_map_elements(
+            filter_out_inline_tags(element_range),
+            group_strings_splitter,
             lambda elements: merge_strings(
                 elements,
             ),
