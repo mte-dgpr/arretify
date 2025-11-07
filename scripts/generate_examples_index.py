@@ -62,7 +62,7 @@ def render_tree(node: TreeNode, base_path: Path) -> str:
         if ext != ".pdf":
             raise ValueError(f"Unexpected file type: {node.path}")
         rel_path = node.path.relative_to(PDF_DIR).parent
-        html_file_path = HTML_DIR / rel_path / f"{base}_mistral.html"
+        html_file_path = HTML_DIR / rel_path / f"{base}.html"
         pdf_file_path = PDF_DIR / rel_path / f"{base}.pdf"
         if not html_file_path.exists():
             raise FileNotFoundError(f"Missing HTML file for: {node.path} -> {html_file_path}")
