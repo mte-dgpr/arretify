@@ -179,7 +179,7 @@ ARRETE_MULTIPLE_NODE = regex_tree.Group(
 def parse_arretes_references(
     document_context: DocumentContext,
     contents: Sequence[ProtectedTagOrStr],
-) -> list[ProtectedTagOrStr]:
+) -> Sequence[ProtectedTagOrStr]:
     return chain_functions(
         document_context.protected_soup,
         contents,
@@ -245,7 +245,7 @@ def _render_arrete_container(
 def _parse_arretes_references(
     soup: ProtectedSoup,
     contents: Sequence[ProtectedTagOrStr],
-) -> list[ProtectedTagOrStr]:
+) -> Sequence[ProtectedTagOrStr]:
     return split_and_map_elements(
         contents,
         make_regex_tree_splitter(ARRETE_NODE),
@@ -259,7 +259,7 @@ def _parse_arretes_references(
 def _parse_multiple_arretes_references(
     soup: ProtectedSoup,
     contents: Sequence[ProtectedTagOrStr],
-) -> list[ProtectedTagOrStr]:
+) -> Sequence[ProtectedTagOrStr]:
     # For multiple arretes, we need to first parse some of the attributes in common
     # before parsing each individual arrete reference.
     return flat_map_splitted_elements(

@@ -17,6 +17,7 @@
 # limitations under the License.
 #
 
+from typing import Sequence
 from arretify.types import ProtectedTagOrStr, DocumentContext
 from arretify.utils.html_create import replace_contents
 from arretify.utils.html_semantic import css_selector
@@ -63,7 +64,7 @@ REFERENCES_CONTAINER_SELECTOR = (
 
 
 def step_references_detection(document_context: DocumentContext) -> DocumentContext:
-    contents: list[ProtectedTagOrStr]
+    contents: Sequence[ProtectedTagOrStr]
 
     # Parse documents and sections references
     for tag in document_context.protected_soup.select(REFERENCES_CONTAINER_SELECTOR):

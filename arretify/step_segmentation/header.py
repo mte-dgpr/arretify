@@ -233,7 +233,7 @@ def parse_emblem_element(
     return split_and_map_elements(
         elements,
         _make_header_elements_splitter(EmblemSpec),
-        lambda contents: _render_header_element(context, EmblemSpec, contents),
+        lambda contents: _make_header_element_tag(context, EmblemSpec, contents),
     )
 
 
@@ -244,7 +244,7 @@ def parse_entity_element(
     return split_and_map_elements(
         elements,
         _make_header_elements_fuzzy_splitter(EntitySpec),
-        lambda contents: _render_header_element(context, EntitySpec, contents),
+        lambda contents: _make_header_element_tag(context, EntitySpec, contents),
     )
 
 
@@ -255,7 +255,7 @@ def parse_identification_element(
     return split_and_map_elements(
         elements,
         _make_header_elements_splitter(IdentificationSpec),
-        lambda contents: _render_header_element(context, IdentificationSpec, contents),
+        lambda contents: _make_header_element_tag(context, IdentificationSpec, contents),
     )
 
 
@@ -266,7 +266,7 @@ def parse_arrete_title_element(
     return split_and_map_elements(
         elements,
         _make_header_elements_fuzzy_splitter(ArreteTitleSpec),
-        lambda contents: _render_arrete_title(context, contents),
+        lambda contents: _make_arrete_title_tag(context, contents),
     )
 
 
@@ -277,7 +277,7 @@ def parse_honorary_element(
     return split_and_map_elements(
         elements,
         _make_header_elements_splitter(HonorarySpec),
-        lambda contents: _render_header_element(context, HonorarySpec, contents),
+        lambda contents: _make_header_element_tag(context, HonorarySpec, contents),
     )
 
 
@@ -288,7 +288,7 @@ def parse_supplementary_motif_info_element(
     return split_and_map_elements(
         elements,
         _make_header_elements_splitter(SupplementaryMotifInfoSpec),
-        lambda contents: _render_header_element(context, SupplementaryMotifInfoSpec, contents),
+        lambda contents: _make_header_element_tag(context, SupplementaryMotifInfoSpec, contents),
     )
 
 
@@ -321,7 +321,7 @@ def _is_nothing_else_than(spec: SemanticTagSpec, element: ProtectedTagOrStr) -> 
     )
 
 
-def _render_arrete_title(
+def _make_arrete_title_tag(
     context: DocumentContext,
     contents: Sequence[ProtectedTagOrStr],
 ) -> ProtectedTag:
@@ -338,7 +338,7 @@ def _render_arrete_title(
     )
 
 
-def _render_header_element(
+def _make_header_element_tag(
     context: DocumentContext,
     spec: SemanticTagSpec,
     contents: Sequence[ProtectedTagOrStr],
