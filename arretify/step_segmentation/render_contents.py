@@ -18,7 +18,6 @@
 #
 from typing import Iterator, List, Sequence, Tuple
 
-from bs4 import Tag
 from arretify.regex_utils.core import PatternProxy
 from arretify.regex_utils.functional import map_matches
 from arretify.regex_utils.split import split_string_with_regex
@@ -236,7 +235,7 @@ def render_visa_motif(
 
 def render_main(
     context: DocumentContext,
-    tag: Tag,
+    tag: ProtectedTag,
 ) -> ProtectedTag:
     return make_semantic_tag(
         context.protected_soup,
@@ -247,7 +246,7 @@ def render_main(
 
 def render_appendix(
     context: DocumentContext,
-    tag: Tag,
+    tag: ProtectedTag,
 ) -> ProtectedTag:
     return make_semantic_tag(
         context.protected_soup,

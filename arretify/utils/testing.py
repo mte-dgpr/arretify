@@ -94,7 +94,7 @@ def make_testing_function_for_single_tag(
 def make_testing_function_for_children_list(
     process_function: Callable[
         [DocumentContext, Sequence[ProtectedTagOrStr]],
-        list[ProtectedTagOrStr],
+        Sequence[ProtectedTagOrStr],
     ],
 ) -> Callable[[str], str]:
     def _testing_function(string: str):
