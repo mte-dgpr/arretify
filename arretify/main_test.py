@@ -50,13 +50,13 @@ class TestWalkInputDir(unittest.TestCase):
     def test_iter_reference_html_files(self):
         paths = _walk_input_dir(ARRETES_OCR_DIR)
         assert paths == [
-            ARRETES_OCR_DIR / "arrete_bilan_ars_mistral.md",
-            ARRETES_OCR_DIR / "arrete_chambre_agriculture_mistral.md",
-            ARRETES_OCR_DIR / "arrete_circulation_mistral.md",
-            ARRETES_OCR_DIR / "arrete_nomination_mistral.md",
-            ARRETES_OCR_DIR / "arrete_ppr_mistral.md",
-            ARRETES_OCR_DIR / "arrete_rectorat_mistral.md",
-            ARRETES_OCR_DIR / "arrete_sentiers_randonnee_mistral.md",
+            ARRETES_OCR_DIR / "arrete_bilan_ars.md",
+            ARRETES_OCR_DIR / "arrete_chambre_agriculture.md",
+            ARRETES_OCR_DIR / "arrete_circulation.md",
+            ARRETES_OCR_DIR / "arrete_nomination.md",
+            ARRETES_OCR_DIR / "arrete_ppr.md",
+            ARRETES_OCR_DIR / "arrete_rectorat.md",
+            ARRETES_OCR_DIR / "arrete_sentiers_randonnee.md",
             ARRETES_OCR_DIR
             / "arretes_icpe/0003013459/2020-04-20_arrêté préfectoral_portant autorisation",  # noqa
             ARRETES_OCR_DIR
