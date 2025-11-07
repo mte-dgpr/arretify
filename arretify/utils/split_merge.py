@@ -185,7 +185,7 @@ def split_and_map_elements(
     ...     return None
     >>> def map_func(n: int) -> str:
     ...     return f"Number {n} is multiple of 3"
-    >>> remap_elements(some_numbers, multiple_of_3, map_func)
+    >>> split_and_map_elements(some_numbers, multiple_of_3, map_func)
     [1, 'Number 3 is multiple of 3', 11, 10, 'Number 6 is multiple of 3', 23]
     """  # noqa: E501
     return map_splitted_elements(split_elements(elements, splitter), map_func)
