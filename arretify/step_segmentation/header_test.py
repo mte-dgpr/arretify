@@ -38,7 +38,7 @@ from arretify.step_segmentation.semantic_tag_specs import (
     VisaSegmentationSpec,
 )
 from .header import (
-    _render_header_element,
+    _make_header_element_tag,
     parse_visa_and_motif_elements,
     parse_arrete_title_element,
     parse_emblem_element,
@@ -491,12 +491,12 @@ class TestParseVisaAndMotifs(BaseTestCase):
 
 class TestRenderHeaderElement(BaseTestCase):
 
-    def test_render_header_element(self):
+    def test_make_header_element_tag(self):
         # Arrange
         contents = make_text_spans(self.soup, "liberté égalité fraternité")
 
         # Act
-        rendered = _render_header_element(self.context, EmblemSpec, contents)
+        rendered = _make_header_element_tag(self.context, EmblemSpec, contents)
 
         # Assert
         assert [str(tag) for tag in rendered] == [
