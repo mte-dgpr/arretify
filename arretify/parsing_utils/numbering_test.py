@@ -18,7 +18,7 @@
 #
 import unittest
 
-from .numbering import str_to_levels
+from .numbering import str_to_levels, ordinal_str_to_int
 
 
 class TestLevelList(unittest.TestCase):
@@ -92,3 +92,26 @@ class TestLevelList(unittest.TestCase):
 
         # Assert
         assert result == [1, 4]
+
+
+class TestOrdinalStrToInt(unittest.TestCase):
+
+    def test_no_accent(self):
+        # Arrange
+        ordinal = "troisieme"
+
+        # Act
+        result = ordinal_str_to_int(ordinal)
+
+        # Assert
+        assert result == 3
+
+    def test_with_accent(self):
+        # Arrange
+        ordinal = "treizième"
+
+        # Act
+        result = ordinal_str_to_int(ordinal)
+
+        # Assert
+        assert result == 13
