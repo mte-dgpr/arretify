@@ -670,3 +670,18 @@ class TestParseTitleInfo(unittest.TestCase):
             levels=[39],
             text="Titre",
         )
+
+    def test_title_with_wrongly_accented_char(self):
+        # Arrange
+        line = "ANNEXÉ 3 - Attestation du Prestataire"
+
+        # Act
+        title_info = parse_title_info(line)
+
+        # Assert
+        assert title_info == TitleInfo(
+            section_type=SectionType.ANNEXE,
+            number="3",
+            levels=[3],
+            text="Attestation du Prestataire",
+        )

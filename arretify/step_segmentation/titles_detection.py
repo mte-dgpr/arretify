@@ -19,6 +19,8 @@
 import logging
 from typing import Optional, Sequence, Tuple
 
+from arretify.regex_utils.helpers import lookup_normalized_version
+from arretify.regex_utils import Settings
 from arretify.types import SectionType
 from arretify.parsing_utils.patterns import LEADING_TRAILING_PUNCTUATION_PATTERN
 from arretify.parsing_utils.numbering import (
@@ -47,15 +49,18 @@ IS_NOT_ENDING_WITH_PUNCTUATION = r"(?!.*[.;:,]$)"
 NUMBERING_THEN_OPT_NUMBERS_PATTERN_S = rf"{NUMBERING_PATTERN_S}([.\-]{NUMBERS_PATTERN_S})*\.?"
 NUMBERING_THEN_OBL_NUMBERS_PATTERN_S = rf"{NUMBERING_PATTERN_S}([.\-]{NUMBERS_PATTERN_S})+\.?"
 
-SECTION_NAMES_LIST = [
-    r"annexe",
-    r"titre",
-    r"chapitre",
-    r"article",
+SECTION_TYPES_LIST = [
+    SectionType.ANNEXE.value,
+    SectionType.TITRE.value,
+    SectionType.CHAPITRE.value,
+    SectionType.ARTICLE.value,
 ]
+"""List of section types that we want to detect."""
 
-SECTION_NAMES_PATTERN_S = rf"{join_with_or(SECTION_NAMES_LIST)}"
-"""Detect all section names."""
+SECTION_TYPES_PATTERN_S = rf"{join_with_or(SECTION_TYPES_LIST)}"
+
+
+SECTION_TYPE_SETTINGS = Settings()
 
 
 TITLE_NODE = regex_tree.Group(
@@ -75,7 +80,10 @@ TITLE_NODE = regex_tree.Group(
             regex_tree.Sequence(
                 [
                     # Section name
-                    rf"^(?P<section_name>{SECTION_NAMES_PATTERN_S})",
+                    regex_tree.Literal(
+                        rf"^(?P<section_type>{SECTION_TYPES_PATTERN_S})",
+                        settings=SECTION_TYPE_SETTINGS,
+                    ),
                     regex_tree.Branching(
                         [
                             # Title has no numbering
@@ -151,7 +159,7 @@ def parse_title_text(line: str) -> Tuple[str, str]:
     match_dict = match_pattern.match_dict
 
     # Build the section name
-    section_type = match_dict.get("section_name", "")
+    section_type = match_dict.get("section_type", "")
     punc_before = match_dict.get("punc_before", "")
     number = match_dict.get("number", "")
     eme = match_dict.get("eme", "")
@@ -169,10 +177,14 @@ def parse_title_info(line: str) -> TitleInfo:
     match_pattern = regex_tree_match([line], TITLE_NODE)
     assert match_pattern, "Only use parse function when match pattern exists!"
 
-    # Extract dict
+    # Extract values
     match_dict = match_pattern.match_dict
-
-    section_type = SectionType.from_string(match_dict.get("section_name", "unknown"))
+    section_type_str = lookup_normalized_version(
+        [t.value for t in SectionType],
+        match_dict.get("section_type", "unknown"),
+        settings=SECTION_TYPE_SETTINGS,
+    )
+    section_type = SectionType(section_type_str)
     number = match_dict.get("number", "")
     text = match_dict.get("text")
 

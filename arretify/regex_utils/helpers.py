@@ -74,7 +74,7 @@ def normalize_quotes(text: str):
     )
 
 
-def normalize_dashes(text: str):
+def normalize_dashes(text: str) -> str:
     return text.replace("–", "-").replace("—", "-")
 
 
@@ -82,7 +82,18 @@ def lookup_normalized_version(
     choices: Sequence[str],
     text: str,
     settings: Settings | None = None,
-):
+) -> str:
+    """
+    Lookup in `choices` to find the entry that matches `text` after normalization.
+
+    Example:
+        >>> lookup_normalized_version(
+            ["Café", "Restaurant"],
+            "cafe",
+            Settings(ignore_accents=True, ignore_case=True),
+        )
+        "Café"
+    """
     if settings is None:
         settings = Settings()
     matches: list[str] = []
