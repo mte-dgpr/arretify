@@ -16,7 +16,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-import re
 from typing import Optional, Sequence
 
 import roman
@@ -57,7 +56,7 @@ NUMBERING_PATTERN_S = rf"({ROMAN_NUMERALS_PATTERN_S}|{LETTER_PATTERN_S}|{NUMBERS
 
 
 def ordinal_str_to_int(ordinal: str) -> int:
-    ordinal_match = re.match(ORDINAL_PATTERN_S, ordinal, re.IGNORECASE)
+    ordinal_match = ORDINAL_PATTERN.match(ordinal)
     if not ordinal_match:
         raise RuntimeError("Ordinal match unexpectedly failed")
 
