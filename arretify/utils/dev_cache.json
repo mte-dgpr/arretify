@@ -56,7 +56,14 @@
         "(2012-05-31,  susvisé et qu'elle est considérée comme existante au sens de ce même arrété)": null,
         "(2012-05-31,  susvisé et qu'elle est considérée comme existante au sens de ce même arrêté,)": null,
         "(2018-08-03,  relatif aux installations de combustion d'une puissance thermique nominale totale inférieure à 50 MW soumises à)": "JORFTEXT000037284792",
-        "(2016-05-23,  qui précise notamment : la liste des paramètres analytiques, les fréquences d'analyse, les modalités de prélèvement)": null
+        "(2016-05-23,  qui précise notamment : la liste des paramètres analytiques, les fréquences d'analyse, les modalités de prélèvement)": null,
+        "(2003-09-11,  fixant les prescriptions générales applicables aux sondages, forages, création de puits ou d'ouvrage souterrain soumis à)": "JORFTEXT000000415722",
+        "(1997-07-16,  relatif aux installations de réfrigération employant l'ammoniac comme fluide frigorigène soumises à autorisation au titre de)": "JORFTEXT000000202155",
+        "(2017-04-11,  relatif aux prescriptions générales applicables aux entrepôts couverts soumis à la rubrique 1510)": "JORFTEXT000034429274",
+        "(2014-03-27,  sont applicables aux installations suivantes du site :)": null,
+        "(2014-03-27,  et en particulier des articles suivants :)": null,
+        "(2008-09-30,  sont applicables aux installations suivantes du site : locaux d'emballages n° 1)": null,
+        "(2017-04-11,  relatif aux prescriptions générales applicables aux entrepôts couverts soumis à la rubrique 1510 sont applicables aux)": null
     },
     "get_eu_act_url_with_year_and_num": {
         "(directive, 2010, 75)": "https://eur-lex.europa.eu/legal-content/FR/TXT/HTML/?uri=cellar:c7191b72-4e07-4712-86d6-d3ae5e4f0082",
@@ -107,7 +114,8 @@
         "(2005-05-30, title= relatif au contrôle des circuits de traitement des déchets et concernant les déchets dangereux et les, num=2005-635)": "JORFTEXT000000257088",
         "(2024-10-31, title= du Président de la République nommant Monsieur Charles GIUSTI, préfet de l'Eure,, num=None)": null,
         "(2024-02-14, title= du Président de la République nommant Monsieur Alaric MALVES, secrétaire général de la préfecture de l'Eure,, num=None)": null,
-        "(2001-07-05, title=None, num=2001-592)": "JORFTEXT000000406806"
+        "(2001-07-05, title=None, num=2001-592)": "JORFTEXT000000406806",
+        "(2021-08-17, title= nommant madame Marie CORNET secrétaire générale de la préfecture de l'Orne, num=None)": null
     },
     "get_circulaire_legifrance_id": {
         "(1986-07-23,  relative aux vibrations mécaniques émises dans l'environnement par les installations classées sont applicables)": null,

@@ -29,6 +29,8 @@ from .html_split_merge import (
     _trim_strings_before_merging,
     _split_match_by_named_groups,
     regex_tree_match,
+    make_regex_tree_splitter,
+    _slice_elements_with_string_index,
     _NamedGroupSplitterMatch,
 )
 
@@ -136,11 +138,10 @@ class TestMakePatternSplitterIgnoringInlineTags(unittest.TestCase):
         pattern_proxy = PatternProxy(
             r"hello",
         )
-        tag = self.soup.new_tag("br")
         elements = [
             "text1",
             "hel",
-            tag,
+            self.soup.new_tag("br"),
             "lo text2",
         ]
 
@@ -152,7 +153,23 @@ class TestMakePatternSplitterIgnoringInlineTags(unittest.TestCase):
         assert before == ["text1"]
         assert after == [" text2"]
         assert match.match_proxy.group(0) == "hello"
-        assert match.elements == ["hel", tag, "lo"]
+        assert match.elements == ["hel", self.soup.new_tag("br"), "lo"]
+
+    def test_split_just_before_inline_tag(self):
+        # Arrange
+        pattern_proxy = PatternProxy(
+            r"bla",
+        )
+        elements = ["blo bla", self.soup.new_tag("br"), "bli blu"]
+        splitter = make_pattern_splitter_ignoring_inline_tags(pattern_proxy)
+
+        # Act
+        before, match, after = splitter(elements)
+
+        # Assert
+        assert before == ["blo "]
+        assert match.elements == ["bla"]
+        assert after == [self.soup.new_tag("br"), "bli blu"]
 
 
 class TestSplitBeforeStringIndex(unittest.TestCase):
@@ -432,3 +449,137 @@ class TestSplitMatchByNamedGroups(unittest.TestCase):
                 )
             ),
         ]
+
+
+class TestMakeRegexTreeSplitter(unittest.TestCase):
+
+    def setUp(self):
+        self.soup = BeautifulSoup("", features="html.parser")
+
+    def test_split_simple(self):
+        # Arrange
+        bla_node = regex_tree.Group(
+            regex_tree.Literal(
+                r"bla",
+            ),
+            group_name="root",
+        )
+        elements = ["blo bla bli", self.soup.new_tag("br"), "blu"]
+        splitter = make_regex_tree_splitter(bla_node)
+
+        # Act
+        before, match, after = splitter(elements)
+
+        # Assert
+        assert before == ["blo "]
+        assert match.children == ["bla"]
+        assert after == [" bli", self.soup.new_tag("br"), "blu"]
+
+    def test_split_around_tag(self):
+        # Arrange
+        hello_node = regex_tree.Group(
+            regex_tree.Literal(
+                r"hello",
+            ),
+            group_name="root",
+        )
+        elements = [
+            "text1 ",
+            "hel",
+            self.soup.new_tag("br"),
+            "lo text2",
+        ]
+        splitter = make_regex_tree_splitter(hello_node)
+
+        # Act
+        before, match, after = splitter(elements)
+
+        # Assert
+        assert before == ["text1 "]
+        assert match.children == ["hel", self.soup.new_tag("br"), "lo"]
+        assert after == [" text2"]
+
+
+class TestSliceElementsWithStringIndex(unittest.TestCase):
+    def setUp(self):
+        self.soup = BeautifulSoup("", features="html.parser")
+
+    def test_slice_elements(self):
+        # Arrange
+        elements = [
+            "Hello",
+            self.soup.new_tag("br"),
+            "World",
+        ]
+        start_index = 2
+        end_index = 7
+
+        # Act
+        before, match, after = _slice_elements_with_string_index(
+            elements,
+            start_index,
+            end_index,
+        )
+
+        # Assert
+        assert before == ["He"]
+        assert match == [
+            "llo",
+            self.soup.new_tag("br"),
+            "Wo",
+        ]
+        assert after == ["rld"]
+
+    def test_slice_just_before_tag(self):
+        # Arrange
+        elements = [
+            "Hello",
+            self.soup.new_tag("br"),
+            "World",
+        ]
+        start_index = 0
+        end_index = 5
+
+        # Act
+        before, match, after = _slice_elements_with_string_index(
+            elements,
+            start_index,
+            end_index,
+        )
+
+        # Assert
+        assert before == []
+        assert match == [
+            "Hello",
+        ]
+        assert after == [
+            self.soup.new_tag("br"),
+            "World",
+        ]
+
+    def test_slice_just_after_tag(self):
+        # Arrange
+        elements = [
+            "Hello",
+            self.soup.new_tag("br"),
+            "World",
+        ]
+        start_index = 5
+        end_index = 10
+
+        # Act
+        before, match, after = _slice_elements_with_string_index(
+            elements,
+            start_index,
+            end_index,
+        )
+
+        # Assert
+        assert before == [
+            "Hello",
+            self.soup.new_tag("br"),
+        ]
+        assert match == [
+            "World",
+        ]
+        assert after == []

@@ -236,7 +236,7 @@ def _slice_elements_with_string_index(
     elements: Sequence[str | T], start: int, end: int
 ) -> RawSplit[str | T, list[str | T]]:
     """
-    Takes a list and slices it based only on its string elements.
+    Takes a list and slices it based only on its string elements (`end` is exclusive).
 
     Example :
 
@@ -245,6 +245,9 @@ def _slice_elements_with_string_index(
     (["He"], ["llo", "<br/>", "Wo"], ["rld"])
     """
     before_match, match_elements = _split_before_string_index(elements, start)
+    # Remove tags at the start of match_elements, so the match doesn't start with a tag.
+    while match_elements and not isinstance(match_elements[0], str):
+        before_match.append(match_elements.pop(0))
     match_elements, after_match = _split_before_string_index(match_elements, end - start)
     return before_match, match_elements, after_match
 
@@ -257,14 +260,19 @@ def _split_before_string_index(
         if not isinstance(element, str):
             continue
         current_index += len(element)
-        if current_index <= split_index:
+        if current_index < split_index:
             continue
-        surplus = current_index - split_index
 
-        string_before = element[:-surplus]
+        surplus = current_index - split_index
+        if surplus == 0:
+            string_before = element
+            string_after = ""
+        else:
+            string_before = element[:-surplus]
+            string_after = element[-surplus:]
+
         before = list(elements[:i]) + ([string_before] if string_before else [])
-        string_after = element[-surplus:]
-        after = [string_after] + list(elements[i + 1 :])
+        after = ([string_after] if string_after else []) + list(elements[i + 1 :])
         return (before, after)
     return (list(elements), [])
 
