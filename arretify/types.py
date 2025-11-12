@@ -120,10 +120,6 @@ class SectionType(Enum):
     """Unknown section type. Needs context to be resolved"""
     ALINEA = "alinea"
 
-    @classmethod
-    def from_string(cls, section_name):
-        return cls(section_name.lower())
-
 
 class OperationType(Enum):
     ADD = "add"
