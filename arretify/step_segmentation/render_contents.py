@@ -32,7 +32,7 @@ from arretify.semantic_tag_specs import (
     SectionTitleData,
     SectionTitleSpec,
 )
-from arretify.step_segmentation.core import get_string
+from arretify.step_segmentation.core import TRANSPARENT_TAG_SPECS, get_string
 from arretify.step_segmentation.header import VISA_MOTIFS_RENDER_SPECS
 from arretify.step_segmentation.semantic_tag_specs import (
     AlineaSegmentationSpec,
@@ -344,7 +344,7 @@ def render_table(
             pile.append(element_str)
             if bool(TABLE_HEADER_SEPARATOR_PATTERN.match(element_str)):
                 has_table_header = True
-        elif is_semantic_tag(element, spec_in=[PageSeparatorSpec]):
+        elif is_semantic_tag(element, spec_in=TRANSPARENT_TAG_SPECS):
             table_tag = parse_markdown_table(pile)
             # Get the right table row for inserting the transparent tag.
             # If the table has a header, the `pile` contains a header
@@ -353,7 +353,7 @@ def render_table(
             row_index = len(pile) - 1 - int(has_table_header)
             transparent_tags.append((row_index, element))
         else:
-            raise ValueError(f"Unexpected element type {type(element)} in table rendering.")
+            raise ValueError(f"Unexpected element {element} in table rendering.")
 
     table_tag = parse_markdown_table(pile)
 
@@ -377,12 +377,8 @@ def render_table_description(
         if is_semantic_tag(element, spec_in=[TextSpanSegmentationSpec]):
             yield make_tag(context.protected_soup, "br")
             yield get_string(element)
-        elif is_semantic_tag(element, spec_in=[PageSeparatorSpec]):
-            yield element
         else:
-            raise ValueError(
-                f"Unexpected element type {type(element)} in table description rendering."
-            )
+            yield element
 
 
 # -------------------- Blockquote -------------------- #
