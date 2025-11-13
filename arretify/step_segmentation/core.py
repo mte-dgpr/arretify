@@ -164,11 +164,11 @@ def make_pattern_splitter(
         elements: Sequence[ProtectedTagOrStr],
     ) -> RawSplit[ProtectedTagOrStr, MatchProxy] | None:
         splitted_elements = split_elements(elements, group_str_splitter)
-        for i, splitted_element in enumerate(splitted_elements):
-            if not isinstance(splitted_element, SplitMatch):
+        for i, grouped_strings in enumerate(splitted_elements):
+            if not isinstance(grouped_strings, SplitMatch):
                 continue
 
-            string: str = merge_strings([get_string(element) for element in splitted_element.value])
+            string: str = merge_strings(map(get_string, grouped_strings.value))
             match_proxy = pattern.search(string)
             if not match_proxy:
                 continue
@@ -288,8 +288,7 @@ def get_string(element: ProtectedTagOrStr) -> str:
     if isinstance(element, str):
         return element
     elif is_semantic_tag(element):
-        strings: list[str] = [_get_string(child) for child in element.contents]
-        return merge_strings(strings)
+        return merge_strings(map(_get_string, element.contents))
     else:
         raise ValueError(f"Element '{element}' is neither a string nor a Tag")
 
@@ -298,7 +297,7 @@ def _get_string(element: ProtectedTagOrStr) -> str:
     if isinstance(element, str):
         return element
     elif is_semantic_tag(element, spec_in=[TextSpanSegmentationSpec, *_STR_TAG_SPECS]):
-        return merge_strings(_get_string(child) for child in element.contents)
+        return merge_strings(map(_get_string, element.contents))
     elif is_semantic_tag(element, spec_in=TRANSPARENT_TAG_SPECS):
         return ""
     else:

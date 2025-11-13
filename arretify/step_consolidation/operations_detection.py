@@ -374,7 +374,10 @@ def _extract_operation_data(
 
     return OperationData(
         operation_type=operation_type_group.group_name,
-        keyword=merge_strings(iter_regex_tree_match_page_elements_or_strings(operation_type_group)),
+        keyword=merge_strings(
+            iter_regex_tree_match_page_elements_or_strings(operation_type_group),
+            strip_other_types=True,
+        ),
         has_operand=has_operand,
         references=None,
         direction="rtl",

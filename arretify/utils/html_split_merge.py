@@ -29,6 +29,7 @@ from arretify.utils.split_merge import (
     SplitMatch,
     SplitNotAMatch,
     SplittedElement,
+    split_and_map_elements,
     split_elements,
     flat_map_splitted_elements,
     merge_splitted_elements,
@@ -123,6 +124,17 @@ group_strings_and_inline_tags_splitter: Splitter[ProtectedTagOrStr, Sequence[Pro
 Splitter to enable grouping of string elements and inline tags,
 when these are preceded and followed by strings.
 """
+
+
+def recombine_strings(contents: Sequence[ProtectedTagOrStr]) -> list[ProtectedTagOrStr]:
+    """
+    Groups and recombines consecutive string elements in `contents` into single string elements.
+    """
+    return split_and_map_elements(
+        contents,
+        group_strings_splitter,
+        merge_strings,
+    )
 
 
 def make_regex_tree_splitter(
