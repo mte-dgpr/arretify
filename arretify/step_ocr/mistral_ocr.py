@@ -43,12 +43,7 @@ def mistral_ocr(
         ocr_pages_dir = ocr_pages_dir_factory(document_context)
 
     ocr_pages: list[str] = []
-    for i, page in enumerate(
-        _call_mistral_ocr_api(
-            document_context,
-            replace_images_placeholders=replace_images_placeholders,
-        )
-    ):
+    for i, page in enumerate(_call_mistral_ocr_api(document_context)):
         page_ocr = page.markdown
 
         if replace_images_placeholders:
@@ -74,8 +69,6 @@ def mistral_ocr(
 
 def _call_mistral_ocr_api(
     document_context: DocumentContext,
-    replace_images_placeholders: bool = True,
-    max_retries: int = 5,
 ) -> Iterable[mistralai.models.OCRPageObject]:
     if not document_context.mistral_client:
         raise ValueError("MistralAI client is not initialized")
@@ -84,39 +77,26 @@ def _call_mistral_ocr_api(
 
     _LOGGER.info(f"Starting OCR process with MistralAI for {document_context.filename}...")
 
-    cnt_retries = 0
-    while cnt_retries < max_retries:
-        try:
-            # Upload PDF file to Mistral's OCR service
-            uploaded_file = document_context.mistral_client.files.upload(
-                file={
-                    "file_name": document_context.filename,
-                    "content": document_context.pdf,
-                },
-                purpose="ocr",
-            )
+    # Upload PDF file to Mistral's OCR service
+    uploaded_file = document_context.mistral_client.files.upload(
+        file={
+            "file_name": document_context.filename,
+            "content": document_context.pdf,
+        },
+        purpose="ocr",
+    )
 
-            # Get URL for the uploaded file
-            signed_url = document_context.mistral_client.files.get_signed_url(
-                file_id=uploaded_file.id, expiry=1
-            )
+    # Get URL for the uploaded file
+    signed_url = document_context.mistral_client.files.get_signed_url(
+        file_id=uploaded_file.id, expiry=1
+    )
 
-            # Process PDF with OCR including embedded images
-            api_response = document_context.mistral_client.ocr.process(
-                model=document_context.settings.mistral_ocr_model,
-                document={"type": "document_url", "document_url": signed_url.url},
-                include_image_base64=True,
-            )
-
-        except mistralai.models.sdkerror.SDKError as err:
-            cnt_retries += 1
-            _LOGGER.debug(err)
-            _LOGGER.debug("OCR failed: Retrying %d/%d", cnt_retries, max_retries)
-
-        break
-
-    if cnt_retries >= max_retries:
-        raise ValueError("OCR failed: max retries reached!")
+    # Process PDF with OCR including embedded images
+    api_response = document_context.mistral_client.ocr.process(
+        model=document_context.settings.mistral_ocr_model,
+        document={"type": "document_url", "document_url": signed_url.url},
+        include_image_base64=True,
+    )
 
     return api_response.pages
 
