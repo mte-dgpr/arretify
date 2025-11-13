@@ -58,7 +58,6 @@ from arretify.semantic_tag_specs import (
     ErrorSpec,
     AddressSpec,
     PageFooterSpec,
-    PageSeparatorSpec,
     TableOfContentsSpec,
 )
 from arretify.utils.split_merge import (
@@ -553,10 +552,8 @@ def _render_table_of_contents(
     for element in contents:
         if is_semantic_tag(element, spec_in=[TextSpanSegmentationSpec]):
             rendered_contents.append(get_string(element))
-        elif is_semantic_tag(element, spec_in=[PageSeparatorSpec]):
-            rendered_contents.append(element)
         else:
-            raise ValueError(f"Unexpected element in table of contents: {element}")
+            rendered_contents.append(element)
     return make_semantic_tag(
         context.protected_soup,
         TableOfContentsSpec,
