@@ -39,13 +39,8 @@ from arretify.utils.html_semantic import (
     is_semantic_tag,
     set_semantic_tag_data,
 )
-from arretify.utils.split_merge import (
-    split_and_map_elements,
-)
-from arretify.utils.html_split_merge import group_strings_splitter
-from arretify.utils.strings import (
-    merge_strings,
-)
+from arretify.utils.html_split_merge import recombine_strings, group_strings_splitter, merge_strings
+from arretify.utils.split_merge import split_and_map_elements
 
 
 _TAGS_ALLOWED_ANYWHERE = {"b", "strong", "i", "em", "u", "br"}
@@ -171,7 +166,7 @@ def _replace_contents(
     contents = split_and_map_elements(
         # Group consecutive string elements and merge
         # them into a single string to avoid extra spaces.
-        list(contents),
+        recombine_strings(contents),
         group_strings_splitter,
         merge_strings,
     )

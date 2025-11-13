@@ -36,10 +36,8 @@ from arretify.utils.html_semantic import (
     is_semantic_tag,
     update_semantic_tag_data,
 )
-from arretify.utils.split_merge import split_and_map_elements
-from arretify.utils.html_split_merge import group_strings_splitter
+from arretify.utils.html_split_merge import recombine_strings
 from arretify.utils.html import ensure_tag_id, filter_out_inline_tags, get_group_id
-from arretify.utils.strings import merge_strings
 
 
 CONNECTOR_SECTION_TO_PARENT_NODE = regex_tree.Group(
@@ -127,13 +125,7 @@ def _search_parent_reference_tag(
             return None
 
         # Filter out inline tags, and generate combined strings
-        element_range_with_merged_strings = split_and_map_elements(
-            filter_out_inline_tags(element_range),
-            group_strings_splitter,
-            lambda elements: merge_strings(
-                elements,
-            ),
-        )
+        element_range_with_merged_strings = recombine_strings(filter_out_inline_tags(element_range))
 
         # Grow the range until we get 3 elements :
         # <reference tag> <connector string> <parent reference tag>

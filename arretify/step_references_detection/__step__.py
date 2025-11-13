@@ -21,8 +21,7 @@ from typing import Sequence
 from arretify.types import ProtectedTagOrStr, DocumentContext
 from arretify.utils.html_create import replace_contents
 from arretify.utils.html_semantic import css_selector
-from arretify.utils.html_split_merge import group_strings_splitter
-from arretify.utils.split_merge import split_and_map_elements
+from arretify.utils.html_split_merge import recombine_strings
 from arretify.semantic_tag_specs import (
     AlineaSpec,
     MotifSpec,
@@ -54,7 +53,6 @@ from .unknown_sections_resolution import (
     resolve_unknown_sections,
     remove_misdetected_sections,
 )
-from arretify.utils.strings import merge_strings
 
 
 REFERENCES_CONTAINER_SELECTOR = (
@@ -94,11 +92,7 @@ def step_references_detection(document_context: DocumentContext) -> DocumentCont
     for tag in document_context.protected_soup.select(REFERENCES_CONTAINER_SELECTOR):
         contents = list(tag.contents)
         contents = list(remove_misdetected_sections(document_context, contents))
-        contents = split_and_map_elements(
-            contents,
-            group_strings_splitter,
-            merge_strings,
-        )
+        contents = recombine_strings(contents)
         replace_contents(tag, contents)
 
     return document_context
