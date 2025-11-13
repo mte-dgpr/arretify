@@ -26,6 +26,10 @@ def merge_strings(
     elements: Iterable[T],
     strip_other_types: bool = False,
 ) -> str:
+    """
+    Merges `elements` into a single string. Beware that all non-string elements
+    will raise a `ValueError`, unless `strip_other_types` is set to `True`.
+    """
     merged_string: str = ""
     for element in elements:
         if isinstance(element, str):
