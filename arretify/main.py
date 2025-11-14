@@ -105,6 +105,10 @@ def main(args: list[str]) -> None:
     features = _Features()
     was_ocr_disabled_warning_given = False
 
+    if not root_input_path.exists():
+        _LOGGER.error(f"Input path does not exist: {root_input_path}")
+        sys.exit(1)
+
     # Initialize Mistral client
     try:
         session_context = initialize_mistral_client(session_context)
