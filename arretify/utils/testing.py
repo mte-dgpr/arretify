@@ -112,7 +112,7 @@ def create_document_context(
 ) -> DocumentContext:
     return DocumentContext(
         soup=BeautifulSoup(html, features="html.parser"),
-        filename="test-file",
+        input_path=None,
         pdf=None,
         pages=[],
         settings=create_settings(),

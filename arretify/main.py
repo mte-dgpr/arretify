@@ -27,7 +27,7 @@ from dataclasses import dataclass, replace as dataclass_replace
 from dotenv import load_dotenv
 
 from .types import SessionContext, DocumentContext
-from .settings import APP_ROOT, EXAMPLES_DIR, OCR_FILE_EXTENSION, Settings
+from .settings import APP_ROOT, OCR_FILE_EXTENSION, Settings
 from .step_ocr import step_ocr
 from .step_segmentation import step_segmentation
 from .step_references_detection import step_references_detection
@@ -65,12 +65,10 @@ def main(args: list[str]) -> None:
         "-i",
         "--input",
         help="Input folder or single file path.",
-        default=EXAMPLES_DIR / "arretes_ocr",
     )
     parser.add_option(
         "-o",
         "--output",
-        default=EXAMPLES_DIR / "arretes_html",
     )
     parser.add_option(
         "-v",
@@ -88,6 +86,12 @@ def main(args: list[str]) -> None:
     )
 
     (options, args) = parser.parse_args(args=args)
+
+    # Check required options
+    if not options.input:
+        parser.error("Option -i/--input is required")
+    if not options.output:
+        parser.error("Option -o/--output is required")
 
     # ---------------- Initialization ---------------- #
     # Initialize environment variables before anything else
@@ -143,29 +147,45 @@ def main(args: list[str]) -> None:
 
     # ---------------- Processing ---------------- #
     if root_input_path.is_dir() and is_recursive:
-        if not root_output_path.is_dir():
+        if root_output_path.exists() and not root_output_path.is_dir():
             _LOGGER.error(f"Expected output to be a directory, got {root_output_path}")
+            sys.exit(1)
 
         all_input_file_paths = _walk_input_dir(root_input_path)
         for i, input_path in enumerate(all_input_file_paths):
-            output_dir = root_output_path / input_path.parent.relative_to(root_input_path)
+            relative_input_path = input_path.relative_to(root_input_path)
+            output_dir = root_output_path / relative_input_path.parent
             output_dir.mkdir(parents=True, exist_ok=True)
-            if input_path.is_dir():
-                output_path = output_dir / f"{input_path.name}.html"
-            else:
-                output_path = output_dir / f"{input_path.stem}.html"
+            output_stem = input_path.name if input_path.is_dir() else input_path.stem
+            output_path = output_dir / f"{output_stem}.html"
+            ocr_pages_dir: Path | None = None
 
-            _LOGGER.info(f"\n\n[{i + 1}/{len(all_input_file_paths)}] processing {input_path} ...")
+            input_path_display = relative_input_path
+            output_path_display = output_path.relative_to(root_output_path)
 
-            if is_pdf_path(input_path) and features.ocr is False:
-                if not was_ocr_disabled_warning_given:
-                    _ocr_disabled_warning()
-                    was_ocr_disabled_warning_given = True
+            _LOGGER.info(
+                f"\n\n[{i + 1}/{len(all_input_file_paths)}] processing {input_path_display} ..."
+            )
 
-                _LOGGER.warning(
-                    f"Skipping {input_path} because it is a PDF and OCR support is not enabled."
+            if is_pdf_path(input_path):
+                if features.ocr is False:
+                    if not was_ocr_disabled_warning_given:
+                        _ocr_disabled_warning()
+                        was_ocr_disabled_warning_given = True
+
+                    _LOGGER.warning(
+                        f"Skipping {input_path} because it is a PDF and OCR support is not enabled."
+                    )
+                    continue
+
+                ocr_pages_dir = (
+                    session_context.settings.tmp_dir
+                    / "ocr"
+                    / relative_input_path.parent
+                    / output_stem
                 )
-                continue
+                ocr_pages_dir.mkdir(parents=True, exist_ok=True)
+                _LOGGER.info(f"OCR pages will be stored at {ocr_pages_dir}")
 
             try:
                 _process_arrete(
@@ -173,11 +193,14 @@ def main(args: list[str]) -> None:
                     input_path,
                     output_path,
                     features,
+                    ocr_pages_dir=ocr_pages_dir,
                 )
             except Exception:
-                _LOGGER.error(f"[{i + 1}/{len(all_input_file_paths)}] FAILED : {input_path} ...")
+                _LOGGER.error(f"❌ FAILED : {input_path_display} ...")
                 error_traceback = traceback.format_exc()
                 _LOGGER.error(f"Traceback:\n{error_traceback}")
+            else:
+                _LOGGER.info(f"✅ DONE : {output_path_display} ...")
 
     else:
         if is_pdf_path(root_input_path) and features.ocr is False:
@@ -240,6 +263,7 @@ def _process_arrete(
     input_path: Path,
     output_path: Path,
     features: _Features,
+    ocr_pages_dir: Path | None = None,
 ) -> None:
     """
     Process a single arrêté. `input_path` can be :
@@ -263,7 +287,19 @@ def _process_arrete(
     if is_pdf_path(input_path):
         if not features.ocr:
             raise RuntimeError("OCR is disabled.")
-        pipeline_steps.insert(0, step_ocr)
+
+        if ocr_pages_dir is not None:
+
+            def step_ocr_with_settings(document_context: DocumentContext) -> DocumentContext:
+                return step_ocr(
+                    document_context,
+                    ocr_pages_dir=ocr_pages_dir,
+                )
+
+            pipeline_steps.insert(0, step_ocr_with_settings)
+        else:
+            pipeline_steps.insert(0, step_ocr)
+
         document_context = load_pdf_file(
             session_context,
             input_path,

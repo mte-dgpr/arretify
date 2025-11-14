@@ -17,9 +17,8 @@
 # limitations under the License.
 #
 import logging
-from typing import Iterable, Callable
+from typing import Iterable
 from dataclasses import replace as dataclass_replace
-from shutil import rmtree
 from pathlib import Path
 
 from arretify._vendor import mistralai
@@ -33,14 +32,10 @@ _LOGGER = logging.getLogger(__name__)
 def mistral_ocr(
     document_context: DocumentContext,
     replace_images_placeholders: bool,
-    ocr_pages_dir_factory: Callable[[DocumentContext], Path] | None,
+    ocr_pages_dir: Path | None,
 ) -> DocumentContext:
     if not document_context.mistral_client:
         raise ValueError("MistralAI client is not initialized")
-
-    ocr_pages_dir: Path | None = None
-    if callable(ocr_pages_dir_factory):
-        ocr_pages_dir = ocr_pages_dir_factory(document_context)
 
     ocr_pages: list[str] = []
     for i, page in enumerate(_call_mistral_ocr_api(document_context)):
@@ -75,12 +70,15 @@ def _call_mistral_ocr_api(
     if not document_context.pdf:
         raise ValueError("Parsing context does not contain a PDF file")
 
-    _LOGGER.info(f"Starting OCR process with MistralAI for {document_context.filename}...")
+    file_name = (
+        document_context.input_path.name if document_context.input_path else "unnamed_file.pdf"
+    )
+    _LOGGER.debug(f"Starting OCR process with MistralAI for {file_name}...")
 
     # Upload PDF file to Mistral's OCR service
     uploaded_file = document_context.mistral_client.files.upload(
         file={
-            "file_name": document_context.filename,
+            "file_name": file_name,
             "content": document_context.pdf,
         },
         purpose="ocr",
@@ -99,12 +97,3 @@ def _call_mistral_ocr_api(
     )
 
     return api_response.pages
-
-
-def default_ocr_pages_dir(document_context: DocumentContext) -> Path:
-    ocr_pages_dir = document_context.settings.tmp_dir / f"{document_context.filename}_ocr"
-    if ocr_pages_dir.is_dir():
-        rmtree(ocr_pages_dir, ignore_errors=True)
-    ocr_pages_dir.mkdir(parents=True, exist_ok=True)
-    _LOGGER.info(f"Created OCR pages dir : {ocr_pages_dir}")
-    return ocr_pages_dir
