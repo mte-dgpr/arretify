@@ -41,14 +41,14 @@ class TestFileLoadingFunctions(unittest.TestCase):
         input_path = mock.Mock(spec=Path)
         input_path.is_file.return_value = True
         input_path.read_bytes.return_value = b"dummy pdf content"
-        input_path.stem = "dummy_path"
+        input_path.suffix = ".pdf"
 
         # Act
         result = load_pdf_file(self.session_context, input_path)
 
         # Assert
         assert result is not None
-        assert result.filename == "dummy_path"
+        assert result.input_path == input_path
         assert result.pdf == b"dummy pdf content"
         assert result.protected_soup is not None
 
@@ -56,7 +56,7 @@ class TestFileLoadingFunctions(unittest.TestCase):
         # Arrange
         input_path = mock.Mock(spec=Path)
         input_path.is_file.return_value = True
-        input_path.stem = "dummy_path"
+        input_path.suffix = ".md"
         m = mock.mock_open(read_data="line1\nline2")
         with mock.patch("builtins.open", m):
             # Act
@@ -64,7 +64,7 @@ class TestFileLoadingFunctions(unittest.TestCase):
 
             # Assert
             assert result is not None
-            assert result.filename == "dummy_path"
+            assert result.input_path == input_path
             assert result.pages == ["line1\nline2"]
             assert result.protected_soup is not None
 
@@ -76,15 +76,23 @@ class TestFileLoadingFunctions(unittest.TestCase):
         # Arrange
         input_path = mock.Mock(spec=Path)
         input_path.is_dir.return_value = True
-        input_path.name = "dummy_directory"
 
         mock_file_path1 = mock.Mock(spec=Path)
         mock_file_path1.stem = "1"
+        mock_file_path1.suffix = ".md"
         mock_file_path10 = mock.Mock(spec=Path)
         mock_file_path10.stem = "10"
+        mock_file_path10.suffix = ".md"
         mock_file_path2 = mock.Mock(spec=Path)
         mock_file_path2.stem = "02"
+        mock_file_path2.suffix = ".md"
+
         input_path.glob.return_value = [mock_file_path1, mock_file_path10, mock_file_path2]
+        input_path.iterdir.return_value = [
+            mock_file_path1,
+            mock_file_path10,
+            mock_file_path2,
+        ]
 
         def _mock_file_open(*args, **kwargs):
             file_path = args[0]
@@ -102,7 +110,7 @@ class TestFileLoadingFunctions(unittest.TestCase):
 
             # Assert
             assert result is not None
-            assert result.filename == "dummy_directory"
+            assert result.input_path == input_path
             assert result.pages == [
                 "content of file 1",
                 "content of file 2",

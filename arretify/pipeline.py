@@ -21,6 +21,8 @@ from pathlib import Path
 
 from bs4 import BeautifulSoup
 
+from arretify.utils.files import is_ocr_pages_dir, is_ocr_path, is_pdf_path
+
 from .types import DocumentContext, SessionContext
 from .settings import DEFAULT_ARRETE_TEMPLATE, OCR_FILE_EXTENSION
 from .step_segmentation import step_segmentation
@@ -50,12 +52,12 @@ def load_pdf_file(
     input_path: Path,
     arrete_template: str = DEFAULT_ARRETE_TEMPLATE,
 ) -> DocumentContext:
-    if not input_path.is_file():
+    if not is_pdf_path(input_path):
         raise ValueError(f"Input path {input_path} is not a file.")
 
     return DocumentContext.from_session_context(
         session_context,
-        filename=input_path.stem,
+        input_path=input_path,
         pdf=input_path.read_bytes(),
         soup=BeautifulSoup(arrete_template, features="html.parser"),
     )
@@ -68,7 +70,7 @@ def load_ocr_file(
 ) -> DocumentContext:
     page_ocr: str
 
-    if not input_path.is_file():
+    if not is_ocr_path(input_path):
         raise ValueError(f"Input path {input_path} is not a file.")
 
     with open(input_path, "r", encoding="utf-8") as f:
@@ -76,7 +78,7 @@ def load_ocr_file(
 
     return DocumentContext.from_session_context(
         session_context,
-        filename=input_path.stem,
+        input_path=input_path,
         pages=[page_ocr],
         soup=BeautifulSoup(arrete_template, features="html.parser"),
     )
@@ -87,7 +89,7 @@ def load_ocr_pages(
     input_path: Path,
     arrete_template: str = DEFAULT_ARRETE_TEMPLATE,
 ) -> DocumentContext:
-    if not input_path.is_dir():
+    if not is_ocr_pages_dir(input_path):
         raise ValueError(f"Input path {input_path} is not a directory.")
 
     file_paths = sorted(input_path.glob(f"*{OCR_FILE_EXTENSION}"), key=lambda p: int(p.stem))
@@ -98,7 +100,7 @@ def load_ocr_pages(
 
     return DocumentContext.from_session_context(
         session_context,
-        filename=input_path.name,
+        input_path=input_path,
         pages=pages_ocr,
         soup=BeautifulSoup(arrete_template, features="html.parser"),
     )
@@ -116,7 +118,7 @@ def load_html_file(
     soup = BeautifulSoup(html_content, features="html.parser")
     return DocumentContext.from_session_context(
         session_context,
-        filename=input_path.stem,
+        input_path=input_path,
         soup=soup,
     )
 

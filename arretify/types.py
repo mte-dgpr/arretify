@@ -16,10 +16,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+from pathlib import Path
 from typing import Protocol, Sequence, Union, Tuple, Optional, Type, TypeVar, cast
 from enum import Enum
 from dataclasses import dataclass, fields, field
-from uuid import uuid4
 
 from bs4 import BeautifulSoup, Tag, PageElement
 
@@ -163,19 +163,18 @@ class DocumentContext(SessionContext):
     and the settings used for parsing.
     """
 
-    filename: str
+    input_path: Path | None
     """
-    Name of the file being processed (without extension).
+    Path of the file / directory being processed.
     This is used to identify the parsing context and name the output files.
     """
 
-    pdf: Optional[bytes]
+    pdf: bytes | None
     """
     PDF of the arrêté. This is used for OCR processing.
-    TODO : support for streaming PDF content
     """
 
-    pages: Optional[Sequence[str]]
+    pages: Sequence[str] | None
     """
     Contents of the markdown pages after OCR processing.
     """
@@ -193,17 +192,15 @@ class DocumentContext(SessionContext):
         cls: Type[DocumentContextType],
         session_context: SessionContext,
         soup: BeautifulSoup,
-        filename: str | None = None,
+        input_path: Path | None = None,
         pdf: Optional[bytes] = None,
         pages: Sequence[str] | None = None,
     ) -> DocumentContextType:
-        if filename is None:
-            filename = str(uuid4())
         return cls(
             **{
                 field.name: getattr(session_context, field.name) for field in fields(SessionContext)
             },
-            filename=filename,
+            input_path=input_path,
             pdf=pdf,
             pages=pages,
             soup=soup,

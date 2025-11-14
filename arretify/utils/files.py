@@ -30,6 +30,8 @@ def is_ocr_path(file_path: Path) -> bool:
 
 
 def is_ocr_pages_dir(file_path: Path) -> bool:
-    return file_path.is_dir() and all(
-        child.is_file() and is_ocr_path(child) for child in file_path.iterdir()
-    )
+    return file_path.is_dir() and all(is_ocr_page_path(child) for child in file_path.iterdir())
+
+
+def is_ocr_page_path(file_path: Path) -> bool:
+    return is_ocr_path(file_path) and file_path.stem.isdigit()
