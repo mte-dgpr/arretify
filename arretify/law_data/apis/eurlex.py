@@ -19,13 +19,15 @@
 from typing import Literal
 from dataclasses import replace as dataclass_replace
 
+from zeep.exceptions import Error as ZeepError
+
 from arretify._vendor.clients_api_droit.clients_api_droit.eurlex import (
     EurlexClient,
     EurlexSettings,
     search_act,
 )
 
-from arretify.errors import SettingsError
+from arretify.errors import ErrorCodes, SettingsError, catch_and_convert_into_arretify_error
 from arretify.types import SessionContext
 from arretify.utils.dev_cache import use_dev_cache
 
@@ -53,6 +55,7 @@ def initialize_eurlex_client(session_context: SessionContext) -> SessionContext:
 
 
 @use_dev_cache
+@catch_and_convert_into_arretify_error(ZeepError, ErrorCodes.law_data_api_error)
 def get_eu_act_url_with_year_and_num(
     session_context: SessionContext,
     act_type: ActType,
