@@ -32,7 +32,6 @@ _LOGGER = logging.getLogger(__name__)
 
 def mistral_ocr(
     document_context: DocumentContext,
-    replace_images_placeholders: bool,
     ocr_pages_dir_factory: Callable[[DocumentContext], Path] | None,
 ) -> DocumentContext:
     if not document_context.mistral_client:
@@ -46,12 +45,11 @@ def mistral_ocr(
     for i, page in enumerate(_call_mistral_ocr_api(document_context)):
         page_ocr = page.markdown
 
-        if replace_images_placeholders:
-            for image in page.images:
-                page_ocr = page_ocr.replace(
-                    f"![{image.id}]({image.id})",
-                    f"![{image.id}]({image.image_base64})",
-                )
+        for image in page.images:
+            page_ocr = page_ocr.replace(
+                f"![{image.id}]({image.id})",
+                f"![{image.id}]({image.image_base64})",
+            )
 
         ocr_pages.append(page_ocr)
         page_index = i + 1

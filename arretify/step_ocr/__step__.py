@@ -33,7 +33,6 @@ _OCR_PAGES_DIR_FACTORY_SENTINEL = Sentinel("ocr_pages_dir_factory")
 
 def step_ocr(
     document_context: DocumentContext,
-    replace_images_placeholders: bool = True,
     ocr_pages_dir_factory: (
         Callable[[DocumentContext], Path] | None | Sentinel
     ) = _OCR_PAGES_DIR_FACTORY_SENTINEL,
@@ -54,6 +53,5 @@ def step_ocr(
 
     return mistral_ocr(
         document_context,
-        replace_images_placeholders=replace_images_placeholders,
         ocr_pages_dir_factory=ocr_pages_dir_factory_,
     )
