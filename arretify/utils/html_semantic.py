@@ -18,7 +18,7 @@
 #
 from dataclasses import dataclass
 from enum import Enum
-from typing import Sequence, TypeGuard, Annotated, TypeVar, Type, Generic, cast
+from typing import Callable, Sequence, TypeGuard, Annotated, TypeVar, Type, Generic, cast
 
 from pydantic import (
     BaseModel,
@@ -30,7 +30,7 @@ from pydantic import (
 from pydantic.functional_serializers import PlainSerializer
 
 from arretify.errors import ErrorCodes
-from arretify.types import ProtectedTagOrStr, ProtectedTag
+from arretify.types import ProtectedSoup, ProtectedTagOrStr, ProtectedTag
 from arretify.utils.html import GROUP_ID_ATTR, TAG_ID_ATTR, is_tag, set_attribute
 
 
@@ -160,17 +160,28 @@ class SemanticTagData(BaseModel):
 class SemanticTagSpec(Generic[TSemanticTagData]):
     """
     Defines the structure and behavior of a semantic HTML tag type.
-
-    Attributes:
-        spec_name: Unique identifier for the semantic tag type
-        tag_name: HTML tag name to use (e.g., 'div', 'span', 'section')
-        data_model: Pydantic model class for validating tag data attributes
     """
 
     spec_name: str
-    tag_name: str
+    """
+    Unique identifier for the semantic tag type.
+    """
+
+    tag_name: str | Callable[[ProtectedSoup, TSemanticTagData], ProtectedTag]
+    """
+    HTML tag name to use (e.g., 'div', 'span', 'section'), or a callable that creates
+    a ProtectedTag given the semantic tag data (useful for example for headings).
+    """
+
     data_model: Type[TSemanticTagData]
+    """Pydantic model class for validating tag data attributes"""
+
     allowed_contents: Contents.Any = tuple()
+    """
+    Allowed contents inside this semantic tag.
+    Use Contents.Str, Contents.Tag, Contents.SemanticTag to specify allowed types.
+    """
+
     is_allowed_anywhere: bool = False
     """
     Whether this semantic tag can appear anywhere in the document.

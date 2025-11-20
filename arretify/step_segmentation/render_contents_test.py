@@ -357,7 +357,7 @@ class TestRenderSection(BaseTestCase):
         assert normalized_html_str(str(result)) == normalized_html_str(
             """
             <section data-spec="section" data-number="1" data-title="Disposition" data-type="article">
-                <h2 data-spec="section_title">
+                <h2 data-level="0" data-spec="section_title">
                     Article 1 : Disposition
                 </h2>
                 <div data-spec="alinea" data-number="1">
@@ -390,7 +390,7 @@ class TestRenderSectionTitle(BaseTestCase):
         # Assert
         assert normalized_html_str(str(result)) == normalized_html_str(
             """
-            <h2 data-spec="section_title">
+            <h2 data-level="0" data-spec="section_title">
                 Titre I - Introduction
             </h2>
             """

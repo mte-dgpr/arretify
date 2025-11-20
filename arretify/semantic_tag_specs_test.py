@@ -17,7 +17,13 @@
 # limitations under the License.
 #
 import unittest
-from arretify.semantic_tag_specs import DocumentReferenceData
+
+from bs4 import BeautifulSoup
+from arretify.semantic_tag_specs import (
+    DocumentReferenceData,
+    SectionTitleData,
+    _make_section_title_tag,
+)
 from arretify.types import DocumentType
 
 
@@ -55,3 +61,34 @@ class TestDocumentReferenceDataValidation(unittest.TestCase):
         # ACT & ASSERT
         with self.assertRaises(ValueError):
             DocumentReferenceData(type=doc_type, date=not_a_date)
+
+
+class TestSectionTitleTag(unittest.TestCase):
+
+    def setUp(self):
+        self.soup = BeautifulSoup("", "html.parser")
+
+    def test_section_title_h2_to_h6(self):
+        # ARRANGE
+        data = SectionTitleData(level=0)
+        # ACT
+        tag = _make_section_title_tag(self.soup, data)
+        # ASSERT
+        self.assertEqual(tag.name, "h2")
+
+    def test_section_title_h6(self):
+        # ARRANGE
+        data = SectionTitleData(level=4)
+        # ACT
+        tag = _make_section_title_tag(self.soup, data)
+        # ASSERT
+        self.assertEqual(tag.name, "h6")
+
+    def test_section_title_div_aria_level(self):
+        # ARRANGE
+        data = SectionTitleData(level=5)
+        # ACT
+        tag = _make_section_title_tag(self.soup, data)
+        # ASSERT
+        self.assertEqual(tag.name, "div")
+        self.assertEqual(tag.attrs.get("aria-level"), "7")

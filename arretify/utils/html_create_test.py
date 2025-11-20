@@ -20,7 +20,14 @@ import unittest
 
 from bs4 import BeautifulSoup
 
-from arretify.types import ProtectedTagOrStr, protect_soup, unprotect_tag
+from arretify.types import (
+    ProtectedSoup,
+    ProtectedTag,
+    ProtectedTagOrStr,
+    protect_soup,
+    unprotect_tag,
+)
+from arretify.utils.html import set_non_data_attributes
 from arretify.utils.html_semantic import (
     Contents,
     SemanticTagData,
@@ -31,6 +38,7 @@ from arretify.utils.html_semantic_test import SemanticTagDataTestCase
 
 from .html_create import (
     InvalidContentsError,
+    _make_tag,
     _unprotect_page_elements,
     _validate_semantic_tag_contents,
     _validate_tag_contents,
@@ -45,25 +53,6 @@ class TestMakeNewTag(unittest.TestCase):
 
     def setUp(self):
         self.soup = BeautifulSoup("", features="html.parser")
-
-    def test_make_new_tag_from_dynamically_mutated_list_of_children(self):
-        """
-        When passing an element as `contents` to `make_new_tag`, that element
-        is moved to another parent during the call, and that shouldn't affect
-        iteration over the original list.
-        """
-        # Arrange
-        soup = BeautifulSoup("<span>bla</span><span>blo</span>", features="html.parser")
-
-        # Act
-        elements = []
-        for child in soup.contents:
-            elements.append(make_tag(self.soup, "div", contents=[child]))
-
-        # Assert
-        assert len(elements) == 2
-        assert str(elements[0]) == "<div><span>bla</span></div>"
-        assert str(elements[1]) == "<div><span>blo</span></div>"
 
     def test_with_contents_iterator(self):
         # ARRANGE
@@ -162,6 +151,61 @@ class TestMakeSemanticTag(SemanticTagDataTestCase):
 
         # ASSERT
         assert str(tag) == '<div data-spec="test_no_data">Item 0Item 1Item 2</div>'
+
+    def test_with_other_semantic_tags_in_contents(self):
+        # ARRANGE
+        child_spec = create_semantic_tag_spec_no_data(
+            spec_name="child_spec",
+            tag_name="span",
+            allowed_contents=(Contents.Str(),),
+        )
+        parent_spec = create_semantic_tag_spec_no_data(
+            spec_name="parent_spec",
+            tag_name="div",
+            allowed_contents=(Contents.SemanticTag(child_spec.spec_name),),
+        )
+        contents = [
+            make_semantic_tag(self.soup, child_spec, contents=["child text"]),
+        ]
+
+        # ACT
+        tag = make_semantic_tag(self.soup, parent_spec, contents=contents)
+
+        # ASSERT
+        assert str(tag) == (
+            '<div data-spec="parent_spec">'
+            '<span data-spec="child_spec">child text</span>'
+            "</div>"
+        )
+
+    def test_callable_tag_name(self) -> None:
+        """
+        Test tag generation with callable tag_name in SemanticTagSpec.
+        """
+
+        # ARRANGE
+        class CustomData(SemanticTagData):
+            value: str
+
+        def _tag_name_func(soup: ProtectedSoup, data: CustomData) -> ProtectedTag:
+            tag = _make_tag(soup, "span")
+            set_non_data_attributes(tag, {"alt": data.value})
+            return tag
+
+        spec = SemanticTagSpec(
+            spec_name="span_spec",
+            tag_name=_tag_name_func,
+            data_model=CustomData,
+            allowed_contents=(Contents.Str(),),
+        )
+
+        # ACT
+        tag = make_semantic_tag(self.soup, spec, data=CustomData(value="some text"))
+
+        # ASSERT
+        assert (
+            str(tag) == '<span alt="some text" data-spec="span_spec" data-value="some text"></span>'
+        )
 
     def test_attrs_parameter(self):
         # ACT
@@ -467,3 +511,71 @@ class TestValidateTagContents(unittest.TestCase):
 
         # ACT & ASSERT
         _validate_tag_contents([semantic_tag])
+
+
+class TestEdgesCases(unittest.TestCase):
+    """
+    It is really easy to shoot oneself in the foot when mixing up
+    iterations over elements and modifying the document structure.
+    """
+
+    def test_keeps_unchanged_contents_references(self):
+        """
+        Consider the following example:
+
+            >>> soup = BeautifulSoup("<div class="some-class"><span>to keep</span></div>", features="html.parser")
+            >>> for tag in soup.select(".some-class, .some-class *"):
+            ...     # first process the `<div>` tag, and then the `<span>` tag inside it.
+            ...     replace_contents(tag, clone_contents(tag.contents))
+
+        If `replace_contents` is implemented by cloning its new contents before inserting them,
+        processing the div tag will cause the span tag to be removed from the document.
+
+        When the loop continues to the span tag, it will no longer be in the document,
+        causing errors or unexpected behavior.
+        """  # noqa: E501
+        # ARRANGE
+        soup = BeautifulSoup("", features="html.parser")
+        child = make_tag(soup, "span", contents=["to keep"])
+        tag = make_tag(soup, "div", contents=[child])
+
+        new_contents = [
+            "new ",
+            make_tag(soup, "span", contents=["content"]),
+            child,
+        ]
+
+        # ACT
+        updated_tag = replace_contents(tag, new_contents)
+
+        # ASSERT
+        assert updated_tag is tag
+        assert str(updated_tag) == "<div>new <span>content</span><span>to keep</span></div>"
+        assert child.parent is updated_tag
+
+    def test_make_new_tag_from_dynamically_mutated_list_of_children(self):
+        """
+        Consider the following example:
+
+            >>> soup = BeautifulSoup("<span>bla</span><span>blo</span>", features="html.parser")
+            >>> elements = []
+            >>> for child in soup.contents:
+            ...     # Wrap each child in a new <div> tag
+            ...     elements.append(make_new_tag(soup, "div", contents=[child]))
+
+        When passing an element as `contents` to `make_new_tag`, that element
+        is moved to another parent during the call. This means that `soup.contents`
+        is being mutated during the iteration, which can lead to unexpected behavior.
+        """
+        # Arrange
+        soup = BeautifulSoup("<span>bla</span><span>blo</span>", features="html.parser")
+
+        # Act
+        elements = []
+        for child in soup.contents:
+            elements.append(make_tag(soup, "div", contents=[child]))
+
+        # Assert
+        assert len(elements) == 2
+        assert str(elements[0]) == "<div><span>bla</span></div>"
+        assert str(elements[1]) == "<div><span>blo</span></div>"
