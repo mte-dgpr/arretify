@@ -273,6 +273,33 @@ class TestRenderList(BaseTestCase):
             """
         )
 
+    def test_render_list_numbers(self):
+        # Arrange
+        tag = make_semantic_tag(
+            self.soup,
+            ListSegmentationSpec,
+            contents=[
+                *make_text_spans(
+                    self.soup,
+                    " - First item",
+                    "- Second item",
+                ),
+            ],
+        )
+
+        # Act
+        list_tag = render_list(self.context, tag)
+
+        # Assert
+        assert normalized_html_str(str(list_tag)) == normalized_html_str(
+            """
+            <ul>
+                <li>- First item</li>
+                <li>- Second item</li>
+            </ul>
+            """
+        )
+
 
 class TestRenderBlockQuote(BaseTestCase):
 

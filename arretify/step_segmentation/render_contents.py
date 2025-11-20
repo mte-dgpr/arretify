@@ -16,6 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+import logging
 from typing import Iterator, List, Sequence, Tuple
 
 from arretify.regex_utils.core import PatternProxy
@@ -62,6 +63,9 @@ from arretify.utils.markdown_parsing import (
     TABLE_HEADER_SEPARATOR_PATTERN,
     parse_markdown_table,
 )
+
+
+_LOGGER = logging.getLogger(__name__)
 
 
 @iter_func_to_list
@@ -279,8 +283,26 @@ def render_list(
     context: DocumentContext,
     tag: ProtectedTag,
 ) -> ProtectedTag:
-    elements, ul = _render_list(context, tag.contents)
-    assert len(elements) == 0, "Expected all lines to be consumed in list rendering"
+    elements = list(tag.contents)
+    iteration_counter = 0
+    ul = None
+    # With a well-formed list, the following loop should iterate only once.
+    # However, we handle here the case of malformed lists,
+    # where indentation is not perfectly consistent, e.g. :
+    #  - Item 1
+    # - Item 2
+    while elements:
+        elements, new_ul = _render_list(context, elements)
+        if ul is None:
+            ul = new_ul
+        else:
+            ul = replace_contents(ul, ul.contents + new_ul.contents)
+        iteration_counter += 1
+
+    if iteration_counter > 1:
+        _LOGGER.warning("List could be malformed due to inconsistent indentation.")
+
+    assert ul is not None, "Expected to have a list for rendering but found none"
     return ul
 
 
