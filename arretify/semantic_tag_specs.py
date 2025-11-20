@@ -24,7 +24,8 @@ from arretify.utils.dates import (
     parse_date_str,
     parse_year_str,
 )
-from arretify.types import DocumentType
+from arretify.types import DocumentType, ProtectedSoup, ProtectedTag
+from arretify.utils.html_create import make_tag
 from arretify.utils.html_semantic import (
     SemanticTagSpec,
     SemanticTagData,
@@ -261,44 +262,27 @@ HeaderSpec = create_semantic_tag_spec_no_data(
 # -------------------- Main + appendix structure -------------------- #
 
 
-SectionTitle1Spec = create_semantic_tag_spec_no_data(
-    spec_name="section_title", tag_name="h2", allowed_contents=(Contents.Str(),)
+class SectionTitleData(SemanticTagData):
+    level: int
+
+
+# Starts at h2, because h1 is used for the main title of the arrete.
+# For level > h6, we use div with aria-level attribute.
+def _make_section_title_tag(soup: ProtectedSoup, data: SectionTitleData) -> ProtectedTag:
+    document_level = data.level + 2
+    if data.level <= 4:
+        return make_tag(soup, f"h{document_level}")
+    else:
+        tag = make_tag(soup, "div", attrs={"aria-level": str(document_level), "role": "heading"})
+        return tag
+
+
+SectionTitleSpec: SemanticTagSpec[SectionTitleData] = SemanticTagSpec(
+    spec_name="section_title",
+    tag_name=_make_section_title_tag,
+    data_model=SectionTitleData,
+    allowed_contents=(Contents.Str(),),
 )
-
-SectionTitle2Spec = create_semantic_tag_spec_no_data(
-    spec_name="section_title", tag_name="h3", allowed_contents=(Contents.Str(),)
-)
-
-SectionTitle3Spec = create_semantic_tag_spec_no_data(
-    spec_name="section_title", tag_name="h4", allowed_contents=(Contents.Str(),)
-)
-
-SectionTitle4Spec = create_semantic_tag_spec_no_data(
-    spec_name="section_title", tag_name="h5", allowed_contents=(Contents.Str(),)
-)
-
-SectionTitle5Spec = create_semantic_tag_spec_no_data(
-    spec_name="section_title", tag_name="h6", allowed_contents=(Contents.Str(),)
-)
-
-SectionTitle6Spec = create_semantic_tag_spec_no_data(
-    spec_name="section_title", tag_name="h7", allowed_contents=(Contents.Str(),)
-)
-
-SectionTitle7Spec = create_semantic_tag_spec_no_data(
-    spec_name="section_title", tag_name="h8", allowed_contents=(Contents.Str(),)
-)
-
-
-SectionTitleSpecs = [
-    SectionTitle1Spec,
-    SectionTitle2Spec,
-    SectionTitle3Spec,
-    SectionTitle4Spec,
-    SectionTitle5Spec,
-    SectionTitle6Spec,
-    SectionTitle7Spec,
-]
 
 
 class AlineaData(SemanticTagData):

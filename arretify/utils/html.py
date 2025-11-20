@@ -26,6 +26,7 @@ from arretify.types import (
     ProtectedTag,
     TagGroupId,
     TagId,
+    protect_tag,
     unprotect_tag,
 )
 from arretify.utils.functional import iter_func_to_list
@@ -104,6 +105,19 @@ def _set_attribute(
 ) -> ProtectedTag:
     unprotect_tag(tag)[attr_name] = attr_value
     return tag
+
+
+def set_non_data_attributes(
+    tag: ProtectedTag,
+    attrs: dict[str, str] | None,
+) -> ProtectedTag:
+    unprotected_tag = unprotect_tag(tag)
+    if attrs:
+        for key, value in attrs.items():
+            if key.startswith("data-"):
+                raise ValueError("Attribute data-* are reserved for semantic tag data")
+            unprotected_tag[key] = value
+    return protect_tag(unprotected_tag)
 
 
 def get_group_id(tag: ProtectedTag) -> TagGroupId | None:

@@ -29,7 +29,8 @@ from arretify.semantic_tag_specs import (
     PageSeparatorSpec,
     SectionData,
     SectionSpec,
-    SectionTitleSpecs,
+    SectionTitleData,
+    SectionTitleSpec,
 )
 from arretify.step_segmentation.core import get_string
 from arretify.step_segmentation.header import VISA_MOTIFS_RENDER_SPECS
@@ -52,7 +53,6 @@ from arretify.types import DocumentContext, ProtectedTag, ProtectedTagOrStr
 from arretify.utils.functional import iter_func_to_list
 from arretify.utils.html_create import make_tag, make_semantic_tag, replace_contents
 from arretify.utils.html_semantic import (
-    SemanticTagData,
     get_semantic_tag_data,
     get_semantic_tag_spec,
     is_semantic_tag,
@@ -128,8 +128,9 @@ def render_section_title(
 
     segmentation_section_data = get_semantic_tag_data(SectionTitleSegmentationSpec, tag)
     assert segmentation_section_data.level is not None, "Section level must be defined"
-    SectionTitleSpec = SectionTitleSpecs[segmentation_section_data.level]
-    section_title_data = SemanticTagData(error_codes=segmentation_section_data.error_codes)
+    section_title_data = SectionTitleData(
+        level=segmentation_section_data.level, error_codes=segmentation_section_data.error_codes
+    )
 
     return make_semantic_tag(
         context.protected_soup,

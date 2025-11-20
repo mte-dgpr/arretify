@@ -29,7 +29,7 @@ from arretify.types import (
     unprotect_soup,
     unprotect_tag,
 )
-from arretify.utils.html import is_tag, set_attribute
+from arretify.utils.html import is_tag, set_attribute, set_non_data_attributes
 from arretify.utils.html_semantic import (
     _SPEC_DATA_ATTR,
     Contents,
@@ -55,6 +55,10 @@ throughout the document.
 """
 
 
+class InvalidContentsError(ValueError):
+    pass
+
+
 def wrap_in_tag(
     soup: ProtectedSoup,
     tag_name: str,
@@ -63,7 +67,7 @@ def wrap_in_tag(
     wrapped: list[ProtectedTag] = []
     for element in elements:
         if isinstance(element, str) and element.strip():
-            container = make_tag(soup, tag_name)
+            container = _make_tag(soup, tag_name)
             wrapped.append(container)
             unprotect_tag(container).append(element)
     return wrapped
@@ -75,13 +79,11 @@ def make_tag(
     contents: Iterable[ProtectedTagOrStr] | None = None,
     attrs: dict[str, str] | None = None,
 ) -> ProtectedTag:
-    if contents is None:
-        contents = []
-    # If contents is an iterator, convert it to a list to keep the elements
-    else:
-        contents = list(contents)
+    contents = _prepare_contents_for_make_tag(contents)
+    tag = _make_tag(soup, tag_name)
+    set_non_data_attributes(tag, attrs)
     _validate_tag_contents(contents)
-    return _make_tag(soup, tag_name, contents=contents, attrs=attrs)
+    return _replace_contents(tag, contents)
 
 
 def make_semantic_tag(
@@ -91,16 +93,20 @@ def make_semantic_tag(
     data: TSemanticTagData | None = None,
     attrs: dict[str, str] | None = None,
 ) -> ProtectedTag:
-    if contents is None:
-        contents = []
-    # If contents is an iterator, convert it to a list to keep the elements
-    else:
-        contents = list(contents)
+    contents = _prepare_contents_for_make_tag(contents)
+    if data is None:
+        data = spec.data_model()
 
     # Create the HTML tag
-    tag = _make_tag(soup, spec.tag_name, contents=contents, attrs=attrs)
+    if isinstance(spec.tag_name, str):
+        tag = _make_tag(soup, spec.tag_name)
+    else:
+        tag = spec.tag_name(soup, data)
 
-    return upgrade_to_semantic_tag(tag, spec, data)
+    tag = upgrade_to_semantic_tag(tag, spec, data)
+    set_non_data_attributes(tag, attrs)
+    _validate_semantic_tag_contents(spec, contents)
+    return _replace_contents(tag, contents)
 
 
 def upgrade_to_semantic_tag(
@@ -116,39 +122,6 @@ def upgrade_to_semantic_tag(
     return protected_tag
 
 
-def _make_tag(
-    soup: ProtectedSoup,
-    tag_name: str,
-    contents: Iterable[ProtectedTagOrStr],
-    attrs: dict[str, str] | None = None,
-) -> ProtectedTag:
-    # We must be careful not to move elements from one part of the tree to another
-    # because that might have unexpected side-effects.
-    # For example, if iterating over the children of a tag and moving one of them
-    # to a new tag, the list currently being iterated is modified.
-    # This is why we work with copies here.
-    cloned_contents: list[ProtectedTagOrStr] = [copy(element) for element in contents]
-
-    element = unprotect_soup(soup).new_tag(tag_name)
-    element.extend(
-        _unprotect_page_elements(
-            split_and_map_elements(
-                cloned_contents,
-                group_strings_splitter,
-                merge_strings,
-            )
-        )
-    )
-
-    if attrs:
-        for key, value in attrs.items():
-            if key.startswith("data-"):
-                raise ValueError("Attribute data-* are reserved for semantic tag data")
-            element[key] = value
-
-    return protect_tag(element)
-
-
 def replace_contents(
     protected_tag: ProtectedTag,
     contents: Sequence[ProtectedTagOrStr],
@@ -159,18 +132,51 @@ def replace_contents(
     else:
         _validate_tag_contents(contents)
 
+    return _replace_contents(protected_tag, contents)
+
+
+def _prepare_contents_for_make_tag(
+    contents: Iterable[ProtectedTagOrStr] | None,
+) -> Sequence[ProtectedTagOrStr]:
+    if contents is None:
+        return []
+    # 1. We must be careful not to move elements from one part of the tree to another
+    # because that might have unexpected side-effects. For example, if iterating
+    # over the children of a tag and moving one of them to a new tag, the list
+    # currently being iterated is modified. This is why we work with copies here.
+    # 2. Also, if contents is an iterator, we need to convert it to a list to keep
+    # the elements.
+    else:
+        return [copy(element) for element in contents]
+
+
+def _make_tag(
+    soup: ProtectedSoup,
+    tag_name: str,
+) -> ProtectedTag:
+    return protect_tag(unprotect_soup(soup).new_tag(tag_name))
+
+
+def _replace_contents(
+    protected_tag: ProtectedTag,
+    contents: Sequence[ProtectedTagOrStr],
+) -> ProtectedTag:
     tag = unprotect_tag(protected_tag)
     tag.clear()
-    # NOTE : `contents` must be a list and not an iterator because
-    # we're mutating the tree here and might have race conditions
-    # provoking unexpected behaviors (e.g. `contents` being a iterator
-    # over `tag.children`, but `tag.clear` removing all of them).
+
+    # Also, `contents` must be a list and not an iterator because we're mutating
+    # the tree here and might have race conditions provoking unexpected behaviors
+    # (e.g. `contents` being an iterator over `tag.children`, but `tag.clear`
+    # removing all of them).
+    contents = split_and_map_elements(
+        # Group consecutive string elements and merge
+        # them into a single string to avoid extra spaces.
+        list(contents),
+        group_strings_splitter,
+        merge_strings,
+    )
     tag.extend(_unprotect_page_elements(contents))
     return protect_tag(tag)
-
-
-class InvalidContentsError(ValueError):
-    pass
 
 
 def _validate_semantic_tag_contents(
