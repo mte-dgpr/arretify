@@ -17,8 +17,8 @@
 # limitations under the License.
 #
 from dataclasses import dataclass
-from typing import List
 from pathlib import Path
+from typing import List
 
 CURRENT_DIR = Path(__file__).parent.resolve()
 EXAMPLES_DIR = (CURRENT_DIR / ".." / "examples").resolve()

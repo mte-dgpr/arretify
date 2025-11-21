@@ -16,25 +16,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from .split import split_string_with_regex
-from .functional import (
-    flat_map_regex_tree_match,
-    map_regex_tree_match,
-    map_matches,
-    iter_regex_tree_match_page_elements_or_strings,
-    filter_regex_tree_match_children,
-)
-from .merge import merge_matches_with_siblings
 from . import regex_tree
-from .core import PatternProxy, MatchProxy, safe_group
+from .core import MatchProxy, PatternProxy, safe_group
+from .functional import (
+    filter_regex_tree_match_children,
+    flat_map_regex_tree_match,
+    iter_regex_tree_match_page_elements_or_strings,
+    map_matches,
+    map_regex_tree_match,
+)
 from .helpers import (
+    join_with_or,
+    lookup_normalized_version,
+    named_group,
+    normalize_string,
+    remove_accents,
+    repeated_with_separator,
     sub_with_match,
     without_named_groups,
-    join_with_or,
-    remove_accents,
-    named_group,
-    lookup_normalized_version,
-    repeated_with_separator,
-    normalize_string,
 )
+from .merge import merge_matches_with_siblings
+from .split import split_string_with_regex
 from .types import Settings

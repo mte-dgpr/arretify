@@ -20,9 +20,10 @@ import unittest
 
 from bs4 import BeautifulSoup
 
-from arretify.types import DocumentType, SectionType
 from arretify.semantic_tag_specs import DocumentReferenceData, SectionReferenceData
-from .references import build_reference_tree, traverse_reference_tree, iter_reference_trees
+from arretify.types import DocumentType, SectionType
+
+from .references import build_reference_tree, iter_reference_trees, traverse_reference_tree
 
 
 class TestBuildReferenceTree(unittest.TestCase):

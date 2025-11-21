@@ -16,40 +16,31 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import (
-    Sequence,
-    cast,
-    Iterator,
-)
+from typing import Iterator, Sequence, cast
 
 from arretify.parsing_utils.patterns import is_continuing_sentence
+from arretify.regex_utils import MatchProxy, PatternProxy
 from arretify.semantic_tag_specs import AddressSpec, PageFooterSpec, PageSeparatorSpec
 from arretify.step_segmentation.semantic_tag_specs import (
     TextSpanSegmentationData,
     TextSpanSegmentationSpec,
 )
-from arretify.types import DocumentContext, ProtectedTagOrStr, ProtectedTag
+from arretify.types import DocumentContext, ProtectedTag, ProtectedTagOrStr
 from arretify.utils.functional import iter_func_to_list
-from arretify.regex_utils import PatternProxy, MatchProxy
 from arretify.utils.html_create import make_semantic_tag
-from arretify.utils.html_semantic import (
-    SemanticTagSpec,
-    get_semantic_tag_data,
-    is_semantic_tag,
-)
-from arretify.utils.strings import merge_strings
+from arretify.utils.html_semantic import SemanticTagSpec, get_semantic_tag_data, is_semantic_tag
 from arretify.utils.split_merge import (
-    make_while_splitter,
-    make_single_line_splitter,
-    Splitter,
     Probe,
     RawSplit,
-    split_elements,
-    merge_splitted_elements,
     SplitMatch,
+    Splitter,
+    make_single_line_splitter,
+    make_while_splitter,
+    merge_splitted_elements,
     split_before_match,
+    split_elements,
 )
-
+from arretify.utils.strings import merge_strings
 
 TRANSPARENT_TAG_SPECS: list[SemanticTagSpec] = [PageSeparatorSpec, PageFooterSpec]
 """

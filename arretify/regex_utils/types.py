@@ -20,7 +20,6 @@ from dataclasses import dataclass
 from types import EllipsisType
 from typing import Tuple
 
-
 PatternString = str
 GroupName = str
 QuantifierRange = Tuple[int, int | EllipsisType]

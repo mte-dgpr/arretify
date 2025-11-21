@@ -18,21 +18,20 @@
 #
 from dataclasses import dataclass
 from enum import Enum
-from typing import Callable, Sequence, TypeGuard, Annotated, TypeVar, Type, Generic, cast
+from typing import Annotated, Callable, Generic, Sequence, Type, TypeGuard, TypeVar, cast
 
 from pydantic import (
     BaseModel,
     BeforeValidator,
-    SerializerFunctionWrapHandler,
     ConfigDict,
+    SerializerFunctionWrapHandler,
     model_serializer,
 )
 from pydantic.functional_serializers import PlainSerializer
 
 from arretify.errors import ErrorCodes
-from arretify.types import ProtectedSoup, ProtectedTagOrStr, ProtectedTag
+from arretify.types import ProtectedSoup, ProtectedTag, ProtectedTagOrStr
 from arretify.utils.html import GROUP_ID_ATTR, TAG_ID_ATTR, is_tag, set_attribute
-
 
 _SPEC_DATA_ATTR = "data-spec"
 _RESERVED_DATA_ATTRIBUTES = [_SPEC_DATA_ATTR, TAG_ID_ATTR, GROUP_ID_ATTR]

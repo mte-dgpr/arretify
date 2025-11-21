@@ -42,8 +42,8 @@ from .html_create import (
     _unprotect_page_elements,
     _validate_semantic_tag_contents,
     _validate_tag_contents,
-    make_tag,
     make_semantic_tag,
+    make_tag,
     replace_contents,
     upgrade_to_semantic_tag,
 )

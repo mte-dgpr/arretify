@@ -17,48 +17,34 @@
 # limitations under the License.
 #
 
-from typing import (
-    Iterator,
-    Sequence,
-)
+from typing import Iterator, Sequence
 
-from arretify.types import (
-    ProtectedTag,
-    TagGroupId,
-    DocumentContext,
-    SectionType,
-    ProtectedTagOrStr,
+from arretify.parsing_utils.numbering import (
+    EME_PATTERN_S,
+    ORDINAL_PATTERN_S,
+    ROMAN_NUMERALS_PATTERN_S,
+    ordinal_str_to_int,
+    roman_str_to_int,
 )
-from arretify.parsing_utils.numbering import ROMAN_NUMERALS_PATTERN_S
-from arretify.semantic_tag_specs import (
-    SectionReferenceData,
-    SectionReferenceSpec,
+from arretify.parsing_utils.patterns import ET_VIRGULE_PATTERN_S
+from arretify.regex_utils import (
+    filter_regex_tree_match_children,
+    iter_regex_tree_match_page_elements_or_strings,
+    map_regex_tree_match,
+    named_group,
+    regex_tree,
+    repeated_with_separator,
 )
+from arretify.semantic_tag_specs import SectionReferenceData, SectionReferenceSpec
+from arretify.types import DocumentContext, ProtectedTag, ProtectedTagOrStr, SectionType, TagGroupId
 from arretify.utils.functional import chain_functions
 from arretify.utils.html import make_group_id, set_group_id
 from arretify.utils.html_create import make_semantic_tag
 from arretify.utils.html_split_merge import make_regex_tree_splitter
 from arretify.utils.split_merge import (
+    flat_map_splitted_elements,
     split_and_map_elements,
     split_elements,
-    flat_map_splitted_elements,
-)
-from arretify.parsing_utils.patterns import (
-    ET_VIRGULE_PATTERN_S,
-)
-from arretify.parsing_utils.numbering import (
-    EME_PATTERN_S,
-    ORDINAL_PATTERN_S,
-    ordinal_str_to_int,
-    roman_str_to_int,
-)
-from arretify.regex_utils import (
-    regex_tree,
-    map_regex_tree_match,
-    iter_regex_tree_match_page_elements_or_strings,
-    filter_regex_tree_match_children,
-    repeated_with_separator,
-    named_group,
 )
 
 # TODO :

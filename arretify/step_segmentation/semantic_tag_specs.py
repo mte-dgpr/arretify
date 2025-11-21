@@ -17,6 +17,7 @@
 # limitations under the License.
 #
 from pydantic import field_validator
+
 from arretify.semantic_tag_specs import (
     AlineaData,
     ArreteTitleSpec,
@@ -30,8 +31,8 @@ from arretify.semantic_tag_specs import (
 from arretify.utils.html_semantic import (
     Contents,
     IntList,
-    SemanticTagSpec,
     SemanticTagData,
+    SemanticTagSpec,
     create_semantic_tag_spec_no_data,
 )
 

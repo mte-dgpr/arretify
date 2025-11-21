@@ -18,15 +18,12 @@
 #
 import logging
 
+from arretify.law_data.apis.eurlex import ActType, get_eu_act_url_with_year_and_num
 from arretify.semantic_tag_specs import DocumentReferenceSpec
 from arretify.types import DocumentContext, ProtectedTag
-from arretify.law_data.apis.eurlex import (
-    get_eu_act_url_with_year_and_num,
-    ActType,
-)
 from arretify.utils.html_semantic import get_semantic_tag_data
-from .core import update_document_reference_tag_href
 
+from .core import update_document_reference_tag_href
 
 _LOGGER = logging.getLogger(__name__)
 

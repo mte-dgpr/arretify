@@ -18,20 +18,12 @@
 #
 from typing import Sequence
 
-
-from arretify.regex_utils import (
-    regex_tree,
-    iter_regex_tree_match_page_elements_or_strings,
-)
-from arretify.types import ProtectedTagOrStr, DocumentContext, DocumentType
-from arretify.semantic_tag_specs import (
-    DocumentReferenceData,
-    DocumentReferenceSpec,
-)
+from arretify.regex_utils import iter_regex_tree_match_page_elements_or_strings, regex_tree
+from arretify.semantic_tag_specs import DocumentReferenceData, DocumentReferenceSpec
+from arretify.types import DocumentContext, DocumentType, ProtectedTagOrStr
 from arretify.utils.html_create import make_semantic_tag
 from arretify.utils.html_split_merge import make_regex_tree_splitter
 from arretify.utils.split_merge import split_and_map_elements
-
 
 SELF_NODE = regex_tree.Group(
     regex_tree.Branching(

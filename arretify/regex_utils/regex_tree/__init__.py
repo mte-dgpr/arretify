@@ -23,12 +23,6 @@ Custom regex tree package. It provides the following features:
 - Possibility to iterate the results of a regex match and recover the named groups
 """
 
-from .compile import (
-    Group,
-    Branching,
-    Sequence,
-    Literal,
-    Repeat,
-    Node,
-)
-from .types import RegexTreeMatch as Match, GroupNode, MatchDict
+from .compile import Branching, Group, Literal, Node, Repeat, Sequence
+from .types import GroupNode, MatchDict
+from .types import RegexTreeMatch as Match

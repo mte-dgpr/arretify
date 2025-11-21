@@ -16,33 +16,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import Dict, Sequence, Iterator
+from typing import Dict, Iterator, Sequence
 
-from arretify.utils.functional import iter_func_to_list, chain_functions
 from arretify.parsing_utils.dates import DATE_NODE, render_date_regex_tree_match
-from arretify.utils.html import is_tag
-from arretify.utils.html_semantic import (
-    SemanticTagSpec,
-    is_semantic_tag,
-)
-from arretify.utils.html_create import (
-    make_semantic_tag,
-    replace_contents,
-    wrap_in_tag,
-    make_tag,
-)
-from arretify.utils.html_split_merge import make_regex_tree_splitter
-from arretify.types import DocumentContext, ProtectedTagOrStr, ProtectedTag
 from arretify.parsing_utils.patterns import join_split_pile_with_pattern
+from arretify.regex_utils import PatternProxy, join_with_or
 from arretify.semantic_tag_specs import (
+    ArreteTitleSpec,
     EmblemSpec,
     EntitySpec,
-    IdentificationSpec,
-    ArreteTitleSpec,
     HonorarySpec,
-    VisaSpec,
+    IdentificationSpec,
     MotifSpec,
     SupplementaryMotifInfoSpec,
+    VisaSpec,
 )
 from arretify.step_segmentation.semantic_tag_specs import (
     ListSegmentationSpec,
@@ -50,25 +37,24 @@ from arretify.step_segmentation.semantic_tag_specs import (
     TextSpanSegmentationSpec,
     VisaSegmentationSpec,
 )
-from arretify.regex_utils import (
-    PatternProxy,
-    join_with_or,
-)
-from arretify.utils.split_merge import (
-    Splitter,
-    split_and_map_elements,
-    Probe,
-)
+from arretify.types import DocumentContext, ProtectedTag, ProtectedTagOrStr
+from arretify.utils.functional import chain_functions, iter_func_to_list
+from arretify.utils.html import is_tag
+from arretify.utils.html_create import make_semantic_tag, make_tag, replace_contents, wrap_in_tag
+from arretify.utils.html_semantic import SemanticTagSpec, is_semantic_tag
+from arretify.utils.html_split_merge import make_regex_tree_splitter
+from arretify.utils.split_merge import Probe, Splitter, split_and_map_elements
+
+from .basic_elements import parse_lists
 from .core import (
-    make_recombine_interrupted_lines_splitter,
-    make_while_splitter_for_text_spans,
-    make_single_line_splitter_for_text_spans,
-    make_probe_from_pattern_proxy,
+    TRANSPARENT_TAG_SPECS,
     get_string,
     get_strings,
-    TRANSPARENT_TAG_SPECS,
+    make_probe_from_pattern_proxy,
+    make_recombine_interrupted_lines_splitter,
+    make_single_line_splitter_for_text_spans,
+    make_while_splitter_for_text_spans,
 )
-from .basic_elements import parse_lists
 
 
 def parse_header(

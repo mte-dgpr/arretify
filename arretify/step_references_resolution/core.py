@@ -18,25 +18,20 @@
 #
 
 from arretify._vendor.clients_api_droit.clients_api_droit.legifrance import (
-    build_jorf_url,
-    build_code_site_url,
     build_code_article_site_url,
+    build_code_site_url,
+    build_jorf_url,
 )
-
-from arretify.regex_utils import (
-    PatternProxy,
-    safe_group,
-)
+from arretify.regex_utils import PatternProxy, safe_group
 from arretify.semantic_tag_specs import (
     DocumentReferenceData,
     DocumentReferenceSpec,
     SectionReferenceData,
     SectionReferenceSpec,
 )
+from arretify.types import DocumentType, ExternalURL, ProtectedTag, SectionType
 from arretify.utils.html import set_attribute
 from arretify.utils.html_semantic import set_semantic_tag_data, update_semantic_tag_data
-from arretify.types import ExternalURL, ProtectedTag, SectionType, DocumentType
-
 
 # Regex for searching an act with its title.
 # Simply picks the first 3 to 15 words following the document reference.

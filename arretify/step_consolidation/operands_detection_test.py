@@ -20,7 +20,7 @@ import unittest
 
 from arretify.semantic_tag_specs import OperationSpec
 from arretify.utils.html_semantic import css_selector
-from arretify.utils.testing import normalized_html_str, create_document_context
+from arretify.utils.testing import create_document_context, normalized_html_str
 
 from .operands_detection import resolve_references_and_operands
 

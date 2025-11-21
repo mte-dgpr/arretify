@@ -19,16 +19,14 @@
 import unittest
 
 from arretify.semantic_tag_specs import DocumentReferenceData, SectionReferenceData
+from arretify.types import DocumentType, SectionType
 from arretify.utils.testing import (
+    create_document_context,
     make_testing_function_for_single_tag,
     normalized_html_str,
-    create_document_context,
 )
-from .codes_resolution import (
-    resolve_code_article_legifrance_id,
-    resolve_code_legifrance_id,
-)
-from arretify.types import DocumentType, SectionType
+
+from .codes_resolution import resolve_code_article_legifrance_id, resolve_code_legifrance_id
 
 process_code_document_reference = make_testing_function_for_single_tag(resolve_code_legifrance_id)
 

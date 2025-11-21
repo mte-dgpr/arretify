@@ -19,15 +19,14 @@
 import re
 from typing import Sequence
 
-from bs4 import BeautifulSoup
 import markdown
+from bs4 import BeautifulSoup
 
 from arretify.errors import ErrorCodes
-from arretify.types import ProtectedTag, protect_soup
-from arretify.utils.html_create import make_tag, make_semantic_tag
-from arretify.semantic_tag_specs import ErrorSpec
 from arretify.regex_utils import PatternProxy, repeated_with_separator
-
+from arretify.semantic_tag_specs import ErrorSpec
+from arretify.types import ProtectedTag, protect_soup
+from arretify.utils.html_create import make_semantic_tag, make_tag
 
 TABLE_LINE_PATTERN = PatternProxy(
     r"^\|" + repeated_with_separator(r"[^|\n]+", r"\|", (1, ...)) + r"\|$"

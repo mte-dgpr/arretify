@@ -18,10 +18,7 @@
 #
 import unittest
 
-from .markdown_cleaning import (
-    clean_markdown,
-    _clean_failed_month_abbreviations,
-)
+from .markdown_cleaning import _clean_failed_month_abbreviations, clean_markdown
 
 
 class TestCleanFailedMonthAbbreviations(unittest.TestCase):

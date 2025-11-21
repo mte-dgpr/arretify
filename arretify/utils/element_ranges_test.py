@@ -21,14 +21,15 @@ import unittest
 from bs4 import Tag
 
 from arretify.utils.testing import normalized_soup
+
 from .element_ranges import (
-    iter_collapsed_range_right,
-    iter_collapsed_range_left,
-    _find_next_after,
-    _collapse_element_range,
     ElementRange,
+    _collapse_element_range,
+    _find_next_after,
     get_contiguous_elements_left,
     get_contiguous_elements_right,
+    iter_collapsed_range_left,
+    iter_collapsed_range_right,
 )
 
 

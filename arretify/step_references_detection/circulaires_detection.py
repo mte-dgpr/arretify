@@ -19,27 +19,14 @@
 import logging
 from typing import Optional, Sequence, cast
 
-from arretify.regex_utils import (
-    regex_tree,
-    map_regex_tree_match,
-)
-from arretify.parsing_utils.dates import (
-    DATE_NODE,
-    render_date_regex_tree_match,
-)
-from arretify.types import ProtectedTagOrStr, DocumentContext, ProtectedSoup
-from arretify.semantic_tag_specs import (
-    DocumentReferenceData,
-    DocumentReferenceSpec,
-)
+from arretify.parsing_utils.dates import DATE_NODE, render_date_regex_tree_match
+from arretify.regex_utils import map_regex_tree_match, regex_tree
+from arretify.semantic_tag_specs import DocumentReferenceData, DocumentReferenceSpec
+from arretify.types import DocumentContext, DocumentType, ProtectedSoup, ProtectedTagOrStr
 from arretify.utils.html import is_tag
 from arretify.utils.html_create import make_semantic_tag
 from arretify.utils.html_split_merge import make_regex_tree_splitter
 from arretify.utils.split_merge import split_and_map_elements
-from arretify.types import (
-    DocumentType,
-)
-
 
 _LOGGER = logging.getLogger(__name__)
 

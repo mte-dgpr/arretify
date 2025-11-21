@@ -18,7 +18,7 @@
 #
 import unittest
 
-from .numbering import str_to_levels, ordinal_str_to_int
+from .numbering import ordinal_str_to_int, str_to_levels
 
 
 class TestLevelList(unittest.TestCase):

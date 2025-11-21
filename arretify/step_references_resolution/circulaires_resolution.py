@@ -18,20 +18,14 @@
 #
 import logging
 
-from arretify.utils.dates import parse_date_str
+from arretify.errors import catch_and_log_arretify_error
+from arretify.law_data.apis.legifrance import get_circulaire_legifrance_id
 from arretify.semantic_tag_specs import DocumentReferenceSpec
 from arretify.types import DocumentContext, ProtectedTag
-from arretify.errors import catch_and_log_arretify_error
+from arretify.utils.dates import parse_date_str
 from arretify.utils.html_semantic import get_semantic_tag_data
 
-from .core import (
-    update_document_reference_tag_href,
-    get_title_sample_next_sibling,
-)
-from arretify.law_data.apis.legifrance import (
-    get_circulaire_legifrance_id,
-)
-
+from .core import get_title_sample_next_sibling, update_document_reference_tag_href
 
 _LOGGER = logging.getLogger(__name__)
 

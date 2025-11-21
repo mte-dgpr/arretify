@@ -16,57 +16,45 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import Dict, Optional, Iterator, Sequence
 import logging
+from typing import Dict, Iterator, Optional, Sequence
 
-
-from arretify.types import DocumentContext, ProtectedTag, SectionType, ProtectedTagOrStr
-from arretify.utils.html_create import make_semantic_tag
-from arretify.utils.html_semantic import (
-    get_semantic_tag_data,
-    is_semantic_tag,
-    set_semantic_tag_data,
-)
-from arretify.utils.functional import iter_func_to_list, chain_functions
-from arretify.utils.split import split_at_first_verb
-from arretify.step_segmentation.semantic_tag_specs import (
-    AlineaSegmentationSpec,
-    SectionTitleSegmentationData,
-    SectionTitleSegmentationSpec,
-    TableDescriptionSegmentationSpec,
-    TableSegmentationSpec,
-    SectionSegmentationSpec,
-    TextSpanSegmentationSpec,
-)
+from arretify.errors import ErrorCodes
 from arretify.semantic_tag_specs import (
     AlineaData,
     PageFooterSpec,
     PageSeparatorSpec,
     TableOfContentsSpec,
 )
-from arretify.errors import ErrorCodes
-from .basic_elements import (
-    parse_tables,
-    parse_lists,
-    parse_images,
-    parse_blockquotes,
+from arretify.step_segmentation.semantic_tag_specs import (
+    AlineaSegmentationSpec,
+    SectionSegmentationSpec,
+    SectionTitleSegmentationData,
+    SectionTitleSegmentationSpec,
+    TableDescriptionSegmentationSpec,
+    TableSegmentationSpec,
+    TextSpanSegmentationSpec,
 )
-from arretify.utils.split_merge import (
-    split_and_map_elements,
+from arretify.types import DocumentContext, ProtectedTag, ProtectedTagOrStr, SectionType
+from arretify.utils.functional import chain_functions, iter_func_to_list
+from arretify.utils.html_create import make_semantic_tag
+from arretify.utils.html_semantic import (
+    get_semantic_tag_data,
+    is_semantic_tag,
+    set_semantic_tag_data,
 )
-from .titles_detection import (
-    parse_title_text,
-    parse_title_info,
-    is_next_title,
-    TITLE_NODE,
-)
+from arretify.utils.split import split_at_first_verb
+from arretify.utils.split_merge import split_and_map_elements
+
+from .basic_elements import parse_blockquotes, parse_images, parse_lists, parse_tables
 from .core import (
     combine_text_spans,
+    get_string,
+    make_probe_from_pattern_proxy,
     make_recombine_interrupted_lines_splitter,
     make_single_line_splitter_for_text_spans,
-    make_probe_from_pattern_proxy,
-    get_string,
 )
+from .titles_detection import TITLE_NODE, is_next_title, parse_title_info, parse_title_text
 
 _LOGGER = logging.getLogger(__name__)
 

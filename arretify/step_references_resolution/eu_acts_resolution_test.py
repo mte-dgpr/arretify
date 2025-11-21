@@ -18,13 +18,11 @@
 #
 import unittest
 
-from arretify.utils.testing import (
-    make_testing_function_for_single_tag,
-    normalized_html_str,
-)
+from arretify.utils.testing import make_testing_function_for_single_tag, normalized_html_str
+
 from .eu_acts_resolution import (
-    resolve_eu_directive_eurlex_url,
     resolve_eu_decision_eurlex_url,
+    resolve_eu_directive_eurlex_url,
     resolve_eu_regulation_eurlex_url,
 )
 

@@ -18,10 +18,8 @@
 #
 import unittest
 
-from arretify.utils.testing import (
-    make_testing_function_for_children_list,
-)
-from arretify.utils.testing import normalized_html_str
+from arretify.utils.testing import make_testing_function_for_children_list, normalized_html_str
+
 from .operations_detection import parse_operations
 
 process_operations = make_testing_function_for_children_list(parse_operations)

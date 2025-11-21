@@ -20,21 +20,14 @@ import unittest
 
 from arretify.semantic_tag_specs import (
     AddressSpec,
+    AlineaData,
     PageSeparatorData,
     PageSeparatorSpec,
-    AlineaData,
 )
 from arretify.utils.html_create import make_semantic_tag
 from arretify.utils.testing import create_document_context
-from .main_or_appendix import (
-    parse_section_titles,
-    parse_sections,
-    parse_alineas,
-)
-from .testing import (
-    assert_elements_equal,
-    make_text_spans,
-)
+
+from .main_or_appendix import parse_alineas, parse_section_titles, parse_sections
 from .semantic_tag_specs import (
     AlineaSegmentationSpec,
     SectionSegmentationSpec,
@@ -43,6 +36,7 @@ from .semantic_tag_specs import (
     TextSpanSegmentationData,
     TextSpanSegmentationSpec,
 )
+from .testing import assert_elements_equal, make_text_spans
 
 
 class BaseTestCase(unittest.TestCase):

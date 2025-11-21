@@ -18,42 +18,23 @@
 #
 
 from typing import Sequence
-from arretify.types import ProtectedTagOrStr, DocumentContext
+
+from arretify.semantic_tag_specs import AlineaSpec, MotifSpec, VisaSpec
+from arretify.types import DocumentContext, ProtectedTagOrStr
 from arretify.utils.html_create import replace_contents
 from arretify.utils.html_semantic import css_selector
 from arretify.utils.html_split_merge import recombine_strings
-from arretify.semantic_tag_specs import (
-    AlineaSpec,
-    MotifSpec,
-    VisaSpec,
-)
 from arretify.utils.references import iter_reference_trees
 
-from .sections_detection import (
-    parse_section_references,
-)
-from .arretes_detection import (
-    parse_arretes_references,
-)
-from .decrets_detection import (
-    parse_decrets_references,
-)
-from .circulaires_detection import (
-    parse_circulaires_references,
-)
-from .codes_detection import (
-    parse_codes_references,
-)
-from .self_detection import parse_self_references
-from .eu_acts_detection import (
-    parse_eu_acts_references,
-)
+from .arretes_detection import parse_arretes_references
+from .circulaires_detection import parse_circulaires_references
+from .codes_detection import parse_codes_references
+from .decrets_detection import parse_decrets_references
+from .eu_acts_detection import parse_eu_acts_references
 from .match_sections_with_documents import match_sections_to_parents
-from .unknown_sections_resolution import (
-    resolve_unknown_sections,
-    remove_misdetected_sections,
-)
-
+from .sections_detection import parse_section_references
+from .self_detection import parse_self_references
+from .unknown_sections_resolution import remove_misdetected_sections, resolve_unknown_sections
 
 REFERENCES_CONTAINER_SELECTOR = (
     f"{css_selector(AlineaSpec)}, {css_selector(AlineaSpec)} *"

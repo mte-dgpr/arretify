@@ -19,6 +19,7 @@
 import unittest
 
 from bs4 import BeautifulSoup
+
 from arretify.semantic_tag_specs import (
     DocumentReferenceData,
     SectionTitleData,

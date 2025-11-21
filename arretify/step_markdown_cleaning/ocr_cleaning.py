@@ -19,16 +19,15 @@
 import re
 
 from arretify.regex_utils import (
-    PatternProxy,
     MatchProxy,
-    normalize_string,
+    PatternProxy,
     Settings,
-    split_string_with_regex,
     map_matches,
+    normalize_string,
     safe_group,
+    split_string_with_regex,
 )
 from arretify.utils.strings import merge_strings
-
 
 _DECOMPOSED_WORD_PATTERN = PatternProxy(r"(?=\b)([a-zA-Z]\s)+[a-zA-Z](?=\b)")
 

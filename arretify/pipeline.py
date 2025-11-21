@@ -16,18 +16,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import Callable, Sequence
 from pathlib import Path
+from typing import Callable, Sequence
 
 from bs4 import BeautifulSoup
 
 from arretify.utils.files import is_ocr_pages_dir, is_ocr_path, is_pdf_path
 
-from .types import DocumentContext, SessionContext
 from .settings import DEFAULT_ARRETE_TEMPLATE, OCR_FILE_EXTENSION
-from .step_segmentation import step_segmentation
 from .step_markdown_cleaning import step_markdown_cleaning
-
+from .step_segmentation import step_segmentation
+from .types import DocumentContext, SessionContext
 
 PipelineStep = Callable[[DocumentContext], DocumentContext]
 

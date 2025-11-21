@@ -17,15 +17,15 @@
 # limitations under the License.
 #
 
-# CSV list of French addresses : https://adresse.data.gouv.fr/data/ban/adresses/latest/csv
-import re
-from typing import Set
-from pathlib import Path
-from csv import DictReader
 import json
 
-from arretify.law_data.french_addresses import WAY_TYPES
+# CSV list of French addresses : https://adresse.data.gouv.fr/data/ban/adresses/latest/csv
+import re
+from csv import DictReader
+from pathlib import Path
+from typing import Set
 
+from arretify.law_data.french_addresses import WAY_TYPES
 
 # Reject street names that are just way types or empty
 REJECTED_STREET_NAMES = (
@@ -53,6 +53,7 @@ def main(input_path: Path, output_dir_path: Path):
 
 if __name__ == "__main__":
     from optparse import OptionParser
+
     from dotenv import load_dotenv
 
     load_dotenv()

@@ -18,6 +18,7 @@
 #
 import unittest
 
+from arretify.law_data.french_addresses import ALL_STREET_NAMES
 from arretify.semantic_tag_specs import (
     AddressSpec,
     PageSeparatorData,
@@ -26,32 +27,26 @@ from arretify.semantic_tag_specs import (
 )
 from arretify.step_segmentation.semantic_tag_specs import (
     SEGMENTATION_TAG_NAME,
-    TableSegmentationSpec,
-    TableDescriptionSegmentationSpec,
-    ListSegmentationSpec,
     BlockquoteSegmentationSpec,
+    ListSegmentationSpec,
+    TableDescriptionSegmentationSpec,
+    TableSegmentationSpec,
     TextSpanSegmentationData,
     TextSpanSegmentationSpec,
 )
-from arretify.utils.html_create import make_tag, make_semantic_tag, wrap_in_tag
-from arretify.utils.html_semantic import (
-    create_semantic_tag_spec_no_data,
-)
+from arretify.utils.html_create import make_semantic_tag, make_tag, wrap_in_tag
+from arretify.utils.html_semantic import create_semantic_tag_spec_no_data
+from arretify.utils.testing import create_document_context
 
 from .basic_elements import (
-    parse_lists,
-    parse_tables,
+    parse_addresses,
     parse_blockquotes,
     parse_images,
-    parse_addresses,
+    parse_lists,
+    parse_tables,
     parse_tables_of_contents,
 )
 from .testing import assert_elements_equal, make_text_spans
-from arretify.utils.testing import (
-    create_document_context,
-)
-from arretify.law_data.french_addresses import ALL_STREET_NAMES
-
 
 SomeTagSpec = create_semantic_tag_spec_no_data(
     spec_name="segmentation:some_tag",

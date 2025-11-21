@@ -21,8 +21,14 @@ from typing import Callable, Iterator, cast
 from arretify.types import ProtectedTag, ProtectedTagOrStr
 from arretify.utils.element_ranges import (
     get_contiguous_elements_left as get_contiguous_elements_left_unprotected,
+)
+from arretify.utils.element_ranges import (
     get_contiguous_elements_right as get_contiguous_elements_right_unprotected,
+)
+from arretify.utils.element_ranges import (
     iter_collapsed_range_left as iter_collapsed_range_left_unprotected,
+)
+from arretify.utils.element_ranges import (
     iter_collapsed_range_right as iter_collapsed_range_right_unprotected,
 )
 

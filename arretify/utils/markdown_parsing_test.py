@@ -19,8 +19,8 @@
 import unittest
 
 from .markdown_parsing import (
-    TABLE_LINE_PATTERN,
     TABLE_HEADER_SEPARATOR_PATTERN,
+    TABLE_LINE_PATTERN,
     is_table_description,
 )
 

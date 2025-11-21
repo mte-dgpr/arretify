@@ -16,8 +16,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from datetime import date
 from dataclasses import replace as dataclass_replace
+from datetime import date
 
 from requests.exceptions import RequestException
 
@@ -26,13 +26,12 @@ from arretify._vendor.clients_api_droit.clients_api_droit.legifrance import (
     LegifranceSettings,
     authenticate,
     search_arrete,
-    search_decret,
     search_circulaire,
+    search_decret,
 )
-
+from arretify.errors import ErrorCodes, SettingsError, catch_and_convert_into_arretify_error
 from arretify.types import SessionContext
 from arretify.utils.dev_cache import use_dev_cache
-from arretify.errors import ErrorCodes, catch_and_convert_into_arretify_error, SettingsError
 
 
 @catch_and_convert_into_arretify_error(RequestException, ErrorCodes.law_data_api_error)

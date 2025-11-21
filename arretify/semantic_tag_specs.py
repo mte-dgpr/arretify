@@ -17,26 +17,22 @@
 # limitations under the License.
 #
 
-from pydantic import model_validator
 from typing import Annotated, Literal
 
-from arretify.utils.dates import (
-    parse_date_str,
-    parse_year_str,
-)
-from arretify.types import DocumentType, ProtectedSoup, ProtectedTag
+from pydantic import model_validator
+
+from arretify.types import DocumentType, OperationType, ProtectedSoup, ProtectedTag, SectionType
+from arretify.utils.dates import parse_date_str, parse_year_str
 from arretify.utils.html_create import make_tag
 from arretify.utils.html_semantic import (
-    SemanticTagSpec,
-    SemanticTagData,
     Bool,
     Contents,
+    SemanticTagData,
+    SemanticTagSpec,
     StrList,
     create_semantic_tag_spec_no_data,
     enum_serializer,
 )
-from arretify.types import OperationType, SectionType
-
 
 # -------------------- Page structure -------------------- #
 

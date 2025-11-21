@@ -18,18 +18,16 @@
 #
 import unittest
 
-from arretify.utils.html_create import make_tag, make_semantic_tag, wrap_in_tag
-from arretify.utils.testing import create_document_context
 from arretify.semantic_tag_specs import (
+    ArreteTitleSpec,
     DateSpec,
-    HonorarySpec,
-    IdentificationSpec,
-    PageSeparatorData,
-    PageSeparatorSpec,
-    PageFooterSpec,
     EmblemSpec,
     EntitySpec,
-    ArreteTitleSpec,
+    HonorarySpec,
+    IdentificationSpec,
+    PageFooterSpec,
+    PageSeparatorData,
+    PageSeparatorSpec,
     SupplementaryMotifInfoSpec,
 )
 from arretify.step_segmentation.semantic_tag_specs import (
@@ -37,15 +35,18 @@ from arretify.step_segmentation.semantic_tag_specs import (
     MotifSegmentationSpec,
     VisaSegmentationSpec,
 )
+from arretify.utils.html_create import make_semantic_tag, make_tag, wrap_in_tag
+from arretify.utils.testing import create_document_context
+
 from .header import (
     _make_header_element_tag,
-    parse_visa_and_motif_elements,
     parse_arrete_title_element,
     parse_emblem_element,
     parse_entity_element,
-    parse_identification_element,
     parse_honorary_element,
+    parse_identification_element,
     parse_supplementary_motif_info_element,
+    parse_visa_and_motif_elements,
 )
 from .testing import assert_elements_equal, make_text_spans
 

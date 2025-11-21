@@ -22,11 +22,9 @@ import unittest
 from pathlib import Path
 from tempfile import mkdtemp
 
-from arretify.settings import (
-    EXAMPLES_DIR,
-)
+from arretify.settings import EXAMPLES_DIR
 
-from .main import main, _walk_input_dir
+from .main import _walk_input_dir, main
 
 ARRETES_OCR_DIR = EXAMPLES_DIR / "arretes_ocr"
 ARRETES_HTML_DIR = EXAMPLES_DIR / "arretes_html"

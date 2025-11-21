@@ -17,14 +17,14 @@
 # limitations under the License.
 #
 import logging
-from shutil import rmtree
 from pathlib import Path
+from shutil import rmtree
 from uuid import uuid4
 
 from arretify.types import DocumentContext
 from arretify.utils.sentinel import Sentinel
-from .mistral_ocr import mistral_ocr
 
+from .mistral_ocr import mistral_ocr
 
 _LOGGER = logging.getLogger(__name__)
 # Sentinel value, used to check that the kwarg `ocr_pages_dir`

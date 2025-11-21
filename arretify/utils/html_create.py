@@ -22,9 +22,9 @@ from typing import Iterable, Sequence, cast
 from bs4 import PageElement
 
 from arretify.types import (
-    ProtectedTagOrStr,
     ProtectedSoup,
     ProtectedTag,
+    ProtectedTagOrStr,
     protect_tag,
     unprotect_soup,
     unprotect_tag,
@@ -39,9 +39,8 @@ from arretify.utils.html_semantic import (
     is_semantic_tag,
     set_semantic_tag_data,
 )
-from arretify.utils.html_split_merge import recombine_strings, group_strings_splitter, merge_strings
+from arretify.utils.html_split_merge import group_strings_splitter, merge_strings, recombine_strings
 from arretify.utils.split_merge import split_and_map_elements
-
 
 _TAGS_ALLOWED_ANYWHERE = {"b", "strong", "i", "em", "u", "br"}
 """

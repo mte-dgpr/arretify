@@ -18,12 +18,9 @@
 #
 import unittest
 
-from .split import (
-    split_string_with_regex,
-    split_match_by_named_groups,
-)
-from .types import MatchNamedGroup
 from .core import MatchFlow, PatternProxy
+from .split import split_match_by_named_groups, split_string_with_regex
+from .types import MatchNamedGroup
 
 
 class TestSplitStringWithRegex(unittest.TestCase):

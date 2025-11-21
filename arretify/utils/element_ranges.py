@@ -18,14 +18,9 @@
 #
 from typing import Iterator
 
-from bs4 import Tag, PageElement
+from bs4 import PageElement, Tag
 
-from .html_tree_navigation import (
-    is_parent,
-    is_descendant,
-    closest_common_ancestor,
-)
-
+from .html_tree_navigation import closest_common_ancestor, is_descendant, is_parent
 
 ElementRange = list[PageElement]
 """

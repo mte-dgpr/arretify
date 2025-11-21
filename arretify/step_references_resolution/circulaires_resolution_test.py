@@ -18,10 +18,8 @@
 #
 import unittest
 
-from arretify.utils.testing import (
-    make_testing_function_for_single_tag,
-    normalized_html_str,
-)
+from arretify.utils.testing import make_testing_function_for_single_tag, normalized_html_str
+
 from .circulaires_resolution import resolve_circulaire_legifrance_id
 
 process_circulaire_document_reference = make_testing_function_for_single_tag(

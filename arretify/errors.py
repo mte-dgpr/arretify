@@ -16,13 +16,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import Union, Callable, Type, TypeVar, ParamSpec, Concatenate
-from enum import Enum
 import logging
+from enum import Enum
+from functools import wraps
+from typing import Callable, Concatenate, ParamSpec, Type, TypeVar, Union
 
 from arretify.types import DocumentContext
-from functools import wraps
-
 
 R = TypeVar("R")
 P = ParamSpec("P")

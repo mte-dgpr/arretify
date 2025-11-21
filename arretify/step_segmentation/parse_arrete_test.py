@@ -18,15 +18,17 @@
 #
 import unittest
 
-from arretify.utils.html_create import make_semantic_tag, wrap_in_tag
-from arretify.utils.testing import create_document_context
 from arretify.semantic_tag_specs import (
+    AddressSpec,
     AlineaData,
+    ArreteTitleSpec,
     PageSeparatorData,
     PageSeparatorSpec,
-    ArreteTitleSpec,
-    AddressSpec,
 )
+from arretify.utils.html_create import make_semantic_tag, wrap_in_tag
+from arretify.utils.testing import create_document_context
+
+from .parse_arrete import initialize_document_structure, parse_arrete
 from .semantic_tag_specs import (
     AlineaSegmentationSpec,
     AppendixSegmentationSpec,
@@ -38,8 +40,7 @@ from .semantic_tag_specs import (
     TextSpanSegmentationData,
     TextSpanSegmentationSpec,
 )
-from .parse_arrete import initialize_document_structure, parse_arrete
-from .testing import make_text_spans, assert_elements_equal
+from .testing import assert_elements_equal, make_text_spans
 
 
 class BaseTestCase(unittest.TestCase):

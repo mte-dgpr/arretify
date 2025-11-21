@@ -18,30 +18,15 @@
 #
 from typing import Sequence
 
-from arretify.regex_utils import (
-    regex_tree,
-    iter_regex_tree_match_page_elements_or_strings,
-)
-from arretify.regex_utils.helpers import (
-    join_with_or,
-    lookup_normalized_version,
-)
-from arretify.utils.dates import (
-    parse_year_str,
-    render_year_str,
-)
-from arretify.types import ProtectedTagOrStr, DocumentContext, DocumentType, ProtectedSoup
-from arretify.semantic_tag_specs import (
-    DocumentReferenceData,
-    DocumentReferenceSpec,
-)
+from arretify.law_data.eurlex_constants import EU_ACT_DOMAINS, EU_ACT_TYPES
+from arretify.regex_utils import iter_regex_tree_match_page_elements_or_strings, regex_tree
+from arretify.regex_utils.helpers import join_with_or, lookup_normalized_version
+from arretify.semantic_tag_specs import DocumentReferenceData, DocumentReferenceSpec
+from arretify.types import DocumentContext, DocumentType, ProtectedSoup, ProtectedTagOrStr
+from arretify.utils.dates import parse_year_str, render_year_str
 from arretify.utils.html_create import make_semantic_tag
 from arretify.utils.html_split_merge import make_regex_tree_splitter
 from arretify.utils.split_merge import split_and_map_elements
-from arretify.law_data.eurlex_constants import (
-    EU_ACT_DOMAINS,
-    EU_ACT_TYPES,
-)
 
 # Examples : CE, UE, ...
 DOMAIN_NODE = regex_tree.Literal(

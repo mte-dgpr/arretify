@@ -16,39 +16,39 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+from dataclasses import dataclass
+from dataclasses import replace as dataclass_replace
 from typing import Iterator, Sequence, Tuple, TypeVar
-from dataclasses import dataclass, replace as dataclass_replace
 
+from arretify.regex_utils import MatchProxy, PatternProxy, safe_group
+from arretify.regex_utils.regex_tree.types import (
+    BranchingNode,
+    GroupName,
+    GroupNode,
+    LiteralNode,
+    Node,
+    RegexTreeMatch,
+    RegexTreeMatchFlow,
+    RepeatNode,
+    SequenceNode,
+)
+from arretify.types import ProtectedTagOrStr
 from arretify.utils.functional import iter_func_to_list
-from arretify.utils.html import is_tag, INLINE_TAG_TYPES
+from arretify.utils.html import INLINE_TAG_TYPES, is_tag
 from arretify.utils.split_merge import (
     Probe,
-    make_while_splitter,
     RawSplit,
-    Splitter,
     SplitMatch,
     SplitNotAMatch,
     SplittedElement,
+    Splitter,
+    flat_map_splitted_elements,
+    make_while_splitter,
+    merge_splitted_elements,
     split_and_map_elements,
     split_elements,
-    flat_map_splitted_elements,
-    merge_splitted_elements,
-)
-from arretify.types import ProtectedTagOrStr
-from arretify.regex_utils import safe_group, MatchProxy, PatternProxy
-from arretify.regex_utils.regex_tree.types import (
-    Node,
-    RegexTreeMatch,
-    LiteralNode,
-    BranchingNode,
-    RepeatNode,
-    GroupNode,
-    SequenceNode,
-    RegexTreeMatchFlow,
-    GroupName,
 )
 from arretify.utils.strings import merge_strings
-
 
 T = TypeVar("T")
 

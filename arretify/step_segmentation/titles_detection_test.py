@@ -23,12 +23,9 @@ import unittest
 from bs4 import BeautifulSoup
 
 from arretify.types import SectionType
+
+from .titles_detection import TITLE_NODE, is_next_title, parse_title_info
 from .types import TitleInfo
-from .titles_detection import (
-    TITLE_NODE,
-    parse_title_info,
-    is_next_title,
-)
 
 
 class TestCompareLevelTitles(unittest.TestCase):

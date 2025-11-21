@@ -18,10 +18,8 @@
 #
 import unittest
 
-from arretify.utils.testing import (
-    make_testing_function_for_children_list,
-    normalized_html_str,
-)
+from arretify.utils.testing import make_testing_function_for_children_list, normalized_html_str
+
 from .sections_detection import parse_section_references
 
 process_children = make_testing_function_for_children_list(parse_section_references)

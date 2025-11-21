@@ -16,41 +16,41 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-import sys
-from pathlib import Path
-from optparse import OptionParser
-import traceback
 import logging
+import sys
+import traceback
+from dataclasses import dataclass
+from dataclasses import replace as dataclass_replace
 from datetime import datetime
-from dataclasses import dataclass, replace as dataclass_replace
+from optparse import OptionParser
+from pathlib import Path
 
 from dotenv import load_dotenv
 
-from .types import SessionContext, DocumentContext
-from .settings import APP_ROOT, OCR_FILE_EXTENSION, Settings
-from .step_ocr import step_ocr
-from .step_segmentation import step_segmentation
-from .step_references_detection import step_references_detection
-from .step_references_resolution import (
-    step_legifrance_references_resolution,
-    step_eurlex_references_resolution,
-)
-from .step_consolidation import step_consolidation
-from .law_data.apis.legifrance import initialize_legifrance_client
+from .errors import ArretifyError, DependencyError, ErrorCodes, SettingsError
 from .law_data.apis.eurlex import initialize_eurlex_client
+from .law_data.apis.legifrance import initialize_legifrance_client
 from .law_data.apis.mistral import initialize_mistral_client
-from .errors import ArretifyError, ErrorCodes, DependencyError, SettingsError
 from .pipeline import (
-    run_pipeline,
+    PipelineStep,
     load_ocr_file,
     load_ocr_pages,
     load_pdf_file,
+    run_pipeline,
     save_html_file,
-    PipelineStep,
 )
+from .settings import APP_ROOT, OCR_FILE_EXTENSION, Settings
+from .step_consolidation import step_consolidation
 from .step_markdown_cleaning import step_markdown_cleaning
-from .utils.files import is_pdf_path, is_ocr_path, is_ocr_pages_dir
-
+from .step_ocr import step_ocr
+from .step_references_detection import step_references_detection
+from .step_references_resolution import (
+    step_eurlex_references_resolution,
+    step_legifrance_references_resolution,
+)
+from .step_segmentation import step_segmentation
+from .types import DocumentContext, SessionContext
+from .utils.files import is_ocr_pages_dir, is_ocr_path, is_pdf_path
 
 _LOGGER = logging.getLogger("arretify")
 

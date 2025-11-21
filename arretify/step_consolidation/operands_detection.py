@@ -18,30 +18,26 @@
 #
 import logging
 
-from arretify.types import DocumentContext, ProtectedTag
 from arretify.semantic_tag_specs import (
-    OperationSpec,
-    SectionReferenceSpec,
     DocumentReferenceSpec,
-    PageSeparatorSpec,
+    OperationSpec,
     PageFooterSpec,
+    PageSeparatorSpec,
+    SectionReferenceSpec,
 )
-from arretify.utils.html import (
-    ensure_tag_id,
-    is_tag,
-)
+from arretify.types import DocumentContext, ProtectedTag
+from arretify.utils.html import ensure_tag_id, is_tag
 from arretify.utils.html_element_ranges import (
     get_contiguous_elements_left,
     get_contiguous_elements_right,
 )
 from arretify.utils.html_semantic import (
     SemanticTagSpec,
-    is_semantic_tag,
     get_semantic_tag_data,
+    is_semantic_tag,
     update_semantic_tag_data,
 )
 from arretify.utils.references import build_reference_tree
-
 
 _LOGGER = logging.getLogger(__name__)
 

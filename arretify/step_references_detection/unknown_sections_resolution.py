@@ -19,21 +19,16 @@
 
 from typing import Iterator, Sequence
 
-from arretify.types import DocumentContext, ProtectedTagOrStr
-from arretify.types import SectionType
+from arretify.semantic_tag_specs import SectionReferenceSpec
+from arretify.types import DocumentContext, ProtectedTagOrStr, SectionType
+from arretify.utils.functional import iter_func_to_list
 from arretify.utils.html_semantic import (
-    is_semantic_tag,
     get_semantic_tag_data,
+    is_semantic_tag,
     set_semantic_tag_data,
     update_data,
 )
-from arretify.utils.references import (
-    traverse_reference_tree,
-    build_reference_tree,
-    ReferenceTree,
-)
-from arretify.utils.functional import iter_func_to_list
-from arretify.semantic_tag_specs import SectionReferenceSpec
+from arretify.utils.references import ReferenceTree, build_reference_tree, traverse_reference_tree
 
 
 def resolve_unknown_sections(

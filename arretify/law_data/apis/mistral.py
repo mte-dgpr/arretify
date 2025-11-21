@@ -22,9 +22,8 @@
 from dataclasses import replace as dataclass_replace
 
 from arretify._vendor import mistralai
-
+from arretify.errors import DependencyError, SettingsError
 from arretify.types import SessionContext
-from arretify.errors import SettingsError, DependencyError
 
 
 def initialize_mistral_client(session_context: SessionContext) -> SessionContext:

@@ -17,45 +17,21 @@
 # limitations under the License.
 #
 
-from typing import (
-    Literal,
-    Dict,
-    Optional,
-    Sequence,
-    Union,
-    cast,
-)
+from typing import Dict, Literal, Optional, Sequence, Union, cast
 
-from arretify.types import DocumentContext, ProtectedSoup, ProtectedTag
+from arretify.parsing_utils.dates import DATE_NODE, render_date_regex_tree_match
+from arretify.parsing_utils.patterns import ET_VIRGULE_PATTERN_S
+from arretify.regex_utils import map_regex_tree_match, regex_tree
+from arretify.semantic_tag_specs import DocumentReferenceData, DocumentReferenceSpec
+from arretify.types import DocumentContext, DocumentType, ProtectedSoup, ProtectedTag
 from arretify.utils.functional import chain_functions
+from arretify.utils.html import ProtectedTagOrStr, is_tag
 from arretify.utils.html_create import make_semantic_tag
+from arretify.utils.html_split_merge import make_regex_tree_splitter
 from arretify.utils.split_merge import (
+    flat_map_splitted_elements,
     split_and_map_elements,
     split_elements,
-    flat_map_splitted_elements,
-)
-from arretify.utils.html import (
-    ProtectedTagOrStr,
-    is_tag,
-)
-from arretify.utils.html_split_merge import make_regex_tree_splitter
-from arretify.semantic_tag_specs import (
-    DocumentReferenceData,
-    DocumentReferenceSpec,
-)
-from arretify.parsing_utils.patterns import (
-    ET_VIRGULE_PATTERN_S,
-)
-from arretify.parsing_utils.dates import (
-    DATE_NODE,
-    render_date_regex_tree_match,
-)
-from arretify.regex_utils import (
-    regex_tree,
-    map_regex_tree_match,
-)
-from arretify.types import (
-    DocumentType,
 )
 
 Authority = Literal["préfectoral", "ministériel"]
