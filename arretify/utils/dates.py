@@ -18,7 +18,6 @@
 #
 from datetime import date, datetime
 
-
 DATE_FORMAT = "%Y-%m-%d"
 DATE_STR_LENGTH = len(date.today().strftime(DATE_FORMAT))
 

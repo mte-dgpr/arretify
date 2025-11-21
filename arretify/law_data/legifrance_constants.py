@@ -16,11 +16,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-import logging
 import json
+import logging
 from pathlib import Path
 from typing import Dict, Sequence, TypedDict
-
 
 CURRENT_DIR = Path(__file__).parent
 LEGIFRANCE_DATA = CURRENT_DIR / "legifrance"

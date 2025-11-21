@@ -19,6 +19,7 @@
 from arretify.semantic_tag_specs import ArreteSpec
 from arretify.types import DocumentContext
 from arretify.utils.html_create import replace_contents, upgrade_to_semantic_tag
+
 from .parse_arrete import parse_arrete
 from .render_contents import render_contents
 

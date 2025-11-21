@@ -20,7 +20,7 @@ import re
 import unicodedata
 from typing import Sequence
 
-from .types import Settings, PatternString, QuantifierRange
+from .types import PatternString, QuantifierRange, Settings
 
 NAMED_GROUP_PATTERN = re.compile(r"\?P\<(?P<name>\w+)\>")
 NAME_WITH_INDEX_PATTERN = re.compile(r"(\w+?)(?P<index>\d+)")

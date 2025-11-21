@@ -16,79 +16,65 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import Sequence, Tuple, Iterator
 import logging
+from typing import Iterator, Sequence, Tuple
 
+from arretify.errors import ErrorCodes
+from arretify.law_data.french_addresses import (
+    ALL_STREET_NAMES,
+    NUMBER_SUFFIXES,
+    STREET_NAMES_NORMALIZATION_SETTINGS,
+    WAY_TYPES,
+)
 from arretify.parsing_utils.patterns import is_continuing_sentence
-from arretify.step_segmentation.semantic_tag_specs import (
-    ListSegmentationSpec,
-    TableDescriptionSegmentationSpec,
-    TableSegmentationSpec,
-    BlockquoteSegmentationSpec,
-    TextSpanSegmentationSpec,
-)
-from arretify.types import DocumentContext, ProtectedTagOrStr, ProtectedTag
-from arretify.utils.functional import iter_func_to_list, chain_functions
-from arretify.utils.html_semantic import (
-    SemanticTagData,
-    get_semantic_tag_data,
-    is_semantic_tag,
-)
-from arretify.utils.html_create import (
-    make_semantic_tag,
-    replace_contents,
-    wrap_in_tag,
-)
-from arretify.utils.markdown_parsing import (
-    is_table_description,
-    TABLE_LINE_PATTERN,
-    IMAGE_PATTERN,
-    LIST_PATTERN,
-    parse_markdown_image,
-)
 from arretify.regex_utils import (
     PatternProxy,
     join_with_or,
     named_group,
-    safe_group,
     normalize_string,
+    safe_group,
 )
-from arretify.errors import ErrorCodes
-from arretify.semantic_tag_specs import (
-    ErrorSpec,
-    AddressSpec,
-    PageFooterSpec,
-    TableOfContentsSpec,
+from arretify.semantic_tag_specs import AddressSpec, ErrorSpec, PageFooterSpec, TableOfContentsSpec
+from arretify.step_segmentation.semantic_tag_specs import (
+    BlockquoteSegmentationSpec,
+    ListSegmentationSpec,
+    TableDescriptionSegmentationSpec,
+    TableSegmentationSpec,
+    TextSpanSegmentationSpec,
+)
+from arretify.types import DocumentContext, ProtectedTag, ProtectedTagOrStr
+from arretify.utils.functional import chain_functions, iter_func_to_list
+from arretify.utils.html_create import make_semantic_tag, replace_contents, wrap_in_tag
+from arretify.utils.html_semantic import SemanticTagData, get_semantic_tag_data, is_semantic_tag
+from arretify.utils.markdown_parsing import (
+    IMAGE_PATTERN,
+    LIST_PATTERN,
+    TABLE_LINE_PATTERN,
+    is_table_description,
+    parse_markdown_image,
 )
 from arretify.utils.split_merge import (
     Probe,
     RawSplit,
     Splitter,
-    split_and_map_elements,
-    split_elements,
     flat_map_splitted_elements,
-    split_before_match,
     negate,
-)
-from arretify.law_data.french_addresses import (
-    WAY_TYPES,
-    NUMBER_SUFFIXES,
-    ALL_STREET_NAMES,
-    STREET_NAMES_NORMALIZATION_SETTINGS,
+    split_and_map_elements,
+    split_before_match,
+    split_elements,
 )
 
 from .core import (
-    make_single_line_splitter_for_text_spans,
+    combine_text_spans,
     get_string,
     get_strings,
-    combine_text_spans,
-    make_probe_from_pattern_proxy,
-    make_while_splitter_for_text_spans,
-    pick_text_spans,
-    pick_if_transparent_tag_followed_by_match,
     make_pattern_splitter,
+    make_probe_from_pattern_proxy,
+    make_single_line_splitter_for_text_spans,
+    make_while_splitter_for_text_spans,
+    pick_if_transparent_tag_followed_by_match,
+    pick_text_spans,
 )
-
 
 _LOGGER = logging.getLogger(__name__)
 

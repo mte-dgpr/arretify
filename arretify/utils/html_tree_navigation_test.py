@@ -21,11 +21,8 @@ import unittest
 from bs4 import BeautifulSoup
 
 from arretify.utils.testing import normalized_soup
-from .html_tree_navigation import (
-    closest_common_ancestor,
-    is_descendant,
-    is_parent,
-)
+
+from .html_tree_navigation import closest_common_ancestor, is_descendant, is_parent
 
 
 class TestIsDescendant(unittest.TestCase):

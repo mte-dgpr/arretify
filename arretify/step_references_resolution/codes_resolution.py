@@ -16,27 +16,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import Sequence
 import logging
+from typing import Sequence
 
+from arretify.law_data.legifrance_constants import (
+    get_code_article_id_from_article_num,
+    get_code_id_with_title,
+)
 from arretify.semantic_tag_specs import (
     DocumentReferenceData,
     DocumentReferenceSpec,
     SectionReferenceData,
 )
-from arretify.types import (
-    DocumentContext,
-    ProtectedTag,
-    SectionType,
-)
-from arretify.law_data.legifrance_constants import (
-    get_code_id_with_title,
-    get_code_article_id_from_article_num,
-)
+from arretify.types import DocumentContext, ProtectedTag, SectionType
 from arretify.utils.html_semantic import get_semantic_tag_data, update_data
 
 from .core import update_document_reference_tag_href, update_section_reference_tag_href
-
 
 _LOGGER = logging.getLogger(__name__)
 

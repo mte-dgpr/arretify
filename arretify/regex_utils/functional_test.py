@@ -18,13 +18,13 @@
 #
 import unittest
 
+from .core import PatternProxy
 from .functional import (
     iter_regex_tree_match_page_elements_or_strings,
     map_matches,
     map_regex_tree_match,
 )
 from .regex_tree.types import RegexTreeMatch
-from .core import PatternProxy
 
 
 class TestFlatMapNonString(unittest.TestCase):

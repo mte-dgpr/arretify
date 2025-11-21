@@ -42,7 +42,9 @@ dev = [
   "black~=25.1",
   "pre-commit~=4.2",
   "flake8~=7.2",
+  "flake8-isort~=7.0",
   "flake8-bugbear~=24.12",
+  "isort~=7.0",
   "autoflake~=2.3",
   "types-requests~=2.32",
   "types-beautifulsoup4~=4.12",
@@ -62,6 +64,11 @@ exclude = "arretify/_vendor"
 [tool.black]
 line-length = 100
 extend-exclude = "arretify/_vendor"
+
+[tool.isort]
+profile = "black"
+line_length = 100
+extend_skip = "arretify/_vendor"
 
 [tool.pytest.ini_options]
 minversion = "6.0"

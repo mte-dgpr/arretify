@@ -21,9 +21,10 @@ from unittest import mock
 
 from bs4 import BeautifulSoup
 
-from arretify._vendor.clients_api_droit.clients_api_droit.legifrance import LegifranceClient
 from arretify._vendor.clients_api_droit.clients_api_droit.eurlex import EurlexClient
+from arretify._vendor.clients_api_droit.clients_api_droit.legifrance import LegifranceClient
 from arretify.settings import Settings
+
 from .types import DocumentContext, SessionContext
 
 

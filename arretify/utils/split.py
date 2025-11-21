@@ -16,10 +16,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import Tuple
 import logging
+from typing import Tuple
 
 import spacy
+
 from arretify.parsing_utils.patterns import LEADING_TRAILING_WHITESPACE_PATTERN
 
 spacy.prefer_gpu()

@@ -18,11 +18,11 @@
 #
 from typing import Callable, Iterable, Iterator, Sequence, TypeVar, Union
 
-from .types import GroupName
-from .core import MatchFlow, MatchProxy
-from .regex_tree.types import RegexTreeMatch, RegexTreeMatchFlow
 from arretify.types import ProtectedTagOrStr
 
+from .core import MatchFlow, MatchProxy
+from .regex_tree.types import RegexTreeMatch, RegexTreeMatchFlow
+from .types import GroupName
 
 R = TypeVar("R")
 

@@ -17,16 +17,12 @@
 # limitations under the License.
 #
 import unittest
-from unittest import mock
 from pathlib import Path
+from unittest import mock
 
-from arretify.pipeline import (
-    load_pdf_file,
-    load_ocr_file,
-    load_ocr_pages,
-)
-from arretify.types import SessionContext
+from arretify.pipeline import load_ocr_file, load_ocr_pages, load_pdf_file
 from arretify.settings import Settings
+from arretify.types import SessionContext
 
 
 class TestFileLoadingFunctions(unittest.TestCase):

@@ -18,8 +18,8 @@
 #
 import unittest
 
-from .compile import Literal, Group, Repeat, Branching, Sequence
 from . import compile
+from .compile import Branching, Group, Literal, Repeat, Sequence
 
 
 class TestCompilePattern(unittest.TestCase):

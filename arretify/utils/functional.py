@@ -16,9 +16,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import Iterable, Iterator, Sequence, Union, Callable, TypeVar, ParamSpec
-from functools import wraps, reduce
-
+from functools import reduce, wraps
+from typing import Callable, Iterable, Iterator, ParamSpec, Sequence, TypeVar, Union
 
 T1 = TypeVar("T1")
 T2 = TypeVar("T2")

@@ -16,19 +16,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+import json
+from datetime import datetime
 from pathlib import Path
 from typing import Dict
-from datetime import datetime
-import json
 
-from arretify.types import SessionContext
-from arretify.settings import Settings
-from arretify.law_data.apis.legifrance import initialize_legifrance_client
 from arretify._vendor.clients_api_droit.clients_api_droit.legifrance import (  # noqa: E402
-    list_codes,
     get_code_summary,
     iter_articles,
+    list_codes,
 )
+from arretify.law_data.apis.legifrance import initialize_legifrance_client
+from arretify.settings import Settings
+from arretify.types import SessionContext
 
 
 def download_codes(session_context: SessionContext, output_dir: Path):
@@ -76,6 +76,7 @@ def main(session_context: SessionContext, output_dir: Path):
 
 if __name__ == "__main__":
     from optparse import OptionParser
+
     from dotenv import load_dotenv
 
     load_dotenv()

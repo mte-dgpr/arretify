@@ -17,14 +17,11 @@
 # limitations under the License.
 #
 import re
-from typing import Iterator, Union, Iterable, Dict
 from dataclasses import replace as dataclass_replace
+from typing import Dict, Iterable, Iterator, Union
 
+from .helpers import normalize_string
 from .types import PatternString, Settings
-from .helpers import (
-    normalize_string,
-)
-
 
 MatchFlow = Iterable[Union[str, "MatchProxy"]]
 

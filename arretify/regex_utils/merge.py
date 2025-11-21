@@ -18,9 +18,8 @@
 #
 from typing import Iterator, Literal
 
-from arretify.utils.generators import (
-    remove_empty_strings_from_flow,
-)
+from arretify.utils.generators import remove_empty_strings_from_flow
+
 from .core import MatchFlow, safe_group
 
 

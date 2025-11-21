@@ -16,8 +16,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import Literal
 from dataclasses import replace as dataclass_replace
+from typing import Literal
 
 from zeep.exceptions import Error as ZeepError
 
@@ -26,11 +26,9 @@ from arretify._vendor.clients_api_droit.clients_api_droit.eurlex import (
     EurlexSettings,
     search_act,
 )
-
 from arretify.errors import ErrorCodes, SettingsError, catch_and_convert_into_arretify_error
 from arretify.types import SessionContext
 from arretify.utils.dev_cache import use_dev_cache
-
 
 ActType = Literal["directive", "regulation", "decision"]
 

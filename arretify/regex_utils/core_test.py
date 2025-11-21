@@ -18,7 +18,8 @@
 #
 import re
 import unittest
-from .core import PatternProxy, MatchProxy
+
+from .core import MatchProxy, PatternProxy
 from .types import Settings
 
 

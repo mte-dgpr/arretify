@@ -22,21 +22,12 @@ It is not concurrent safe, **to be used only in development mode**.
 """
 
 import json
-from pathlib import Path
-from functools import wraps
 import logging
-from typing import (
-    Any,
-    TypeVar,
-    ParamSpec,
-    cast,
-    Callable,
-    Concatenate,
-    Dict,
-)
+from functools import wraps
+from pathlib import Path
+from typing import Any, Callable, Concatenate, Dict, ParamSpec, TypeVar, cast
 
 from arretify.types import DocumentContext
-
 
 R = TypeVar("R")
 P = ParamSpec("P")

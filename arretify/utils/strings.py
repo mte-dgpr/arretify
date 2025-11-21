@@ -18,7 +18,6 @@
 #
 from typing import Iterable, TypeVar
 
-
 T = TypeVar("T")
 
 

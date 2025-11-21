@@ -17,14 +17,12 @@
 # limitations under the License.
 #
 import logging
-from typing import Iterable
 from dataclasses import replace as dataclass_replace
 from pathlib import Path
+from typing import Iterable
 
 from arretify._vendor import mistralai
-
 from arretify.types import DocumentContext
-
 
 _LOGGER = logging.getLogger(__name__)
 

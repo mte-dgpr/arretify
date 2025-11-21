@@ -16,10 +16,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-import os
-import logging
-import time
 import csv
+import logging
+import os
+import time
 from collections import defaultdict
 from dataclasses import dataclass
 from datetime import datetime
@@ -27,7 +27,6 @@ from optparse import OptionParser
 from pathlib import Path
 
 import requests
-
 
 _LOGGER = logging.getLogger(__name__)
 

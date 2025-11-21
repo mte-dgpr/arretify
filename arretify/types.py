@@ -16,19 +16,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from pathlib import Path
-from typing import Protocol, Sequence, Union, Tuple, Optional, Type, TypeVar, cast
+from dataclasses import dataclass, field, fields
 from enum import Enum
-from dataclasses import dataclass, fields, field
+from pathlib import Path
+from typing import Optional, Protocol, Sequence, Tuple, Type, TypeVar, Union, cast
 
-from bs4 import BeautifulSoup, Tag, PageElement
+from bs4 import BeautifulSoup, PageElement, Tag
 
-from arretify._vendor.clients_api_droit.clients_api_droit.legifrance import LegifranceClient
-from arretify._vendor.clients_api_droit.clients_api_droit.eurlex import EurlexClient
 from arretify._vendor import mistralai
-
+from arretify._vendor.clients_api_droit.clients_api_droit.eurlex import EurlexClient
+from arretify._vendor.clients_api_droit.clients_api_droit.legifrance import LegifranceClient
 from arretify.settings import Settings
-
 
 DocumentContextType = TypeVar("DocumentContextType", bound="DocumentContext")
 

@@ -16,19 +16,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import (
-    Callable,
-    Sequence,
-    Tuple,
-    Iterator,
-    Iterable,
-    TypeVar,
-    Generic,
-)
 from dataclasses import dataclass
+from typing import Callable, Generic, Iterable, Iterator, Sequence, Tuple, TypeVar
 
 from arretify.utils.functional import iter_func_to_list
-
 
 # -------------------- Generic splitting utils -------------------- #
 # TODO : merge with other splitting utils voir #391

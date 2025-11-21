@@ -19,27 +19,23 @@
 import logging
 from typing import Optional, Sequence, Tuple
 
-from arretify.regex_utils.helpers import lookup_normalized_version
-from arretify.regex_utils import Settings
-from arretify.types import SectionType
-from arretify.parsing_utils.patterns import LEADING_TRAILING_PUNCTUATION_PATTERN
 from arretify.parsing_utils.numbering import (
     EME_PATTERN_S,
-    ORDINAL_PATTERN_S,
-    ORDINAL_PATTERN,
-    NUMBERS_PATTERN_S,
     NUMBERING_PATTERN_S,
+    NUMBERS_PATTERN_S,
+    ORDINAL_PATTERN,
+    ORDINAL_PATTERN_S,
+    are_levels_contiguous,
     ordinal_str_to_int,
     str_to_levels,
-    are_levels_contiguous,
 )
-from arretify.regex_utils import (
-    regex_tree,
-    join_with_or,
-)
+from arretify.parsing_utils.patterns import LEADING_TRAILING_PUNCTUATION_PATTERN
+from arretify.regex_utils import Settings, join_with_or, regex_tree
+from arretify.regex_utils.helpers import lookup_normalized_version
+from arretify.types import SectionType
 from arretify.utils.html_split_merge import regex_tree_match
-from .types import TitleInfo
 
+from .types import TitleInfo
 
 _LOGGER = logging.getLogger(__name__)
 

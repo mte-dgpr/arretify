@@ -18,27 +18,13 @@
 #
 from typing import Sequence
 
-from arretify.types import (
-    ProtectedTagOrStr,
-    DocumentContext,
-    ProtectedTag,
-    unprotect_page_element,
-)
-from arretify.utils.html_element_ranges import (
-    iter_collapsed_range_right,
-)
-from arretify.semantic_tag_specs import (
-    SectionReferenceSpec,
-    DocumentReferenceSpec,
-)
 from arretify.regex_utils import regex_tree
-from arretify.utils.html_semantic import (
-    is_semantic_tag,
-    update_semantic_tag_data,
-)
-from arretify.utils.html_split_merge import recombine_strings
+from arretify.semantic_tag_specs import DocumentReferenceSpec, SectionReferenceSpec
+from arretify.types import DocumentContext, ProtectedTag, ProtectedTagOrStr, unprotect_page_element
 from arretify.utils.html import ensure_tag_id, filter_out_inline_tags, get_group_id
-
+from arretify.utils.html_element_ranges import iter_collapsed_range_right
+from arretify.utils.html_semantic import is_semantic_tag, update_semantic_tag_data
+from arretify.utils.html_split_merge import recombine_strings
 
 CONNECTOR_SECTION_TO_PARENT_NODE = regex_tree.Group(
     regex_tree.Sequence(

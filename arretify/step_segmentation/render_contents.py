@@ -52,7 +52,7 @@ from arretify.step_segmentation.semantic_tag_specs import (
 )
 from arretify.types import DocumentContext, ProtectedTag, ProtectedTagOrStr
 from arretify.utils.functional import iter_func_to_list
-from arretify.utils.html_create import make_tag, make_semantic_tag, replace_contents
+from arretify.utils.html_create import make_semantic_tag, make_tag, replace_contents
 from arretify.utils.html_semantic import (
     get_semantic_tag_data,
     get_semantic_tag_spec,
@@ -63,7 +63,6 @@ from arretify.utils.markdown_parsing import (
     TABLE_HEADER_SEPARATOR_PATTERN,
     parse_markdown_table,
 )
-
 
 _LOGGER = logging.getLogger(__name__)
 

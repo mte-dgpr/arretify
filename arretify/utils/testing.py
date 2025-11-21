@@ -19,12 +19,11 @@
 import re
 from typing import Callable, Sequence, TypeVar
 
-from bs4 import NavigableString, BeautifulSoup, Tag
+from bs4 import BeautifulSoup, NavigableString, Tag
 
 from arretify.settings import Settings
-from arretify.types import ProtectedTagOrStr, DocumentContext, ProtectedTag
+from arretify.types import DocumentContext, ProtectedTag, ProtectedTagOrStr
 from arretify.utils.html import is_tag
-
 
 _INLINE_TAGS = [
     "a",

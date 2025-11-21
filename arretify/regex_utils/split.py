@@ -16,17 +16,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import (
-    Iterator,
-    Tuple,
-)
+from typing import Iterator, Tuple
 
-from arretify.utils.generators import (
-    remove_empty_strings_from_flow,
-)
+from arretify.utils.generators import remove_empty_strings_from_flow
+
+from .core import MatchFlow, MatchProxy, PatternProxy, safe_group
 from .types import MatchNamedGroup
-from .core import MatchProxy, PatternProxy, MatchFlow, safe_group
-
 
 StrSplit = Tuple[str, MatchProxy, str]
 

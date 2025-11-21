@@ -16,8 +16,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-import unittest
 import re
+import unittest
 
 from .strings import merge_strings, split_on_newlines
 

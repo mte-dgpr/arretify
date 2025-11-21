@@ -19,31 +19,28 @@
 import unittest
 
 from arretify.regex_utils import PatternProxy
-from arretify.utils.html_create import make_tag, make_semantic_tag
-from arretify.utils.testing import create_document_context
-from arretify.utils.html_semantic import (
-    Contents,
-    create_semantic_tag_spec_no_data,
-)
 from arretify.semantic_tag_specs import AddressSpec, PageSeparatorData, PageSeparatorSpec
+from arretify.utils.html_create import make_semantic_tag, make_tag
+from arretify.utils.html_semantic import Contents, create_semantic_tag_spec_no_data
+from arretify.utils.testing import create_document_context
+
+from .core import (
+    combine_text_spans,
+    get_string,
+    group_text_span_tags_splitter,
+    make_pattern_splitter,
+    make_probe_from_pattern_proxy,
+    make_recombine_interrupted_lines_splitter,
+    make_while_splitter_for_text_spans,
+    pick_str,
+    pick_text_spans,
+)
 from .semantic_tag_specs import (
     SEGMENTATION_TAG_NAME,
     TextSpanSegmentationData,
     TextSpanSegmentationSpec,
 )
-from .core import (
-    make_while_splitter_for_text_spans,
-    pick_text_spans,
-    pick_str,
-    group_text_span_tags_splitter,
-    make_probe_from_pattern_proxy,
-    get_string,
-    combine_text_spans,
-    make_pattern_splitter,
-    make_recombine_interrupted_lines_splitter,
-)
-from .testing import make_text_spans, assert_elements_equal
-
+from .testing import assert_elements_equal, make_text_spans
 
 SomeTagSpec = create_semantic_tag_spec_no_data(
     spec_name="segmentation:some_tag",

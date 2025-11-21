@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import Iterable, Tuple, Iterator
+from typing import Iterable, Iterator, Tuple
 
 from arretify.semantic_tag_specs import (
     DocumentReferenceData,
@@ -25,8 +25,7 @@ from arretify.semantic_tag_specs import (
     SectionReferenceSpec,
 )
 from arretify.types import ProtectedSoup, ProtectedTag
-from arretify.utils.html_semantic import css_selector, is_semantic_tag, get_semantic_tag_data
-
+from arretify.utils.html_semantic import css_selector, get_semantic_tag_data, is_semantic_tag
 
 ReferenceTree = list[list[ProtectedTag]]
 ReferenceTreeTraversal = Iterable[

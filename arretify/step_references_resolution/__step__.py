@@ -17,23 +17,15 @@
 # limitations under the License.
 #
 
-from arretify.types import DocumentContext, DocumentType
 from arretify.semantic_tag_specs import DocumentReferenceSpec
+from arretify.types import DocumentContext, DocumentType
 from arretify.utils.html_semantic import css_selector, get_semantic_tag_data
 from arretify.utils.references import build_and_traverse_reference_tree
-from .codes_resolution import (
-    resolve_code_article_legifrance_id,
-    resolve_code_legifrance_id,
-)
-from .arretes_resolution import (
-    resolve_arrete_ministeriel_legifrance_id,
-)
-from .decrets_resolution import (
-    resolve_decret_legifrance_id,
-)
-from .circulaires_resolution import (
-    resolve_circulaire_legifrance_id,
-)
+
+from .arretes_resolution import resolve_arrete_ministeriel_legifrance_id
+from .circulaires_resolution import resolve_circulaire_legifrance_id
+from .codes_resolution import resolve_code_article_legifrance_id, resolve_code_legifrance_id
+from .decrets_resolution import resolve_decret_legifrance_id
 from .eu_acts_resolution import (
     resolve_eu_decision_eurlex_url,
     resolve_eu_directive_eurlex_url,

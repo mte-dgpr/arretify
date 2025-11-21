@@ -16,27 +16,28 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import Union, Sequence as SequenceType
 from dataclasses import replace
+from typing import Sequence as SequenceType
+from typing import Union
 
-from .types import (
-    GroupName,
-    RepeatNode,
-    QuantifierRange,
-    GroupNode,
-    SequenceNode,
-    BranchingNode,
-    LiteralNode,
-    Node,
-    NodeMap,
-)
-from ..types import Settings
 from ..core import PatternProxy
 from ..helpers import (
-    without_named_groups,
     join_with_or,
     quantifier_to_string,
     repeated_with_separator,
+    without_named_groups,
+)
+from ..types import Settings
+from .types import (
+    BranchingNode,
+    GroupName,
+    GroupNode,
+    LiteralNode,
+    Node,
+    NodeMap,
+    QuantifierRange,
+    RepeatNode,
+    SequenceNode,
 )
 
 

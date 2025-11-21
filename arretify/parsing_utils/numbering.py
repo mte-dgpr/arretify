@@ -21,8 +21,8 @@ from typing import Optional, Sequence
 import roman
 
 from arretify.regex_utils import PatternProxy
-from .patterns import LETTER_PATTERN_S
 
+from .patterns import LETTER_PATTERN_S
 
 # "°" is a common OCR error for superscript "è"
 # as in "4ᵉ" for "4ème".

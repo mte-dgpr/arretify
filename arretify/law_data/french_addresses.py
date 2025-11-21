@@ -16,9 +16,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import Set
-from pathlib import Path
 import json
+from pathlib import Path
+from typing import Set
 
 from arretify.regex_utils import Settings, normalize_string
 

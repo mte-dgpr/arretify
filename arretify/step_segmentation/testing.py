@@ -22,7 +22,7 @@ from arretify.step_segmentation.semantic_tag_specs import (
     TextSpanSegmentationData,
     TextSpanSegmentationSpec,
 )
-from arretify.types import ProtectedTagOrStr, ProtectedTag
+from arretify.types import ProtectedTag, ProtectedTagOrStr
 from arretify.utils.html import is_tag
 from arretify.utils.html_create import make_semantic_tag
 from arretify.utils.html_semantic import (

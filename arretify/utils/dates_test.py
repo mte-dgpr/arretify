@@ -19,12 +19,7 @@
 import unittest
 from datetime import date
 
-from .dates import (
-    parse_date_str,
-    render_date_str,
-    parse_year_str,
-    render_year_str,
-)
+from .dates import parse_date_str, parse_year_str, render_date_str, render_year_str
 
 
 class TestStrToDateAndDateToStr(unittest.TestCase):

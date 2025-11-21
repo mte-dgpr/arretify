@@ -21,11 +21,10 @@ from typing import Sequence
 from arretify.regex_utils import (
     PatternProxy,
     Settings,
-    split_string_with_regex,
     merge_matches_with_siblings,
+    split_string_with_regex,
 )
 from arretify.types import ProtectedTagOrStr
-
 
 ET_VIRGULE_PATTERN_S = r"(\s*(,|,?et)\s*)"
 

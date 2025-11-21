@@ -17,26 +17,17 @@
 # limitations under the License.
 #
 import re
-from unicodedata import normalize
 from typing import cast
+from unicodedata import normalize
 
 from pylatexenc.latex2text import LatexNodes2Text
 
-from arretify.regex_utils import (
-    sub_with_match,
-    lookup_normalized_version,
-    join_with_or,
-)
-from arretify.utils.strings import merge_strings
-from arretify.utils.split_merge import (
-    split_and_map_elements,
-    Splitter,
-)
-from arretify.utils.html_split_merge import make_regex_tree_splitter
 from arretify.parsing_utils.dates import MONTH_POINT_ABBREVIATIONS
-from arretify.regex_utils import regex_tree
-from arretify.utils.markdown_parsing import LIST_PATTERN, BULLETPOINT_PATTERN_S, TABLE_LINE_PATTERN
-
+from arretify.regex_utils import join_with_or, lookup_normalized_version, regex_tree, sub_with_match
+from arretify.utils.html_split_merge import make_regex_tree_splitter
+from arretify.utils.markdown_parsing import BULLETPOINT_PATTERN_S, LIST_PATTERN, TABLE_LINE_PATTERN
+from arretify.utils.split_merge import Splitter, split_and_map_elements
+from arretify.utils.strings import merge_strings
 
 LATEX_NODE = LatexNodes2Text(keep_comments=True)
 

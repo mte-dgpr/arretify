@@ -20,21 +20,20 @@ import unittest
 
 from bs4 import BeautifulSoup
 
+from arretify.regex_utils import PatternProxy, Settings, regex_tree
 from arretify.utils.split_merge import SplitMatch, SplitNotAMatch
-from arretify.regex_utils import PatternProxy, regex_tree, Settings
+
 from .html_split_merge import (
+    _NamedGroupSplitterMatch,
     _slice_elements_with_string_index,
+    _split_before_string_index,
+    _split_match_by_named_groups,
+    _trim_strings_before_merging,
+    make_pattern_splitter_ignoring_inline_tags,
     make_regex_tree_splitter,
     pick_string,
-    make_pattern_splitter_ignoring_inline_tags,
-    _split_before_string_index,
-    _trim_strings_before_merging,
-    _split_match_by_named_groups,
-    regex_tree_match,
-    make_regex_tree_splitter,
-    _slice_elements_with_string_index,
-    _NamedGroupSplitterMatch,
     recombine_strings,
+    regex_tree_match,
 )
 
 

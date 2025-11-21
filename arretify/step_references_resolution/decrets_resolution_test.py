@@ -18,10 +18,8 @@
 #
 import unittest
 
-from arretify.utils.testing import (
-    make_testing_function_for_single_tag,
-    normalized_html_str,
-)
+from arretify.utils.testing import make_testing_function_for_single_tag, normalized_html_str
+
 from .decrets_resolution import resolve_decret_legifrance_id
 
 process_decret_document_reference = make_testing_function_for_single_tag(

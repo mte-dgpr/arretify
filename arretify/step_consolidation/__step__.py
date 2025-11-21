@@ -23,16 +23,12 @@ from arretify.semantic_tag_specs import (
     OperationSpec,
     SectionReferenceSpec,
 )
-from arretify.types import ProtectedTagOrStr, DocumentContext
+from arretify.types import DocumentContext, ProtectedTagOrStr
 from arretify.utils.html_create import replace_contents
 from arretify.utils.html_semantic import css_selector
 
-from .operations_detection import (
-    parse_operations,
-)
-from .operands_detection import (
-    resolve_references_and_operands,
-)
+from .operands_detection import resolve_references_and_operands
+from .operations_detection import parse_operations
 
 
 def step_consolidation(document_context: DocumentContext) -> DocumentContext:

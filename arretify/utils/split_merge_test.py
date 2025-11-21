@@ -19,14 +19,14 @@
 import unittest
 
 from .split_merge import (
-    split_elements,
+    SplitMatch,
+    SplitNotAMatch,
     make_single_line_splitter,
     make_while_splitter,
     negate,
-    split_before_match,
     split_and_map_elements,
-    SplitMatch,
-    SplitNotAMatch,
+    split_before_match,
+    split_elements,
 )
 
 

@@ -16,23 +16,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import Iterator, Callable, Sequence
+from typing import Callable, Iterator, Sequence
 
 from arretify.semantic_tag_specs import PageSeparatorData, PageSeparatorSpec
-from arretify.types import DocumentContext, SectionType, ProtectedTagOrStr
-from arretify.utils.html_create import make_semantic_tag, replace_contents, is_semantic_tag
+from arretify.types import DocumentContext, ProtectedTagOrStr, SectionType
 from arretify.utils.functional import chain_functions, iter_func_to_list
-from arretify.utils.split_merge import (
-    split_before_match,
-)
+from arretify.utils.html_create import is_semantic_tag, make_semantic_tag, replace_contents
+from arretify.utils.split_merge import split_before_match
 from arretify.utils.strings import split_on_newlines
-from .header import parse_header
-from .titles_detection import parse_title_info
-from .main_or_appendix import parse_content, is_title
-from .core import (
-    pick_text_spans,
-    get_string,
+
+from .basic_elements import (
+    parse_addresses,
+    parse_images,
+    parse_page_footers,
+    parse_tables_of_contents,
 )
+from .core import get_string, pick_text_spans
+from .header import parse_header
+from .main_or_appendix import is_title, parse_content
 from .semantic_tag_specs import (
     AppendixSegmentationSpec,
     HeaderSegmentationSpec,
@@ -40,13 +41,7 @@ from .semantic_tag_specs import (
     TextSpanSegmentationData,
     TextSpanSegmentationSpec,
 )
-from .basic_elements import (
-    parse_images,
-    parse_addresses,
-    parse_page_footers,
-    parse_tables_of_contents,
-)
-
+from .titles_detection import parse_title_info
 
 _is_title_line = pick_text_spans(is_title)
 

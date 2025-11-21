@@ -16,16 +16,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-import unittest
 import re
+import unittest
 
 from .helpers import (
-    sub_with_match,
-    without_named_groups,
-    normalize_string,
     lookup_normalized_version,
+    normalize_string,
     quantifier_to_string,
     repeated_with_separator,
+    sub_with_match,
+    without_named_groups,
 )
 from .types import Settings
 

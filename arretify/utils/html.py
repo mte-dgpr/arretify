@@ -16,21 +16,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import Literal, Sequence, TypeGuard, Iterable, Iterator, cast
+from typing import Iterable, Iterator, Literal, Sequence, TypeGuard, cast
 
 from bs4 import Tag
 
 from arretify.types import (
     IdCounters,
-    ProtectedTagOrStr,
     ProtectedTag,
+    ProtectedTagOrStr,
     TagGroupId,
     TagId,
     protect_tag,
     unprotect_tag,
 )
 from arretify.utils.functional import iter_func_to_list
-
 
 INLINE_TAG_TYPES = ["br"]
 

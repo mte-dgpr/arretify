@@ -17,12 +17,12 @@
 # limitations under the License.
 #
 from dataclasses import dataclass
-from typing import Dict, Sequence, Union, Iterable
+from typing import Dict, Iterable, Sequence, Union
 
-from ..core import PatternProxy
-from ..types import GroupName, Settings, QuantifierRange
 from arretify.types import ProtectedTag, ProtectedTagOrStr
 
+from ..core import PatternProxy
+from ..types import GroupName, QuantifierRange, Settings
 
 NodeMap = Dict[GroupName, "Node"]
 Node = Union[

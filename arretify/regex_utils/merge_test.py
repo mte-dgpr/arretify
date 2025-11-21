@@ -18,9 +18,9 @@
 #
 import unittest
 
+from .core import PatternProxy
 from .merge import merge_matches_with_siblings
 from .split import split_string_with_regex
-from .core import PatternProxy
 
 
 class TestMergeMatchWithSiblingString(unittest.TestCase):

@@ -18,12 +18,9 @@
 #
 import unittest
 
-from arretify.utils.testing import (
-    make_testing_function_for_children_list,
-    normalized_html_str,
-)
-from .arretes_detection import parse_arretes_references
+from arretify.utils.testing import make_testing_function_for_children_list, normalized_html_str
 
+from .arretes_detection import parse_arretes_references
 
 process_children = make_testing_function_for_children_list(parse_arretes_references)
 

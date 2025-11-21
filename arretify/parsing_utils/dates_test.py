@@ -16,22 +16,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import cast
 import unittest
+from typing import cast
 
 from bs4 import BeautifulSoup
 
-from .dates import (
-    DATE_NODE,
-    render_date_regex_tree_match,
-)
 from arretify.types import ProtectedSoup, ProtectedTagOrStr
-from arretify.utils.split_merge import (
-    split_and_map_elements,
-)
-from arretify.utils.html_split_merge import (
-    make_regex_tree_splitter,
-)
+from arretify.utils.html_split_merge import make_regex_tree_splitter
+from arretify.utils.split_merge import split_and_map_elements
+
+from .dates import DATE_NODE, render_date_regex_tree_match
 
 
 class TestRenderDateRegexTreeMatch(unittest.TestCase):

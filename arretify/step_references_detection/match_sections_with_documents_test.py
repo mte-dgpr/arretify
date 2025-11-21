@@ -18,10 +18,8 @@
 #
 import unittest
 
-from arretify.utils.testing import (
-    make_testing_function_for_children_list,
-    normalized_html_str,
-)
+from arretify.utils.testing import make_testing_function_for_children_list, normalized_html_str
+
 from .match_sections_with_documents import match_sections_to_parents
 
 process_match_sections_to_parents = make_testing_function_for_children_list(

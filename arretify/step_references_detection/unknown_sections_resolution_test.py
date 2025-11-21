@@ -19,13 +19,12 @@
 import unittest
 
 from arretify.semantic_tag_specs import SectionReferenceSpec
-from arretify.utils.html_semantic import get_semantic_tag_data
-from arretify.utils.testing import create_document_context
-from arretify.utils.references import build_reference_tree
 from arretify.types import SectionType
-from arretify.utils.testing import make_testing_function_for_children_list
-from .unknown_sections_resolution import resolve_unknown_sections, remove_misdetected_sections
+from arretify.utils.html_semantic import get_semantic_tag_data
+from arretify.utils.references import build_reference_tree
+from arretify.utils.testing import create_document_context, make_testing_function_for_children_list
 
+from .unknown_sections_resolution import remove_misdetected_sections, resolve_unknown_sections
 
 remove_misdetected_sections_ = make_testing_function_for_children_list(remove_misdetected_sections)
 

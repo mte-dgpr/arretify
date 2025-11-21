@@ -18,27 +18,26 @@
 #
 from typing import Iterator, Sequence
 
+from arretify.parsing_utils.numbering import COUNT_PATTERN_S
 from arretify.regex_utils import (
-    regex_tree,
+    filter_regex_tree_match_children,
     flat_map_regex_tree_match,
     iter_regex_tree_match_page_elements_or_strings,
-    filter_regex_tree_match_children,
     join_with_or,
+    regex_tree,
 )
-from arretify.utils.html_create import make_tag, make_semantic_tag
-from arretify.utils.strings import merge_strings
-from arretify.utils.html_split_merge import make_regex_tree_splitter
-from arretify.utils.split_merge import split_and_map_elements
 from arretify.semantic_tag_specs import OperationData, OperationSpec
 from arretify.types import (
-    OperationType,
-    ProtectedTagOrStr,
     DocumentContext,
+    OperationType,
     ProtectedSoup,
     ProtectedTag,
+    ProtectedTagOrStr,
 )
-
-from arretify.parsing_utils.numbering import COUNT_PATTERN_S
+from arretify.utils.html_create import make_semantic_tag, make_tag
+from arretify.utils.html_split_merge import make_regex_tree_splitter
+from arretify.utils.split_merge import split_and_map_elements
+from arretify.utils.strings import merge_strings
 
 OPERATION_TYPES_GROUP_NAMES = [
     OperationType.ADD.value,

@@ -16,9 +16,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+import unittest
 from enum import Enum
 from typing import Annotated
-import unittest
 
 from bs4 import BeautifulSoup
 
@@ -27,22 +27,22 @@ from arretify.utils.html import set_attribute
 from arretify.utils.html_create import make_tag
 
 from .html_semantic import (
+    Bool,
     Contents,
     IntList,
     SemanticTagData,
     SemanticTagSpec,
-    create_semantic_tag_spec_no_data,
-    is_semantic_tag,
-    Bool,
     StrList,
-    enum_serializer,
-    update_data,
-    set_semantic_tag_data,
-    get_semantic_tag_data,
-    update_semantic_tag_data,
+    create_semantic_tag_spec_no_data,
+    css_selector,
     enum_list_parser,
     enum_list_serializer,
-    css_selector,
+    enum_serializer,
+    get_semantic_tag_data,
+    is_semantic_tag,
+    set_semantic_tag_data,
+    update_data,
+    update_semantic_tag_data,
 )
 
 
