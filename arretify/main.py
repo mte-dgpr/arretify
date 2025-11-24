@@ -39,7 +39,7 @@ from .pipeline import (
     run_pipeline,
     save_html_file,
 )
-from .settings import APP_ROOT, OCR_FILE_EXTENSION, Settings
+from .settings import OCR_FILE_EXTENSION, Settings
 from .step_consolidation import step_consolidation
 from .step_markdown_cleaning import step_markdown_cleaning
 from .step_ocr import step_ocr
@@ -78,6 +78,10 @@ def main(args: list[str]) -> None:
         help="Enable verbose logging.",
     )
     parser.add_option(
+        "--log-file",
+        help="Path to the log file.",
+    )
+    parser.add_option(
         "-r",
         "--recursive",
         action="store_true",
@@ -97,12 +101,16 @@ def main(args: list[str]) -> None:
     # Initialize environment variables before anything else
     load_dotenv()
 
-    # Then initialize logging, so we don't miss any messages
-    _initialize_root_logger(_LOGGER, options.verbose)
-
+    settings = Settings.from_env()
     session_context = SessionContext(
-        settings=Settings.from_env(),
+        settings=settings,
     )
+
+    # Then initialize logging, so we don't miss any messages
+    _initialize_root_logger(
+        settings, _LOGGER, options.verbose, options.log_file and Path(options.log_file)
+    )
+
     root_input_path = Path(options.input)
     root_output_path = Path(options.output)
     is_recursive = options.recursive
@@ -355,25 +363,34 @@ class _MainLoggingFormatter(logging.Formatter):
             return self.simple_formatter.format(record)
 
 
-def _initialize_root_logger(logger: logging.Logger, verbose: bool) -> None:
-    # Configure root logger
-    log_dir = APP_ROOT / "logs"
-    log_dir.mkdir(exist_ok=True)
-    log_file = log_dir / f"{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.log"
-
+def _initialize_root_logger(
+    settings: Settings, logger: logging.Logger, verbose: bool, log_file: Path | None
+) -> None:
     stream_handler = logging.StreamHandler()
     stream_handler.setFormatter(_MainLoggingFormatter())
+    handlers: list[logging.Handler] = [stream_handler]
+
+    if log_file is not None or settings.env == "development":
+        if settings.env == "development":
+            # Configure root logger
+            log_dir = settings.tmp_dir / "log"
+            log_dir.mkdir(exist_ok=True)
+            log_file = log_dir / f"{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.log"
+
+        assert log_file
+        handlers.append(logging.FileHandler(log_file, encoding="utf-8"))
 
     logging.basicConfig(
-        level=logging.WARNING,
-        handlers=[stream_handler, logging.FileHandler(log_file, encoding="utf-8")],
+        level=logging.INFO,
+        handlers=handlers,
     )
+
+    if log_file is not None:
+        _LOGGER.info(f"Logging to file: {log_file}")
 
     # Set level globally based on verbosity flag
     if verbose:
         logger.setLevel(logging.DEBUG)
-    else:
-        logger.setLevel(logging.INFO)
 
 
 if __name__ == "__main__":
