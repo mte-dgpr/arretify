@@ -16,12 +16,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from arretify.semantic_tag_specs import ArreteSpec
+import importlib.metadata
+
+from arretify.semantic_tag_specs import ArreteData, ArreteSpec
 from arretify.types import DocumentContext
 from arretify.utils.html_create import replace_contents, upgrade_to_semantic_tag
 
 from .parse_arrete import parse_arrete
 from .render_contents import render_contents
+
+ARRETIFY_VERSION = importlib.metadata.version("arretify")
 
 
 def step_segmentation(document_context: DocumentContext) -> DocumentContext:
@@ -33,7 +37,14 @@ def step_segmentation(document_context: DocumentContext) -> DocumentContext:
 
     body = document_context.protected_soup.body
     assert body
-    upgrade_to_semantic_tag(body, ArreteSpec)
+    upgrade_to_semantic_tag(
+        body,
+        ArreteSpec,
+        ArreteData(
+            input_name=document_context.input_path.name if document_context.input_path else None,
+            arretify_version=ARRETIFY_VERSION,
+        ),
+    )
     replace_contents(
         body,
         render_contents(
