@@ -18,9 +18,11 @@
 #
 import unittest
 
+from arretify.errors import ErrorCodes
 from arretify.law_data.french_addresses import ALL_STREET_NAMES
 from arretify.semantic_tag_specs import (
     AddressSpec,
+    ErrorSpec,
     PageSeparatorData,
     PageSeparatorSpec,
     TableOfContentsSpec,
@@ -45,6 +47,7 @@ from .basic_elements import (
     parse_lists,
     parse_tables,
     parse_tables_of_contents,
+    parse_unknown_elements,
 )
 from .testing import assert_elements_equal, make_text_spans
 
@@ -539,6 +542,59 @@ class TestParseTablesOfContents(unittest.TestCase):
                     ),
                 ),
                 *make_text_spans(self.soup, "Line 2"),
+            ],
+            ignore_text_span_data=True,
+        )
+
+
+class TestParseUnknownElements(BaseTestCase):
+
+    def test_parse_unknown_elements(self):
+        # Arrange
+        some_spec = create_semantic_tag_spec_no_data(
+            spec_name="some_spec",
+            tag_name="div",
+            allowed_contents=tuple(),  # nothing allowed
+        )
+        other_spec = create_semantic_tag_spec_no_data(
+            spec_name="other_spec",
+            tag_name="div",
+        )
+        contents = [
+            make_semantic_tag(self.soup, other_spec),
+            "Unknown str element",
+            make_tag(self.soup, "span", contents=["Unknown tag element"]),
+        ]
+
+        # Act
+        result = parse_unknown_elements(self.context, some_spec, contents)
+
+        # Assert
+        assert_elements_equal(
+            result,
+            [
+                make_semantic_tag(
+                    self.soup,
+                    ErrorSpec,
+                    contents=[
+                        make_semantic_tag(self.soup, other_spec),
+                    ],
+                    data=ErrorSpec.data_model(error_codes=[ErrorCodes.unknown_content]),
+                ),
+                make_semantic_tag(
+                    self.soup,
+                    ErrorSpec,
+                    contents=["Unknown str element"],
+                    data=ErrorSpec.data_model(error_codes=[ErrorCodes.unknown_content]),
+                ),
+                make_semantic_tag(
+                    self.soup,
+                    ErrorSpec,
+                    contents=[
+                        make_tag(self.soup, "span", contents=["Unknown tag element"]),
+                    ],
+                    data=ErrorSpec.data_model(error_codes=[ErrorCodes.unknown_content]),
+                ),
             ],
             ignore_text_span_data=True,
         )

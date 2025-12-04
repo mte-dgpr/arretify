@@ -40,12 +40,12 @@ from .html_create import (
     InvalidContentsError,
     _make_tag,
     _unprotect_page_elements,
-    _validate_semantic_tag_contents,
     _validate_tag_contents,
     make_semantic_tag,
     make_tag,
     replace_contents,
     upgrade_to_semantic_tag,
+    validate_semantic_tag_contents,
 )
 
 
@@ -259,6 +259,12 @@ class TestValidateSemanticTagContents(unittest.TestCase):
             data_model=SemanticTagData,
         )
 
+        self.other_spec = SemanticTagSpec(
+            spec_name="other_spec",
+            tag_name="span",
+            data_model=SemanticTagData,
+        )
+
     def test_only_str_allowed(self) -> None:
         # ARRANGE
         spec_only_str = SemanticTagSpec(
@@ -273,22 +279,16 @@ class TestValidateSemanticTagContents(unittest.TestCase):
         tag_contents = [make_tag(self.soup, "span")]
 
         # ACT & ASSERT
-        _validate_semantic_tag_contents(spec_only_str, str_contents)
+        validate_semantic_tag_contents(spec_only_str, str_contents)
 
         with self.assertRaises(InvalidContentsError):
-            _validate_semantic_tag_contents(spec_only_str, semantic_tag_contents)
+            validate_semantic_tag_contents(spec_only_str, semantic_tag_contents)
 
         with self.assertRaises(InvalidContentsError):
-            _validate_semantic_tag_contents(spec_only_str, tag_contents)
+            validate_semantic_tag_contents(spec_only_str, tag_contents)
 
     def test_only_specs_allowed(self) -> None:
         # ARRANGE
-        other_spec = SemanticTagSpec(
-            spec_name="other_spec",
-            tag_name="span",
-            data_model=SemanticTagData,
-        )
-
         spec_only_specs = SemanticTagSpec(
             spec_name="only_specs",
             tag_name="div",
@@ -297,21 +297,21 @@ class TestValidateSemanticTagContents(unittest.TestCase):
         )
 
         allowed_semantic_tag_contents = [make_semantic_tag(self.soup, self.some_spec)]
-        other_semantic_tag_contents = [make_semantic_tag(self.soup, other_spec)]
+        other_semantic_tag_contents = [make_semantic_tag(self.soup, self.other_spec)]
         str_contents = ["some text"]
         tag_contents = [make_tag(self.soup, "span")]
 
         # ACT & ASSERT
-        _validate_semantic_tag_contents(spec_only_specs, allowed_semantic_tag_contents)
+        validate_semantic_tag_contents(spec_only_specs, allowed_semantic_tag_contents)
 
         with self.assertRaises(InvalidContentsError):
-            _validate_semantic_tag_contents(spec_only_specs, str_contents)
+            validate_semantic_tag_contents(spec_only_specs, str_contents)
 
         with self.assertRaises(InvalidContentsError):
-            _validate_semantic_tag_contents(spec_only_specs, other_semantic_tag_contents)
+            validate_semantic_tag_contents(spec_only_specs, other_semantic_tag_contents)
 
         with self.assertRaises(InvalidContentsError):
-            _validate_semantic_tag_contents(spec_only_specs, tag_contents)
+            validate_semantic_tag_contents(spec_only_specs, tag_contents)
 
     def test_only_tags_allowed(self) -> None:
         # ARRANGE
@@ -328,16 +328,16 @@ class TestValidateSemanticTagContents(unittest.TestCase):
         wrong_tag_contents = [make_tag(self.soup, "ol")]
 
         # ACT & ASSERT
-        _validate_semantic_tag_contents(spec_only_tags, allowed_tag_contents)
+        validate_semantic_tag_contents(spec_only_tags, allowed_tag_contents)
 
         with self.assertRaises(InvalidContentsError):
-            _validate_semantic_tag_contents(spec_only_tags, str_contents)
+            validate_semantic_tag_contents(spec_only_tags, str_contents)
 
         with self.assertRaises(InvalidContentsError):
-            _validate_semantic_tag_contents(spec_only_tags, semantic_tag_contents)
+            validate_semantic_tag_contents(spec_only_tags, semantic_tag_contents)
 
         with self.assertRaises(InvalidContentsError):
-            _validate_semantic_tag_contents(spec_only_tags, wrong_tag_contents)
+            validate_semantic_tag_contents(spec_only_tags, wrong_tag_contents)
 
     def test_nothing_allowed(self) -> None:
         # ARRANGE
@@ -354,16 +354,16 @@ class TestValidateSemanticTagContents(unittest.TestCase):
         tag_contents = [make_tag(self.soup, "span")]
 
         # ACT & ASSERT
-        _validate_semantic_tag_contents(spec_nothing, empty_contents)
+        validate_semantic_tag_contents(spec_nothing, empty_contents)
 
         with self.assertRaises(InvalidContentsError):
-            _validate_semantic_tag_contents(spec_nothing, str_contents)
+            validate_semantic_tag_contents(spec_nothing, str_contents)
 
         with self.assertRaises(InvalidContentsError):
-            _validate_semantic_tag_contents(spec_nothing, semantic_tag_contents)
+            validate_semantic_tag_contents(spec_nothing, semantic_tag_contents)
 
         with self.assertRaises(InvalidContentsError):
-            _validate_semantic_tag_contents(spec_nothing, tag_contents)
+            validate_semantic_tag_contents(spec_nothing, tag_contents)
 
     def test_everything_allowed(self) -> None:
         # ARRANGE
@@ -371,11 +371,7 @@ class TestValidateSemanticTagContents(unittest.TestCase):
             spec_name="everything",
             tag_name="div",
             data_model=SemanticTagData,
-            allowed_contents=(
-                Contents.Str(),
-                Contents.SemanticTag(spec_name=self.some_spec.spec_name),
-                Contents.Tag(tag_name="span"),
-            ),
+            allowed_contents=None,
         )
 
         str_contents = ["text"]
@@ -388,12 +384,12 @@ class TestValidateSemanticTagContents(unittest.TestCase):
         ]
 
         # ACT & ASSERT
-        _validate_semantic_tag_contents(spec_everything, str_contents)
-        _validate_semantic_tag_contents(spec_everything, allowed_semantic_tag_contents)
-        _validate_semantic_tag_contents(spec_everything, allowed_tag_contents)
-        _validate_semantic_tag_contents(spec_everything, mixed_contents)
+        validate_semantic_tag_contents(spec_everything, str_contents)
+        validate_semantic_tag_contents(spec_everything, allowed_semantic_tag_contents)
+        validate_semantic_tag_contents(spec_everything, allowed_tag_contents)
+        validate_semantic_tag_contents(spec_everything, mixed_contents)
 
-    def test_is_allowed_anywhere(self) -> None:
+    def test_semantic_tag_is_allowed_anywhere(self) -> None:
         # ARRANGE
         spec_is_allowed_anywhere = SemanticTagSpec(
             spec_name="is_allowed_anywhere",
@@ -406,7 +402,7 @@ class TestValidateSemanticTagContents(unittest.TestCase):
         semantic_tag_contents = [make_semantic_tag(self.soup, spec_is_allowed_anywhere)]
 
         # ACT & ASSERT
-        _validate_semantic_tag_contents(self.some_spec, semantic_tag_contents)
+        validate_semantic_tag_contents(self.some_spec, semantic_tag_contents)
 
     def test_tags_allowed_anywhere(self) -> None:
         # ARRANGE
@@ -427,7 +423,7 @@ class TestValidateSemanticTagContents(unittest.TestCase):
         ]
 
         # ACT & ASSERT
-        _validate_semantic_tag_contents(spec_only_str, contents)
+        validate_semantic_tag_contents(spec_only_str, contents)
 
     def test_tags_allowed_anywhere_but_no_contents_allowed(self) -> None:
         # ARRANGE
@@ -444,7 +440,39 @@ class TestValidateSemanticTagContents(unittest.TestCase):
 
         # ACT & ASSERT
         with self.assertRaises(InvalidContentsError):
-            _validate_semantic_tag_contents(spec_nothing, contents)
+            validate_semantic_tag_contents(spec_nothing, contents)
+
+    def test_errors_list(self):
+        # ARRANGE
+        spec_allowing_some_stuff = SemanticTagSpec(
+            spec_name="spec_allowing_some_stuff",
+            tag_name="div",
+            data_model=SemanticTagData,
+            allowed_contents=(
+                Contents.SemanticTag(spec_name=self.some_spec.spec_name),
+                Contents.Tag(tag_name="span"),
+            ),
+        )
+
+        contents = [
+            make_tag(self.soup, "span"),  # Allowed
+            make_tag(self.soup, "div"),  # Not allowed
+            make_semantic_tag(self.soup, self.some_spec),  # Allowed
+            make_semantic_tag(self.soup, self.other_spec),  # Not allowed
+            "bla",  # Not allowed
+            42,  # type: ignore
+        ]
+
+        # ACT & ASSERT
+        with self.assertRaises(InvalidContentsError) as context:
+            validate_semantic_tag_contents(spec_allowing_some_stuff, contents)
+
+        errors = context.exception.errors
+        assert len(errors) == 4
+        assert errors[0] == (1, "tag div not allowed")
+        assert errors[1] == (3, "semantic tag other_spec not allowed")
+        assert errors[2] == (4, "string content not allowed")
+        assert errors[3] == (5, "invalid content type <class 'int'>")
 
 
 class TestValidateTagContents(unittest.TestCase):
@@ -511,6 +539,27 @@ class TestValidateTagContents(unittest.TestCase):
 
         # ACT & ASSERT
         _validate_tag_contents([semantic_tag])
+
+    def test_errors_list(self) -> None:
+        # ARRANGE
+        contents: list[ProtectedTagOrStr] = [
+            "valid string",
+            make_semantic_tag(self.soup, self.some_spec),
+            make_tag(self.soup, "div"),
+            make_semantic_tag(self.soup, self.some_spec),
+            "other string",
+            42,  # type: ignore
+        ]
+
+        # ACT & ASSERT
+        with self.assertRaises(InvalidContentsError) as context:
+            _validate_tag_contents(contents)
+
+        errors = context.exception.errors
+        assert len(errors) == 3
+        assert errors[0] == (1, "semantic tag some_spec not allowed")
+        assert errors[1] == (3, "semantic tag some_spec not allowed")
+        assert errors[2] == (5, "invalid content type <class 'int'>")
 
 
 class TestEdgesCases(unittest.TestCase):

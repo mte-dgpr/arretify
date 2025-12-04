@@ -18,16 +18,20 @@
 #
 import unittest
 
+from arretify.errors import ErrorCodes
 from arretify.semantic_tag_specs import (
     ArreteTitleSpec,
     DateSpec,
     EmblemSpec,
     EntitySpec,
+    ErrorSpec,
     HonorarySpec,
     IdentificationSpec,
     PageFooterSpec,
     PageSeparatorData,
     PageSeparatorSpec,
+    SectionData,
+    SectionSpec,
     SupplementaryMotifInfoSpec,
 )
 from arretify.step_segmentation.semantic_tag_specs import (
@@ -43,6 +47,7 @@ from .header import (
     parse_arrete_title_element,
     parse_emblem_element,
     parse_entity_element,
+    parse_header,
     parse_honorary_element,
     parse_identification_element,
     parse_supplementary_motif_info_element,
@@ -55,6 +60,40 @@ class BaseTestCase(unittest.TestCase):
     def setUp(self):
         self.context = create_document_context()
         self.soup = self.context.protected_soup
+
+
+class TestParseHeader(BaseTestCase):
+
+    def test_unknown_elements(self):
+        # Arrange
+        unexpected_article = make_semantic_tag(
+            self.soup,
+            SectionSpec,
+            contents=[],
+            data=SectionData(
+                title="Article 1",
+                number="1",
+                type="article",
+            ),
+        )
+        contents = [unexpected_article]
+
+        # Act
+        results = parse_header(self.context, contents)
+
+        # Assert
+        assert_elements_equal(
+            results,
+            [
+                make_semantic_tag(
+                    self.soup,
+                    ErrorSpec,
+                    contents=[unexpected_article],
+                    data=ErrorSpec.data_model(error_codes=[ErrorCodes.unknown_content]),
+                ),
+            ],
+            ignore_text_span_data=True,
+        )
 
 
 class TestParseVisaAndMotifs(BaseTestCase):

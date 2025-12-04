@@ -110,6 +110,10 @@ TSemanticTagData = TypeVar("TSemanticTagData", bound="SemanticTagData")
 
 
 class Contents:
+    """
+    Namespace for specifying allowed contents of semantic tags.
+    """
+
     @dataclass(frozen=True, eq=True)
     class Str:
         pass
@@ -122,7 +126,7 @@ class Contents:
     class SemanticTag:
         spec_name: str
 
-    Any = tuple[Str | Tag | SemanticTag, ...]
+    Tuple = tuple[Str | Tag | SemanticTag, ...]
 
 
 _REGISTRY: dict[str, "SemanticTagSpec"] = {}
@@ -175,10 +179,12 @@ class SemanticTagSpec(Generic[TSemanticTagData]):
     data_model: Type[TSemanticTagData]
     """Pydantic model class for validating tag data attributes"""
 
-    allowed_contents: Contents.Any = tuple()
+    allowed_contents: Contents.Tuple | None = tuple()
     """
     Allowed contents inside this semantic tag.
     Use Contents.Str, Contents.Tag, Contents.SemanticTag to specify allowed types.
+    If value is `None`, any content is allowed. This should not be used except for very specific
+    cases.
     """
 
     is_allowed_anywhere: bool = False
@@ -194,7 +200,7 @@ class SemanticTagSpec(Generic[TSemanticTagData]):
 def create_semantic_tag_spec_no_data(
     spec_name: str,
     tag_name: str,
-    allowed_contents: Contents.Any = tuple(),
+    allowed_contents: Contents.Tuple | None = tuple(),
     is_allowed_anywhere: bool = False,
 ) -> SemanticTagSpec[SemanticTagData]:
     """
