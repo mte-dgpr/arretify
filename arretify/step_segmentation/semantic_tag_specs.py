@@ -99,6 +99,7 @@ BlockquoteSegmentationSpec = create_semantic_tag_spec_no_data(
         Contents.SemanticTag(ListSegmentationSpec.spec_name),
         Contents.SemanticTag(TableSegmentationSpec.spec_name),
         Contents.SemanticTag(TableDescriptionSegmentationSpec.spec_name),
+        Contents.Tag("img"),
     ),
 )
 

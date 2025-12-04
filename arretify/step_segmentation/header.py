@@ -408,9 +408,8 @@ def _parse_visa_and_motif_elements_pass1(
 ) -> Iterator[ProtectedTagOrStr]:
     """
     Pass 1 of parsing visa and motif elements.
-    This pass splits the tag flow into segments based on the node pattern.
-    It creates tags of type 'visa' or 'motif' for each segment that matches
-    the pattern.
+    It simply creates tags of type 'visa' or 'motif' for each line that matches
+    the pattern, without taking into account following lines.
     """
     elements = split_and_map_elements(
         elements,
@@ -471,7 +470,7 @@ def _parse_visa_and_motif_elements_pass2(
     # 1. Variant "simple" :
     #   Vu que blabla
     #   Vu que bloblo
-    if first_tag_match and first_tag_match.group("contents"):
+    if first_tag_match and first_tag_match.group("contents").strip():
         elements.insert(0, first_tag)
         # Recombine interrupted lines, e.g.
         #   Vu que blabla
