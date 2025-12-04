@@ -9,11 +9,14 @@ authors = [
   { name="Sébastien Piquemal", email="sebastien.piquemal@developpement-durable.gouv.fr" },
   { name="Sébastien Meyer", email="sebastien.meyer@developpement-durable.gouv.fr" }
 ]
-description = ""
+description = "Arrêtify est une librairie Python permettant la conversion d'arrêtés préfectoraux français en HTML sémantique."
 readme = "README.md"
 # Python 3.13 is not supported by spacy with cuda as of august 2025.
 requires-python = "~=3.12"
-classifiers = []
+classifiers = [
+]
+license = "Apache-2.0"
+license-files = ["LICENSE"]
 dependencies = [
   "python-dotenv~=1.0",
   "requests~=2.32",
@@ -34,6 +37,10 @@ dependencies = [
   # TODO : move this as optional dependencies for NLP
   "spacy~=3.8.7",
 ]
+
+[project.urls]
+Homepage = "https://github.com/mte-dgpr/arretify"
+Issues = "https://github.com/mte-dgpr/arretify/issues"
 
 [project.optional-dependencies]
 dev = [
@@ -73,3 +80,13 @@ extend_skip = "arretify/_vendor"
 [tool.pytest.ini_options]
 minversion = "6.0"
 addopts = "--ignore=arretify/_vendor"
+
+[tool.hatch.build]
+exclude = [
+  "examples/",
+  "tmp/",
+  ".git/",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["arretify"]
