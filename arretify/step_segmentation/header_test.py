@@ -302,6 +302,42 @@ class TestParseVisaAndMotifs(BaseTestCase):
             ignore_text_span_data=True,
         )
 
+    def test_variant_implicit_list_with_extra_spaces_after_considerant(self):
+        # Arrange
+        elements = [
+            *make_text_spans(
+                self.soup,
+                "CONSIDÉRANT  ",
+                "que le site a évolué",
+                "que les mesures concernent :",
+            ),
+        ]
+
+        # Act
+        result = parse_visa_and_motif_elements(self.context, elements)
+
+        # Assert
+        assert_elements_equal(
+            result,
+            [
+                *make_text_spans(
+                    self.soup,
+                    "CONSIDÉRANT  ",
+                ),
+                make_semantic_tag(
+                    self.soup,
+                    MotifSegmentationSpec,
+                    contents=make_text_spans(self.soup, "que le site a évolué"),
+                ),
+                make_semantic_tag(
+                    self.soup,
+                    MotifSegmentationSpec,
+                    contents=make_text_spans(self.soup, "que les mesures concernent :"),
+                ),
+            ],
+            ignore_text_span_data=True,
+        )
+
     def test_variant_explicit_list(self):
         # Arrange
         elements = [
