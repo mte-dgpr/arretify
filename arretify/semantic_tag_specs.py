@@ -85,9 +85,9 @@ TableOfContentsSpec = create_semantic_tag_spec_no_data(
 
 ErrorSpec = create_semantic_tag_spec_no_data(
     spec_name="error",
-    tag_name="span",
-    allowed_contents=(Contents.Str(),),
+    tag_name="div",
     is_allowed_anywhere=True,
+    allowed_contents=None,  # Any content is allowed
 )
 
 

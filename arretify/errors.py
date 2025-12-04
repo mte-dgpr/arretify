@@ -42,6 +42,8 @@ class ErrorCodes(Enum):
     law_data_api_error = "law_data_api_error"
     non_existant_date = "non_existant_date"
     """This date is syntactically valid but doesn't exist on the calendar"""
+    unknown_content = "unknown_content"
+    """Content that could not be categorized according to the expected structure"""
 
 
 class ArretifyError(Exception):

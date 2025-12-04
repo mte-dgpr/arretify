@@ -49,8 +49,26 @@ throughout the document.
 """
 
 
+InvalidContentsErrorEntry = tuple[int, str]
+
+
 class InvalidContentsError(ValueError):
-    pass
+    """
+    Raised when the contents of a tag do not conform to the expected structure.
+    Attributes:
+        errors: A list of tuples where each tuple contains the index of the invalid
+                content and a description of the error.
+    """
+
+    def __init__(
+        self, errors: Sequence[InvalidContentsErrorEntry], prefix: str | None = None
+    ) -> None:
+        super().__init__(
+            (prefix + "\n")
+            if prefix
+            else "" + "\n".join(f"Index {i}: {message}" for i, message in errors)
+        )
+        self.errors = errors
 
 
 def wrap_in_tag(
@@ -99,7 +117,7 @@ def make_semantic_tag(
 
     tag = upgrade_to_semantic_tag(tag, spec, data)
     set_non_data_attributes(tag, attrs)
-    _validate_semantic_tag_contents(spec, contents)
+    validate_semantic_tag_contents(spec, contents)
     return _replace_contents(tag, contents)
 
 
@@ -108,7 +126,7 @@ def upgrade_to_semantic_tag(
     spec: SemanticTagSpec[TSemanticTagData],
     data: TSemanticTagData | None = None,
 ) -> ProtectedTag:
-    _validate_semantic_tag_contents(spec, protected_tag.contents)
+    validate_semantic_tag_contents(spec, protected_tag.contents)
     set_attribute(protected_tag, _SPEC_DATA_ATTR, spec.spec_name)
     if data is None:
         data = spec.data_model()
@@ -122,7 +140,7 @@ def replace_contents(
 ) -> ProtectedTag:
     if is_semantic_tag(protected_tag):
         spec = get_semantic_tag_spec(protected_tag)
-        _validate_semantic_tag_contents(spec, contents)
+        validate_semantic_tag_contents(spec, contents)
     else:
         _validate_tag_contents(contents)
 
@@ -173,9 +191,16 @@ def _replace_contents(
     return protect_tag(tag)
 
 
-def _validate_semantic_tag_contents(
+def validate_semantic_tag_contents(
     spec: SemanticTagSpec, contents: Sequence[ProtectedTagOrStr]
 ) -> None:
+    """
+    Validates that the contents conform to the allowed contents of the semantic tag spec.
+    Raises a single InvalidContentsError containing all validation errors if any are found.
+    """
+    if spec.allowed_contents is None:
+        return  # Any content is allowed
+
     is_str_accepted = any(isinstance(ac, Contents.Str) for ac in spec.allowed_contents)
     tag_names_accepted = {
         ac.tag_name for ac in spec.allowed_contents if isinstance(ac, Contents.Tag)
@@ -183,11 +208,12 @@ def _validate_semantic_tag_contents(
     spec_names_accepted = {
         ac.spec_name for ac in spec.allowed_contents if isinstance(ac, Contents.SemanticTag)
     }
+    errors: list[InvalidContentsErrorEntry] = []
 
-    for element in contents:
+    for i, element in enumerate(contents):
         if isinstance(element, str):
             if not is_str_accepted:
-                raise InvalidContentsError(f"String content not accepted in {spec.spec_name}")
+                errors.append((i, "string content not allowed"))
 
         elif is_semantic_tag(element):
             element_spec = get_semantic_tag_spec(element)
@@ -195,9 +221,7 @@ def _validate_semantic_tag_contents(
                 continue
 
             if element_spec.spec_name not in spec_names_accepted:
-                raise InvalidContentsError(
-                    f'Semantic tag "{element_spec.spec_name}" not accepted in "{spec.spec_name}"'
-                )
+                errors.append((i, f"semantic tag {element_spec.spec_name} not allowed"))
 
         elif is_tag(element):
             tag_name = element.name
@@ -206,28 +230,45 @@ def _validate_semantic_tag_contents(
                 continue
 
             elif tag_name not in tag_names_accepted:
-                raise InvalidContentsError(f"Tag <{tag_name}> not accepted in {spec.spec_name}")
+                errors.append((i, f"tag {tag_name} not allowed"))
 
             _validate_tag_contents(element.contents)
 
         else:
-            raise InvalidContentsError(f"Invalid content type {type(element)} in {spec.spec_name}")
+            errors.append((i, f"invalid content type {type(element)}"))
+
+    if errors:
+        raise InvalidContentsError(
+            errors, prefix=f"Invalid contents for semantic tag {spec.spec_name}:"
+        )
 
 
 def _validate_tag_contents(contents: Sequence[ProtectedTagOrStr]) -> None:
     """
-    Recursively validates that there is no semantic tag in the subtree.
+    Recursively validates that the contents only contain strings and tags.
+    Raises a single InvalidContentsError containing all validation errors if any are found.
     """
-    for element in contents:
-        if is_semantic_tag(element):
+    errors: list[InvalidContentsErrorEntry] = []
+
+    for i, element in enumerate(contents):
+
+        if isinstance(element, str):
+            continue
+
+        elif is_semantic_tag(element):
             spec = get_semantic_tag_spec(element)
             if spec.is_allowed_anywhere:
                 continue
-
-            raise InvalidContentsError(f"Semantic tag {spec.spec_name} not allowed here")
+            errors.append((i, f"semantic tag {spec.spec_name} not allowed"))
 
         elif is_tag(element):
             _validate_tag_contents(element.contents)
+
+        else:
+            errors.append((i, f"invalid content type {type(element)}"))
+
+    if errors:
+        raise InvalidContentsError(errors, prefix="Invalid contents for tag:")
 
 
 def _unprotect_page_elements(

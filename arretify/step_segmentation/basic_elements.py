@@ -44,8 +44,14 @@ from arretify.step_segmentation.semantic_tag_specs import (
 )
 from arretify.types import DocumentContext, ProtectedTag, ProtectedTagOrStr
 from arretify.utils.functional import chain_functions, iter_func_to_list
-from arretify.utils.html_create import make_semantic_tag, replace_contents, wrap_in_tag
-from arretify.utils.html_semantic import SemanticTagData, get_semantic_tag_data, is_semantic_tag
+from arretify.utils.html_create import (
+    InvalidContentsError,
+    make_semantic_tag,
+    replace_contents,
+    validate_semantic_tag_contents,
+    wrap_in_tag,
+)
+from arretify.utils.html_semantic import SemanticTagSpec, get_semantic_tag_data, is_semantic_tag
 from arretify.utils.markdown_parsing import (
     IMAGE_PATTERN,
     LIST_PATTERN,
@@ -268,7 +274,7 @@ def _make_blockquote_tag(context: DocumentContext, match: _BlockquoteSplitterMat
             context.protected_soup,
             ErrorSpec,
             contents=get_strings(pile),
-            data=SemanticTagData(error_codes=[error_code]),
+            data=ErrorSpec.data_model(error_codes=[error_code]),
         )
 
 
@@ -545,3 +551,30 @@ def _render_table_of_contents(
         TableOfContentsSpec,
         contents=wrap_in_tag(context.protected_soup, "div", rendered_contents),
     )
+
+
+# -------------------- Unknown elements -------------------- #
+@iter_func_to_list
+def parse_unknown_elements(
+    context: DocumentContext,
+    spec: SemanticTagSpec,
+    contents: Sequence[ProtectedTagOrStr],
+) -> Iterator[ProtectedTagOrStr]:
+    invalid_contents_indices = set()
+    try:
+        validate_semantic_tag_contents(spec, contents)
+    except InvalidContentsError as invalid_contents_error:
+        for index, _ in invalid_contents_error.errors:
+            invalid_contents_indices.add(index)
+
+    for i, element in enumerate(contents):
+        if i in invalid_contents_indices:
+            yield make_semantic_tag(
+                context.protected_soup,
+                ErrorSpec,
+                contents=[element],
+                data=ErrorSpec.data_model(error_codes=[ErrorCodes.unknown_content]),
+            )
+
+        else:
+            yield element

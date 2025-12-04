@@ -32,6 +32,7 @@ from arretify.semantic_tag_specs import (
     VisaSpec,
 )
 from arretify.step_segmentation.semantic_tag_specs import (
+    HeaderSegmentationSpec,
     ListSegmentationSpec,
     MotifSegmentationSpec,
     TextSpanSegmentationSpec,
@@ -45,7 +46,7 @@ from arretify.utils.html_semantic import SemanticTagSpec, is_semantic_tag
 from arretify.utils.html_split_merge import make_regex_tree_splitter
 from arretify.utils.split_merge import Probe, Splitter, split_and_map_elements
 
-from .basic_elements import parse_lists
+from .basic_elements import parse_lists, parse_unknown_elements
 from .core import (
     TRANSPARENT_TAG_SPECS,
     get_string,
@@ -61,9 +62,9 @@ def parse_header(
     context: DocumentContext,
     elements: Sequence[ProtectedTagOrStr],
 ) -> list[ProtectedTagOrStr]:
-    elements = chain_functions(
+    return chain_functions(
         context,
-        elements,
+        list(elements),
         [
             parse_emblem_element,
             parse_entity_element,
@@ -78,10 +79,15 @@ def parse_header(
             # - before visas and motifs, because they use list tags
             #       to build lists of visas / motifs
             parse_lists,
+            # Must be executed after parsing of all other elements,
+            # in particular because visas and motifs parsing is more fuzzy.
+            parse_visa_and_motif_elements,
+            # Final step, to catch and save any unknown elements instead of raising errors
+            lambda context, elements: parse_unknown_elements(
+                context, HeaderSegmentationSpec, elements
+            ),
         ],
     )
-    elements = parse_visa_and_motif_elements(context, elements)
-    return elements
 
 
 # -------------------- Header elements -------------------- #
@@ -470,7 +476,12 @@ def _parse_visa_and_motif_elements_pass2(
     # 1. Variant "simple" :
     #   Vu que blabla
     #   Vu que bloblo
-    if first_tag_match and first_tag_match.group("contents").strip():
+    first_tag_contents: str | None = None
+    if first_tag_match:
+        first_tag_contents = first_tag_match.group("contents")
+        if first_tag_contents is not None:
+            first_tag_contents = first_tag_contents.strip()
+    if first_tag_contents:
         elements.insert(0, first_tag)
         # Recombine interrupted lines, e.g.
         #   Vu que blabla
