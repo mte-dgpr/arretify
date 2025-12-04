@@ -333,9 +333,15 @@ AppendixSpec = create_semantic_tag_spec_no_data(
 
 
 # -------------------- Arrete -------------------- #
-ArreteSpec = create_semantic_tag_spec_no_data(
+class ArreteData(SemanticTagData):
+    input_name: str | None = None
+    arretify_version: str
+
+
+ArreteSpec: SemanticTagSpec[ArreteData] = SemanticTagSpec(
     spec_name="arrete",
     tag_name="body",
+    data_model=ArreteData,
     allowed_contents=(
         Contents.SemanticTag(HeaderSpec.spec_name),
         Contents.SemanticTag(MainSpec.spec_name),
