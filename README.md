@@ -34,8 +34,8 @@
 **→ Installation** : 
 
 ```bash
-# **NOTE**: La librairie sera disponible très prochainement sur PyPI. En attendant, vous pouvez l'installer directement depuis le repo git.
-pip install git+https://github.com/mte-dgpr/arretify.git
+# Installe la dernière version d'arrêtify
+pip install arretify
 
 # Modèles spacy
 python -m spacy download fr_dep_news_trf
@@ -210,4 +210,18 @@ Télécharger la liste des codes :
 
 ```bash
 python ./scripts/download_data_legifrance.py -o ./arretify/law_data/legifrance
+```
+
+### Publication sur PyPI
+
+La publication sur PyPI se fait automatiquement à travers GitHub Actions. Cette action est définie dans le workflow [.github/workflows/publish.yml](.github/workflows/publish.yml).
+
+Pour publier une nouvelle version : 
+
+1. Incrémenter le numéro de version dans `pyproject.toml`, ajouter un log dans le fichier `CHANGELOG.md`, puis effectuer un commit.
+2. Ajouter un tag de version correspondant au nouveau numéro de version de la librairie : 
+
+```bash
+git tag v1.2.3          # Crée le tag localement
+git push origin v1.2.3  # Push sur github
 ```
