@@ -70,7 +70,7 @@ def render_tree(node: TreeNode, base_path: Path) -> str:
             raise FileNotFoundError(f"Missing PDF file for: {node.path} -> {pdf_file_path}")
         html_url = html_file_path.relative_to(HTML_DIR.parent).as_posix()
         pdf_url = pdf_file_path.relative_to(PDF_DIR.parent).as_posix()
-        return f'<li class="file"><span>{base}</span><span class="spacer"></span> <span><a href="{pdf_url}">pdf</a> | <a href="{html_url}">html</a></span></li>'  # noqa: E501
+        return f'<li class="file"><span class="file-name">{base}</span><span class="spacer"></span> <span class="file-urls"><a href="{pdf_url}">pdf</a> | <a href="{html_url}">html</a></span></li>'  # noqa: E501
 
     # Directory node
     else:

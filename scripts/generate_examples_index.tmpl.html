@@ -37,7 +37,11 @@
         a { 
             color: var(--text-action-high-blue-france)
         }
-                .dir {
+        .notes {
+            font-style: italic;
+            margin-bottom: 1.5rem;
+        }
+        .dir {
             font-weight: bold;
             margin-top: 0.5em;
         }
@@ -45,19 +49,21 @@
             display: flex;
             flex-direction: row;
             justify-content: space-between;
+            align-items: center;
             font-weight: normal;
-            margin-bottom: 0.3em;
-        }
-        .notes {
-            font-style: italic;
-            margin-bottom: 1.5rem;
+            margin-bottom: 0.5em;
         }
         .spacer {
             flex: 1;
             border-bottom: 1px black dotted;
             margin: 0 1rem;
-            position: relative;
-            bottom: 0.5rem;
+            height: 0;
+        }
+        .file-name {
+            max-width: 300px;
+        }
+        .file-urls {
+            white-space: nowrap;
         }
     </style>
 </head>
