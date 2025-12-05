@@ -18,6 +18,7 @@
 #
 import unittest
 
+import pytest
 from bs4 import BeautifulSoup
 
 from arretify.regex_utils import PatternProxy, Settings, regex_tree
@@ -372,6 +373,71 @@ class TestRegexTreeMatch(unittest.TestCase):
             group_name="root",
             match_dict=dict(branch2="hello"),
             children=["hello"],
+        )
+
+    @pytest.mark.skip("Known issue: alternation order not yet handled properly")
+    def test_match_with_longest_alternation(self):
+        """
+        Test for a specific case where alternation order matters.
+        What happens here is that the pattern compiled for the Sequence node will match the whole
+        string, but when descending into the Literal node with the substring "123", the node
+        will match only "12", and therefore fail to decompose the entirety of the substring.
+        We need to make sure this does not happen and always match the longest alternation.
+
+        For now, we just ensure that the join_with_or helper raises an error when such a situation
+        is detected.
+        """
+        # Arrange
+        group_node = regex_tree.Group(
+            regex_tree.Sequence(
+                [
+                    "bla",
+                    regex_tree.Literal(
+                        r"12|123",
+                    ),
+                    "blo",
+                ],
+            ),
+            group_name="root",
+        )
+
+        # Act
+        elements = ["bla123blo"]
+        result = regex_tree_match(elements, group_node)
+
+        # Assert
+        assert result == regex_tree.Match(
+            group_name="root",
+            match_dict=dict(),
+            children=["bla", "123", "blo"],
+        )
+
+    @pytest.mark.skip("Known issue: alternation order not yet handled properly")
+    def test_match_longest_alternation_with_repeat(self):
+        # Arrange
+        group_node = regex_tree.Group(
+            regex_tree.Repeat(
+                regex_tree.Literal(
+                    r"12|123",
+                ),
+                quantifier=(1, ...),
+            ),
+            group_name="root",
+        )
+
+        # Act
+        elements = ["12312312"]
+        result = regex_tree_match(elements, group_node)
+
+        # Assert
+        assert result == regex_tree.Match(
+            group_name="root",
+            match_dict=dict(),
+            children=[
+                "123",
+                "123",
+                "12",
+            ],
         )
 
 
