@@ -25,7 +25,8 @@ from arretify.regex_utils import Settings, normalize_string
 CURRENT_DIR = Path(__file__).parent
 FRENCH_ADDRESSES_DATA = CURRENT_DIR / "french_addresses"
 
-WAY_TYPES = {
+WAY_TYPES = [
+    "ruelle",
     "rue",
     "boulevard",
     "avenue",
@@ -45,7 +46,6 @@ WAY_TYPES = {
     "parvis",
     "promenade",
     "square",
-    "ruelle",
     "traverse",
     "chaussée",
     "montée",
@@ -54,10 +54,10 @@ WAY_TYPES = {
     "résidence",
     "quartier",
     "pont",
-}
+]
 """Non-exhaustive list of French way types."""
 
-NUMBER_SUFFIXES = {
+NUMBER_SUFFIXES = [
     "bis",
     "ter",
     "quater",
@@ -66,7 +66,7 @@ NUMBER_SUFFIXES = {
     "septies",
     "octies",
     "nonies",
-}
+]
 """Non-exhaustive list of French street number suffixes."""
 
 STREET_NAMES_NORMALIZATION_SETTINGS = Settings()

@@ -20,6 +20,7 @@ import re
 import unittest
 
 from .helpers import (
+    join_with_or,
     lookup_normalized_version,
     normalize_string,
     quantifier_to_string,
@@ -146,3 +147,24 @@ class TestRepeatedWithSeparator(unittest.TestCase):
 
         # Assert
         assert result == r"((\w+)((,)(\w+)){0,2})?"
+
+
+class TestJoinWithOr(unittest.TestCase):
+
+    def test_join_with_or_simple(self):
+        # Arrange
+        patterns = [r"cat", r"dog", r"mouse"]
+
+        # Act
+        result = join_with_or(patterns)
+
+        # Assert
+        assert result == r"cat|dog|mouse"
+
+    def test_join_with_or_prefix_conflict(self):
+        # Arrange
+        patterns = [r"cat", r"caterpillar", r"dog"]
+
+        # Act / Assert
+        with self.assertRaises(ValueError):
+            join_with_or(patterns)

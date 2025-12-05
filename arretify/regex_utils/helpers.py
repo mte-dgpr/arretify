@@ -35,6 +35,16 @@ def without_named_groups(pattern_string: str) -> PatternString:
 
 
 def join_with_or(pattern_strings: Sequence[str]) -> PatternString:
+    for i, pattern_string in enumerate(pattern_strings):
+        # We check for this, because if one pattern is a prefix of another,
+        # the regex engine will always match the shorter one first.
+        # So we prevent users from unintentionally letting this happen.
+        for other in pattern_strings[i + 1 :]:
+            if other.startswith(pattern_string):
+                raise ValueError(
+                    "Cannot join patterns with 'or' if one pattern is a prefix of another. "
+                    f"Conflict between '{pattern_string}' and '{other}'"
+                )
     return "|".join(pattern_strings)
 
 
