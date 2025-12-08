@@ -16,7 +16,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-import unittest
 
 from arretify.errors import ErrorCodes
 from arretify.semantic_tag_specs import (
@@ -39,8 +38,8 @@ from arretify.step_segmentation.semantic_tag_specs import (
     MotifSegmentationSpec,
     VisaSegmentationSpec,
 )
-from arretify.utils.html_create import make_semantic_tag, make_tag, wrap_in_tag
-from arretify.utils.testing import create_document_context
+from arretify.utils.html_create import wrap_in_tag
+from arretify.utils.testing import assert_elements_equal
 
 from .header import (
     _make_header_element_tag,
@@ -53,21 +52,14 @@ from .header import (
     parse_supplementary_motif_info_element,
     parse_visa_and_motif_elements,
 )
-from .testing import assert_elements_equal, make_text_spans
+from .testing import BaseTestCaseSegmentation
 
 
-class BaseTestCase(unittest.TestCase):
-    def setUp(self):
-        self.context = create_document_context()
-        self.soup = self.context.protected_soup
-
-
-class TestParseHeader(BaseTestCase):
+class TestParseHeader(BaseTestCaseSegmentation):
 
     def test_unknown_elements(self):
         # Arrange
-        unexpected_article = make_semantic_tag(
-            self.soup,
+        unexpected_article = self.make_semantic_tag(
             SectionSpec,
             contents=[],
             data=SectionData(
@@ -85,23 +77,20 @@ class TestParseHeader(BaseTestCase):
         assert_elements_equal(
             results,
             [
-                make_semantic_tag(
-                    self.soup,
+                self.make_semantic_tag(
                     ErrorSpec,
                     contents=[unexpected_article],
                     data=ErrorSpec.data_model(error_codes=[ErrorCodes.unknown_content]),
                 ),
             ],
-            ignore_text_span_data=True,
         )
 
 
-class TestParseVisaAndMotifs(BaseTestCase):
+class TestParseVisaAndMotifs(BaseTestCaseSegmentation):
 
     def test_variant_simple(self):
         # Arrange
-        elements = make_text_spans(
-            self.soup,
+        elements = self.make_text_spans(
             (
                 "Vu le code de l'environnement, et notamment ses titres "
                 "1er et 4 des parties réglementaires et législatives du livre V ;"
@@ -119,22 +108,18 @@ class TestParseVisaAndMotifs(BaseTestCase):
         assert_elements_equal(
             result,
             [
-                make_semantic_tag(
-                    self.soup,
+                self.make_semantic_tag(
                     VisaSegmentationSpec,
-                    contents=make_text_spans(
-                        self.soup,
+                    contents=self.make_text_spans(
                         (
                             "Vu le code de l'environnement, et notamment ses titres "
                             "1er et 4 des parties réglementaires et législatives du livre V ;"
                         ),
                     ),
                 ),
-                make_semantic_tag(
-                    self.soup,
+                self.make_semantic_tag(
                     VisaSegmentationSpec,
-                    contents=make_text_spans(
-                        self.soup,
+                    contents=self.make_text_spans(
                         (
                             "Vu la nomenclature des installations classées codifiée à l'annexe "
                             "de l'article R511-9 du code de l'environnement ;"
@@ -142,13 +127,11 @@ class TestParseVisaAndMotifs(BaseTestCase):
                     ),
                 ),
             ],
-            ignore_text_span_data=True,
         )
 
     def test_variant_simple_interrupted_by_random_text(self):
         # Arrange
-        elements = make_text_spans(
-            self.soup,
+        elements = self.make_text_spans(
             "Vu bla",
             "Ceci est du texte aléatoire qui n'est pas un visa.",
             "Vu blo",
@@ -161,25 +144,22 @@ class TestParseVisaAndMotifs(BaseTestCase):
         assert_elements_equal(
             result,
             [
-                make_semantic_tag(
-                    self.soup, VisaSegmentationSpec, contents=make_text_spans(self.soup, "Vu bla")
+                self.make_semantic_tag(
+                    VisaSegmentationSpec, contents=self.make_text_spans("Vu bla")
                 ),
-                *make_text_spans(self.soup, "Ceci est du texte aléatoire qui n'est pas un visa."),
-                make_semantic_tag(
-                    self.soup, VisaSegmentationSpec, contents=make_text_spans(self.soup, "Vu blo")
+                *self.make_text_spans("Ceci est du texte aléatoire qui n'est pas un visa."),
+                self.make_semantic_tag(
+                    VisaSegmentationSpec, contents=self.make_text_spans("Vu blo")
                 ),
             ],
-            ignore_text_span_data=True,
         )
 
     def test_variant_simple_inside_list(self):
         # Arrange
         elements = [
-            make_semantic_tag(
-                self.soup,
+            self.make_semantic_tag(
                 ListSegmentationSpec,
-                contents=make_text_spans(
-                    self.soup,
+                contents=self.make_text_spans(
                     "- Considérant que blabla ;",
                     "- Considérant que bloblo ;",
                 ),
@@ -193,28 +173,25 @@ class TestParseVisaAndMotifs(BaseTestCase):
         assert_elements_equal(
             result,
             [
-                make_semantic_tag(
-                    self.soup,
+                self.make_semantic_tag(
                     MotifSegmentationSpec,
-                    contents=make_text_spans(self.soup, "- Considérant que blabla ;"),
+                    contents=self.make_text_spans("- Considérant que blabla ;"),
                 ),
-                make_semantic_tag(
-                    self.soup,
+                self.make_semantic_tag(
                     MotifSegmentationSpec,
-                    contents=make_text_spans(self.soup, "- Considérant que bloblo ;"),
+                    contents=self.make_text_spans("- Considérant que bloblo ;"),
                 ),
             ],
-            ignore_text_span_data=True,
         )
 
     def test_variant_simple_page_separator_interrupting_sentence(self):
         # Arrange
         elements = [
-            *make_text_spans(
-                self.soup, "Vu le code de l'environnement, et notamment ses titres 1er et 4"
+            *self.make_text_spans(
+                "Vu le code de l'environnement, et notamment ses titres 1er et 4"
             ),
-            make_semantic_tag(self.soup, PageSeparatorSpec, data=PageSeparatorData(page_index=0)),
-            *make_text_spans(self.soup, "des parties réglementaires et législatives du livre V ;"),
+            self.make_semantic_tag(PageSeparatorSpec, data=PageSeparatorData(page_index=0)),
+            *self.make_text_spans("des parties réglementaires et législatives du livre V ;"),
         ]
 
         # Act
@@ -224,30 +201,26 @@ class TestParseVisaAndMotifs(BaseTestCase):
         assert_elements_equal(
             result,
             [
-                make_semantic_tag(
-                    self.soup,
+                self.make_semantic_tag(
                     VisaSegmentationSpec,
                     contents=[
-                        *make_text_spans(
-                            self.soup,
+                        *self.make_text_spans(
                             "Vu le code de l'environnement, et notamment ses titres 1er et 4",
                         ),
-                        make_semantic_tag(
-                            self.soup, PageSeparatorSpec, data=PageSeparatorData(page_index=0)
+                        self.make_semantic_tag(
+                            PageSeparatorSpec, data=PageSeparatorData(page_index=0)
                         ),
-                        *make_text_spans(
-                            self.soup, "des parties réglementaires et législatives du livre V ;"
+                        *self.make_text_spans(
+                            "des parties réglementaires et législatives du livre V ;"
                         ),
                     ],
                 ),
             ],
-            ignore_text_span_data=True,
         )
 
     def test_variant_implicit_list(self):
         # Arrange
-        elements = make_text_spans(
-            self.soup,
+        elements = self.make_text_spans(
             "CONSIDÉRANT : ",
             "que blabla ;",
             "que bloblo ;",
@@ -261,44 +234,37 @@ class TestParseVisaAndMotifs(BaseTestCase):
         assert_elements_equal(
             result,
             [
-                *make_text_spans(self.soup, "CONSIDÉRANT : "),
-                make_semantic_tag(
-                    self.soup,
+                *self.make_text_spans("CONSIDÉRANT : "),
+                self.make_semantic_tag(
                     MotifSegmentationSpec,
-                    contents=make_text_spans(self.soup, "que blabla ;"),
+                    contents=self.make_text_spans("que blabla ;"),
                 ),
-                make_semantic_tag(
-                    self.soup,
+                self.make_semantic_tag(
                     MotifSegmentationSpec,
-                    contents=make_text_spans(self.soup, "que bloblo ;"),
+                    contents=self.make_text_spans("que bloblo ;"),
                 ),
-                make_semantic_tag(
-                    self.soup,
+                self.make_semantic_tag(
                     MotifSegmentationSpec,
-                    contents=make_text_spans(self.soup, "qu'en application de blibli ;"),
+                    contents=self.make_text_spans("qu'en application de blibli ;"),
                 ),
             ],
-            ignore_text_span_data=True,
         )
 
     def test_variant_implicit_list_interrupted_by_page_footer(self):
         # Arrange
         elements = [
-            *make_text_spans(
-                self.soup,
+            *self.make_text_spans(
                 "Vu : ",
                 (
                     "le code de l'environnement, et notamment ses titres "
                     "1er et 4 des parties réglementaires et législatives du livre V ;"
                 ),
             ),
-            make_semantic_tag(
-                self.soup,
+            self.make_semantic_tag(
                 PageFooterSpec,
                 contents=wrap_in_tag(self.soup, "div", ["page 1"]),
             ),
-            *make_text_spans(
-                self.soup,
+            *self.make_text_spans(
                 (
                     "la nomenclature des installations classées codifiée à l'annexe "
                     "de l'article R511-9 du code de l'environnement ;"
@@ -313,39 +279,32 @@ class TestParseVisaAndMotifs(BaseTestCase):
         assert_elements_equal(
             result,
             [
-                *make_text_spans(self.soup, "Vu : "),
-                make_semantic_tag(
-                    self.soup,
+                *self.make_text_spans("Vu : "),
+                self.make_semantic_tag(
                     VisaSegmentationSpec,
-                    contents=make_text_spans(
-                        self.soup,
+                    contents=self.make_text_spans(
                         "le code de l'environnement, et notamment ses titres "
                         "1er et 4 des parties réglementaires et législatives du livre V ;",
                     ),
                 ),
-                make_semantic_tag(
-                    self.soup,
+                self.make_semantic_tag(
                     PageFooterSpec,
                     contents=wrap_in_tag(self.soup, "div", ["page 1"]),
                 ),
-                make_semantic_tag(
-                    self.soup,
+                self.make_semantic_tag(
                     VisaSegmentationSpec,
-                    contents=make_text_spans(
-                        self.soup,
+                    contents=self.make_text_spans(
                         "la nomenclature des installations classées codifiée à l'annexe "
                         "de l'article R511-9 du code de l'environnement ;",
                     ),
                 ),
             ],
-            ignore_text_span_data=True,
         )
 
     def test_variant_implicit_list_with_extra_spaces_after_considerant(self):
         # Arrange
         elements = [
-            *make_text_spans(
-                self.soup,
+            *self.make_text_spans(
                 "CONSIDÉRANT  ",
                 "que le site a évolué",
                 "que les mesures concernent :",
@@ -359,33 +318,27 @@ class TestParseVisaAndMotifs(BaseTestCase):
         assert_elements_equal(
             result,
             [
-                *make_text_spans(
-                    self.soup,
+                *self.make_text_spans(
                     "CONSIDÉRANT  ",
                 ),
-                make_semantic_tag(
-                    self.soup,
+                self.make_semantic_tag(
                     MotifSegmentationSpec,
-                    contents=make_text_spans(self.soup, "que le site a évolué"),
+                    contents=self.make_text_spans("que le site a évolué"),
                 ),
-                make_semantic_tag(
-                    self.soup,
+                self.make_semantic_tag(
                     MotifSegmentationSpec,
-                    contents=make_text_spans(self.soup, "que les mesures concernent :"),
+                    contents=self.make_text_spans("que les mesures concernent :"),
                 ),
             ],
-            ignore_text_span_data=True,
         )
 
     def test_variant_explicit_list(self):
         # Arrange
         elements = [
-            *make_text_spans(self.soup, "Vu : "),
-            make_semantic_tag(
-                self.soup,
+            *self.make_text_spans("Vu : "),
+            self.make_semantic_tag(
                 ListSegmentationSpec,
-                contents=make_text_spans(
-                    self.soup,
+                contents=self.make_text_spans(
                     "- le code de l'environnement ;",
                     "- la nomenclature des installations classées ;",
                 ),
@@ -399,39 +352,30 @@ class TestParseVisaAndMotifs(BaseTestCase):
         assert_elements_equal(
             result,
             [
-                *make_text_spans(self.soup, "Vu : "),
-                make_semantic_tag(
-                    self.soup,
+                *self.make_text_spans("Vu : "),
+                self.make_semantic_tag(
                     VisaSegmentationSpec,
-                    contents=make_text_spans(self.soup, "- le code de l'environnement ;"),
+                    contents=self.make_text_spans("- le code de l'environnement ;"),
                 ),
-                make_semantic_tag(
-                    self.soup,
+                self.make_semantic_tag(
                     VisaSegmentationSpec,
-                    contents=make_text_spans(
-                        self.soup, "- la nomenclature des installations classées ;"
-                    ),
+                    contents=self.make_text_spans("- la nomenclature des installations classées ;"),
                 ),
             ],
-            ignore_text_span_data=True,
         )
 
     def test_variant_explicit_list_interrupted(self):
         # Arrange
         elements = [
-            *make_text_spans(self.soup, "Vu : "),
-            make_semantic_tag(
-                self.soup,
+            *self.make_text_spans("Vu : "),
+            self.make_semantic_tag(
                 ListSegmentationSpec,
-                contents=make_text_spans(self.soup, "- le code de l'environnement ;"),
+                contents=self.make_text_spans("- le code de l'environnement ;"),
             ),
-            *make_text_spans(self.soup, "Ceci est du texte aléatoire qui n'est pas un visa."),
-            make_semantic_tag(
-                self.soup,
+            *self.make_text_spans("Ceci est du texte aléatoire qui n'est pas un visa."),
+            self.make_semantic_tag(
                 ListSegmentationSpec,
-                contents=make_text_spans(
-                    self.soup, "- la nomenclature des installations classées ;"
-                ),
+                contents=self.make_text_spans("- la nomenclature des installations classées ;"),
             ),
         ]
 
@@ -442,33 +386,26 @@ class TestParseVisaAndMotifs(BaseTestCase):
         assert_elements_equal(
             result,
             [
-                *make_text_spans(self.soup, "Vu : "),
-                make_semantic_tag(
-                    self.soup,
+                *self.make_text_spans("Vu : "),
+                self.make_semantic_tag(
                     VisaSegmentationSpec,
-                    contents=make_text_spans(self.soup, "- le code de l'environnement ;"),
+                    contents=self.make_text_spans("- le code de l'environnement ;"),
                 ),
-                *make_text_spans(self.soup, "Ceci est du texte aléatoire qui n'est pas un visa."),
-                make_semantic_tag(
-                    self.soup,
+                *self.make_text_spans("Ceci est du texte aléatoire qui n'est pas un visa."),
+                self.make_semantic_tag(
                     VisaSegmentationSpec,
-                    contents=make_text_spans(
-                        self.soup, "- la nomenclature des installations classées ;"
-                    ),
+                    contents=self.make_text_spans("- la nomenclature des installations classées ;"),
                 ),
             ],
-            ignore_text_span_data=True,
         )
 
     def test_variant_explicit_list_vu_inside_list_element(self):
         # Arrange
         elements = [
-            *make_text_spans(self.soup, "Vu : "),
-            make_semantic_tag(
-                self.soup,
+            *self.make_text_spans("Vu : "),
+            self.make_semantic_tag(
                 ListSegmentationSpec,
-                contents=make_text_spans(
-                    self.soup,
+                contents=self.make_text_spans(
                     "- le code de l'environnement ;",
                     "- la nomenclature des installations classées ;",
                     "- vu la demande déposée par la société XYZ ;",
@@ -483,44 +420,33 @@ class TestParseVisaAndMotifs(BaseTestCase):
         assert_elements_equal(
             result,
             [
-                *make_text_spans(self.soup, "Vu : "),
-                make_semantic_tag(
-                    self.soup,
+                *self.make_text_spans("Vu : "),
+                self.make_semantic_tag(
                     VisaSegmentationSpec,
-                    contents=make_text_spans(self.soup, "- le code de l'environnement ;"),
+                    contents=self.make_text_spans("- le code de l'environnement ;"),
                 ),
-                make_semantic_tag(
-                    self.soup,
+                self.make_semantic_tag(
                     VisaSegmentationSpec,
-                    contents=make_text_spans(
-                        self.soup, "- la nomenclature des installations classées ;"
-                    ),
+                    contents=self.make_text_spans("- la nomenclature des installations classées ;"),
                 ),
-                make_semantic_tag(
-                    self.soup,
+                self.make_semantic_tag(
                     VisaSegmentationSpec,
-                    contents=make_text_spans(
-                        self.soup, "- vu la demande déposée par la société XYZ ;"
-                    ),
+                    contents=self.make_text_spans("- vu la demande déposée par la société XYZ ;"),
                 ),
             ],
-            ignore_text_span_data=True,
         )
 
     def test_variant_simple_with_list_inside_and_interrupted_by_page_separator(self):
         # Arrange
         elements = [
-            *make_text_spans(
-                self.soup,
+            *self.make_text_spans(
                 "Considérant que la demande de modification sollicitée "
                 "le 19 juillet 2021 porte sur:",
             ),
-            make_semantic_tag(self.soup, PageSeparatorSpec, data=PageSeparatorData(page_index=1)),
-            make_semantic_tag(
-                self.soup,
+            self.make_semantic_tag(PageSeparatorSpec, data=PageSeparatorData(page_index=1)),
+            self.make_semantic_tag(
                 ListSegmentationSpec,
-                contents=make_text_spans(
-                    self.soup,
+                contents=self.make_text_spans(
                     "- la modification de l'installation de stockage de déchets non dangereux ;",
                     "- la mise en conformité avec les exigences réglementaires ;",
                 ),
@@ -534,23 +460,19 @@ class TestParseVisaAndMotifs(BaseTestCase):
         assert_elements_equal(
             result,
             [
-                make_semantic_tag(
-                    self.soup,
+                self.make_semantic_tag(
                     MotifSegmentationSpec,
                     contents=[
-                        *make_text_spans(
-                            self.soup,
+                        *self.make_text_spans(
                             "Considérant que la demande de modification sollicitée "
                             "le 19 juillet 2021 porte sur:",
                         ),
-                        make_semantic_tag(
-                            self.soup, PageSeparatorSpec, data=PageSeparatorData(page_index=1)
+                        self.make_semantic_tag(
+                            PageSeparatorSpec, data=PageSeparatorData(page_index=1)
                         ),
-                        make_semantic_tag(
-                            self.soup,
+                        self.make_semantic_tag(
                             ListSegmentationSpec,
-                            contents=make_text_spans(
-                                self.soup,
+                            contents=self.make_text_spans(
                                 (
                                     "- la modification de l'installation de stockage de déchets"
                                     " non dangereux ;"
@@ -561,15 +483,14 @@ class TestParseVisaAndMotifs(BaseTestCase):
                     ],
                 ),
             ],
-            ignore_text_span_data=True,
         )
 
 
-class TestRenderHeaderElement(BaseTestCase):
+class TestRenderHeaderElement(BaseTestCaseSegmentation):
 
     def test_make_header_element_tag(self):
         # Arrange
-        contents = make_text_spans(self.soup, "liberté égalité fraternité")
+        contents = self.make_text_spans("liberté égalité fraternité")
 
         # Act
         rendered = _make_header_element_tag(self.context, EmblemSpec, contents)
@@ -582,12 +503,11 @@ class TestRenderHeaderElement(BaseTestCase):
         ]
 
 
-class TestParseArreteTitle(BaseTestCase):
+class TestParseArreteTitle(BaseTestCaseSegmentation):
 
     def test_simple(self):
         # Arrange
-        contents = make_text_spans(
-            self.soup,
+        contents = self.make_text_spans(
             # Fuzzy pattern, match until next header element
             "Arrêté du 1er janvier 2020",
             "Vu le blabla",
@@ -600,33 +520,28 @@ class TestParseArreteTitle(BaseTestCase):
         assert_elements_equal(
             results,
             [
-                make_semantic_tag(
-                    self.soup,
+                self.make_semantic_tag(
                     ArreteTitleSpec,
                     contents=[
-                        make_tag(
-                            self.soup,
+                        self.make_tag(
                             "h1",
                             contents=[
                                 "Arrêté du ",
-                                make_semantic_tag(
-                                    self.soup, DateSpec, contents=["1er janvier 2020"]
-                                ),
+                                self.make_semantic_tag(DateSpec, contents=["1er janvier 2020"]),
                             ],
                         )
                     ],
                 ),
-                *make_text_spans(self.soup, "Vu le blabla"),
+                *self.make_text_spans("Vu le blabla"),
             ],
-            ignore_text_span_data=True,
         )
 
 
-class TestParseEmblemElement(BaseTestCase):
+class TestParseEmblemElement(BaseTestCaseSegmentation):
 
     def test_simple(self):
         # Arrange
-        contents = make_text_spans(self.soup, "liberté égalité fraternité")
+        contents = self.make_text_spans("liberté égalité fraternité")
 
         # Act
         results = parse_emblem_element(self.context, contents)
@@ -635,8 +550,7 @@ class TestParseEmblemElement(BaseTestCase):
         assert_elements_equal(
             results,
             [
-                make_semantic_tag(
-                    self.soup,
+                self.make_semantic_tag(
                     EmblemSpec,
                     contents=wrap_in_tag(
                         self.soup,
@@ -649,15 +563,14 @@ class TestParseEmblemElement(BaseTestCase):
                     ),
                 ),
             ],
-            ignore_text_span_data=True,
         )
 
 
-class TestParseEntityElement(BaseTestCase):
+class TestParseEntityElement(BaseTestCaseSegmentation):
 
     def test_simple(self):
         # Arrange
-        contents = make_text_spans(self.soup, "Ministère de la Transition écologique")
+        contents = self.make_text_spans("Ministère de la Transition écologique")
 
         # Act
         results = parse_entity_element(self.context, contents)
@@ -666,8 +579,7 @@ class TestParseEntityElement(BaseTestCase):
         assert_elements_equal(
             results,
             [
-                make_semantic_tag(
-                    self.soup,
+                self.make_semantic_tag(
                     EntitySpec,
                     contents=wrap_in_tag(
                         self.soup,
@@ -678,15 +590,14 @@ class TestParseEntityElement(BaseTestCase):
                     ),
                 ),
             ],
-            ignore_text_span_data=True,
         )
 
 
-class TestParseIdentificationElement(BaseTestCase):
+class TestParseIdentificationElement(BaseTestCaseSegmentation):
 
     def test_simple(self):
         # Arrange
-        contents = make_text_spans(self.soup, "Référence : 2020-1234")
+        contents = self.make_text_spans("Référence : 2020-1234")
 
         # Act
         results = parse_identification_element(self.context, contents)
@@ -695,8 +606,7 @@ class TestParseIdentificationElement(BaseTestCase):
         assert_elements_equal(
             results,
             [
-                make_semantic_tag(
-                    self.soup,
+                self.make_semantic_tag(
                     IdentificationSpec,
                     contents=wrap_in_tag(
                         self.soup,
@@ -707,15 +617,14 @@ class TestParseIdentificationElement(BaseTestCase):
                     ),
                 ),
             ],
-            ignore_text_span_data=True,
         )
 
 
-class TestParseHonoraryElement(BaseTestCase):
+class TestParseHonoraryElement(BaseTestCaseSegmentation):
     def test_simple(self):
         # Arrange
-        contents = make_text_spans(
-            self.soup, "La Directrice Générale de l'Agence Régionale de Santé Grand Est"
+        contents = self.make_text_spans(
+            "La Directrice Générale de l'Agence Régionale de Santé Grand Est"
         )
 
         # Act
@@ -725,8 +634,7 @@ class TestParseHonoraryElement(BaseTestCase):
         assert_elements_equal(
             results,
             [
-                make_semantic_tag(
-                    self.soup,
+                self.make_semantic_tag(
                     HonorarySpec,
                     contents=wrap_in_tag(
                         self.soup,
@@ -737,16 +645,14 @@ class TestParseHonoraryElement(BaseTestCase):
                     ),
                 ),
             ],
-            ignore_text_span_data=True,
         )
 
 
-class TestParseSupplementaryMotifInfo(BaseTestCase):
+class TestParseSupplementaryMotifInfo(BaseTestCaseSegmentation):
 
     def test_simple(self):
         # Arrange
-        contents = make_text_spans(
-            self.soup,
+        contents = self.make_text_spans(
             (
                 "Sur proposition de M. le directeur régional de l'environnement,"
                 " de l'aménagement et du logement des Hauts-de-France ;"
@@ -760,8 +666,7 @@ class TestParseSupplementaryMotifInfo(BaseTestCase):
         assert_elements_equal(
             results,
             [
-                make_semantic_tag(
-                    self.soup,
+                self.make_semantic_tag(
                     SupplementaryMotifInfoSpec,
                     contents=wrap_in_tag(
                         self.soup,
@@ -773,5 +678,4 @@ class TestParseSupplementaryMotifInfo(BaseTestCase):
                     ),
                 ),
             ],
-            ignore_text_span_data=True,
         )

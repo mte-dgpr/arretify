@@ -17,13 +17,22 @@
 # limitations under the License.
 #
 import re
+import unittest
+from functools import partial
 from typing import Callable, Sequence, TypeVar
 
 from bs4 import BeautifulSoup, NavigableString, Tag
 
 from arretify.settings import Settings
+from arretify.step_segmentation.semantic_tag_specs import TextSpanSegmentationData
 from arretify.types import DocumentContext, ProtectedTag, ProtectedTagOrStr
 from arretify.utils.html import is_tag
+from arretify.utils.html_create import make_semantic_tag, make_tag
+from arretify.utils.html_semantic import (
+    get_semantic_tag_data,
+    get_semantic_tag_spec,
+    is_semantic_tag,
+)
 
 _INLINE_TAGS = [
     "a",
@@ -241,3 +250,74 @@ def _normalize_tag(tag: PageElementType) -> PageElementType:
     tag.clear()
     tag.extend(new_children)
     return tag
+
+
+DEFAULT_TEXT_SPAN_DATA = TextSpanSegmentationData(start=[-1, -1, -1], end=[-1, -1, -1])
+"""
+Dummy value for TextSpanSegmentationData.
+When this is encountered, the testing functions skip comparing values.
+This allows not having to test irrelevant text span data each time.
+"""
+
+
+def assert_elements_equal(
+    actual: Sequence[ProtectedTagOrStr],
+    expected: Sequence[ProtectedTagOrStr],
+    path="",
+):
+    assert len(actual) == len(
+        expected
+    ), f"[{path}] Expected {[type(el) for el in expected]} tags, got {[type(el) for el in actual]}"
+    for i, (a, e) in enumerate(zip(actual, expected)):
+        child_path = f"{path}/{i}"
+        if is_semantic_tag(e):
+            assert is_semantic_tag(a), f"[{child_path}] Expected semantic tag, got : {a}"
+            assert get_semantic_tag_spec(a) == get_semantic_tag_spec(e), (
+                f"[{child_path}] Expected tag spec '{get_semantic_tag_spec(e)}', "
+                f"got '{get_semantic_tag_spec(a)}'"
+            )
+            _assert_data_equal(
+                a,
+                e,
+                path=child_path,
+            )
+            assert_elements_equal(
+                a.contents,
+                e.contents,
+                path=child_path,
+            )
+        elif is_tag(a):
+            assert is_tag(e), f"[{child_path}] Expected Tag, got : {e}"
+            assert a.name == e.name, f"[{child_path}] Expected tag name '{e.name}', got '{a.name}'"
+            assert_elements_equal(
+                a.contents,
+                e.contents,
+                path=child_path,
+            )
+        else:
+            assert isinstance(a, type(e)), f"[{child_path}] Expected {type(e)}, got {type(a)}"
+            assert a == e, f"[{child_path}] Expected {e}, got {a}"
+
+
+def _assert_data_equal(
+    actual: ProtectedTag,
+    expected: ProtectedTag,
+    path="",
+):
+    spec = get_semantic_tag_spec(expected)
+    actual_data = get_semantic_tag_data(spec, actual)
+    expected_data = get_semantic_tag_data(spec, expected)
+
+    # Special case : ignore text_span PageLineColumn if it was not set to a real expected value
+    if expected_data == DEFAULT_TEXT_SPAN_DATA:
+        return
+    assert actual_data == expected_data, f"[{path}] Expected {expected_data}, got {actual_data}"
+
+
+class BaseTestCaseHtml(unittest.TestCase):
+    def setUp(self) -> None:
+        super(BaseTestCaseHtml, self).setUp()
+        self.context = create_document_context()
+        self.soup = self.context.protected_soup
+        self.make_semantic_tag = partial(make_semantic_tag, self.soup)
+        self.make_tag = partial(make_tag, self.soup)
