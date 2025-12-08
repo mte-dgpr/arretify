@@ -16,98 +16,27 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import Sequence
+from functools import partial
 
-from arretify.step_segmentation.semantic_tag_specs import (
-    TextSpanSegmentationData,
-    TextSpanSegmentationSpec,
-)
-from arretify.types import ProtectedTag, ProtectedTagOrStr
-from arretify.utils.html import is_tag
+from arretify.step_segmentation.semantic_tag_specs import TextSpanSegmentationSpec
+from arretify.types import ProtectedTag
 from arretify.utils.html_create import make_semantic_tag
-from arretify.utils.html_semantic import (
-    get_semantic_tag_data,
-    get_semantic_tag_spec,
-    is_semantic_tag,
-)
+from arretify.utils.testing import DEFAULT_TEXT_SPAN_DATA, BaseTestCaseHtml
 
 
-def assert_elements_equal(
-    actual: Sequence[ProtectedTagOrStr],
-    expected: Sequence[ProtectedTagOrStr],
-    ignore_data_if_omitted: bool = False,
-    ignore_text_span_data: bool = False,
-    path="",
-):
-    assert len(actual) == len(
-        expected
-    ), f"[{path}] Expected {[type(el) for el in expected]} tags, got {[type(el) for el in actual]}"
-    for i, (a, e) in enumerate(zip(actual, expected)):
-        child_path = f"{path}/{i}"
-        if is_semantic_tag(e):
-            assert is_semantic_tag(a), f"[{child_path}] Expected semantic tag, got : {a}"
-            assert get_semantic_tag_spec(a) == get_semantic_tag_spec(e), (
-                f"[{child_path}] Expected tag spec '{get_semantic_tag_spec(e)}', "
-                f"got '{get_semantic_tag_spec(a)}'"
-            )
-            # if `ignore_data_if_omitted` is True, test data only
-            # if defined in test expectations.
-            _assert_data_equal(
-                a,
-                e,
-                ignore_data_if_omitted=ignore_data_if_omitted,
-                ignore_text_span_data=ignore_text_span_data,
-                path=child_path,
-            )
-            assert_elements_equal(
-                a.contents,
-                e.contents,
-                path=child_path,
-                ignore_data_if_omitted=ignore_data_if_omitted,
-                ignore_text_span_data=ignore_text_span_data,
-            )
-        elif is_tag(a):
-            assert is_tag(e), f"[{child_path}] Expected Tag, got : {e}"
-            assert a.name == e.name, f"[{child_path}] Expected tag name '{e.name}', got '{a.name}'"
-            assert_elements_equal(
-                a.contents,
-                e.contents,
-                path=child_path,
-                ignore_data_if_omitted=ignore_data_if_omitted,
-                ignore_text_span_data=ignore_text_span_data,
-            )
-        else:
-            assert isinstance(a, type(e)), f"[{child_path}] Expected {type(e)}, got {type(a)}"
-            assert a == e, f"[{child_path}] Expected {e}, got {a}"
-
-
-def _assert_data_equal(
-    actual: ProtectedTag,
-    expected: ProtectedTag,
-    ignore_data_if_omitted: bool = False,
-    ignore_text_span_data: bool = False,
-    path="",
-):
-    spec = get_semantic_tag_spec(expected)
-    actual_data = get_semantic_tag_data(spec, actual)
-    expected_data = get_semantic_tag_data(spec, expected)
-    if ignore_data_if_omitted is True and not expected_data:
-        return
-    if (
-        is_semantic_tag(expected, spec_in=[TextSpanSegmentationSpec])
-        and ignore_text_span_data is True
-    ):
-        return
-    assert actual_data == expected_data, f"[{path}] Expected {expected_data}, got {actual_data}"
-
-
-def make_text_spans(soup, *lines: str) -> list[ProtectedTag]:
+def _make_text_spans(soup, *lines: str) -> list[ProtectedTag]:
     return [
         make_semantic_tag(
             soup,
             TextSpanSegmentationSpec,
             contents=[line],
-            data=TextSpanSegmentationData(start=[0, 0, 0], end=[0, 0, 0]),
+            data=DEFAULT_TEXT_SPAN_DATA,
         )
         for line in lines
     ]
+
+
+class BaseTestCaseSegmentation(BaseTestCaseHtml):
+    def setUp(self) -> None:
+        super(BaseTestCaseSegmentation, self).setUp()
+        self.make_text_spans = partial(_make_text_spans, self.soup)

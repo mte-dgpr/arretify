@@ -20,8 +20,6 @@
 
 import unittest
 
-from bs4 import BeautifulSoup
-
 from arretify.types import SectionType
 
 from .titles_detection import TITLE_NODE, is_next_title, parse_title_info
@@ -196,9 +194,6 @@ class TestTitlePattern(unittest.TestCase):
 
 
 class TestParseTitleInfo(unittest.TestCase):
-
-    def setUp(self):
-        self.soup = BeautifulSoup("", "html.parser")
 
     def test_title_with_roman_number(self):
         # Arrange

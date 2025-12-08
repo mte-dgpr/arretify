@@ -17,7 +17,6 @@
 # limitations under the License.
 #
 from arretify.semantic_tag_specs import AlineaData, PageSeparatorData, PageSeparatorSpec
-from arretify.step_segmentation.core_test import BaseTestCase
 from arretify.step_segmentation.render_contents import (
     _list_indentation,
     render_alinea,
@@ -43,12 +42,11 @@ from arretify.step_segmentation.semantic_tag_specs import (
     TextSpanSegmentationSpec,
     VisaSegmentationSpec,
 )
-from arretify.step_segmentation.testing import make_text_spans
-from arretify.utils.html_create import make_semantic_tag
+from arretify.step_segmentation.testing import BaseTestCaseSegmentation
 from arretify.utils.testing import assert_html_list_equal, normalized_html_str
 
 
-class TestListIndentation(BaseTestCase):
+class TestListIndentation(BaseTestCaseSegmentation):
 
     def test_correct_indentation(self):
         # Arrange
@@ -82,7 +80,7 @@ class TestListIndentation(BaseTestCase):
         ), "Should raise ValueError for non-list lines"
 
 
-class TestRenderInlineQuotes(BaseTestCase):
+class TestRenderInlineQuotes(BaseTestCaseSegmentation):
 
     def test_inline_quote(self):
         # Arrange
@@ -99,27 +97,20 @@ class TestRenderInlineQuotes(BaseTestCase):
         ]
 
 
-class TestRenderTable(BaseTestCase):
+class TestRenderTable(BaseTestCaseSegmentation):
 
     def test_render_table_with_page_separators(self):
         # Arrange
-        tag = make_semantic_tag(
-            self.soup,
+        tag = self.make_semantic_tag(
             TableSegmentationSpec,
             contents=[
-                *make_text_spans(self.soup, "| Column 1 | Column 2 |", "|----------|----------|"),
-                make_semantic_tag(
-                    self.soup, PageSeparatorSpec, data=PageSeparatorData(page_index=1)
-                ),
-                *make_text_spans(
-                    self.soup,
+                *self.make_text_spans("| Column 1 | Column 2 |", "|----------|----------|"),
+                self.make_semantic_tag(PageSeparatorSpec, data=PageSeparatorData(page_index=1)),
+                *self.make_text_spans(
                     "| Row 1    | Data 1   |",
                 ),
-                make_semantic_tag(
-                    self.soup, PageSeparatorSpec, data=PageSeparatorData(page_index=2)
-                ),
-                *make_text_spans(
-                    self.soup,
+                self.make_semantic_tag(PageSeparatorSpec, data=PageSeparatorData(page_index=2)),
+                *self.make_text_spans(
                     "| Row 2    | Data 2   |",
                 ),
             ],
@@ -153,19 +144,16 @@ class TestRenderTable(BaseTestCase):
         )
 
 
-class TestRenderTableDescription(BaseTestCase):
+class TestRenderTableDescription(BaseTestCaseSegmentation):
 
     def test_render_table_description_with_page_separators(self):
         # Arrange
-        tag = make_semantic_tag(
-            self.soup,
+        tag = self.make_semantic_tag(
             TableDescriptionSegmentationSpec,
             contents=[
-                *make_text_spans(self.soup, "This is a description of the table."),
-                make_semantic_tag(
-                    self.soup, PageSeparatorSpec, data=PageSeparatorData(page_index=1)
-                ),
-                *make_text_spans(self.soup, "This is another part of the description."),
+                *self.make_text_spans("This is a description of the table."),
+                self.make_semantic_tag(PageSeparatorSpec, data=PageSeparatorData(page_index=1)),
+                *self.make_text_spans("This is another part of the description."),
             ],
         )
 
@@ -185,19 +173,16 @@ class TestRenderTableDescription(BaseTestCase):
         )
 
 
-class TestRenderList(BaseTestCase):
+class TestRenderList(BaseTestCaseSegmentation):
 
     def test_render_list_with_page_separator(self):
         # Arrange
-        tag = make_semantic_tag(
-            self.soup,
+        tag = self.make_semantic_tag(
             ListSegmentationSpec,
             contents=[
-                *make_text_spans(self.soup, "- Item 1"),
-                make_semantic_tag(
-                    self.soup, PageSeparatorSpec, data=PageSeparatorData(page_index=1)
-                ),
-                *make_text_spans(self.soup, "- Item 2"),
+                *self.make_text_spans("- Item 1"),
+                self.make_semantic_tag(PageSeparatorSpec, data=PageSeparatorData(page_index=1)),
+                *self.make_text_spans("- Item 2"),
             ],
         )
 
@@ -216,13 +201,10 @@ class TestRenderList(BaseTestCase):
 
     def test_render_nested_list(self):
         # Arrange
-        tag = make_semantic_tag(
-            self.soup,
+        tag = self.make_semantic_tag(
             ListSegmentationSpec,
             contents=[
-                *make_text_spans(
-                    self.soup, "- Item 1", "  - Subitem 1.1", "  - Subitem 1.2", "- Item 2"
-                ),
+                *self.make_text_spans("- Item 1", "  - Subitem 1.1", "  - Subitem 1.2", "- Item 2"),
             ],
         )
 
@@ -246,17 +228,15 @@ class TestRenderList(BaseTestCase):
 
     def test_render_list_text_span(self):
         # Arrange
-        tag = make_semantic_tag(
-            self.soup,
+        tag = self.make_semantic_tag(
             ListSegmentationSpec,
             contents=[
-                make_semantic_tag(
-                    self.soup,
+                self.make_semantic_tag(
                     TextSpanSegmentationSpec,
                     contents=["- Item 1", " This is a continuation of the previous sentence."],
                     data=TextSpanSegmentationData(start=[0, 0, 0], end=[0, 1, 48]),
                 ),
-                *make_text_spans(self.soup, "- Item 2"),
+                *self.make_text_spans("- Item 2"),
             ],
         )
 
@@ -275,12 +255,10 @@ class TestRenderList(BaseTestCase):
 
     def test_render_list_numbers(self):
         # Arrange
-        tag = make_semantic_tag(
-            self.soup,
+        tag = self.make_semantic_tag(
             ListSegmentationSpec,
             contents=[
-                *make_text_spans(
-                    self.soup,
+                *self.make_text_spans(
                     " - First item",
                     "- Second item",
                 ),
@@ -301,14 +279,13 @@ class TestRenderList(BaseTestCase):
         )
 
 
-class TestRenderBlockQuote(BaseTestCase):
+class TestRenderBlockQuote(BaseTestCaseSegmentation):
 
     def test_render_blockquote(self):
         # Arrange
-        tag = make_semantic_tag(
-            self.soup,
+        tag = self.make_semantic_tag(
             BlockquoteSegmentationSpec,
-            contents=make_text_spans(self.soup, "This is", "a blockquote"),
+            contents=self.make_text_spans("This is", "a blockquote"),
         )
 
         # Act
@@ -325,14 +302,13 @@ class TestRenderBlockQuote(BaseTestCase):
         )
 
 
-class TestRenderAlinea(BaseTestCase):
+class TestRenderAlinea(BaseTestCaseSegmentation):
 
     def test_simple(self):
         # Arrange
-        alinea = make_semantic_tag(
-            self.soup,
+        alinea = self.make_semantic_tag(
             AlineaSegmentationSpec,
-            contents=make_text_spans(self.soup, "This is an alinea."),
+            contents=self.make_text_spans("This is an alinea."),
             data=AlineaData(number="1"),
         )
 
@@ -349,18 +325,16 @@ class TestRenderAlinea(BaseTestCase):
         )
 
 
-class TestRenderSection(BaseTestCase):
+class TestRenderSection(BaseTestCaseSegmentation):
 
     def test_simple(self):
         # Arrange
-        tag = make_semantic_tag(
-            self.soup,
+        tag = self.make_semantic_tag(
             SectionSegmentationSpec,
             contents=[
-                make_semantic_tag(
-                    self.soup,
+                self.make_semantic_tag(
                     SectionTitleSegmentationSpec,
-                    contents=make_text_spans(self.soup, "Article 1 : Disposition"),
+                    contents=self.make_text_spans("Article 1 : Disposition"),
                     data=SectionTitleSegmentationData(
                         level=0,
                         number="1",
@@ -368,10 +342,9 @@ class TestRenderSection(BaseTestCase):
                         type="article",
                     ),
                 ),
-                make_semantic_tag(
-                    self.soup,
+                self.make_semantic_tag(
                     AlineaSegmentationSpec,
-                    contents=make_text_spans(self.soup, "Bla bla bla ..."),
+                    contents=self.make_text_spans("Bla bla bla ..."),
                     data=AlineaData(number="1"),
                 ),
             ],
@@ -395,14 +368,13 @@ class TestRenderSection(BaseTestCase):
         )
 
 
-class TestRenderSectionTitle(BaseTestCase):
+class TestRenderSectionTitle(BaseTestCaseSegmentation):
 
     def test_simple(self):
         # Arrange
-        section_title = make_semantic_tag(
-            self.soup,
+        section_title = self.make_semantic_tag(
             SectionTitleSegmentationSpec,
-            contents=make_text_spans(self.soup, "Titre I - Introduction"),
+            contents=self.make_text_spans("Titre I - Introduction"),
             data=SectionTitleSegmentationData(
                 level=0,
                 number="I",
@@ -424,15 +396,13 @@ class TestRenderSectionTitle(BaseTestCase):
         )
 
 
-class TestRenderVisaMotif(BaseTestCase):
+class TestRenderVisaMotif(BaseTestCaseSegmentation):
 
     def test_render_simple(self):
         # Arrange
-        tag = make_semantic_tag(
-            self.soup,
+        tag = self.make_semantic_tag(
             VisaSegmentationSpec,
-            contents=make_text_spans(
-                self.soup,
+            contents=self.make_text_spans(
                 "Vu le code de l'environnement, et notamment ses titres "
                 "1er et 4 des parties réglementaires et législatives du livre V ;",
             ),

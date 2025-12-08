@@ -16,7 +16,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-import unittest
 
 from arretify.semantic_tag_specs import (
     AddressSpec,
@@ -24,8 +23,7 @@ from arretify.semantic_tag_specs import (
     PageSeparatorData,
     PageSeparatorSpec,
 )
-from arretify.utils.html_create import make_semantic_tag
-from arretify.utils.testing import create_document_context
+from arretify.utils.testing import assert_elements_equal
 
 from .main_or_appendix import parse_alineas, parse_section_titles, parse_sections
 from .semantic_tag_specs import (
@@ -36,21 +34,14 @@ from .semantic_tag_specs import (
     TextSpanSegmentationData,
     TextSpanSegmentationSpec,
 )
-from .testing import assert_elements_equal, make_text_spans
+from .testing import BaseTestCaseSegmentation
 
 
-class BaseTestCase(unittest.TestCase):
-    def setUp(self):
-        self.context = create_document_context()
-        self.soup = self.context.protected_soup
-
-
-class TestParseSectionTitles(BaseTestCase):
+class TestParseSectionTitles(BaseTestCaseSegmentation):
 
     def test_parse_section_titles(self):
         # Arrange
-        elements = make_text_spans(
-            self.soup,
+        elements = self.make_text_spans(
             "Titre I - Introduction",
             "1. Contexte",
             "bla bla bla",
@@ -69,10 +60,9 @@ class TestParseSectionTitles(BaseTestCase):
         assert_elements_equal(
             result,
             [
-                make_semantic_tag(
-                    self.soup,
+                self.make_semantic_tag(
                     SectionTitleSegmentationSpec,
-                    contents=make_text_spans(self.soup, "Titre I - Introduction"),
+                    contents=self.make_text_spans("Titre I - Introduction"),
                     data=SectionTitleSegmentationData(
                         level=0,
                         number="I",
@@ -80,10 +70,9 @@ class TestParseSectionTitles(BaseTestCase):
                         type="titre",
                     ),
                 ),
-                make_semantic_tag(
-                    self.soup,
+                self.make_semantic_tag(
                     SectionTitleSegmentationSpec,
-                    contents=make_text_spans(self.soup, "1. Contexte"),
+                    contents=self.make_text_spans("1. Contexte"),
                     data=SectionTitleSegmentationData(
                         level=1,
                         number="1",
@@ -91,11 +80,10 @@ class TestParseSectionTitles(BaseTestCase):
                         type="unknown",
                     ),
                 ),
-                *make_text_spans(self.soup, "bla bla bla"),
-                make_semantic_tag(
-                    self.soup,
+                *self.make_text_spans("bla bla bla"),
+                self.make_semantic_tag(
                     SectionTitleSegmentationSpec,
-                    contents=make_text_spans(self.soup, "2. Objectifs"),
+                    contents=self.make_text_spans("2. Objectifs"),
                     data=SectionTitleSegmentationData(
                         level=1,
                         number="2",
@@ -103,15 +91,13 @@ class TestParseSectionTitles(BaseTestCase):
                         type="unknown",
                     ),
                 ),
-                *make_text_spans(
-                    self.soup,
+                *self.make_text_spans(
                     "blo blo blo",
                     "bli bli bli",
                 ),
-                make_semantic_tag(
-                    self.soup,
+                self.make_semantic_tag(
                     SectionTitleSegmentationSpec,
-                    contents=make_text_spans(self.soup, "Titre II - Méthodologie"),
+                    contents=self.make_text_spans("Titre II - Méthodologie"),
                     data=SectionTitleSegmentationData(
                         level=0,
                         number="II",
@@ -119,28 +105,23 @@ class TestParseSectionTitles(BaseTestCase):
                         type="titre",
                     ),
                 ),
-                *make_text_spans(
-                    self.soup,
+                *self.make_text_spans(
                     "blu blu blu",
                     "ble ble ble",
                 ),
             ],
-            ignore_text_span_data=True,
         )
 
     def test_reject_text_span_starting_with_inline_tag(self):
         # Arrange
         elements = [
-            *make_text_spans(
-                self.soup,
+            *self.make_text_spans(
                 "Titre I - Introduction",
             ),
-            make_semantic_tag(
-                self.soup,
+            self.make_semantic_tag(
                 TextSpanSegmentationSpec,
                 contents=[
-                    make_semantic_tag(
-                        self.soup,
+                    self.make_semantic_tag(
                         AddressSpec,
                         contents=["1 rue de l'avenir"],
                     )
@@ -156,10 +137,9 @@ class TestParseSectionTitles(BaseTestCase):
         assert_elements_equal(
             result,
             [
-                make_semantic_tag(
-                    self.soup,
+                self.make_semantic_tag(
                     SectionTitleSegmentationSpec,
-                    contents=make_text_spans(self.soup, "Titre I - Introduction"),
+                    contents=self.make_text_spans("Titre I - Introduction"),
                     data=SectionTitleSegmentationData(
                         level=0,
                         number="I",
@@ -167,12 +147,10 @@ class TestParseSectionTitles(BaseTestCase):
                         type="titre",
                     ),
                 ),
-                make_semantic_tag(
-                    self.soup,
+                self.make_semantic_tag(
                     TextSpanSegmentationSpec,
                     contents=[
-                        make_semantic_tag(
-                            self.soup,
+                        self.make_semantic_tag(
                             AddressSpec,
                             contents=["1 rue de l'avenir"],
                         )
@@ -180,48 +158,41 @@ class TestParseSectionTitles(BaseTestCase):
                     data=TextSpanSegmentationData(start=[0, 0, 0], end=[0, 0, 0]),
                 ),
             ],
-            ignore_text_span_data=True,
         )
 
 
-class TestParseSections(BaseTestCase):
+class TestParseSections(BaseTestCaseSegmentation):
 
     def test_parse_sections(self):
         # Arrange
         elements = [
-            *make_text_spans(self.soup, "bly bly bly"),
-            make_semantic_tag(
-                self.soup,
+            *self.make_text_spans("bly bly bly"),
+            self.make_semantic_tag(
                 SectionTitleSegmentationSpec,
-                contents=make_text_spans(self.soup, "Titre I - Introduction"),
+                contents=self.make_text_spans("Titre I - Introduction"),
                 data=SectionTitleSegmentationData(level=1),
             ),
-            make_semantic_tag(
-                self.soup,
+            self.make_semantic_tag(
                 SectionTitleSegmentationSpec,
-                contents=make_text_spans(self.soup, "1. Contexte"),
+                contents=self.make_text_spans("1. Contexte"),
                 data=SectionTitleSegmentationData(level=2),
             ),
-            *make_text_spans(self.soup, "bla bla bla"),
-            make_semantic_tag(
-                self.soup,
+            *self.make_text_spans("bla bla bla"),
+            self.make_semantic_tag(
                 SectionTitleSegmentationSpec,
-                contents=make_text_spans(self.soup, "2. Objectifs"),
+                contents=self.make_text_spans("2. Objectifs"),
                 data=SectionTitleSegmentationData(level=2),
             ),
-            *make_text_spans(
-                self.soup,
+            *self.make_text_spans(
                 "blo blo blo",
                 "bli bli bli",
             ),
-            make_semantic_tag(
-                self.soup,
+            self.make_semantic_tag(
                 SectionTitleSegmentationSpec,
-                contents=make_text_spans(self.soup, "Titre II - Méthodologie"),
+                contents=self.make_text_spans("Titre II - Méthodologie"),
                 data=SectionTitleSegmentationData(level=1),
             ),
-            *make_text_spans(
-                self.soup,
+            *self.make_text_spans(
                 "blu blu blu",
                 "ble ble ble",
             ),
@@ -234,120 +205,102 @@ class TestParseSections(BaseTestCase):
         assert_elements_equal(
             result,
             [
-                make_semantic_tag(
-                    self.soup,
+                self.make_semantic_tag(
                     AlineaSegmentationSpec,
-                    contents=make_text_spans(self.soup, "bly bly bly"),
+                    contents=self.make_text_spans("bly bly bly"),
                     data=AlineaData(number="1"),
                 ),
-                make_semantic_tag(
-                    self.soup,
+                self.make_semantic_tag(
                     SectionSegmentationSpec,
                     contents=[
-                        make_semantic_tag(
-                            self.soup,
+                        self.make_semantic_tag(
                             SectionTitleSegmentationSpec,
-                            contents=make_text_spans(self.soup, "Titre I - Introduction"),
+                            contents=self.make_text_spans("Titre I - Introduction"),
                             data=SectionTitleSegmentationData(
                                 level=1,
                             ),
                         ),
-                        make_semantic_tag(
-                            self.soup,
+                        self.make_semantic_tag(
                             SectionSegmentationSpec,
                             contents=[
-                                make_semantic_tag(
-                                    self.soup,
+                                self.make_semantic_tag(
                                     SectionTitleSegmentationSpec,
-                                    contents=make_text_spans(self.soup, "1. Contexte"),
+                                    contents=self.make_text_spans("1. Contexte"),
                                     data=SectionTitleSegmentationData(
                                         level=2,
                                     ),
                                 ),
-                                make_semantic_tag(
-                                    self.soup,
+                                self.make_semantic_tag(
                                     AlineaSegmentationSpec,
-                                    contents=make_text_spans(self.soup, "bla bla bla"),
+                                    contents=self.make_text_spans("bla bla bla"),
                                     data=AlineaData(number="1"),
                                 ),
                             ],
                         ),
-                        make_semantic_tag(
-                            self.soup,
+                        self.make_semantic_tag(
                             SectionSegmentationSpec,
                             contents=[
-                                make_semantic_tag(
-                                    self.soup,
+                                self.make_semantic_tag(
                                     SectionTitleSegmentationSpec,
-                                    contents=make_text_spans(self.soup, "2. Objectifs"),
+                                    contents=self.make_text_spans("2. Objectifs"),
                                     data=SectionTitleSegmentationData(
                                         level=2,
                                     ),
                                 ),
-                                make_semantic_tag(
-                                    self.soup,
+                                self.make_semantic_tag(
                                     AlineaSegmentationSpec,
-                                    contents=make_text_spans(self.soup, "blo blo blo"),
+                                    contents=self.make_text_spans("blo blo blo"),
                                     data=AlineaData(number="1"),
                                 ),
-                                make_semantic_tag(
-                                    self.soup,
+                                self.make_semantic_tag(
                                     AlineaSegmentationSpec,
-                                    contents=make_text_spans(self.soup, "bli bli bli"),
+                                    contents=self.make_text_spans("bli bli bli"),
                                     data=AlineaData(number="2"),
                                 ),
                             ],
                         ),
                     ],
                 ),
-                make_semantic_tag(
-                    self.soup,
+                self.make_semantic_tag(
                     SectionSegmentationSpec,
                     contents=[
-                        make_semantic_tag(
-                            self.soup,
+                        self.make_semantic_tag(
                             SectionTitleSegmentationSpec,
-                            contents=make_text_spans(self.soup, "Titre II - Méthodologie"),
+                            contents=self.make_text_spans("Titre II - Méthodologie"),
                             data=SectionTitleSegmentationData(
                                 level=1,
                             ),
                         ),
-                        make_semantic_tag(
-                            self.soup,
+                        self.make_semantic_tag(
                             AlineaSegmentationSpec,
-                            contents=make_text_spans(self.soup, "blu blu blu"),
+                            contents=self.make_text_spans("blu blu blu"),
                             data=AlineaData(number="1"),
                         ),
-                        make_semantic_tag(
-                            self.soup,
+                        self.make_semantic_tag(
                             AlineaSegmentationSpec,
-                            contents=make_text_spans(self.soup, "ble ble ble"),
+                            contents=self.make_text_spans("ble ble ble"),
                             data=AlineaData(number="2"),
                         ),
                     ],
                 ),
             ],
-            ignore_data_if_omitted=True,
-            ignore_text_span_data=True,
         )
 
     def test_parse_sections_contents(self):
         # Arrange
         elements = [
-            make_semantic_tag(
-                self.soup,
+            self.make_semantic_tag(
                 SectionTitleSegmentationSpec,
-                contents=make_text_spans(self.soup, "1. Bla"),
+                contents=self.make_text_spans("1. Bla"),
                 data=SectionTitleSegmentationData(level=0),
             ),
-            *make_text_spans(self.soup, "bla bla bla"),
-            make_semantic_tag(
-                self.soup,
+            *self.make_text_spans("bla bla bla"),
+            self.make_semantic_tag(
                 SectionTitleSegmentationSpec,
-                contents=make_text_spans(self.soup, "1.1. Blabla"),
+                contents=self.make_text_spans("1.1. Blabla"),
                 data=SectionTitleSegmentationData(level=1),
             ),
-            *make_text_spans(self.soup, "bli bli bli"),
+            *self.make_text_spans("bli bli bli"),
         ]
 
         # Act
@@ -357,36 +310,30 @@ class TestParseSections(BaseTestCase):
         assert_elements_equal(
             result,
             [
-                make_semantic_tag(
-                    self.soup,
+                self.make_semantic_tag(
                     SectionSegmentationSpec,
                     contents=[
-                        make_semantic_tag(
-                            self.soup,
+                        self.make_semantic_tag(
                             SectionTitleSegmentationSpec,
-                            contents=make_text_spans(self.soup, "1. Bla"),
+                            contents=self.make_text_spans("1. Bla"),
                             data=SectionTitleSegmentationData(level=0),
                         ),
-                        make_semantic_tag(
-                            self.soup,
+                        self.make_semantic_tag(
                             AlineaSegmentationSpec,
-                            contents=make_text_spans(self.soup, "bla bla bla"),
+                            contents=self.make_text_spans("bla bla bla"),
                             data=AlineaData(number="1"),
                         ),
-                        make_semantic_tag(
-                            self.soup,
+                        self.make_semantic_tag(
                             SectionSegmentationSpec,
                             contents=[
-                                make_semantic_tag(
-                                    self.soup,
+                                self.make_semantic_tag(
                                     SectionTitleSegmentationSpec,
-                                    contents=make_text_spans(self.soup, "1.1. Blabla"),
+                                    contents=self.make_text_spans("1.1. Blabla"),
                                     data=SectionTitleSegmentationData(level=1),
                                 ),
-                                make_semantic_tag(
-                                    self.soup,
+                                self.make_semantic_tag(
                                     AlineaSegmentationSpec,
-                                    contents=make_text_spans(self.soup, "bli bli bli"),
+                                    contents=self.make_text_spans("bli bli bli"),
                                     data=AlineaData(number="1"),
                                 ),
                             ],
@@ -394,23 +341,19 @@ class TestParseSections(BaseTestCase):
                     ],
                 ),
             ],
-            ignore_data_if_omitted=True,
-            ignore_text_span_data=True,
         )
 
     def test_parse_sections_missing_level(self):
         # Arrange
         elements = [
-            make_semantic_tag(
-                self.soup,
+            self.make_semantic_tag(
                 SectionTitleSegmentationSpec,
-                contents=make_text_spans(self.soup, "1. Bla"),
+                contents=self.make_text_spans("1. Bla"),
                 data=SectionTitleSegmentationData(level=0),
             ),
-            make_semantic_tag(
-                self.soup,
+            self.make_semantic_tag(
                 SectionTitleSegmentationSpec,
-                contents=make_text_spans(self.soup, "1.1.1. Blabla"),
+                contents=self.make_text_spans("1.1.1. Blabla"),
                 data=SectionTitleSegmentationData(level=2),
             ),
         ]
@@ -422,24 +365,20 @@ class TestParseSections(BaseTestCase):
         assert_elements_equal(
             result,
             [
-                make_semantic_tag(
-                    self.soup,
+                self.make_semantic_tag(
                     SectionSegmentationSpec,
                     contents=[
-                        make_semantic_tag(
-                            self.soup,
+                        self.make_semantic_tag(
                             SectionTitleSegmentationSpec,
-                            contents=make_text_spans(self.soup, "1. Bla"),
+                            contents=self.make_text_spans("1. Bla"),
                             data=SectionTitleSegmentationData(level=0),
                         ),
-                        make_semantic_tag(
-                            self.soup,
+                        self.make_semantic_tag(
                             SectionSegmentationSpec,
                             contents=[
-                                make_semantic_tag(
-                                    self.soup,
+                                self.make_semantic_tag(
                                     SectionTitleSegmentationSpec,
-                                    contents=make_text_spans(self.soup, "1.1.1. Blabla"),
+                                    contents=self.make_text_spans("1.1.1. Blabla"),
                                     data=SectionTitleSegmentationData(level=2),
                                 ),
                             ],
@@ -447,41 +386,34 @@ class TestParseSections(BaseTestCase):
                     ],
                 ),
             ],
-            ignore_data_if_omitted=True,
-            ignore_text_span_data=True,
         )
 
     def test_parse_missing_title_current_level(self):
         # Arrange
         elements = [
-            make_semantic_tag(
-                self.soup,
+            self.make_semantic_tag(
                 SectionTitleSegmentationSpec,
-                contents=make_text_spans(self.soup, "1.1. bla"),
+                contents=self.make_text_spans("1.1. bla"),
                 data=SectionTitleSegmentationData(level=1),
             ),
-            make_semantic_tag(
-                self.soup,
+            self.make_semantic_tag(
                 SectionTitleSegmentationSpec,
-                contents=make_text_spans(self.soup, "1.1.1. bla"),
+                contents=self.make_text_spans("1.1.1. bla"),
                 data=SectionTitleSegmentationData(level=2),
             ),
-            make_semantic_tag(
-                self.soup,
+            self.make_semantic_tag(
                 SectionTitleSegmentationSpec,
-                contents=make_text_spans(self.soup, "1.2. bla"),
+                contents=self.make_text_spans("1.2. bla"),
                 data=SectionTitleSegmentationData(level=1),
             ),
-            make_semantic_tag(
-                self.soup,
+            self.make_semantic_tag(
                 SectionTitleSegmentationSpec,
-                contents=make_text_spans(self.soup, "2. bla"),
+                contents=self.make_text_spans("2. bla"),
                 data=SectionTitleSegmentationData(level=0),
             ),
-            make_semantic_tag(
-                self.soup,
+            self.make_semantic_tag(
                 SectionTitleSegmentationSpec,
-                contents=make_text_spans(self.soup, "2.1. bla"),
+                contents=self.make_text_spans("2.1. bla"),
                 data=SectionTitleSegmentationData(level=1),
             ),
         ]
@@ -493,60 +425,50 @@ class TestParseSections(BaseTestCase):
         assert_elements_equal(
             result,
             [
-                make_semantic_tag(
-                    self.soup,
+                self.make_semantic_tag(
                     SectionSegmentationSpec,
                     contents=[
-                        make_semantic_tag(
-                            self.soup,
+                        self.make_semantic_tag(
                             SectionTitleSegmentationSpec,
-                            contents=make_text_spans(self.soup, "1.1. bla"),
+                            contents=self.make_text_spans("1.1. bla"),
                             data=SectionTitleSegmentationData(level=1),
                         ),
-                        make_semantic_tag(
-                            self.soup,
+                        self.make_semantic_tag(
                             SectionSegmentationSpec,
                             contents=[
-                                make_semantic_tag(
-                                    self.soup,
+                                self.make_semantic_tag(
                                     SectionTitleSegmentationSpec,
-                                    contents=make_text_spans(self.soup, "1.1.1. bla"),
+                                    contents=self.make_text_spans("1.1.1. bla"),
                                     data=SectionTitleSegmentationData(level=2),
                                 ),
                             ],
                         ),
                     ],
                 ),
-                make_semantic_tag(
-                    self.soup,
+                self.make_semantic_tag(
                     SectionSegmentationSpec,
                     contents=[
-                        make_semantic_tag(
-                            self.soup,
+                        self.make_semantic_tag(
                             SectionTitleSegmentationSpec,
-                            contents=make_text_spans(self.soup, "1.2. bla"),
+                            contents=self.make_text_spans("1.2. bla"),
                             data=SectionTitleSegmentationData(level=1),
                         ),
                     ],
                 ),
-                make_semantic_tag(
-                    self.soup,
+                self.make_semantic_tag(
                     SectionSegmentationSpec,
                     contents=[
-                        make_semantic_tag(
-                            self.soup,
+                        self.make_semantic_tag(
                             SectionTitleSegmentationSpec,
-                            contents=make_text_spans(self.soup, "2. bla"),
+                            contents=self.make_text_spans("2. bla"),
                             data=SectionTitleSegmentationData(level=0),
                         ),
-                        make_semantic_tag(
-                            self.soup,
+                        self.make_semantic_tag(
                             SectionSegmentationSpec,
                             contents=[
-                                make_semantic_tag(
-                                    self.soup,
+                                self.make_semantic_tag(
                                     SectionTitleSegmentationSpec,
-                                    contents=make_text_spans(self.soup, "2.1. bla"),
+                                    contents=self.make_text_spans("2.1. bla"),
                                     data=SectionTitleSegmentationData(level=1),
                                 ),
                             ],
@@ -554,19 +476,25 @@ class TestParseSections(BaseTestCase):
                     ],
                 ),
             ],
-            ignore_data_if_omitted=True,
-            ignore_text_span_data=True,
         )
 
 
-class TestParseAlineas(BaseTestCase):
+class TestParseAlineas(BaseTestCaseSegmentation):
 
     def test_merge_if_continuing_sentence_and_page_separator(self):
         # Arrange
         elements = [
-            *make_text_spans(self.soup, "This is a sentence that "),
-            make_semantic_tag(self.soup, PageSeparatorSpec, data=PageSeparatorData(page_index=1)),
-            *make_text_spans(self.soup, "continues on the next page."),
+            self.make_semantic_tag(
+                TextSpanSegmentationSpec,
+                contents=["This is a sentence that "],
+                data=TextSpanSegmentationData(start=[0, 111, 0], end=[0, 111, 10]),
+            ),
+            self.make_semantic_tag(PageSeparatorSpec, data=PageSeparatorData(page_index=1)),
+            self.make_semantic_tag(
+                TextSpanSegmentationSpec,
+                contents=["continues on the next page."],
+                data=TextSpanSegmentationData(start=[1, 0, 0], end=[1, 0, 10]),
+            ),
         ]
 
         # Act
@@ -576,28 +504,23 @@ class TestParseAlineas(BaseTestCase):
         assert_elements_equal(
             result,
             [
-                make_semantic_tag(
-                    self.soup,
+                self.make_semantic_tag(
                     AlineaSegmentationSpec,
                     contents=[
-                        make_semantic_tag(
-                            self.soup,
+                        self.make_semantic_tag(
                             TextSpanSegmentationSpec,
                             contents=[
                                 "This is a sentence that ",
-                                make_semantic_tag(
-                                    self.soup,
+                                self.make_semantic_tag(
                                     PageSeparatorSpec,
                                     data=PageSeparatorData(page_index=1),
                                 ),
                                 "continues on the next page.",
                             ],
-                            data=TextSpanSegmentationData(start=[0, 0, 0], end=[0, 0, 0]),
+                            data=TextSpanSegmentationData(start=[0, 111, 0], end=[1, 0, 10]),
                         )
                     ],
                     data=AlineaData(number=1),
                 ),
             ],
-            ignore_text_span_data=True,
-            ignore_data_if_omitted=True,
         )
