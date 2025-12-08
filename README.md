@@ -218,10 +218,16 @@ La publication sur PyPI se fait automatiquement à travers GitHub Actions. Cette
 
 Pour publier une nouvelle version : 
 
-1. Incrémenter le numéro de version dans `pyproject.toml`, ajouter un log dans le fichier `CHANGELOG.md`, puis effectuer un commit.
-2. Ajouter un tag de version correspondant au nouveau numéro de version de la librairie : 
+1. Créer une branche de release `git checkout -b v1.2.3`
+2. Incrémenter le numéro de version dans `pyproject.toml`
+3. Ajouter un log dans le fichier `CHANGELOG.md`
+4. Réinstaller la librairie si besoin, puis regénérer les HTML des exemples pour mettre à jour le numéro de version
+5. Effectuer un commit et pusher la branche
+6. Ajouter un tag de version correspondant au nouveau numéro de version de la librairie : 
 
 ```bash
 git tag v1.2.3          # Crée le tag localement
 git push origin v1.2.3  # Push sur github
 ```
+
+7. Terminer par une PR
