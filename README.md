@@ -1,6 +1,6 @@
 # Arrêtify
 
-<img src="images/cover.svg" style="display:block;margin:auto;width:100%" />
+<img src="https://raw.githubusercontent.com/mte-dgpr/arretify/main/images/cover.svg" style="display:block;margin:auto;width:100%" />
 
 <br/>
 
