@@ -20,7 +20,6 @@
 from arretify.regex_utils import PatternProxy
 from arretify.semantic_tag_specs import AddressSpec, PageSeparatorData, PageSeparatorSpec
 from arretify.utils.html_semantic import Contents, create_semantic_tag_spec_no_data
-from arretify.utils.testing import assert_elements_equal
 
 from .core import (
     combine_text_spans,
@@ -38,7 +37,7 @@ from .semantic_tag_specs import (
     TextSpanSegmentationData,
     TextSpanSegmentationSpec,
 )
-from .testing import BaseTestCaseSegmentation
+from .testing import BaseTestCaseSegmentation, assert_elements_equal_segmentation_step
 
 SomeTagSpec = create_semantic_tag_spec_no_data(
     spec_name="segmentation:some_tag",
@@ -277,8 +276,8 @@ class TestMakeRecombineInterruptedLinesSplitter(BaseTestCaseSegmentation):
         # Assert
         assert result is not None
         before, match, after = result
-        assert_elements_equal(before, [])
-        assert_elements_equal(
+        assert_elements_equal_segmentation_step(before, [])
+        assert_elements_equal_segmentation_step(
             match,
             (
                 self.make_semantic_tag(SomeTagSpec, contents=["This is a line"]),
@@ -293,7 +292,7 @@ class TestMakeRecombineInterruptedLinesSplitter(BaseTestCaseSegmentation):
                 ),
             ),
         )
-        assert_elements_equal(after, [])
+        assert_elements_equal_segmentation_step(after, [])
 
     def test_line_is_not_continuing(self):
         # Arrange
@@ -424,7 +423,7 @@ class TestCombineTextSpans(BaseTestCaseSegmentation):
         result = combine_text_spans(self.context, elements)
 
         # Assert
-        assert_elements_equal(
+        assert_elements_equal_segmentation_step(
             [result],
             [
                 self.make_semantic_tag(
@@ -462,7 +461,7 @@ class TestCombineTextSpans(BaseTestCaseSegmentation):
         result = combine_text_spans(self.context, elements)
 
         # Assert
-        assert_elements_equal(
+        assert_elements_equal_segmentation_step(
             [result],
             [
                 self.make_semantic_tag(
@@ -499,7 +498,7 @@ class TestMakePatternSplitter(BaseTestCaseSegmentation):
         # Assert
         assert result is not None
         before, match, after = result
-        assert_elements_equal(
+        assert_elements_equal_segmentation_step(
             before,
             [
                 "abc",
@@ -507,7 +506,7 @@ class TestMakePatternSplitter(BaseTestCaseSegmentation):
                 "def",
             ],
         )
-        assert_elements_equal(
+        assert_elements_equal_segmentation_step(
             after,
             [
                 "ghi",
@@ -529,8 +528,8 @@ class TestMakePatternSplitter(BaseTestCaseSegmentation):
         # Assert
         assert result is not None
         before, match, after = result
-        assert_elements_equal(before, [])
-        assert_elements_equal(after, ["abc"])
+        assert_elements_equal_segmentation_step(before, [])
+        assert_elements_equal_segmentation_step(after, ["abc"])
         assert match.group(0) == "123"
 
     def test_match_end(self):
@@ -545,8 +544,8 @@ class TestMakePatternSplitter(BaseTestCaseSegmentation):
         # Assert
         assert result is not None
         before, match, after = result
-        assert_elements_equal(before, ["jkl"])
-        assert_elements_equal(after, [])
+        assert_elements_equal_segmentation_step(before, ["jkl"])
+        assert_elements_equal_segmentation_step(after, [])
         assert match.group(0) == "456"
 
     def test_no_match(self):
@@ -573,6 +572,6 @@ class TestMakePatternSplitter(BaseTestCaseSegmentation):
         # Assert
         assert result is not None
         before, match, after = result
-        assert_elements_equal(before, ["abc"])
-        assert_elements_equal(after, ["jkl"])
+        assert_elements_equal_segmentation_step(before, ["abc"])
+        assert_elements_equal_segmentation_step(after, ["jkl"])
         assert match.group(0) == "defghi"
