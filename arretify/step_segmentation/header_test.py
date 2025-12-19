@@ -39,7 +39,6 @@ from arretify.step_segmentation.semantic_tag_specs import (
     VisaSegmentationSpec,
 )
 from arretify.utils.html_create import wrap_in_tag
-from arretify.utils.testing import assert_elements_equal
 
 from .header import (
     _make_header_element_tag,
@@ -52,7 +51,7 @@ from .header import (
     parse_supplementary_motif_info_element,
     parse_visa_and_motif_elements,
 )
-from .testing import BaseTestCaseSegmentation
+from .testing import BaseTestCaseSegmentation, assert_elements_equal_segmentation_step
 
 
 class TestParseHeader(BaseTestCaseSegmentation):
@@ -74,7 +73,7 @@ class TestParseHeader(BaseTestCaseSegmentation):
         results = parse_header(self.context, contents)
 
         # Assert
-        assert_elements_equal(
+        assert_elements_equal_segmentation_step(
             results,
             [
                 self.make_semantic_tag(
@@ -105,7 +104,7 @@ class TestParseVisaAndMotifs(BaseTestCaseSegmentation):
         result = parse_visa_and_motif_elements(self.context, elements)
 
         # Assert
-        assert_elements_equal(
+        assert_elements_equal_segmentation_step(
             result,
             [
                 self.make_semantic_tag(
@@ -141,7 +140,7 @@ class TestParseVisaAndMotifs(BaseTestCaseSegmentation):
         result = parse_visa_and_motif_elements(self.context, elements)
 
         # Assert
-        assert_elements_equal(
+        assert_elements_equal_segmentation_step(
             result,
             [
                 self.make_semantic_tag(
@@ -170,7 +169,7 @@ class TestParseVisaAndMotifs(BaseTestCaseSegmentation):
         result = parse_visa_and_motif_elements(self.context, elements)
 
         # Assert
-        assert_elements_equal(
+        assert_elements_equal_segmentation_step(
             result,
             [
                 self.make_semantic_tag(
@@ -198,7 +197,7 @@ class TestParseVisaAndMotifs(BaseTestCaseSegmentation):
         result = parse_visa_and_motif_elements(self.context, elements)
 
         # Assert
-        assert_elements_equal(
+        assert_elements_equal_segmentation_step(
             result,
             [
                 self.make_semantic_tag(
@@ -231,7 +230,7 @@ class TestParseVisaAndMotifs(BaseTestCaseSegmentation):
         result = parse_visa_and_motif_elements(self.context, elements)
 
         # Assert
-        assert_elements_equal(
+        assert_elements_equal_segmentation_step(
             result,
             [
                 *self.make_text_spans("CONSIDÉRANT : "),
@@ -276,7 +275,7 @@ class TestParseVisaAndMotifs(BaseTestCaseSegmentation):
         result = parse_visa_and_motif_elements(self.context, elements)
 
         # Assert
-        assert_elements_equal(
+        assert_elements_equal_segmentation_step(
             result,
             [
                 *self.make_text_spans("Vu : "),
@@ -315,7 +314,7 @@ class TestParseVisaAndMotifs(BaseTestCaseSegmentation):
         result = parse_visa_and_motif_elements(self.context, elements)
 
         # Assert
-        assert_elements_equal(
+        assert_elements_equal_segmentation_step(
             result,
             [
                 *self.make_text_spans(
@@ -349,7 +348,7 @@ class TestParseVisaAndMotifs(BaseTestCaseSegmentation):
         result = parse_visa_and_motif_elements(self.context, elements)
 
         # Assert
-        assert_elements_equal(
+        assert_elements_equal_segmentation_step(
             result,
             [
                 *self.make_text_spans("Vu : "),
@@ -383,7 +382,7 @@ class TestParseVisaAndMotifs(BaseTestCaseSegmentation):
         result = parse_visa_and_motif_elements(self.context, elements)
 
         # Assert
-        assert_elements_equal(
+        assert_elements_equal_segmentation_step(
             result,
             [
                 *self.make_text_spans("Vu : "),
@@ -417,7 +416,7 @@ class TestParseVisaAndMotifs(BaseTestCaseSegmentation):
         result = parse_visa_and_motif_elements(self.context, elements)
 
         # Assert
-        assert_elements_equal(
+        assert_elements_equal_segmentation_step(
             result,
             [
                 *self.make_text_spans("Vu : "),
@@ -457,7 +456,7 @@ class TestParseVisaAndMotifs(BaseTestCaseSegmentation):
         result = parse_visa_and_motif_elements(self.context, elements)
 
         # Assert
-        assert_elements_equal(
+        assert_elements_equal_segmentation_step(
             result,
             [
                 self.make_semantic_tag(
@@ -517,7 +516,7 @@ class TestParseArreteTitle(BaseTestCaseSegmentation):
         results = parse_arrete_title_element(self.context, contents)
 
         # Assert
-        assert_elements_equal(
+        assert_elements_equal_segmentation_step(
             results,
             [
                 self.make_semantic_tag(
@@ -547,7 +546,7 @@ class TestParseEmblemElement(BaseTestCaseSegmentation):
         results = parse_emblem_element(self.context, contents)
 
         # Assert
-        assert_elements_equal(
+        assert_elements_equal_segmentation_step(
             results,
             [
                 self.make_semantic_tag(
@@ -576,7 +575,7 @@ class TestParseEntityElement(BaseTestCaseSegmentation):
         results = parse_entity_element(self.context, contents)
 
         # Assert
-        assert_elements_equal(
+        assert_elements_equal_segmentation_step(
             results,
             [
                 self.make_semantic_tag(
@@ -603,7 +602,7 @@ class TestParseIdentificationElement(BaseTestCaseSegmentation):
         results = parse_identification_element(self.context, contents)
 
         # Assert
-        assert_elements_equal(
+        assert_elements_equal_segmentation_step(
             results,
             [
                 self.make_semantic_tag(
@@ -631,7 +630,7 @@ class TestParseHonoraryElement(BaseTestCaseSegmentation):
         results = parse_honorary_element(self.context, contents)
 
         # Assert
-        assert_elements_equal(
+        assert_elements_equal_segmentation_step(
             results,
             [
                 self.make_semantic_tag(
@@ -663,7 +662,7 @@ class TestParseSupplementaryMotifInfo(BaseTestCaseSegmentation):
         results = parse_supplementary_motif_info_element(self.context, contents)
 
         # Assert
-        assert_elements_equal(
+        assert_elements_equal_segmentation_step(
             results,
             [
                 self.make_semantic_tag(

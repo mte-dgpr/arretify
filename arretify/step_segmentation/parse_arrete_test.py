@@ -24,7 +24,6 @@ from arretify.semantic_tag_specs import (
     PageSeparatorSpec,
 )
 from arretify.utils.html_create import wrap_in_tag
-from arretify.utils.testing import assert_elements_equal
 
 from .parse_arrete import initialize_document_structure, parse_arrete
 from .semantic_tag_specs import (
@@ -38,7 +37,11 @@ from .semantic_tag_specs import (
     TextSpanSegmentationData,
     TextSpanSegmentationSpec,
 )
-from .testing import DEFAULT_TEXT_SPAN_DATA, BaseTestCaseSegmentation
+from .testing import (
+    DEFAULT_TEXT_SPAN_DATA,
+    BaseTestCaseSegmentation,
+    assert_elements_equal_segmentation_step,
+)
 
 
 class TestParseArrete(BaseTestCaseSegmentation):
@@ -59,7 +62,7 @@ class TestParseArrete(BaseTestCaseSegmentation):
         elements = parse_arrete(self.context, pages)
 
         # Assert
-        assert_elements_equal(
+        assert_elements_equal_segmentation_step(
             elements,
             [
                 self.make_semantic_tag(
@@ -143,7 +146,7 @@ class TestParseArrete(BaseTestCaseSegmentation):
         elements = parse_arrete(self.context, pages)
 
         # Assert
-        assert_elements_equal(
+        assert_elements_equal_segmentation_step(
             elements,
             [
                 self.make_semantic_tag(
@@ -214,7 +217,7 @@ class TestInitializeDocumentStructure(BaseTestCaseSegmentation):
         result = initialize_document_structure(self.context, pages)
 
         # Assert
-        assert_elements_equal(
+        assert_elements_equal_segmentation_step(
             result,
             [
                 self.make_semantic_tag(PageSeparatorSpec, data=PageSeparatorData(page_index=0)),
