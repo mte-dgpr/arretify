@@ -18,15 +18,17 @@
 #
 import unittest
 
-from arretify.semantic_tag_specs import SectionReferenceSpec
+from arretify.semantic_tag_specs import SectionReferenceData, SectionReferenceSpec
 from arretify.types import SectionType
 from arretify.utils.html_semantic import get_semantic_tag_data
 from arretify.utils.references import build_reference_tree
-from arretify.utils.testing import create_document_context, make_testing_function_for_children_list
+from arretify.utils.testing import (
+    BaseTestCaseHtml,
+    assert_element_lists_equal,
+    create_document_context,
+)
 
 from .unknown_sections_resolution import remove_misdetected_sections, resolve_unknown_sections
-
-remove_misdetected_sections_ = make_testing_function_for_children_list(remove_misdetected_sections)
 
 
 class TestResolveUnknownSections(unittest.TestCase):
@@ -114,22 +116,32 @@ class TestResolveUnknownSections(unittest.TestCase):
         assert section_reference.type == SectionType.ALINEA
 
 
-class TestRemoveMisdetectedSections(unittest.TestCase):
+class TestRemoveMisdetectedSections(BaseTestCaseHtml):
 
     def test_appendix_all_alone(self):
-        assert (
-            remove_misdetected_sections_(
-                """
-            à l'
-            <a
-                data-spec="section_reference"
-                data-tag_id="1"
-                data-type="annexe"
-            >
-                annexe
-            </a>
-            de la mairie
-            """
-            )
-            == ["à l' ", "annexe", " de la mairie"]
+        # Arrange
+        self.soup_extend(
+            [
+                "à l' ",
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["annexe"],
+                    data=SectionReferenceData(type=SectionType.ANNEXE),
+                    reserved_data_attrs=dict(tag_id="1"),
+                ),
+                " de la mairie",
+            ]
+        )
+
+        # Act
+        actual = remove_misdetected_sections(self.context, self.soup.contents)
+
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                "à l' ",
+                "annexe",
+                " de la mairie",
+            ],
         )

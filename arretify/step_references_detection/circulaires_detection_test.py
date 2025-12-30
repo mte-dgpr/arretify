@@ -16,94 +16,140 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-import unittest
-
-from arretify.utils.testing import make_testing_function_for_children_list, normalized_html_str
+from arretify.semantic_tag_specs import DateSpec, DocumentReferenceData, DocumentReferenceSpec
+from arretify.types import ProtectedTagOrStr
+from arretify.utils.testing import BaseTestCaseHtml, assert_element_lists_equal
 
 from .circulaires_detection import parse_circulaires_references
 
-process_children = make_testing_function_for_children_list(parse_circulaires_references)
 
-
-class TestParseCirculairesReferences(unittest.TestCase):
+class TestParseCirculairesReferences(BaseTestCaseHtml):
 
     def test_only_date(self):
-        assert process_children("Bla bla circulaire du 30 mai 2005 relative à") == [
-            "Bla bla ",
-            normalized_html_str(
-                """
-                <a
-                    data-date="2005-05-30"
-                    data-spec="document_reference"
-                    data-type="circulaire"
-                >
-                    circulaire du
-                    <time data-spec="date" datetime="2005-05-30">
-                        30 mai 2005
-                    </time>
-                </a>
-                """
-            ),
-            " relative à",
-        ]
+        # Arrange
+        elements: list[ProtectedTagOrStr] = ["Bla bla circulaire du 30 mai 2005 relative à"]
+
+        # Act
+        actual = parse_circulaires_references(self.context, elements)
+
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                "Bla bla ",
+                self.make_semantic_tag(
+                    DocumentReferenceSpec,
+                    contents=[
+                        "circulaire du ",
+                        self.make_semantic_tag(
+                            DateSpec,
+                            contents=["30 mai 2005"],
+                            attrs=dict(datetime="2005-05-30"),
+                        ),
+                    ],
+                    data=DocumentReferenceData(
+                        type="circulaire",
+                        date="2005-05-30",
+                    ),
+                ),
+                " relative à",
+            ],
+        )
 
     def test_with_ministerielle(self):
-        assert process_children("Bla bla circulaire ministérielle du 30 mai 2005 relative à") == [
-            "Bla bla ",
-            normalized_html_str(
-                """
-                <a
-                    data-date="2005-05-30"
-                    data-spec="document_reference"
-                    data-type="circulaire"
-                >
-                    circulaire ministérielle du
-                    <time data-spec="date" datetime="2005-05-30">
-                        30 mai 2005
-                    </time>
-                </a>
-                """
-            ),
-            " relative à",
+        # Arrange
+        elements: list[ProtectedTagOrStr] = [
+            "Bla bla circulaire ministérielle du 30 mai 2005 relative à"
         ]
+
+        # Act
+        actual = parse_circulaires_references(self.context, elements)
+
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                "Bla bla ",
+                self.make_semantic_tag(
+                    DocumentReferenceSpec,
+                    contents=[
+                        "circulaire ministérielle du ",
+                        self.make_semantic_tag(
+                            DateSpec,
+                            contents=["30 mai 2005"],
+                            attrs=dict(datetime="2005-05-30"),
+                        ),
+                    ],
+                    data=DocumentReferenceData(
+                        type="circulaire",
+                        date="2005-05-30",
+                    ),
+                ),
+                " relative à",
+            ],
+        )
 
     def test_with_random_acronym(self):
-        assert process_children("Bla bla circulaire DPPR/DE du 30 mai 2005 relative à") == [
-            "Bla bla ",
-            normalized_html_str(
-                """
-                <a
-                    data-date="2005-05-30"
-                    data-spec="document_reference"
-                    data-type="circulaire"
-                >
-                    circulaire DPPR/DE du
-                    <time data-spec="date" datetime="2005-05-30">
-                        30 mai 2005
-                    </time>
-                </a>
-                """
-            ),
-            " relative à",
-        ]
+        # Arrange
+        elements: list[ProtectedTagOrStr] = ["Bla bla circulaire DPPR/DE du 30 mai 2005 relative à"]
+
+        # Act
+        actual = parse_circulaires_references(self.context, elements)
+
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                "Bla bla ",
+                self.make_semantic_tag(
+                    DocumentReferenceSpec,
+                    contents=[
+                        "circulaire DPPR/DE du ",
+                        self.make_semantic_tag(
+                            DateSpec,
+                            contents=["30 mai 2005"],
+                            attrs=dict(datetime="2005-05-30"),
+                        ),
+                    ],
+                    data=DocumentReferenceData(
+                        type="circulaire",
+                        date="2005-05-30",
+                    ),
+                ),
+                " relative à",
+            ],
+        )
 
     def test_with_identifier_and_date(self):
-        assert process_children("Bla bla circulaire n°2005-12 du 30 mai 2005 relative à") == [
-            "Bla bla ",
-            normalized_html_str(
-                """
-                <a
-                    data-date="2005-05-30"
-                    data-num="2005-12"
-                    data-spec="document_reference"
-                    data-type="circulaire"
-                >
-                    circulaire n°2005-12 du
-                    <time data-spec="date" datetime="2005-05-30">
-                        30 mai 2005
-                    </time>
-                </a>
-                """
-            ),
-            " relative à",
+        # Arrange
+        elements: list[ProtectedTagOrStr] = [
+            "Bla bla circulaire n°2005-12 du 30 mai 2005 relative à"
         ]
+
+        # Act
+        actual = parse_circulaires_references(self.context, elements)
+
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                "Bla bla ",
+                self.make_semantic_tag(
+                    DocumentReferenceSpec,
+                    contents=[
+                        "circulaire n°2005-12 du ",
+                        self.make_semantic_tag(
+                            DateSpec,
+                            contents=["30 mai 2005"],
+                            attrs=dict(datetime="2005-05-30"),
+                        ),
+                    ],
+                    data=DocumentReferenceData(
+                        type="circulaire",
+                        date="2005-05-30",
+                        num="2005-12",
+                    ),
+                ),
+                " relative à",
+            ],
+        )

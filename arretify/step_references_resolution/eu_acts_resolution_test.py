@@ -16,9 +16,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-import unittest
-
-from arretify.utils.testing import make_testing_function_for_single_tag, normalized_html_str
+from arretify.semantic_tag_specs import DocumentReferenceData, DocumentReferenceSpec
+from arretify.types import DocumentType
+from arretify.utils.testing import BaseTestCaseHtml, assert_elements_equal
 
 from .eu_acts_resolution import (
     resolve_eu_decision_eurlex_url,
@@ -26,104 +26,112 @@ from .eu_acts_resolution import (
     resolve_eu_regulation_eurlex_url,
 )
 
-process_eu_directive_document_reference = make_testing_function_for_single_tag(
-    resolve_eu_directive_eurlex_url
-)
-process_eu_decision_document_reference = make_testing_function_for_single_tag(
-    resolve_eu_decision_eurlex_url
-)
-process_eu_regulation_document_reference = make_testing_function_for_single_tag(
-    resolve_eu_regulation_eurlex_url
-)
 
-
-class TestResolveEuActUrls(unittest.TestCase):
+class TestResolveEuActUrls(BaseTestCaseHtml):
     def test_directive(self):
-        assert (
-            process_eu_directive_document_reference(
-                """
-            <a
-                data-spec="document_reference"
-                data-date="2010"
-                data-num="75"
-                data-type="eu-directive"
-            >
-                directive 2010/75/UE
-            </a>
-            """
-            )
-            == normalized_html_str(
-                """
-            <a
-                data-spec="document_reference"
-                data-date="2010"
-                data-id="https://eur-lex.europa.eu/legal-content/FR/TXT/HTML/?uri=cellar:c7191b72-4e07-4712-86d6-d3ae5e4f0082"
-                data-num="75"
-                data-type="eu-directive"
-                href="https://eur-lex.europa.eu/legal-content/FR/TXT/HTML/?uri=cellar:c7191b72-4e07-4712-86d6-d3ae5e4f0082"
-            >
-                directive 2010/75/UE
-            </a>
-            """
-            )
+        # Arrange
+        reference_tag = self.make_semantic_tag(
+            DocumentReferenceSpec,
+            data=DocumentReferenceData(type=DocumentType.eu_directive, date="2010", num="75"),
+            contents=["directive 2010/75/UE"],
+        )
+        self.soup_extend([reference_tag])
+
+        # Act
+        resolve_eu_directive_eurlex_url(self.context, reference_tag)
+
+        # Assert
+        assert_elements_equal(
+            reference_tag,
+            self.make_semantic_tag(
+                DocumentReferenceSpec,
+                data=DocumentReferenceData(
+                    type=DocumentType.eu_directive,
+                    date="2010",
+                    num="75",
+                    id=(
+                        "https://eur-lex.europa.eu/legal-content/FR/TXT/HTML/"
+                        "?uri=cellar:c7191b72-4e07-4712-86d6-d3ae5e4f0082"
+                    ),
+                ),
+                contents=["directive 2010/75/UE"],
+                attrs=dict(
+                    href=(
+                        "https://eur-lex.europa.eu/legal-content/FR/TXT/HTML/"
+                        "?uri=cellar:c7191b72-4e07-4712-86d6-d3ae5e4f0082"
+                    )
+                ),
+            ),
         )
 
     def test_decision(self):
-        assert (
-            process_eu_decision_document_reference(
-                """
-            <a
-                data-spec="document_reference"
-                data-date="2020"
-                data-num="2019"
-                data-type="eu-decision"
-            >
-                décision 2019/2020/UE
-            </a>
-            """
-            )
-            == normalized_html_str(
-                """
-            <a
-                data-spec="document_reference"
-                data-date="2020"
-                data-id="https://eur-lex.europa.eu/legal-content/FR/TXT/HTML/?uri=cellar:8e42e417-3ab2-11eb-b27b-01aa75ed71a1"
-                data-num="2019"
-                data-type="eu-decision"
-                href="https://eur-lex.europa.eu/legal-content/FR/TXT/HTML/?uri=cellar:8e42e417-3ab2-11eb-b27b-01aa75ed71a1"
-            >
-                décision 2019/2020/UE
-            </a>
-            """
-            )
+        # Arrange
+        reference_tag = self.make_semantic_tag(
+            DocumentReferenceSpec,
+            data=DocumentReferenceData(type=DocumentType.eu_decision, date="2020", num="2019"),
+            contents=["décision 2019/2020/UE"],
+        )
+        self.soup_extend([reference_tag])
+
+        # Act
+        resolve_eu_decision_eurlex_url(self.context, reference_tag)
+
+        # Assert
+        assert_elements_equal(
+            reference_tag,
+            self.make_semantic_tag(
+                DocumentReferenceSpec,
+                data=DocumentReferenceData(
+                    type=DocumentType.eu_decision,
+                    date="2020",
+                    num="2019",
+                    id=(
+                        "https://eur-lex.europa.eu/legal-content/FR/TXT/HTML/"
+                        "?uri=cellar:8e42e417-3ab2-11eb-b27b-01aa75ed71a1"
+                    ),
+                ),
+                contents=["décision 2019/2020/UE"],
+                attrs=dict(
+                    href=(
+                        "https://eur-lex.europa.eu/legal-content/FR/TXT/HTML/"
+                        "?uri=cellar:8e42e417-3ab2-11eb-b27b-01aa75ed71a1"
+                    )
+                ),
+            ),
         )
 
     def test_regulation(self):
-        assert (
-            process_eu_regulation_document_reference(
-                """
-            <a
-                data-spec="document_reference"
-                data-date="2012"
-                data-num="601"
-                data-type="eu-regulation"
-            >
-                règlement 2012/601/UE
-            </a>
-            """
-            )
-            == normalized_html_str(
-                """
-            <a
-                data-spec="document_reference"
-                data-date="2012"
-                data-id="https://eur-lex.europa.eu/legal-content/FR/TXT/HTML/?uri=cellar:a025c83e-c7f9-4f94-87bb-3522f4ff930d"
-                data-num="601"
-                data-type="eu-regulation"
-                href="https://eur-lex.europa.eu/legal-content/FR/TXT/HTML/?uri=cellar:a025c83e-c7f9-4f94-87bb-3522f4ff930d"
-            >
-                règlement 2012/601/UE
-            </a>
-            """
-            )
+        # Arrange
+        reference_tag = self.make_semantic_tag(
+            DocumentReferenceSpec,
+            data=DocumentReferenceData(type=DocumentType.eu_regulation, date="2012", num="601"),
+            contents=["règlement 2012/601/UE"],
+        )
+        self.soup_extend([reference_tag])
+
+        # Act
+        resolve_eu_regulation_eurlex_url(self.context, reference_tag)
+
+        # Assert
+        assert_elements_equal(
+            reference_tag,
+            self.make_semantic_tag(
+                DocumentReferenceSpec,
+                data=DocumentReferenceData(
+                    type=DocumentType.eu_regulation,
+                    date="2012",
+                    num="601",
+                    id=(
+                        "https://eur-lex.europa.eu/legal-content/FR/TXT/HTML/"
+                        "?uri=cellar:a025c83e-c7f9-4f94-87bb-3522f4ff930d"
+                    ),
+                ),
+                contents=["règlement 2012/601/UE"],
+                attrs=dict(
+                    href=(
+                        "https://eur-lex.europa.eu/legal-content/FR/TXT/HTML/"
+                        "?uri=cellar:a025c83e-c7f9-4f94-87bb-3522f4ff930d"
+                    )
+                ),
+            ),
         )

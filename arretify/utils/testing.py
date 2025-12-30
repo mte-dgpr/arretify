@@ -24,10 +24,11 @@ from typing import Callable, Sequence, TypeVar
 from bs4 import BeautifulSoup, NavigableString, Tag
 
 from arretify.settings import Settings
-from arretify.types import DocumentContext, ProtectedTag, ProtectedTagOrStr
+from arretify.types import DocumentContext, ProtectedTag, ProtectedTagOrStr, unprotect_soup
 from arretify.utils.html import is_tag
 from arretify.utils.html_create import make_semantic_tag, make_tag
 from arretify.utils.html_semantic import (
+    RESERVED_DATA_ATTRIBUTES,
     SemanticTagData,
     get_semantic_tag_data,
     get_semantic_tag_spec,
@@ -71,48 +72,6 @@ _INDENTATION_PATTERN = re.compile(r"\n[\s\t]{2,}")
 _NO_CONTENT = re.compile(r"^[\s]*$")
 
 PageElementType = TypeVar("PageElementType", bound=Tag | BeautifulSoup)
-
-
-def make_testing_function_for_single_tag(
-    process_function: Callable[[DocumentContext, ProtectedTag], None],
-) -> Callable[[str], str]:
-    def _testing_function(string: str, css_selector: str | None = None) -> str:
-        document_context = create_document_context(normalized_html_str(string))
-
-        tag_list: list[ProtectedTagOrStr]
-        if css_selector is None:
-            tag_list = list(document_context.protected_soup.contents)
-        else:
-            tag_list = list(document_context.protected_soup.select(css_selector))
-        tag_list = [tag for tag in tag_list if is_tag(tag)]
-
-        if len(tag_list) != 1:
-            raise ValueError("One and only one tag must be found")
-
-        if not is_tag(tag_list[0]):
-            raise ValueError("No tag found")
-
-        tag = tag_list[0]
-        process_function(document_context, tag)
-        return normalized_html_str(str(tag))
-
-    return _testing_function
-
-
-def make_testing_function_for_children_list(
-    process_function: Callable[
-        [DocumentContext, Sequence[ProtectedTagOrStr]],
-        Sequence[ProtectedTagOrStr],
-    ],
-) -> Callable[[str], str]:
-    def _testing_function(string: str):
-        document_context = create_document_context(normalized_html_str(string))
-        elements = list(
-            process_function(document_context, list(document_context.protected_soup.contents))
-        )
-        return _normalize_element_list(elements)
-
-    return _testing_function
 
 
 def create_document_context(
@@ -257,10 +216,87 @@ def assert_data_equal(
     expected_data: SemanticTagData,
     path: str,
 ) -> None:
-    assert actual_data == expected_data, f"[{path}] Expected {expected_data}, got {actual_data}"
+    assert (
+        actual_data == expected_data
+    ), f"{_path_str(path)}Expected data :\n{expected_data}\nActual data :\n{actual_data}"
+
+
+def assert_attrs_equal(
+    actual: ProtectedTag,
+    expected: ProtectedTag,
+    path: str,
+) -> None:
+    actual_data = dict(actual.attrs)
+    expected_data = dict(expected.attrs)
+    # Clean data- attributes which are tested separately in data equality tests
+    for data in [actual_data, expected_data]:
+        for key in list(data.keys()):
+            if key.startswith("data-") and key not in RESERVED_DATA_ATTRIBUTES:
+                data.pop(key)
+    assert (
+        actual_data == expected_data
+    ), f"{_path_str(path)}Expected attrs :\n{expected_data}\nActual attrs :\n{actual_data}"
 
 
 def assert_elements_equal(
+    actual: ProtectedTagOrStr,
+    expected: ProtectedTagOrStr,
+    path="",
+    data_assertion_func: Callable[
+        [SemanticTagData, SemanticTagData, str], None
+    ] = assert_data_equal,
+) -> None:
+    if is_tag(expected) and is_tag(actual):
+        assert_attrs_equal(
+            actual,
+            expected,
+            path,
+        )
+
+    if is_semantic_tag(expected):
+        # Checking actual child is also a semantic tag and has the right spec
+        expected_spec = get_semantic_tag_spec(expected)
+        assert is_semantic_tag(actual), f"{_path_str(path)}Expected semantic tag, got : {actual}"
+        actual_spec = get_semantic_tag_spec(actual)
+        assert actual_spec == expected_spec, (
+            f"{_path_str(path)}Expected tag spec '{expected_spec}', " f"got '{actual_spec}'"
+        )
+
+        # Checking data equality
+        actual_data = get_semantic_tag_data(expected_spec, actual)
+        expected_data = get_semantic_tag_data(expected_spec, expected)
+        data_assertion_func(
+            actual_data,
+            expected_data,
+            path,
+        )
+
+        # Recursively checking children
+        assert_element_lists_equal(
+            actual.contents,
+            expected.contents,
+            path=path,
+            data_assertion_func=data_assertion_func,
+        )
+    elif is_tag(expected):
+        assert is_tag(expected), f"{_path_str(path)}Expected Tag, got : {expected}"
+        assert actual.name == expected.name, (
+            f"{_path_str(path)}Expected tag name '{expected.name}', " f"got '{actual.name}'"
+        )
+        assert_element_lists_equal(
+            actual.contents,
+            expected.contents,
+            path=path,
+            data_assertion_func=data_assertion_func,
+        )
+    else:
+        assert isinstance(
+            actual, type(expected)
+        ), f"{_path_str(path)}Expected {type(expected)}, got {type(actual)}"
+        assert actual == expected, f"{_path_str(path)}Expected {expected}, got {actual}"
+
+
+def assert_element_lists_equal(
     actual: Sequence[ProtectedTagOrStr],
     expected: Sequence[ProtectedTagOrStr],
     path="",
@@ -268,58 +304,22 @@ def assert_elements_equal(
         [SemanticTagData, SemanticTagData, str], None
     ] = assert_data_equal,
 ):
-    assert len(actual) == len(
-        expected
-    ), f"[{path}] Expected {[type(el) for el in expected]} tags, got {[type(el) for el in actual]}"
+    assert len(actual) == len(expected), (
+        f"{_path_str(path)}Expected {[type(el) for el in expected]} tags, "
+        f"got {[type(el) for el in actual]}"
+    )
 
     for i, (actual_child, expected_child) in enumerate(zip(actual, expected)):
-        child_path = f"{path}/{i}"
-        if is_semantic_tag(expected_child):
-            # Checking actual child is also a semantic tag and has the right spec
-            expected_spec = get_semantic_tag_spec(expected_child)
-            assert is_semantic_tag(
-                actual_child
-            ), f"[{child_path}] Expected semantic tag, got : {actual_child}"
-            actual_spec = get_semantic_tag_spec(actual_child)
-            assert actual_spec == expected_spec, (
-                f"[{child_path}] Expected tag spec '{expected_spec}', " f"got '{actual_spec}'"
-            )
+        assert_elements_equal(
+            actual_child,
+            expected_child,
+            path=f"{path}/{i}",
+            data_assertion_func=data_assertion_func,
+        )
 
-            # Checking data equality
-            actual_data = get_semantic_tag_data(expected_spec, actual_child)
-            expected_data = get_semantic_tag_data(expected_spec, expected_child)
-            data_assertion_func(
-                actual_data,
-                expected_data,
-                child_path,
-            )
 
-            # Recursively checking children
-            assert_elements_equal(
-                actual_child.contents,
-                expected_child.contents,
-                path=child_path,
-                data_assertion_func=data_assertion_func,
-            )
-        elif is_tag(actual_child):
-            assert is_tag(expected_child), f"[{child_path}] Expected Tag, got : {expected_child}"
-            assert actual_child.name == expected_child.name, (
-                f"[{child_path}] Expected tag name '{expected_child.name}', "
-                f"got '{actual_child.name}'"
-            )
-            assert_elements_equal(
-                actual_child.contents,
-                expected_child.contents,
-                path=child_path,
-                data_assertion_func=data_assertion_func,
-            )
-        else:
-            assert isinstance(
-                actual_child, type(expected_child)
-            ), f"[{child_path}] Expected {type(expected_child)}, got {type(actual_child)}"
-            assert (
-                actual_child == expected_child
-            ), f"[{child_path}] Expected {expected_child}, got {actual_child}"
+def _path_str(path: str) -> str:
+    return f"[{path}] " if path else ""
 
 
 class BaseTestCaseHtml(unittest.TestCase):
@@ -327,5 +327,32 @@ class BaseTestCaseHtml(unittest.TestCase):
         super(BaseTestCaseHtml, self).setUp()
         self.context = create_document_context()
         self.soup = self.context.protected_soup
-        self.make_semantic_tag = partial(make_semantic_tag, self.soup)
+
+        def _make_semantic_tag(
+            soup: BeautifulSoup,
+            spec_cls: type,
+            contents: list[ProtectedTagOrStr] = [],
+            data: SemanticTagData | None = None,
+            attrs: dict[str, str] = {},
+            reserved_data_attrs: dict[str, str] = {},
+        ) -> ProtectedTag:
+            """
+            Helper to create a semantic tag with reserved data attributes.
+            """
+            tag = make_semantic_tag(
+                soup,
+                spec_cls,
+                contents=contents,
+                data=data,
+                attrs=attrs,
+            )
+            for key, value in reserved_data_attrs.items():
+                data_key = f"data-{key}"
+                if data_key not in RESERVED_DATA_ATTRIBUTES:
+                    raise ValueError(f"Attribute '{data_key}' is not a reserved data attribute.")
+                tag.attrs[data_key] = value
+            return tag
+
+        self.make_semantic_tag = partial(_make_semantic_tag, self.soup)
         self.make_tag = partial(make_tag, self.soup)
+        self.soup_extend = unprotect_soup(self.soup).extend

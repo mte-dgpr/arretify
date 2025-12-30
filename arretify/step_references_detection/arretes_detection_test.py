@@ -16,182 +16,248 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-import unittest
-
-from arretify.utils.testing import make_testing_function_for_children_list, normalized_html_str
+from arretify.semantic_tag_specs import DateSpec, DocumentReferenceData, DocumentReferenceSpec
+from arretify.types import ProtectedTagOrStr
+from arretify.utils.testing import BaseTestCaseHtml, assert_element_lists_equal
 
 from .arretes_detection import parse_arretes_references
 
-process_children = make_testing_function_for_children_list(parse_arretes_references)
 
-
-class TestParseArreteReferences(unittest.TestCase):
+class TestParseArreteReferences(BaseTestCaseHtml):
 
     def test_arrete_date1(self):
-        assert process_children("Vu l'arrêté ministériel du 2 février 1998,") == [
-            "Vu l'",
-            normalized_html_str(
-                """
-                <a
-                    data-date="1998-02-02"
-                    data-spec="document_reference"
-                    data-type="arrete-ministeriel"
-                >
-                    arrêté ministériel du
-                    <time
-                        data-spec="date"
-                        datetime="1998-02-02"
-                    >
-                        2 février 1998
-                    </time>
-                </a>
-            """
-            ),
-            ",",
-        ]
+        # Arrange
+        elements: list[ProtectedTagOrStr] = ["Vu l'arrêté ministériel du 2 février 1998,"]
+
+        # Act
+        actual = parse_arretes_references(self.context, elements)
+
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                "Vu l'",
+                self.make_semantic_tag(
+                    DocumentReferenceSpec,
+                    contents=[
+                        "arrêté ministériel du ",
+                        self.make_semantic_tag(
+                            DateSpec,
+                            contents=["2 février 1998"],
+                            attrs=dict(datetime="1998-02-02"),
+                        ),
+                    ],
+                    data=DocumentReferenceData(
+                        type="arrete-ministeriel",
+                        date="1998-02-02",
+                    ),
+                ),
+                ",",
+            ],
+        )
 
     def test_arrete_date1_end_modifiant(self):
-        assert process_children(
+        # Arrange
+        elements: list[ProtectedTagOrStr] = [
             (
-                "arrêté ministériel du 23 mai 2016 modifiant relatif aux installations "
-                "de production de chaleur"
+                "arrêté ministériel du 23 mai 2016 modifiant relatif aux installations de "
+                "production de chaleur"
             )
-        ) == [
-            normalized_html_str(
-                """
-                <a
-                    data-date="2016-05-23"
-                    data-spec="document_reference"
-                    data-type="arrete-ministeriel"
-                >
-                    arrêté ministériel du
-                    <time data-spec="date" datetime="2016-05-23">23 mai 2016</time>
-                    modifiant
-                </a>
-            """
-            ),
-            " relatif aux installations de production de chaleur",
         ]
+
+        # Act
+        actual = parse_arretes_references(self.context, elements)
+
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                self.make_semantic_tag(
+                    DocumentReferenceSpec,
+                    contents=[
+                        "arrêté ministériel du ",
+                        self.make_semantic_tag(
+                            DateSpec,
+                            contents=["23 mai 2016"],
+                            attrs=dict(datetime="2016-05-23"),
+                        ),
+                        " modifiant",
+                    ],
+                    data=DocumentReferenceData(
+                        type="arrete-ministeriel",
+                        date="2016-05-23",
+                    ),
+                ),
+                " relatif aux installations de production de chaleur",
+            ],
+        )
 
     def test_arrete_unknown(self):
-        assert process_children("Vu l'arrêté du 2 février 1998,") == [
-            "Vu l'",
-            normalized_html_str(
-                """
-                <a
-                    data-date="1998-02-02"
-                    data-spec="document_reference"
-                    data-type="arrete"
-                >
-                    arrêté du
-                    <time data-spec="date" datetime="1998-02-02">
-                        2 février 1998
-                    </time>
-                </a>
-            """
-            ),
-            ",",
-        ]
+        # Arrange
+        elements: list[ProtectedTagOrStr] = ["Vu l'arrêté du 2 février 1998,"]
+
+        # Act
+        actual = parse_arretes_references(self.context, elements)
+
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                "Vu l'",
+                self.make_semantic_tag(
+                    DocumentReferenceSpec,
+                    contents=[
+                        "arrêté du ",
+                        self.make_semantic_tag(
+                            DateSpec,
+                            contents=["2 février 1998"],
+                            attrs=dict(datetime="1998-02-02"),
+                        ),
+                    ],
+                    data=DocumentReferenceData(
+                        type="arrete",
+                        date="1998-02-02",
+                    ),
+                ),
+                ",",
+            ],
+        )
 
     def test_interrupted_inline_tag(self):
-        assert process_children("Vu l'arrêté ministériel <br/> du 2 février 1998,") == [
-            "Vu l'",
-            normalized_html_str(
-                """
-                <a
-                    data-date="1998-02-02"
-                    data-spec="document_reference"
-                    data-type="arrete-ministeriel"
-                >
-                    arrêté ministériel<br/>
-                    du
-                    <time data-spec="date" datetime="1998-02-02">
-                        2 février 1998
-                    </time>
-                </a>
-            """
-            ),
-            ",",
+        # Arrange
+        elements: list[ProtectedTagOrStr] = [
+            "Vu l'arrêté ministériel ",
+            self.make_tag("br"),
+            " du 2 février 1998,",
         ]
 
+        # Act
+        actual = parse_arretes_references(self.context, elements)
 
-class TestParseArretePluralReferences(unittest.TestCase):
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                "Vu l'",
+                self.make_semantic_tag(
+                    DocumentReferenceSpec,
+                    contents=[
+                        "arrêté ministériel",
+                        self.make_tag("br"),
+                        " du ",
+                        self.make_semantic_tag(
+                            DateSpec,
+                            contents=["2 février 1998"],
+                            attrs=dict(datetime="1998-02-02"),
+                        ),
+                    ],
+                    data=DocumentReferenceData(
+                        type="arrete-ministeriel",
+                        date="1998-02-02",
+                    ),
+                ),
+                ",",
+            ],
+        )
+
+
+class TestParseArretePluralReferences(BaseTestCaseHtml):
 
     def test_references_multiple(self):
-        assert process_children(
+        # Arrange
+        elements: list[ProtectedTagOrStr] = [
             "Les arrêtés préfectoraux n° 5213 du 28 octobre 1988 et n° 1636 du 24/03/95 blabla."
-        ) == [
-            "Les ",
-            "arrêtés préfectoraux ",
-            normalized_html_str(
-                """
-                <a
-                    data-date="1988-10-28"
-                    data-num="5213"
-                    data-spec="document_reference"
-                    data-type="arrete-prefectoral"
-                >
-                    n° 5213 du
-                    <time data-spec="date" datetime="1988-10-28">
-                        28 octobre 1988
-                    </time>
-                </a>
-            """
-            ),
-            " et ",
-            normalized_html_str(
-                """
-                <a
-                    data-date="1995-03-24"
-                    data-num="1636"
-                    data-spec="document_reference"
-                    data-type="arrete-prefectoral"
-                >
-                    n° 1636 du
-                    <time data-spec="date" datetime="1995-03-24">
-                        24/03/95
-                    </time>
-                </a>
-            """
-            ),
-            " blabla.",
         ]
 
+        # Act
+        actual = parse_arretes_references(self.context, elements)
 
-class TestParseArreteReferencesAll(unittest.TestCase):
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                "Les ",
+                "arrêtés préfectoraux ",
+                self.make_semantic_tag(
+                    DocumentReferenceSpec,
+                    contents=[
+                        "n° 5213 du ",
+                        self.make_semantic_tag(
+                            DateSpec,
+                            contents=["28 octobre 1988"],
+                            attrs=dict(datetime="1988-10-28"),
+                        ),
+                    ],
+                    data=DocumentReferenceData(
+                        type="arrete-prefectoral",
+                        num="5213",
+                        date="1988-10-28",
+                    ),
+                ),
+                " et ",
+                self.make_semantic_tag(
+                    DocumentReferenceSpec,
+                    contents=[
+                        "n° 1636 du ",
+                        self.make_semantic_tag(
+                            DateSpec,
+                            contents=["24/03/95"],
+                            attrs=dict(datetime="1995-03-24"),
+                        ),
+                    ],
+                    data=DocumentReferenceData(
+                        type="arrete-prefectoral",
+                        num="1636",
+                        date="1995-03-24",
+                    ),
+                ),
+                " blabla.",
+            ],
+        )
+
+
+class TestParseArreteReferencesAll(BaseTestCaseHtml):
 
     def test_several_references(self):
-        assert process_children(
+        # Arrange
+        elements: list[ProtectedTagOrStr] = [
             (
-                "Bla bla arrêté ministériel du 23 mai 2016 relatif aux installations de production "
-                "de chaleur et arrêté préfectoral n° 1234-567/01."
+                "Bla bla arrêté ministériel du 23 mai 2016 relatif aux installations de "
+                "production de chaleur et arrêté préfectoral n° 1234-567/01."
             )
-        ) == [
-            "Bla bla ",
-            normalized_html_str(
-                """
-                <a
-                    data-date="2016-05-23"
-                    data-spec="document_reference"
-                    data-type="arrete-ministeriel"
-                >
-                    arrêté ministériel du
-                    <time data-spec="date" datetime="2016-05-23">
-                        23 mai 2016
-                    </time>
-                </a>
-            """
-            ),
-            " relatif aux installations de production de chaleur et ",
-            normalized_html_str(
-                """
-                <a
-                    data-num="1234-567/01."
-                    data-spec="document_reference"
-                    data-type="arrete-prefectoral"
-                >
-                    arrêté préfectoral n° 1234-567/01.
-                </a>
-            """
-            ),
         ]
+
+        # Act
+        actual = parse_arretes_references(self.context, elements)
+
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                "Bla bla ",
+                self.make_semantic_tag(
+                    DocumentReferenceSpec,
+                    contents=[
+                        "arrêté ministériel du ",
+                        self.make_semantic_tag(
+                            DateSpec,
+                            contents=["23 mai 2016"],
+                            attrs=dict(datetime="2016-05-23"),
+                        ),
+                    ],
+                    data=DocumentReferenceData(
+                        type="arrete-ministeriel",
+                        date="2016-05-23",
+                    ),
+                ),
+                " relatif aux installations de production de chaleur et ",
+                self.make_semantic_tag(
+                    DocumentReferenceSpec,
+                    contents=["arrêté préfectoral n° 1234-567/01."],
+                    data=DocumentReferenceData(
+                        type="arrete-prefectoral",
+                        num="1234-567/01.",
+                    ),
+                ),
+            ],
+        )

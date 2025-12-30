@@ -34,8 +34,8 @@ from arretify.types import ProtectedSoup, ProtectedTag, ProtectedTagOrStr
 from arretify.utils.html import GROUP_ID_ATTR, TAG_ID_ATTR, is_tag, set_attribute
 
 _SPEC_DATA_ATTR = "data-spec"
-_RESERVED_DATA_ATTRIBUTES = [_SPEC_DATA_ATTR, TAG_ID_ATTR, GROUP_ID_ATTR]
-_RESERVED_DATA_FIELD_NAMES = [key[len("data-") :] for key in _RESERVED_DATA_ATTRIBUTES]
+RESERVED_DATA_ATTRIBUTES = [_SPEC_DATA_ATTR, TAG_ID_ATTR, GROUP_ID_ATTR]
+_RESERVED_DATA_FIELD_NAMES = [key[len("data-") :] for key in RESERVED_DATA_ATTRIBUTES]
 
 
 # -------------------- Pydantic fields -------------------- #
@@ -264,7 +264,7 @@ def get_semantic_tag_data(
     _ensure_matching_spec(spec, tag)
     raw_data: dict[str, str] = {}
     for key, value in tag.attrs.items():
-        if key in _RESERVED_DATA_ATTRIBUTES:
+        if key in RESERVED_DATA_ATTRIBUTES:
             continue
         if key.startswith("data-"):
             data_key = key[len("data-") :]

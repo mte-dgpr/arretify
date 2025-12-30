@@ -16,108 +16,157 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-import unittest
-
-from arretify.utils.testing import make_testing_function_for_children_list, normalized_html_str
+from arretify.semantic_tag_specs import DocumentReferenceData, DocumentReferenceSpec
+from arretify.types import ProtectedTagOrStr
+from arretify.utils.testing import BaseTestCaseHtml, assert_element_lists_equal
 
 from .eu_acts_detection import parse_eu_acts_references
 
-process_children = make_testing_function_for_children_list(parse_eu_acts_references)
 
-
-class TestParseEuActsReferences(unittest.TestCase):
+class TestParseEuActsReferences(BaseTestCaseHtml):
 
     def test_domain_before(self):
-        assert process_children("Bla bla de la directive (CE) n° 1013/2006 du 22 juin 2006") == [
-            "Bla bla de la ",
-            normalized_html_str(
-                """
-                <a
-                    data-date="2006"
-                    data-num="1013"
-                    data-spec="document_reference"
-                    data-type="eu-directive"
-                >
-                    directive (CE) n° 1013/2006
-                </a>
-                """
-            ),
-            " du 22 juin 2006",
+        # Arrange
+        elements: list[ProtectedTagOrStr] = [
+            "Bla bla de la directive (CE) n° 1013/2006 du 22 juin 2006"
         ]
+
+        # Act
+        actual = parse_eu_acts_references(self.context, elements)
+
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                "Bla bla de la ",
+                self.make_semantic_tag(
+                    DocumentReferenceSpec,
+                    contents=["directive (CE) n° 1013/2006"],
+                    data=DocumentReferenceData(
+                        type="eu-directive",
+                        date="2006",
+                        num="1013",
+                    ),
+                ),
+                " du 22 juin 2006",
+            ],
+        )
 
     def test_domain_after(self):
-        assert process_children("VU la directive 2010/75/UE du 24 novembre 2010") == [
-            "VU la ",
-            normalized_html_str(
-                """
-                <a
-                    data-date="2010"
-                    data-num="75"
-                    data-spec="document_reference"
-                    data-type="eu-directive"
-                >
-                    directive 2010/75/UE
-                </a>
-                """
-            ),
-            " du 24 novembre 2010",
-        ]
+        # Arrange
+        elements: list[ProtectedTagOrStr] = ["VU la directive 2010/75/UE du 24 novembre 2010"]
+
+        # Act
+        actual = parse_eu_acts_references(self.context, elements)
+
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                "VU la ",
+                self.make_semantic_tag(
+                    DocumentReferenceSpec,
+                    contents=["directive 2010/75/UE"],
+                    data=DocumentReferenceData(
+                        type="eu-directive",
+                        date="2010",
+                        num="75",
+                    ),
+                ),
+                " du 24 novembre 2010",
+            ],
+        )
 
     def test_domain_after_year_2digits(self):
-        assert process_children("VU la directive 96/75/UE du 24 novembre 1996") == [
-            "VU la ",
-            normalized_html_str(
-                """
-                <a
-                    data-date="1996"
-                    data-num="75"
-                    data-spec="document_reference"
-                    data-type="eu-directive"
-                >
-                    directive 96/75/UE
-                </a>
-                """
-            ),
-            " du 24 novembre 1996",
-        ]
+        # Arrange
+        elements: list[ProtectedTagOrStr] = ["VU la directive 96/75/UE du 24 novembre 1996"]
+
+        # Act
+        actual = parse_eu_acts_references(self.context, elements)
+
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                "VU la ",
+                self.make_semantic_tag(
+                    DocumentReferenceSpec,
+                    contents=["directive 96/75/UE"],
+                    data=DocumentReferenceData(
+                        type="eu-directive",
+                        date="1996",
+                        num="75",
+                    ),
+                ),
+                " du 24 novembre 1996",
+            ],
+        )
 
     def test_with_word_europeen(self):
-        assert process_children("VU le règlement européen (CE) n° 1013/2006 du 22 juin 2006") == [
-            "VU le ",
-            normalized_html_str(
-                """
-                <a
-                    data-date="2006"
-                    data-num="1013"
-                    data-spec="document_reference"
-                    data-type="eu-regulation"
-                >
-                    règlement européen (CE) n° 1013/2006
-                </a>
-                """
-            ),
-            " du 22 juin 2006",
+        # Arrange
+        elements: list[ProtectedTagOrStr] = [
+            "VU le règlement européen (CE) n° 1013/2006 du 22 juin 2006"
         ]
+
+        # Act
+        actual = parse_eu_acts_references(self.context, elements)
+
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                "VU le ",
+                self.make_semantic_tag(
+                    DocumentReferenceSpec,
+                    contents=["règlement européen (CE) n° 1013/2006"],
+                    data=DocumentReferenceData(
+                        type="eu-regulation",
+                        date="2006",
+                        num="1013",
+                    ),
+                ),
+                " du 22 juin 2006",
+            ],
+        )
 
     def test_parsing_2digit_year(self):
-        assert process_children("Bla bla de la directive (CE) n° 1013/96 du 12 aout 1996") == [
-            "Bla bla de la ",
-            normalized_html_str(
-                """
-                <a
-                    data-date="1996"
-                    data-num="1013"
-                    data-spec="document_reference"
-                    data-type="eu-directive"
-                >
-                    directive (CE) n° 1013/96
-                </a>
-                """
-            ),
-            " du 12 aout 1996",
+        # Arrange
+        elements: list[ProtectedTagOrStr] = [
+            "Bla bla de la directive (CE) n° 1013/96 du 12 aout 1996"
         ]
 
+        # Act
+        actual = parse_eu_acts_references(self.context, elements)
+
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                "Bla bla de la ",
+                self.make_semantic_tag(
+                    DocumentReferenceSpec,
+                    contents=["directive (CE) n° 1013/96"],
+                    data=DocumentReferenceData(
+                        type="eu-directive",
+                        date="1996",
+                        num="1013",
+                    ),
+                ),
+                " du 12 aout 1996",
+            ],
+        )
+
     def test_ignore_if_malformed(self):
-        assert process_children("VU la directive 96/75/POIPOI du 24 novembre 1996") == [
-            "VU la directive 96/75/POIPOI du 24 novembre 1996",
-        ]
+        # Arrange
+        elements: list[ProtectedTagOrStr] = ["VU la directive 96/75/POIPOI du 24 novembre 1996"]
+
+        # Act
+        actual = parse_eu_acts_references(self.context, elements)
+
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                "VU la directive 96/75/POIPOI du 24 novembre 1996",
+            ],
+        )

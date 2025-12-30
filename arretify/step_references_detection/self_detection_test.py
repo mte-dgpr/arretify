@@ -16,29 +16,34 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-import unittest
-
-from arretify.utils.testing import make_testing_function_for_children_list, normalized_html_str
+from arretify.semantic_tag_specs import DocumentReferenceData, DocumentReferenceSpec
+from arretify.types import ProtectedTagOrStr
+from arretify.utils.testing import BaseTestCaseHtml, assert_element_lists_equal
 
 from .self_detection import parse_self_references
 
-process_children = make_testing_function_for_children_list(parse_self_references)
 
-
-class TestParseSelfReferences(unittest.TestCase):
+class TestParseSelfReferences(BaseTestCaseHtml):
 
     def test_simple(self):
-        assert process_children("l'article 8 du présent arrêté remplace") == [
-            "l'article 8 du ",
-            normalized_html_str(
-                """
-            <a
-                data-spec="document_reference"
-                data-type="self"
-            >
-                présent arrêté
-            </a>
-            """
-            ),
-            " remplace",
-        ]
+        # Arrange
+        elements: list[ProtectedTagOrStr] = ["l'article 8 du présent arrêté remplace"]
+
+        # Act
+        actual = parse_self_references(self.context, elements)
+
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                "l'article 8 du ",
+                self.make_semantic_tag(
+                    DocumentReferenceSpec,
+                    contents=["présent arrêté"],
+                    data=DocumentReferenceData(
+                        type="self",
+                    ),
+                ),
+                " remplace",
+            ],
+        )

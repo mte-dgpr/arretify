@@ -16,51 +16,46 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-import unittest
-
-from arretify.utils.testing import make_testing_function_for_single_tag, normalized_html_str
+from arretify.semantic_tag_specs import DateSpec, DocumentReferenceData, DocumentReferenceSpec
+from arretify.types import DocumentType
+from arretify.utils.testing import BaseTestCaseHtml, assert_elements_equal
 
 from .decrets_resolution import resolve_decret_legifrance_id
 
-process_decret_document_reference = make_testing_function_for_single_tag(
-    resolve_decret_legifrance_id
-)
 
-
-class TestResolveDecretLegifranceId(unittest.TestCase):
+class TestResolveDecretLegifranceId(BaseTestCaseHtml):
     def test_resolve_simple(self):
-        assert (
-            process_decret_document_reference(
-                """
-            <a
-                data-spec="document_reference"
-                data-date="2005-04-20"
-                data-type="decret"
-            >
-                décret du
-                <time data-spec="date" datetime="2005-04-20">
-                    20 avril 2005
-                </time>
-            </a>
-            relatif au programme national d'action contre la pollution des milieux aquatiques
-            par certaines substances dangereuses
-            """,
-                css_selector="[data-spec='document_reference']",
-            )
-            == normalized_html_str(
-                """
-            <a
-                data-spec="document_reference"
-                data-date="2005-04-20"
-                data-id="JORFTEXT000000259598"
-                data-type="decret"
-                href="https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000000259598"
-            >
-                décret du
-                <time data-spec="date" datetime="2005-04-20">
-                    20 avril 2005
-                </time>
-            </a>
-            """
-            )
+        # Arrange
+        date_tag = self.make_semantic_tag(
+            DateSpec, contents=["20 avril 2005"], attrs=dict(datetime="2005-04-20")
+        )
+        reference_tag = self.make_semantic_tag(
+            DocumentReferenceSpec,
+            data=DocumentReferenceData(type=DocumentType.decret, date="2005-04-20"),
+            contents=["décret du ", date_tag],
+        )
+        self.soup_extend(
+            [
+                reference_tag,
+                (
+                    " relatif au programme national d'action contre la pollution des "
+                    "milieux aquatiques par certaines substances dangereuses"
+                ),
+            ]
+        )
+
+        # Act
+        resolve_decret_legifrance_id(self.context, reference_tag)
+
+        # Assert
+        assert_elements_equal(
+            reference_tag,
+            self.make_semantic_tag(
+                DocumentReferenceSpec,
+                data=DocumentReferenceData(
+                    type=DocumentType.decret, date="2005-04-20", id="JORFTEXT000000259598"
+                ),
+                contents=["décret du ", date_tag],
+                attrs=dict(href="https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000000259598"),
+            ),
         )

@@ -40,7 +40,7 @@ from .semantic_tag_specs import (
 from .testing import (
     DEFAULT_TEXT_SPAN_DATA,
     BaseTestCaseSegmentation,
-    assert_elements_equal_segmentation_step,
+    assert_segmentation_element_lists_equal,
 )
 
 
@@ -62,7 +62,7 @@ class TestParseArrete(BaseTestCaseSegmentation):
         elements = parse_arrete(self.context, pages)
 
         # Assert
-        assert_elements_equal_segmentation_step(
+        assert_segmentation_element_lists_equal(
             elements,
             [
                 self.make_semantic_tag(
@@ -146,7 +146,7 @@ class TestParseArrete(BaseTestCaseSegmentation):
         elements = parse_arrete(self.context, pages)
 
         # Assert
-        assert_elements_equal_segmentation_step(
+        assert_segmentation_element_lists_equal(
             elements,
             [
                 self.make_semantic_tag(
@@ -217,7 +217,7 @@ class TestInitializeDocumentStructure(BaseTestCaseSegmentation):
         result = initialize_document_structure(self.context, pages)
 
         # Assert
-        assert_elements_equal_segmentation_step(
+        assert_segmentation_element_lists_equal(
             result,
             [
                 self.make_semantic_tag(PageSeparatorSpec, data=PageSeparatorData(page_index=0)),
