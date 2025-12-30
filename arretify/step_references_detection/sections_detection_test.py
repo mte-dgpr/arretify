@@ -16,753 +16,1011 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-import unittest
-
-from arretify.utils.testing import make_testing_function_for_children_list, normalized_html_str
+from arretify.semantic_tag_specs import SectionReferenceData, SectionReferenceSpec
+from arretify.types import ProtectedTagOrStr
+from arretify.utils.testing import BaseTestCaseHtml, assert_element_lists_equal
 
 from .sections_detection import parse_section_references
 
-process_children = make_testing_function_for_children_list(parse_section_references)
 
-
-class TestArticleSingle(unittest.TestCase):
+class TestArticleSingle(BaseTestCaseHtml):
     def test_article_num(self):
-        assert process_children("article 4.1.b") == [
-            normalized_html_str(
-                """
-                <a
-                    data-spec="section_reference"
-                    data-start_num="4.1.b"
-                    data-type="article"
-                >
-                    article 4.1.b
-                </a>
-                """
-            )
-        ]
-        assert process_children("article 8") == [
-            normalized_html_str(
-                """
-                <a
-                    data-spec="section_reference"
-                    data-start_num="8"
-                    data-type="article"
-                >
-                    article 8
-                </a>
-                """
-            )
-        ]
-        assert process_children("article 1er") == [
-            normalized_html_str(
-                """
-                <a
-                    data-spec="section_reference"
-                    data-start_num="1"
-                    data-type="article"
-                >
-                    article 1er
-                </a>
-                """
-            )
-        ]
-        assert process_children("article 111è") == [
-            normalized_html_str(
-                """
-                <a
-                    data-spec="section_reference"
-                    data-start_num="111"
-                    data-type="article"
-                >
-                    article 111è
-                </a>
-                """
-            )
-        ]
-        assert process_children("article 2ème") == [
-            normalized_html_str(
-                """
-                <a
-                    data-spec="section_reference"
-                    data-start_num="2"
-                    data-type="article"
-                >
-                    article 2ème
-                </a>
-                """
-            )
-        ]
+        # Arrange
+        elements: list[ProtectedTagOrStr] = ["article 4.1.b"]
 
-    def test_code_article(self):
-        assert process_children("article R. 511-9") == [
-            normalized_html_str(
-                """
-                <a
-                    data-spec="section_reference"
-                    data-start_num="R511-9"
-                    data-type="article"
-                >
-                    article R. 511-9
-                </a>
-                """
-            )
-        ]
-        assert process_children("article D.12") == [
-            normalized_html_str(
-                """
-                <a
-                    data-spec="section_reference"
-                    data-start_num="D12"
-                    data-type="article"
-                >
-                    article D.12
-                </a>
-                """
-            )
-        ]
-        assert process_children("article L181-3") == [
-            normalized_html_str(
-                """
-                <a
-                    data-spec="section_reference"
-                    data-start_num="L181-3"
-                    data-type="article"
-                >
-                    article L181-3
-                </a>
-                """
-            )
-        ]
+        # Act
+        actual = parse_section_references(self.context, elements)
 
-    def test_ordinal(self):
-        assert process_children("article premier") == [
-            normalized_html_str(
-                """
-                <a
-                    data-spec="section_reference"
-                    data-start_num="1"
-                    data-type="article"
-                >
-                    article premier
-                </a>
-                """
-            )
-        ]
-        assert process_children("article quatrième") == [
-            normalized_html_str(
-                """
-                <a
-                    data-spec="section_reference"
-                    data-start_num="4"
-                    data-type="article"
-                >
-                    article quatrième
-                </a>
-                """
-            )
-        ]
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["article 4.1.b"],
+                    data=SectionReferenceData(
+                        type="article",
+                        start_num="4.1.b",
+                    ),
+                ),
+            ],
+        )
+
+    def test_article_8(self):
+        # Arrange
+        elements: list[ProtectedTagOrStr] = ["article 8"]
+
+        # Act
+        actual = parse_section_references(self.context, elements)
+
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["article 8"],
+                    data=SectionReferenceData(
+                        type="article",
+                        start_num="8",
+                    ),
+                ),
+            ],
+        )
+
+    def test_article_1er(self):
+        # Arrange
+        elements: list[ProtectedTagOrStr] = ["article 1er"]
+
+        # Act
+        actual = parse_section_references(self.context, elements)
+
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["article 1er"],
+                    data=SectionReferenceData(
+                        type="article",
+                        start_num="1",
+                    ),
+                ),
+            ],
+        )
+
+    def test_article_111e(self):
+        # Arrange
+        elements: list[ProtectedTagOrStr] = ["article 111è"]
+
+        # Act
+        actual = parse_section_references(self.context, elements)
+
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["article 111è"],
+                    data=SectionReferenceData(
+                        type="article",
+                        start_num="111",
+                    ),
+                ),
+            ],
+        )
+
+    def test_article_2eme(self):
+        # Arrange
+        elements: list[ProtectedTagOrStr] = ["article 2ème"]
+
+        # Act
+        actual = parse_section_references(self.context, elements)
+
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["article 2ème"],
+                    data=SectionReferenceData(
+                        type="article",
+                        start_num="2",
+                    ),
+                ),
+            ],
+        )
+
+    def test_code_article_r511_9(self):
+        # Arrange
+        elements: list[ProtectedTagOrStr] = ["article R. 511-9"]
+
+        # Act
+        actual = parse_section_references(self.context, elements)
+
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["article R. 511-9"],
+                    data=SectionReferenceData(
+                        type="article",
+                        start_num="R511-9",
+                    ),
+                ),
+            ],
+        )
+
+    def test_code_article_d12(self):
+        # Arrange
+        elements: list[ProtectedTagOrStr] = ["article D.12"]
+
+        # Act
+        actual = parse_section_references(self.context, elements)
+
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["article D.12"],
+                    data=SectionReferenceData(
+                        type="article",
+                        start_num="D12",
+                    ),
+                ),
+            ],
+        )
+
+    def test_code_article_l181_3(self):
+        # Arrange
+        elements: list[ProtectedTagOrStr] = ["article L181-3"]
+
+        # Act
+        actual = parse_section_references(self.context, elements)
+
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["article L181-3"],
+                    data=SectionReferenceData(
+                        type="article",
+                        start_num="L181-3",
+                    ),
+                ),
+            ],
+        )
+
+    def test_ordinal_premier(self):
+        # Arrange
+        elements: list[ProtectedTagOrStr] = ["article premier"]
+
+        # Act
+        actual = parse_section_references(self.context, elements)
+
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["article premier"],
+                    data=SectionReferenceData(
+                        type="article",
+                        start_num="1",
+                    ),
+                ),
+            ],
+        )
+
+    def test_ordinal_quatrieme(self):
+        # Arrange
+        elements: list[ProtectedTagOrStr] = ["article quatrième"]
+
+        # Act
+        actual = parse_section_references(self.context, elements)
+
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["article quatrième"],
+                    data=SectionReferenceData(
+                        type="article",
+                        start_num="4",
+                    ),
+                ),
+            ],
+        )
 
     def test_ambiguous_paragraph_use(self):
-        assert process_children("Paragraphe L123") == [
-            normalized_html_str(
-                """
-                <a
-                    data-spec="section_reference"
-                    data-start_num="L123"
-                    data-type="article"
-                >
-                    Paragraphe L123
-                </a>
-                """
-            )
-        ]
+        # Arrange
+        elements: list[ProtectedTagOrStr] = ["Paragraphe L123"]
+
+        # Act
+        actual = parse_section_references(self.context, elements)
+
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["Paragraphe L123"],
+                    data=SectionReferenceData(
+                        type="article",
+                        start_num="L123",
+                    ),
+                ),
+            ],
+        )
 
 
-class TestArticleRange(unittest.TestCase):
+class TestArticleRange(BaseTestCaseHtml):
 
-    def test_article_num_range(self):
-        assert process_children("articles 3 à 11") == [
-            normalized_html_str(
-                """
-                <a
-                    data-spec="section_reference"
-                    data-end_num="11"
-                    data-start_num="3"
-                    data-type="article"
-                >
-                    articles 3 à 11
-                </a>
-                """
-            )
-        ]
-        assert process_children("articles 6.18.1 à 6.18.7") == [
-            normalized_html_str(
-                """
-                <a
-                    data-spec="section_reference"
-                    data-end_num="6.18.7"
-                    data-start_num="6.18.1"
-                    data-type="article"
-                >
-                    articles 6.18.1 à 6.18.7
-                </a>
-                """
-            )
-        ]
-        assert process_children("articles 6.18.a à 6.18.c") == [
-            normalized_html_str(
-                """
-                <a
-                    data-spec="section_reference"
-                    data-end_num="6.18.c"
-                    data-start_num="6.18.a"
-                    data-type="article"
-                >
-                    articles 6.18.a à 6.18.c
-                </a>
-                """
-            )
-        ]
+    def test_article_num_range_3_to_11(self):
+        # Arrange
+        elements: list[ProtectedTagOrStr] = ["articles 3 à 11"]
 
-    def test_ordinal_range(self):
-        assert process_children("de l'article premier à l'article troisième") == [
-            "de l'",
-            normalized_html_str(
-                """
-                <a
-                    data-spec="section_reference"
-                    data-end_num="3"
-                    data-start_num="1"
-                    data-type="article"
-                >
-                    article premier à l'article troisième
-                </a>
-                """
-            ),
-        ]
-        assert process_children("des articles second à 10ème") == [
-            "des ",
-            normalized_html_str(
-                """
-                <a
-                    data-spec="section_reference"
-                    data-end_num="10"
-                    data-start_num="2"
-                    data-type="article"
-                >
-                    articles second à 10ème
-                </a>
-                """
-            ),
-        ]
+        # Act
+        actual = parse_section_references(self.context, elements)
 
-    def test_code_article_range(self):
-        assert process_children("de l'article R. 511-9 à l'article D.512") == [
-            "de l'",
-            normalized_html_str(
-                """
-                <a
-                    data-spec="section_reference"
-                    data-end_num="D512"
-                    data-start_num="R511-9"
-                    data-type="article"
-                >
-                    article R. 511-9 à l'article D.512
-                </a>
-                """
-            ),
-        ]
-        assert process_children("l' article R.543-137 à R.543-151") == [
-            "l' ",
-            normalized_html_str(
-                """
-                <a
-                    data-spec="section_reference"
-                    data-end_num="R543-151"
-                    data-start_num="R543-137"
-                    data-type="article"
-                >
-                    article R.543-137 à R.543-151
-                </a>
-                """
-            ),
-        ]
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["articles 3 à 11"],
+                    data=SectionReferenceData(
+                        type="article",
+                        start_num="3",
+                        end_num="11",
+                    ),
+                ),
+            ],
+        )
+
+    def test_article_num_range_6_18_1_to_6_18_7(self):
+        # Arrange
+        elements: list[ProtectedTagOrStr] = ["articles 6.18.1 à 6.18.7"]
+
+        # Act
+        actual = parse_section_references(self.context, elements)
+
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["articles 6.18.1 à 6.18.7"],
+                    data=SectionReferenceData(
+                        type="article",
+                        start_num="6.18.1",
+                        end_num="6.18.7",
+                    ),
+                ),
+            ],
+        )
+
+    def test_article_num_range_6_18_a_to_6_18_c(self):
+        # Arrange
+        elements: list[ProtectedTagOrStr] = ["articles 6.18.a à 6.18.c"]
+
+        # Act
+        actual = parse_section_references(self.context, elements)
+
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["articles 6.18.a à 6.18.c"],
+                    data=SectionReferenceData(
+                        type="article",
+                        start_num="6.18.a",
+                        end_num="6.18.c",
+                    ),
+                ),
+            ],
+        )
+
+    def test_ordinal_range_premier_to_troisieme(self):
+        # Arrange
+        elements: list[ProtectedTagOrStr] = ["de l'article premier à l'article troisième"]
+
+        # Act
+        actual = parse_section_references(self.context, elements)
+
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                "de l'",
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["article premier à l'article troisième"],
+                    data=SectionReferenceData(
+                        type="article",
+                        start_num="1",
+                        end_num="3",
+                    ),
+                ),
+            ],
+        )
+
+    def test_ordinal_range_second_to_10eme(self):
+        # Arrange
+        elements: list[ProtectedTagOrStr] = ["des articles second à 10ème"]
+
+        # Act
+        actual = parse_section_references(self.context, elements)
+
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                "des ",
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["articles second à 10ème"],
+                    data=SectionReferenceData(
+                        type="article",
+                        start_num="2",
+                        end_num="10",
+                    ),
+                ),
+            ],
+        )
+
+    def test_code_article_range_r511_9_to_d512(self):
+        # Arrange
+        elements: list[ProtectedTagOrStr] = ["de l'article R. 511-9 à l'article D.512"]
+
+        # Act
+        actual = parse_section_references(self.context, elements)
+
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                "de l'",
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["article R. 511-9 à l'article D.512"],
+                    data=SectionReferenceData(
+                        type="article",
+                        start_num="R511-9",
+                        end_num="D512",
+                    ),
+                ),
+            ],
+        )
+
+    def test_code_article_range_r543_137_to_r543_151(self):
+        # Arrange
+        elements: list[ProtectedTagOrStr] = ["l' article R.543-137 à R.543-151"]
+
+        # Act
+        actual = parse_section_references(self.context, elements)
+
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                "l' ",
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["article R.543-137 à R.543-151"],
+                    data=SectionReferenceData(
+                        type="article",
+                        start_num="R543-137",
+                        end_num="R543-151",
+                    ),
+                ),
+            ],
+        )
 
 
-class TestArticlePlural(unittest.TestCase):
+class TestArticlePlural(BaseTestCaseHtml):
 
     def test_article_num(self):
-        assert process_children("articles 5.1.9, 9.2.1, 10.2.1 et 10.2.5") == [
-            normalized_html_str(
-                """
-                <a
-                    data-spec="section_reference"
-                    data-group_id="1"
-                    data-start_num="5.1.9"
-                    data-type="article"
-                >
-                    articles 5.1.9
-                </a>
-            """
-            ),
-            ", ",
-            normalized_html_str(
-                """
-                <a
-                    data-spec="section_reference"
-                    data-group_id="1"
-                    data-start_num="9.2.1"
-                    data-type="article"
-                >
-                    9.2.1
-                </a>
-            """
-            ),
-            ", ",
-            normalized_html_str(
-                """
-                <a
-                    data-spec="section_reference"
-                    data-group_id="1"
-                    data-start_num="10.2.1"
-                    data-type="article"
-                >
-                    10.2.1
-                </a>
-            """
-            ),
-            " et ",
-            normalized_html_str(
-                """
-                <a
-                    data-spec="section_reference"
-                    data-group_id="1"
-                    data-start_num="10.2.5"
-                    data-type="article"
-                >
-                    10.2.5
-                </a>
-            """
-            ),
-        ]
+        # Arrange
+        elements: list[ProtectedTagOrStr] = ["articles 5.1.9, 9.2.1, 10.2.1 et 10.2.5"]
 
-    def test_ordinal(self):
-        assert process_children("articles premier,9.a") == [
-            normalized_html_str(
-                """
-                <a
-                    data-spec="section_reference"
-                    data-group_id="1"
-                    data-start_num="1"
-                    data-type="article"
-                >
-                    articles premier
-                </a>
-            """
-            ),
-            ",",
-            normalized_html_str(
-                """
-                <a
-                    data-spec="section_reference"
-                    data-group_id="1"
-                    data-start_num="9.a"
-                    data-type="article"
-                >
-                    9.a
-                </a>
-            """
-            ),
-        ]
+        # Act
+        actual = parse_section_references(self.context, elements)
 
-        assert process_children("articles premier et second") == [
-            normalized_html_str(
-                """
-                <a
-                    data-spec="section_reference"
-                    data-group_id="1"
-                    data-start_num="1"
-                    data-type="article"
-                >
-                    articles premier
-                </a>
-            """
-            ),
-            " et ",
-            normalized_html_str(
-                """
-                <a
-                    data-spec="section_reference"
-                    data-group_id="1"
-                    data-start_num="2"
-                    data-type="article"
-                >
-                    second
-                </a>
-            """
-            ),
-        ]
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["articles 5.1.9"],
+                    data=SectionReferenceData(
+                        type="article",
+                        start_num="5.1.9",
+                    ),
+                    reserved_data_attrs=dict(group_id="1"),
+                ),
+                ", ",
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["9.2.1"],
+                    data=SectionReferenceData(
+                        type="article",
+                        start_num="9.2.1",
+                    ),
+                    reserved_data_attrs=dict(group_id="1"),
+                ),
+                ", ",
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["10.2.1"],
+                    data=SectionReferenceData(
+                        type="article",
+                        start_num="10.2.1",
+                    ),
+                    reserved_data_attrs=dict(group_id="1"),
+                ),
+                " et ",
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["10.2.5"],
+                    data=SectionReferenceData(
+                        type="article",
+                        start_num="10.2.5",
+                    ),
+                    reserved_data_attrs=dict(group_id="1"),
+                ),
+            ],
+        )
+
+    def test_ordinal_premier_9a(self):
+        # Arrange
+        elements: list[ProtectedTagOrStr] = ["articles premier,9.a"]
+
+        # Act
+        actual = parse_section_references(self.context, elements)
+
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["articles premier"],
+                    data=SectionReferenceData(
+                        type="article",
+                        start_num="1",
+                    ),
+                    reserved_data_attrs=dict(group_id="1"),
+                ),
+                ",",
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["9.a"],
+                    data=SectionReferenceData(
+                        type="article",
+                        start_num="9.a",
+                    ),
+                    reserved_data_attrs=dict(group_id="1"),
+                ),
+            ],
+        )
+
+    def test_ordinal_premier_et_second(self):
+        # Arrange
+        elements: list[ProtectedTagOrStr] = ["articles premier et second"]
+
+        # Act
+        actual = parse_section_references(self.context, elements)
+
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["articles premier"],
+                    data=SectionReferenceData(
+                        type="article",
+                        start_num="1",
+                    ),
+                    reserved_data_attrs=dict(group_id="1"),
+                ),
+                " et ",
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["second"],
+                    data=SectionReferenceData(
+                        type="article",
+                        start_num="2",
+                    ),
+                    reserved_data_attrs=dict(group_id="1"),
+                ),
+            ],
+        )
 
     def test_article_code(self):
-        assert process_children("articles R. 511-9 et L. 111") == [
-            normalized_html_str(
-                """
-                <a
-                    data-spec="section_reference"
-                    data-group_id="1"
-                    data-start_num="R511-9"
-                    data-type="article"
-                >
-                    articles R. 511-9
-                </a>
-            """
-            ),
-            " et ",
-            normalized_html_str(
-                """
-                <a
-                    data-spec="section_reference"
-                    data-group_id="1"
-                    data-start_num="L111"
-                    data-type="article"
-                >
-                    L. 111
-                </a>
-            """
-            ),
-        ]
+        # Arrange
+        elements: list[ProtectedTagOrStr] = ["articles R. 511-9 et L. 111"]
+
+        # Act
+        actual = parse_section_references(self.context, elements)
+
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["articles R. 511-9"],
+                    data=SectionReferenceData(
+                        type="article",
+                        start_num="R511-9",
+                    ),
+                    reserved_data_attrs=dict(group_id="1"),
+                ),
+                " et ",
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["L. 111"],
+                    data=SectionReferenceData(
+                        type="article",
+                        start_num="L111",
+                    ),
+                    reserved_data_attrs=dict(group_id="1"),
+                ),
+            ],
+        )
 
     def test_article_range(self):
-        assert process_children("articles R. 512 - 74 et R. 512-39-1 à R.512-39-3") == [
-            normalized_html_str(
-                """
-                <a
-                    data-spec="section_reference"
-                    data-group_id="1"
-                    data-start_num="R512-74"
-                    data-type="article"
-                >
-                    articles R. 512 - 74
-                </a>
-            """
-            ),
-            " et ",
-            normalized_html_str(
-                """
-                <a
-                    data-spec="section_reference"
-                    data-group_id="1"
-                    data-end_num="R512-39-3"
-                    data-start_num="R512-39-1"
-                    data-type="article"
-                >
-                    R. 512-39-1 à R.512-39-3
-                </a>
-            """
-            ),
-        ]
+        # Arrange
+        elements: list[ProtectedTagOrStr] = ["articles R. 512 - 74 et R. 512-39-1 à R.512-39-3"]
+
+        # Act
+        actual = parse_section_references(self.context, elements)
+
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["articles R. 512 - 74"],
+                    data=SectionReferenceData(
+                        type="article",
+                        start_num="R512-74",
+                    ),
+                    reserved_data_attrs=dict(group_id="1"),
+                ),
+                " et ",
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["R. 512-39-1 à R.512-39-3"],
+                    data=SectionReferenceData(
+                        type="article",
+                        start_num="R512-39-1",
+                        end_num="R512-39-3",
+                    ),
+                    reserved_data_attrs=dict(group_id="1"),
+                ),
+            ],
+        )
 
     def test_range_first(self):
-        assert process_children("articles R.541-49 à R.541-64 et R.541-79") == [
-            normalized_html_str(
-                """
-                <a
-                    data-spec="section_reference"
-                    data-group_id="1"
-                    data-end_num="R541-64"
-                    data-start_num="R541-49"
-                    data-type="article"
-                >
-                    articles R.541-49 à R.541-64
-                </a>
-            """
-            ),
-            " et ",
-            normalized_html_str(
-                """
-                <a
-                    data-spec="section_reference"
-                    data-group_id="1"
-                    data-start_num="R541-79"
-                    data-type="article"
-                >
-                    R.541-79
-                </a>
-            """
-            ),
-        ]
+        # Arrange
+        elements: list[ProtectedTagOrStr] = ["articles R.541-49 à R.541-64 et R.541-79"]
+
+        # Act
+        actual = parse_section_references(self.context, elements)
+
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["articles R.541-49 à R.541-64"],
+                    data=SectionReferenceData(
+                        type="article",
+                        start_num="R541-49",
+                        end_num="R541-64",
+                    ),
+                    reserved_data_attrs=dict(group_id="1"),
+                ),
+                " et ",
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["R.541-79"],
+                    data=SectionReferenceData(
+                        type="article",
+                        start_num="R541-79",
+                    ),
+                    reserved_data_attrs=dict(group_id="1"),
+                ),
+            ],
+        )
 
 
-class TestAlineaSingle(unittest.TestCase):
+class TestAlineaSingle(BaseTestCaseHtml):
 
     def test_alinea_num_before(self):
-        assert process_children("2ème alinéa") == [
-            normalized_html_str(
-                """
-            <a
-                data-spec="section_reference"
-                data-start_num="2"
-                data-type="alinea"
-            >
-                2ème alinéa
-            </a>
-            """
-            )
-        ]
+        # Arrange
+        elements: list[ProtectedTagOrStr] = ["2ème alinéa"]
 
-    def test_alinea_num_after(self):
-        assert process_children("alinéa 3") == [
-            normalized_html_str(
-                """
-            <a
-                data-spec="section_reference"
-                data-start_num="3"
-                data-type="alinea"
-            >
-                alinéa 3
-            </a>
-            """
-            )
-        ]
-        assert process_children("alinéa second") == [
-            normalized_html_str(
-                """
-            <a
-                data-spec="section_reference"
-                data-start_num="2"
-                data-type="alinea"
-            >
-                alinéa second
-            </a>
-            """
-            )
-        ]
-        assert process_children("alinéa neuvième") == [
-            normalized_html_str(
-                """
-            <a
-                data-spec="section_reference"
-                data-start_num="9"
-                data-type="alinea"
-            >
-                alinéa neuvième
-            </a>
-            """
-            )
-        ]
+        # Act
+        actual = parse_section_references(self.context, elements)
+
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["2ème alinéa"],
+                    data=SectionReferenceData(
+                        type="alinea",
+                        start_num="2",
+                    ),
+                ),
+            ],
+        )
+
+    def test_alinea_num_after_3(self):
+        # Arrange
+        elements: list[ProtectedTagOrStr] = ["alinéa 3"]
+
+        # Act
+        actual = parse_section_references(self.context, elements)
+
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["alinéa 3"],
+                    data=SectionReferenceData(
+                        type="alinea",
+                        start_num="3",
+                    ),
+                ),
+            ],
+        )
+
+    def test_alinea_num_after_second(self):
+        # Arrange
+        elements: list[ProtectedTagOrStr] = ["alinéa second"]
+
+        # Act
+        actual = parse_section_references(self.context, elements)
+
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["alinéa second"],
+                    data=SectionReferenceData(
+                        type="alinea",
+                        start_num="2",
+                    ),
+                ),
+            ],
+        )
+
+    def test_alinea_num_after_neuvieme(self):
+        # Arrange
+        elements: list[ProtectedTagOrStr] = ["alinéa neuvième"]
+
+        # Act
+        actual = parse_section_references(self.context, elements)
+
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["alinéa neuvième"],
+                    data=SectionReferenceData(
+                        type="alinea",
+                        start_num="9",
+                    ),
+                ),
+            ],
+        )
 
 
-class TestAlineaRange(unittest.TestCase):
+class TestAlineaRange(BaseTestCaseHtml):
 
     def test_alinea_num_range(self):
-        assert process_children("alinéas 3 à 5") == [
-            normalized_html_str(
-                """
-                <a
-                    data-spec="section_reference"
-                    data-end_num="5"
-                    data-start_num="3"
-                    data-type="alinea"
-                >
-                    alinéas 3 à 5
-                </a>
-            """
-            )
-        ]
+        # Arrange
+        elements: list[ProtectedTagOrStr] = ["alinéas 3 à 5"]
+
+        # Act
+        actual = parse_section_references(self.context, elements)
+
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["alinéas 3 à 5"],
+                    data=SectionReferenceData(
+                        type="alinea",
+                        start_num="3",
+                        end_num="5",
+                    ),
+                ),
+            ],
+        )
 
     def test_alinea_num_range_with_ordinal(self):
-        assert process_children("alinéas premier à troisième") == [
-            normalized_html_str(
-                """
-                <a
-                    data-spec="section_reference"
-                    data-end_num="3"
-                    data-start_num="1"
-                    data-type="alinea"
-                >
-                    alinéas premier à troisième
-                </a>
-            """
-            )
-        ]
+        # Arrange
+        elements: list[ProtectedTagOrStr] = ["alinéas premier à troisième"]
+
+        # Act
+        actual = parse_section_references(self.context, elements)
+
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["alinéas premier à troisième"],
+                    data=SectionReferenceData(
+                        type="alinea",
+                        start_num="1",
+                        end_num="3",
+                    ),
+                ),
+            ],
+        )
 
 
-class TestAlineaMultiple(unittest.TestCase):
+class TestAlineaMultiple(BaseTestCaseHtml):
 
     def test_alinea_list(self):
-        assert process_children("Les alinéas 3 et 4") == [
-            "Les ",
-            normalized_html_str(
-                """
-                <a
-                    data-spec="section_reference"
-                    data-group_id="1"
-                    data-start_num="3"
-                    data-type="alinea"
-                >
-                    alinéas 3
-                </a>
-            """
-            ),
-            " et ",
-            normalized_html_str(
-                """
-                <a
-                    data-spec="section_reference"
-                    data-group_id="1"
-                    data-start_num="4"
-                    data-type="alinea"
-                >
-                    4
-                </a>
-            """
-            ),
-        ]
+        # Arrange
+        elements: list[ProtectedTagOrStr] = ["Les alinéas 3 et 4"]
+
+        # Act
+        actual = parse_section_references(self.context, elements)
+
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                "Les ",
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["alinéas 3"],
+                    data=SectionReferenceData(
+                        type="alinea",
+                        start_num="3",
+                    ),
+                    reserved_data_attrs=dict(group_id="1"),
+                ),
+                " et ",
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["4"],
+                    data=SectionReferenceData(
+                        type="alinea",
+                        start_num="4",
+                    ),
+                    reserved_data_attrs=dict(group_id="1"),
+                ),
+            ],
+        )
 
 
-class TestUnknownSingle(unittest.TestCase):
+class TestUnknownSingle(BaseTestCaseHtml):
 
     def test_unknown_num(self):
-        assert process_children("paragraphe 3") == [
-            normalized_html_str(
-                """
-                <a
-                    data-spec="section_reference"
-                    data-start_num="3"
-                    data-type="unknown"
-                >
-                    paragraphe 3
-                </a>
-                """
-            )
-        ]
+        # Arrange
+        elements: list[ProtectedTagOrStr] = ["paragraphe 3"]
+
+        # Act
+        actual = parse_section_references(self.context, elements)
+
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["paragraphe 3"],
+                    data=SectionReferenceData(
+                        type="unknown",
+                        start_num="3",
+                    ),
+                ),
+            ],
+        )
 
     def test_paragraph_symbol(self):
-        assert process_children("Dans le § a.4") == [
-            "Dans le ",
-            normalized_html_str(
-                """
-                <a
-                    data-spec="section_reference"
-                    data-start_num="a.4"
-                    data-type="unknown"
-                >
-                    § a.4
-                </a>
-            """
-            ),
-        ]
+        # Arrange
+        elements: list[ProtectedTagOrStr] = ["Dans le § a.4"]
+
+        # Act
+        actual = parse_section_references(self.context, elements)
+
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                "Dans le ",
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["§ a.4"],
+                    data=SectionReferenceData(
+                        type="unknown",
+                        start_num="a.4",
+                    ),
+                ),
+            ],
+        )
 
 
-class TestUnknownRange(unittest.TestCase):
+class TestUnknownRange(BaseTestCaseHtml):
 
     def test_unknown_num_range(self):
-        assert process_children("paragraphes 3 à 5") == [
-            normalized_html_str(
-                """
-                <a
-                    data-spec="section_reference"
-                    data-end_num="5"
-                    data-start_num="3"
-                    data-type="unknown"
-                >
-                    paragraphes 3 à 5
-                </a>
-            """
-            )
-        ]
+        # Arrange
+        elements: list[ProtectedTagOrStr] = ["paragraphes 3 à 5"]
+
+        # Act
+        actual = parse_section_references(self.context, elements)
+
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["paragraphes 3 à 5"],
+                    data=SectionReferenceData(
+                        type="unknown",
+                        start_num="3",
+                        end_num="5",
+                    ),
+                ),
+            ],
+        )
 
 
-class TestUnknownMultiple(unittest.TestCase):
+class TestUnknownMultiple(BaseTestCaseHtml):
 
     def test_paragraphe_list(self):
-        assert process_children("Les paragraphes 3è, 5 et quatrième") == [
-            "Les ",
-            normalized_html_str(
-                """
-                <a
-                    data-spec="section_reference"
-                    data-group_id="1"
-                    data-start_num="3"
-                    data-type="unknown"
-                >
-                    paragraphes 3è
-                </a>
-            """
-            ),
-            ", ",
-            normalized_html_str(
-                """
-                <a
-                    data-spec="section_reference"
-                    data-group_id="1"
-                    data-start_num="5"
-                    data-type="unknown"
-                >
-                    5
-                </a>
-            """
-            ),
-            " et ",
-            normalized_html_str(
-                """
-                <a
-                    data-spec="section_reference"
-                    data-group_id="1"
-                    data-start_num="4"
-                    data-type="unknown"
-                >
-                    quatrième
-                </a>
-            """
-            ),
-        ]
+        # Arrange
+        elements: list[ProtectedTagOrStr] = ["Les paragraphes 3è, 5 et quatrième"]
+
+        # Act
+        actual = parse_section_references(self.context, elements)
+
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                "Les ",
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["paragraphes 3è"],
+                    data=SectionReferenceData(
+                        type="unknown",
+                        start_num="3",
+                    ),
+                    reserved_data_attrs=dict(group_id="1"),
+                ),
+                ", ",
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["5"],
+                    data=SectionReferenceData(
+                        type="unknown",
+                        start_num="5",
+                    ),
+                    reserved_data_attrs=dict(group_id="1"),
+                ),
+                " et ",
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["quatrième"],
+                    data=SectionReferenceData(
+                        type="unknown",
+                        start_num="4",
+                    ),
+                    reserved_data_attrs=dict(group_id="1"),
+                ),
+            ],
+        )
 
 
-class TestAppendixSingle(unittest.TestCase):
+class TestAppendixSingle(BaseTestCaseHtml):
 
     def test_appendix_num(self):
-        assert process_children("annexe 1") == [
-            normalized_html_str(
-                """
-                <a
-                    data-spec="section_reference"
-                    data-start_num="1"
-                    data-type="annexe"
-                >
-                    annexe 1
-                </a>
-                """
-            )
-        ]
+        # Arrange
+        elements: list[ProtectedTagOrStr] = ["annexe 1"]
+
+        # Act
+        actual = parse_section_references(self.context, elements)
+
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["annexe 1"],
+                    data=SectionReferenceData(
+                        type="annexe",
+                        start_num="1",
+                    ),
+                ),
+            ],
+        )
 
     def test_appendix_roman(self):
-        assert process_children("annexe IV") == [
-            normalized_html_str(
-                """
-                <a
-                    data-spec="section_reference"
-                    data-start_num="4"
-                    data-type="annexe"
-                >
-                    annexe IV
-                </a>
-                """
-            )
-        ]
+        # Arrange
+        elements: list[ProtectedTagOrStr] = ["annexe IV"]
+
+        # Act
+        actual = parse_section_references(self.context, elements)
+
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["annexe IV"],
+                    data=SectionReferenceData(
+                        type="annexe",
+                        start_num="4",
+                    ),
+                ),
+            ],
+        )
 
     def test_appendix_no_number(self):
-        assert process_children("en annexe de blabla") == [
-            "en ",
-            normalized_html_str(
-                """
-                <a
-                    data-spec="section_reference"
-                    data-type="annexe"
-                >
-                    annexe
-                </a>
-                """
-            ),
-            " de blabla",
-        ]
+        # Arrange
+        elements: list[ProtectedTagOrStr] = ["en annexe de blabla"]
+
+        # Act
+        actual = parse_section_references(self.context, elements)
+
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                "en ",
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["annexe"],
+                    data=SectionReferenceData(
+                        type="annexe",
+                    ),
+                ),
+                " de blabla",
+            ],
+        )

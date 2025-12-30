@@ -26,7 +26,7 @@ from arretify.step_segmentation.semantic_tag_specs import (
 from arretify.types import ProtectedTag, ProtectedTagOrStr
 from arretify.utils.html_create import make_semantic_tag
 from arretify.utils.html_semantic import SemanticTagData
-from arretify.utils.testing import BaseTestCaseHtml, assert_data_equal, assert_elements_equal
+from arretify.utils.testing import BaseTestCaseHtml, assert_data_equal, assert_element_lists_equal
 
 DEFAULT_TEXT_SPAN_DATA = TextSpanSegmentationData(start=[-1, -1, -1], end=[-1, -1, -1])
 """
@@ -47,12 +47,12 @@ def assert_data_equal_ignore_default_text_span(
     return assert_data_equal(actual, expected, path)
 
 
-def assert_elements_equal_segmentation_step(
+def assert_segmentation_element_lists_equal(
     actual: Sequence[ProtectedTagOrStr],
     expected: Sequence[ProtectedTagOrStr],
     path: str = "",
 ) -> None:
-    return assert_elements_equal(
+    return assert_element_lists_equal(
         actual,
         expected,
         data_assertion_func=assert_data_equal_ignore_default_text_span,

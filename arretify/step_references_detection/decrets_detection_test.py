@@ -16,34 +16,43 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-import unittest
-
-from arretify.utils.testing import make_testing_function_for_children_list, normalized_html_str
+from arretify.semantic_tag_specs import DateSpec, DocumentReferenceData, DocumentReferenceSpec
+from arretify.types import ProtectedTagOrStr
+from arretify.utils.testing import BaseTestCaseHtml, assert_element_lists_equal
 
 from .decrets_detection import parse_decrets_references
 
-process_children = make_testing_function_for_children_list(parse_decrets_references)
 
-
-class TestParseDecretsReferences(unittest.TestCase):
+class TestParseDecretsReferences(BaseTestCaseHtml):
 
     def test_simple(self):
-        assert process_children("Bla bla décret n°2005-635 du 30 mai 2005 relatif à") == [
-            "Bla bla ",
-            normalized_html_str(
-                """
-                <a
-                    data-date="2005-05-30"
-                    data-num="2005-635"
-                    data-spec="document_reference"
-                    data-type="decret"
-                >
-                    décret n°2005-635 du
-                    <time data-spec="date" datetime="2005-05-30">
-                        30 mai 2005
-                    </time>
-                </a>
-                """
-            ),
-            " relatif à",
-        ]
+        # Arrange
+        elements: list[ProtectedTagOrStr] = ["Bla bla décret n°2005-635 du 30 mai 2005 relatif à"]
+
+        # Act
+        actual = parse_decrets_references(self.context, elements)
+
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                "Bla bla ",
+                self.make_semantic_tag(
+                    DocumentReferenceSpec,
+                    contents=[
+                        "décret n°2005-635 du ",
+                        self.make_semantic_tag(
+                            DateSpec,
+                            contents=["30 mai 2005"],
+                            attrs=dict(datetime="2005-05-30"),
+                        ),
+                    ],
+                    data=DocumentReferenceData(
+                        type="decret",
+                        date="2005-05-30",
+                        num="2005-635",
+                    ),
+                ),
+                " relatif à",
+            ],
+        )

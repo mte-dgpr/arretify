@@ -16,276 +16,297 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-import unittest
-
-from arretify.utils.testing import make_testing_function_for_children_list, normalized_html_str
+from arretify.semantic_tag_specs import (
+    DateSpec,
+    DocumentReferenceData,
+    DocumentReferenceSpec,
+    SectionReferenceData,
+    SectionReferenceSpec,
+)
+from arretify.utils.testing import BaseTestCaseHtml, assert_element_lists_equal
 
 from .match_sections_with_documents import match_sections_to_parents
 
-process_match_sections_to_parents = make_testing_function_for_children_list(
-    match_sections_to_parents
-)
 
-
-class TestConnectParentSections(unittest.TestCase):
+class TestConnectParentSections(BaseTestCaseHtml):
 
     def test_single_section_to_section(self):
-        assert (
-            process_match_sections_to_parents(
-                """
-            <a
-                data-spec="section_reference"
-            >
-                2ème alinéa
-            </a>
-            de l'
-            <a
-                data-spec="document_reference"
-            >
-                article 1
-            </a>
-            """
-            )
-            == [
-                normalized_html_str(
-                    """
-                <a
-                    data-parent_reference="1"
-                    data-spec="section_reference"
-                >
-                    2ème alinéa
-                </a>
-                """
+        # Arrange
+        self.soup_extend(
+            [
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["2ème alinéa"],
                 ),
                 " de l' ",
-                normalized_html_str(
-                    """
-                <a
-                    data-tag_id="1"
-                    data-spec="document_reference"
-                >
-                    article 1
-                </a>
-                """
+                self.make_semantic_tag(
+                    DocumentReferenceSpec,
+                    contents=["article 1"],
+                    data=DocumentReferenceData(
+                        type="self",
+                    ),
                 ),
             ]
+        )
+
+        # Act
+        actual = match_sections_to_parents(self.context, self.soup.contents)
+
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["2ème alinéa"],
+                    data=SectionReferenceData(
+                        parent_reference="1",
+                    ),
+                ),
+                " de l' ",
+                self.make_semantic_tag(
+                    DocumentReferenceSpec,
+                    contents=["article 1"],
+                    data=DocumentReferenceData(
+                        type="self",
+                    ),
+                    reserved_data_attrs=dict(tag_id="1"),
+                ),
+            ],
         )
 
     def test_single_section_to_document(self):
-        assert (
-            process_match_sections_to_parents(
-                """
-                <a
-                    data-spec="section_reference"
-                >
-                    article 5
-                </a>
-                de l’
-                <a
-                    data-spec="document_reference"
-                >
-                    arrêté du
-                    <time data-spec="date" datetime="2016-05-23">
-                        23 mai 2016
-                    </time>
-                </a>
-                """
-            )
-            == [
-                normalized_html_str(
-                    """
-                    <a
-                        data-parent_reference="1"
-                        data-spec="section_reference"
-                    >
-                        article 5
-                    </a>
-                    """
+        # Arrange
+        self.soup_extend(
+            [
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["article 5"],
                 ),
-                " de l’ ",
-                normalized_html_str(
-                    """
-                    <a
-                        data-tag_id="1"
-                        data-spec="document_reference"
-                    >
-                        arrêté du
-                        <time data-spec="date" datetime="2016-05-23">
-                            23 mai 2016
-                        </time>
-                    </a>
-                    """
+                " de l' ",
+                self.make_semantic_tag(
+                    DocumentReferenceSpec,
+                    contents=[
+                        "arrêté du ",
+                        self.make_semantic_tag(
+                            DateSpec,
+                            contents=["23 mai 2016"],
+                            attrs=dict(datetime="2016-05-23"),
+                        ),
+                    ],
+                    data=DocumentReferenceData(
+                        type="arrete-ministeriel",
+                    ),
                 ),
             ]
+        )
+
+        # Act
+        actual = match_sections_to_parents(self.context, self.soup.contents)
+
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["article 5"],
+                    data=SectionReferenceData(
+                        parent_reference="1",
+                    ),
+                ),
+                " de l' ",
+                self.make_semantic_tag(
+                    DocumentReferenceSpec,
+                    contents=[
+                        "arrêté du ",
+                        self.make_semantic_tag(
+                            DateSpec,
+                            contents=["23 mai 2016"],
+                            attrs=dict(datetime="2016-05-23"),
+                        ),
+                    ],
+                    data=DocumentReferenceData(
+                        type="arrete-ministeriel",
+                    ),
+                    reserved_data_attrs=dict(tag_id="1"),
+                ),
+            ],
         )
 
     def test_multiple_sections_to_document(self):
-        assert (
-            process_match_sections_to_parents(
-                """
-                <a
-                    data-group_id="111"
-                    data-spec="section_reference"
-                >
-                    articles R. 512 - 74
-                </a>
-                et
-                <a
-                    data-group_id="111"
-                    data-spec="section_reference"
-                >
-                    R. 512 39-1 à R.512-39-3
-                </a>
-                du
-                <a
-                    data-spec="document_reference"
-                >
-                    code de l'environnement
-                </a>
-                """
-            )
-            == [
-                normalized_html_str(
-                    """
-                    <a
-                        data-group_id="111"
-                        data-parent_reference="1"
-                        data-spec="section_reference"
-                    >
-                        articles R. 512 - 74
-                    </a>
-                    """
+        # Arrange
+        self.soup_extend(
+            [
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["articles R. 512 - 74"],
+                    reserved_data_attrs=dict(group_id="111"),
                 ),
                 " et ",
-                normalized_html_str(
-                    """
-                    <a
-                        data-parent_reference="1"
-                        data-group_id="111"
-                        data-spec="section_reference"
-                    >
-                        R. 512 39-1 à R.512-39-3
-                    </a>
-                    """
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["R. 512 39-1 à R.512-39-3"],
+                    reserved_data_attrs=dict(group_id="111"),
                 ),
                 " du ",
-                normalized_html_str(
-                    """
-                    <a
-                        data-tag_id="1"
-                        data-spec="document_reference"
-                    >
-                        code de l'environnement
-                    </a>
-                    """
+                self.make_semantic_tag(
+                    DocumentReferenceSpec,
+                    contents=["code de l'environnement"],
+                    data=DocumentReferenceData(
+                        type="code",
+                        title="Code de l'environnement",
+                    ),
                 ),
             ]
+        )
+
+        # Act
+        actual = match_sections_to_parents(self.context, self.soup.contents)
+
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["articles R. 512 - 74"],
+                    data=SectionReferenceData(
+                        parent_reference="1",
+                    ),
+                    reserved_data_attrs=dict(group_id="111"),
+                ),
+                " et ",
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["R. 512 39-1 à R.512-39-3"],
+                    data=SectionReferenceData(
+                        parent_reference="1",
+                    ),
+                    reserved_data_attrs=dict(group_id="111"),
+                ),
+                " du ",
+                self.make_semantic_tag(
+                    DocumentReferenceSpec,
+                    contents=["code de l'environnement"],
+                    data=DocumentReferenceData(
+                        type="code",
+                        title="Code de l'environnement",
+                    ),
+                    reserved_data_attrs=dict(tag_id="1"),
+                ),
+            ],
         )
 
     def test_section_to_section_to_document(self):
-        assert (
-            process_match_sections_to_parents(
-                """
-                <a
-                    data-spec="section_reference"
-                >
-                    alinéa 3
-                </a>
-                de l'
-                <a
-                    data-spec="section_reference"
-                >
-                    article R121-1
-                </a>
-                du
-                <a
-                    data-spec="document_reference"
-                >
-                    code de l'environnement
-                </a>
-                """
-            )
-            == [
-                normalized_html_str(
-                    """
-                    <a
-                        data-spec="section_reference"
-                        data-parent_reference="1"
-                    >
-                        alinéa 3
-                    </a>
-                    """
+        # Arrange
+        self.soup_extend(
+            [
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["alinéa 3"],
                 ),
                 " de l' ",
-                normalized_html_str(
-                    """
-                    <a
-                        data-tag_id="1"
-                        data-parent_reference="2"
-                        data-spec="section_reference"
-                    >
-                        article R121-1
-                    </a>
-                    """
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["article R121-1"],
                 ),
                 " du ",
-                normalized_html_str(
-                    """
-                    <a
-                        data-tag_id="2"
-                        data-spec="document_reference"
-                    >
-                        code de l'environnement
-                    </a>
-                    """
+                self.make_semantic_tag(
+                    DocumentReferenceSpec,
+                    contents=["code de l'environnement"],
+                    data=DocumentReferenceData(
+                        type="code",
+                        title="Code de l'environnement",
+                    ),
                 ),
             ]
         )
 
+        # Act
+        actual = match_sections_to_parents(self.context, self.soup.contents)
+
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["alinéa 3"],
+                    data=SectionReferenceData(
+                        parent_reference="1",
+                    ),
+                ),
+                " de l' ",
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["article R121-1"],
+                    data=SectionReferenceData(
+                        parent_reference="2",
+                    ),
+                    reserved_data_attrs=dict(tag_id="1"),
+                ),
+                " du ",
+                self.make_semantic_tag(
+                    DocumentReferenceSpec,
+                    contents=["code de l'environnement"],
+                    data=DocumentReferenceData(
+                        type="code",
+                        title="Code de l'environnement",
+                    ),
+                    reserved_data_attrs=dict(tag_id="2"),
+                ),
+            ],
+        )
+
     def test_section_separated_by_inline_element(self):
-        assert (
-            process_match_sections_to_parents(
-                """
-            <a
-                data-tag_id="1"
-                data-spec="section_reference"
-            >
-                annexe III
-            </a>
-            de <br/> l'
-            <a
-                data-spec="document_reference"
-                data-tag_id="2"
-            >
-                arrêté ministériel du 23 mai 2016
-            </a>
-            """
-            )
-            == [
-                normalized_html_str(
-                    """
-                <a
-                    data-tag_id="1"
-                    data-parent_reference="2"
-                    data-spec="section_reference"
-                >
-                    annexe III
-                </a>
-                """
+        # Arrange
+        self.soup_extend(
+            [
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["annexe III"],
+                    reserved_data_attrs=dict(tag_id="1"),
                 ),
                 " de ",
-                "<br/>",
+                self.make_tag("br"),
                 " l' ",
-                normalized_html_str(
-                    """
-                <a
-                    data-tag_id="2"
-                    data-spec="document_reference"
-                >
-                    arrêté ministériel du 23 mai 2016
-                </a>
-                """
+                self.make_semantic_tag(
+                    DocumentReferenceSpec,
+                    contents=["arrêté ministériel du 23 mai 2016"],
+                    data=DocumentReferenceData(
+                        type="arrete-ministeriel",
+                    ),
+                    reserved_data_attrs=dict(tag_id="2"),
                 ),
             ]
         )
-        # paragraphe 3 de <br/> l'annexe III de l'arrêté <br/> ministériel du 23 mai 2016
+
+        # Act
+        actual = match_sections_to_parents(self.context, self.soup.contents)
+
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["annexe III"],
+                    data=SectionReferenceData(
+                        parent_reference="2",
+                    ),
+                    reserved_data_attrs=dict(tag_id="1"),
+                ),
+                " de ",
+                self.make_tag("br"),
+                " l' ",
+                self.make_semantic_tag(
+                    DocumentReferenceSpec,
+                    contents=["arrêté ministériel du 23 mai 2016"],
+                    data=DocumentReferenceData(
+                        type="arrete-ministeriel",
+                    ),
+                    reserved_data_attrs=dict(tag_id="2"),
+                ),
+            ],
+        )

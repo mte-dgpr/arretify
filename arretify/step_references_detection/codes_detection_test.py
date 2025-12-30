@@ -16,29 +16,34 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-import unittest
-
-from arretify.utils.testing import make_testing_function_for_children_list, normalized_html_str
+from arretify.semantic_tag_specs import DocumentReferenceData, DocumentReferenceSpec
+from arretify.types import ProtectedTagOrStr
+from arretify.utils.testing import BaseTestCaseHtml, assert_element_lists_equal
 
 from .codes_detection import parse_codes_references
 
-process_children = make_testing_function_for_children_list(parse_codes_references)
 
-
-class TestParseCodesReferences(unittest.TestCase):
+class TestParseCodesReferences(BaseTestCaseHtml):
 
     def test_simple(self):
-        assert process_children("Bla bla code de l’environnement") == [
-            "Bla bla ",
-            normalized_html_str(
-                """
-                <a
-                    data-spec="document_reference"
-                    data-title="Code de l'environnement"
-                    data-type="code"
-                >
-                    code de l’environnement
-                </a>
-                """
-            ),
-        ]
+        # Arrange
+        elements: list[ProtectedTagOrStr] = ["Bla bla code de l'environnement"]
+
+        # Act
+        actual = parse_codes_references(self.context, elements)
+
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                "Bla bla ",
+                self.make_semantic_tag(
+                    DocumentReferenceSpec,
+                    contents=["code de l'environnement"],
+                    data=DocumentReferenceData(
+                        type="code",
+                        title="Code de l'environnement",
+                    ),
+                ),
+            ],
+        )

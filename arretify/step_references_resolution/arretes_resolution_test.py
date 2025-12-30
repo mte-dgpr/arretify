@@ -16,52 +16,49 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-import unittest
-
-from arretify.utils.testing import make_testing_function_for_single_tag, normalized_html_str
+from arretify.semantic_tag_specs import DateSpec, DocumentReferenceData, DocumentReferenceSpec
+from arretify.types import DocumentType
+from arretify.utils.testing import BaseTestCaseHtml, assert_elements_equal
 
 from .arretes_resolution import resolve_arrete_ministeriel_legifrance_id
 
-process_arrete_document_reference = make_testing_function_for_single_tag(
-    resolve_arrete_ministeriel_legifrance_id
-)
 
-
-class TestResolveArreteMinisterielLegifranceId(unittest.TestCase):
+class TestResolveArreteMinisterielLegifranceId(BaseTestCaseHtml):
     def test_resolve_simple(self):
-        assert (
-            process_arrete_document_reference(
-                """
-                <a
-                    data-spec="document_reference"
-                    data-date="1998-02-02"
-                    data-type="arrete-ministeriel"
-                >
-                    arrêté ministériel du
-                    <time data-spec="date" datetime="1998-02-02">
-                        2 février 1998
-                    </time>
-                </a>
-                relatif aux prélèvements et à la consommation d'eau ainsi
-                qu'aux émissions de toute nature des installations classées
-                pour la protection de l'environnement soumises à autorisation
-            """,
-                css_selector="[data-spec='document_reference']",
-            )
-            == normalized_html_str(
-                """
-            <a
-                data-spec="document_reference"
-                data-date="1998-02-02"
-                data-id="JORFTEXT000000204891"
-                data-type="arrete-ministeriel"
-                href="https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000000204891"
-            >
-                arrêté ministériel du
-                <time data-spec="date" datetime="1998-02-02">
-                    2 février 1998
-                </time>
-            </a>
-        """
-            )
+        # Arrange
+        date_tag = self.make_semantic_tag(
+            DateSpec, contents=["2 février 1998"], attrs=dict(datetime="1998-02-02")
+        )
+        reference_tag = self.make_semantic_tag(
+            DocumentReferenceSpec,
+            data=DocumentReferenceData(type=DocumentType.arrete_ministeriel, date="1998-02-02"),
+            contents=["arrêté ministériel du ", date_tag],
+        )
+        self.soup_extend(
+            [
+                reference_tag,
+                (
+                    " relatif aux prélèvements et à la consommation d'eau ainsi"
+                    " qu'aux émissions de toute nature des installations classées"
+                    " pour la protection de l'environnement soumises à autorisation"
+                ),
+            ]
+        )
+
+        # Act
+        resolve_arrete_ministeriel_legifrance_id(self.context, reference_tag)
+
+        # Assert
+        assert_elements_equal(
+            reference_tag,
+            self.make_semantic_tag(
+                DocumentReferenceSpec,
+                data=DocumentReferenceData(
+                    type=DocumentType.arrete_ministeriel,
+                    date="1998-02-02",
+                    id="JORFTEXT000000204891",
+                ),
+                contents=["arrêté ministériel du ", date_tag],
+                attrs=dict(href="https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000000204891"),
+            ),
         )

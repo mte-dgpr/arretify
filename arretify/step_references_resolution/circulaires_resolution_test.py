@@ -16,51 +16,46 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-import unittest
-
-from arretify.utils.testing import make_testing_function_for_single_tag, normalized_html_str
+from arretify.semantic_tag_specs import DateSpec, DocumentReferenceData, DocumentReferenceSpec
+from arretify.types import DocumentType
+from arretify.utils.testing import BaseTestCaseHtml, assert_elements_equal
 
 from .circulaires_resolution import resolve_circulaire_legifrance_id
 
-process_circulaire_document_reference = make_testing_function_for_single_tag(
-    resolve_circulaire_legifrance_id
-)
 
-
-class TestResolveCirculaireLegifranceId(unittest.TestCase):
+class TestResolveCirculaireLegifranceId(BaseTestCaseHtml):
     def test_resolve_simple(self):
-        assert (
-            process_circulaire_document_reference(
-                """
-            <a
-                data-spec="document_reference"
-                data-date="1986-07-23"
-                data-type="circulaire"
-            >
-                Circulaire du
-                <time data-spec="date" datetime="1986-07-23">
-                    23 juillet 1986
-                </time>
-            </a>
-            relative aux vibrations mécaniques émises dans l'environnement par les
-            installations classées
-            """,
-                css_selector="[data-spec='document_reference']",
-            )
-            == normalized_html_str(
-                """
-            <a
-                data-spec="document_reference"
-                data-date="1986-07-23"
-                data-id="JORFTEXT000000866509"
-                data-type="circulaire"
-                href="https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000000866509"
-            >
-                Circulaire du
-                <time data-spec="date" datetime="1986-07-23">
-                    23 juillet 1986
-                </time>
-            </a>
-            """
-            )
+        # Arrange
+        date_tag = self.make_semantic_tag(
+            DateSpec, contents=["23 juillet 1986"], attrs=dict(datetime="1986-07-23")
+        )
+        reference_tag = self.make_semantic_tag(
+            DocumentReferenceSpec,
+            data=DocumentReferenceData(type=DocumentType.circulaire, date="1986-07-23"),
+            contents=["Circulaire du ", date_tag],
+        )
+        self.soup_extend(
+            [
+                reference_tag,
+                (
+                    " relative aux vibrations mécaniques émises dans l'environnement par les "
+                    "installations classées"
+                ),
+            ]
+        )
+
+        # Act
+        resolve_circulaire_legifrance_id(self.context, reference_tag)
+
+        # Assert
+        assert_elements_equal(
+            reference_tag,
+            self.make_semantic_tag(
+                DocumentReferenceSpec,
+                data=DocumentReferenceData(
+                    type=DocumentType.circulaire, date="1986-07-23", id="JORFTEXT000000866509"
+                ),
+                contents=["Circulaire du ", date_tag],
+                attrs=dict(href="https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000000866509"),
+            ),
         )

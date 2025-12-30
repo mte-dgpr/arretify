@@ -33,7 +33,7 @@ from .semantic_tag_specs import (
     TextSpanSegmentationData,
     TextSpanSegmentationSpec,
 )
-from .testing import BaseTestCaseSegmentation, assert_elements_equal_segmentation_step
+from .testing import BaseTestCaseSegmentation, assert_segmentation_element_lists_equal
 
 
 class TestParseSectionTitles(BaseTestCaseSegmentation):
@@ -56,7 +56,7 @@ class TestParseSectionTitles(BaseTestCaseSegmentation):
         result = list(parse_section_titles(self.context, elements))
 
         # Assert
-        assert_elements_equal_segmentation_step(
+        assert_segmentation_element_lists_equal(
             result,
             [
                 self.make_semantic_tag(
@@ -133,7 +133,7 @@ class TestParseSectionTitles(BaseTestCaseSegmentation):
         result = list(parse_section_titles(self.context, elements))
 
         # Assert
-        assert_elements_equal_segmentation_step(
+        assert_segmentation_element_lists_equal(
             result,
             [
                 self.make_semantic_tag(
@@ -201,7 +201,7 @@ class TestParseSections(BaseTestCaseSegmentation):
         result = parse_sections(self.context, elements, level=1)
 
         # Assert
-        assert_elements_equal_segmentation_step(
+        assert_segmentation_element_lists_equal(
             result,
             [
                 self.make_semantic_tag(
@@ -306,7 +306,7 @@ class TestParseSections(BaseTestCaseSegmentation):
         result = parse_sections(self.context, elements, level=0)
 
         # Assert
-        assert_elements_equal_segmentation_step(
+        assert_segmentation_element_lists_equal(
             result,
             [
                 self.make_semantic_tag(
@@ -361,7 +361,7 @@ class TestParseSections(BaseTestCaseSegmentation):
         result = parse_sections(self.context, elements, level=0)
 
         # Assert
-        assert_elements_equal_segmentation_step(
+        assert_segmentation_element_lists_equal(
             result,
             [
                 self.make_semantic_tag(
@@ -421,7 +421,7 @@ class TestParseSections(BaseTestCaseSegmentation):
         result = parse_sections(self.context, elements, level=0)
 
         # Assert
-        assert_elements_equal_segmentation_step(
+        assert_segmentation_element_lists_equal(
             result,
             [
                 self.make_semantic_tag(
@@ -500,7 +500,7 @@ class TestParseAlineas(BaseTestCaseSegmentation):
         result = parse_alineas(self.context, elements)
 
         # Assert
-        assert_elements_equal_segmentation_step(
+        assert_segmentation_element_lists_equal(
             result,
             [
                 self.make_semantic_tag(
