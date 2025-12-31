@@ -17,15 +17,14 @@
 # limitations under the License.
 #
 from copy import copy
-from typing import Iterable, Sequence, cast
-
-from bs4 import PageElement
+from typing import Iterable, Sequence
 
 from arretify.types import (
     ProtectedSoup,
     ProtectedTag,
     ProtectedTagOrStr,
     protect_tag,
+    unprotect_page_element_or_strings,
     unprotect_soup,
     unprotect_tag,
 )
@@ -187,7 +186,7 @@ def _replace_contents(
         group_strings_splitter,
         merge_strings,
     )
-    tag.extend(_unprotect_page_elements(contents))
+    tag.extend(unprotect_page_element_or_strings(contents))
     return protect_tag(tag)
 
 
@@ -269,9 +268,3 @@ def _validate_tag_contents(contents: Sequence[ProtectedTagOrStr]) -> None:
 
     if errors:
         raise InvalidContentsError(errors, prefix="Invalid contents for tag:")
-
-
-def _unprotect_page_elements(
-    protected_elements: Iterable[ProtectedTagOrStr],
-) -> Iterable[PageElement]:
-    return cast(Iterable[PageElement], protected_elements)

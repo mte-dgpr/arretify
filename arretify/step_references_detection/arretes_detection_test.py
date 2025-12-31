@@ -17,7 +17,6 @@
 # limitations under the License.
 #
 from arretify.semantic_tag_specs import DateSpec, DocumentReferenceData, DocumentReferenceSpec
-from arretify.types import ProtectedTagOrStr
 from arretify.utils.testing import BaseTestCaseHtml, assert_element_lists_equal
 
 from .arretes_detection import parse_arretes_references
@@ -27,7 +26,7 @@ class TestParseArreteReferences(BaseTestCaseHtml):
 
     def test_arrete_date1(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = ["Vu l'arrêté ministériel du 2 février 1998,"]
+        elements = ["Vu l'arrêté ministériel du 2 février 1998,"]
 
         # Act
         actual = parse_arretes_references(self.context, elements)
@@ -58,7 +57,7 @@ class TestParseArreteReferences(BaseTestCaseHtml):
 
     def test_arrete_date1_end_modifiant(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = [
+        elements = [
             (
                 "arrêté ministériel du 23 mai 2016 modifiant relatif aux installations de "
                 "production de chaleur"
@@ -94,7 +93,7 @@ class TestParseArreteReferences(BaseTestCaseHtml):
 
     def test_arrete_unknown(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = ["Vu l'arrêté du 2 février 1998,"]
+        elements = ["Vu l'arrêté du 2 février 1998,"]
 
         # Act
         actual = parse_arretes_references(self.context, elements)
@@ -125,7 +124,7 @@ class TestParseArreteReferences(BaseTestCaseHtml):
 
     def test_interrupted_inline_tag(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = [
+        elements = [
             "Vu l'arrêté ministériel ",
             self.make_tag("br"),
             " du 2 février 1998,",
@@ -165,7 +164,7 @@ class TestParseArretePluralReferences(BaseTestCaseHtml):
 
     def test_references_multiple(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = [
+        elements = [
             "Les arrêtés préfectoraux n° 5213 du 28 octobre 1988 et n° 1636 du 24/03/95 blabla."
         ]
 
@@ -220,7 +219,7 @@ class TestParseArreteReferencesAll(BaseTestCaseHtml):
 
     def test_several_references(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = [
+        elements = [
             (
                 "Bla bla arrêté ministériel du 23 mai 2016 relatif aux installations de "
                 "production de chaleur et arrêté préfectoral n° 1234-567/01."

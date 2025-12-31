@@ -25,6 +25,7 @@ from arretify.types import (
     ProtectedTag,
     ProtectedTagOrStr,
     protect_soup,
+    unprotect_page_element_or_strings,
     unprotect_tag,
 )
 from arretify.utils.html import set_non_data_attributes
@@ -39,7 +40,6 @@ from arretify.utils.html_semantic_test import SemanticTagDataTestCase
 from .html_create import (
     InvalidContentsError,
     _make_tag,
-    _unprotect_page_elements,
     _validate_tag_contents,
     make_semantic_tag,
     make_tag,
@@ -512,7 +512,7 @@ class TestValidateTagContents(unittest.TestCase):
         semantic_tag = make_semantic_tag(self.soup, self.some_spec)
         div_tag = make_tag(self.soup, "div")
         # Bypass validation by directly manipulating the tag
-        unprotect_tag(div_tag).extend(_unprotect_page_elements([semantic_tag]))
+        unprotect_tag(div_tag).extend(unprotect_page_element_or_strings([semantic_tag]))
 
         # ACT & ASSERT
         with self.assertRaises(InvalidContentsError):

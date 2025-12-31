@@ -19,7 +19,7 @@
 from dataclasses import dataclass, field, fields
 from enum import Enum
 from pathlib import Path
-from typing import Optional, Protocol, Sequence, Tuple, Type, TypeVar, Union, cast
+from typing import Iterable, Optional, Protocol, Sequence, Tuple, Type, TypeVar, Union, cast
 
 from bs4 import BeautifulSoup, PageElement, Tag
 
@@ -256,3 +256,10 @@ def unprotect_page_element(
     """
     assert isinstance(protected_element, PageElement)
     return cast(PageElement, protected_element)
+
+
+def unprotect_page_element_or_strings(
+    protected_elements: Iterable[ProtectedTagOrStr],
+) -> Iterable[PageElement | str]:
+    assert all(isinstance(element, (PageElement, str)) for element in protected_elements)
+    return cast(Iterable[PageElement | str], protected_elements)

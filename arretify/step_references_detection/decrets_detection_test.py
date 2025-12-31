@@ -17,7 +17,6 @@
 # limitations under the License.
 #
 from arretify.semantic_tag_specs import DateSpec, DocumentReferenceData, DocumentReferenceSpec
-from arretify.types import ProtectedTagOrStr
 from arretify.utils.testing import BaseTestCaseHtml, assert_element_lists_equal
 
 from .decrets_detection import parse_decrets_references
@@ -27,7 +26,7 @@ class TestParseDecretsReferences(BaseTestCaseHtml):
 
     def test_simple(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = ["Bla bla décret n°2005-635 du 30 mai 2005 relatif à"]
+        elements = ["Bla bla décret n°2005-635 du 30 mai 2005 relatif à"]
 
         # Act
         actual = parse_decrets_references(self.context, elements)

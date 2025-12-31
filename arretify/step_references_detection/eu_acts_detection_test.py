@@ -17,7 +17,6 @@
 # limitations under the License.
 #
 from arretify.semantic_tag_specs import DocumentReferenceData, DocumentReferenceSpec
-from arretify.types import ProtectedTagOrStr
 from arretify.utils.testing import BaseTestCaseHtml, assert_element_lists_equal
 
 from .eu_acts_detection import parse_eu_acts_references
@@ -27,9 +26,7 @@ class TestParseEuActsReferences(BaseTestCaseHtml):
 
     def test_domain_before(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = [
-            "Bla bla de la directive (CE) n° 1013/2006 du 22 juin 2006"
-        ]
+        elements = ["Bla bla de la directive (CE) n° 1013/2006 du 22 juin 2006"]
 
         # Act
         actual = parse_eu_acts_references(self.context, elements)
@@ -54,7 +51,7 @@ class TestParseEuActsReferences(BaseTestCaseHtml):
 
     def test_domain_after(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = ["VU la directive 2010/75/UE du 24 novembre 2010"]
+        elements = ["VU la directive 2010/75/UE du 24 novembre 2010"]
 
         # Act
         actual = parse_eu_acts_references(self.context, elements)
@@ -79,7 +76,7 @@ class TestParseEuActsReferences(BaseTestCaseHtml):
 
     def test_domain_after_year_2digits(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = ["VU la directive 96/75/UE du 24 novembre 1996"]
+        elements = ["VU la directive 96/75/UE du 24 novembre 1996"]
 
         # Act
         actual = parse_eu_acts_references(self.context, elements)
@@ -104,9 +101,7 @@ class TestParseEuActsReferences(BaseTestCaseHtml):
 
     def test_with_word_europeen(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = [
-            "VU le règlement européen (CE) n° 1013/2006 du 22 juin 2006"
-        ]
+        elements = ["VU le règlement européen (CE) n° 1013/2006 du 22 juin 2006"]
 
         # Act
         actual = parse_eu_acts_references(self.context, elements)
@@ -131,9 +126,7 @@ class TestParseEuActsReferences(BaseTestCaseHtml):
 
     def test_parsing_2digit_year(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = [
-            "Bla bla de la directive (CE) n° 1013/96 du 12 aout 1996"
-        ]
+        elements = ["Bla bla de la directive (CE) n° 1013/96 du 12 aout 1996"]
 
         # Act
         actual = parse_eu_acts_references(self.context, elements)
@@ -158,7 +151,7 @@ class TestParseEuActsReferences(BaseTestCaseHtml):
 
     def test_ignore_if_malformed(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = ["VU la directive 96/75/POIPOI du 24 novembre 1996"]
+        elements = ["VU la directive 96/75/POIPOI du 24 novembre 1996"]
 
         # Act
         actual = parse_eu_acts_references(self.context, elements)

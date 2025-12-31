@@ -17,7 +17,6 @@
 # limitations under the License.
 #
 from arretify.semantic_tag_specs import DocumentReferenceData, DocumentReferenceSpec
-from arretify.types import ProtectedTagOrStr
 from arretify.utils.testing import BaseTestCaseHtml, assert_element_lists_equal
 
 from .codes_detection import parse_codes_references
@@ -27,7 +26,7 @@ class TestParseCodesReferences(BaseTestCaseHtml):
 
     def test_simple(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = ["Bla bla code de l'environnement"]
+        elements = ["Bla bla code de l'environnement"]
 
         # Act
         actual = parse_codes_references(self.context, elements)
