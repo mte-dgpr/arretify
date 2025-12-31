@@ -300,7 +300,7 @@ def _ensure_matching_spec(
     tag: ProtectedTag,
 ) -> None:
     if not is_semantic_tag(tag, spec_in=[spec]):
-        raise ValueError(f"Expected semantic tag {spec.spec_name}")
+        raise ValueError(f"Expected semantic tag with spec '{spec.spec_name}'")
 
 
 def update_data(obj: TSemanticTagData, **kwargs) -> TSemanticTagData:

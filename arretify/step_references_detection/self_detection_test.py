@@ -17,7 +17,6 @@
 # limitations under the License.
 #
 from arretify.semantic_tag_specs import DocumentReferenceData, DocumentReferenceSpec
-from arretify.types import ProtectedTagOrStr
 from arretify.utils.testing import BaseTestCaseHtml, assert_element_lists_equal
 
 from .self_detection import parse_self_references
@@ -27,7 +26,7 @@ class TestParseSelfReferences(BaseTestCaseHtml):
 
     def test_simple(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = ["l'article 8 du présent arrêté remplace"]
+        elements = ["l'article 8 du présent arrêté remplace"]
 
         # Act
         actual = parse_self_references(self.context, elements)

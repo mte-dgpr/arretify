@@ -16,64 +16,36 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-import re
 import unittest
-from functools import partial
-from typing import Callable, Sequence, TypeVar
+from typing import Any, Callable, Sequence, TypeVar
 
-from bs4 import BeautifulSoup, NavigableString, Tag
+from bs4 import BeautifulSoup, Tag
 
 from arretify.settings import Settings
-from arretify.types import DocumentContext, ProtectedTag, ProtectedTagOrStr, unprotect_soup
+from arretify.types import (
+    DocumentContext,
+    ProtectedSoup,
+    ProtectedTag,
+    ProtectedTagOrStr,
+    protect_soup,
+    unprotect_page_element_or_strings,
+    unprotect_soup,
+)
 from arretify.utils.html import is_tag
 from arretify.utils.html_create import make_semantic_tag, make_tag
 from arretify.utils.html_semantic import (
     RESERVED_DATA_ATTRIBUTES,
     SemanticTagData,
+    SemanticTagSpec,
     get_semantic_tag_data,
     get_semantic_tag_spec,
     is_semantic_tag,
 )
 
-_INLINE_TAGS = [
-    "a",
-    "abbr",
-    "acronym",
-    "b",
-    "bdo",
-    "big",
-    "cite",
-    "code",
-    "em",
-    "i",
-    "kbd",
-    "mark",
-    "q",
-    "samp",
-    "small",
-    "span",
-    "strong",
-    "sub",
-    "sup",
-    "time",
-    "u",
-    "var",
-    "wbr",
-    "br",
-    "img",
-    "hr",
-    "input",
-    "select",
-    "textarea",
-    "button",
-    "label",
-]
-_INDENTATION_PATTERN = re.compile(r"\n[\s\t]{2,}")
-_NO_CONTENT = re.compile(r"^[\s]*$")
-
 PageElementType = TypeVar("PageElementType", bound=Tag | BeautifulSoup)
 
 
+# -------------------- Helper functions to initialize tests -------------------- #
 def create_document_context(
     html: str = "",
 ) -> DocumentContext:
@@ -99,126 +71,47 @@ def create_settings() -> Settings:
     )
 
 
-def normalized_soup(html: str) -> BeautifulSoup:
-    return BeautifulSoup(
-        normalized_html_str(html),
-        features="html.parser",
-    )
-
-
-def assert_html_list_equal(
-    actual: Sequence[ProtectedTagOrStr],
-    expected: Sequence[ProtectedTagOrStr],
-) -> None:
+def parse_element(html: str) -> ProtectedTagOrStr:
     """
-    Assert that two lists of HTML strings are equal after normalization.
+    Disclaimer : instead of using this function, prefer using
+    `make_tag` or `make_semantic_tag` to build your html programmatically when convenient.
+    This function is mainly useful when passing a small snippet of html as a string is
+    more readable.
     """
-    assert len(actual) == len(expected)
-    for i, (actual_html, expected_html) in enumerate(
-        zip(_normalize_element_list(actual), _normalize_element_list(expected))
-    ):
-        assert actual_html == expected_html, (
-            f"Elements in position {i} are not equal :"
-            f"\nACTUAL:\n{actual_html}\nEXPECTED:\n{expected_html}"
-        )
+    elements = parse_element_list(html)
+    if len(elements) != 1:
+        raise ValueError("HTML should contain exactly one root element")
+    return elements[0]
 
 
-def _normalize_element_list(
-    html_list: Sequence[ProtectedTagOrStr],
-) -> list[ProtectedTagOrStr]:
-    return [
-        normalized_html_str(str(element)) if is_tag(element) else str(element)
-        for element in html_list
-    ]
-
-
-def normalized_html_str(html: str) -> str:
+def parse_element_list(html: str) -> list[ProtectedTagOrStr]:
     """
-    Normalize the HTML string by removing unnecessary whitespace and
-    indentation, and ensuring consistent formatting.
-    Allows to write tests with a multiline HTML strings. For example :
-
-        <div>
-            <span>bli</span>
-            bla
-            blo
-        </div>
-
-    becomes :
-
-        <div><span>bli</span> bla blo</div>
+    Disclaimer : instead of using this function, prefer using
+    `make_tag` or `make_semantic_tag` to build your html programmatically when convenient.
+    This function is mainly useful when passing a small snippet of html as
+    a string is more readable.
     """
-    return str(
-        _normalize_tag(
-            BeautifulSoup(
-                html,
-                features="html.parser",
-            )
-        )
-    )
+    return _normalize_html_multiline_str(html).contents
 
 
-def _normalize_string(nav_string: NavigableString) -> str | None:
-    strip_chars = " \n\t"
-    string = str(nav_string)
-    string = _INDENTATION_PATTERN.sub(" ", string)
-
-    if _NO_CONTENT.match(string):
-        return None
-
-    def _ensure_space_right(string: str) -> str:
-        if string and string[-1] != " ":
-            return string + " "
-        return string
-
-    def _ensure_space_left(string: str) -> str:
-        if string and string[0] != " ":
-            return " " + string
-        return string
-
-    if nav_string.previous_sibling is None:
-        string = string.lstrip(strip_chars)
-    elif isinstance(nav_string.previous_sibling, Tag):
-        if nav_string.previous_sibling.name in _INLINE_TAGS:
-            string = _ensure_space_left(string)
-        else:
-            string = string.lstrip(strip_chars)
-
-    if nav_string.next_sibling is None:
-        string = string.rstrip(strip_chars)
-    elif isinstance(nav_string.next_sibling, Tag):
-        if nav_string.next_sibling.name in _INLINE_TAGS:
-            string = _ensure_space_right(string)
-        else:
-            string = string.rstrip(strip_chars)
-    elif isinstance(nav_string.next_sibling, str):
-        string = _ensure_space_right(string)
-
-    return string
+def _normalize_html_multiline_str(html: str) -> ProtectedSoup:
+    """
+    Normalize the HTML string by removing indentations and newlines.
+    """
+    lines: list[str] = html.splitlines()
+    cleaned_html: str = ""
+    for line in lines:
+        cleaned_html += line.lstrip()
+    return protect_soup(BeautifulSoup(cleaned_html, features="html.parser"))
 
 
-def _normalize_tag(tag: PageElementType) -> PageElementType:
-    new_children: list[Tag | str] = []
-    for child in tag.contents:
-        if isinstance(child, NavigableString):
-            normalized_string = _normalize_string(child)
-            if normalized_string is not None:
-                new_children.append(normalized_string)
-        elif isinstance(child, (Tag, BeautifulSoup)):
-            new_children.append(_normalize_tag(child))
-    tag.clear()
-    tag.extend(new_children)
-    return tag
-
-
+# -------------------- Comparison helpers -------------------- #
 def assert_data_equal(
     actual_data: SemanticTagData,
     expected_data: SemanticTagData,
     path: str,
 ) -> None:
-    assert (
-        actual_data == expected_data
-    ), f"{_path_str(path)}Expected data :\n{expected_data}\nActual data :\n{actual_data}"
+    assert actual_data == expected_data, _diff_message(path, "data", expected_data, actual_data)
 
 
 def assert_attrs_equal(
@@ -233,9 +126,7 @@ def assert_attrs_equal(
         for key in list(data.keys()):
             if key.startswith("data-") and key not in RESERVED_DATA_ATTRIBUTES:
                 data.pop(key)
-    assert (
-        actual_data == expected_data
-    ), f"{_path_str(path)}Expected attrs :\n{expected_data}\nActual attrs :\n{actual_data}"
+    assert actual_data == expected_data, _diff_message(path, "attrs", expected_data, actual_data)
 
 
 def assert_elements_equal(
@@ -256,10 +147,15 @@ def assert_elements_equal(
     if is_semantic_tag(expected):
         # Checking actual child is also a semantic tag and has the right spec
         expected_spec = get_semantic_tag_spec(expected)
-        assert is_semantic_tag(actual), f"{_path_str(path)}Expected semantic tag, got : {actual}"
+        assert is_semantic_tag(actual), _diff_message(
+            path,
+            "semantic tag",
+            expected,
+            actual,
+        )
         actual_spec = get_semantic_tag_spec(actual)
-        assert actual_spec == expected_spec, (
-            f"{_path_str(path)}Expected tag spec '{expected_spec}', " f"got '{actual_spec}'"
+        assert actual_spec == expected_spec, _diff_message(
+            path, "tag spec", expected_spec, actual_spec
         )
 
         # Checking data equality
@@ -279,9 +175,14 @@ def assert_elements_equal(
             data_assertion_func=data_assertion_func,
         )
     elif is_tag(expected):
-        assert is_tag(expected), f"{_path_str(path)}Expected Tag, got : {expected}"
-        assert actual.name == expected.name, (
-            f"{_path_str(path)}Expected tag name '{expected.name}', " f"got '{actual.name}'"
+        assert is_tag(actual), _diff_message(
+            path,
+            "tag",
+            expected,
+            actual,
+        )
+        assert actual.name == expected.name, _diff_message(
+            path, "tag name", expected.name, actual.name
         )
         assert_element_lists_equal(
             actual.contents,
@@ -290,10 +191,13 @@ def assert_elements_equal(
             data_assertion_func=data_assertion_func,
         )
     else:
-        assert isinstance(
-            actual, type(expected)
-        ), f"{_path_str(path)}Expected {type(expected)}, got {type(actual)}"
-        assert actual == expected, f"{_path_str(path)}Expected {expected}, got {actual}"
+        assert isinstance(actual, type(expected)), _diff_message(
+            path,
+            "type",
+            expected,
+            actual,
+        )
+        assert actual == expected, _diff_message(path, "element", expected, actual)
 
 
 def assert_element_lists_equal(
@@ -304,10 +208,7 @@ def assert_element_lists_equal(
         [SemanticTagData, SemanticTagData, str], None
     ] = assert_data_equal,
 ):
-    assert len(actual) == len(expected), (
-        f"{_path_str(path)}Expected {[type(el) for el in expected]} tags, "
-        f"got {[type(el) for el in actual]}"
-    )
+    assert len(actual) == len(expected), _diff_message(path, "elements", expected, actual)
 
     for i, (actual_child, expected_child) in enumerate(zip(actual, expected)):
         assert_elements_equal(
@@ -318,41 +219,58 @@ def assert_element_lists_equal(
         )
 
 
-def _path_str(path: str) -> str:
-    return f"[{path}] " if path else ""
+def _diff_message(
+    path: str,
+    label: str,
+    expected_value: Any,
+    actual_value: Any,
+) -> str:
+    def _display(value: Any) -> Any:
+        if isinstance(value, list):
+            return [_display(el) for el in value]
+        elif is_tag(value):
+            return f"<{value.name}>"
+        elif isinstance(value, str):
+            return f"'{value[:30]}...'" if len(value) > 30 else f"'{value}'"
+        else:
+            return value
+
+    path_msg = f"{label.capitalize()} differ at {f'[{path}]' if path else 'root path'}"
+    expected_display = _display(expected_value)
+    actual_display = _display(actual_value)
+    return f"{path_msg}\n" f"Expected :\n{expected_display}\n" f"Actual :\n{actual_display}"
 
 
+# -------------------- Base class for most html tests  -------------------- #
 class BaseTestCaseHtml(unittest.TestCase):
     def setUp(self) -> None:
         super(BaseTestCaseHtml, self).setUp()
         self.context = create_document_context()
         self.soup = self.context.protected_soup
 
-        def _make_semantic_tag(
-            soup: BeautifulSoup,
-            spec_cls: type,
-            contents: list[ProtectedTagOrStr] = [],
-            data: SemanticTagData | None = None,
-            attrs: dict[str, str] = {},
-            reserved_data_attrs: dict[str, str] = {},
-        ) -> ProtectedTag:
-            """
-            Helper to create a semantic tag with reserved data attributes.
-            """
-            tag = make_semantic_tag(
-                soup,
-                spec_cls,
-                contents=contents,
-                data=data,
-                attrs=attrs,
-            )
-            for key, value in reserved_data_attrs.items():
-                data_key = f"data-{key}"
-                if data_key not in RESERVED_DATA_ATTRIBUTES:
-                    raise ValueError(f"Attribute '{data_key}' is not a reserved data attribute.")
-                tag.attrs[data_key] = value
-            return tag
+    def make_semantic_tag(self, spec_cls: SemanticTagSpec, **kwargs) -> ProtectedTag:
+        """Create a semantic tag with optional reserved data attributes."""
+        reserved = kwargs.pop("reserved_data_attrs", {})
+        tag = make_semantic_tag(self.soup, spec_cls, **kwargs)
+        return _set_reserved_data_attrs(tag, reserved)
 
-        self.make_semantic_tag = partial(_make_semantic_tag, self.soup)
-        self.make_tag = partial(make_tag, self.soup)
-        self.soup_extend = unprotect_soup(self.soup).extend
+    def make_tag(self, tag_name: str, **kwargs) -> ProtectedTag:
+        """Create a tag with optional reserved data attributes."""
+        reserved = kwargs.pop("reserved_data_attrs", {})
+        tag = make_tag(self.soup, tag_name, **kwargs)
+        return _set_reserved_data_attrs(tag, reserved)
+
+    def soup_extend(self, contents: list[ProtectedTagOrStr]) -> None:
+        unprotect_soup(self.soup).extend(unprotect_page_element_or_strings(contents))
+
+
+def _set_reserved_data_attrs(
+    tag: ProtectedTag,
+    reserved_data_attrs: dict[str, str],
+) -> ProtectedTag:
+    for key, value in reserved_data_attrs.items():
+        data_key = f"data-{key}"
+        if data_key not in RESERVED_DATA_ATTRIBUTES:
+            raise ValueError(f"Attribute '{data_key}' is not a reserved data attribute.")
+        tag.attrs[data_key] = value
+    return tag

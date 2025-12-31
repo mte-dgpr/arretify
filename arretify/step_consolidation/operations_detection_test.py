@@ -18,7 +18,6 @@
 #
 
 from arretify.semantic_tag_specs import OperationData, OperationSpec
-from arretify.types import ProtectedTagOrStr
 from arretify.utils.testing import BaseTestCaseHtml, assert_element_lists_equal
 
 from .operations_detection import parse_operations
@@ -27,7 +26,7 @@ from .operations_detection import parse_operations
 class TestReplaceOperations(BaseTestCaseHtml):
     def test_has_operand(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = ["sont remplacées comme suit :"]
+        elements = ["sont remplacées comme suit :"]
 
         # Act
         actual = parse_operations(self.context, elements)
@@ -55,7 +54,7 @@ class TestReplaceOperations(BaseTestCaseHtml):
 
     def test_replace_substituted(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = [
+        elements = [
             "Le deuxième alinéa de l'article 4.3.8 de l'arrêté préfectoral précité est supprimé. "
             "Il est substitué par les alinéas suivants :"
         ]
@@ -89,7 +88,7 @@ class TestReplaceOperations(BaseTestCaseHtml):
 
     def test_canceled_and_replaced(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = [
+        elements = [
             (
                 "Les prescriptions suivantes sont annulées et remplacées par les "
                 "dispositions du présent arrêté :"
@@ -122,7 +121,7 @@ class TestReplaceOperations(BaseTestCaseHtml):
 
     def test_revoked_and_replaced(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = [
+        elements = [
             "Les prescriptions de cet article sont abrogées et remplacées par celles ci-après :"
         ]
 
@@ -152,7 +151,7 @@ class TestReplaceOperations(BaseTestCaseHtml):
 
     def test_deleted_and_replaced(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = [
+        elements = [
             "L' article 1 .2 .2 SITUATION DE L'ÉTABLISSEMENT est supprimé et remplacé par :"
         ]
 
@@ -182,7 +181,7 @@ class TestReplaceOperations(BaseTestCaseHtml):
 
     def test_modified_and_replaced(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = [
+        elements = [
             "2 .4 .2 L' article 15 .2 de l' arrêté préfectoral du 19 mars 2003 "
             "est modifié et remplacé par les dispositions suivantes :"
         ]
@@ -213,7 +212,7 @@ class TestReplaceOperations(BaseTestCaseHtml):
 
     def test_modified_and_completed_by(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = [
+        elements = [
             "L'article 5 des prescriptions techniques annexées à l'arrêté préfectoral du "
             "11 juin 2004 est modifié et complété par les dispositions suivantes :"
         ]
@@ -247,7 +246,7 @@ class TestReplaceOperations(BaseTestCaseHtml):
 
     def test_modified_completed_or_annulled(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = [
+        elements = [
             "Les dispositions de l'arrêté préfectoral n09-0150 du 20 janvier 2009 susvisé "
             "sont modifiées, complétées, ou annulées par les dispositions fixées aux articles "
             "suivants, et dont le récapitulatif figure ci-après :"
@@ -285,7 +284,7 @@ class TestReplaceOperations(BaseTestCaseHtml):
 
     def test_modified_simple_disposition(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = [
+        elements = [
             "La dernière phrase de l'article 8.1.1.2 de l'arrêté préfectoral du 10 décembre 2008 "
             "est remplacée par la disposition suivante :"
         ]
@@ -319,7 +318,7 @@ class TestReplaceOperations(BaseTestCaseHtml):
 
     def test_modified_operand(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = [
+        elements = [
             "La dernière phrase de l'article 8.1.1.2 de l'arrêté préfectoral du 10 décembre 2008 "
             "est ainsi modifiée :"
         ]
@@ -353,7 +352,7 @@ class TestReplaceOperations(BaseTestCaseHtml):
 
     def test_delete_replace_plural(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = [
+        elements = [
             "Les dispositions de l'article 2.8 - Arrêtés types sont supprimées et sont remplacées "
             "par celles du tableau suivant :"
         ]
@@ -384,7 +383,7 @@ class TestReplaceOperations(BaseTestCaseHtml):
 
     def test_update(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = [
+        elements = [
             "Le tableau de l'article 1.2.1 de l'arrêté préfectoral du 10 décembre 2008 "
             "est mis à jour de la façon suivante :"
         ]
@@ -420,7 +419,7 @@ class TestReplaceOperations(BaseTestCaseHtml):
 class TestAddOperations(BaseTestCaseHtml):
     def test_add_completed_as_follows(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = [
+        elements = [
             "Le paragraphe 4.14 - Postes de chargement -déchargement est complété comme suit :"
         ]
 
@@ -450,9 +449,7 @@ class TestAddOperations(BaseTestCaseHtml):
 
     def test_add_completed(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = [
-            "Le paragraphe 4.19.1 - Réseau d'eau incendie est complété ainsi"
-        ]
+        elements = ["Le paragraphe 4.19.1 - Réseau d'eau incendie est complété ainsi"]
 
         # Act
         actual = parse_operations(self.context, elements)
@@ -479,7 +476,7 @@ class TestAddOperations(BaseTestCaseHtml):
 
     def test_completed_d_multiple_articles(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = [
+        elements = [
             "Les prescriptions de l' article 8.3. dispositions spécifiques à l'installation de "
             "combustion de l' arrêté préfectoral du 15 mars 2013 sont complétés d' articles 8.3 .8 "
             "et 8.3 .9 ainsi rédigés :"
@@ -515,9 +512,7 @@ class TestAddOperations(BaseTestCaseHtml):
 
     def test_add_operation(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = [
-            "Il est créé un article 4.3.14 à l'arrêté préfectoral du 10 décembre 2008"
-        ]
+        elements = ["Il est créé un article 4.3.14 à l'arrêté préfectoral du 10 décembre 2008"]
 
         # Act
         actual = parse_operations(self.context, elements)
@@ -541,7 +536,7 @@ class TestAddOperations(BaseTestCaseHtml):
 
     def test_created_article_end(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = [
+        elements = [
             "Un article additionnel 8.2.5 relatif au fonctionnement du casier VIII en mode "
             "bioréacteur est créé en fin de chapitre 8.2 intitulé Zone de stockage de déchets non"
             "dangereux de l' arrêté préfectoral du 28 novembre 2017"
@@ -579,7 +574,7 @@ class TestAddOperations(BaseTestCaseHtml):
 
     def test_created_new_chapter(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = [
+        elements = [
             (
                 "Il est créé un nouveau chapitre 11.6 à l' arrêté du 16 juillet 2010 "
                 "rédigé comme suit :"
@@ -608,7 +603,7 @@ class TestAddOperations(BaseTestCaseHtml):
 
     def test_created_new_article(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = [
+        elements = [
             "Il est créé un nouvel article 8.2.3 à l' arrêté du 16 juillet 2010 rédigé comme suit :"
         ]
 
@@ -634,7 +629,7 @@ class TestAddOperations(BaseTestCaseHtml):
 
     def test_created_two_new_articles(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = [
+        elements = [
             (
                 "Sous le tableau de la liste des activités autorisées, il est créé "
                 "deux nouveaux articles ainsi rédigés :"
@@ -667,7 +662,7 @@ class TestAddOperations(BaseTestCaseHtml):
 
     def test_add_operation_(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = [
+        elements = [
             (
                 "Paragraphe 4.25 -Cuyes de stockages de TDI/MOI. Il est ajouté un "
                 "paragraphe rédigé ainsi:"
@@ -700,9 +695,7 @@ class TestAddOperations(BaseTestCaseHtml):
 
     def test_add_operation_with_article_references(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = [
-            "L' article 8 .6 suivant est ajouté à l'arrêté préfectoral"
-        ]
+        elements = ["L' article 8 .6 suivant est ajouté à l'arrêté préfectoral"]
 
         # Act
         actual = parse_operations(self.context, elements)
@@ -730,7 +723,7 @@ class TestAddOperations(BaseTestCaseHtml):
 
     def test_modified_by_addition_operation(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = [
+        elements = [
             "Le chapitre 6.7 relatif aux déchets produits par l'établissement de l'arrêté "
             "préfectoral d'autorisation du 08 décembre 2009 est modifié par l'ajout du paragraphe"
         ]
@@ -764,9 +757,7 @@ class TestAddOperations(BaseTestCaseHtml):
 
     def test_insert_paragraph_at_start(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = [
-            "2.4.3 Le paragraphe suivant est inséré au début de l' article 15.4"
-        ]
+        elements = ["2.4.3 Le paragraphe suivant est inséré au début de l' article 15.4"]
 
         # Act
         actual = parse_operations(self.context, elements)
@@ -794,7 +785,7 @@ class TestAddOperations(BaseTestCaseHtml):
 
     def test_insert_after_alinea(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = [
+        elements = [
             (
                 "A la suite du 1er  alinéa de l' article 14.5 de l' arrêté préfectoral "
                 "du 18 avril 2005 sont insérées les dispositions suivantes :"
@@ -830,7 +821,7 @@ class TestAddOperations(BaseTestCaseHtml):
 
     def test_insert_new_alinea_after(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = [
+        elements = [
             "Après le 4ème alinéa de l'article 4.3.8 de l'arrêté préfectoral précité, "
             "il est inséré le nouvel alinéa suivant :"
         ]
@@ -864,7 +855,7 @@ class TestAddOperations(BaseTestCaseHtml):
 
     def test_insert_two_new_alinea(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = [
+        elements = [
             "Après lé 6ème alinéa de l'article 4.3.8 de l'arrêté préfectoral précité, "
             "il est inséré les deux nouveaux alinéas suivants :"
         ]
@@ -898,7 +889,7 @@ class TestAddOperations(BaseTestCaseHtml):
 
     def test_insert_article_after(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = [
+        elements = [
             (
                 "Un article numéroté 7.7.6.3. est inséré à la suite de l' article 7.7.6.2. "
                 "des prescriptions annexées à l' arrêté préfectoral du 20 mars 2012 "
@@ -935,7 +926,7 @@ class TestAddOperations(BaseTestCaseHtml):
 
     def test_insert_article_in_chapter(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = [
+        elements = [
             (
                 "Un article numéroté 12.4.1. intitulé Dispositions spécifiques a l'atelier "
                 "est insérée dans le chapitre 12.4."
@@ -971,9 +962,7 @@ class TestAddOperations(BaseTestCaseHtml):
 
     def test_insert_article(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = [
-            "un article numéroté 11.4.5. est inséré et est ainsi rédigé :"
-        ]
+        elements = ["un article numéroté 11.4.5. est inséré et est ainsi rédigé :"]
 
         # Act
         actual = parse_operations(self.context, elements)
@@ -1001,7 +990,7 @@ class TestAddOperations(BaseTestCaseHtml):
 
     def test_insert_title_after_another(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = [
+        elements = [
             "Un titre 15, intitulé Dispositions particulières - Fabrication de crème enzymatique "
             "est inséré après le titre 14"
         ]
@@ -1037,7 +1026,7 @@ class TestAddOperations(BaseTestCaseHtml):
 class TestDeleteOperations(BaseTestCaseHtml):
     def test_delete_abroge(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = [
+        elements = [
             "Le dernier alinéa de l' article 1 .2 .2 de l'arrêté préfectoral précité est abrogé."
         ]
 
@@ -1069,7 +1058,7 @@ class TestDeleteOperations(BaseTestCaseHtml):
 
     def test_delete_supprime(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = [
+        elements = [
             "L' article 11.1.2 relatif à la dérivation du bassin d'orage n° 1 vers le n° 2 "
             "est supprimé"
         ]
@@ -1101,7 +1090,7 @@ class TestDeleteOperations(BaseTestCaseHtml):
 
     def test_delete_annule(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = [
+        elements = [
             "L' article 2.13  Arrêté type  des prescriptions annexées à l' arrêté préfectoral "
             "modifié du 15 février 2005 est annulé."
         ]

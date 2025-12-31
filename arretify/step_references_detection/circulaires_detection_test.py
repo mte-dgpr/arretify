@@ -17,7 +17,6 @@
 # limitations under the License.
 #
 from arretify.semantic_tag_specs import DateSpec, DocumentReferenceData, DocumentReferenceSpec
-from arretify.types import ProtectedTagOrStr
 from arretify.utils.testing import BaseTestCaseHtml, assert_element_lists_equal
 
 from .circulaires_detection import parse_circulaires_references
@@ -27,7 +26,7 @@ class TestParseCirculairesReferences(BaseTestCaseHtml):
 
     def test_only_date(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = ["Bla bla circulaire du 30 mai 2005 relative à"]
+        elements = ["Bla bla circulaire du 30 mai 2005 relative à"]
 
         # Act
         actual = parse_circulaires_references(self.context, elements)
@@ -58,9 +57,7 @@ class TestParseCirculairesReferences(BaseTestCaseHtml):
 
     def test_with_ministerielle(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = [
-            "Bla bla circulaire ministérielle du 30 mai 2005 relative à"
-        ]
+        elements = ["Bla bla circulaire ministérielle du 30 mai 2005 relative à"]
 
         # Act
         actual = parse_circulaires_references(self.context, elements)
@@ -91,7 +88,7 @@ class TestParseCirculairesReferences(BaseTestCaseHtml):
 
     def test_with_random_acronym(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = ["Bla bla circulaire DPPR/DE du 30 mai 2005 relative à"]
+        elements = ["Bla bla circulaire DPPR/DE du 30 mai 2005 relative à"]
 
         # Act
         actual = parse_circulaires_references(self.context, elements)
@@ -122,9 +119,7 @@ class TestParseCirculairesReferences(BaseTestCaseHtml):
 
     def test_with_identifier_and_date(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = [
-            "Bla bla circulaire n°2005-12 du 30 mai 2005 relative à"
-        ]
+        elements = ["Bla bla circulaire n°2005-12 du 30 mai 2005 relative à"]
 
         # Act
         actual = parse_circulaires_references(self.context, elements)

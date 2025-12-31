@@ -16,394 +16,458 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-import unittest
-
-from arretify.semantic_tag_specs import OperationSpec
+from arretify.semantic_tag_specs import (
+    AlineaData,
+    AlineaSpec,
+    DocumentReferenceData,
+    DocumentReferenceSpec,
+    OperationData,
+    OperationSpec,
+    PageSeparatorData,
+    PageSeparatorSpec,
+    SectionReferenceData,
+    SectionReferenceSpec,
+)
+from arretify.types import DocumentType
 from arretify.utils.html_semantic import css_selector
-from arretify.utils.testing import create_document_context, normalized_html_str
+from arretify.utils.testing import BaseTestCaseHtml, assert_elements_equal
 
 from .operands_detection import resolve_references_and_operands
 
 
-class TestParseOperations(unittest.TestCase):
+class TestParseOperations(BaseTestCaseHtml):
 
     def test_several_references_no_operand(self):
         # Arrange
-        document_context = create_document_context(
-            normalized_html_str(
-                """
-                <div data-spec="alinea">
-                    Les
-                    <a
-                        data-group_id="11"
-                        data-parent_reference="123"
-                        data-spec="section_reference"
-                    >
-                        paragraphes 3
-                    </a>
-                    et
-                    <a
-                        data-group_id="11"
-                        data-parent_reference="123"
-                        data-spec="section_reference"
-                    >
-                        4
-                    </a>
-                    de l'
-                    <a
-                        data-tag_id="123"
-                        data-parent_reference="456"
-                        data-spec="section_reference"
-                    >
-                        article 8.5.1.1
-                    </a>
-                    de l'
-                    <a
-                        data-spec="document_reference"
-                        data-tag_id="456"
-                    >
-                        arrêté préfectoral du
-                        <time data-spec="date" datetime="2008-12-10">
-                            10 décembre 2008
-                        </time>
-                    </a>
-                    <span
-                        data-direction="rtl"
-                        data-keyword="supprimés"
-                        data-operand=""
-                        data-operation_type="delete"
-                        data-spec="operation"
-                    >
-                        sont
-                        <b>
-                            supprimés
-                        </b>
-                    </span>
-                </div>
-                """  # noqa: E501
-            )
+        self.soup_extend(
+            [
+                self.make_semantic_tag(
+                    AlineaSpec,
+                    data=AlineaData(number=1),
+                    contents=[
+                        "Les ",
+                        self.make_semantic_tag(
+                            SectionReferenceSpec,
+                            data=SectionReferenceData(
+                                parent_reference="123",
+                            ),
+                            contents=["paragraphes 3"],
+                            reserved_data_attrs=dict(group_id="11"),
+                        ),
+                        " et ",
+                        self.make_semantic_tag(
+                            SectionReferenceSpec,
+                            data=SectionReferenceData(
+                                parent_reference="123",
+                            ),
+                            contents=["4"],
+                            reserved_data_attrs=dict(group_id="11"),
+                        ),
+                        " de l' ",
+                        self.make_semantic_tag(
+                            SectionReferenceSpec,
+                            data=SectionReferenceData(
+                                parent_reference="456",
+                            ),
+                            contents=["article 8.5.1.1"],
+                            reserved_data_attrs=dict(tag_id="123"),
+                        ),
+                        " de l' ",
+                        self.make_semantic_tag(
+                            DocumentReferenceSpec,
+                            data=DocumentReferenceData(
+                                type=DocumentType.arrete_prefectoral,
+                                date="2008-12-10",
+                            ),
+                            contents=["arrêté préfectoral du 10 décembre 2008"],
+                            reserved_data_attrs=dict(tag_id="456"),
+                        ),
+                        self.make_semantic_tag(
+                            OperationSpec,
+                            data=OperationData(
+                                direction="rtl",
+                                keyword="supprimés",
+                                operand="",
+                                operation_type="delete",
+                            ),
+                            contents=[
+                                "sont ",
+                                self.make_tag("b", contents=["supprimés"]),
+                            ],
+                        ),
+                    ],
+                )
+            ]
         )
-        tag = document_context.protected_soup.select_one(css_selector(OperationSpec))
+        operation_tag = self.soup.select_one(css_selector(OperationSpec))
 
         # Act
-        resolve_references_and_operands(document_context, tag)
+        resolve_references_and_operands(self.context, operation_tag)
 
         # Assert
-        assert str(document_context.protected_soup) == normalized_html_str(
-            # Check that tag_id was added to both references, and that the references were
-            # added to the operation
-            """
-            <div data-spec="alinea">
-                Les
-                <a
-                    data-tag_id="1"
-                    data-group_id="11"
-                    data-parent_reference="123"
-                    data-spec="section_reference"
-                >
-                    paragraphes 3
-                </a>
-                et
-                <a
-                    data-tag_id="2"
-                    data-group_id="11"
-                    data-parent_reference="123"
-                    data-spec="section_reference"
-                >
-                    4
-                </a>
-                de l'
-                <a
-                    data-tag_id="123"
-                    data-parent_reference="456"
-                    data-spec="section_reference"
-                >
-                    article 8.5.1.1
-                </a>
-                de l'
-                <a
-                    data-tag_id="456"
-                    data-spec="document_reference"
-                >
-                    arrêté préfectoral du
-                    <time data-spec="date" datetime="2008-12-10">
-                        10 décembre 2008
-                    </time>
-                </a>
-                <span
-                    data-direction="rtl"
-                    data-keyword="supprimés"
-                    data-operand=""
-                    data-operation_type="delete"
-                    data-references="1,2"
-                    data-spec="operation"
-                >
-                    sont
-                    <b>
-                        supprimés
-                    </b>
-                </span>
-            </div>
-            """  # noqa: E501
+        assert_elements_equal(
+            self.soup.contents[0],
+            self.make_semantic_tag(
+                AlineaSpec,
+                data=AlineaData(number=1),
+                contents=[
+                    "Les ",
+                    self.make_semantic_tag(
+                        SectionReferenceSpec,
+                        data=SectionReferenceData(
+                            parent_reference="123",
+                        ),
+                        contents=["paragraphes 3"],
+                        reserved_data_attrs=dict(tag_id="1", group_id="11"),
+                    ),
+                    " et ",
+                    self.make_semantic_tag(
+                        SectionReferenceSpec,
+                        data=SectionReferenceData(
+                            parent_reference="123",
+                        ),
+                        contents=["4"],
+                        reserved_data_attrs=dict(tag_id="2", group_id="11"),
+                    ),
+                    " de l' ",
+                    self.make_semantic_tag(
+                        SectionReferenceSpec,
+                        data=SectionReferenceData(
+                            parent_reference="456",
+                        ),
+                        contents=["article 8.5.1.1"],
+                        reserved_data_attrs=dict(tag_id="123"),
+                    ),
+                    " de l' ",
+                    self.make_semantic_tag(
+                        DocumentReferenceSpec,
+                        data=DocumentReferenceData(
+                            type=DocumentType.arrete_prefectoral,
+                            date="2008-12-10",
+                        ),
+                        contents=["arrêté préfectoral du 10 décembre 2008"],
+                        reserved_data_attrs=dict(tag_id="456"),
+                    ),
+                    self.make_semantic_tag(
+                        OperationSpec,
+                        data=OperationData(
+                            direction="rtl",
+                            keyword="supprimés",
+                            operand="",
+                            operation_type="delete",
+                            references="1,2",
+                        ),
+                        contents=[
+                            "sont ",
+                            self.make_tag("b", contents=["supprimés"]),
+                        ],
+                    ),
+                ],
+            ),
         )
 
     def test_one_reference_one_operand(self):
         # Arrange
-        document_context = create_document_context(
-            normalized_html_str(
-                """
-                <div data-spec="alinea">
-                    La dernière phrase de l'
-                    <a
-                        data-parent_reference="123"
-                        data-spec="section_reference"
-                    >
-                        article 8.1.1.2
-                    </a>
-                    de l'
-                    <a
-                        data-spec="document_reference"
-                        data-tag_id="123"
-                    >
-                        arrêté préfectoral du
-                        <time
-                            datetime="2008-12-10"
-                            data-spec="date"
-                        >
-                                10 décembre 2008
-                        </time>
-                    </a>
-                    <span
-                        data-direction="rtl"
-                        data-has_operand="true"
-                        data-keyword="remplacée"
-                        data-operand=""
-                        data-operation_type="replace"
-                        data-spec="operation"
-                    >
-                        est
-                        <b>
-                            remplacée
-                        </b>
-                        par la disposition suivante :
-                    </span>
-                    <q>
-                        Un relevé hebdomadaire de chacun des compteurs d'eau est réalisé par l'exploitant
-                    </q>
-                    .
-                </div>
-                """  # noqa: E501
-            )
+        self.soup_extend(
+            [
+                self.make_semantic_tag(
+                    AlineaSpec,
+                    data=AlineaData(number=1),
+                    contents=[
+                        "La dernière phrase de l' ",
+                        self.make_semantic_tag(
+                            SectionReferenceSpec,
+                            data=SectionReferenceData(
+                                parent_reference="123",
+                            ),
+                            contents=["article 8.1.1.2"],
+                        ),
+                        " de l' ",
+                        self.make_semantic_tag(
+                            DocumentReferenceSpec,
+                            data=DocumentReferenceData(
+                                type=DocumentType.arrete_prefectoral,
+                                date="2008-12-10",
+                            ),
+                            contents=["arrêté préfectoral du 10 décembre 2008"],
+                            reserved_data_attrs=dict(tag_id="123"),
+                        ),
+                        self.make_semantic_tag(
+                            OperationSpec,
+                            data=OperationData(
+                                direction="rtl",
+                                has_operand=True,
+                                keyword="remplacée",
+                                operand="",
+                                operation_type="replace",
+                            ),
+                            contents=[
+                                "est ",
+                                self.make_tag("b", contents=["remplacée"]),
+                                " par la disposition suivante :",
+                            ],
+                        ),
+                        self.make_tag(
+                            "q",
+                            contents=[
+                                (
+                                    "Un relevé hebdomadaire de chacun des compteurs "
+                                    "d'eau est réalisé par l'exploitant"
+                                )
+                            ],
+                        ),
+                        ".",
+                    ],
+                )
+            ]
         )
-        tag = document_context.protected_soup.select_one(css_selector(OperationSpec))
+        operation_tag = self.soup.select_one(css_selector(OperationSpec))
 
         # Act
-        resolve_references_and_operands(document_context, tag)
+        resolve_references_and_operands(self.context, operation_tag)
 
         # Assert
-        assert str(document_context.protected_soup) == normalized_html_str(
-            """
-            <div data-spec="alinea">
-                La dernière phrase de l'
-                <a
-                    data-tag_id="1"
-                    data-parent_reference="123"
-                    data-spec="section_reference"
-                >
-                    article 8.1.1.2
-                </a>
-                de l'
-                <a
-                    data-tag_id="123"
-                    data-spec="document_reference"
-                >
-                    arrêté préfectoral du
-                    <time
-                        datetime="2008-12-10"
-                        data-spec="date"
-                    >
-                            10 décembre 2008
-                    </time>
-                </a>
-                <span
-                    data-direction="rtl"
-                    data-has_operand="true"
-                    data-keyword="remplacée"
-                    data-operand="2"
-                    data-operation_type="replace"
-                    data-references="1"
-                    data-spec="operation"
-                >
-                    est
-                    <b>
-                        remplacée
-                    </b>
-                    par la disposition suivante :
-                </span>
-                <q
-                    data-tag_id="2"
-                >
-                    Un relevé hebdomadaire de chacun des compteurs d'eau est réalisé par l'exploitant
-                </q>
-                .
-            </div>
-            """  # noqa: E501
+        assert_elements_equal(
+            self.soup.contents[0],
+            self.make_semantic_tag(
+                AlineaSpec,
+                data=AlineaData(number=1),
+                contents=[
+                    "La dernière phrase de l' ",
+                    self.make_semantic_tag(
+                        SectionReferenceSpec,
+                        data=SectionReferenceData(
+                            parent_reference="123",
+                        ),
+                        contents=["article 8.1.1.2"],
+                        reserved_data_attrs=dict(tag_id="1"),
+                    ),
+                    " de l' ",
+                    self.make_semantic_tag(
+                        DocumentReferenceSpec,
+                        data=DocumentReferenceData(
+                            type=DocumentType.arrete_prefectoral,
+                            date="2008-12-10",
+                        ),
+                        contents=["arrêté préfectoral du 10 décembre 2008"],
+                        reserved_data_attrs=dict(tag_id="123"),
+                    ),
+                    self.make_semantic_tag(
+                        OperationSpec,
+                        data=OperationData(
+                            direction="rtl",
+                            has_operand=True,
+                            keyword="remplacée",
+                            operand="2",
+                            operation_type="replace",
+                            references="1",
+                        ),
+                        contents=[
+                            "est ",
+                            self.make_tag("b", contents=["remplacée"]),
+                            " par la disposition suivante :",
+                        ],
+                    ),
+                    self.make_tag(
+                        "q",
+                        contents=[
+                            (
+                                "Un relevé hebdomadaire de chacun des compteurs "
+                                "d'eau est réalisé par l'exploitant"
+                            )
+                        ],
+                        reserved_data_attrs=dict(tag_id="2"),
+                    ),
+                    ".",
+                ],
+            ),
         )
 
     def test_with_single_document_reference(self):
         # Arrange
-        document_context = create_document_context(
-            normalized_html_str(
-                """
-                <div data-spec="alinea">
-                    Les prescriptions de l'
-                    <a data-spec="document_reference">
-                        arrêté préfectoral du
-                        <time
-                            datetime="2008-12-10"
-                            data-spec="date"
-                        >
-                                10 décembre 2008
-                        </time>
-                    </a>
-                    <span
-                        data-direction="rtl"
-                        data-keyword="abrogées"
-                        data-operand=""
-                        data-operation_type="delete"
-                        data-spec="operation"
-                    >
-                        sont
-                        <b>
-                            abrogées
-                        </b>
-                        .
-                    </span>
-                </div>
-                """  # noqa: E501
-            )
+        self.soup_extend(
+            [
+                self.make_semantic_tag(
+                    AlineaSpec,
+                    data=AlineaData(number=1),
+                    contents=[
+                        "Les prescriptions de l' ",
+                        self.make_semantic_tag(
+                            DocumentReferenceSpec,
+                            data=DocumentReferenceData(
+                                type=DocumentType.arrete_prefectoral,
+                                date="2008-12-10",
+                            ),
+                            contents=["arrêté préfectoral du 10 décembre 2008"],
+                        ),
+                        self.make_semantic_tag(
+                            OperationSpec,
+                            data=OperationData(
+                                direction="rtl",
+                                keyword="abrogées",
+                                operand="",
+                                operation_type="delete",
+                            ),
+                            contents=[
+                                "sont ",
+                                self.make_tag("b", contents=["abrogées"]),
+                                " .",
+                            ],
+                        ),
+                    ],
+                )
+            ]
         )
-        tag = document_context.protected_soup.select_one(css_selector(OperationSpec))
+        operation_tag = self.soup.select_one(css_selector(OperationSpec))
 
         # Act
-        resolve_references_and_operands(document_context, tag)
+        resolve_references_and_operands(self.context, operation_tag)
 
         # Assert
-        assert str(document_context.protected_soup) == normalized_html_str(
-            """
-            <div data-spec="alinea">
-                Les prescriptions de l'
-                <a
-                    data-tag_id="1"
-                    data-spec="document_reference"
-                >
-                    arrêté préfectoral du
-                    <time
-                        datetime="2008-12-10"
-                        data-spec="date"
-                    >
-                            10 décembre 2008
-                    </time>
-                </a>
-                <span
-                    data-direction="rtl"
-                    data-keyword="abrogées"
-                    data-operand=""
-                    data-operation_type="delete"
-                    data-references="1"
-                    data-spec="operation"
-                >
-                    sont
-                    <b>
-                        abrogées
-                    </b>
-                    .
-                </span>
-            </div>
-            """  # noqa: E501
+        assert_elements_equal(
+            self.soup.contents[0],
+            self.make_semantic_tag(
+                AlineaSpec,
+                data=AlineaData(number=1),
+                contents=[
+                    "Les prescriptions de l' ",
+                    self.make_semantic_tag(
+                        DocumentReferenceSpec,
+                        data=DocumentReferenceData(
+                            type=DocumentType.arrete_prefectoral,
+                            date="2008-12-10",
+                        ),
+                        contents=["arrêté préfectoral du 10 décembre 2008"],
+                        reserved_data_attrs=dict(tag_id="1"),
+                    ),
+                    self.make_semantic_tag(
+                        OperationSpec,
+                        data=OperationData(
+                            direction="rtl",
+                            keyword="abrogées",
+                            operand="",
+                            operation_type="delete",
+                            references="1",
+                        ),
+                        contents=[
+                            "sont ",
+                            self.make_tag("b", contents=["abrogées"]),
+                            " .",
+                        ],
+                    ),
+                ],
+            ),
         )
 
     def test_with_inline_tag_between_operands(self):
         # Arrange
-        document_context = create_document_context(
-            normalized_html_str(
-                """
-                <div data-spec="alinea">
-                    Les dispositions de l'
-                    <a data-spec="document_reference">
-                        arrêté préfectoral du
-                        <time
-                            datetime="2008-12-10"
-                            data-spec="date"
-                        >
-                                10 décembre 2008
-                        </time>
-                    </a>
-                    <a data-spec="page_separator"></a>
-                    <span
-                        data-direction="rtl"
-                        data-has_operand="true"
-                        data-keyword="remplacées"
-                        data-operand=""
-                        data-operation_type="replace"
-                        data-spec="operation"
-                    >
-                        sont
-                        <b>
-                            remplacées
-                        </b>
-                        par la disposition suivante :
-                    </span>
-                    <a data-spec="page_separator"></a>
-                    <q>
-                        Un relevé hebdomadaire de chacun des compteurs d'eau est réalisé par l'exploitant
-                    </q>
-                </div>
-                """  # noqa: E501
-            )
+        self.soup_extend(
+            [
+                self.make_semantic_tag(
+                    AlineaSpec,
+                    data=AlineaData(number=1),
+                    contents=[
+                        "Les dispositions de l' ",
+                        self.make_semantic_tag(
+                            DocumentReferenceSpec,
+                            data=DocumentReferenceData(
+                                type=DocumentType.arrete_prefectoral,
+                                date="2008-12-10",
+                            ),
+                            contents=["arrêté préfectoral du 10 décembre 2008"],
+                        ),
+                        self.make_semantic_tag(
+                            PageSeparatorSpec,
+                            data=PageSeparatorData(page_index=1),
+                        ),
+                        self.make_semantic_tag(
+                            OperationSpec,
+                            data=OperationData(
+                                direction="rtl",
+                                has_operand=True,
+                                keyword="remplacées",
+                                operand="",
+                                operation_type="replace",
+                            ),
+                            contents=[
+                                "sont ",
+                                self.make_tag("b", contents=["remplacées"]),
+                                " par la disposition suivante :",
+                            ],
+                        ),
+                        self.make_semantic_tag(
+                            PageSeparatorSpec,
+                            data=PageSeparatorData(page_index=2),
+                        ),
+                        self.make_tag(
+                            "q",
+                            contents=[
+                                (
+                                    "Un relevé hebdomadaire de chacun des compteurs "
+                                    "d'eau est réalisé par l'exploitant"
+                                )
+                            ],
+                        ),
+                    ],
+                )
+            ]
         )
-        tag = document_context.protected_soup.select_one(css_selector(OperationSpec))
+        operation_tag = self.soup.select_one(css_selector(OperationSpec))
 
         # Act
-        resolve_references_and_operands(document_context, tag)
+        resolve_references_and_operands(self.context, operation_tag)
 
         # Assert
-        assert str(document_context.protected_soup) == normalized_html_str(
-            """
-            <div data-spec="alinea">
-                Les dispositions de l'
-                <a
-                    data-tag_id="1"
-                    data-spec="document_reference"
-                >
-                    arrêté préfectoral du
-                    <time
-                        datetime="2008-12-10"
-                        data-spec="date"
-                    >
-                            10 décembre 2008
-                    </time>
-                </a>
-                <a data-spec="page_separator"></a>
-                <span
-                    data-direction="rtl"
-                    data-has_operand="true"
-                    data-keyword="remplacées"
-                    data-operand="2"
-                    data-operation_type="replace"
-                    data-references="1"
-                    data-spec="operation"
-                >
-                    sont
-                    <b>
-                        remplacées
-                    </b>
-                    par la disposition suivante :
-                </span>
-                <a data-spec="page_separator"></a>
-                <q data-tag_id="2">
-                    Un relevé hebdomadaire de chacun des compteurs d'eau est réalisé par l'exploitant
-                </q>
-            </div>
-            """  # noqa: E501
+        assert_elements_equal(
+            self.soup.contents[0],
+            self.make_semantic_tag(
+                AlineaSpec,
+                data=AlineaData(number=1),
+                contents=[
+                    "Les dispositions de l' ",
+                    self.make_semantic_tag(
+                        DocumentReferenceSpec,
+                        data=DocumentReferenceData(
+                            type=DocumentType.arrete_prefectoral,
+                            date="2008-12-10",
+                        ),
+                        contents=["arrêté préfectoral du 10 décembre 2008"],
+                        reserved_data_attrs=dict(tag_id="1"),
+                    ),
+                    self.make_semantic_tag(
+                        PageSeparatorSpec,
+                        data=PageSeparatorData(page_index=1),
+                    ),
+                    self.make_semantic_tag(
+                        OperationSpec,
+                        data=OperationData(
+                            direction="rtl",
+                            has_operand=True,
+                            keyword="remplacées",
+                            operand="2",
+                            operation_type="replace",
+                            references="1",
+                        ),
+                        contents=[
+                            "sont ",
+                            self.make_tag("b", contents=["remplacées"]),
+                            " par la disposition suivante :",
+                        ],
+                    ),
+                    self.make_semantic_tag(
+                        PageSeparatorSpec,
+                        data=PageSeparatorData(page_index=2),
+                    ),
+                    self.make_tag(
+                        "q",
+                        contents=[
+                            (
+                                "Un relevé hebdomadaire de chacun des compteurs "
+                                "d'eau est réalisé par l'exploitant"
+                            )
+                        ],
+                        reserved_data_attrs=dict(tag_id="2"),
+                    ),
+                ],
+            ),
         )

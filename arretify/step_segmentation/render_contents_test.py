@@ -43,7 +43,7 @@ from arretify.step_segmentation.semantic_tag_specs import (
     VisaSegmentationSpec,
 )
 from arretify.step_segmentation.testing import BaseTestCaseSegmentation
-from arretify.utils.testing import assert_html_list_equal, normalized_html_str
+from arretify.utils.testing import assert_element_lists_equal, assert_elements_equal, parse_element
 
 
 class TestListIndentation(BaseTestCaseSegmentation):
@@ -118,10 +118,17 @@ class TestRenderTable(BaseTestCaseSegmentation):
 
         # Act
         table_tag = render_table(self.context, tag)
+        # markdown parsing adds lots of strings with only newlines
+        # we remove them for easier testing
+        for descendant in table_tag.find_all(string=True):
+            if descendant.strip() == "":
+                descendant.extract()
 
         # Assert
-        assert normalized_html_str(str(table_tag)) == normalized_html_str(
-            """
+        assert_elements_equal(
+            table_tag,
+            parse_element(
+                """
             <table>
                 <thead>
                     <tr>
@@ -141,6 +148,7 @@ class TestRenderTable(BaseTestCaseSegmentation):
                 </tbody>
             </table>
             """
+            ),
         )
 
 
@@ -161,13 +169,13 @@ class TestRenderTableDescription(BaseTestCaseSegmentation):
         table_description_elements = list(render_table_description(self.context, tag))
 
         # Assert
-        assert_html_list_equal(
+        assert_element_lists_equal(
             table_description_elements,
             [
-                "<br/>",
+                parse_element("<br>"),
                 "This is a description of the table.",
-                '<a data-page_index="1" data-spec="page_separator"></a>',
-                "<br/>",
+                parse_element('<a data-page_index="1" data-spec="page_separator"></a>'),
+                parse_element("<br>"),
                 "This is another part of the description.",
             ],
         )
@@ -190,13 +198,16 @@ class TestRenderList(BaseTestCaseSegmentation):
         list_tag = render_list(self.context, tag)
 
         # Assert
-        assert normalized_html_str(str(list_tag)) == normalized_html_str(
-            """
+        assert_elements_equal(
+            list_tag,
+            parse_element(
+                """
             <ul>
                 <li>- Item 1<a data-spec="page_separator" data-page_index="1"></a></li>
                 <li>- Item 2</li>
             </ul>
             """
+            ),
         )
 
     def test_render_nested_list(self):
@@ -212,8 +223,10 @@ class TestRenderList(BaseTestCaseSegmentation):
         list_tag = render_list(self.context, tag)
 
         # Assert
-        assert normalized_html_str(str(list_tag)) == normalized_html_str(
-            """
+        assert_elements_equal(
+            list_tag,
+            parse_element(
+                """
             <ul>
                 <li>- Item 1
                     <ul>
@@ -224,6 +237,7 @@ class TestRenderList(BaseTestCaseSegmentation):
                 <li>- Item 2</li>
             </ul>
             """
+            ),
         )
 
     def test_render_list_text_span(self):
@@ -244,13 +258,16 @@ class TestRenderList(BaseTestCaseSegmentation):
         list_tag = render_list(self.context, tag)
 
         # Assert
-        assert normalized_html_str(str(list_tag)) == normalized_html_str(
-            """
+        assert_elements_equal(
+            list_tag,
+            parse_element(
+                """
             <ul>
                 <li>- Item 1 This is a continuation of the previous sentence.</li>
                 <li>- Item 2</li>
             </ul>
             """
+            ),
         )
 
     def test_render_list_numbers(self):
@@ -269,13 +286,16 @@ class TestRenderList(BaseTestCaseSegmentation):
         list_tag = render_list(self.context, tag)
 
         # Assert
-        assert normalized_html_str(str(list_tag)) == normalized_html_str(
-            """
+        assert_elements_equal(
+            list_tag,
+            parse_element(
+                """
             <ul>
                 <li>- First item</li>
                 <li>- Second item</li>
             </ul>
             """
+            ),
         )
 
 
@@ -292,13 +312,16 @@ class TestRenderBlockQuote(BaseTestCaseSegmentation):
         blockquote_tag = render_blockquote(self.context, tag)
 
         # Assert
-        assert normalized_html_str(str(blockquote_tag)) == normalized_html_str(
-            """
+        assert_elements_equal(
+            blockquote_tag,
+            parse_element(
+                """
             <blockquote>
                 <p>This is</p>
                 <p>a blockquote</p>
             </blockquote>
             """
+            ),
         )
 
 
@@ -316,12 +339,15 @@ class TestRenderAlinea(BaseTestCaseSegmentation):
         result = render_alinea(self.context, alinea)
 
         # Assert
-        assert normalized_html_str(str(result)) == normalized_html_str(
-            """
+        assert_elements_equal(
+            result,
+            parse_element(
+                """
             <div data-spec="alinea" data-number="1">
                 This is an alinea.
             </div>
             """
+            ),
         )
 
 
@@ -354,8 +380,10 @@ class TestRenderSection(BaseTestCaseSegmentation):
         result = render_section(self.context, tag)
 
         # Assert
-        assert normalized_html_str(str(result)) == normalized_html_str(
-            """
+        assert_elements_equal(
+            result,
+            parse_element(
+                """
             <section data-spec="section" data-number="1" data-title="Disposition" data-type="article">
                 <h2 data-level="0" data-spec="section_title">
                     Article 1 : Disposition
@@ -365,6 +393,7 @@ class TestRenderSection(BaseTestCaseSegmentation):
                 </div>
             </section>
             """  # noqa: E501
+            ),
         )
 
 
@@ -387,12 +416,15 @@ class TestRenderSectionTitle(BaseTestCaseSegmentation):
         result = render_section_title(self.context, section_title)
 
         # Assert
-        assert normalized_html_str(str(result)) == normalized_html_str(
-            """
+        assert_elements_equal(
+            result,
+            parse_element(
+                """
             <h2 data-level="0" data-spec="section_title">
                 Titre I - Introduction
             </h2>
             """
+            ),
         )
 
 
@@ -412,11 +444,13 @@ class TestRenderVisaMotif(BaseTestCaseSegmentation):
         rendered = render_visa_motif(self.context, tag)
 
         # Assert
-        assert normalized_html_str(str(rendered)) == normalized_html_str(
-            """
+        assert_elements_equal(
+            rendered,
+            parse_element(
+                """
             <div data-spec="visa">
-                Vu le code de l'environnement, et notamment ses titres
-                1er et 4 des parties réglementaires et législatives du livre V ;
+                Vu le code de l'environnement, et notamment ses titres 1er et 4 des parties réglementaires et législatives du livre V ;
             </div>
-            """
+            """  # noqa: E501
+            ),
         )

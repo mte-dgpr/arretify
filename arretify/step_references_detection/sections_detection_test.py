@@ -17,7 +17,6 @@
 # limitations under the License.
 #
 from arretify.semantic_tag_specs import SectionReferenceData, SectionReferenceSpec
-from arretify.types import ProtectedTagOrStr
 from arretify.utils.testing import BaseTestCaseHtml, assert_element_lists_equal
 
 from .sections_detection import parse_section_references
@@ -26,7 +25,7 @@ from .sections_detection import parse_section_references
 class TestArticleSingle(BaseTestCaseHtml):
     def test_article_num(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = ["article 4.1.b"]
+        elements = ["article 4.1.b"]
 
         # Act
         actual = parse_section_references(self.context, elements)
@@ -48,7 +47,7 @@ class TestArticleSingle(BaseTestCaseHtml):
 
     def test_article_8(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = ["article 8"]
+        elements = ["article 8"]
 
         # Act
         actual = parse_section_references(self.context, elements)
@@ -70,7 +69,7 @@ class TestArticleSingle(BaseTestCaseHtml):
 
     def test_article_1er(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = ["article 1er"]
+        elements = ["article 1er"]
 
         # Act
         actual = parse_section_references(self.context, elements)
@@ -92,7 +91,7 @@ class TestArticleSingle(BaseTestCaseHtml):
 
     def test_article_111e(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = ["article 111è"]
+        elements = ["article 111è"]
 
         # Act
         actual = parse_section_references(self.context, elements)
@@ -114,7 +113,7 @@ class TestArticleSingle(BaseTestCaseHtml):
 
     def test_article_2eme(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = ["article 2ème"]
+        elements = ["article 2ème"]
 
         # Act
         actual = parse_section_references(self.context, elements)
@@ -136,7 +135,7 @@ class TestArticleSingle(BaseTestCaseHtml):
 
     def test_code_article_r511_9(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = ["article R. 511-9"]
+        elements = ["article R. 511-9"]
 
         # Act
         actual = parse_section_references(self.context, elements)
@@ -158,7 +157,7 @@ class TestArticleSingle(BaseTestCaseHtml):
 
     def test_code_article_d12(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = ["article D.12"]
+        elements = ["article D.12"]
 
         # Act
         actual = parse_section_references(self.context, elements)
@@ -180,7 +179,7 @@ class TestArticleSingle(BaseTestCaseHtml):
 
     def test_code_article_l181_3(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = ["article L181-3"]
+        elements = ["article L181-3"]
 
         # Act
         actual = parse_section_references(self.context, elements)
@@ -202,7 +201,7 @@ class TestArticleSingle(BaseTestCaseHtml):
 
     def test_ordinal_premier(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = ["article premier"]
+        elements = ["article premier"]
 
         # Act
         actual = parse_section_references(self.context, elements)
@@ -224,7 +223,7 @@ class TestArticleSingle(BaseTestCaseHtml):
 
     def test_ordinal_quatrieme(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = ["article quatrième"]
+        elements = ["article quatrième"]
 
         # Act
         actual = parse_section_references(self.context, elements)
@@ -246,7 +245,7 @@ class TestArticleSingle(BaseTestCaseHtml):
 
     def test_ambiguous_paragraph_use(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = ["Paragraphe L123"]
+        elements = ["Paragraphe L123"]
 
         # Act
         actual = parse_section_references(self.context, elements)
@@ -271,7 +270,7 @@ class TestArticleRange(BaseTestCaseHtml):
 
     def test_article_num_range_3_to_11(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = ["articles 3 à 11"]
+        elements = ["articles 3 à 11"]
 
         # Act
         actual = parse_section_references(self.context, elements)
@@ -294,7 +293,7 @@ class TestArticleRange(BaseTestCaseHtml):
 
     def test_article_num_range_6_18_1_to_6_18_7(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = ["articles 6.18.1 à 6.18.7"]
+        elements = ["articles 6.18.1 à 6.18.7"]
 
         # Act
         actual = parse_section_references(self.context, elements)
@@ -317,7 +316,7 @@ class TestArticleRange(BaseTestCaseHtml):
 
     def test_article_num_range_6_18_a_to_6_18_c(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = ["articles 6.18.a à 6.18.c"]
+        elements = ["articles 6.18.a à 6.18.c"]
 
         # Act
         actual = parse_section_references(self.context, elements)
@@ -340,7 +339,7 @@ class TestArticleRange(BaseTestCaseHtml):
 
     def test_ordinal_range_premier_to_troisieme(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = ["de l'article premier à l'article troisième"]
+        elements = ["de l'article premier à l'article troisième"]
 
         # Act
         actual = parse_section_references(self.context, elements)
@@ -364,7 +363,7 @@ class TestArticleRange(BaseTestCaseHtml):
 
     def test_ordinal_range_second_to_10eme(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = ["des articles second à 10ème"]
+        elements = ["des articles second à 10ème"]
 
         # Act
         actual = parse_section_references(self.context, elements)
@@ -388,7 +387,7 @@ class TestArticleRange(BaseTestCaseHtml):
 
     def test_code_article_range_r511_9_to_d512(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = ["de l'article R. 511-9 à l'article D.512"]
+        elements = ["de l'article R. 511-9 à l'article D.512"]
 
         # Act
         actual = parse_section_references(self.context, elements)
@@ -412,7 +411,7 @@ class TestArticleRange(BaseTestCaseHtml):
 
     def test_code_article_range_r543_137_to_r543_151(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = ["l' article R.543-137 à R.543-151"]
+        elements = ["l' article R.543-137 à R.543-151"]
 
         # Act
         actual = parse_section_references(self.context, elements)
@@ -439,7 +438,7 @@ class TestArticlePlural(BaseTestCaseHtml):
 
     def test_article_num(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = ["articles 5.1.9, 9.2.1, 10.2.1 et 10.2.5"]
+        elements = ["articles 5.1.9, 9.2.1, 10.2.1 et 10.2.5"]
 
         # Act
         actual = parse_section_references(self.context, elements)
@@ -492,7 +491,7 @@ class TestArticlePlural(BaseTestCaseHtml):
 
     def test_ordinal_premier_9a(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = ["articles premier,9.a"]
+        elements = ["articles premier,9.a"]
 
         # Act
         actual = parse_section_references(self.context, elements)
@@ -525,7 +524,7 @@ class TestArticlePlural(BaseTestCaseHtml):
 
     def test_ordinal_premier_et_second(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = ["articles premier et second"]
+        elements = ["articles premier et second"]
 
         # Act
         actual = parse_section_references(self.context, elements)
@@ -558,7 +557,7 @@ class TestArticlePlural(BaseTestCaseHtml):
 
     def test_article_code(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = ["articles R. 511-9 et L. 111"]
+        elements = ["articles R. 511-9 et L. 111"]
 
         # Act
         actual = parse_section_references(self.context, elements)
@@ -591,7 +590,7 @@ class TestArticlePlural(BaseTestCaseHtml):
 
     def test_article_range(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = ["articles R. 512 - 74 et R. 512-39-1 à R.512-39-3"]
+        elements = ["articles R. 512 - 74 et R. 512-39-1 à R.512-39-3"]
 
         # Act
         actual = parse_section_references(self.context, elements)
@@ -625,7 +624,7 @@ class TestArticlePlural(BaseTestCaseHtml):
 
     def test_range_first(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = ["articles R.541-49 à R.541-64 et R.541-79"]
+        elements = ["articles R.541-49 à R.541-64 et R.541-79"]
 
         # Act
         actual = parse_section_references(self.context, elements)
@@ -662,7 +661,7 @@ class TestAlineaSingle(BaseTestCaseHtml):
 
     def test_alinea_num_before(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = ["2ème alinéa"]
+        elements = ["2ème alinéa"]
 
         # Act
         actual = parse_section_references(self.context, elements)
@@ -684,7 +683,7 @@ class TestAlineaSingle(BaseTestCaseHtml):
 
     def test_alinea_num_after_3(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = ["alinéa 3"]
+        elements = ["alinéa 3"]
 
         # Act
         actual = parse_section_references(self.context, elements)
@@ -706,7 +705,7 @@ class TestAlineaSingle(BaseTestCaseHtml):
 
     def test_alinea_num_after_second(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = ["alinéa second"]
+        elements = ["alinéa second"]
 
         # Act
         actual = parse_section_references(self.context, elements)
@@ -728,7 +727,7 @@ class TestAlineaSingle(BaseTestCaseHtml):
 
     def test_alinea_num_after_neuvieme(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = ["alinéa neuvième"]
+        elements = ["alinéa neuvième"]
 
         # Act
         actual = parse_section_references(self.context, elements)
@@ -753,7 +752,7 @@ class TestAlineaRange(BaseTestCaseHtml):
 
     def test_alinea_num_range(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = ["alinéas 3 à 5"]
+        elements = ["alinéas 3 à 5"]
 
         # Act
         actual = parse_section_references(self.context, elements)
@@ -776,7 +775,7 @@ class TestAlineaRange(BaseTestCaseHtml):
 
     def test_alinea_num_range_with_ordinal(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = ["alinéas premier à troisième"]
+        elements = ["alinéas premier à troisième"]
 
         # Act
         actual = parse_section_references(self.context, elements)
@@ -802,7 +801,7 @@ class TestAlineaMultiple(BaseTestCaseHtml):
 
     def test_alinea_list(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = ["Les alinéas 3 et 4"]
+        elements = ["Les alinéas 3 et 4"]
 
         # Act
         actual = parse_section_references(self.context, elements)
@@ -839,7 +838,7 @@ class TestUnknownSingle(BaseTestCaseHtml):
 
     def test_unknown_num(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = ["paragraphe 3"]
+        elements = ["paragraphe 3"]
 
         # Act
         actual = parse_section_references(self.context, elements)
@@ -861,7 +860,7 @@ class TestUnknownSingle(BaseTestCaseHtml):
 
     def test_paragraph_symbol(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = ["Dans le § a.4"]
+        elements = ["Dans le § a.4"]
 
         # Act
         actual = parse_section_references(self.context, elements)
@@ -887,7 +886,7 @@ class TestUnknownRange(BaseTestCaseHtml):
 
     def test_unknown_num_range(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = ["paragraphes 3 à 5"]
+        elements = ["paragraphes 3 à 5"]
 
         # Act
         actual = parse_section_references(self.context, elements)
@@ -913,7 +912,7 @@ class TestUnknownMultiple(BaseTestCaseHtml):
 
     def test_paragraphe_list(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = ["Les paragraphes 3è, 5 et quatrième"]
+        elements = ["Les paragraphes 3è, 5 et quatrième"]
 
         # Act
         actual = parse_section_references(self.context, elements)
@@ -960,7 +959,7 @@ class TestAppendixSingle(BaseTestCaseHtml):
 
     def test_appendix_num(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = ["annexe 1"]
+        elements = ["annexe 1"]
 
         # Act
         actual = parse_section_references(self.context, elements)
@@ -982,7 +981,7 @@ class TestAppendixSingle(BaseTestCaseHtml):
 
     def test_appendix_roman(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = ["annexe IV"]
+        elements = ["annexe IV"]
 
         # Act
         actual = parse_section_references(self.context, elements)
@@ -1004,7 +1003,7 @@ class TestAppendixSingle(BaseTestCaseHtml):
 
     def test_appendix_no_number(self):
         # Arrange
-        elements: list[ProtectedTagOrStr] = ["en annexe de blabla"]
+        elements = ["en annexe de blabla"]
 
         # Act
         actual = parse_section_references(self.context, elements)

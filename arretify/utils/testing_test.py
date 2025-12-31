@@ -18,105 +18,35 @@
 #
 import unittest
 
-from bs4.element import Tag
-
-from .testing import normalized_html_str, normalized_soup
+from .testing import _normalize_html_multiline_str, assert_elements_equal, parse_element
 
 
-class TestHtmlNormalization(unittest.TestCase):
+class TestNormalizeHtmlMultilineStr(unittest.TestCase):
 
-    def test_remove_all_spaces_and_newlines_except_after_inline(self):
-        assert (
-            normalized_html_str(
-                """
-                <div>
-                    bla <a>link</a>
-                    <span class="start">
-                        blo <b>bold blo</b>
-                    </span>
-                </div>
-                <div>
-                    <div>
-                        bli <i>italic bli</i>
-                    </div>
-                    <blockquote>
-                        blu <u>underline blu</u>
-                    </blockquote>
-                </div>
-                """
-            )
-            == (
-                '<div>bla <a>link</a><span class="start">blo <b>bold blo</b></span></div>'
-                "<div><div>bli <i>italic bli</i></div><blockquote>blu <u>underline blu</u>"
-                "</blockquote></div>"
-            )
-        )
-
-    def test_insert_space_between_string_and_inline(self):
-        assert (
-            normalized_html_str(
-                """
-                    arrêté ministériel du
-                    <time data-spec="date" datetime="1998-02-02">
-                        2 février 1998
-                    </time>
-                """
-            )
-            == (
-                'arrêté ministériel du <time data-spec="date" datetime="1998-02-02">'
-                "2 février 1998</time>"
-            )
-        )
-
-    def test_insert_space_between_inline_and_string(self):
-        assert (
-            normalized_html_str(
-                """
-                    <time data-spec="date" datetime="1998-02-02">
-                        2 février 1998
-                    </time>
-                    arrêté ministériel du
-                """
-            )
-            == (
-                '<time data-spec="date" datetime="1998-02-02">'
-                "2 février 1998</time> arrêté ministériel du"
-            )
-        )
-
-    def test_insert_space_between_string_lines(self):
-        assert (
-            normalized_html_str(
-                """
-                    <a>
-                        bla
-                    </a>
-                    he ho
-                    hi hu
-                    ha hy ha
-                """
-            )
-            == ("<a>bla</a> he ho hi hu ha hy ha")
-        )
-
-    def test_remove_empty_strings(self):
-        bs = normalized_soup(
+    def test_removes_indentation_and_newlines(self):
+        # Arrange & Act
+        result = _normalize_html_multiline_str(
             """
-            <div id="el1">
-                <div id="el2"></div>
-                <div id="el3"></div>
-            </div>
-            <div id="el4"></div>
-            <div id="el5">
-                <div id="el6">
-                    <div id="el7"></div>
-                </div>
+            <div>
+                <span>content</span>
             </div>
             """
         )
-        assert str(bs) == (
-            '<div id="el1"><div id="el2"></div><div id="el3"></div></div>'
-            '<div id="el4"></div>'
-            '<div id="el5"><div id="el6"><div id="el7"></div></div></div>'
+
+        # Assert
+        assert len(result.contents) == 1
+        assert_elements_equal(result.contents[0], parse_element("<div><span>content</span></div>"))
+
+    def test_handles_multiple_root_elements(self):
+        # Arrange & Act
+        result = _normalize_html_multiline_str(
+            """
+            <div>first</div>
+            <div>second</div>
+            """
         )
-        assert all(isinstance(d, Tag) for d in bs.descendants)
+
+        # Assert
+        assert len(result.contents) == 2
+        assert_elements_equal(result.contents[0], parse_element("<div>first</div>"))
+        assert_elements_equal(result.contents[1], parse_element("<div>second</div>"))

@@ -16,21 +16,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-import unittest
 
-from bs4 import BeautifulSoup
-
-from arretify.utils.testing import normalized_soup
+from arretify.utils.testing import BaseTestCaseHtml, parse_element_list
 
 from .html_tree_navigation import closest_common_ancestor, is_descendant, is_parent
 
 
-class TestIsDescendant(unittest.TestCase):
+class TestIsDescendant(BaseTestCaseHtml):
 
     def test_is_descendant(self):
         # Arrange
-        soup = normalized_soup(
-            """
+        self.soup_extend(
+            parse_element_list(
+                """
             <div>
                 bla <a>link</a>
                 <span class="parent">
@@ -38,9 +36,10 @@ class TestIsDescendant(unittest.TestCase):
                 </span>
             </div>
             """
+            )
         )
-        parent_tag = soup.find(class_="parent")
-        child_tag = soup.find(class_="child")
+        parent_tag = self.soup.find(class_="parent")
+        child_tag = self.soup.find(class_="child")
         assert parent_tag is not None
         assert child_tag is not None
 
@@ -49,8 +48,9 @@ class TestIsDescendant(unittest.TestCase):
 
     def test_is_not_descendant(self):
         # Arrange
-        soup = normalized_soup(
-            """
+        self.soup_extend(
+            parse_element_list(
+                """
             <div>
                 bla <a class="other">link</a>
                 <span class="parent">
@@ -58,9 +58,10 @@ class TestIsDescendant(unittest.TestCase):
                 </span>
             </div>
             """
+            )
         )
-        parent_tag = soup.find(class_="parent")
-        other_tag = soup.find(class_="other")
+        parent_tag = self.soup.find(class_="parent")
+        other_tag = self.soup.find(class_="other")
         assert parent_tag is not None
         assert other_tag is not None
 
@@ -68,12 +69,13 @@ class TestIsDescendant(unittest.TestCase):
         assert is_descendant(parent_tag.find("b"), parent_tag.find("a")) is False
 
 
-class TestIsParent(unittest.TestCase):
+class TestIsParent(BaseTestCaseHtml):
 
     def test_is_parent(self):
         # Arrange
-        soup = normalized_soup(
-            """
+        self.soup_extend(
+            parse_element_list(
+                """
             <div>
                 bla <a>link</a>
                 <span class="parent">
@@ -81,9 +83,10 @@ class TestIsParent(unittest.TestCase):
                 </span>
             </div>
             """
+            )
         )
-        parent_tag = soup.find(class_="parent")
-        child_tag = soup.find(class_="child")
+        parent_tag = self.soup.find(class_="parent")
+        child_tag = self.soup.find(class_="child")
         assert parent_tag is not None
         assert child_tag is not None
 
@@ -92,8 +95,9 @@ class TestIsParent(unittest.TestCase):
 
     def test_is_not_parent(self):
         # Arrange
-        soup = normalized_soup(
-            """
+        self.soup_extend(
+            parse_element_list(
+                """
             <div>
                 bla <a class="other">link</a>
                 <span class="parent">
@@ -101,9 +105,10 @@ class TestIsParent(unittest.TestCase):
                 </span>
             </div>
             """
+            )
         )
-        parent_tag = soup.find(class_="parent")
-        other_tag = soup.find(class_="other")
+        parent_tag = self.soup.find(class_="parent")
+        other_tag = self.soup.find(class_="other")
         assert parent_tag is not None
         assert other_tag is not None
 
@@ -111,14 +116,13 @@ class TestIsParent(unittest.TestCase):
         assert is_parent(other_tag, parent_tag) is False
 
 
-class TestClosestCommonAncestor(unittest.TestCase):
+class TestClosestCommonAncestor(BaseTestCaseHtml):
 
     def test_direct_parent(self):
         # Arrange
-        soup = BeautifulSoup("", "html.parser")
-        tag1 = soup.new_tag("div")
-        tag2 = soup.new_tag("div")
-        parent = soup.new_tag("div")
+        tag1 = self.soup.new_tag("div")
+        tag2 = self.soup.new_tag("div")
+        parent = self.soup.new_tag("div")
         parent.append(tag1)
         parent.append(tag2)
 
@@ -130,14 +134,13 @@ class TestClosestCommonAncestor(unittest.TestCase):
 
     def test_grandparent(self):
         # Arrange
-        soup = BeautifulSoup("", "html.parser")
-        tag1 = soup.new_tag("div")
-        tag2 = soup.new_tag("div")
-        parent1 = soup.new_tag("div")
-        parent2 = soup.new_tag("div")
+        tag1 = self.soup.new_tag("div")
+        tag2 = self.soup.new_tag("div")
+        parent1 = self.soup.new_tag("div")
+        parent2 = self.soup.new_tag("div")
         parent1.append(tag1)
         parent2.append(tag2)
-        grandparent = soup.new_tag("div")
+        grandparent = self.soup.new_tag("div")
         grandparent.append(parent1)
         grandparent.append(parent2)
 
