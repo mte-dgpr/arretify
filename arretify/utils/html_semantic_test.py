@@ -189,6 +189,21 @@ class TestSemanticTagData(unittest.TestCase):
         # Assert
         assert m.model_dump() == {}
 
+    def test_missing_fields_set_to_none(self) -> None:
+        # Arrange
+        class Model(SemanticTagData):
+            required_field: str
+            optional_field: str | None = None
+
+        # Act - load data with missing optional_field
+        m = Model.model_validate({"required_field": "value"})
+
+        # Assert
+        assert m.required_field == "value"
+        assert m.optional_field is None
+        # When serialized, None values are removed
+        assert m.model_dump() == {"required_field": "value"}
+
     def test_build_with_native_values(self) -> None:
         # Act
         m = self.Model(

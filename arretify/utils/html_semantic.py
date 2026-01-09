@@ -26,6 +26,7 @@ from pydantic import (
     ConfigDict,
     SerializerFunctionWrapHandler,
     model_serializer,
+    model_validator,
 )
 from pydantic.functional_serializers import PlainSerializer
 
@@ -146,6 +147,16 @@ class SemanticTagData(BaseModel):
                 raise ValueError(
                     f"Field name '{field_name}' is reserved and cannot be used in {cls.__name__}."
                 )
+
+    @model_validator(mode="before")
+    @classmethod
+    def set_none_for_missing_fields(cls, data: dict) -> dict:
+        # Add None for any field that's missing in the input data
+        if isinstance(data, dict):
+            for field_name in cls.model_fields:
+                if field_name not in data:
+                    data[field_name] = None
+        return data
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler: SerializerFunctionWrapHandler) -> dict[str, object]:
