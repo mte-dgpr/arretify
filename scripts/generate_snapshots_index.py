@@ -21,9 +21,9 @@ from pathlib import Path
 from typing import List
 
 CURRENT_DIR = Path(__file__).parent.resolve()
-EXAMPLES_DIR = (CURRENT_DIR / ".." / "examples").resolve()
+EXAMPLES_DIR = (CURRENT_DIR / ".." / "datasets" / "snapshots").resolve()
 OUTPUT_FILE = EXAMPLES_DIR / "index.html"
-TEMPLATE_FILE = CURRENT_DIR / "generate_examples_index.tmpl.html"
+TEMPLATE_FILE = CURRENT_DIR / "generate_snapshots_index.tmpl.html"
 PDF_DIR = EXAMPLES_DIR / "arretes_pdf"
 HTML_DIR = EXAMPLES_DIR / "arretes_html"
 

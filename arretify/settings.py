@@ -46,7 +46,7 @@ _SETTINGS_ENV_MAP = {
 
 # Static settings
 APP_ROOT = pathlib.Path(__file__).resolve().parent.parent
-EXAMPLES_DIR = APP_ROOT / "examples"
+EXAMPLES_DIR = APP_ROOT / "datasets" / "snapshots"
 DEFAULT_ARRETE_TEMPLATE = open(
     APP_ROOT / "arretify" / "templates" / "arrete.html", "r", encoding="utf-8"
 ).read()
