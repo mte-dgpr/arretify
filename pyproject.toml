@@ -59,6 +59,10 @@ dev = [
   "licenseheaders~=0.8.8"
 ]
 
+quality_measures = [
+  "python-Levenshtein~=0.27.3"
+]
+
 [project.scripts]
 arretify = "arretify.main:main_cli"
 
@@ -83,7 +87,7 @@ addopts = "--ignore=arretify/_vendor"
 
 [tool.hatch.build]
 exclude = [
-  "examples/",
+  "datasets/",
   "tmp/",
   ".git/",
 ]

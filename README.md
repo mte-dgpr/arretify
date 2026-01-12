@@ -26,7 +26,7 @@
     - *détection de références* - droit français, droit européen, arrêtés connexes
     - *opérations de modification* - abrogation, modification, d'arrêtés connexes
 
-### → [Exemples en ligne](https://mte-dgpr.github.io/arretify/examples/)
+### → [Exemples en ligne](https://mte-dgpr.github.io/arretify/datasets/snapshots/)
 
 
 ## Démarrage rapide
