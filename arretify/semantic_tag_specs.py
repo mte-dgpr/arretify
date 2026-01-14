@@ -301,7 +301,7 @@ AlineaSpec: SemanticTagSpec[AlineaData] = SemanticTagSpec(
 
 
 class SectionData(SemanticTagData):
-    title: str | None
+    title: str | None = None
     number: str
     type: str
 

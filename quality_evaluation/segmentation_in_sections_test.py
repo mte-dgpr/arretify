@@ -22,11 +22,13 @@ import unittest
 
 from bs4 import BeautifulSoup
 from segmentation_in_sections import (
+    SectionTree,
     SectionTreeNode,
     _generate_string_for_section_tree,
+    _generate_string_for_section_tree_node_list,
     _normalize_section_tree_string,
     build_section_tree,
-    compute_similarity,
+    compute_evaluation,
 )
 
 from arretify.semantic_tag_specs import (
@@ -40,7 +42,7 @@ from arretify.semantic_tag_specs import (
 from arretify.utils.html_create import make_semantic_tag
 
 
-class TestGenerateStringForSectionTree(unittest.TestCase):
+class TestGenerateStringForSectionTreeNodeList(unittest.TestCase):
     def test_nested_children(self):
         # Arrange
         children = [
@@ -56,10 +58,39 @@ class TestGenerateStringForSectionTree(unittest.TestCase):
         ]
 
         # Act
-        result = _generate_string_for_section_tree(children)
+        result = _generate_string_for_section_tree_node_list(children)
 
         # Assert
-        assert result == "1\n1.1\n"
+        assert result == "1\n>1.1\n"
+
+
+class TestGenerateStringForSectionTree(unittest.TestCase):
+    def test_main_and_appendix(self):
+        # Arrange
+        section_tree = SectionTree(
+            main=[
+                SectionTreeNode(
+                    data=SectionData(number="1", title="Article 1", type="article"),
+                    children=[],
+                ),
+                SectionTreeNode(
+                    data=SectionData(number="2", title="Article 2", type="article"),
+                    children=[],
+                ),
+            ],
+            appendix=[
+                SectionTreeNode(
+                    data=SectionData(number="A", title="Annexe A", type="annexe"),
+                    children=[],
+                ),
+            ],
+        )
+
+        # Act
+        string = _generate_string_for_section_tree(section_tree)
+
+        # Assert
+        assert string == "1\n2\n-\nA"
 
 
 class TestNormalizeSectionTreeString(unittest.TestCase):
@@ -168,65 +199,59 @@ class TestBuildSectionTree(unittest.TestCase):
         assert result.appendix[0].data.number == "A"
 
 
-class TestComputeSimilarity(unittest.TestCase):
-    def test_identical_trees(self):
+class TestComputeEvaluation(unittest.TestCase):
+    def test_compute_evaluation_without_diff(self):
         # Arrange
-        children1 = [
-            SectionTreeNode(
-                data=SectionData(number="1", title="Section 1", type="article"),
-                children=[
-                    SectionTreeNode(
-                        data=SectionData(number="1.1", title="Section 1.1", type="article"),
-                        children=[],
-                    ),
-                ],
-            )
-        ]
-        children2 = [
-            SectionTreeNode(
-                data=SectionData(number="1", title="Section 1", type="article"),
-                children=[
-                    SectionTreeNode(
-                        data=SectionData(number="1.1", title="Section 1.1", type="article"),
-                        children=[],
-                    ),
-                ],
-            )
-        ]
+        ground_truth = SectionTree(
+            main=[
+                SectionTreeNode(data=SectionData(number="1", type="titre"), children=[]),
+            ],
+            appendix=None,
+        )
+        result = SectionTree(
+            main=[
+                SectionTreeNode(data=SectionData(number="1", type="titre"), children=[]),
+            ],
+            appendix=None,
+        )
 
         # Act
-        result = compute_similarity(children1, children2)
+        evaluation, (string_result, string_ground_truth) = compute_evaluation(
+            file_name="test.pdf",
+            section_tree_result=result,
+            section_tree_ground_truth=ground_truth,
+            baseline_run=None,
+        )
 
         # Assert
-        assert result == 1.0
+        assert evaluation.similarity == 1.0
+        assert string_result == string_ground_truth
 
-    def test_slightly_different_trees(self):
+    def test_compute_evaluation_with_diff(self):
         # Arrange
-        children1 = [
-            SectionTreeNode(
-                data=SectionData(number="1", title="Section 1", type="article"),
-                children=[
-                    SectionTreeNode(
-                        data=SectionData(number="1.1", title="Section 1.1", type="article"),
-                        children=[],
-                    ),
-                ],
-            )
-        ]
-        children2 = [
-            SectionTreeNode(
-                data=SectionData(number="1", title="Section 1", type="article"),
-                children=[
-                    SectionTreeNode(
-                        data=SectionData(number="1.2", title="Section 1.2", type="article"),
-                        children=[],
-                    ),
-                ],
-            )
-        ]
+        ground_truth = SectionTree(
+            main=[
+                SectionTreeNode(data=SectionData(number="1", type="titre"), children=[]),
+            ],
+            appendix=None,
+        )
+        result = SectionTree(
+            main=[
+                SectionTreeNode(data=SectionData(number="2", type="titre"), children=[]),
+            ],
+            appendix=None,
+        )
 
         # Act
-        result = compute_similarity(children1, children2)
+        evaluation, (string_result, string_ground_truth) = compute_evaluation(
+            file_name="test.pdf",
+            section_tree_result=result,
+            section_tree_ground_truth=ground_truth,
+            baseline_run=None,
+        )
 
         # Assert
-        assert 0 < result < 1.0
+        assert evaluation.similarity < 1.0
+        assert string_result != string_ground_truth
+        assert "1" in string_ground_truth
+        assert "2" in string_result

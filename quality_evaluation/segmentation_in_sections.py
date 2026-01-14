@@ -22,6 +22,7 @@ from datetime import date as Date
 from pathlib import Path
 from typing import Type, TypeVar
 
+import git
 import Levenshtein
 from dotenv import load_dotenv
 from pydantic import BaseModel
@@ -55,12 +56,13 @@ class SectionTree(BaseModel):
 class Evaluation(BaseModel):
     file_name: str
     similarity: float
-    diff: float | None
+    delta: float | None
 
 
 class Run(BaseModel):
     date: Date
     baseline_date: Date | None
+    git_hash: str
     evaluations: dict[str, Evaluation]
 
 
@@ -76,7 +78,16 @@ def dump_json(output_json_path: Path, model: BaseModel) -> None:
 
 
 def load_json(json_path: Path, model_class: Type[T]) -> T:
-    return model_class.model_validate_json(json_path.read_text(encoding="utf-8"))
+    try:
+        return model_class.model_validate_json(json_path.read_text(encoding="utf-8"))
+    except Exception:
+        _LOGGER.error(f"Error loading JSON from {json_path}")
+        raise
+
+
+def get_git_hash() -> str:
+    repo = git.Repo(ROOT_DIR)
+    return repo.head.commit.hexsha
 
 
 # -------------------- Section Tree Building -------------------- #
@@ -134,27 +145,35 @@ def _normalize_section_tree_string(section_tree_string: str) -> str:
     return "\n".join(lines)
 
 
-def _generate_string_for_section_tree(children: list[SectionTreeNode]) -> str:
+def _generate_string_for_section_tree_node_list(
+    children: list[SectionTreeNode], depth: int = 0
+) -> str:
     result = ""
+    indent = ">" * depth
     for child in children:
-        result += f"{child.data.number}\n"
-        result += _generate_string_for_section_tree(child.children)
+        result += f"{indent}{child.data.number}\n"
+        result += _generate_string_for_section_tree_node_list(child.children, depth + 1)
     return result
 
 
-def compute_similarity(children1: list[SectionTreeNode], children2: list[SectionTreeNode]) -> float:
-    return Levenshtein.ratio(
-        _normalize_section_tree_string(_generate_string_for_section_tree(children1)),
-        _normalize_section_tree_string(_generate_string_for_section_tree(children2)),
+def _generate_string_for_section_tree(section_tree: SectionTree) -> str:
+    return (
+        _normalize_section_tree_string(
+            _generate_string_for_section_tree_node_list(section_tree.main)
+        )
+        + "\n-\n"
+        + _normalize_section_tree_string(
+            _generate_string_for_section_tree_node_list(section_tree.appendix or [])
+        )
     )
 
 
 def compute_evaluation(
     file_name: str,
-    section_tree_actual: SectionTree,
+    section_tree_result: SectionTree,
     section_tree_ground_truth: SectionTree,
     baseline_run: Run | None,
-) -> Evaluation:
+) -> tuple[Evaluation, tuple[str, str]]:
     baseline_evaluation = None
     if baseline_run:
         baseline_evaluation = baseline_run.evaluations.get(file_name)
@@ -163,15 +182,17 @@ def compute_evaluation(
                 f"No baseline evaluation found for {file_name} " f"in run dated {baseline_run.date}"
             )
 
-    similarity = compute_similarity(section_tree_actual.main, section_tree_ground_truth.main)
+    string_result = _generate_string_for_section_tree(section_tree_result)
+    string_ground_truth = _generate_string_for_section_tree(section_tree_ground_truth)
+    similarity = Levenshtein.ratio(string_result, string_ground_truth)
 
     return Evaluation(
         file_name=file_name,
         similarity=similarity,
-        diff=(
+        delta=(
             similarity - baseline_evaluation.similarity if baseline_evaluation is not None else None
         ),
-    )
+    ), (string_result, string_ground_truth)
 
 
 # -------------------- File Loading and PDF Processing -------------------- #
@@ -282,6 +303,14 @@ if __name__ == "__main__":
         / "ground_truth_segmentation_in_sections",
         help="Path to the directory containing ground truth section tree JSON files.",
     )
+    evaluate_parser.add_argument(
+        "--diff-dir",
+        default=None,
+        help=(
+            "Directory where diff files should be saved. To see differences in VS Code, "
+            "select both files and use 'Compare Selected'."
+        ),
+    )
 
     args = parser.parse_args()
 
@@ -330,31 +359,43 @@ if __name__ == "__main__":
             _LOGGER.info("New experiment will be created.")
 
         if any(run.date == Date.today() for run in experiment.runs):
-            parser.error(
-                "A run for today already exists."
-                "Please remove it before running the evaluation again."
-            )
+            _LOGGER.info("Removing existing run for today.")
+            experiment.runs = [run for run in experiment.runs if run.date != Date.today()]
 
         baseline_run = experiment.runs[-1] if experiment.runs else None
         current_run = Run(
             date=Date.today(),
             baseline_date=baseline_run.date if baseline_run else None,
+            git_hash=get_git_hash(),
             evaluations={},
         )
         experiment.runs.append(current_run)
 
+        diff_dir = Path(args.diff_dir) if args.diff_dir else None
+        if diff_dir:
+            diff_dir.mkdir(parents=True, exist_ok=True)
+            _LOGGER.info(f"Diff directory: {diff_dir}")
+
         for pdf_file_path, document_context in loaded_pdfs:
-            section_tree_actual = build_section_tree(document_context.soup)
+            section_tree_result = build_section_tree(document_context.soup)
             section_tree_ground_truth = load_json(
                 ground_truth_dir / f"{pdf_file_path.stem}.json", SectionTree
             )
-            evaluation = compute_evaluation(
+            evaluation, (string_result, string_ground_truth) = compute_evaluation(
                 pdf_file_path.name,
-                section_tree_actual,
+                section_tree_result,
                 section_tree_ground_truth,
                 baseline_run,
             )
             current_run.evaluations[pdf_file_path.name] = evaluation
+
+            if diff_dir:
+                # Save ground truth and result as separate files for VS Code diff view
+                ground_truth_file = diff_dir / f"{pdf_file_path.stem}.ground_truth.txt"
+                result_file = diff_dir / f"{pdf_file_path.stem}.result.txt"
+                ground_truth_file.write_text(string_ground_truth, encoding="utf-8")
+                result_file.write_text(string_result, encoding="utf-8")
+                _LOGGER.info(f"Diff files saved: {ground_truth_file.name} vs {result_file.name}")
 
         # ----- Generate evaluation summary
         total = len(current_run.evaluations)
@@ -362,20 +403,20 @@ if __name__ == "__main__":
         _LOGGER.info(f"\nEvaluation: {total} files, avg={avg_score:.4f}")
 
         if baseline_run:
-            regressions = [
-                e for e in current_run.evaluations.values() if e.diff is not None and e.diff < 0
+            regressions: list[Evaluation] = [
+                e for e in current_run.evaluations.values() if e.delta is not None and e.delta < 0
             ]
-            improvements = [
-                e for e in current_run.evaluations.values() if e.diff is not None and e.diff > 0
+            improvements: list[Evaluation] = [
+                e for e in current_run.evaluations.values() if e.delta is not None and e.delta > 0
             ]
             _LOGGER.info(f"vs {baseline_run.date}: ↓{len(regressions)} ↑{len(improvements)}")
 
             if regressions:
-                for e in sorted(regressions, key=lambda x: x.diff)[:3]:
-                    _LOGGER.info(f"  ⚠ {e.file_name}: {e.diff:+.4f}")
+                for e in sorted(regressions, key=lambda x: x.delta):
+                    _LOGGER.info(f"  ⚠ {e.file_name}: {e.delta:+.4f}")
             if improvements:
-                for e in sorted(improvements, key=lambda x: x.diff, reverse=True)[:3]:
-                    _LOGGER.info(f"  ✓ {e.file_name}: {e.diff:+.4f}")
+                for e in sorted(improvements, key=lambda x: x.delta, reverse=True):
+                    _LOGGER.info(f"  ✓ {e.file_name}: {e.delta:+.4f}")
 
         dump_json(output_path, experiment)
         _LOGGER.info(f"Experiment saved to: {output_path}")

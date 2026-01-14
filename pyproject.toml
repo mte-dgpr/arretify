@@ -60,7 +60,8 @@ dev = [
 ]
 
 quality_evaluations = [
-  "python-Levenshtein~=0.27.3"
+  "python-Levenshtein~=0.27.3",
+  "GitPython~=3.1"
 ]
 
 [project.scripts]

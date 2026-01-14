@@ -150,12 +150,12 @@ class SemanticTagData(BaseModel):
 
     @model_validator(mode="before")
     @classmethod
-    def set_none_for_missing_fields(cls, data: dict) -> dict:
-        # Add None for any field that's missing in the input data
+    def set_default_for_missing_fields(cls, data: dict) -> dict:
+        # Add default value for any field that's missing in the input data
         if isinstance(data, dict):
-            for field_name in cls.model_fields:
+            for field_name, field_info in cls.model_fields.items():
                 if field_name not in data:
-                    data[field_name] = None
+                    data[field_name] = field_info.get_default(call_default_factory=True)
         return data
 
     @model_serializer(mode="wrap")
