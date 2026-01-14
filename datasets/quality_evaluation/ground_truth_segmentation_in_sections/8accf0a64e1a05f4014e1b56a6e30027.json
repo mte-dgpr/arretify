@@ -1,4 +1,93 @@
 {
-  "main": [],
-  "appendix": null
+  "main": [
+    {
+      "data": {
+        "number": "1",
+        "type": "article"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "number": "2",
+        "type": "article"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "number": "3",
+        "type": "article"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "number": "4",
+        "type": "article"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "number": "5",
+        "type": "article"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "number": "6",
+        "type": "article"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "number": "7",
+        "type": "article"
+      },
+      "children": []
+    }
+  ],
+  "appendix": [
+    {
+      "data": {
+        "number": "1",
+        "type": "annexe"
+      },
+      "children": [
+        {
+          "data": {
+            "number": "1",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "Valeurs limites de rejet des eaux pluviales et eaux de refroidissement ",
+            "number": "2",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "Surveillance de la qualité des eaux de refroidissement",
+            "number": "3",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "number": "4",
+            "type": "article"
+          },
+          "children": []
+        }
+      ]
+    }
+  ]
 }

@@ -2,42 +2,254 @@
   "main": [
     {
       "data": {
-        "title": "Supérieure ou égale à 5000 t",
+        "title": "DISPOSITIONS GENERALES",
         "number": "1",
-        "type": "unknown"
+        "type": "titre"
       },
-      "children": []
+      "children": [
+        {
+          "data": {
+            "title": "DÉSIGNATION DE L'EXPLOITANT",
+            "number": "1",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "DESCRIPTION DES PRODUITS AUTORISÉS ET DES VOLUMES :",
+            "number": "2",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "ARRÊTÉS APPLICABLES POUR LES INSTALLATIONS SOUMISES À DÉCLARATION",
+            "number": "3",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "ORGANISATION DU STOCKAGE",
+            "number": "4",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "LUTTE CONTRE L'INTRUSION ",
+            "number": "5",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "ACCESSIBILITÉ AU SITE POUR LES SERVICES DE SECOURS",
+            "number": "6",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "MOYENS DE LUTTE CONTRE L'INCENDIE ET RÉTENTION DES EAUX D'EXTINCTION INCENDIE",
+            "number": "7",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "CUVETTES DE RÉTENTION",
+            "number": "8",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "PROTECTION CONTRE LA FOUDRE ",
+            "number": "9",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "RECENSEMENT DES POTENTIELS DE DANGER",
+            "number": "10",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "CONNAISSANCE DES PRODUITS - ETIQUETAGE",
+            "number": "10.1",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "ÉTAT DES STOCKS DE PRODUITS",
+            "number": "10.2",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "LOCALISATION DES DISQUES",
+            "number": "10.3",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "PROPRETÉ DE L'INSTALLATION",
+            "number": "11",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "TRAVAUX ",
+            "number": "12",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "CONSIGNES D'EXPLOITATION",
+            "number": "13",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "VÉRIFICATION PÉRIODIQUE ET MAINTENANCE DES ÉQUIPEMENTS",
+            "number": "14",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "MESURES POUR RÉDUIRE LES SOURCES D'IGNITION ",
+            "number": "15",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "MISE EN SÉCURITÉ ET REMISE EN ÉTAT EN FIN D'EXPLOITATION",
+            "number": "16",
+            "type": "article"
+          },
+          "children": []
+        }
+      ]
     },
     {
       "data": {
-        "title": "Supérieure ou égale à 1250 t , mais inférieure à 5000 t",
+        "title": "DISPOSITIONS PARTICULIERES APPLICABLES AU STOCKAGE DE PRODUITS PHYTOSANITAIRES",
         "number": "2",
-        "type": "unknown"
+        "type": "titre"
       },
-      "children": []
+      "children": [
+        {
+          "data": {
+            "title": "RÈGLES DE STOCKAGE",
+            "number": "17",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "DISPOSITIONS CONSTRUCTIVES ",
+            "number": "18",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "MOYENS DE PRÉVENTION ET DE PROTECTION CONTRE L'INCENDIE",
+            "number": "19",
+            "type": "article"
+          },
+          "children": []
+        }
+      ]
     },
     {
       "data": {
-        "title": "Supérieure ou égale à 500 t , mais inférieure à 1250 t",
+        "title": "DISPOSITIONS PARTICULIERES APPLICABLES AUX CELLULES DE LA PARTIE «EXTENSION 2008»",
         "number": "3",
-        "type": "unknown"
+        "type": "titre"
       },
-      "children": []
-    },
-    {
-      "data": {
-        "number": "4",
-        "type": "unknown"
-      },
-      "children": []
-    },
-    {
-      "data": {
-        "title": "Arrêtés Applıcables pour les installations SOUmiSES À déclaration",
-        "number": "3",
-        "type": "article"
-      },
-      "children": []
+      "children": [
+        {
+          "data": {
+            "title": "DISPOSITIONS CONSTRUCTIVES",
+            "number": "20",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "DÉTECTION, SYSTÈME D'ALERTE ET ÉVACUATION EN CAS D'INCENDIE AU SEIN DE LA RÉSERVE DU MAGASIN GAMM VERT",
+            "number": "21",
+            "type": "article"
+          },
+          "children": []
+        ,}
+        {
+          "data": {
+            "title": "DROIT DES TIERS ",
+            "number": "22",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "RECOURS",
+            "number": "23",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "SANCTIONS",
+            "number": "24",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "EXÉCUTION ET DIFFUSION",
+            "number": "25",
+            "type": "article"
+          },
+          "children": []
+        }
+      ]
     }
   ],
   "appendix": null

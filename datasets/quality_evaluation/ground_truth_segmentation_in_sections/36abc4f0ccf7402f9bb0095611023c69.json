@@ -2,17 +2,57 @@
   "main": [
     {
       "data": {
-        "title": "JUN 2006",
-        "number": "18",
-        "type": "unknown"
+        "number": "1",
+        "type": "article"
       },
       "children": []
     },
     {
       "data": {
-        "title": "JUN 2006",
-        "number": "16",
-        "type": "unknown"
+        "number": "2",
+        "type": "article"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "number": "3",
+        "type": "article"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "number": "4",
+        "type": "article"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "number": "5",
+        "type": "article"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "number": "6",
+        "type": "article"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "number": "7",
+        "type": "article"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "number": "8",
+        "type": "article"
       },
       "children": []
     }

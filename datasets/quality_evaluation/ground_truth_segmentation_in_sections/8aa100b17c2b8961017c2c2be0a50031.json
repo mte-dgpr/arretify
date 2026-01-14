@@ -2,8 +2,203 @@
   "main": [
     {
       "data": {
-        "number": "6.1",
-        "type": "unknown"
+        "title": "Exploitant titulaire de l'autorisation",
+        "number": "1",
+        "type": "article"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "title": "Exploitation",
+        "number": "2",
+        "type": "article"
+      },
+      "children": [
+        {
+          "data": {
+            "title": "Limitation des sources d'émissions",
+            "number": "2.1",
+            "type": "unknown"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "Utilisation de substances dangereuses",
+            "number": "2.2",
+            "type": "unknown"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "Positionnement sur les meilleures techniques disponibles ",
+            "number": "2.3",
+            "type": "unknown"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "Gestion des signalements",
+            "number": "2.4",
+            "type": "unknown"
+          },
+          "children": []
+        }
+      ]
+    },
+    {
+      "data": {
+        "title": "Caractérisation des rejets atmosphériques",
+        "number": "3",
+        "type": "article"
+      },
+      "children": [
+        {
+          "data": {
+            "title": "Définitions",
+            "number": "3.1",
+            "type": "unknown"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "Caractérisation des sources d'émissions constituant un rejet à l'atmosphère ",
+            "number": "3.2",
+            "type": "unknown"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "Identification des substances ou mélanges présents au rejet",
+            "number": "3.3",
+            "type": "unknown"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "Amélioration de la connaissance des rejets ",
+            "number": "3.4",
+            "type": "unknown"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "Cas des émissions fugitives de COV",
+            "number": "3.5",
+            "type": "unknown"
+          },
+          "children": []
+        }
+      ]
+    },
+    {
+      "data": {
+        "title": "Transmission d'un bilan et comparaison des valeurs mesurées ",
+        "number": "4",
+        "type": "article"
+      },
+      "children": [
+        {
+          "data": {
+            "title": "Bilan",
+            "number": "4.1",
+            "type": "unknown"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "Comparaison des valeurs mesurées",
+            "number": "4.2",
+            "type": "unknown"
+          },
+          "children": []
+        }
+      ]
+    },
+    {
+      "data": {
+        "title": "Valeurs limites d'émission et surveillance des rejets ",
+        "number": "5",
+        "type": "article"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "title": "Réduction des impacts durant les phases de torchage",
+        "number": "6",
+        "type": "article"
+      },
+      "children": [
+        {
+          "data": {
+            "number": "6.1",
+            "type": "unknown"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "number": "6.2",
+            "type": "unknown"
+          },
+          "children": []
+        }
+      ]
+    },
+    {
+      "data": {
+        "title": "Évaluation des impacts",
+        "number": "7",
+        "type": "article"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "title": "Surveillance de l'environnement",
+        "number": "8",
+        "type": "article"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "title": "Publicité",
+        "number": "9",
+        "type": "article"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "title": "Voies et délais de recours",
+        "number": "10",
+        "type": "article"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "title": "Sanctions ",
+        "number": "11",
+        "type": "article"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "title": "Copie et exécution",
+        "number": "12",
+        "type": "article"
       },
       "children": []
     }
