@@ -1,9 +1,74 @@
 {
-  "main": [],
+  "main": [
+    {
+      "data": {
+        "title": "Institution des servitudes.",
+        "number": "1",
+        "type": "article"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "title": "Servitudes relatives à l'usage des terrains.",
+        "number": "2",
+        "type": "article"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "title": "Servitudes relatives à l'usage des eaux souterraines.",
+        "number": "3",
+        "type": "article"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "title": "Levée des servitudes et changement d'usage.",
+        "number": "4",
+        "type": "article"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "title": "Information des tiers.",
+        "number": "5",
+        "type": "article"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "title": "Publicité. ",
+        "number": "6",
+        "type": "article"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "title": "Délais et voie de recours.",
+        "number": "7",
+        "type": "article"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "title": "Exécution.",
+        "number": "8",
+        "type": "article"
+      },
+      "children": []
+    }
+  ],
   "appendix": [
     {
       "data": {
-        "number": "",
+        "number": "1",
         "type": "annexe"
       },
       "children": []

@@ -7,7 +7,64 @@
         "type": "article"
       },
       "children": []
+    },
+    {
+      "data": {
+        "title": "Article modifié ",
+        "number": "2",
+        "type": "article"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "title": "Article modifié",
+        "number": "3",
+        "type": "article"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "title": "Article modifié",
+        "number": "4",
+        "type": "article"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "title": "Annexe modifiée",
+        "number": "5",
+        "type": "article"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "title": "Publicité ",
+        "number": "6",
+        "type": "article"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "title": "Exécution",
+        "number": "7",
+        "type": "article"
+      },
+      "children": []
     }
   ],
-  "appendix": null
+  "appendix": [
+    {
+      "data": {
+        "title": "PLAN D'IMPLANTATION DU RÉSEAU DE SUIVI DE LA QUALITÉ DES EAUX SOUTERRAINES",
+        "number": "I",
+        "type": "annexe"
+      },
+      "children": []
+    }
+  ]
 }

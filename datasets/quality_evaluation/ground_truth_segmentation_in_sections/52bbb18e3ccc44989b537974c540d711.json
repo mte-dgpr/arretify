@@ -2,65 +2,1456 @@
   "main": [
     {
       "data": {
-        "title": "ÉCHÉANCES",
-        "number": "10.1",
-        "type": "article"
+        "title": "PORTÉE DE L'AUTORISATION ET CONDITIONS GÉNÉRALES",
+        "number": "1",
+        "type": "titre"
       },
       "children": [
         {
           "data": {
-            "number": "1.2",
-            "type": "unknown"
+            "title": "BÉNÉFICIAIRE ET PORTÉE DE L'AUTORISATION",
+            "number": "1",
+            "type": "chapitre"
+          },
+          "children": [
+            {
+              "data": {
+                "number": "1.1.1",
+                "type": "article"
+              },
+              "children": []
+            },
+            {
+              "data": {
+                "title": "INSTALLATIONS NON-VISEES PAR LA NOMENCLATURE, SOUMISES A DECLARATION OU A ENREGISTREMENT",
+                "number": "1.1.2",
+                "type": "article"
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "data": {
+            "title": "NATURE DES INSTALLATIONS ",
+            "number": "2",
+            "type": "chapitre"
+          },
+          "children": [
+            {
+              "data": {
+                "title": "LISTE DES INSTALLATIONS CONCERNEES PAR UNE RUBRIQUE DE LA NOMENCLATURE DES INSTALLATIONS CLASSEES",
+                "number": "1.2.1",
+                "type": "article"
+              },
+              "children": []
+            },
+            {
+              "data": {
+                "title": "SITUATION DE L'ETABLISSEMENT",
+                "number": "1.2.2",
+                "type": "article"
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "data": {
+            "title": "CONFORMITÉ AU DOSSIER DE DEMANDE D'AUTORISATION ",
+            "number": "3",
+            "type": "chapitre"
+          },
+          "children": [
+            {
+              "data": {
+                "title": "CONFORMITÉ AUX DOSSIERS",
+                "number": "1.3.1",
+                "type": "article"
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "data": {
+            "title": "DURÉE ET LIMITES DE L'AUTORISATION",
+            "number": "4",
+            "type": "chapitre"
+          },
+          "children": [
+            {
+              "data": {
+                "title": "DURÉE ET LIMITES DE L'AUTORISATION",
+                "number": "1.4.1",
+                "type": "article"
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "data": {
+            "title": "PÉRIMÈTRE D'ÉLOIGNEMENT",
+            "number": "5",
+            "type": "chapitre"
+          },
+          "children": [
+            {
+              "data": {
+                "title": "IMPLANTATION ET ISOLEMENT DU SITE",
+                "number": "1.5.1",
+                "type": "article"
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "data": {
+            "title": "GARANTIES FINANCIÈRES",
+            "number": "6",
+            "type": "chapitre"
+          },
+          "children": [
+            {
+              "data": {
+                "title": "OBJET DES GARANTIES FINANCIÈRES",
+                "number": "1.6.1",
+                "type": "article"
+              },
+              "children": []
+            },
+            {
+              "data": {
+                "title": "MONTANT DES GARANTIES FINANCIÈRES",
+                "number": "1.6.2",
+                "type": "article"
+              },
+              "children": []
+            },
+            {
+              "data": {
+                "title": "ETABLISSEMENT DES GARANTIES FINANCIERES",
+                "number": "1.6.3",
+                "type": "article"
+              },
+              "children": []
+            },
+            {
+              "data": {
+                "title": "RENOUVELLEMENT DES GARANTIES FINANCIERES",
+                "number": "1.6.4",
+                "type": "article"
+              },
+              "children": []
+            },
+            {
+              "data": {
+                "title": "ACTUALISATION DES GARANTIES FINANCIERES",
+                "number": "1.6.5",
+                "type": "article"
+              },
+              "children": []
+            },
+            {
+              "data": {
+                "title": "REVISION DU MONTANT DES GARANTIES FINANCIERES",
+                "number": "1.6.6",
+                "type": "article"
+              },
+              "children": []
+            },
+            {
+              "data": {
+                "title": "ABSENCE DE GARANTIES FINANCIERES ",
+                "number": "1.6.7",
+                "type": "article"
+              },
+              "children": []
+            },
+            {
+              "data": {
+                "title": "APPEL DES GARANTIES FINANCIERES",
+                "number": "1.6.8",
+                "type": "article"
+              },
+              "children": []
+            },
+            {
+              "data": {
+                "title": "LEVEE DE L'OBLIGATION DE GARANTIES FINANCIERES",
+                "number": "1.6.9",
+                "type": "article"
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "data": {
+            "title": "MODIFICATIONS ET CESSATION D'ACTIVITÉ",
+            "number": "7",
+            "type": "chapitre"
+          },
+          "children": [
+            {
+              "data": {
+                "title": "INFORMATION",
+                "number": "1.7.1",
+                "type": "article"
+              },
+              "children": []
+            },
+            {
+              "data": {
+                "title": "MISE A JOUR DU DOSSIER",
+                "number": "1.7.2",
+                "type": "article"
+              },
+              "children": []
+            },
+            {
+              "data": {
+                "title": "CHANGEMENT D'EXPLOITANT (ART. R 516-1 DU CODE DE L'ENVIRONNEMENT)",
+                "number": "1.7.3",
+                "type": "article"
+              },
+              "children": []
+            },
+            {
+              "data": {
+                "title": "CESSATION D'ACTIVITE",
+                "number": "1.7.4",
+                "type": "article"
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "data": {
+            "title": "DÉLAIS ET VOIES DE RECOURS ",
+            "number": "8",
+            "type": "chapitre"
+          },
+          "children": [
+            {
+              "data": {
+                "number": "1.8.1",
+                "type": "article"
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "data": {
+            "title": "MESURES COMPENSATOIRES",
+            "number": "9",
+            "type": "chapitre"
+          },
+          "children": [
+            {
+              "data": {
+                "title": "MESURES COMPENSATOIRES - DÉCISION PRÉFECTORALE DU 5 JANVIER 2012 PORTANT DÉROGATION À L'INTERDICTION DE DESTRUCTION DE MILIEUX D'ESPÈCES PROTÉGÉES",
+                "number": "1.9.1",
+                "type": "article"
+              },
+              "children": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "data": {
+        "title": "GESTION DE L'ÉTABLISSEMENT",
+        "number": "2",
+        "type": "titre"
+      },
+      "children": [
+        {
+          "data": {
+            "title": "ACCÈS ET INFORMATION",
+            "number": "1",
+            "type": "chapitre"
+          },
+          "children": [
+            {
+              "data": {
+                "title": "CONTRÔLE D'ACCÈS; CLÔTURE, GARDIENNAGE",
+                "number": "2.1.1",
+                "type": "article"
+              },
+              "children": []
+            },
+            {
+              "data": {
+                "title": "INFORMATION DU PUBLIC À L'ENTRÉE DU SITE ",
+                "number": "2.1.2",
+                "type": "article"
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "data": {
+            "title": "DANGERS OU NUISANCES NON PRÉVENUS",
+            "number": "2",
+            "type": "chapitre"
+          },
+          "children": [
+            {
+              "data": {
+                "number": "2.2.1",
+                "type": "article"
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "data": {
+            "title": "INCIDENTS OU ACCIDENTS",
+            "number": "3",
+            "type": "chapitre"
+          },
+          "children": [
+            {
+              "data": {
+                "title": "DECLARATION ET RAPPORT",
+                "number": "2.3.1",
+                "type": "article"
+              },
+              "children": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "data": {
+        "title": "PRÉVENTION DE LA POLLUTION ATMOSPHÉRIQUE",
+        "number": "3",
+        "type": "titre"
+      },
+      "children": [
+        {
+          "data": {
+            "title": "CONCEPTION DES INSTALLATIONS",
+            "number": "1",
+            "type": "chapitre"
+          },
+          "children": [
+            {
+              "data": {
+                "title": "DISPOSITIONS GENERALES",
+                "number": "3.1.1",
+                "type": "article"
+              },
+              "children": []
+            },
+            {
+              "data": {
+                "title": "VOIES DE CIRCULATION",
+                "number": "3.1.2",
+                "type": "article"
+              },
+              "children": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "data": {
+        "title": "PROTECTION DES RESSOURCES EN EAUX ET DES MILIEUX AQUATIQUES ",
+        "number": "4",
+        "type": "titre"
+      },
+      "children": [
+        {
+          "data": {
+            "title": "PRÉLÈVEMENTS ET CONSOMMATIONS D'EAU",
+            "number": "1",
+            "type": "chapitre"
+          },
+          "children": [
+            {
+              "data": {
+                "title": "ORIGINE DES APPROVISIONNEMENTS EN EAU",
+                "number": "4.1.1",
+                "type": "article"
+              },
+              "children": []
+            },
+            {
+              "data": {
+                "title": "PROTECTION DES RÉSEAUX D'EAU POTABLE ET DES MILIEUX DE PRÉLÈVEMENT",
+                "number": "4.1.2",
+                "type": "article"
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "data": {
+            "title": "COLLECTE DES EFFLUENTS LIQUIDES",
+            "number": "2",
+            "type": "chapitre"
+          },
+          "children": [
+            {
+              "data": {
+                "title": "PLAN DES RÉSEAUX",
+                "number": "4.2.1",
+                "type": "article"
+              },
+              "children": []
+            },
+            {
+              "data": {
+                "title": "ENTRETIEN ET SURVEILLANCE",
+                "number": "4.2.2",
+                "type": "article"
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "data": {
+            "title": "TYPES D'EFFLUENTS, LEURS OUVRAGES D'ÉPURATION ET LEURS CARACTÉRISTIQUES DE REJET AU MILIEU ",
+            "number": "3",
+            "type": "chapitre"
+          },
+          "children": [
+            {
+              "data": {
+                "title": "IDENTIFICATION DES EFFLUENTS",
+                "number": "4.3.1",
+                "type": "article"
+              },
+              "children": []
+            },
+            {
+              "data": {
+                "title": "REJET",
+                "number": "4.3.2",
+                "type": "article"
+              },
+              "children": []
+            },
+            {
+              "data": {
+                "title": "EAUX DOMESTIQUES",
+                "number": "4.3.3",
+                "type": "article"
+              },
+              "children": []
+            },
+            {
+              "data": {
+                "title": "REJETS DE SUBSTANCES DANGEREUSES DANS LE MILIEU AQUATIQUE",
+                "number": "4.3.4",
+                "type": "article"
+              },
+              "children": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "data": {
+        "title": "DÉCHETS",
+        "number": "5",
+        "type": "titre"
+      },
+      "children": [
+        {
+          "data": {
+            "title": "PRINCIPES DE GESTION",
+            "number": "1",
+            "type": "chapitre"
+          },
+          "children": [
+            {
+              "data": {
+                "title": "LIMITATION DE LA PRODUCTION DE DÉCHETS",
+                "number": "5.1.1",
+                "type": "article"
+              },
+              "children": []
+            },
+            {
+              "data": {
+                "title": "SÉPARATION DES DÉCHETS ",
+                "number": "5.1.2",
+                "type": "article"
+              },
+              "children": []
+            },
+            {
+              "data": {
+                "title": "CONCEPTION ET EXPLOITATION DES INSTALLATIONS D'ENTREPOSAGE INTERNES DE TRANSIT DES DÉCHETS",
+                "number": "5.1.3",
+                "type": "article"
+              },
+              "children": []
+            },
+            {
+              "data": {
+                "title": "DÉCHETS TRAITÉS OU ÉLIMINÉS À L'EXTÉRIEUR DE L'ÉTABLISSEMENT",
+                "number": "5.1.4",
+                "type": "article"
+              },
+              "children": []
+            },
+            {
+              "data": {
+                "title": "DÉCHETS TRAITÉS OU ÉLIMINÉS À L'INTÉRIEUR DE L'ÉTABLISSEMENT",
+                "number": "5.1.5",
+                "type": "article"
+              },
+              "children": []
+            },
+            {
+              "data": {
+                "title": "TRANSPORT",
+                "number": "5.1.6",
+                "type": "article"
+              },
+              "children": []
+            },
+            {
+              "data": {
+                "title": "DÉCHETS PRODUITS PAR L'ÉTABLISSEMENT",
+                "number": "5.1.7",
+                "type": "article"
+              },
+              "children": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "data": {
+        "title": "PRÉVENTION DES NUISANCES SONORES ET DES VIBRATIONS",
+        "number": "6",
+        "type": "titre"
+      },
+      "children": [
+        {
+          "data": {
+            "title": "DISPOSITIONS GÉNÉRALES ",
+            "number": "1",
+            "type": "chapitre"
+          },
+          "children": [
+            {
+              "data": {
+                "title": "AMÉNAGEMENTS ET HORAIRES DE FONCTIONNEMENT",
+                "number": "6.1.1",
+                "type": "article"
+              },
+              "children": []
+            },
+            {
+              "data": {
+                "title": "VÉHICULES ET ENGINS",
+                "number": "6.1.2",
+                "type": "article"
+              },
+              "children": []
+            },
+            {
+              "data": {
+                "title": "APPAREILS DE COMMUNICATION",
+                "number": "6.1.3",
+                "type": "article"
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "data": {
+            "title": "NIVEAUX ACOUSTIQUES",
+            "number": "2",
+            "type": "chapitre"
+          },
+          "children": [
+            {
+              "data": {
+                "title": "VALEURS LIMITES D'ÉMERGENCE",
+                "number": "6.2.1",
+                "type": "article"
+              },
+              "children": []
+            },
+            {
+              "data": {
+                "title": "NIVEAUX LIMITES DE BRUIT",
+                "number": "6.2.2",
+                "type": "article"
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "data": {
+            "title": "VIBRATIONS ",
+            "number": "3",
+            "type": "chapitre"
+          },
+          "children": [
+            {
+              "data": {
+                "title": "VIBRATIONS",
+                "number": "6.3.1",
+                "type": "article"
+              },
+              "children": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "data": {
+        "title": "PRÉVENTION DES RISQUES TECHNOLOGIQUES",
+        "number": "7",
+        "type": "titre"
+      },
+      "children": [
+        {
+          "data": {
+            "title": "CARACTÉRISATION DES RISQUES",
+            "number": "1",
+            "type": "chapitre"
+          },
+          "children": [
+            {
+              "data": {
+                "title": "ZONAGES INTERNES À L'ÉTABLISEMENT",
+                "number": "7.1.1",
+                "type": "article"
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "data": {
+            "title": "INFRASTRUCTURES ET INSTALLATIONS",
+            "number": "2",
+            "type": "chapitre"
+          },
+          "children": [
+            {
+              "data": {
+                "title": "INSTALLATIONS ÉLECTRIQUES - MISE À LA TERRE",
+                "number": "7.2.1",
+                "type": "article"
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "data": {
+            "title": "GESTION DES OPÉRATIONS PORTANT SUR DES SUBSTANCES POUVANT PRÉSENTER DES DANGERS ",
+            "number": "3",
+            "type": "chapitre"
+          },
+          "children": [
+            {
+              "data": {
+                "title": "CONSIGNES D'EXPLOITATION DESTINÉES À PRÉVENIR LES ACCIDENTS",
+                "number": "7.3.1",
+                "type": "article"
+              },
+              "children": []
+            },
+            {
+              "data": {
+                "title": "FORMATION DU PERSONNEL",
+                "number": "7.3.2",
+                "type": "article"
+              },
+              "children": []
+            },
+            {
+              "data": {
+                "title": "TRAVAUX D'ENTRETIEN ET DE MAINTENANCE",
+                "number": "7.3.3",
+                "type": "article"
+              },
+              "children": []
+            },
+            {
+              "data": {
+                "title": "SUBSTANCES RADIOACTIVES ",
+                "number": "7.3.4",
+                "type": "article"
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "data": {
+            "title": "PRÉVENTION DES POLLUTIONS ACCIDENTELLES",
+            "number": "4",
+            "type": "chapitre"
+          },
+          "children": [
+            {
+              "data": {
+                "title": "ORGANISATION DE L'ÉTABLISSEMENT",
+                "number": "7.4.1",
+                "type": "article"
+              },
+              "children": []
+            },
+            {
+              "data": {
+                "title": "ÉTIQUETAGE DES SUBSTANCES ET PRÉPARATIONS DANGEREUSES",
+                "number": "7.4.2",
+                "type": "article"
+              },
+              "children": []
+            },
+            {
+              "data": {
+                "title": "RÉTENTIONS",
+                "number": "7.4.3",
+                "type": "article"
+              },
+              "children": []
+            },
+            {
+              "data": {
+                "title": "RÉSERVOIRS ",
+                "number": "7.4.4",
+                "type": "article"
+              },
+              "children": []
+            },
+            {
+              "data": {
+                "title": "RÈGLES DE GESTION DES STOCKAGES EN RÉTENTION",
+                "number": "7.4.5",
+                "type": "article"
+              },
+              "children": []
+            },
+            {
+              "data": {
+                "title": "TRANSPORTS - CHARGEMENTS - DÉCHARGEMENTS",
+                "number": "7.4.6",
+                "type": "article"
+              },
+              "children": []
+            },
+            {
+              "data": {
+                "title": "ÉLIMINATION DES SUBSTANCES OU PRÉPARATIONS DANGEREUSES",
+                "number": "7.4.7",
+                "type": "article"
+              },
+              "children": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "data": {
+        "title": "CONDITIONS PARTICULIÈRES APPLICABLES AU STOCKAGE DE DÉCHETS NON DANGEREUX (\" HOCHFELDEN II \")",
+        "number": "8",
+        "type": "titre"
+      },
+      "children": [
+        {
+          "data": {
+            "title": "BARRIÈRE DE SÉCURITÉ PASSIVE",
+            "number": "8.1",
+            "type": "article"
           },
           "children": []
         },
         {
           "data": {
-            "number": "1.3",
-            "type": "unknown"
+            "title": "MAITTRISE DES ARRIVÉES D'EAUX SOUTERRAINES",
+            "number": "8.2",
+            "type": "article"
           },
           "children": []
         },
         {
           "data": {
-            "title": "a -Justificatifs d'accréditations sur les opérations de prélèvements et d'analyses de substances dans la matrice «Eaux Résiduaires» comprenant a minima :",
-            "number": "I.3",
-            "type": "unknown"
+            "title": "BARRIÈRE DE SÉCURITÉ ACTIVE",
+            "number": "8.3",
+            "type": "article"
           },
           "children": []
         },
         {
           "data": {
-            "number": "I.3",
-            "type": "unknown"
+            "title": "FOSSÉS DE COLLECTE DES EAUX EXTÉRIEURES",
+            "number": "8.4",
+            "type": "article"
           },
           "children": []
         },
         {
           "data": {
-            "title": "c-Liste de références en matière d'opérations de prélèvements de substances dangereuses dans les rejets industriels;",
-            "number": "I.3",
-            "type": "unknown"
+            "title": "CASIERS ET ALVÉOLES ",
+            "number": "8.5",
+            "type": "article"
           },
           "children": []
         },
         {
           "data": {
-            "title": "d -Attestation du prestataire s'engageant à respecter les prescriptions du fascicule.",
-            "number": "I.3",
-            "type": "unknown"
+            "title": "JUSTIFICATION DE LA CONFORMITÉ DES AMÉNAGEMENTS ET DES COUVERTURES DES CASIERS",
+            "number": "8.6",
+            "type": "article"
           },
           "children": []
         },
         {
           "data": {
-            "number": "1.4",
-            "type": "unknown"
+            "title": "PLANS ET RELEVÉS TOPOGRAPHIQUES",
+            "number": "8.7",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "DÉCHETS ADMISSIBLES ET NON ADMISSIBLES ",
+            "number": "8.8",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "INFORMATION PRÉALABLE ",
+            "number": "8.9",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "CERTIFICAT D'ACCEPTATION PRÉALABLE",
+            "number": "8.10",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "ADMISSION SUR SITE, CONTRÔLES, REFUS D'ADMISSION, REGISTRES ",
+            "number": "8.11",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "MISE EN PLACE DES DÉCHETS ",
+            "number": "8.12",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "COUVERTURE FINALE DES CASIERS",
+            "number": "8.13",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "FOSSÉS ET BASSINS DE COLLECTE DES EAUX INTÉRIEURES",
+            "number": "8.14",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "REJET DES EAUX DES BASSINS DE COLLECTE DES EAUX INTÉRIEURES ",
+            "number": "8.15",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "LIXIVIATS : DRAINAGE ET COLLECTE ",
+            "number": "8.16",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "LIXIVIATS : TRAITEMENTS",
+            "number": "8.17",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "SUIVI DU BILAN HYDRIQUE ",
+            "number": "8.18",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "BIOGAZ : DRAINAGE, VALORISATION ET DESTRUCTION",
+            "number": "8.19",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "BIOGAZ MESURES",
+            "number": "8.20",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "PRÉVENTION ET LIMITATION DES ODEURS, AÉROSOLS - MESURES DANS L'ENVIRONNEMENT ",
+            "number": "8.21",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "CONTRÔLE DES EFFLUENTS (EAUX DE RUISSELLEMENT, LIXIVIATS, BIOGAZ) ET DE L'AIR AMBIANT - CONTRÔLES DIVERS - TRANSMISSION DES RÉSULTATS",
+            "number": "8.22",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "SURVEILLANCE DES EAUX SOUTERRAINES ",
+            "number": "8.23",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "PLAN D'ACTION ET DE SURVEILLANCE RENFORCÉE DES EAUX SOUTERRAINES ",
+            "number": "8.24",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "SURVEILLANCE DES EAUX DU ROHRBACH",
+            "number": "8.25",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "PRÉVENTION ET LUTTE CONTRE L'INCENDIE",
+            "number": "8.26",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "LUTTE CONTRE LA PROLIFÉRATION DES ESPÈCES INDÉSIRABLES ",
+            "number": "8.27",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "TRI, CHIFFONNAGE, RÉCUPÉRATION",
+            "number": "8.28",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "FIN D'EXPLOITATION : RÉAMÉNAGEMENT",
+            "number": "8.29",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "FIN D'EXPLOITATION : AMÉNAGEMENTS, CLÔTURE ",
+            "number": "8.30",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "PROPOSITION DE SERVITUDES",
+            "number": "8.31",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "SUIVI TRENTENAIRE",
+            "number": "8.32",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "FIN DE LA PERIODE DE SUIVI",
+            "number": "8.33",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "INFORMATION DES MAIRES ET DE LA CLIS, RAPPORT ANNUEL, INFORMATION DE L'INSPECTION ",
+            "number": "8.34",
+            "type": "article"
+          },
+          "children": []
+        }
+      ]
+    },
+    {
+      "data": {
+        "title": "SURVEILLANCE TRENTENAIRE DE « HOCHFELDEN I » ET RECIRCULATION DES LIXIVIATS (BIORÉACTEUR)",
+        "number": "9",
+        "type": "titre"
+      },
+      "children": [
+        {
+          "data": {
+            "number": "9.1",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "PROGRAMME SPÉCIFIQUE DE SURVEILLANCE DES EAUX ET DU BIOGAZ, ÉLIMINATION DES LIXIVIATS NON RECIRCULÉS ",
+            "number": "9.2",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "BIORÉACTEUR ",
+            "number": "9.3",
+            "type": "article"
+          },
+          "children": [
+            {
+              "data": {
+                "title": "recirculation des lixiviats",
+                "number": "9.3.1",
+                "type": "article"
+              },
+              "children": []
+            },
+            {
+              "data": {
+                "title": "Couverture étanche",
+                "number": "9.3.2",
+                "type": "article"
+              },
+              "children": []
+            },
+            {
+              "data": {
+                "title": "Suivi du bioréacteur",
+                "number": "9.3.3",
+                "type": "article"
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "data": {
+            "title": "COUVERTURE FINALE DE LA PARCELLE N°409 (CONFINEMENT DE LA CAPSULE DE DÉCHETS DANGEREUX) ",
+            "number": "9.4",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "FIN DE LA PÉRIODE DE SUIVI",
+            "number": "9.5",
+            "type": "article"
+          },
+          "children": []
+        }
+      ]
+    },
+    {
+      "data": {
+        "title": "RÉCAPITULATIFS",
+        "number": "10",
+        "type": "titre"
+      },
+      "children": [
+        {
+          "data": {
+            "title": "ÉCHÉANCES",
+            "number": "10.1",
+            "type": "article"
+          },
+          "children": []
+        }
+      ]
+    },
+    {
+      "data": {
+        "title": "MODALITÉS D'EXÉCUTION ",
+        "number": "11",
+        "type": "titre"
+      },
+      "children": [
+        {
+          "data": {
+            "title": "FRAIS",
+            "number": "11.1",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "AUTRES RÉGLEMENTS D'ADMINISTRATION PUBLIQUE",
+            "number": "11.2",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "AUTRES FORMALITÉS ADMINISTRATIVES",
+            "number": "11.3",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "MESURES DE PUBLICITÉ",
+            "number": "11.4",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "EXÉCUTION",
+            "number": "11.5",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "SANCTIONS",
+            "number": "11.6",
+            "type": "article"
           },
           "children": []
         }
       ]
     }
   ],
-  "appendix": null
+  "appendix": [
+    {
+      "data": {
+        "title": "LES NIVEAUX DE VÉRIFICATION",
+        "number": "1",
+        "type": "annexe"
+      },
+      "children": [
+        {
+          "data": {
+            "title": "Caractérisation de base",
+            "number": "1",
+            "type": "unknown"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "Vérification de la conformité ",
+            "number": "2",
+            "type": "unknown"
+          },
+          "children": []
+        }
+      ]
+    },
+    {
+      "data": {
+        "number": "2",
+        "type": "annexe"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "number": "3",
+        "type": "annexe"
+      },
+      "children": [
+        {
+          "data": {
+            "number": "I",
+            "type": "Prescriptions techniques applicables aux opérations de prélèvement et d'analyses"
+          },
+          "children": [
+            [
+              {
+                "data": {
+                  "number": "I.1",
+                  "type": "unknown"
+                },
+                "children": []
+              },
+              {
+                "data": {
+                  "number": "I.2",
+                  "type": "unknown"
+                },
+                "children": []
+              },
+              {
+                "data": {
+                  "number": "I.3",
+                  "type": "unknown"
+                },
+                "children": [
+                  {
+                    "data": {
+                      "number": "I.3.a",
+                      "type": "unknown"
+                    },
+                    "children": []
+                  },
+                  {
+                    "data": {
+                      "number": "I.3.b",
+                      "type": "unknown"
+                    },
+                    "children": []
+                  },
+                  {
+                    "data": {
+                      "number": "I.3.c",
+                      "type": "unknown"
+                    },
+                    "children": []
+                  },
+                  {
+                    "data": {
+                      "number": "I.3.d",
+                      "type": "unknown"
+                    },
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "data": {
+                  "number": "I.4",
+                  "type": "unknown"
+                },
+                "children": []
+              },
+              {
+                "data": {
+                  "number": "I.5",
+                  "type": "unknown"
+                },
+                "children": []
+              }
+            ]
+          ]
+        },
+        {
+          "data": {
+            "number": "II",
+            "type": "Mise en oeuvre de la surveillance initiale"
+          },
+          "children": [
+            [
+              {
+                "data": {
+                  "title": "Programme de surveillance initiale",
+                  "number": "II.1",
+                  "type": "unknown"
+                },
+                "children": []
+              },
+              {
+                "data": {
+                  "title": "Rapport de synthèse de la surveillance initiale",
+                  "number": "II.1",
+                  "type": "unknown"
+                },
+                "children": []
+              },
+              {
+                "data": {
+                  "title": "Classement des substances en 3 catégories",
+                  "number": "II.1",
+                  "type": "unknown"
+                },
+                "children": []
+              }
+            ]
+          ]
+        },
+        {
+          "data": {
+            "number": "I",
+            "type": "Surveillance pérenne"
+          },
+          "children": [
+            [
+              {
+                "data": {
+                  "title": "Substances concernées",
+                  "number": "I.1",
+                  "type": "unknown"
+                },
+                "children": []
+              },
+              {
+                "data": {
+                  "title": "Programme de surveillance pérenne",
+                  "number": "I.2",
+                  "type": "unknown"
+                },
+                "children": []
+              },
+              {
+                "data": {
+                  "title": "Actualisarion du programme de surveillance pérenne",
+                  "number": "I.3",
+                  "type": "unknown"
+                },
+                "children": []
+              }
+            ]
+          ]
+        },
+        {
+          "data": {
+            "number": "II",
+            "type": "Étude technico-économique"
+          },
+          "children": [
+            {
+              "data": {
+                "title": "Substances concernées",
+                "number": "II.1",
+                "type": "unknown"
+              },
+              "children": []
+            },
+            {
+              "data": {
+                "title": "Prescriptions générales",
+                "number": "II.2",
+                "type": "unknown"
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "data": {
+            "number": "I",
+            "type": "Plan d'actions"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "number": "II",
+            "type": "Déclaration sous GIDAF"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "number": "III",
+            "type": "Déclaration annuelle des émissions polluantes"
+          },
+          "children": []
+        }
+      ]
+    },
+    {
+      "data": {
+        "number": "A",
+        "type": "annexe"
+      },
+      "children": [
+        {
+          "data": {
+            "title": "Les critères de maintien de la surveillance",
+            "number": "1",
+            "type": "unknown"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "Abandon de la surveillance",
+            "number": "2",
+            "type": "unknown"
+          },
+          "children": []
+        }
+      ]
+    }
+  ]
 }

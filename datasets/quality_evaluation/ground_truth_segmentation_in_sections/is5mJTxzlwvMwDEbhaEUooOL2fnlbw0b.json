@@ -1,0 +1,140 @@
+{
+  "main": [
+    {
+      "data": {
+        "title": "PORTÉE, CONDITIONS GÉNÉRALES",
+        "number": "1",
+        "type": "titre"
+      },
+      "children": [
+        {
+          "data": {
+            "title": "BÉNÉFICIAIRE ET PORTÉE",
+            "number": "1.1",
+            "type": "chapitre"
+          },
+          "children": [
+            {
+              "data": {
+                "title": "EXPLOITANT, DURÉE, PÉREMPTION",
+                "number": "1.1.1",
+                "type": "article"
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "data": {
+            "title": "NATURE ET LOCALISATION DES INSTALLATIONS",
+            "number": "1.2",
+            "type": "chapitre"
+          },
+          "children": [
+            {
+              "data": {
+                "title": "LISTE DES INSTALLATIONS CONCERNEES PAR UNE RUBRIQUE DE LA NOMENCLATURE DES INSTALLATIONS CLASSEES",
+                "number": "1.2.1",
+                "type": "article"
+              },
+              "children": []
+            },
+            {
+              "data": {
+                "title": "SITUATION DE l'ETABLISSEMENT",
+                "number": "1.2.2",
+                "type": "article"
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "data": {
+            "title": "CONFORMITÉ AU DOSSIER D'ENREGISTREMENT",
+            "number": "1.3",
+            "type": "chapitre"
+          },
+          "children": [
+            {
+              "data": {
+                "title": "CONFORMITÉ AU DOSSIER D'ENREGISTREMENT",
+                "number": "1.3.1",
+                "type": "article"
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "data": {
+            "title": "MISE À L'ARRÊT DÉFINITIF",
+            "number": "1.4",
+            "type": "chapitre"
+          },
+          "children": [
+            {
+              "data": {
+                "title": "MISE À L'ARRÊT DÉFINITIF",
+                "number": "1.4.1",
+                "type": "article"
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "data": {
+            "title": "PRESCRIPTIONS TECHNIQUES APPLICABLES",
+            "number": "1.5",
+            "type": "chapitre"
+          },
+          "children": [
+            {
+              "data": {
+                "title": "ARRÉTÉS MINISTÉRIELS DE PRESCRIPTIONS GÉNÉRALES",
+                "number": "1.5.1",
+                "type": "article"
+              },
+              "children": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "data": {
+        "title": "MODALITÉS D'EXÉCUTION, VOIES DE RECOURS",
+        "number": "2",
+        "type": "titre"
+      },
+      "children": [
+        {
+          "data": {
+            "title": "FRAIS",
+            "number": "2.1",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "DELAIS ET VOIES DE RECOURS (art. L.514-6 du code de l'environnement)",
+            "number": "2.2",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "EXÉCUTION - AMPLIATION ",
+            "number": "2.3",
+            "type": "article"
+          },
+          "children": []
+        }
+      ]
+    }
+  ],
+  "appendix": null
+}

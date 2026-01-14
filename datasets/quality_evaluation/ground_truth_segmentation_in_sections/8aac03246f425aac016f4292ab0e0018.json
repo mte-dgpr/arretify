@@ -1,21 +1,288 @@
 {
-  "main": [
+  "main": [],
+  "appendix": [
     {
       "data": {
-        "title": "bis, rue du Moulin 85120 SAINT-PIERRE DU CHEMIN",
-        "number": "6",
-        "type": "unknown"
+        "title": "PLAN D'ACCES A L'EXPLOITATION DE L'EARL ECLIPSE - les  Brelutières - 85700 MENOMBLET ",
+        "number": "1",
+        "type": "annexe"
       },
       "children": []
     },
     {
       "data": {
-        "title": "Bls rue du Moulin",
-        "number": "6",
-        "type": "unknown"
+        "title": "ANNEXE 2 - Parcellaire EARL ECLIPSE",
+        "number": "2",
+        "type": "annexe"
       },
       "children": []
+    },
+    {
+      "data": {
+        "title": "CONTRAT DE REPRISE DE FUMIER",
+        "number": "3",
+        "type": "annexe"
+      },
+      "children": [
+        {
+          "data": {
+            "title": "OBJET DU CONTRAT",
+            "number": "1",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "QUALITE DU PRODUIT ",
+            "number": "2",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "ENLEVEMENT DU FUMIER",
+            "number": "3",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "CHARGEMENT ET CONDITIONS FINANCIERES DE REPRISE",
+            "number": "4",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "DUREE DU CONTRAT",
+            "number": "5",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "CLAUSE DE SAUVEGARDE ",
+            "number": "6",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "TRANSPORT DU FUMIER",
+            "number": "7",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "CLAUSES ESSENTIELLES",
+            "number": "8",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "RESILIATION",
+            "number": "9",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "SUBSTITUTION",
+            "number": "10",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "TOLERANCE",
+            "number": "11",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "NULLITE ",
+            "number": "12",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "PROTOCOLE DE SECURITE",
+            "number": "13",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "COMPETENCE",
+            "number": "14",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "ELECTION DE DOMICILE",
+            "number": "15",
+            "type": "article"
+          },
+          "children": []
+        }
+      ]
+    },
+    {
+      "data": {
+        "title": "CONVENTION RECIPROQUE DE RECEPTION ET DE LIVRAISON DE DEJECTIONS ANIMALES",
+        "number": "4",
+        "type": "annexe"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "title": "CONTRAT DE REPRISE DE FUMIER DE RUMINANT",
+        "number": "5",
+        "type": "annexe"
+      },
+      "children": [
+        
+        {
+          "data": {
+            "title": "OBJET DU CONTRAT",
+            "number": "1",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "QUALITÉ DU PRODUIT",
+            "number": "2",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "ENLEVEMENT DU FUMIER ",
+            "number": "3",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "CHARGEMENT ET CONDITIONS FINANCIERES DE REPRISE",
+            "number": "4",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "DUREE DU CONTRAT",
+            "number": "5",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "CLAUSE DE SAUVEGARDE",
+            "number": "6",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "TRAITEMENT DES FUMIERS. ",
+            "number": "7",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "CLAUSES ESSENTIELLES",
+            "number": "8",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "RESILIATION",
+            "number": "9",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "SUBSTITUTION",
+            "number": "10",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "TOLERANCE",
+            "number": "11",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "NULLITE ",
+            "number": "12",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "PROTOCOLE DE SECURITE",
+            "number": "13",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "COMPETENCE",
+            "number": "14",
+            "type": "article"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "ELECTION DE DOMICILE",
+            "number": "15",
+            "type": "article"
+          },
+          "children": []
+        }
+      ]
     }
-  ],
-  "appendix": null
+  ]
 }

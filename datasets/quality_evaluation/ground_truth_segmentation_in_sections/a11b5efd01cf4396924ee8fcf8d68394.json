@@ -2,7 +2,7 @@
   "main": [
     {
       "data": {
-        "number": "j",
+        "number": "1",
         "type": "article"
       },
       "children": []
@@ -30,7 +30,6 @@
     },
     {
       "data": {
-        "title": "Sans préjudice de l'observation des législations et réglementations applicables et des mesures particulières de police",
         "number": "5",
         "type": "article"
       },

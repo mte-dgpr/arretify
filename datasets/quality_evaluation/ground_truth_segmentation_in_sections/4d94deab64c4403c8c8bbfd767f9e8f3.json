@@ -1,4 +1,48 @@
 {
-  "main": [],
-  "appendix": null
+  "main": [
+    {
+      "data": {
+        "number": "1",
+        "type": "article"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "number": "2",
+        "type": "article"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "number": "3",
+        "type": "article"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "number": "4",
+        "type": "article"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "number": "5",
+        "type": "article"
+      },
+      "children": []
+    }
+  ],
+  "appendix": [
+    {
+      "data": {
+        "number": "1",
+        "type": "annexe"
+      },
+      "children": []
+    }
+  ]
 }

@@ -1,4 +1,35 @@
 {
-  "main": [],
+  "main": [
+    {
+      "data": {
+        "number": "1",
+        "type": "article"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "number": "2",
+        "type": "article"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "title": "Délais et voies de recours",
+        "number": "3",
+        "type": "article"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "title": "Exécution ",
+        "number": "4",
+        "type": "article"
+      },
+      "children": []
+    }
+  ],
   "appendix": null
 }

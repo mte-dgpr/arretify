@@ -30,6 +30,7 @@ from arretify.law_data.apis.mistral import initialize_mistral_client
 from arretify.pipeline import load_ocr_pages, load_pdf_file, run_pipeline
 from arretify.semantic_tag_specs import AppendixSpec, MainSpec, SectionData, SectionSpec
 from arretify.settings import Settings
+from arretify.step_markdown_cleaning import step_markdown_cleaning
 from arretify.step_ocr import step_ocr
 from arretify.step_segmentation import step_segmentation
 from arretify.types import DocumentContext, ProtectedSoup, ProtectedTag, SessionContext
@@ -188,7 +189,7 @@ def convert_pdf_to_html(
         _LOGGER.info(f"Loading OCR pages from cache directory for {pdf_file_path.name}")
         return run_pipeline(
             load_ocr_pages(session_context, ocr_pages_dir),
-            [step_segmentation],
+            [step_markdown_cleaning, step_segmentation],
         )
 
     else:
@@ -206,7 +207,7 @@ def convert_pdf_to_html(
         _LOGGER.info(f"Performing OCR for {pdf_file_path.name}")
         return run_pipeline(
             load_pdf_file(session_context, pdf_file_path),
-            [step_ocr_with_cache, step_segmentation],
+            [step_ocr_with_cache, step_markdown_cleaning, step_segmentation],
         )
 
 

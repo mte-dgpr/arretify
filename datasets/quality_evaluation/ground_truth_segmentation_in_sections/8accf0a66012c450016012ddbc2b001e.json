@@ -1,4 +1,117 @@
 {
-  "main": [],
+  "main": [
+    {
+      "data": {
+        "title": "EXPLOITANT",
+        "number": "1",
+        "type": "article"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "title": "LISTE DES INSTALLATIONS CONCERNÉES PAR UNE RUBRIQUE DE LA NOMENCLATURE DES INSTALLATIONS CLASSÉES",
+        "number": "2",
+        "type": "article"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "title": "ARRÉTÉS APPLICABLES ",
+        "number": "3",
+        "type": "article"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "title": "MODIFICATION DES PRESCRIPTIONS GÉNÉRALES",
+        "number": "4",
+        "type": "article"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "title": "CONTRÔLES PERIODIQUES",
+        "number": "5",
+        "type": "article"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "title": "MODIFICATION DE L'INSTALLATION",
+        "number": "6",
+        "type": "article"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "title": "CHANGEMENT D'EXPLOITANT ",
+        "number": "7",
+        "type": "article"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "title": "RAPPORT D'INCIDENT OU D'ACCIDENT",
+        "number": "8",
+        "type": "article"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "title": "REMISE EN SERVICE",
+        "number": "9",
+        "type": "article"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "title": "SURVEILLANCE DE L'INSTALLATION",
+        "number": "10",
+        "type": "article"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "title": "CADUCITÉ",
+        "number": "11",
+        "type": "article"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "title": "MISE A L'ARRÊT DÉFINITIF ET REMISE EN ÉTAT",
+        "number": "12",
+        "type": "article"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "title": "DÉLAIS ET VOIES DE RECOURS ",
+        "number": "13",
+        "type": "article"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "title": "PUBLICITÉ",
+        "number": "14",
+        "type": "article"
+      },
+      "children": []
+    }
+  ],
   "appendix": null
 }
