@@ -1246,72 +1246,70 @@
             "type": "Prescriptions techniques applicables aux opérations de prélèvement et d'analyses"
           },
           "children": [
-            [
-              {
-                "data": {
-                  "number": "I.1",
-                  "type": "unknown"
-                },
-                "children": []
+            {
+              "data": {
+                "number": "I.1",
+                "type": "unknown"
               },
-              {
-                "data": {
-                  "number": "I.2",
-                  "type": "unknown"
-                },
-                "children": []
+              "children": []
+            },
+            {
+              "data": {
+                "number": "I.2",
+                "type": "unknown"
               },
-              {
-                "data": {
-                  "number": "I.3",
-                  "type": "unknown"
-                },
-                "children": [
-                  {
-                    "data": {
-                      "number": "I.3.a",
-                      "type": "unknown"
-                    },
-                    "children": []
+              "children": []
+            },
+            {
+              "data": {
+                "number": "I.3",
+                "type": "unknown"
+              },
+              "children": [
+                {
+                  "data": {
+                    "number": "I.3.a",
+                    "type": "unknown"
                   },
-                  {
-                    "data": {
-                      "number": "I.3.b",
-                      "type": "unknown"
-                    },
-                    "children": []
-                  },
-                  {
-                    "data": {
-                      "number": "I.3.c",
-                      "type": "unknown"
-                    },
-                    "children": []
-                  },
-                  {
-                    "data": {
-                      "number": "I.3.d",
-                      "type": "unknown"
-                    },
-                    "children": []
-                  }
-                ]
-              },
-              {
-                "data": {
-                  "number": "I.4",
-                  "type": "unknown"
+                  "children": []
                 },
-                "children": []
-              },
-              {
-                "data": {
-                  "number": "I.5",
-                  "type": "unknown"
+                {
+                  "data": {
+                    "number": "I.3.b",
+                    "type": "unknown"
+                  },
+                  "children": []
                 },
-                "children": []
-              }
-            ]
+                {
+                  "data": {
+                    "number": "I.3.c",
+                    "type": "unknown"
+                  },
+                  "children": []
+                },
+                {
+                  "data": {
+                    "number": "I.3.d",
+                    "type": "unknown"
+                  },
+                  "children": []
+                }
+              ]
+            },
+            {
+              "data": {
+                "number": "I.4",
+                "type": "unknown"
+              },
+              "children": []
+            },
+            {
+              "data": {
+                "number": "I.5",
+                "type": "unknown"
+              },
+              "children": []
+            }
           ]
         },
         {
@@ -1320,32 +1318,30 @@
             "type": "Mise en oeuvre de la surveillance initiale"
           },
           "children": [
-            [
-              {
-                "data": {
-                  "title": "Programme de surveillance initiale",
-                  "number": "II.1",
-                  "type": "unknown"
-                },
-                "children": []
+            {
+              "data": {
+                "title": "Programme de surveillance initiale",
+                "number": "II.1",
+                "type": "unknown"
               },
-              {
-                "data": {
-                  "title": "Rapport de synthèse de la surveillance initiale",
-                  "number": "II.1",
-                  "type": "unknown"
-                },
-                "children": []
+              "children": []
+            },
+            {
+              "data": {
+                "title": "Rapport de synthèse de la surveillance initiale",
+                "number": "II.1",
+                "type": "unknown"
               },
-              {
-                "data": {
-                  "title": "Classement des substances en 3 catégories",
-                  "number": "II.1",
-                  "type": "unknown"
-                },
-                "children": []
-              }
-            ]
+              "children": []
+            },
+            {
+              "data": {
+                "title": "Classement des substances en 3 catégories",
+                "number": "II.1",
+                "type": "unknown"
+              },
+              "children": []
+            }
           ]
         },
         {
@@ -1354,32 +1350,30 @@
             "type": "Surveillance pérenne"
           },
           "children": [
-            [
-              {
-                "data": {
-                  "title": "Substances concernées",
-                  "number": "I.1",
-                  "type": "unknown"
-                },
-                "children": []
+            {
+              "data": {
+                "title": "Substances concernées",
+                "number": "I.1",
+                "type": "unknown"
               },
-              {
-                "data": {
-                  "title": "Programme de surveillance pérenne",
-                  "number": "I.2",
-                  "type": "unknown"
-                },
-                "children": []
+              "children": []
+            },
+            {
+              "data": {
+                "title": "Programme de surveillance pérenne",
+                "number": "I.2",
+                "type": "unknown"
               },
-              {
-                "data": {
-                  "title": "Actualisarion du programme de surveillance pérenne",
-                  "number": "I.3",
-                  "type": "unknown"
-                },
-                "children": []
-              }
-            ]
+              "children": []
+            },
+            {
+              "data": {
+                "title": "Actualisarion du programme de surveillance pérenne",
+                "number": "I.3",
+                "type": "unknown"
+              },
+              "children": []
+            }
           ]
         },
         {

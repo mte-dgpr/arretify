@@ -204,6 +204,29 @@ class TestSemanticTagData(unittest.TestCase):
         # When serialized, None values are removed
         assert m.model_dump() == {"required_field": "value"}
 
+    def test_missing_fields_use_default_values(self) -> None:
+        # Arrange
+        class Model(SemanticTagData):
+            required_field: str
+            field_with_str_default: str = "default_string"
+            field_with_int_default: int = 42
+            field_with_bool_default: Bool = True
+
+        # Act - load data with only required_field
+        m = Model.model_validate({"required_field": "value"})
+
+        # Assert
+        assert m.required_field == "value"
+        assert m.field_with_str_default == "default_string"
+        assert m.field_with_int_default == 42
+        assert m.field_with_bool_default is True
+        assert m.model_dump() == {
+            "required_field": "value",
+            "field_with_str_default": "default_string",
+            "field_with_int_default": 42,
+            "field_with_bool_default": "true",
+        }
+
     def test_build_with_native_values(self) -> None:
         # Act
         m = self.Model(
