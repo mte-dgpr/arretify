@@ -1,0 +1,199 @@
+{
+  "main": [
+    {
+      "data": {
+        "title": "En récipients de capacité unitaire supérieure à 37 kg , la quantité totale susceptible d'être présente dans l'installation étant inférieure à 250 t",
+        "number": "2",
+        "type": "unknown"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "title": "supérieure ou égale à 200 t",
+        "number": "1",
+        "type": "unknown"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "title": "sphères de 1200 kg . A $\\quad 250 \\mathrm{t}$",
+        "number": "12",
+        "type": "unknown"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "title": "installations de chargement ou de déchargement desservant un dépôt de liquides inflammables soumis à autorisation",
+        "number": "2",
+        "type": "unknown"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "title": "supérieure ou égale à 250 t",
+        "number": "1",
+        "type": "unknown"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "title": "Supérieure à 100 t , mais inférieure ou égale à 250 t",
+        "number": "2",
+        "type": "unknown"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "title": "Supérieure à 2 MW mais inférieure à 20 MW",
+        "number": "3",
+        "type": "unknown"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "title": "chaudière GN: 10 MW DC 2MW",
+        "number": "1",
+        "type": "unknown"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "title": "groupe électrogène FOD : 0,8 MW",
+        "number": "1",
+        "type": "unknown"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "number": "2",
+        "type": "unknown"
+      },
+      "children": [
+        {
+          "data": {
+            "title": "A - Installations figurant sur la liste prévue à l'article L. 515-8 du code de l'environnement",
+            "number": "1.6.2",
+            "type": "unknown"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "B - Installations visées par l'arrêté du 31 mai 2012 en application de l'article R516-1 du Code de l'Environnement",
+            "number": "1.6.2",
+            "type": "unknown"
+          },
+          "children": [
+            {
+              "data": {
+                "title": "Connaissance du rejet, positionnement par rapport aux dispositions réglementaires et Gestion des solvants",
+                "number": "3.2.5.2",
+                "type": "article"
+              },
+              "children": [
+                {
+                  "data": {
+                    "title": "eaux domestiques (ED) : eaux sanitaires et eaux vannes",
+                    "number": "1",
+                    "type": "unknown"
+                  },
+                  "children": []
+                },
+                {
+                  "data": {
+                    "title": "eaux pluviales (EP) : ruissellement toitures et voiries hors aires de dépotage",
+                    "number": "2",
+                    "type": "unknown"
+                  },
+                  "children": []
+                },
+                {
+                  "data": {
+                    "title": "eaux pluviales à risque (EPR) : ruissellement aires dépotage et zones de remplissage des fûts, vidanges eaux pluviales des cuvettes de rétention, purges de déconcentration des aéroréfrigérants, eaux épurées suite au traitement des eaux de nappe et fraction des condensats vapeurs",
+                    "number": "3",
+                    "type": "unknown"
+                  },
+                  "children": []
+                },
+                {
+                  "data": {
+                    "title": "eaux industrielles process (ERC) : Eaux résiduaires Chimiques",
+                    "number": "4",
+                    "type": "unknown"
+                  },
+                  "children": []
+                }
+              ]
+            },
+            {
+              "data": {
+                "title": "Gardiennage et contrôle des accès",
+                "number": "7.13.1.1",
+                "type": "article"
+              },
+              "children": []
+            },
+            {
+              "data": {
+                "title": "Salles de contrôle",
+                "number": "7.13.2.3",
+                "type": "article"
+              },
+              "children": []
+            },
+            {
+              "data": {
+                "title": "Ventilation",
+                "number": "7.13.2.4",
+                "type": "article"
+              },
+              "children": []
+            },
+            {
+              "data": {
+                "title": "Dispositions visant à prévenir le risque de ruine ou rupture pour défaut métallurgique",
+                "number": "7.16.5.2",
+                "type": "article"
+              },
+              "children": []
+            },
+            {
+              "data": {
+                "title": "Surveillance par la mesure des émissions canalisées (installations de combustion)",
+                "number": "9.2.1.1",
+                "type": "article"
+              },
+              "children": []
+            },
+            {
+              "data": {
+                "title": "Relevé des prélèvements d'eau",
+                "number": "9.2.2.1",
+                "type": "article"
+              },
+              "children": []
+            },
+            {
+              "data": {
+                "title": "Fréquences, et modalités de l'auto surveillance de la qualité des rejets",
+                "number": "9.2.2.2",
+                "type": "article"
+              },
+              "children": []
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "appendix": null
+}

@@ -22,7 +22,7 @@ import unittest
 
 from bs4 import BeautifulSoup
 from segmentation_in_sections import (
-    SectionTree,
+    SectionTreeNode,
     _generate_string_for_section_tree,
     _normalize_section_tree_string,
     build_section_tree,
@@ -44,10 +44,10 @@ class TestGenerateStringForSectionTree(unittest.TestCase):
     def test_nested_children(self):
         # Arrange
         children = [
-            SectionTree(
+            SectionTreeNode(
                 data=SectionData(number="1", title="Section 1", type="article"),
                 children=[
-                    SectionTree(
+                    SectionTreeNode(
                         data=SectionData(number="1.1", title="Section 1.1", type="article"),
                         children=[],
                     ),
@@ -172,10 +172,21 @@ class TestComputeSimilarity(unittest.TestCase):
     def test_identical_trees(self):
         # Arrange
         children1 = [
-            SectionTree(
+            SectionTreeNode(
                 data=SectionData(number="1", title="Section 1", type="article"),
                 children=[
-                    SectionTree(
+                    SectionTreeNode(
+                        data=SectionData(number="1.1", title="Section 1.1", type="article"),
+                        children=[],
+                    ),
+                ],
+            )
+        ]
+        children2 = [
+            SectionTreeNode(
+                data=SectionData(number="1", title="Section 1", type="article"),
+                children=[
+                    SectionTreeNode(
                         data=SectionData(number="1.1", title="Section 1.1", type="article"),
                         children=[],
                     ),
@@ -184,7 +195,7 @@ class TestComputeSimilarity(unittest.TestCase):
         ]
 
         # Act
-        result = compute_similarity(children1, children1)
+        result = compute_similarity(children1, children2)
 
         # Assert
         assert result == 1.0
@@ -192,10 +203,10 @@ class TestComputeSimilarity(unittest.TestCase):
     def test_slightly_different_trees(self):
         # Arrange
         children1 = [
-            SectionTree(
+            SectionTreeNode(
                 data=SectionData(number="1", title="Section 1", type="article"),
                 children=[
-                    SectionTree(
+                    SectionTreeNode(
                         data=SectionData(number="1.1", title="Section 1.1", type="article"),
                         children=[],
                     ),
@@ -203,10 +214,10 @@ class TestComputeSimilarity(unittest.TestCase):
             )
         ]
         children2 = [
-            SectionTree(
+            SectionTreeNode(
                 data=SectionData(number="1", title="Section 1", type="article"),
                 children=[
-                    SectionTree(
+                    SectionTreeNode(
                         data=SectionData(number="1.2", title="Section 1.2", type="article"),
                         children=[],
                     ),

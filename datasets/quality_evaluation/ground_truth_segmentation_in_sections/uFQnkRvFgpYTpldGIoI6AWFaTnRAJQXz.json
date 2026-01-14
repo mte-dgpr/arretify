@@ -1,0 +1,30 @@
+{
+  "main": [
+    {
+      "data": {
+        "title": "MAIS 2023",
+        "number": "09",
+        "type": "unknown"
+      },
+      "children": []
+    }
+  ],
+  "appendix": [
+    {
+      "data": {
+        "title": "PLAN DE LOCALISATION",
+        "number": "I",
+        "type": "annexe"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "title": "PLAN PARCELLAIRE",
+        "number": "II",
+        "type": "annexe"
+      },
+      "children": []
+    }
+  ]
+}
