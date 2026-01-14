@@ -18,7 +18,9 @@
 #
 import argparse
 import logging
+from datetime import date as Date
 from pathlib import Path
+from typing import Type, TypeVar
 
 import Levenshtein
 from dotenv import load_dotenv
@@ -34,37 +36,52 @@ from arretify.types import DocumentContext, ProtectedSoup, ProtectedTag, Session
 from arretify.utils.html_semantic import get_semantic_tag_data, is_semantic_tag
 
 _LOGGER = logging.getLogger(Path(__file__).stem)
-
+ROOT_DIR = Path(__file__).parent.parent
 
 # -------------------- Data Models -------------------- #
 
 
-class SectionTree(BaseModel):
+class SectionTreeNode(BaseModel):
     data: SectionData
-    children: list["SectionTree"]
+    children: list["SectionTreeNode"]
 
 
-class Document(BaseModel):
-    main: list[SectionTree]
-    appendix: list[SectionTree] | None
-    baseline: float | None = None
-    """
-    Baseline score for quality measurement.
-    """
+class SectionTree(BaseModel):
+    main: list[SectionTreeNode]
+    appendix: list[SectionTreeNode] | None
 
 
-def dump_document(output_json_path: Path, document: Document) -> None:
-    output_json_path.write_text(document.model_dump_json(indent=2), encoding="utf-8")
+class Evaluation(BaseModel):
+    file_name: str
+    similarity: float
+    diff: float | None
 
 
-def load_document(json_path: Path) -> Document:
-    return Document.model_validate_json(json_path.read_text(encoding="utf-8"))
+class Run(BaseModel):
+    date: Date
+    baseline_date: Date | None
+    evaluations: dict[str, Evaluation]
+
+
+class Experiment(BaseModel):
+    runs: list[Run]
+
+
+T = TypeVar("T", bound=BaseModel)
+
+
+def dump_json(output_json_path: Path, model: BaseModel) -> None:
+    output_json_path.write_text(model.model_dump_json(indent=2), encoding="utf-8")
+
+
+def load_json(json_path: Path, model_class: Type[T]) -> T:
+    return model_class.model_validate_json(json_path.read_text(encoding="utf-8"))
 
 
 # -------------------- Section Tree Building -------------------- #
 
 
-def build_section_tree(soup: ProtectedSoup) -> Document:
+def build_section_tree(soup: ProtectedSoup) -> SectionTree:
     main_tag: ProtectedTag | None = None
     appendix_tag: ProtectedTag | None = None
     for child in soup.body.contents:
@@ -75,13 +92,13 @@ def build_section_tree(soup: ProtectedSoup) -> Document:
     if main_tag is None:
         raise ValueError(f"'{MainSpec.tag_name}' semantic tag was not found.")
 
-    main: list[SectionTree] = [
+    main: list[SectionTreeNode] = [
         _build_section_subtree(child)
         for child in main_tag.contents
         if is_semantic_tag(child, spec_in=[SectionSpec])
     ]
 
-    appendix: list[SectionTree] | None = None
+    appendix: list[SectionTreeNode] | None = None
     if appendix_tag is not None:
         appendix = [
             _build_section_subtree(child)
@@ -89,15 +106,15 @@ def build_section_tree(soup: ProtectedSoup) -> Document:
             if is_semantic_tag(child, spec_in=[SectionSpec])
         ]
 
-    return Document(main=main, appendix=appendix)
+    return SectionTree(main=main, appendix=appendix)
 
 
-def _build_section_subtree(section_tag: ProtectedTag) -> SectionTree:
-    children: list[SectionTree] = []
+def _build_section_subtree(section_tag: ProtectedTag) -> SectionTreeNode:
+    children: list[SectionTreeNode] = []
     for child in section_tag.contents:
         if is_semantic_tag(child, spec_in=[SectionSpec]):
             children.append(_build_section_subtree(child))
-    return SectionTree(
+    return SectionTreeNode(
         data=get_semantic_tag_data(SectionSpec, section_tag),
         children=children,
     )
@@ -116,7 +133,7 @@ def _normalize_section_tree_string(section_tree_string: str) -> str:
     return "\n".join(lines)
 
 
-def _generate_string_for_section_tree(children: list[SectionTree]) -> str:
+def _generate_string_for_section_tree(children: list[SectionTreeNode]) -> str:
     result = ""
     for child in children:
         result += f"{child.data.number}\n"
@@ -124,14 +141,39 @@ def _generate_string_for_section_tree(children: list[SectionTree]) -> str:
     return result
 
 
-def compute_similarity(children1: list[SectionTree], children2: list[SectionTree]) -> float:
+def compute_similarity(children1: list[SectionTreeNode], children2: list[SectionTreeNode]) -> float:
     return Levenshtein.ratio(
         _normalize_section_tree_string(_generate_string_for_section_tree(children1)),
         _normalize_section_tree_string(_generate_string_for_section_tree(children2)),
     )
 
 
-# -------------------- PDF Processing -------------------- #
+def compute_evaluation(
+    file_name: str,
+    section_tree_actual: SectionTree,
+    section_tree_ground_truth: SectionTree,
+    baseline_run: Run | None,
+) -> Evaluation:
+    baseline_evaluation = None
+    if baseline_run:
+        baseline_evaluation = baseline_run.evaluations.get(file_name)
+        if baseline_evaluation is None:
+            _LOGGER.warning(
+                f"No baseline evaluation found for {file_name} " f"in run dated {baseline_run.date}"
+            )
+
+    similarity = compute_similarity(section_tree_actual.main, section_tree_ground_truth.main)
+
+    return Evaluation(
+        file_name=file_name,
+        similarity=similarity,
+        diff=(
+            similarity - baseline_evaluation.similarity if baseline_evaluation is not None else None
+        ),
+    )
+
+
+# -------------------- File Loading and PDF Processing -------------------- #
 
 
 def convert_pdf_to_html(
@@ -211,36 +253,33 @@ if __name__ == "__main__":
         default=None,
         help="Path to cache directory.",
     )
-
-    subparsers = parser.add_subparsers(dest="action", required=True, help="Action to perform")
-
-    generate_sections_parser = subparsers.add_parser(
-        "generate_references",
-        parents=[parent_parser],
-        help="Generate section trees from HTML files",
-    )
-    generate_sections_parser.add_argument(
+    parent_parser.add_argument(
         "-o",
         "--output",
         required=True,
         help="Output path.",
     )
 
-    measure_quality_parser = subparsers.add_parser(
-        "measure_quality",
+    subparsers = parser.add_subparsers(dest="action", required=True, help="Action to perform")
+
+    generate_sections_parser = subparsers.add_parser(
+        "generate_ground_truth",
         parents=[parent_parser],
-        help="Measure quality between reference and generated sections",
+        help="Generate section trees from HTML files",
     )
-    measure_quality_parser.add_argument(
-        "--reference",
-        required=True,
-        help="Path to the directory containing reference section tree JSON files.",
+
+    evaluate_parser = subparsers.add_parser(
+        "evaluate",
+        parents=[parent_parser],
+        help="Evaluate system output against ground truth",
     )
-    measure_quality_parser.add_argument(
-        "--save-baseline",
-        default=False,
-        action="store_true",
-        help="Take the scores as new baselines for future quality measurement.",
+    evaluate_parser.add_argument(
+        "--ground-truth",
+        default=ROOT_DIR
+        / "datasets"
+        / "quality_evaluation"
+        / "ground_truth_segmentation_in_sections",
+        help="Path to the directory containing ground truth section tree JSON files.",
     )
 
     args = parser.parse_args()
@@ -262,56 +301,80 @@ if __name__ == "__main__":
     )
     session_context = initialize_mistral_client(session_context)
 
-    loaded_documents = load_all_pdfs(input_dir, cache_dir=cache_dir)
+    loaded_pdfs = load_all_pdfs(input_dir, cache_dir=cache_dir)
 
     # ----- Performing the requested action
-    if args.action == "generate_references":
+    if args.action == "generate_ground_truth":
+        output_dir = Path(args.output)
+        output_dir.mkdir(parents=True, exist_ok=True)
+        _LOGGER.info(f"Output directory: {output_dir}")
+        for pdf_file_path, document_context in loaded_pdfs:
+            section_tree = build_section_tree(document_context.soup)
+            output_json_path = output_dir / f"{pdf_file_path.stem}.json"
+            dump_json(output_json_path, section_tree)
+            _LOGGER.info(f"Ground truth saved to: {output_json_path}")
+
+    elif args.action == "evaluate":
         output_path = Path(args.output)
-        output_path.mkdir(parents=True, exist_ok=True)
         _LOGGER.info(f"Output path: {output_path}")
-        for pdf_file_path, document_context in loaded_documents:
-            document = build_section_tree(document_context.soup)
-            output_json_path = output_path / f"{pdf_file_path.stem}.json"
-            dump_document(output_json_path, document)
-            _LOGGER.info(f"Reference saved to: {output_json_path}")
+        ground_truth_dir = Path(args.ground_truth)
+        if not ground_truth_dir.is_dir():
+            parser.error("Ground truth path must be a directory.")
 
-    elif args.action == "measure_quality":
-        reference_dir = Path(args.reference)
-        if not reference_dir.is_dir():
-            parser.error("Reference path must be a directory.")
-        save_baseline = args.save_baseline
-        if save_baseline:
-            _LOGGER.info("Saving new baselines.")
+        if output_path.exists():
+            experiment = load_json(output_path, Experiment)
+            _LOGGER.info("Existing experiment loaded.")
+        else:
+            experiment = Experiment(runs=[])
+            _LOGGER.info("New experiment will be created.")
 
-        for pdf_file_path, document_context in loaded_documents:
-            document_actual = build_section_tree(document_context.soup)
-            reference_json_path = reference_dir / f"{pdf_file_path.stem}.json"
-            document_reference = load_document(reference_json_path)
-            similarity = compute_similarity(document_actual.main, document_reference.main)
+        if any(run.date == Date.today() for run in experiment.runs):
+            parser.error(
+                "A run for today already exists."
+                "Please remove it before running the evaluation again."
+            )
 
-            if save_baseline:
-                document_reference.baseline = similarity
-                dump_document(reference_json_path, document_reference)
+        baseline_run = experiment.runs[-1] if experiment.runs else None
+        current_run = Run(
+            date=Date.today(),
+            baseline_date=baseline_run.date if baseline_run else None,
+            evaluations={},
+        )
+        experiment.runs.append(current_run)
 
-            else:
-                if document_reference.baseline:
-                    diff = similarity - document_reference.baseline
-                    if diff < 0:
-                        _LOGGER.warning(
-                            f"Quality regression detected for {pdf_file_path.name}: "
-                            f"similarity {similarity:.4f} "
-                            f"< baseline {document_reference.baseline:.4f} "
-                            f"(diff {diff:.4f})"
-                        )
-                    else:
-                        _LOGGER.info(
-                            f"Quality check passed for {pdf_file_path.name}: "
-                            f"similarity {similarity:.4f} "
-                            f">= baseline {document_reference.baseline:.4f} "
-                            f"(diff +{diff:.4f})"
-                        )
-                else:
-                    _LOGGER.info(
-                        f"No baseline available for {pdf_file_path.name}: "
-                        f"similarity is {similarity:.4f}"
-                    )
+        for pdf_file_path, document_context in loaded_pdfs:
+            section_tree_actual = build_section_tree(document_context.soup)
+            section_tree_ground_truth = load_json(
+                ground_truth_dir / f"{pdf_file_path.stem}.json", SectionTree
+            )
+            evaluation = compute_evaluation(
+                pdf_file_path.name,
+                section_tree_actual,
+                section_tree_ground_truth,
+                baseline_run,
+            )
+            current_run.evaluations[pdf_file_path.name] = evaluation
+
+        # ----- Generate evaluation summary
+        total = len(current_run.evaluations)
+        avg_score = sum(e.similarity for e in current_run.evaluations.values()) / total
+        _LOGGER.info(f"\nEvaluation: {total} files, avg={avg_score:.4f}")
+
+        if baseline_run:
+            regressions = [
+                e for e in current_run.evaluations.values() if e.diff is not None and e.diff < 0
+            ]
+            improvements = [
+                e for e in current_run.evaluations.values() if e.diff is not None and e.diff > 0
+            ]
+            _LOGGER.info(f"vs {baseline_run.date}: ↓{len(regressions)} ↑{len(improvements)}")
+
+            if regressions:
+                for e in sorted(regressions, key=lambda x: x.diff)[:3]:
+                    _LOGGER.info(f"  ⚠ {e.file_name}: {e.diff:+.4f}")
+            if improvements:
+                for e in sorted(improvements, key=lambda x: x.diff, reverse=True)[:3]:
+                    _LOGGER.info(f"  ✓ {e.file_name}: {e.diff:+.4f}")
+
+        dump_json(output_path, experiment)
+        _LOGGER.info(f"Experiment saved to: {output_path}")

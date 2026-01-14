@@ -59,7 +59,7 @@ dev = [
   "licenseheaders~=0.8.8"
 ]
 
-quality_measures = [
+quality_evaluations = [
   "python-Levenshtein~=0.27.3"
 ]
 

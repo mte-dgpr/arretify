@@ -1,0 +1,44 @@
+{
+  "main": [
+    {
+      "data": {
+        "title": "Supérieure ou égale à 5000 t",
+        "number": "1",
+        "type": "unknown"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "title": "Supérieure ou égale à 1250 t , mais inférieure à 5000 t",
+        "number": "2",
+        "type": "unknown"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "title": "Supérieure ou égale à 500 t , mais inférieure à 1250 t",
+        "number": "3",
+        "type": "unknown"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "number": "4",
+        "type": "unknown"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "title": "Arrêtés Applıcables pour les installations SOUmiSES À déclaration",
+        "number": "3",
+        "type": "article"
+      },
+      "children": []
+    }
+  ],
+  "appendix": null
+}

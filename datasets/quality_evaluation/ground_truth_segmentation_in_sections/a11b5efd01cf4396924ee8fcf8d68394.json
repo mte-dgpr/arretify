@@ -1,0 +1,111 @@
+{
+  "main": [
+    {
+      "data": {
+        "number": "j",
+        "type": "article"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "number": "2",
+        "type": "article"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "number": "3",
+        "type": "article"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "number": "4",
+        "type": "article"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "title": "Sans préjudice de l'observation des législations et réglementations applicables et des mesures particulières de police",
+        "number": "5",
+        "type": "article"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "number": "6",
+        "type": "article"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "number": "7",
+        "type": "article"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "number": "8",
+        "type": "article"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "number": "9",
+        "type": "article"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "number": "10",
+        "type": "article"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "number": "11",
+        "type": "article"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "number": "12",
+        "type": "article"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "number": "13",
+        "type": "article"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "number": "14",
+        "type": "article"
+      },
+      "children": []
+    },
+    {
+      "data": {
+        "number": "15",
+        "type": "article"
+      },
+      "children": []
+    }
+  ],
+  "appendix": null
+}

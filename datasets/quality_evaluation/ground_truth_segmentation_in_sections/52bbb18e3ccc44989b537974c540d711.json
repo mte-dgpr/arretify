@@ -1,0 +1,66 @@
+{
+  "main": [
+    {
+      "data": {
+        "title": "ÉCHÉANCES",
+        "number": "10.1",
+        "type": "article"
+      },
+      "children": [
+        {
+          "data": {
+            "number": "1.2",
+            "type": "unknown"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "number": "1.3",
+            "type": "unknown"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "a -Justificatifs d'accréditations sur les opérations de prélèvements et d'analyses de substances dans la matrice «Eaux Résiduaires» comprenant a minima :",
+            "number": "I.3",
+            "type": "unknown"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "number": "I.3",
+            "type": "unknown"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "c-Liste de références en matière d'opérations de prélèvements de substances dangereuses dans les rejets industriels;",
+            "number": "I.3",
+            "type": "unknown"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "title": "d -Attestation du prestataire s'engageant à respecter les prescriptions du fascicule.",
+            "number": "I.3",
+            "type": "unknown"
+          },
+          "children": []
+        },
+        {
+          "data": {
+            "number": "1.4",
+            "type": "unknown"
+          },
+          "children": []
+        }
+      ]
+    }
+  ],
+  "appendix": null
+}
