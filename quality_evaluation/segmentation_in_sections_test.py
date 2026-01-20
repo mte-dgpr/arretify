@@ -16,11 +16,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
-# TODO : Refactor tests when this closed : https://github.com/mte-dgpr/arretify/pull/65
 import unittest
 
-from bs4 import BeautifulSoup
 from segmentation_in_sections import (
     SectionTree,
     SectionTreeNode,
@@ -39,7 +36,7 @@ from arretify.semantic_tag_specs import (
     SectionData,
     SectionSpec,
 )
-from arretify.utils.html_create import make_semantic_tag
+from arretify.utils.testing import BaseTestCaseHtml
 
 
 class TestGenerateStringForSectionTreeNodeList(unittest.TestCase):
@@ -110,29 +107,22 @@ class TestNormalizeSectionTreeString(unittest.TestCase):
         assert lines[2] == "2     "
 
 
-class TestBuildSectionTree(unittest.TestCase):
-
-    def setUp(self):
-        self.soup = BeautifulSoup("", "html.parser")
+class TestBuildSectionTree(BaseTestCaseHtml):
 
     def test_nested_sections(self):
         # Arrange
-        arrete_tag = make_semantic_tag(
-            self.soup,
+        arrete_tag = self.make_semantic_tag(
             ArreteSpec,
             data=ArreteData(arretify_version="test-version"),
             contents=[
-                make_semantic_tag(
-                    self.soup,
+                self.make_semantic_tag(
                     MainSpec,
                     contents=[
-                        make_semantic_tag(
-                            self.soup,
+                        self.make_semantic_tag(
                             SectionSpec,
                             data=SectionData(number="1", title="Section 1", type="article"),
                             contents=[
-                                make_semantic_tag(
-                                    self.soup,
+                                self.make_semantic_tag(
                                     SectionSpec,
                                     data=SectionData(
                                         number="1.1", title="Section 1.1", type="article"
@@ -157,28 +147,23 @@ class TestBuildSectionTree(unittest.TestCase):
 
     def test_with_appendix(self):
         # Arrange
-        arrete_tag = make_semantic_tag(
-            self.soup,
+        arrete_tag = self.make_semantic_tag(
             ArreteSpec,
             data=ArreteData(arretify_version="test-version"),
             contents=[
-                make_semantic_tag(
-                    self.soup,
+                self.make_semantic_tag(
                     MainSpec,
                     contents=[
-                        make_semantic_tag(
-                            self.soup,
+                        self.make_semantic_tag(
                             SectionSpec,
                             data=SectionData(number="1", title="Article 1", type="article"),
                         )
                     ],
                 ),
-                make_semantic_tag(
-                    self.soup,
+                self.make_semantic_tag(
                     AppendixSpec,
                     contents=[
-                        make_semantic_tag(
-                            self.soup,
+                        self.make_semantic_tag(
                             SectionSpec,
                             data=SectionData(number="A", title="Annexe A", type="annexe"),
                         )
