@@ -4,101 +4,103 @@
       "date": "2026-01-14",
       "baseline_date": null,
       "git_hash": "66aeb9955e9b62f5c171cc0611b2ed5a7bce069b",
-      "evaluations": {
-        "0d89233b35434aca8e0feb66f0070319.pdf": {
-          "file_name": "0d89233b35434aca8e0feb66f0070319.pdf",
-          "similarity": 0.9714285714285714,
-          "delta": null
-        },
-        "132b73899fc04fd4b3f9a175c3ad99f2.pdf": {
-          "file_name": "132b73899fc04fd4b3f9a175c3ad99f2.pdf",
-          "similarity": 0.31746031746031744,
-          "delta": null
-        },
-        "36abc4f0ccf7402f9bb0095611023c69.pdf": {
-          "file_name": "36abc4f0ccf7402f9bb0095611023c69.pdf",
-          "similarity": 0.6,
-          "delta": null
-        },
-        "4d94deab64c4403c8c8bbfd767f9e8f3.pdf": {
-          "file_name": "4d94deab64c4403c8c8bbfd767f9e8f3.pdf",
-          "similarity": 0.96,
-          "delta": null
-        },
-        "52bbb18e3ccc44989b537974c540d711.pdf": {
-          "file_name": "52bbb18e3ccc44989b537974c540d711.pdf",
-          "similarity": 0.9081404032860343,
-          "delta": null
-        },
-        "7eYWqgFO5BP6B2Q8jP0Pu8zFXRVPp0Js.pdf": {
-          "file_name": "7eYWqgFO5BP6B2Q8jP0Pu8zFXRVPp0Js.pdf",
-          "similarity": 0.972972972972973,
-          "delta": null
-        },
-        "8a8d1b975968c75b015968e98f970023.pdf": {
-          "file_name": "8a8d1b975968c75b015968e98f970023.pdf",
-          "similarity": 0.41025641025641024,
-          "delta": null
-        },
-        "8aa100b1428f9a9201428fa0a7890004.pdf": {
-          "file_name": "8aa100b1428f9a9201428fa0a7890004.pdf",
-          "similarity": 0.9065664815419797,
-          "delta": null
-        },
-        "8aa100b1556dfefc01556e13dd85000b.pdf": {
-          "file_name": "8aa100b1556dfefc01556e13dd85000b.pdf",
-          "similarity": 1.0,
-          "delta": null
-        },
-        "8aa100b17c2b8961017c2c2be0a50031.pdf": {
-          "file_name": "8aa100b17c2b8961017c2c2be0a50031.pdf",
-          "similarity": 1.0,
-          "delta": null
-        },
-        "8aac03246f425aac016f4292ab0e0018.pdf": {
-          "file_name": "8aac03246f425aac016f4292ab0e0018.pdf",
-          "similarity": 0.9420289855072463,
-          "delta": null
-        },
-        "8ab308a944bbb1fc0144bbe573a00012.pdf": {
-          "file_name": "8ab308a944bbb1fc0144bbe573a00012.pdf",
-          "similarity": 0.9381443298969072,
-          "delta": null
-        },
-        "8accf0a64e1a05f4014e1b56a6e30027.pdf": {
-          "file_name": "8accf0a64e1a05f4014e1b56a6e30027.pdf",
-          "similarity": 0.7777777777777778,
-          "delta": null
-        },
-        "8accf0a66012c450016012ddbc2b001e.pdf": {
-          "file_name": "8accf0a66012c450016012ddbc2b001e.pdf",
-          "similarity": 1.0,
-          "delta": null
-        },
-        "a11b5efd01cf4396924ee8fcf8d68394.pdf": {
-          "file_name": "a11b5efd01cf4396924ee8fcf8d68394.pdf",
-          "similarity": 0.9787234042553191,
-          "delta": null
-        },
-        "baW25WFrv7WZankfo7C9pf3MpRH5HA6G.pdf": {
-          "file_name": "baW25WFrv7WZankfo7C9pf3MpRH5HA6G.pdf",
-          "similarity": 1.0,
-          "delta": null
-        },
-        "IPmRif7o4vBlabCre3XVyLjtoaqZdOEs.pdf": {
-          "file_name": "IPmRif7o4vBlabCre3XVyLjtoaqZdOEs.pdf",
-          "similarity": 1.0,
-          "delta": null
-        },
-        "is5mJTxzlwvMwDEbhaEUooOL2fnlbw0b.pdf": {
-          "file_name": "is5mJTxzlwvMwDEbhaEUooOL2fnlbw0b.pdf",
-          "similarity": 0.9344262295081968,
-          "delta": null
-        },
-        "uFQnkRvFgpYTpldGIoI6AWFaTnRAJQXz.pdf": {
-          "file_name": "uFQnkRvFgpYTpldGIoI6AWFaTnRAJQXz.pdf",
-          "similarity": 0.9545454545454546,
-          "delta": null
+      "evaluation_sets": {
+        "sections_similarity": {
+          "0d89233b35434aca8e0feb66f0070319.pdf": {
+            "file_name": "0d89233b35434aca8e0feb66f0070319.pdf",
+            "value": 0.9714285714285714,
+            "delta": null
+          },
+          "132b73899fc04fd4b3f9a175c3ad99f2.pdf": {
+            "file_name": "132b73899fc04fd4b3f9a175c3ad99f2.pdf",
+            "value": 0.31746031746031744,
+            "delta": null
+          },
+          "36abc4f0ccf7402f9bb0095611023c69.pdf": {
+            "file_name": "36abc4f0ccf7402f9bb0095611023c69.pdf",
+            "value": 0.6,
+            "delta": null
+          },
+          "4d94deab64c4403c8c8bbfd767f9e8f3.pdf": {
+            "file_name": "4d94deab64c4403c8c8bbfd767f9e8f3.pdf",
+            "value": 0.96,
+            "delta": null
+          },
+          "52bbb18e3ccc44989b537974c540d711.pdf": {
+            "file_name": "52bbb18e3ccc44989b537974c540d711.pdf",
+            "value": 0.9081404032860343,
+            "delta": null
+          },
+          "7eYWqgFO5BP6B2Q8jP0Pu8zFXRVPp0Js.pdf": {
+            "file_name": "7eYWqgFO5BP6B2Q8jP0Pu8zFXRVPp0Js.pdf",
+            "value": 0.972972972972973,
+            "delta": null
+          },
+          "8a8d1b975968c75b015968e98f970023.pdf": {
+            "file_name": "8a8d1b975968c75b015968e98f970023.pdf",
+            "value": 0.41025641025641024,
+            "delta": null
+          },
+          "8aa100b1428f9a9201428fa0a7890004.pdf": {
+            "file_name": "8aa100b1428f9a9201428fa0a7890004.pdf",
+            "value": 0.9065664815419797,
+            "delta": null
+          },
+          "8aa100b1556dfefc01556e13dd85000b.pdf": {
+            "file_name": "8aa100b1556dfefc01556e13dd85000b.pdf",
+            "value": 1.0,
+            "delta": null
+          },
+          "8aa100b17c2b8961017c2c2be0a50031.pdf": {
+            "file_name": "8aa100b17c2b8961017c2c2be0a50031.pdf",
+            "value": 1.0,
+            "delta": null
+          },
+          "8aac03246f425aac016f4292ab0e0018.pdf": {
+            "file_name": "8aac03246f425aac016f4292ab0e0018.pdf",
+            "value": 0.9420289855072463,
+            "delta": null
+          },
+          "8ab308a944bbb1fc0144bbe573a00012.pdf": {
+            "file_name": "8ab308a944bbb1fc0144bbe573a00012.pdf",
+            "value": 0.9381443298969072,
+            "delta": null
+          },
+          "8accf0a64e1a05f4014e1b56a6e30027.pdf": {
+            "file_name": "8accf0a64e1a05f4014e1b56a6e30027.pdf",
+            "value": 0.7777777777777778,
+            "delta": null
+          },
+          "8accf0a66012c450016012ddbc2b001e.pdf": {
+            "file_name": "8accf0a66012c450016012ddbc2b001e.pdf",
+            "value": 1.0,
+            "delta": null
+          },
+          "a11b5efd01cf4396924ee8fcf8d68394.pdf": {
+            "file_name": "a11b5efd01cf4396924ee8fcf8d68394.pdf",
+            "value": 0.9787234042553191,
+            "delta": null
+          },
+          "baW25WFrv7WZankfo7C9pf3MpRH5HA6G.pdf": {
+            "file_name": "baW25WFrv7WZankfo7C9pf3MpRH5HA6G.pdf",
+            "value": 1.0,
+            "delta": null
+          },
+          "IPmRif7o4vBlabCre3XVyLjtoaqZdOEs.pdf": {
+            "file_name": "IPmRif7o4vBlabCre3XVyLjtoaqZdOEs.pdf",
+            "value": 1.0,
+            "delta": null
+          },
+          "is5mJTxzlwvMwDEbhaEUooOL2fnlbw0b.pdf": {
+            "file_name": "is5mJTxzlwvMwDEbhaEUooOL2fnlbw0b.pdf",
+            "value": 0.9344262295081968,
+            "delta": null
+          },
+          "uFQnkRvFgpYTpldGIoI6AWFaTnRAJQXz.pdf": {
+            "file_name": "uFQnkRvFgpYTpldGIoI6AWFaTnRAJQXz.pdf",
+            "value": 0.9545454545454546,
+            "delta": null
+          }
         }
       }
     }

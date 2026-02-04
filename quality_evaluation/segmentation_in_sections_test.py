@@ -209,7 +209,7 @@ class TestComputeEvaluation(unittest.TestCase):
         )
 
         # Assert
-        assert evaluation.similarity == 1.0
+        assert evaluation.value == 1.0
         assert string_result == string_ground_truth
 
     def test_compute_evaluation_with_diff(self):
@@ -236,7 +236,7 @@ class TestComputeEvaluation(unittest.TestCase):
         )
 
         # Assert
-        assert evaluation.similarity < 1.0
+        assert evaluation.value < 1.0
         assert string_result != string_ground_truth
         assert "1" in string_ground_truth
         assert "2" in string_result

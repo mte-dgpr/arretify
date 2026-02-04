@@ -18,27 +18,32 @@
 #
 import argparse
 import logging
-from datetime import date as Date
 from pathlib import Path
-from typing import Type, TypeVar
 
-import git
 import Levenshtein
-from dotenv import load_dotenv
 from pydantic import BaseModel
 
-from arretify.law_data.apis.mistral import initialize_mistral_client
-from arretify.pipeline import load_ocr_pages, load_pdf_file, run_pipeline
 from arretify.semantic_tag_specs import AppendixSpec, MainSpec, SectionData, SectionSpec
-from arretify.settings import Settings
-from arretify.step_markdown_cleaning import step_markdown_cleaning
-from arretify.step_ocr import step_ocr
-from arretify.step_segmentation import step_segmentation
-from arretify.types import DocumentContext, ProtectedSoup, ProtectedTag, SessionContext
+from arretify.types import ProtectedSoup, ProtectedTag
 from arretify.utils.html_semantic import get_semantic_tag_data, is_semantic_tag
+from quality_evaluation.common import (
+    Evaluation,
+    Run,
+    add_evaluation_arguments,
+    create_base_parser,
+    create_evaluation_with_delta,
+    dump_json,
+    initialize_session_context,
+    load_all_pdfs,
+    load_json,
+    load_or_create_experiment,
+    log_evaluation_summary,
+    prepare_current_run,
+)
 
 _LOGGER = logging.getLogger(Path(__file__).stem)
 ROOT_DIR = Path(__file__).parent.parent
+METRIC_NAME = "sections_similarity"
 
 # -------------------- Data Models -------------------- #
 
@@ -51,43 +56,6 @@ class SectionTreeNode(BaseModel):
 class SectionTree(BaseModel):
     main: list[SectionTreeNode]
     appendix: list[SectionTreeNode] | None
-
-
-class Evaluation(BaseModel):
-    file_name: str
-    similarity: float
-    delta: float | None
-
-
-class Run(BaseModel):
-    date: Date
-    baseline_date: Date | None
-    git_hash: str
-    evaluations: dict[str, Evaluation]
-
-
-class Experiment(BaseModel):
-    runs: list[Run]
-
-
-T = TypeVar("T", bound=BaseModel)
-
-
-def dump_json(output_json_path: Path, model: BaseModel) -> None:
-    output_json_path.write_text(model.model_dump_json(indent=2), encoding="utf-8")
-
-
-def load_json(json_path: Path, model_class: Type[T]) -> T:
-    try:
-        return model_class.model_validate_json(json_path.read_text(encoding="utf-8"))
-    except Exception:
-        _LOGGER.error(f"Error loading JSON from {json_path}")
-        raise
-
-
-def get_git_hash() -> str:
-    repo = git.Repo(ROOT_DIR)
-    return repo.head.commit.hexsha
 
 
 # -------------------- Section Tree Building -------------------- #
@@ -174,81 +142,16 @@ def compute_evaluation(
     section_tree_ground_truth: SectionTree,
     baseline_run: Run | None,
 ) -> tuple[Evaluation, tuple[str, str]]:
-    baseline_evaluation = None
-    if baseline_run:
-        baseline_evaluation = baseline_run.evaluations.get(file_name)
-        if baseline_evaluation is None:
-            _LOGGER.warning(
-                f"No baseline evaluation found for {file_name} " f"in run dated {baseline_run.date}"
-            )
-
     string_result = _generate_string_for_section_tree(section_tree_result)
     string_ground_truth = _generate_string_for_section_tree(section_tree_ground_truth)
     similarity = Levenshtein.ratio(string_result, string_ground_truth)
 
-    return Evaluation(
+    return create_evaluation_with_delta(
         file_name=file_name,
-        similarity=similarity,
-        delta=(
-            similarity - baseline_evaluation.similarity if baseline_evaluation is not None else None
-        ),
+        value=similarity,
+        baseline_run=baseline_run,
+        metric_name=METRIC_NAME,
     ), (string_result, string_ground_truth)
-
-
-# -------------------- File Loading and PDF Processing -------------------- #
-
-
-def convert_pdf_to_html(
-    session_context: SessionContext, pdf_file_path: Path, cache_dir: Path | None
-) -> DocumentContext:
-    if cache_dir is not None:
-        ocr_pages_dir = cache_dir / pdf_file_path.stem
-
-    if ocr_pages_dir and ocr_pages_dir.exists():
-        if not ocr_pages_dir.is_dir():
-            raise ValueError(f"Cache path {ocr_pages_dir} exists and is not a directory.")
-        _LOGGER.info(f"Loading OCR pages from cache directory for {pdf_file_path.name}")
-        return run_pipeline(
-            load_ocr_pages(session_context, ocr_pages_dir),
-            [step_markdown_cleaning, step_segmentation],
-        )
-
-    else:
-        if ocr_pages_dir is not None:
-            ocr_pages_dir.mkdir(parents=True, exist_ok=True)
-
-        def step_ocr_with_cache(
-            document_context: DocumentContext,
-        ) -> DocumentContext:
-            return step_ocr(
-                document_context=document_context,
-                ocr_pages_dir=ocr_pages_dir,
-            )
-
-        _LOGGER.info(f"Performing OCR for {pdf_file_path.name}")
-        return run_pipeline(
-            load_pdf_file(session_context, pdf_file_path),
-            [step_ocr_with_cache, step_markdown_cleaning, step_segmentation],
-        )
-
-
-def load_all_pdfs(input_dir: Path, cache_dir: Path | None) -> list[tuple[Path, DocumentContext]]:
-    pdf_file_paths: list[Path] = []
-    for entry in input_dir.iterdir():
-        if entry.is_file() and entry.suffix.lower() == ".pdf":
-            pdf_file_paths.append(entry)
-    loaded: list[tuple[Path, DocumentContext]] = []
-    for pdf_file_path in sorted(pdf_file_paths):
-        try:
-            loaded.append(
-                (
-                    pdf_file_path,
-                    convert_pdf_to_html(session_context, pdf_file_path, cache_dir=cache_dir),
-                )
-            )
-        except Exception as e:
-            _LOGGER.error(f"Error processing file {pdf_file_path}: {e}")
-    return loaded
 
 
 # -------------------- Main Script -------------------- #
@@ -256,30 +159,16 @@ def load_all_pdfs(input_dir: Path, cache_dir: Path | None) -> list[tuple[Path, D
 
 if __name__ == "__main__":
     logging.basicConfig(
-        level=logging.ERROR,
+        level=logging.INFO,
         format="%(message)s",
     )
-    _LOGGER.setLevel(logging.INFO)
+    logging.getLogger("arretify").setLevel(logging.ERROR)
 
     # ----- Parsing command-line arguments
     parser = argparse.ArgumentParser()
-    parent_parser = argparse.ArgumentParser(add_help=False)
-    parent_parser.add_argument(
-        "-i",
-        "--input",
-        default=ROOT_DIR / "datasets" / "quality_evaluation_segmentation_in_sections",
-        help="Input folder.",
-    )
-    parent_parser.add_argument(
-        "--cache-dir",
-        default=None,
-        help="Path to cache directory.",
-    )
-    parent_parser.add_argument(
-        "-o",
-        "--output",
-        default=ROOT_DIR / "quality_evaluation" / "segmentation_in_sections.json",
-        help="Output path.",
+    parent_parser = create_base_parser(
+        default_input=ROOT_DIR / "datasets" / "quality_evaluation",
+        default_output=ROOT_DIR / "quality_evaluation" / "segmentation_in_sections.json",
     )
 
     subparsers = parser.add_subparsers(dest="action", required=True, help="Action to perform")
@@ -295,21 +184,12 @@ if __name__ == "__main__":
         parents=[parent_parser],
         help="Evaluate system output against ground truth",
     )
-    evaluate_parser.add_argument(
-        "--ground-truth",
-        default=ROOT_DIR
+    add_evaluation_arguments(
+        evaluate_parser,
+        default_ground_truth=ROOT_DIR
         / "datasets"
-        / "quality_evaluation_segmentation_in_sections"
-        / "ground_truth",
-        help="Path to the directory containing ground truth section tree JSON files.",
-    )
-    evaluate_parser.add_argument(
-        "--diff-dir",
-        default=None,
-        help=(
-            "Directory where diff files should be saved. To see differences in VS Code, "
-            "select both files and use 'Compare Selected'."
-        ),
+        / "quality_evaluation"
+        / "ground_truth_segmentation_in_sections",
     )
 
     args = parser.parse_args()
@@ -325,13 +205,8 @@ if __name__ == "__main__":
         cache_dir.mkdir(parents=True, exist_ok=True)
         _LOGGER.info(f"Cache directory: {cache_dir}")
 
-    load_dotenv()
-    session_context = SessionContext(
-        settings=Settings.from_env(),
-    )
-    session_context = initialize_mistral_client(session_context)
-
-    loaded_pdfs = load_all_pdfs(input_dir, cache_dir=cache_dir)
+    session_context = initialize_session_context()
+    loaded_pdfs = load_all_pdfs(session_context, input_dir, cache_dir=cache_dir)
 
     # ----- Performing the requested action
     if args.action == "generate_ground_truth":
@@ -351,25 +226,10 @@ if __name__ == "__main__":
         if not ground_truth_dir.is_dir():
             parser.error("Ground truth path must be a directory.")
 
-        if output_path.exists():
-            experiment = load_json(output_path, Experiment)
-            _LOGGER.info("Existing experiment loaded.")
-        else:
-            experiment = Experiment(runs=[])
-            _LOGGER.info("New experiment will be created.")
+        experiment = load_or_create_experiment(output_path)
+        current_run, baseline_run = prepare_current_run(experiment)
 
-        if any(run.date == Date.today() for run in experiment.runs):
-            _LOGGER.info("Removing existing run for today.")
-            experiment.runs = [run for run in experiment.runs if run.date != Date.today()]
-
-        baseline_run = experiment.runs[-1] if experiment.runs else None
-        current_run = Run(
-            date=Date.today(),
-            baseline_date=baseline_run.date if baseline_run else None,
-            git_hash=get_git_hash(),
-            evaluations={},
-        )
-        experiment.runs.append(current_run)
+        current_run.evaluation_sets[METRIC_NAME] = {}
 
         diff_dir = Path(args.diff_dir) if args.diff_dir else None
         if diff_dir:
@@ -387,7 +247,7 @@ if __name__ == "__main__":
                 section_tree_ground_truth,
                 baseline_run,
             )
-            current_run.evaluations[pdf_file_path.name] = evaluation
+            current_run.evaluation_sets[METRIC_NAME][pdf_file_path.name] = evaluation
 
             if diff_dir:
                 # Save ground truth and result as separate files for VS Code diff view
@@ -398,25 +258,6 @@ if __name__ == "__main__":
                 _LOGGER.info(f"Diff files saved: {ground_truth_file.name} vs {result_file.name}")
 
         # ----- Generate evaluation summary
-        total = len(current_run.evaluations)
-        avg_score = sum(e.similarity for e in current_run.evaluations.values()) / total
-        _LOGGER.info(f"\nEvaluation: {total} files, avg={avg_score:.4f}")
-
-        if baseline_run:
-            regressions: list[Evaluation] = [
-                e for e in current_run.evaluations.values() if e.delta is not None and e.delta < 0
-            ]
-            improvements: list[Evaluation] = [
-                e for e in current_run.evaluations.values() if e.delta is not None and e.delta > 0
-            ]
-            _LOGGER.info(f"vs {baseline_run.date}: ↓{len(regressions)} ↑{len(improvements)}")
-
-            if regressions:
-                for e in sorted(regressions, key=lambda x: x.delta):
-                    _LOGGER.info(f"  ⚠ {e.file_name}: {e.delta:+.4f}")
-            if improvements:
-                for e in sorted(improvements, key=lambda x: x.delta, reverse=True):
-                    _LOGGER.info(f"  ✓ {e.file_name}: {e.delta:+.4f}")
-
+        log_evaluation_summary(current_run, baseline_run, METRIC_NAME)
         dump_json(output_path, experiment)
         _LOGGER.info(f"Experiment saved to: {output_path}")
