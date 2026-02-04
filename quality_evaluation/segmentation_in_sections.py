@@ -267,7 +267,7 @@ if __name__ == "__main__":
     parent_parser.add_argument(
         "-i",
         "--input",
-        required=True,
+        default=ROOT_DIR / "datasets" / "quality_evaluation_segmentation_in_sections",
         help="Input folder.",
     )
     parent_parser.add_argument(
@@ -278,7 +278,7 @@ if __name__ == "__main__":
     parent_parser.add_argument(
         "-o",
         "--output",
-        required=True,
+        default=ROOT_DIR / "quality_evaluation" / "segmentation_in_sections.json",
         help="Output path.",
     )
 
@@ -299,8 +299,8 @@ if __name__ == "__main__":
         "--ground-truth",
         default=ROOT_DIR
         / "datasets"
-        / "quality_evaluation"
-        / "ground_truth_segmentation_in_sections",
+        / "quality_evaluation_segmentation_in_sections"
+        / "ground_truth",
         help="Path to the directory containing ground truth section tree JSON files.",
     )
     evaluate_parser.add_argument(
