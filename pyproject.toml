@@ -68,7 +68,7 @@ quality_evaluations = [
 arretify = "arretify.main:main_cli"
 
 [tool.mypy]
-packages=["arretify"]
+packages=["arretify", "quality_evaluation"]
 plugins = ['pydantic.mypy']
 follow_untyped_imports = true
 exclude = "arretify/_vendor"
