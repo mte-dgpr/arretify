@@ -1,7 +1,7 @@
 {
   "tables_by_page": {
-    "1": [
-      "<table>\n<thead>\n<tr>\n<th>Teneur en O2 sur gaz sec</th>\n<th>NO₂</th>\n<th>Poussières</th>\n<th>COVNM</th>\n<th>CO</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>5 %</td>\n<td>525</td>\n<td>150</td>\n<td>50</td>\n<td>1200</td>\n</tr>\n</tbody>\n</table>"
+    "2": [
+      "<table><thead><tr><th>Teneur en O2 sur gaz sec</th><th>NO₂</th><th>Poussières</th><th>COVNM</th><th>CO</th></tr></thead><tbody><tr><td>5 %</td><td>525</td><td>150</td><td>50</td><td>1200</td></tr></tbody></table>"
     ]
   }
 }

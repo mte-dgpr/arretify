@@ -47,6 +47,10 @@ PageFooterSpec = create_semantic_tag_spec_no_data(
 
 class PageSeparatorData(SemanticTagData):
     page_index: int
+    """
+    0-based index of the page after which the separator is located.
+    For example, if page_index=3, it means that the separator is located between page 3 and page 4.
+    """
 
 
 PageSeparatorSpec: SemanticTagSpec[PageSeparatorData] = SemanticTagSpec(

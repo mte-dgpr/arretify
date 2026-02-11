@@ -27,7 +27,7 @@ from quality_evaluation.tables_detection import (
     _get_table_structure_html,
     _get_table_text_content,
     _match_tables_by_page,
-    _strip_table_attrs,
+    _normalize_table_tag,
     compute_metric_scores,
     extract_tables_from_html,
 )
@@ -224,8 +224,8 @@ class TestComputeEvaluation(unittest.TestCase):
         }
 
 
-class TestStripTableAttrs(unittest.TestCase):
-    def test_strip_table_attrs_removes_attributes_except_colspan_rowspan(self):
+class TestNormalizeTableTag(unittest.TestCase):
+    def test_normalize_table_tag_removes_attributes_except_colspan_rowspan(self):
         # Arrange
         html = """
         <table class="my-table" id="table1" style="width: 100%">
@@ -244,19 +244,19 @@ class TestStripTableAttrs(unittest.TestCase):
         table_tag = soup.find("table")
 
         # Act
-        result = _strip_table_attrs(table_tag)
+        result = _normalize_table_tag(table_tag)
 
         # Assert
         expected = (
-            "<table>\n"
-            "<tr>\n"
-            '<th colspan="2">Header Spacing</th>\n'
-            '<th rowspan="3">Another</th>\n'
-            "</tr>\n"
-            "<tr>\n"
-            "<td>Cell with spaces</td>\n"
-            "<td>Normal cell</td>\n"
-            "</tr>\n"
+            "<table>"
+            "<tr>"
+            '<th colspan="2">Header Spacing</th>'
+            '<th rowspan="3">Another</th>'
+            "</tr>"
+            "<tr>"
+            "<td>Cell with spaces</td>"
+            "<td>Normal cell</td>"
+            "</tr>"
             "</table>"
         )
         assert str(result) == expected
