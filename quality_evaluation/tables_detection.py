@@ -48,25 +48,30 @@ class TablesData(BaseModel):
 # -------------------- Table Detection -------------------- #
 
 
-def _strip_table_attrs(table_tag: Tag) -> Tag:
+def _normalize_table_tag(table_tag: Tag) -> Tag:
     """
-    Strip all attributes from table HTML except colspan and rowspan.
-    Also normalizes text content by stripping and collapsing whitespace.
-    Returns cleaned HTML string.
+    Normalize a <table> tag by stripping whitespace, new lines
+    and removing non-structural attributes.
     """
     table_copy = copy(table_tag)
     attrs_to_keep = {"colspan", "rowspan"}
 
     for tag in [table_copy, *table_copy.find_all(True)]:
+        # Remove all attributes except those in attrs_to_keep
         for attr in list(tag.attrs.keys()):
             if attr not in attrs_to_keep:
                 del tag[attr]
 
+        # Normalize text content in cells by stripping and collapsing whitespace
         if tag.name in ["td", "th"]:
             text = tag.get_text(strip=True)
             text = " ".join(text.split())
             tag.clear()
             tag.string = text
+
+    # Remove NavigableString elements that contain only whitespace/newlines
+    for element in table_copy.find_all(string=lambda text: text.strip() == ""):
+        element.extract()
 
     return table_copy
 
@@ -79,16 +84,16 @@ def extract_tables_from_html(document_context: DocumentContext) -> TablesData:
     tables_by_page: dict[int, list[str]] = {}
 
     for table_tag in document_context.soup.find_all("table"):
-        page = 0
+        page = 1
         page_separator = table_tag.find_previous(
             lambda t: is_semantic_tag(t, spec_in=[PageSeparatorSpec])
         )
         if page_separator:
-            page = get_semantic_tag_data(PageSeparatorSpec, page_separator).page_index
+            page = get_semantic_tag_data(PageSeparatorSpec, page_separator).page_index + 1
 
         if page not in tables_by_page:
             tables_by_page[page] = []
-        tables_by_page[page].append(str(_strip_table_attrs(table_tag)))
+        tables_by_page[page].append(str(_normalize_table_tag(table_tag)))
 
     return TablesData(tables_by_page=tables_by_page)
 
