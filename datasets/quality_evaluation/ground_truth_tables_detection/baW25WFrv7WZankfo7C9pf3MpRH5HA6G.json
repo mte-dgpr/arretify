@@ -1,0 +1,7 @@
+{
+  "tables_by_page": {
+    "4": [
+      "<table>\n<thead>\n<tr>\n<th>Coordonnées en LAMBERT 93</th>\n<th></th>\n<th></th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>Dénomination</td>\n<td>X</td>\n<td>Y</td>\n</tr>\n<tr>\n<td>PZ 1 (amont) comblé</td>\n<td>565834,75</td>\n<td>6326123,85</td>\n</tr>\n<tr>\n<td>Puits (amont) Mme CAILA</td>\n<td>565857</td>\n<td>6325940</td>\n</tr>\n<tr>\n<td>PZ 2 (aval)</td>\n<td>565929,68</td>\n<td>6326 200,93</td>\n</tr>\n<tr>\n<td>PZ 3 (aval)</td>\n<td>565900,94</td>\n<td>6326168,59</td>\n</tr>\n</tbody>\n</table>"
+    ]
+  }
+}

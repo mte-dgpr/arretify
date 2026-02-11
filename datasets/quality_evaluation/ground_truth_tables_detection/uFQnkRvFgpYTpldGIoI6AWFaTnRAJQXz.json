@@ -1,0 +1,8 @@
+{
+  "tables_by_page": {
+    "2": [
+      "<table>\n<thead>\n<tr>\n<th>Parcelle</th>\n<th>Lieu-dit</th>\n<th>Superficie</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>ZI 25</td>\n<td>Fief de la Fontaine</td>\n<td>9000 m²</td>\n</tr>\n</tbody>\n</table>",
+      "<table>\n<thead>\n<tr>\n<th>RubriquesICPE</th>\n<th>Libellé simplifié de la rubrique</th>\n<th>Nature de l'installation</th>\n<th>Quantitéautorisée</th>\n<th>Régime(*)</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>2515-1</td>\n<td>Installations de broyage,concassage, criblage,ensachage, pulvérisation,lavage, nettoyage, tamisage,mélange de pierres, cailloux,minerais et autres produitsminéraux naturels ou artificielsou de déchets non dangereuxinertes, en vue de laproduction de matériauxdestinés à une utilisation, àl'exclusion de celles classées</td>\n<td>Broyage, concassage</td>\n<td>190 kW</td>\n<td>D</td>\n</tr>\n<tr>\n<td></td>\n<td>au titre d'une autre rubrique ou de la sous-rubrique 2515-2. La puissance maximale de l'ensemble des machines fixes pouvant concourir simultanément a fonctionnement de l'installation, étant : [...]b) Supérieure à 40 kW , mais inférieure ou égale à 200 kW</td>\n<td></td>\n<td></td>\n<td></td>\n</tr>\n<tr>\n<td>:--:</td>\n<td>:--:</td>\n<td>:--:</td>\n<td>:--:</td>\n<td>:--:</td>\n</tr>\n<tr>\n<td>2517-2</td>\n<td>Station de transit, regroupement ou tri de produits minéraux ou de déchets non dangereux inertes autres que ceux visés par d'autres rubriques, la superficie de l'aire de transit étant: [...]Supérieure à 5000 m³, mais inférieure ou égale à 10000 m²</td>\n<td>Plateforme d'accueil de déchets inertes issus de chantiers BTP de la société EUROVIA d'une superficie de</td>\n<td>9000 m²</td>\n<td>D</td>\n</tr>\n</tbody>\n</table>"
+    ]
+  }
+}

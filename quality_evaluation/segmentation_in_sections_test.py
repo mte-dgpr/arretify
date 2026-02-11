@@ -18,16 +18,6 @@
 #
 import unittest
 
-from segmentation_in_sections import (
-    SectionTree,
-    SectionTreeNode,
-    _generate_string_for_section_tree,
-    _generate_string_for_section_tree_node_list,
-    _normalize_section_tree_string,
-    build_section_tree,
-    compute_evaluation,
-)
-
 from arretify.semantic_tag_specs import (
     AppendixSpec,
     ArreteData,
@@ -37,6 +27,15 @@ from arretify.semantic_tag_specs import (
     SectionSpec,
 )
 from arretify.utils.testing import BaseTestCaseHtml
+from quality_evaluation.segmentation_in_sections import (
+    SectionTree,
+    SectionTreeNode,
+    _generate_string_for_section_tree,
+    _generate_string_for_section_tree_node_list,
+    _normalize_section_tree_string,
+    build_section_tree,
+    compute_metric_scores,
+)
 
 
 class TestGenerateStringForSectionTreeNodeList(unittest.TestCase):
@@ -137,7 +136,7 @@ class TestBuildSectionTree(BaseTestCaseHtml):
         self.soup.append(arrete_tag)
 
         # Act
-        result = build_section_tree(self.soup)
+        result = build_section_tree(self.context)
 
         # Assert
         assert len(result.main) == 1
@@ -174,7 +173,7 @@ class TestBuildSectionTree(BaseTestCaseHtml):
         self.soup.append(arrete_tag)
 
         # Act
-        result = build_section_tree(self.soup)
+        result = build_section_tree(self.context)
 
         # Assert
         assert len(result.main) == 1
@@ -184,8 +183,8 @@ class TestBuildSectionTree(BaseTestCaseHtml):
         assert result.appendix[0].data.number == "A"
 
 
-class TestComputeEvaluation(unittest.TestCase):
-    def test_compute_evaluation_without_diff(self):
+class TestComputeMetricScores(unittest.TestCase):
+    def test_compute_metric_scores_without_diff(self):
         # Arrange
         ground_truth = SectionTree(
             main=[
@@ -201,18 +200,16 @@ class TestComputeEvaluation(unittest.TestCase):
         )
 
         # Act
-        evaluation, (string_result, string_ground_truth) = compute_evaluation(
-            file_name="test.pdf",
+        metric_scores, (string_result, string_ground_truth) = compute_metric_scores(
             section_tree_result=result,
             section_tree_ground_truth=ground_truth,
-            baseline_run=None,
         )
 
         # Assert
-        assert evaluation.value == 1.0
+        assert metric_scores["sections_similarity"] == 1.0
         assert string_result == string_ground_truth
 
-    def test_compute_evaluation_with_diff(self):
+    def test_compute_metric_scores_with_diff(self):
         # Arrange
         ground_truth = SectionTree(
             main=[
@@ -228,15 +225,13 @@ class TestComputeEvaluation(unittest.TestCase):
         )
 
         # Act
-        evaluation, (string_result, string_ground_truth) = compute_evaluation(
-            file_name="test.pdf",
+        metric_scores, (string_result, string_ground_truth) = compute_metric_scores(
             section_tree_result=result,
             section_tree_ground_truth=ground_truth,
-            baseline_run=None,
         )
 
         # Assert
-        assert evaluation.value < 1.0
+        assert metric_scores["sections_similarity"] < 1.0
         assert string_result != string_ground_truth
         assert "1" in string_ground_truth
         assert "2" in string_result
