@@ -27,7 +27,7 @@ from arretify.semantic_tag_specs import PageSeparatorSpec
 from arretify.types import DocumentContext
 from arretify.utils.html import is_tag
 from arretify.utils.html_semantic import get_semantic_tag_data, is_semantic_tag
-from quality_evaluation.types import MetricScores
+from quality_evaluation.types import ComputeMetricsResult
 
 ROOT_DIR = Path(__file__).parent.parent
 
@@ -128,6 +128,11 @@ def _process_tables(tables_data: TablesData) -> tuple[HtmlStr, HtmlStr]:
     3. Concatenate into two strings: structure-only and full HTML
 
     Returns tuple of (structure_html, general_html)
+
+    We concatenate all tables because it is difficult to match individual tables
+    between result and ground truth, especially when there are extra or missing tables.
+    Also there are problematic cases where a single table in the ground truth corresponds to
+    multiple tables in the result or vice versa (if tables are split between pages for example).
     """
     all_tables_html: list[HtmlStr] = []
     all_structures_html: list[HtmlStr] = []
@@ -152,7 +157,7 @@ def _process_tables(tables_data: TablesData) -> tuple[HtmlStr, HtmlStr]:
 def compute_metric_scores(
     tables_result: TablesData,
     tables_ground_truth: TablesData,
-) -> tuple[MetricScores, tuple[str, str] | None]:
+) -> ComputeMetricsResult:
     """
     Compute evaluation metrics for table detection.
     Concatenates all tables into single strings and compares them.
@@ -172,5 +177,8 @@ def compute_metric_scores(
             "structure_accuracy": structure_accuracy,
             "general_accuracy": general_accuracy,
         },
-        None,
+        {
+            "structure_accuracy": (result_structure, ground_truth_structure),
+            "general_accuracy": (result_general, ground_truth_general),
+        },
     )

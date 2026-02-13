@@ -38,6 +38,7 @@ class TestMain(unittest.TestCase):
             input_dir.mkdir()
             ground_truth_dir = temp_path / "ground_truth"
             ground_truth_dir.mkdir()
+            debug_dir = temp_path / "debug"
             experiment_json_path = temp_path / "experiment.json"
 
             # Create test PDF file
@@ -88,10 +89,12 @@ class TestMain(unittest.TestCase):
                         str(ground_truth_dir),
                         "--output",
                         str(experiment_json_path),
+                        "--debug",
+                        str(debug_dir),
                     ]
                 )
 
-            # Assert
+            # Assert experiment file
             assert experiment_json_path.exists()
             experiment = load_json(experiment_json_path, Experiment)
 
@@ -102,8 +105,6 @@ class TestMain(unittest.TestCase):
                 git_hash="test123",
                 metrics_by_file={
                     "test.pdf": {
-                        "recall": 1.0,
-                        "precision": 1.0,
                         "structure_accuracy": 1.0,
                         "general_accuracy": 1.0,
                     }
@@ -111,6 +112,13 @@ class TestMain(unittest.TestCase):
             )
 
             assert experiment.runs == [expected_run]
+
+            # Assert debug files exist
+            assert debug_dir.exists()
+            assert (debug_dir / "test.structure_accuracy.result.txt").exists()
+            assert (debug_dir / "test.structure_accuracy.ground_truth.txt").exists()
+            assert (debug_dir / "test.general_accuracy.result.txt").exists()
+            assert (debug_dir / "test.general_accuracy.ground_truth.txt").exists()
 
 
 class TestComputeRunSummary(unittest.TestCase):
