@@ -1,0 +1,88 @@
+{
+  "runs": [
+    {
+      "id": 1,
+      "date": "2026-02-13",
+      "baseline_id": null,
+      "git_hash": "aa80e92e44dacc386363b3ad89af87dab10e971b",
+      "metrics_by_file": {
+        "0d89233b35434aca8e0feb66f0070319.pdf": {
+          "structure_accuracy": 1.0,
+          "general_accuracy": 1.0
+        },
+        "132b73899fc04fd4b3f9a175c3ad99f2.pdf": {
+          "structure_accuracy": 0.9109848484848485,
+          "general_accuracy": 0.9547625031414928
+        },
+        "36abc4f0ccf7402f9bb0095611023c69.pdf": {
+          "structure_accuracy": 1.0,
+          "general_accuracy": 1.0
+        },
+        "4d94deab64c4403c8c8bbfd767f9e8f3.pdf": {
+          "structure_accuracy": 1.0,
+          "general_accuracy": 1.0
+        },
+        "52bbb18e3ccc44989b537974c540d711.pdf": {
+          "structure_accuracy": 0.8545073849810424,
+          "general_accuracy": 0.9271482238813068
+        },
+        "7eYWqgFO5BP6B2Q8jP0Pu8zFXRVPp0Js.pdf": {
+          "structure_accuracy": 1.0,
+          "general_accuracy": 1.0
+        },
+        "8a8d1b975968c75b015968e98f970023.pdf": {
+          "structure_accuracy": 1.0,
+          "general_accuracy": 1.0
+        },
+        "8aa100b1428f9a9201428fa0a7890004.pdf": {
+          "structure_accuracy": 0.7922600282639417,
+          "general_accuracy": 0.561987919382812
+        },
+        "8aa100b1556dfefc01556e13dd85000b.pdf": {
+          "structure_accuracy": 1.0,
+          "general_accuracy": 1.0
+        },
+        "8aa100b17c2b8961017c2c2be0a50031.pdf": {
+          "structure_accuracy": 1.0,
+          "general_accuracy": 1.0
+        },
+        "8aac03246f425aac016f4292ab0e0018.pdf": {
+          "structure_accuracy": 0.0,
+          "general_accuracy": 0.0
+        },
+        "8ab308a944bbb1fc0144bbe573a00012.pdf": {
+          "structure_accuracy": 0.9635933806146573,
+          "general_accuracy": 0.7832077072829831
+        },
+        "8accf0a64e1a05f4014e1b56a6e30027.pdf": {
+          "structure_accuracy": 0.9533941236068896,
+          "general_accuracy": 0.9832621082621082
+        },
+        "8accf0a66012c450016012ddbc2b001e.pdf": {
+          "structure_accuracy": 1.0,
+          "general_accuracy": 1.0
+        },
+        "a11b5efd01cf4396924ee8fcf8d68394.pdf": {
+          "structure_accuracy": 1.0,
+          "general_accuracy": 1.0
+        },
+        "baW25WFrv7WZankfo7C9pf3MpRH5HA6G.pdf": {
+          "structure_accuracy": 0.9342105263157895,
+          "general_accuracy": 0.9626865671641791
+        },
+        "IPmRif7o4vBlabCre3XVyLjtoaqZdOEs.pdf": {
+          "structure_accuracy": 1.0,
+          "general_accuracy": 1.0
+        },
+        "is5mJTxzlwvMwDEbhaEUooOL2fnlbw0b.pdf": {
+          "structure_accuracy": 0.9155555555555556,
+          "general_accuracy": 0.9827493261455525
+        },
+        "uFQnkRvFgpYTpldGIoI6AWFaTnRAJQXz.pdf": {
+          "structure_accuracy": 0.9219858156028369,
+          "general_accuracy": 0.9696363029696363
+        }
+      }
+    }
+  ]
+}
