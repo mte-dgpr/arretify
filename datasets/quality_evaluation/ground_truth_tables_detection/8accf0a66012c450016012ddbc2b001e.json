@@ -1,10 +1,10 @@
 {
   "tables_by_page": {
     "3": [
-      "<table><thead><tr><th>Rubrique</th><th>Libellé de la rubrique (activité)</th><th>Nature de l'installation</th><th>Critère de classement</th><th>Valeurdéclarée</th><th>D, DC NC*</th></tr></thead><tbody><tr><td>2710-1-b</td><td>Installations de collecte de déchets apportés par le producteur initial de ces déchets</td><td>Installation de collecte</td><td>La quantité de déchets susceptible d'être présente dans l'installation étant ≥ à 1 t et &lt;à 7 t</td><td>6,5 t</td><td>DC</td></tr></tbody></table>"
+      "<table><thead><tr><th>Rubrique</th><th>Libellé de la rubrique (activité)</th><th>Nature de l'installation</th><th>Critère de classement</th><th>Valeur déclarée</th><th>D, DC NC*</th></tr></thead><tbody><tr><td>2710-1-b</td><td>Installations de collecte de déchets apportés par le producteur initial de ces déchets</td><td>Installation de collecte</td><td>La quantité de déchets susceptible d'être présente dans l'installation étant ≥ à 1 t et &lt;à 7 t</td><td>6,5 t</td><td>DC</td></tr></tbody></table>"
     ],
     "4": [
-      "<table><thead><tr><th>Dates</th><th>Textes</th></tr></thead><tbody><tr><td>27/03/12</td><td>Arrêté ministériel du 27/03/12 relatif aux prescriptions générales applicables à lacollecte de déchets dangereux relevant du régime de la déclaration contrôlée autitre de la rubrique n 2710 de la nomenclature des installations classées pour laprotection de l'environnement.</td></tr></tbody></table>"
+      "<table><thead><tr><th>Dates</th><th>Textes</th></tr></thead><tbody><tr><td>27/03/12</td><td>Arrêté ministériel du 27/03/12 relatif aux prescriptions générales applicables à la collecte de déchets dangereux relevant du régime de la déclaration contrôlée au titre de la rubrique n 2710 de la nomenclature des installations classées pour la protection de l'environnement.</td></tr></tbody></table>"
     ]
   }
 }

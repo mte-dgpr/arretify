@@ -1,7 +1,7 @@
 {
   "tables_by_page": {
     "5": [
-      "<table><thead><tr><th>Coordonnées en LAMBERT 93</th><th></th><th></th></tr></thead><tbody><tr><td>Dénomination</td><td>X</td><td>Y</td></tr><tr><td>PZ 1 (amont) comblé</td><td>565834,75</td><td>6326123,85</td></tr><tr><td>Puits (amont) Mme CAILA</td><td>565857</td><td>6325940</td></tr><tr><td>PZ 2 (aval)</td><td>565929,68</td><td>6326 200,93</td></tr><tr><td>PZ 3 (aval)</td><td>565900,94</td><td>6326168,59</td></tr></tbody></table>"
+      "<table><thead><tr><th colspan='3'>Coordonnées en LAMBERT 93</th></tr></thead><tbody><tr><td>Dénomination</td><td>X</td><td>Y</td></tr><tr><td>PZ 1 (amont) comblé</td><td>565834,75</td><td>6326123,85</td></tr><tr><td>Puits (amont) Mme CAILA</td><td>565857</td><td>6325940</td></tr><tr><td>PZ 2 (aval)</td><td>565929,68</td><td>6326 200,93</td></tr><tr><td>PZ 3 (aval)</td><td>565900,94</td><td>6326168,59</td></tr></tbody></table>"
     ]
   }
 }
