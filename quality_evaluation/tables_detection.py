@@ -25,8 +25,8 @@ from pydantic import BaseModel
 
 from arretify.semantic_tag_specs import PageSeparatorSpec
 from arretify.types import DocumentContext
+from arretify.utils.html import is_tag
 from arretify.utils.html_semantic import get_semantic_tag_data, is_semantic_tag
-from quality_evaluation.math_utils import compute_average_score
 from quality_evaluation.types import MetricScores
 
 ROOT_DIR = Path(__file__).parent.parent
@@ -105,90 +105,45 @@ def extract_tables_from_html(document_context: DocumentContext) -> TablesData:
     return TablesData(tables_by_page=tables_by_page)
 
 
-# -------------------- Table Matching & Metrics -------------------- #
+# -------------------- Table Metrics -------------------- #
 
 
-def _get_table_text_content(table_html: HtmlStr) -> HtmlStr:
+def _get_table_structure_html(table_tag: Tag) -> Tag:
     """
-    Get concatenated text content of all cells in a table HTML string.
+    Extract table structure from a table Tag without text content.
+    Returns Tag with only tags and attributes (colspan, rowspan), no cell text.
     """
-    return BeautifulSoup(table_html, "html.parser").get_text(separator=" ", strip=True)
-
-
-def _match_tables_by_page(
-    ground_truth: TablesData, result: TablesData
-) -> tuple[list[tuple[str, str]], list[str], list[str]]:
-    """
-    Match tables between ground truth and result using text content similarity.
-    Returns tuple of (matched_pairs, false_negatives, false_positives):
-    - matched_pairs: list of (ground_truth_html, result_html) pairs that matched
-    - false_negatives: list of ground_truth tables that were not detected
-    - false_positives: list of result tables that could not be matched to ground truth
-    """
-    SIMILARITY_THRESHOLD = 0.5
-    matched_pairs: list[tuple[str, str]] = []
-    false_negatives: list[str] = []
-    false_positives: list[str] = []
-
-    for page, ground_truth_tables in ground_truth.tables_by_page.items():
-        result_tables = list(result.tables_by_page.get(page, []))
-
-        for ground_truth_table in ground_truth_tables:
-            ground_truth_content = _get_table_text_content(ground_truth_table)
-            best_index, best_similarity = None, 0.0
-
-            for index, result_table in enumerate(result_tables):
-                similarity = Levenshtein.ratio(
-                    ground_truth_content, _get_table_text_content(result_table)
-                )
-                if similarity > best_similarity:
-                    best_index, best_similarity = index, similarity
-
-            if best_index is not None and best_similarity > SIMILARITY_THRESHOLD:
-                matched_pairs.append((ground_truth_table, result_tables.pop(best_index)))
-            else:
-                false_negatives.append(ground_truth_table)
-
-        false_positives.extend(result_tables)
-
-    return matched_pairs, false_negatives, false_positives
-
-
-def _get_table_structure_html(table_html: str) -> str:
-    """
-    Extract table structure HTML without text content.
-    Returns HTML string with only tags and attributes (colspan, rowspan), no cell text.
-    """
-    soup = BeautifulSoup(table_html, "html.parser")
-    table = soup.find("table")
-    if not table:
-        raise ValueError("No <table> tag found in the provided HTML.")
-
-    table_copy = copy(table)
-    if not isinstance(table_copy, Tag):
-        raise ValueError("Expected Tag after copy")
+    table_copy = copy(table_tag)
     for cell in table_copy.find_all(["td", "th"]):
         cell.clear()
 
-    return str(table_copy)
+    return table_copy
 
 
-def _compute_structure_similarity(ground_truth_html: str, result_html: str) -> float:
+def _process_tables(tables_data: TablesData) -> tuple[HtmlStr, HtmlStr]:
     """
-    Compute structure similarity using Levenshtein distance on table HTML without text content.
-    Returns a score between 0 and 1.
-    """
-    ground_truth_structure = _get_table_structure_html(ground_truth_html)
-    result_structure = _get_table_structure_html(result_html)
-    return Levenshtein.ratio(ground_truth_structure, result_structure)
+    Process all tables from TablesData:
+    1. Collect and normalize all tables
+    2. Extract structure-only HTML for each table
+    3. Concatenate into two strings: structure-only and full HTML
 
+    Returns tuple of (structure_html, general_html)
+    """
+    all_tables_html: list[HtmlStr] = []
+    all_structures_html: list[HtmlStr] = []
 
-def _compute_general_similarity(ground_truth_html: str, result_html: str) -> float:
-    """
-    Compute general accuracy using Levenshtein distance on full table HTML including text content.
-    Returns a score between 0 and 1.
-    """
-    return Levenshtein.ratio(ground_truth_html, result_html)
+    for page in sorted(tables_data.tables_by_page.keys()):
+        for table_html in tables_data.tables_by_page[page]:
+            soup = BeautifulSoup(table_html, "html.parser")
+            table_tag = soup.find("table")
+            if not is_tag(table_tag):
+                raise ValueError("Expected a single <table> tag in the HTML string.")
+
+            normalized_table = _normalize_table_tag(table_tag)
+            all_structures_html.append(str(_get_table_structure_html(normalized_table)))
+            all_tables_html.append(str(normalized_table))
+
+    return "".join(all_structures_html), "".join(all_tables_html)
 
 
 # -------------------- String Generation & Similarity -------------------- #
@@ -200,35 +155,22 @@ def compute_metric_scores(
 ) -> tuple[MetricScores, tuple[str, str] | None]:
     """
     Compute evaluation metrics for table detection.
+    Concatenates all tables into single strings and compares them.
     """
+    # Process all tables: normalize, extract structures, concatenate
+    ground_truth_structure, ground_truth_general = _process_tables(tables_ground_truth)
+    result_structure, result_general = _process_tables(tables_result)
 
-    matched_pairs, _, _ = _match_tables_by_page(tables_ground_truth, tables_result)
+    # Structure accuracy (HTML structure without text)
+    structure_accuracy = Levenshtein.ratio(ground_truth_structure, result_structure)
 
-    total_detected_tables = sum(len(tables) for tables in tables_result.tables_by_page.values())
-    total_ground_truth_tables = sum(
-        len(tables) for tables in tables_ground_truth.tables_by_page.values()
-    )
-
-    # Recall: proportion of ground truth tables that were detected
-    recall = (
-        len(matched_pairs) / total_ground_truth_tables if total_ground_truth_tables > 0 else 1.0
-    )
-
-    # Precision: proportion of detected tables that were correctly matched
-    precision = len(matched_pairs) / total_detected_tables if total_detected_tables > 0 else 1.0
-
-    # Structure accuracy for matched tables (HTML structure without text)
-    average_structure = compute_average_score(matched_pairs, _compute_structure_similarity)
-
-    # General accuracy for matched tables (full HTML with text)
-    average_general = compute_average_score(matched_pairs, _compute_general_similarity)
+    # General accuracy (full HTML with text)
+    general_accuracy = Levenshtein.ratio(ground_truth_general, result_general)
 
     return (
         {
-            "recall": recall,
-            "precision": precision,
-            "structure_accuracy": average_structure,
-            "general_accuracy": average_general,
+            "structure_accuracy": structure_accuracy,
+            "general_accuracy": general_accuracy,
         },
         None,
     )

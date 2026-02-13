@@ -23,11 +23,9 @@ from bs4 import BeautifulSoup
 from arretify.utils.testing import BaseTestCaseHtml
 from quality_evaluation.tables_detection import (
     TablesData,
-    _compute_structure_similarity,
     _get_table_structure_html,
-    _get_table_text_content,
-    _match_tables_by_page,
     _normalize_table_tag,
+    _process_tables,
     compute_metric_scores,
     extract_tables_from_html,
 )
@@ -80,30 +78,6 @@ class TestExtractTablesFromHtml(BaseTestCaseHtml):
         assert result == expected
 
 
-class TestComputeStructureSimilarity(unittest.TestCase):
-    def test_identical_tables(self):
-        # Arrange
-        html1 = "<table><tr><th>H1</th><th>H2</th></tr><tr><td>C1</td><td>C2</td></tr></table>"
-        html2 = "<table><tr><th>H1</th><th>H2</th></tr><tr><td>C1</td><td>C2</td></tr></table>"
-
-        # Act
-        similarity = _compute_structure_similarity(html1, html2)
-
-        # Assert
-        assert similarity == 1.0
-
-    def test_different_structures(self):
-        # Arrange
-        html1 = "<table><tr><th>H1</th><th>H2</th></tr><tr><td>C1</td><td>C2</td></tr></table>"
-        html2 = "<table><tr><th>H1</th></tr><tr><td>C1</td></tr></table>"
-
-        # Act
-        similarity = _compute_structure_similarity(html1, html2)
-
-        # Assert
-        assert similarity < 1.0
-
-
 class TestGetTableStructureWithoutText(unittest.TestCase):
     def test_removes_text_content(self):
         # Arrange
@@ -113,84 +87,10 @@ class TestGetTableStructureWithoutText(unittest.TestCase):
         table = soup.find("table")
 
         # Act
-        result = _get_table_structure_html(str(table))
+        result = _get_table_structure_html(table)
 
         # Assert
-        assert result == "<table><tr><th></th></tr><tr><td></td></tr></table>"
-
-
-class TestMatchTablesByPage(unittest.TestCase):
-    def test_matches_tables_with_high_text_similarity(self):
-        # Arrange
-        ground_truth = TablesData(
-            tables_by_page={
-                0: [
-                    "<table><tr><td>Product A</td><td>100</td></tr></table>",
-                    "<table><tr><td>Product B</td><td>200</td></tr></table>",
-                ]
-            }
-        )
-        result = TablesData(
-            tables_by_page={
-                0: [
-                    "<table><tr><td>Product A</td><td>100</td></tr></table>",
-                    "<table><tr><td>Product B</td><td>200</td></tr></table>",
-                ]
-            }
-        )
-
-        # Act
-        matched_pairs, false_negatives, false_positives = _match_tables_by_page(
-            ground_truth, result
-        )
-
-        # Assert
-        assert matched_pairs == [
-            (
-                "<table><tr><td>Product A</td><td>100</td></tr></table>",
-                "<table><tr><td>Product A</td><td>100</td></tr></table>",
-            ),
-            (
-                "<table><tr><td>Product B</td><td>200</td></tr></table>",
-                "<table><tr><td>Product B</td><td>200</td></tr></table>",
-            ),
-        ]
-        assert false_negatives == []
-        assert false_positives == []
-
-    def test_returns_false_negative_when_result_page_missing(self):
-        # Arrange
-        ground_truth = TablesData(tables_by_page={0: ["<table><tr><td>Data</td></tr></table>"]})
-        result = TablesData(tables_by_page={})
-
-        # Act
-        matched_pairs, false_negatives, false_positives = _match_tables_by_page(
-            ground_truth, result
-        )
-
-        # Assert
-        assert matched_pairs == []
-        assert false_negatives == ["<table><tr><td>Data</td></tr></table>"]
-        assert false_positives == []
-
-    def test_ignores_low_similarity_tables(self):
-        # Arrange
-        ground_truth = TablesData(
-            tables_by_page={0: ["<table><tr><td>Product A</td></tr></table>"]}
-        )
-        result = TablesData(
-            tables_by_page={0: ["<table><tr><td>Completely Different</td></tr></table>"]}
-        )
-
-        # Act
-        matched_pairs, false_negatives, false_positives = _match_tables_by_page(
-            ground_truth, result
-        )
-
-        # Assert
-        assert matched_pairs == []
-        assert false_negatives == ["<table><tr><td>Product A</td></tr></table>"]
-        assert false_positives == ["<table><tr><td>Completely Different</td></tr></table>"]
+        assert str(result) == "<table><tr><th></th></tr><tr><td></td></tr></table>"
 
 
 class TestGetTableStructureHtml(unittest.TestCase):
@@ -199,12 +99,45 @@ class TestGetTableStructureHtml(unittest.TestCase):
         table_html = (
             '<table><tr><th>Header Text</th><td colspan="2" rowspan="3">Cell Data</td></tr></table>'
         )
+        soup = BeautifulSoup(table_html, "html.parser")
+        table = soup.find("table")
 
         # Act
-        result = _get_table_structure_html(table_html)
+        result = _get_table_structure_html(table)
 
         # Assert
-        assert result == '<table><tr><th></th><td colspan="2" rowspan="3"></td></tr></table>'
+        assert str(result) == '<table><tr><th></th><td colspan="2" rowspan="3"></td></tr></table>'
+
+
+class TestProcessTables(unittest.TestCase):
+    def test_process_tables_normalizes_and_separates_structure(self):
+        # Arrange
+        tables_data = TablesData(
+            tables_by_page={
+                0: [
+                    '<table><tr><td>Cell 1</td><td colspan="2">Cell 2</td></tr></table>',
+                    "<table><tr><th>Header</th></tr><tr><td>Data</td></tr></table>",
+                ],
+                1: ["<table><tbody><tr><td>Page 2</td></tr></tbody></table>"],
+            }
+        )
+
+        # Act
+        structure_html, general_html = _process_tables(tables_data)
+
+        # Assert - Structure HTML has no text content
+        assert structure_html == (
+            '<table><tr><td></td><td colspan="2"></td></tr></table>'
+            "<table><tr><th></th></tr><tr><td></td></tr></table>"
+            "<table><tr><td></td></tr></table>"
+        )
+
+        # Assert - General HTML has text content and is normalized
+        assert general_html == (
+            '<table><tr><td>Cell 1</td><td colspan="2">Cell 2</td></tr></table>'
+            "<table><tr><th>Header</th></tr><tr><td>Data</td></tr></table>"
+            "<table><tr><td>Page 2</td></tr></table>"
+        )
 
 
 class TestComputeEvaluation(unittest.TestCase):
@@ -217,8 +150,6 @@ class TestComputeEvaluation(unittest.TestCase):
 
         # Assert
         assert metrics == {
-            "recall": 1.0,
-            "precision": 1.0,
             "structure_accuracy": 1.0,
             "general_accuracy": 1.0,
         }
@@ -295,30 +226,3 @@ class TestNormalizeTableTag(unittest.TestCase):
 
         # Assert
         assert str(result) == "<table><tr><th>Header</th></tr><tr><td>Data</td></tr></table>"
-
-
-class TestGetTableTextContent(unittest.TestCase):
-    def test_extracts_concatenated_text_with_space_separator(self):
-        # Arrange
-        table_html = """
-        <table>
-            <tr>
-                <th>Product</th>
-                <th>Price</th>
-            </tr>
-            <tr>
-                <td>Apple</td>
-                <td>$2.50</td>
-            </tr>
-            <tr>
-                <td>Orange</td>
-                <td>$3.00</td>
-            </tr>
-        </table>
-        """
-
-        # Act
-        result = _get_table_text_content(table_html)
-
-        # Assert
-        assert result == "Product Price Apple $2.50 Orange $3.00"
