@@ -56,6 +56,14 @@ def _normalize_table_tag(table_tag: Tag) -> Tag:
     table_copy = copy(table_tag)
     attrs_to_keep = {"colspan", "rowspan"}
 
+    # Replace <br> tags with spaces
+    for br_tag in table_copy.find_all("br"):
+        br_tag.replace_with(" ")
+
+    # Remove <thead> and <tbody> tags while keeping their contents
+    for tag in table_copy.find_all(["thead", "tbody"]):
+        tag.unwrap()
+
     for tag in [table_copy, *table_copy.find_all(True)]:
         # Remove all attributes except those in attrs_to_keep
         for attr in list(tag.attrs.keys()):
@@ -64,8 +72,7 @@ def _normalize_table_tag(table_tag: Tag) -> Tag:
 
         # Normalize text content in cells by stripping and collapsing whitespace
         if tag.name in ["td", "th"]:
-            text = tag.get_text(strip=True)
-            text = " ".join(text.split())
+            text = " ".join(tag.get_text().split()).strip()
             tag.clear()
             tag.string = text
 

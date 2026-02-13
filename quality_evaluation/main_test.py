@@ -47,7 +47,7 @@ class TestMain(unittest.TestCase):
             # Create ground truth
             ground_truth_file = ground_truth_dir / "test.json"
             ground_truth_file.write_text(
-                '{"tables_by_page": {"1": ["<table><tr><td>Ground Truth</td></tr></table>"]}}',
+                '{"tables_by_page": {"2": ["<table><tr><td>Ground Truth</td></tr></table>"]}}',
                 encoding="utf-8",
             )
 

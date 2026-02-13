@@ -61,17 +61,17 @@ class TestExtractTablesFromHtml(BaseTestCaseHtml):
         # Assert
         expected = TablesData(
             tables_by_page={
-                3: [
+                4: [
                     (
-                        "<table>\n"
-                        "<tr>\n"
-                        "<th>Header 1</th>\n"
-                        "<th>Header 2</th>\n"
-                        "</tr>\n"
-                        "<tr>\n"
-                        "<td>Cell 1</td>\n"
-                        "<td>Cell 2</td>\n"
-                        "</tr>\n"
+                        "<table>"
+                        "<tr>"
+                        "<th>Header 1</th>"
+                        "<th>Header 2</th>"
+                        "</tr>"
+                        "<tr>"
+                        "<td>Cell 1</td>"
+                        "<td>Cell 2</td>"
+                        "</tr>"
                         "</table>"
                     )
                 ]
@@ -260,6 +260,41 @@ class TestNormalizeTableTag(unittest.TestCase):
             "</table>"
         )
         assert str(result) == expected
+
+    def test_replaces_br_with_space(self):
+        # Arrange
+        html = """
+        <table>
+            <tr>
+                <td>Line 1<br/>Line 2<br/>Line 3</td>
+                <td>Normal cell</td>
+            </tr>
+        </table>
+        """
+        soup = BeautifulSoup(html, "html.parser")
+        table_tag = soup.find("table")
+
+        # Act
+        normalized = _normalize_table_tag(table_tag)
+        cell_text = normalized.find("td").get_text()
+
+        # Assert
+        self.assertEqual(cell_text, "Line 1 Line 2 Line 3")
+
+    def test_removes_thead_tbody_tags(self):
+        # Arrange
+        html = (
+            "<table><thead><tr><th>Header</th></tr></thead>"
+            "<tbody><tr><td>Data</td></tr></tbody></table>"
+        )
+        soup = BeautifulSoup(html, "html.parser")
+        table_tag = soup.find("table")
+
+        # Act
+        result = _normalize_table_tag(table_tag)
+
+        # Assert
+        assert str(result) == "<table><tr><th>Header</th></tr><tr><td>Data</td></tr></table>"
 
 
 class TestGetTableTextContent(unittest.TestCase):
