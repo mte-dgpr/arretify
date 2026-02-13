@@ -272,18 +272,22 @@ def action_compute_metrics(
         result_data = extract_function(document_context)
         ground_truth_data = load_json(ground_truth_dir / f"{pdf_file_path.stem}.json", data_model)
 
-        metric_scores, debug_strings = compute_metrics_function(result_data, ground_truth_data)
+        metric_scores, debug_strings_by_metric = compute_metrics_function(
+            result_data, ground_truth_data
+        )
 
         # Store metric scores
         current_run.metrics_by_file[pdf_file_path.name] = metric_scores
 
         # Save debug artifacts if provided
-        if debug_dir and debug_strings:
-            debug_result, debug_ground_truth = debug_strings
-            ground_truth_file = debug_dir / f"{pdf_file_path.stem}.ground_truth.txt"
-            result_file = debug_dir / f"{pdf_file_path.stem}.result.txt"
-            ground_truth_file.write_text(debug_ground_truth, encoding="utf-8")
-            result_file.write_text(debug_result, encoding="utf-8")
+        if debug_dir and debug_strings_by_metric:
+            for metric_name, (debug_result, debug_ground_truth) in debug_strings_by_metric.items():
+                ground_truth_file = (
+                    debug_dir / f"{pdf_file_path.stem}.{metric_name}.ground_truth.txt"
+                )
+                result_file = debug_dir / f"{pdf_file_path.stem}.{metric_name}.result.txt"
+                ground_truth_file.write_text(debug_ground_truth, encoding="utf-8")
+                result_file.write_text(debug_result, encoding="utf-8")
 
     # Compute summary statistics
     summary = compute_run_summary(current_run, baseline_run)

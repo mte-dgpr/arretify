@@ -35,13 +35,14 @@ FileName = str
 MetricScores = dict[MetricName, float]
 """Mapping from metric name to score for a single file."""
 
+ComputeMetricsResult = tuple[MetricScores, dict[str, tuple[str, str]] | None]
+"""Return type for compute_metrics functions: (scores, debug_strings_per_metric)."""
+
 ExtractFunction = Callable[[DocumentContext], BaseModel]
 """Type for functions that extract data from DocumentContext."""
 
-ComputeMetricsFunction = Callable[[T, T], tuple[dict[str, float], tuple[str, str] | None]]
-"""
-Type for functions that compute metric scores and optionally return debug strings.
-"""
+ComputeMetricsFunction = Callable[[T, T], ComputeMetricsResult]
+"""Type for functions that compute metric scores and optionally return debug strings per metric."""
 
 # -------------------- Experiment & Run Data Structures -------------------- #
 

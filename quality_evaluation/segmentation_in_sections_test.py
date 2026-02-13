@@ -200,10 +200,11 @@ class TestComputeMetricScores(unittest.TestCase):
         )
 
         # Act
-        metric_scores, (string_result, string_ground_truth) = compute_metric_scores(
+        metric_scores, debug_strings = compute_metric_scores(
             section_tree_result=result,
             section_tree_ground_truth=ground_truth,
         )
+        string_result, string_ground_truth = debug_strings["sections_similarity"]
 
         # Assert
         assert metric_scores["sections_similarity"] == 1.0
@@ -225,10 +226,11 @@ class TestComputeMetricScores(unittest.TestCase):
         )
 
         # Act
-        metric_scores, (string_result, string_ground_truth) = compute_metric_scores(
+        metric_scores, debug_strings = compute_metric_scores(
             section_tree_result=result,
             section_tree_ground_truth=ground_truth,
         )
+        string_result, string_ground_truth = debug_strings["sections_similarity"]
 
         # Assert
         assert metric_scores["sections_similarity"] < 1.0

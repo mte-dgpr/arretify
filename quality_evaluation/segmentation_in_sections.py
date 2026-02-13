@@ -24,7 +24,7 @@ from pydantic import BaseModel
 from arretify.semantic_tag_specs import AppendixSpec, MainSpec, SectionData, SectionSpec
 from arretify.types import DocumentContext, ProtectedTag
 from arretify.utils.html_semantic import get_semantic_tag_data, is_semantic_tag
-from quality_evaluation.types import MetricScores
+from quality_evaluation.types import ComputeMetricsResult
 
 ROOT_DIR = Path(__file__).parent.parent
 
@@ -126,11 +126,11 @@ def _generate_string_for_section_tree(section_tree: SectionTree) -> str:
 def compute_metric_scores(
     section_tree_result: SectionTree,
     section_tree_ground_truth: SectionTree,
-) -> tuple[MetricScores, tuple[str, str] | None]:
+) -> ComputeMetricsResult:
     string_result = _generate_string_for_section_tree(section_tree_result)
     string_ground_truth = _generate_string_for_section_tree(section_tree_ground_truth)
     similarity = Levenshtein.ratio(string_result, string_ground_truth)
     return (
         {"sections_similarity": similarity},
-        (string_result, string_ground_truth),
+        {"sections_similarity": (string_result, string_ground_truth)},
     )
