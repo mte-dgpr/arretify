@@ -2,6 +2,7 @@
   "runs": [
     {
       "id": 1,
+      "comment": "Mistral OCR mistral-ocr-2503",
       "date": "2026-02-13",
       "baseline_id": null,
       "git_hash": "aa80e92e44dacc386363b3ad89af87dab10e971b",
