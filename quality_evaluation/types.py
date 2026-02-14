@@ -70,6 +70,9 @@ class Run(BaseModel):
 
     git_hash: str
 
+    comment: str = ""
+    """Optional free-text comment for the run, empty by default (filled manually)."""
+
     metrics_by_file: dict[FileName, MetricScores]
     """
     Mapping from file name to metric scores.
