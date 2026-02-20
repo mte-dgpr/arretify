@@ -40,6 +40,8 @@ class TestStepMarkdownCleaning(unittest.TestCase):
             create_document_context(),
             pages=pages,
         )
+        content_1_before = get_or_load_asset(page1, "main.md")
+        content_2_before = get_or_load_asset(page2, "main.md")
 
         # Act
         result = step_markdown_cleaning(document_context)
@@ -49,12 +51,12 @@ class TestStepMarkdownCleaning(unittest.TestCase):
         assert len(result.pages) == 2
 
         # For both pages, test that content was modified, but still contains relevant text.
-        main_content_1 = get_or_load_asset(result.pages[0], "main.md")
-        assert len(main_content_1) > 0
-        assert main_content_1 != pages[0].assets["main.md"]
-        assert "Article 1" in main_content_1
+        content_1_after = result.pages[0].assets["main.md"]
+        assert len(content_1_before) > 0
+        assert content_1_before != content_1_after
+        assert "Article 1" in content_1_before
 
-        main_content_2 = get_or_load_asset(result.pages[1], "main.md")
-        assert len(main_content_2) > 0
-        assert main_content_2 != pages[1].assets["main.md"]
-        assert "Article 2" in main_content_2
+        content_2_after = result.pages[1].assets["main.md"]
+        assert len(content_2_before) > 0
+        assert content_2_before != content_2_after
+        assert "Article 2" in content_2_before
