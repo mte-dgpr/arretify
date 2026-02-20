@@ -43,11 +43,8 @@ class TestPage(unittest.TestCase):
         create_asset(page, "footer.md")
 
         # Assert
-        assert "main.md" in page.assets
         assert page.assets["main.md"] == "Main content"
-        assert "header.md" in page.assets
         assert page.assets["header.md"] == "Header content"
-        assert "footer.md" in page.assets
         assert page.assets["footer.md"] is None
 
     def test_set_asset(self):
@@ -130,12 +127,10 @@ class TestPage(unittest.TestCase):
         # Assert
         data = json.loads(json_str)
         assert data["index"] == 1
-        assert "assets" in data
-        assert "main.md" in data["assets"]
-        assert "header.md" in data["assets"]
-        # Content should be None in JSON
-        assert data["assets"]["main.md"] is None
-        assert data["assets"]["header.md"] is None
+        assert data["assets"] == {
+            "main.md": None,
+            "header.md": None,
+        }
 
 
 class TestPageSaveLoad(unittest.TestCase):
