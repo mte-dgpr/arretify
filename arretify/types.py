@@ -27,6 +27,7 @@ from arretify._vendor import mistralai
 from arretify._vendor.clients_api_droit.clients_api_droit.eurlex import EurlexClient
 from arretify._vendor.clients_api_droit.clients_api_droit.legifrance import LegifranceClient
 from arretify.settings import Settings
+from arretify.utils.pages import Page
 
 DocumentContextType = TypeVar("DocumentContextType", bound="DocumentContext")
 
@@ -172,9 +173,9 @@ class DocumentContext(SessionContext):
     PDF of the arrêté. This is used for OCR processing.
     """
 
-    pages: Sequence[str] | None
+    pages: Sequence[Page] | None
     """
-    Contents of the markdown pages after OCR processing.
+    Pages after OCR processing.
     """
 
     soup: BeautifulSoup
@@ -192,7 +193,7 @@ class DocumentContext(SessionContext):
         soup: BeautifulSoup,
         input_path: Path | None = None,
         pdf: Optional[bytes] = None,
-        pages: Sequence[str] | None = None,
+        pages: Sequence[Page] | None = None,
     ) -> DocumentContextType:
         return cls(
             **{

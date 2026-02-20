@@ -19,19 +19,23 @@
 from pathlib import Path
 
 from arretify.settings import OCR_FILE_EXTENSION
+from arretify.utils.pages import PAGE_JSON_FILE_NAME
 
 
-def is_pdf_path(file_path: Path) -> bool:
-    return file_path.is_file() and file_path.suffix.lower() == ".pdf"
+def is_pdf_path(path: Path) -> bool:
+    return path.is_file() and path.suffix.lower() == ".pdf"
 
 
-def is_ocr_path(file_path: Path) -> bool:
-    return file_path.is_file() and file_path.suffix.lower() == OCR_FILE_EXTENSION
+def is_standalone_ocr_path(path: Path) -> bool:
+    return path.is_file() and path.suffix.lower() == OCR_FILE_EXTENSION
 
 
-def is_ocr_pages_dir(file_path: Path) -> bool:
-    return file_path.is_dir() and all(is_ocr_page_path(child) for child in file_path.iterdir())
+def is_ocr_pages_dir(path: Path) -> bool:
+    return path.is_dir() and all(_is_ocr_page_dir(child) for child in path.iterdir())
 
 
-def is_ocr_page_path(file_path: Path) -> bool:
-    return is_ocr_path(file_path) and file_path.stem.isdigit()
+def _is_ocr_page_dir(path: Path) -> bool:
+    if not path.is_dir() or not path.stem.isdigit():
+        return False
+    has_page_json = any(file_path.name == PAGE_JSON_FILE_NAME for file_path in path.iterdir())
+    return has_page_json

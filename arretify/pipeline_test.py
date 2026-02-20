@@ -16,13 +16,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+import tempfile
 import unittest
 from pathlib import Path
 from unittest import mock
 
-from arretify.pipeline import load_ocr_file, load_ocr_pages, load_pdf_file
+from arretify.pipeline import load_ocr_pages, load_pdf_file, load_standalone_ocr_file
 from arretify.settings import Settings
 from arretify.types import SessionContext
+from arretify.utils.pages import Page, create_asset, get_or_load_asset, save_page
 
 
 class TestFileLoadingFunctions(unittest.TestCase):
@@ -48,7 +50,7 @@ class TestFileLoadingFunctions(unittest.TestCase):
         assert result.pdf == b"dummy pdf content"
         assert result.protected_soup is not None
 
-    def test_load_ocr_file(self):
+    def test_load_standalone_ocr_file(self):
         # Arrange
         input_path = mock.Mock(spec=Path)
         input_path.is_file.return_value = True
@@ -56,12 +58,14 @@ class TestFileLoadingFunctions(unittest.TestCase):
         m = mock.mock_open(read_data="line1\nline2")
         with mock.patch("builtins.open", m):
             # Act
-            result = load_ocr_file(self.session_context, input_path)
+            result = load_standalone_ocr_file(self.session_context, input_path)
 
             # Assert
             assert result is not None
             assert result.input_path == input_path
-            assert result.pages == ["line1\nline2"]
+            assert len(result.pages) == 1
+            assert result.pages[0].index == 1
+            assert get_or_load_asset(result.pages[0], "main.md") == "line1\nline2"
             assert result.protected_soup is not None
 
     def test_load_ocr_pages(self):
@@ -69,47 +73,43 @@ class TestFileLoadingFunctions(unittest.TestCase):
         We make sure pages are opened in the right order
         (page number and not file name order).
         """
-        # Arrange
-        input_path = mock.Mock(spec=Path)
-        input_path.is_dir.return_value = True
+        with tempfile.TemporaryDirectory() as tmpdir:
+            # Arrange - Create temporary directory structure with real files
+            input_path = Path(tmpdir)
 
-        mock_file_path1 = mock.Mock(spec=Path)
-        mock_file_path1.stem = "1"
-        mock_file_path1.suffix = ".md"
-        mock_file_path10 = mock.Mock(spec=Path)
-        mock_file_path10.stem = "10"
-        mock_file_path10.suffix = ".md"
-        mock_file_path2 = mock.Mock(spec=Path)
-        mock_file_path2.stem = "02"
-        mock_file_path2.suffix = ".md"
+            page_dir1 = input_path / "1"
+            page1 = Page(index=1, dir_path=page_dir1)
+            create_asset(page1, "main.md", "content of file 1")
+            save_page(page1)
 
-        input_path.glob.return_value = [mock_file_path1, mock_file_path10, mock_file_path2]
-        input_path.iterdir.return_value = [
-            mock_file_path1,
-            mock_file_path10,
-            mock_file_path2,
-        ]
+            page_dir2 = input_path / "02"  # Note: different naming to test sorting
+            page2 = Page(index=2, dir_path=page_dir2)
+            create_asset(page2, "main.md", "content of file 2")
+            save_page(page2)
 
-        def _mock_file_open(*args, **kwargs):
-            file_path = args[0]
-            return mock.mock_open(
-                read_data={
-                    str(mock_file_path1): "content of file 1",
-                    str(mock_file_path10): "content of file 10",
-                    str(mock_file_path2): "content of file 2",
-                }[str(file_path)]
-            ).return_value
+            page_dir10 = input_path / "10"
+            page10 = Page(index=10, dir_path=page_dir10)
+            create_asset(page10, "main.md", "content of file 10")
+            save_page(page10)
 
-        with mock.patch("builtins.open", side_effect=_mock_file_open):
             # Act
             result = load_ocr_pages(self.session_context, input_path)
 
             # Assert
-            assert result is not None
             assert result.input_path == input_path
-            assert result.pages == [
-                "content of file 1",
-                "content of file 2",
-                "content of file 10",
-            ]
+            assert len(result.pages) == 3
+
+            # Verify Page objects with correct indices and content order
+            assert isinstance(result.pages[0], Page)
+            assert result.pages[0].index == 1
+            assert get_or_load_asset(result.pages[0], "main.md") == "content of file 1"
+
+            assert isinstance(result.pages[1], Page)
+            assert result.pages[1].index == 2
+            assert get_or_load_asset(result.pages[1], "main.md") == "content of file 2"
+
+            assert isinstance(result.pages[0], Page)
+            assert result.pages[2].index == 10
+            assert get_or_load_asset(result.pages[2], "main.md") == "content of file 10"
+
             assert result.protected_soup is not None

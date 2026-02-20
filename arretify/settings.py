@@ -92,7 +92,7 @@ class Settings(BaseModel):
         ),
     )
     mistral_ocr_model: str = Field(
-        default="mistral-ocr-2503",
+        default="mistral-ocr-2512",
         description="Mistral OCR model to use for processing documents.",
     )
 

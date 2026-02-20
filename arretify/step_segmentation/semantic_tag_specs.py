@@ -46,6 +46,16 @@ Name of the tag used for segmentation tags.
 
 
 class TextSpanSegmentationData(SemanticTagData):
+    """
+    Data model for text span segmentation. `start` and `end` are 3-element lists representing
+    the position of the text span in the document, in the format
+        `[page_index, line_index, char_index]`.
+
+    - `page_index` is the 1-based index of the page in the document.
+    - `line_index` is the 0-based index of the line in the page.
+    - `char_index` is the 0-based index of the character in the line.
+    """
+
     start: IntList
     end: IntList
 

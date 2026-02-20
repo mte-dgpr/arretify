@@ -34,7 +34,6 @@ _OCR_PAGES_DIR_SENTINEL = Sentinel("ocr_pages_dir")
 
 def step_ocr(
     document_context: DocumentContext,
-    replace_images_placeholders: bool = True,
     ocr_pages_dir: Path | None | Sentinel = _OCR_PAGES_DIR_SENTINEL,
 ) -> DocumentContext:
     if not document_context.pdf:
@@ -56,7 +55,6 @@ def step_ocr(
 
     return mistral_ocr(
         document_context,
-        replace_images_placeholders=replace_images_placeholders,
         ocr_pages_dir=ocr_pages_dir_,
     )
 
