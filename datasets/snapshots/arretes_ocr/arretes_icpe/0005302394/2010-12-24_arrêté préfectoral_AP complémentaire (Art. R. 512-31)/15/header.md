@@ -1,0 +1,1 @@
+VU pour être annexé à mon arrêté en date de ce jour. Argentan, le 24 DEC. 2010 Le Préfet Pour le Préfet et pas délégation Le Sous-Préfet d'Argentan Jean-Yves FRAQUET

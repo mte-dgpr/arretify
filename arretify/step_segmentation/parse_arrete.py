@@ -22,6 +22,7 @@ from arretify.semantic_tag_specs import PageSeparatorData, PageSeparatorSpec
 from arretify.types import DocumentContext, ProtectedTagOrStr, SectionType
 from arretify.utils.functional import chain_functions, iter_func_to_list
 from arretify.utils.html_create import is_semantic_tag, make_semantic_tag, replace_contents
+from arretify.utils.pages import Page, get_or_load_asset
 from arretify.utils.split_merge import split_before_match
 from arretify.utils.strings import split_on_newlines
 
@@ -64,7 +65,7 @@ _is_appendix = pick_text_spans(_is_appendix_text_span_tag)
 
 
 @iter_func_to_list
-def parse_arrete(context: DocumentContext, pages: Sequence[str]) -> Iterator[ProtectedTagOrStr]:
+def parse_arrete(context: DocumentContext, pages: Sequence[Page]) -> Iterator[ProtectedTagOrStr]:
     elements: list[ProtectedTagOrStr] = initialize_document_structure(context, pages)
 
     # Add basic document elements
@@ -106,24 +107,25 @@ def parse_arrete(context: DocumentContext, pages: Sequence[str]) -> Iterator[Pro
 @iter_func_to_list
 def initialize_document_structure(
     context: DocumentContext,
-    pages: Sequence[str],
+    pages: Sequence[Page],
 ) -> Iterator[ProtectedTagOrStr]:
-    for page_index, page_text in enumerate(pages):
+    for page in pages:
         yield make_semantic_tag(
             context.protected_soup,
             PageSeparatorSpec,
             contents=[],
-            data=PageSeparatorData(page_index=page_index),
+            # Separator situates before the page content, so page index is page.index - 1
+            data=PageSeparatorData(page_index=page.index - 1),
         )
-        page_lines = split_on_newlines(page_text)
+        page_lines = split_on_newlines(get_or_load_asset(page, "main.md"))
         for line_index, line in enumerate(page_lines):
             yield make_semantic_tag(
                 context.protected_soup,
                 TextSpanSegmentationSpec,
                 contents=[line],
                 data=TextSpanSegmentationData(
-                    start=[page_index, line_index, 0],
-                    end=[page_index, line_index, len(line) - 1],
+                    start=[page.index, line_index, 0],
+                    end=[page.index, line_index, len(line) - 1],
                 ),
             )
 

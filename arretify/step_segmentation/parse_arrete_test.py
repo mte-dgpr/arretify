@@ -24,6 +24,7 @@ from arretify.semantic_tag_specs import (
     PageSeparatorSpec,
 )
 from arretify.utils.html_create import wrap_in_tag
+from arretify.utils.pages import Page, create_asset
 
 from .parse_arrete import initialize_document_structure, parse_arrete
 from .semantic_tag_specs import (
@@ -48,15 +49,19 @@ class TestParseArrete(BaseTestCaseSegmentation):
 
     def test_simple(self):
         # Arrange
-        pages = [
+        page = Page(index=1)
+        create_asset(
+            page,
+            "main.md",
             (
                 "Arrêté n° 123\n"
                 "Article 1 : Disposition\n"
                 "Bla bla bla ...\n"
                 "Annexe 1 : Détails\n"
                 "Bla bla bla ...\n"
-            )
-        ]
+            ),
+        )
+        pages = [page]
 
         # Act
         elements = parse_arrete(self.context, pages)
@@ -132,15 +137,19 @@ class TestParseArrete(BaseTestCaseSegmentation):
 
     def test_parse_text_span_inline_content_tags(self):
         # Arrange
-        pages = [
+        page = Page(index=1)
+        create_asset(
+            page,
+            "main.md",
             (
                 "Arrêté n° 123\n"
                 "Article 1 : Disposition\n"
                 # This address should be parsed as an address
                 # tag inside a text_span
                 "Bla bla, 123 rue de la Paix, bla ..."
-            )
-        ]
+            ),
+        )
+        pages = [page]
 
         # Act
         elements = parse_arrete(self.context, pages)
@@ -207,11 +216,13 @@ class TestInitializeDocumentStructure(BaseTestCaseSegmentation):
 
     def test_page_separators_inserted_and_text_spans_created(self):
         # Arrange
-        pages = [
-            "Line 1\nLine 2\nLine 3",
-            "Line 4\nLine 5",
-            "Line 6",
-        ]
+        page1 = Page(index=1)
+        create_asset(page1, "main.md", "Line 1\nLine 2\nLine 3")
+        page2 = Page(index=2)
+        create_asset(page2, "main.md", "Line 4\nLine 5")
+        page3 = Page(index=3)
+        create_asset(page3, "main.md", "Line 6")
+        pages = [page1, page2, page3]
 
         # Act
         result = initialize_document_structure(self.context, pages)
@@ -224,34 +235,34 @@ class TestInitializeDocumentStructure(BaseTestCaseSegmentation):
                 self.make_semantic_tag(
                     TextSpanSegmentationSpec,
                     contents=["Line 1"],
-                    data=TextSpanSegmentationData(start=[0, 0, 0], end=[0, 0, 5]),
+                    data=TextSpanSegmentationData(start=[1, 0, 0], end=[1, 0, 5]),
                 ),
                 self.make_semantic_tag(
                     TextSpanSegmentationSpec,
                     contents=["Line 2"],
-                    data=TextSpanSegmentationData(start=[0, 1, 0], end=[0, 1, 5]),
+                    data=TextSpanSegmentationData(start=[1, 1, 0], end=[1, 1, 5]),
                 ),
                 self.make_semantic_tag(
                     TextSpanSegmentationSpec,
                     contents=["Line 3"],
-                    data=TextSpanSegmentationData(start=[0, 2, 0], end=[0, 2, 5]),
+                    data=TextSpanSegmentationData(start=[1, 2, 0], end=[1, 2, 5]),
                 ),
                 self.make_semantic_tag(PageSeparatorSpec, data=PageSeparatorData(page_index=1)),
                 self.make_semantic_tag(
                     TextSpanSegmentationSpec,
                     contents=["Line 4"],
-                    data=TextSpanSegmentationData(start=[1, 0, 0], end=[1, 0, 5]),
+                    data=TextSpanSegmentationData(start=[2, 0, 0], end=[2, 0, 5]),
                 ),
                 self.make_semantic_tag(
                     TextSpanSegmentationSpec,
                     contents=["Line 5"],
-                    data=TextSpanSegmentationData(start=[1, 1, 0], end=[1, 1, 5]),
+                    data=TextSpanSegmentationData(start=[2, 1, 0], end=[2, 1, 5]),
                 ),
                 self.make_semantic_tag(PageSeparatorSpec, data=PageSeparatorData(page_index=2)),
                 self.make_semantic_tag(
                     TextSpanSegmentationSpec,
                     contents=["Line 6"],
-                    data=TextSpanSegmentationData(start=[2, 0, 0], end=[2, 0, 5]),
+                    data=TextSpanSegmentationData(start=[3, 0, 0], end=[3, 0, 5]),
                 ),
             ],
         )

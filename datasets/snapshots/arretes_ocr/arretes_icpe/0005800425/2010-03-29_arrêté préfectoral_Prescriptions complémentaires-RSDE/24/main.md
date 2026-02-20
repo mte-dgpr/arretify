@@ -1,0 +1,3 @@
+# ANNEXE 5.2 : LIMITES DE QUANTIFICATION À ATTEINDRE
+
+[tbl-12.html](tbl-12.html)

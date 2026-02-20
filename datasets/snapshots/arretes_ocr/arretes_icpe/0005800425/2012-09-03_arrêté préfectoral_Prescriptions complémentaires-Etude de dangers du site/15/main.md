@@ -1,0 +1,3 @@
+![img-2.jpeg](img-2.jpeg)
+
+FIGURE 2 : LOCALISATION DES INSTALLATIONS

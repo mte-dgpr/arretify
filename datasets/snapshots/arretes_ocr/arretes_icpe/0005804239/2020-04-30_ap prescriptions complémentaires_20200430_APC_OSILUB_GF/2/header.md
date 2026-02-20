@@ -1,0 +1,1 @@
+Vu la réponse de l'exploitant par courriel du 17 avril 2020.

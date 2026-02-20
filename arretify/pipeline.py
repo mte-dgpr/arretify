@@ -21,9 +21,10 @@ from typing import Callable, Sequence
 
 from bs4 import BeautifulSoup
 
-from arretify.utils.files import is_ocr_pages_dir, is_ocr_path, is_pdf_path
+from arretify.utils.files import is_ocr_pages_dir, is_pdf_path, is_standalone_ocr_path
+from arretify.utils.pages import Page, create_asset, load_page
 
-from .settings import DEFAULT_ARRETE_TEMPLATE, OCR_FILE_EXTENSION
+from .settings import DEFAULT_ARRETE_TEMPLATE
 from .step_markdown_cleaning import step_markdown_cleaning
 from .step_segmentation import step_segmentation
 from .types import DocumentContext, SessionContext
@@ -62,23 +63,27 @@ def load_pdf_file(
     )
 
 
-def load_ocr_file(
+def load_standalone_ocr_file(
     session_context: SessionContext,
     input_path: Path,
     arrete_template: str = DEFAULT_ARRETE_TEMPLATE,
 ) -> DocumentContext:
-    page_ocr: str
-
-    if not is_ocr_path(input_path):
+    """
+    Loads a standalone markdown OCR file (no external assets) and returns a DocumentContext.
+    """
+    if not is_standalone_ocr_path(input_path):
         raise ValueError(f"Input path {input_path} is not a file.")
 
     with open(input_path, "r", encoding="utf-8") as f:
         page_ocr = f.read()
 
+    page = Page(index=1)
+    create_asset(page, "main.md", page_ocr)
+
     return DocumentContext.from_session_context(
         session_context,
         input_path=input_path,
-        pages=[page_ocr],
+        pages=[page],
         soup=BeautifulSoup(arrete_template, features="html.parser"),
     )
 
@@ -91,16 +96,15 @@ def load_ocr_pages(
     if not is_ocr_pages_dir(input_path):
         raise ValueError(f"Input path {input_path} is not a directory.")
 
-    file_paths = sorted(input_path.glob(f"*{OCR_FILE_EXTENSION}"), key=lambda p: int(p.stem))
-    pages_ocr: list[str] = []
-    for file_path in file_paths:
-        with open(file_path, "r", encoding="utf-8") as file:
-            pages_ocr.append(file.read())
+    pages: list[Page] = []
+    for page_dir in input_path.iterdir():
+        pages.append(load_page(page_dir))
+    pages = sorted(pages, key=lambda page: page.index)
 
     return DocumentContext.from_session_context(
         session_context,
         input_path=input_path,
-        pages=pages_ocr,
+        pages=pages,
         soup=BeautifulSoup(arrete_template, features="html.parser"),
     )
 

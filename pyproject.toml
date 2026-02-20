@@ -33,7 +33,7 @@ dependencies = [
   "lxml~=5.3",
 
   # TODO : move this as optional dependency for OCR
-  "mistralai~=1.8",
+  "mistralai~=1.12",
   # TODO : move this as optional dependencies for NLP
   "spacy~=3.8.7",
 ]

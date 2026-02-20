@@ -1,0 +1,67 @@
+{
+  "ocr_model": "mistral-ocr-2512",
+  "pages": [
+    {
+      "index": 1,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
+        },
+        "header.md": {
+          "name": "header.md"
+        },
+        "footer.md": {
+          "name": "footer.md"
+        }
+      }
+    },
+    {
+      "index": 2,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
+        }
+      }
+    },
+    {
+      "index": 3,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
+        },
+        "header.md": {
+          "name": "header.md"
+        },
+        "tbl-0.html": {
+          "name": "tbl-0.html"
+        },
+        "tbl-1.html": {
+          "name": "tbl-1.html"
+        },
+        "tbl-2.html": {
+          "name": "tbl-2.html"
+        },
+        "tbl-3.html": {
+          "name": "tbl-3.html"
+        },
+        "tbl-4.html": {
+          "name": "tbl-4.html"
+        },
+        "tbl-5.html": {
+          "name": "tbl-5.html"
+        }
+      }
+    },
+    {
+      "index": 4,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
+        },
+        "img-0.jpeg": {
+          "name": "img-0.jpeg"
+        }
+      }
+    }
+  ]
+}
