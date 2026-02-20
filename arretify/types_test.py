@@ -24,6 +24,7 @@ from bs4 import BeautifulSoup
 from arretify._vendor.clients_api_droit.clients_api_droit.eurlex import EurlexClient
 from arretify._vendor.clients_api_droit.clients_api_droit.legifrance import LegifranceClient
 from arretify.settings import Settings
+from arretify.utils.pages import Page, create_asset
 
 from .types import DocumentContext, SessionContext
 
@@ -35,10 +36,13 @@ class TestDocumentContext(unittest.TestCase):
         eurlex_client = mock.Mock(spec=EurlexClient)
         settings = mock.Mock(spec=Settings)
         soup = BeautifulSoup("<html></html>", "html.parser")
-        pages = [
-            "Hello",
-            "World",
-        ]
+
+        page1 = Page(index=1)
+        create_asset(page1, "main.md", "Hello")
+        page2 = Page(index=2)
+        create_asset(page2, "main.md", "World")
+        pages = [page1, page2]
+
         session_context = SessionContext(
             settings=settings,
             legifrance_client=legifrance_client,

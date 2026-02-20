@@ -23,40 +23,62 @@ from typing import Iterable
 
 from arretify._vendor import mistralai
 from arretify.types import DocumentContext
+from arretify.utils.pages import Page, create_asset, save_page
 
 _LOGGER = logging.getLogger(__name__)
 
 
 def mistral_ocr(
     document_context: DocumentContext,
-    replace_images_placeholders: bool,
     ocr_pages_dir: Path | None,
 ) -> DocumentContext:
     if not document_context.mistral_client:
         raise ValueError("MistralAI client is not initialized")
 
-    ocr_pages: list[str] = []
-    for i, page in enumerate(_call_mistral_ocr_api(document_context)):
-        page_ocr = page.markdown
+    pages: list[Page] = []
+    for ocr_page in _call_mistral_ocr_api(document_context):
+        page_index = ocr_page.index + 1
 
-        if replace_images_placeholders:
-            for image in page.images:
-                page_ocr = page_ocr.replace(
-                    f"![{image.id}]({image.id})",
-                    f"![{image.id}]({image.image_base64})",
-                )
-
-        ocr_pages.append(page_ocr)
-        page_index = i + 1
+        # Determine dir_path for this page
+        page_dir = None
         if ocr_pages_dir is not None:
-            page_ocr_filepath = ocr_pages_dir / f"{page_index}.md"
-            with open(page_ocr_filepath, "w", encoding="utf-8") as f:
-                f.write(page_ocr)
-            _LOGGER.debug(f"Saved OCR page {page_index} to {page_ocr_filepath}")
+            page_dir = ocr_pages_dir / str(page_index)
+
+        # Create page with optional dir_path
+        page = Page(index=page_index, dir_path=page_dir)
+
+        # Add main content
+        create_asset(page, "main.md", ocr_page.markdown)
+
+        # Add header if present
+        if isinstance(ocr_page.header, str):
+            create_asset(page, "header.md", ocr_page.header)
+
+        # Add footer if present
+        if isinstance(ocr_page.footer, str):
+            create_asset(page, "footer.md", ocr_page.footer)
+
+        # Add images
+        for image in ocr_page.images:
+            if not isinstance(image.image_base64, str):
+                _LOGGER.warning(f"Skipping image with unsupported format in page {page_index}")
+                continue
+            create_asset(page, image.id, image.image_base64)
+
+        # Add tables
+        for table in ocr_page.tables or []:
+            create_asset(page, table.id, table.content)
+
+        # Save page to disk if dir provided
+        if ocr_pages_dir is not None:
+            save_page(page)
+            _LOGGER.debug(f"Saved OCR page {page.index} to {page_dir}")
+
+        pages.append(page)
 
     return dataclass_replace(
         document_context,
-        pages=ocr_pages,
+        pages=pages,
     )
 
 
@@ -75,10 +97,10 @@ def _call_mistral_ocr_api(
 
     # Upload PDF file to Mistral's OCR service
     uploaded_file = document_context.mistral_client.files.upload(
-        file={
-            "file_name": file_name,
-            "content": document_context.pdf,
-        },
+        file=dict(
+            file_name=file_name,
+            content=document_context.pdf,
+        ),
         purpose="ocr",
     )
 
@@ -90,8 +112,11 @@ def _call_mistral_ocr_api(
     # Process PDF with OCR including embedded images
     api_response = document_context.mistral_client.ocr.process(
         model=document_context.settings.mistral_ocr_model,
-        document={"type": "document_url", "document_url": signed_url.url},
+        document=dict(type="document_url", document_url=signed_url.url),
         include_image_base64=True,
+        extract_footer=True,
+        extract_header=True,
+        table_format="html",
     )
 
     return api_response.pages

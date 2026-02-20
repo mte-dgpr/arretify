@@ -1,0 +1,2 @@
+ADRESSE POSTALE : 9, ROUTE DE SÉES B.P. 20267 61202 ARGENTAN CEDEX ☎ 02.33.80.61.61 (standard) Télécopie : 02.33.39.54.52
+Tout courrier relatif à cette affaire, doit obligatoirement être adressé sous forme impersonnelle dans la rédaction de la lettre et le libellé de l’enveloppe

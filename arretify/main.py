@@ -33,9 +33,9 @@ from .law_data.apis.legifrance import initialize_legifrance_client
 from .law_data.apis.mistral import initialize_mistral_client
 from .pipeline import (
     PipelineStep,
-    load_ocr_file,
     load_ocr_pages,
     load_pdf_file,
+    load_standalone_ocr_file,
     run_pipeline,
     save_html_file,
 )
@@ -50,7 +50,7 @@ from .step_references_resolution import (
 )
 from .step_segmentation import step_segmentation
 from .types import DocumentContext, SessionContext
-from .utils.files import is_ocr_pages_dir, is_ocr_path, is_pdf_path
+from .utils.files import is_ocr_pages_dir, is_pdf_path, is_standalone_ocr_path
 
 _LOGGER = logging.getLogger("arretify")
 
@@ -232,6 +232,11 @@ def _walk_input_dir(
 ) -> list[Path]:
     paths: list[Path] = []
     for dir_path, sub_dir_names, file_names in root_dir_path.walk():
+        # If parent directory is already in paths
+        # (typically detected with is_ocr_pages_dir), we shouldn't walk in deeper.
+        if dir_path.parent in paths:
+            continue
+
         # If we have entered a subdirectory that contains OCR pages,
         # we do not want to process it again.
         if dir_path not in paths:
@@ -239,7 +244,7 @@ def _walk_input_dir(
                 [
                     dir_path / file_name
                     for file_name in file_names
-                    if is_ocr_path(dir_path / file_name)
+                    if is_standalone_ocr_path(dir_path / file_name)
                 ]
             )
 
@@ -312,8 +317,8 @@ def _process_arrete(
             session_context,
             input_path,
         )
-    elif is_ocr_path(input_path):
-        document_context = load_ocr_file(
+    elif is_standalone_ocr_path(input_path):
+        document_context = load_standalone_ocr_file(
             session_context,
             input_path,
         )

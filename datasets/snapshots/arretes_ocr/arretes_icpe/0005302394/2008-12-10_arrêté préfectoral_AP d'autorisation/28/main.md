@@ -1,0 +1,1 @@
+L'aménagement des réseaux permettant le confinement de toutes les eaux d'incendie devra être achevé au plus tard le 30 juin 2010. Un dossier de présentation de la solution retenue et des travaux planifiés sera envoyé à l'inspection des installations classées avant le 31 décembre 2009.

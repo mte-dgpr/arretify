@@ -8,6 +8,11 @@
                 --spacing-1: 1rem;
                 --spacing-0p5: 0.5rem;
                 --spacing-2: 2rem;
+                
+                --page-separator-footer-height: 2em;
+                --page-separator-line-height: 0.5em;
+                --page-separator-header-height: 2em;
+                --page-separator-total-height: calc(var(--page-separator-footer-height) + var(--page-separator-line-height) + var(--page-separator-header-height));
             }
 
             header, main, footer {
@@ -122,46 +127,122 @@
                 background-color: var(--background-action-low-blue-france);
             }
 
-            /**************** visual_page_separator ****************/
-            .visual_page_separator {
+            /**************** Original page_separator takes up space ****************/
+            [data-spec="page_separator"] {
+                display: block;
+                min-height: var(--page-separator-total-height);
+                visibility: hidden;
+            }
+
+            /**************** Hide original page_header and page_footer ****************/
+            [data-spec="page_header"],
+            [data-spec="page_footer"] {
+                display: none;
+            }
+
+            /**************** Page separator groups ****************/
+            .page_separator_group {
                 position: absolute;
                 left: 0;
                 width: 100vw;
-                height: 0.3em;
-                background-color: var(--grey-950-100);
-                z-index: -1;
+                height: var(--page-separator-total-height);
             }
 
-            a.visual_page_separator > span {
-                position: absolute;
+            .page_separator_footer,
+            .page_separator_header {
+                width: 100%;
                 font-size: 75%;
+                color: var(--grey-625-425);
+                background-color: rgba(255, 255, 255, 0.9);
+                padding: 0.25rem 0.5rem;
+                box-sizing: border-box;
+            }
+
+            .page_separator_footer {
+                height: var(--page-separator-footer-height);
+                text-align: right;
+            }
+
+            .page_separator_header {
+                height: var(--page-separator-header-height);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .page_separator_hline {
+                width: 100%;
+                height: var(--page-separator-line-height);
+                background-color: var(--grey-950-100);
+            }
+
+            .page_separator_page_number {
                 color: var(--grey-625-425);
             }
   </style>
   <script>
    window.onload = function() {
                 // Page separators are inline elements, so they can be anywhere in the tree.
-                // To ensure proper layout, we therefore create a separate visual element
-                // for each page separator.
-                const pageSeparators = Array.from(document.querySelectorAll('[data-spec="page_separator"]'))
+                // We create visual page separator containers that include:
+                // - Footer from previous page (above, right)
+                // - Separator line
+                // - Page number (below, left)
+                // - Header from next page (below, right)
                 
-                const refreshPageSeparator = () => {
-                    document.querySelectorAll('.visual_page_separator')
-                        .forEach((visualPageSeparator) => visualPageSeparator.remove())
-                    pageSeparators.slice(1).forEach(function(pageSeparator) {
-                        const boundingBox = pageSeparator.getBoundingClientRect()
-                        const position = getPositionRelativeToDocument(pageSeparator)
-                        const pageIndex = parseInt(pageSeparator.dataset.page_index, 10)
-                        const visualPageSeparator = document.createElement('a')
-                        visualPageSeparator.classList.add('visual_page_separator')
-                        visualPageSeparator.style.top = `${position.top + boundingBox.height}px`
-                        visualPageSeparator.innerHTML = `<span>↓ page ${pageIndex + 1}</span>`
-                        document.body.appendChild(visualPageSeparator)
+                const elements = Array.from(document.querySelectorAll('[data-spec="page_footer"], [data-spec="page_separator"], [data-spec="page_header"]'))
+                
+                const refreshPageSeparators = () => {
+                    // Remove existing page separator groups
+                    document.querySelectorAll('.page_separator_group')
+                        .forEach(el => el.remove())
+                    
+                    // Build list of {separator, header, footer} objects
+                    const separatorData = []
+                    let pendingFooter = null
+                    
+                    elements.forEach(element => {
+                        if (element.dataset.spec === 'page_footer') {
+                            pendingFooter = element
+                        } else if (element.dataset.spec === 'page_separator') {
+                            separatorData.push({
+                                separator: element,
+                                footer: pendingFooter,
+                                header: null
+                            })
+                            pendingFooter = null
+                        } else if (element.dataset.spec === 'page_header') {
+                            const lastSeparator = separatorData[separatorData.length - 1]
+                            if (lastSeparator) {
+                                lastSeparator.header = element
+                            }
+                            pendingFooter = null
+                        }
+                    })
+                    
+                    // Create a group container for each separator trio
+                    separatorData.forEach(data => {
+                        const pageIndex = parseInt(data.separator.dataset.page_index, 10)
+                        const position = getPositionRelativeToDocument(data.separator)
+                        
+                        // Create page separator group with fixed layout
+                        const group = document.createElement('div')
+                        group.classList.add('page_separator_group')
+                        group.style.top = `${position.top}px`
+                        group.innerHTML = `
+                            <div class="page_separator_footer">${data.footer ? data.footer.innerHTML : ''}</div>
+                            <div class="page_separator_hline"></div>
+                            <div class="page_separator_header">
+                                <span class="page_separator_page_number">↓ page ${pageIndex + 1}</span>
+                                <span>${data.header ? data.header.innerHTML : ''}</span>
+                            </div>
+                        `
+                        
+                        document.body.appendChild(group)
                     })
                 }
 
-                refreshPageSeparator()
-                window.addEventListener('resize', refreshPageSeparator)
+                refreshPageSeparators()
+                window.addEventListener('resize', refreshPageSeparators)
             }
 
             const getPositionRelativeToDocument = (el) => {
@@ -173,17 +254,32 @@
             }
   </script>
  </head>
- <body data-arretify_version="0.1.0" data-input_name="arrete_nomination.md" data-spec="arrete">
+ <body data-arretify_version="0.1.0" data-input_name="arrete_nomination" data-spec="arrete">
   <header data-spec="header">
    <a data-page_index="0" data-spec="page_separator">
    </a>
+   <div data-spec="page_header">
+    <div>
+     GOUVERNEMENT
+
+Liberté
+
+Égalité
+
+Fraternité
+
+Direction
+
+de la sécurité sociale
+    </div>
+   </div>
    <div data-spec="arrete_title">
     <h1>
      ARRÊTÉ du
      <time data-spec="date" datetime="2025-05-15">
       15 mai 2025
      </time>
-     portant modification ( N° 5 ) à l'arrêté de nomination des membres du conseil de la Caisse Primaire d'Assurance Maladie des Flandres
+     portant modification (N° 5) à l'arrêté de nomination des membres du conseil de la Caisse Primaire d'Assurance Maladie des Flandres
     </h1>
    </div>
    <div data-spec="honorary">
@@ -253,13 +349,13 @@
     </h2>
     <div data-number="1" data-spec="alinea">
      L'
-     <a data-date="2022-04-04" data-spec="document_reference" data-tag_id="1" data-type="arrete-ministeriel">
+     <a data-date="2022-04-04" data-spec="document_reference" data-tag_id="2" data-type="arrete-ministeriel">
       arrêté ministériel du
       <time data-spec="date" datetime="2022-04-04">
        4 avril 2022
       </time>
      </a>
-     <span data-direction="rtl" data-has_operand="true" data-keyword="complété" data-operand="2" data-operation_type="add" data-references="1" data-spec="operation">
+     <span data-direction="rtl" data-has_operand="true" data-keyword="complété" data-operand="3" data-operation_type="add" data-references="2" data-spec="operation">
       susvisé est
       <b>
        complété
@@ -268,7 +364,7 @@
      </span>
     </div>
     <div data-number="2" data-spec="alinea">
-     <blockquote data-tag_id="2">
+     <blockquote data-tag_id="3">
       <p>
        <a data-spec="section_reference" data-start_num="1" data-type="article">
         Article 1
@@ -307,10 +403,42 @@
      Fait à Lille, le 15 mai 2025
     </div>
     <div data-number="3" data-spec="alinea">
-     Pour la Cheffe de l'antenne de Lille de la Mission Nationale de Contrôle et d'audit des organismes de sécurité sociale, l'adjoint
+     Pour la Cheffe de l'antenne de Lille
     </div>
     <div data-number="4" data-spec="alinea">
+     de la Mission Nationale de Contrôle et
+    </div>
+    <div data-number="5" data-spec="alinea">
+     d'audit des organismes de sécurité sociale,
+    </div>
+    <div data-number="6" data-spec="alinea">
+     l'adjoint
+    </div>
+    <div data-number="7" data-spec="alinea">
+     <img alt="img-0.jpeg" src="data:image/jpeg;base64,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"/>
+    </div>
+    <div data-number="8" data-spec="alinea">
      Régis DUBOS
+    </div>
+    <div data-number="9" data-spec="alinea">
+     Conformément aux dispositions des
+     <a data-group_id="2" data-parent_reference="1" data-spec="section_reference" data-start_num="R421-1" data-type="article" href="https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006070933">
+      articles R 421-1
+     </a>
+     et
+     <a data-group_id="2" data-parent_reference="1" data-spec="section_reference" data-start_num="R421-5" data-type="article" href="https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006070933">
+      R 421-5
+     </a>
+     du
+     <a data-id="LEGITEXT000006070933" data-spec="document_reference" data-tag_id="1" data-title="Code de justice administrative" data-type="code" href="https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006070933">
+      code de justice administrative
+     </a>
+     , la présente décision peut faire l'objet d'un recours contentieux devant le tribunal administratif dans le délai de 2 mois à compter de sa publication.
+    </div>
+    <div data-spec="page_footer">
+     <div>
+      Adresse Postale : Madame la cheffe d'antenne – MNC – Antenne de Lille – Cité Marianne - DREETS - 2 boulevard de Strasbourg – BP 90219 – 59019 LILLE Cedex
+     </div>
     </div>
    </section>
   </main>

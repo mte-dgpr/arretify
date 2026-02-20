@@ -1,0 +1,41 @@
+{
+  "ocr_model": "mistral-ocr-2512",
+  "pages": [
+    {
+      "index": 1,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
+        },
+        "header.md": {
+          "name": "header.md"
+        },
+        "footer.md": {
+          "name": "footer.md"
+        }
+      }
+    },
+    {
+      "index": 2,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
+        },
+        "footer.md": {
+          "name": "footer.md"
+        }
+      }
+    },
+    {
+      "index": 3,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
+        },
+        "footer.md": {
+          "name": "footer.md"
+        }
+      }
+    }
+  ]
+}
