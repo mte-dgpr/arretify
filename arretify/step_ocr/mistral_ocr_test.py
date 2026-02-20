@@ -43,7 +43,7 @@ class TestMistralOcr(unittest.TestCase):
                 footer="Page 1 Footer",
                 images=[
                     mistralai.models.OCRImageObject(
-                        id="img-001",
+                        id="img-001.b64",
                         top_left_x=10,
                         top_left_y=20,
                         bottom_right_x=100,
@@ -53,7 +53,7 @@ class TestMistralOcr(unittest.TestCase):
                 ],
                 tables=[
                     mistralai.models.OCRTableObject(
-                        id="table-001",
+                        id="table-001.html",
                         content="<table><tr><td>Data 1</td></tr></table>",
                         format_="html",
                     )
