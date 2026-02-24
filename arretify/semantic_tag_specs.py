@@ -37,6 +37,14 @@ from arretify.utils.html_semantic import (
 # -------------------- Page structure -------------------- #
 
 
+PageHeaderSpec = create_semantic_tag_spec_no_data(
+    spec_name="page_header",
+    tag_name="div",
+    allowed_contents=(Contents.Tag("div"),),
+    is_allowed_anywhere=True,
+)
+
+
 PageFooterSpec = create_semantic_tag_spec_no_data(
     spec_name="page_footer",
     tag_name="div",

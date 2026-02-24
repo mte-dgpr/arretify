@@ -20,7 +20,12 @@ from typing import Iterator, Sequence, cast
 
 from arretify.parsing_utils.patterns import is_continuing_sentence
 from arretify.regex_utils import MatchProxy, PatternProxy
-from arretify.semantic_tag_specs import AddressSpec, PageFooterSpec, PageSeparatorSpec
+from arretify.semantic_tag_specs import (
+    AddressSpec,
+    PageFooterSpec,
+    PageHeaderSpec,
+    PageSeparatorSpec,
+)
 from arretify.step_segmentation.semantic_tag_specs import (
     TextSpanSegmentationData,
     TextSpanSegmentationSpec,
@@ -42,7 +47,7 @@ from arretify.utils.split_merge import (
 )
 from arretify.utils.strings import merge_strings
 
-TRANSPARENT_TAG_SPECS: list[SemanticTagSpec] = [PageSeparatorSpec, PageFooterSpec]
+TRANSPARENT_TAG_SPECS: list[SemanticTagSpec] = [PageSeparatorSpec, PageHeaderSpec, PageFooterSpec]
 """
 List of tag names that are considered transparent for text extraction purposes.
 """
