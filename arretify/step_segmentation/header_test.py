@@ -27,6 +27,7 @@ from arretify.semantic_tag_specs import (
     HonorarySpec,
     IdentificationSpec,
     PageFooterSpec,
+    PageHeaderSpec,
     PageSeparatorData,
     PageSeparatorSpec,
     SectionData,
@@ -260,6 +261,10 @@ class TestParseVisaAndMotifs(BaseTestCaseSegmentation):
                 ),
             ),
             self.make_semantic_tag(
+                PageHeaderSpec,
+                contents=wrap_in_tag(self.soup, "div", ["page 1"]),
+            ),
+            self.make_semantic_tag(
                 PageFooterSpec,
                 contents=wrap_in_tag(self.soup, "div", ["page 1"]),
             ),
@@ -285,6 +290,10 @@ class TestParseVisaAndMotifs(BaseTestCaseSegmentation):
                         "le code de l'environnement, et notamment ses titres "
                         "1er et 4 des parties réglementaires et législatives du livre V ;",
                     ),
+                ),
+                self.make_semantic_tag(
+                    PageHeaderSpec,
+                    contents=wrap_in_tag(self.soup, "div", ["page 1"]),
                 ),
                 self.make_semantic_tag(
                     PageFooterSpec,

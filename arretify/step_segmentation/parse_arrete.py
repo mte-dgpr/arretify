@@ -18,11 +18,21 @@
 #
 from typing import Callable, Iterator, Sequence
 
-from arretify.semantic_tag_specs import PageSeparatorData, PageSeparatorSpec
+from arretify.semantic_tag_specs import (
+    PageFooterSpec,
+    PageHeaderSpec,
+    PageSeparatorData,
+    PageSeparatorSpec,
+)
 from arretify.types import DocumentContext, ProtectedTagOrStr, SectionType
 from arretify.utils.functional import chain_functions, iter_func_to_list
-from arretify.utils.html_create import is_semantic_tag, make_semantic_tag, replace_contents
 from arretify.utils.ocr_document import OcrDocument, get_or_load_asset_content
+from arretify.utils.html_create import (
+    is_semantic_tag,
+    make_semantic_tag,
+    replace_contents,
+    wrap_in_tag,
+)
 from arretify.utils.split_merge import split_before_match
 from arretify.utils.strings import split_on_newlines
 
@@ -119,6 +129,7 @@ def initialize_document_structure(
             # Separator situates before the page content, so page index is page.index - 1
             data=PageSeparatorData(page_index=page.index - 1),
         )
+        
         page_lines = split_on_newlines(get_or_load_asset_content(page.assets["main.md"]))
         for line_index, line in enumerate(page_lines):
             yield make_semantic_tag(
@@ -128,6 +139,18 @@ def initialize_document_structure(
                 data=TextSpanSegmentationData(
                     start=[page.index, line_index, 0],
                     end=[page.index, line_index, len(line) - 1],
+                ),
+            )
+
+        if "footer.md" in page.assets:
+            footer_content = get_or_load_asset_content(page, "footer.md")
+            yield make_semantic_tag(
+                context.protected_soup,
+                PageFooterSpec,
+                contents=wrap_in_tag(
+                    context.protected_soup,
+                    "div",
+                    [footer_content],
                 ),
             )
 

@@ -23,6 +23,7 @@ from arretify.errors import ErrorCodes
 from arretify.semantic_tag_specs import (
     AlineaData,
     PageFooterSpec,
+    PageHeaderSpec,
     PageSeparatorSpec,
     TableOfContentsSpec,
 )
@@ -390,7 +391,8 @@ def parse_alineas(
         # table_of_contents can appear here if we are in an annexe (then it isn't really an
         # alinea but that's how the detection works for now).
         if is_semantic_tag(
-            element, spec_in=[PageFooterSpec, TableOfContentsSpec, PageSeparatorSpec]
+            element,
+            spec_in=[PageHeaderSpec, PageFooterSpec, TableOfContentsSpec, PageSeparatorSpec],
         ):
             yield element
             continue
