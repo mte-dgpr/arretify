@@ -18,13 +18,8 @@
 #
 import logging
 
-from arretify.semantic_tag_specs import (
-    DocumentReferenceSpec,
-    OperationSpec,
-    PageFooterSpec,
-    PageSeparatorSpec,
-    SectionReferenceSpec,
-)
+from arretify.semantic_tag_specs import DocumentReferenceSpec, OperationSpec, SectionReferenceSpec
+from arretify.step_segmentation.core import TRANSPARENT_TAG_SPECS
 from arretify.types import DocumentContext, ProtectedTag
 from arretify.utils.html import ensure_tag_id, is_tag
 from arretify.utils.html_element_ranges import (
@@ -32,7 +27,6 @@ from arretify.utils.html_element_ranges import (
     get_contiguous_elements_right,
 )
 from arretify.utils.html_semantic import (
-    SemanticTagSpec,
     get_semantic_tag_data,
     is_semantic_tag,
     update_semantic_tag_data,
@@ -40,13 +34,6 @@ from arretify.utils.html_semantic import (
 from arretify.utils.references import build_reference_tree
 
 _LOGGER = logging.getLogger(__name__)
-
-
-# TODO : refactor to factorize with list in step_segmentation
-INLINE_TAG_SCHEMAS: list[SemanticTagSpec] = [
-    PageFooterSpec,
-    PageSeparatorSpec,
-]
 
 
 def resolve_references_and_operands(
@@ -94,7 +81,7 @@ def _find_right_operand(
 
         # We ignore inline tags like page separators and footers
         # and look recursively for the next neighbouring element.
-        elif is_semantic_tag(element, spec_in=INLINE_TAG_SCHEMAS):
+        elif is_semantic_tag(element, spec_in=TRANSPARENT_TAG_SPECS):
             return _find_right_operand(document_context, element)
     return None
 
@@ -125,7 +112,7 @@ def _find_left_references(
 
         # We ignore inline tags like page separators and footers
         # and look recursively for the next neighbouring element.
-        elif is_semantic_tag(element, spec_in=INLINE_TAG_SCHEMAS):
+        elif is_semantic_tag(element, spec_in=TRANSPARENT_TAG_SPECS):
             return _find_left_references(document_context, element)
 
     if len(reference_tags) == 0:
