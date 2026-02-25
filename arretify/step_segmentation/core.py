@@ -139,6 +139,22 @@ def make_while_splitter_for_text_spans(
     start_condition: Probe[ProtectedTagOrStr],
     while_condition: Probe[ProtectedTagOrStr],
 ) -> Splitter[ProtectedTagOrStr, list[ProtectedTagOrStr]]:
+    """
+    Splitter that matches a group of consecutive text_span tags starting with a text span that
+    matches  `start_condition` and until the `while_condition` is not met anymore.
+
+    Example:
+        >>> splitter = make_while_splitter_for_text_spans(
+        ...     start_condition=lambda elements, index: (
+        ...         get_string(elements[index]) == "Hello"
+        ...     ),
+        ...     while_condition=lambda elements, index: (
+        ...         get_string(elements[index]) in ["World", "Foo"]
+        ...     ),
+        ... )
+        >>> splitter(["Intro", <text_span>Hello</text_span>, "Outro"])
+        (["Intro"], [<text_span>Hello</text_span>], ["Outro"])
+    """
     return make_while_splitter(
         pick_text_spans(start_condition),
         pick_if_transparent_tag_followed_by_match(pick_text_spans(while_condition)),
@@ -148,6 +164,16 @@ def make_while_splitter_for_text_spans(
 def make_single_line_splitter_for_text_spans(
     is_matching: Probe[ProtectedTagOrStr],
 ) -> Splitter[ProtectedTagOrStr, list[ProtectedTagOrStr]]:
+    """
+    Splitter that matches a single text_span tag that matches the provided `is_matching` function.
+
+    Example:
+        >>> splitter = make_single_line_splitter_for_text_spans(
+        ...     lambda elements, index: get_string(elements[index]) == "Hello"
+        ... )
+        >>> splitter(["Intro", <text_span>Hello</text_span>, "Outro"])
+        (["Intro"], [<text_span>Hello</text_span>], ["Outro"])
+    """
     return make_single_line_splitter(
         is_matching=pick_text_spans(is_matching),
     )
@@ -156,6 +182,15 @@ def make_single_line_splitter_for_text_spans(
 def make_pattern_splitter(
     pattern: PatternProxy,
 ) -> Splitter[ProtectedTagOrStr, MatchProxy]:
+    r"""
+    Splits elements at the first pattern match found in strings.
+
+    Example:
+        >>> splitter = make_pattern_splitter(PatternProxy(r"\d+"))
+        >>> splitter(["abc", "123def"])
+        (["abc"], <Match "123">, ["def"])
+    """
+
     def _splitter(
         elements: Sequence[ProtectedTagOrStr],
     ) -> RawSplit[ProtectedTagOrStr, MatchProxy] | None:
@@ -215,7 +250,23 @@ def make_recombine_interrupted_lines_splitter(
     start_tag_spec: SemanticTagSpec,
 ) -> Splitter[ProtectedTagOrStr, Sequence[ProtectedTagOrStr]]:
     """
-    Builds a splitter for groupping text that is interrupted by page separators.
+    Helper to regroup text interrupted by page separators.
+
+    >>> make_recombine_interrupted_lines_splitter(spec)([
+    ...     tag("This is a whole sentence."),
+    ...     tag("This sentence is split"),
+    ...     <page_separator/>,
+    ...     tag("by a page separator."),
+    ...     tag("This is another whole sentence."),
+    ... ])
+    (
+        [tag("This is a whole sentence.")],
+        [tag("This sentence is split"), <page_separator/>, tag("by a page separator.")],
+        [tag("This is another whole sentence.")]
+    )
+
+    The splitter groups the split sentence together with the page separator,
+    allowing it to be recombined / processed as a single unit.
     """
 
     def _splitter(
