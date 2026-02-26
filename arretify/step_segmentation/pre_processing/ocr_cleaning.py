@@ -40,13 +40,19 @@ _PUNCTUATION_LINE_PATTERN = PatternProxy(r"^[·.,;:!?'\s\-]*$")
 """Detect if the line contains only punctuation."""
 
 
-# TODO-PROCESS-TAG
 def clean_ocr(line: str) -> str:
+    """
+    Clean common OCR errors in the given line.
+    """
     line = recompose_words(line)
     return line
 
 
 def is_useful_line(line: str) -> bool:
+    """
+    Returns False if the line doesn't contain any useful information,
+    for example if it is empty or only contains punctuation.
+    """
     return not is_punctuation_line(line)
 
 
