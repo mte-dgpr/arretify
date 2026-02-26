@@ -63,9 +63,8 @@ class InvalidContentsError(ValueError):
         self, errors: Sequence[InvalidContentsErrorEntry], prefix: str | None = None
     ) -> None:
         super().__init__(
-            (prefix + "\n")
-            if prefix
-            else "" + "\n".join(f"Index {i}: {message}" for i, message in errors)
+            ((prefix + "\n") if prefix else "")
+            + "\n".join(f"Index {i}: {message}" for i, message in errors)
         )
         self.errors = errors
 

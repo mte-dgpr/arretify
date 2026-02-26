@@ -16,4 +16,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from .__step__ import step_markdown_cleaning
+from .step_segmentation_pre_processing import step_segmentation_pre_processing

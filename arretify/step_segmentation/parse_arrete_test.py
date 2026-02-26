@@ -20,15 +20,12 @@ from arretify.semantic_tag_specs import (
     AddressSpec,
     AlineaData,
     ArreteTitleSpec,
-    PageFooterSpec,
-    PageHeaderSpec,
     PageSeparatorData,
     PageSeparatorSpec,
 )
 from arretify.utils.html_create import wrap_in_tag
-from arretify.utils.ocr_document import OcrDocument, Page, create_asset
 
-from .parse_arrete import initialize_document_structure, parse_arrete
+from .parse_arrete import parse_arrete
 from .semantic_tag_specs import (
     AlineaSegmentationSpec,
     AppendixSegmentationSpec,
@@ -37,7 +34,6 @@ from .semantic_tag_specs import (
     SectionSegmentationSpec,
     SectionTitleSegmentationData,
     SectionTitleSegmentationSpec,
-    TextSpanSegmentationData,
     TextSpanSegmentationSpec,
 )
 from .testing import (
@@ -51,23 +47,21 @@ class TestParseArrete(BaseTestCaseSegmentation):
 
     def test_simple(self):
         # Arrange
-        page = Page(index=1)
-        create_asset(
-            page,
-            "main.md",
-            (
-                "Arrêté n° 123\n"
-                "Article 1 : Disposition\n"
-                "Bla bla bla ...\n"
-                "Annexe 1 : Détails\n"
-                "Bla bla bla ...\n"
+        elements = [
+            *self.make_text_spans(
+                "Arrêté n° 123",
+                "Article 1 : Disposition",
             ),
-        )
-
-        ocr_document = OcrDocument(pages=[page])
+            self.make_semantic_tag(PageSeparatorSpec, data=PageSeparatorData(page_index=1)),
+            *self.make_text_spans(
+                "Bla bla bla ...",
+                "Annexe 1 : Détails",
+                "Bla bla bla ...",
+            ),
+        ]
 
         # Act
-        elements = parse_arrete(self.context, ocr_document)
+        elements = parse_arrete(self.context, elements)
 
         # Assert
         assert_segmentation_element_lists_equal(
@@ -76,9 +70,6 @@ class TestParseArrete(BaseTestCaseSegmentation):
                 self.make_semantic_tag(
                     HeaderSegmentationSpec,
                     contents=[
-                        self.make_semantic_tag(
-                            PageSeparatorSpec, data=PageSeparatorData(page_index=0)
-                        ),
                         self.make_semantic_tag(
                             ArreteTitleSpec,
                             contents=wrap_in_tag(self.soup, "h1", ["Arrêté n° 123"]),
@@ -100,6 +91,9 @@ class TestParseArrete(BaseTestCaseSegmentation):
                                         level=0,
                                         title="Disposition",
                                     ),
+                                ),
+                                self.make_semantic_tag(
+                                    PageSeparatorSpec, data=PageSeparatorData(page_index=1)
                                 ),
                                 self.make_semantic_tag(
                                     AlineaSegmentationSpec,
@@ -140,23 +134,16 @@ class TestParseArrete(BaseTestCaseSegmentation):
 
     def test_parse_text_span_inline_content_tags(self):
         # Arrange
-        page = Page(index=1)
-        create_asset(
-            page,
-            "main.md",
-            (
-                "Arrêté n° 123\n"
-                "Article 1 : Disposition\n"
-                # This address should be parsed as an address
-                # tag inside a text_span
-                "Bla bla, 123 rue de la Paix, bla ..."
-            ),
+        elements = self.make_text_spans(
+            "Arrêté n° 123",
+            "Article 1 : Disposition",
+            # This address should be parsed as an address
+            # tag inside a text_span
+            "Bla bla, 123 rue de la Paix, bla ...",
         )
 
-        ocr_document = OcrDocument(pages=[page])
-
         # Act
-        elements = parse_arrete(self.context, ocr_document)
+        elements = parse_arrete(self.context, elements)
 
         # Assert
         assert_segmentation_element_lists_equal(
@@ -165,9 +152,6 @@ class TestParseArrete(BaseTestCaseSegmentation):
                 self.make_semantic_tag(
                     HeaderSegmentationSpec,
                     contents=[
-                        self.make_semantic_tag(
-                            PageSeparatorSpec, data=PageSeparatorData(page_index=0)
-                        ),
                         self.make_semantic_tag(
                             ArreteTitleSpec,
                             contents=wrap_in_tag(self.soup, "h1", ["Arrêté n° 123"]),
@@ -211,95 +195,6 @@ class TestParseArrete(BaseTestCaseSegmentation):
                             ],
                         ),
                     ],
-                ),
-            ],
-        )
-
-
-class TestInitializeDocumentStructure(BaseTestCaseSegmentation):
-
-    def test_page_separators_inserted_and_text_spans_created(self):
-        # Arrange
-        page1 = Page(index=1)
-        create_asset(page1, "main.md", "Line 1\nLine 2\nLine 3")
-        page2 = Page(index=2)
-        create_asset(page2, "main.md", "Line 4\nLine 5")
-        page3 = Page(index=3)
-        create_asset(page3, "main.md", "Line 6")
-
-        ocr_document = OcrDocument(pages=[page1, page2, page3])
-
-        # Act
-        result = initialize_document_structure(self.context, ocr_document)
-
-        # Assert
-        assert_segmentation_element_lists_equal(
-            result,
-            [
-                self.make_semantic_tag(PageSeparatorSpec, data=PageSeparatorData(page_index=0)),
-                self.make_semantic_tag(
-                    TextSpanSegmentationSpec,
-                    contents=["Line 1"],
-                    data=TextSpanSegmentationData(start=[1, 0, 0], end=[1, 0, 5]),
-                ),
-                self.make_semantic_tag(
-                    TextSpanSegmentationSpec,
-                    contents=["Line 2"],
-                    data=TextSpanSegmentationData(start=[1, 1, 0], end=[1, 1, 5]),
-                ),
-                self.make_semantic_tag(
-                    TextSpanSegmentationSpec,
-                    contents=["Line 3"],
-                    data=TextSpanSegmentationData(start=[1, 2, 0], end=[1, 2, 5]),
-                ),
-                self.make_semantic_tag(PageSeparatorSpec, data=PageSeparatorData(page_index=1)),
-                self.make_semantic_tag(
-                    TextSpanSegmentationSpec,
-                    contents=["Line 4"],
-                    data=TextSpanSegmentationData(start=[2, 0, 0], end=[2, 0, 5]),
-                ),
-                self.make_semantic_tag(
-                    TextSpanSegmentationSpec,
-                    contents=["Line 5"],
-                    data=TextSpanSegmentationData(start=[2, 1, 0], end=[2, 1, 5]),
-                ),
-                self.make_semantic_tag(PageSeparatorSpec, data=PageSeparatorData(page_index=2)),
-                self.make_semantic_tag(
-                    TextSpanSegmentationSpec,
-                    contents=["Line 6"],
-                    data=TextSpanSegmentationData(start=[3, 0, 0], end=[3, 0, 5]),
-                ),
-            ],
-        )
-
-    def test_with_header_and_footer(self):
-        # Arrange
-        page = Page(index=1)
-        create_asset(page, "header.md", "Header content")
-        create_asset(page, "main.md", "Main line")
-        create_asset(page, "footer.md", "Footer content")
-        pages = [page]
-
-        # Act
-        result = initialize_document_structure(self.context, pages)
-
-        # Assert
-        assert_segmentation_element_lists_equal(
-            result,
-            [
-                self.make_semantic_tag(PageSeparatorSpec, data=PageSeparatorData(page_index=0)),
-                self.make_semantic_tag(
-                    PageHeaderSpec,
-                    contents=wrap_in_tag(self.soup, "div", ["Header content"]),
-                ),
-                self.make_semantic_tag(
-                    TextSpanSegmentationSpec,
-                    contents=["Main line"],
-                    data=TextSpanSegmentationData(start=[1, 0, 0], end=[1, 0, 8]),
-                ),
-                self.make_semantic_tag(
-                    PageFooterSpec,
-                    contents=wrap_in_tag(self.soup, "div", ["Footer content"]),
                 ),
             ],
         )

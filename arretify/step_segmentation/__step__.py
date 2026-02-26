@@ -23,17 +23,16 @@ from arretify.types import DocumentContext
 from arretify.utils.html_create import replace_contents, upgrade_to_semantic_tag
 
 from .parse_arrete import parse_arrete
+from .pre_processing import step_segmentation_pre_processing
 from .render_contents import render_contents
 
 ARRETIFY_VERSION = importlib.metadata.version("arretify")
 
 
 def step_segmentation(document_context: DocumentContext) -> DocumentContext:
-    if not document_context.ocr_document:
-        raise ValueError("Parsing context does not contain any ocr document to segment")
-
     ocr_document = document_context.ocr_document
-    assert ocr_document
+    if not ocr_document:
+        raise ValueError("Parsing context does not contain any ocr document to segment")
 
     body = document_context.protected_soup.body
     assert body
@@ -45,11 +44,13 @@ def step_segmentation(document_context: DocumentContext) -> DocumentContext:
             arretify_version=ARRETIFY_VERSION,
         ),
     )
+
+    # Render segmented arrete contents and set it to body.
     replace_contents(
         body,
         render_contents(
             document_context,
-            parse_arrete(document_context, ocr_document),
+            parse_arrete(document_context, step_segmentation_pre_processing(document_context, ocr_document)),
         ),
     )
 

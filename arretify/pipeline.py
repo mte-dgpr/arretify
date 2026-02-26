@@ -30,7 +30,6 @@ from arretify.utils.ocr_document import (
 )
 
 from .settings import DEFAULT_ARRETE_TEMPLATE, OCR_FILE_EXTENSION
-from .step_markdown_cleaning import step_markdown_cleaning
 from .step_segmentation import step_segmentation
 from .types import DocumentContext, SessionContext
 
@@ -43,7 +42,6 @@ def run_pipeline(
 ) -> DocumentContext:
     if steps is None:
         steps = [
-            step_markdown_cleaning,
             step_segmentation,
         ]
 

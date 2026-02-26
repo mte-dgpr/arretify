@@ -44,7 +44,6 @@ from .pipeline import (
 )
 from .settings import OCR_FILE_EXTENSION, Settings
 from .step_consolidation import step_consolidation
-from .step_markdown_cleaning import step_markdown_cleaning
 from .step_ocr import step_ocr
 from .step_references_detection import step_references_detection
 from .step_references_resolution import (
@@ -287,7 +286,6 @@ def _process_arrete(
     - Path to a folder containing markdown pages and their assets, ...
     """
     pipeline_steps: list[PipelineStep] = [
-        step_markdown_cleaning,
         step_segmentation,
         step_references_detection,
     ]
