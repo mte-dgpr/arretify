@@ -17,21 +17,25 @@
 # limitations under the License.
 #
 
-from dataclasses import replace as dataclass_replace
+from typing import Sequence
 
-from arretify.types import DocumentContext
-from arretify.utils.ocr_document import get_or_load_asset_content
+
+from arretify.utils.ocr_document import get_or_load_asset_content, OcrDocument
+from arretify.types import DocumentContext, ProtectedTagOrStr
 from arretify.utils.strings import join_on_newlines, split_on_newlines
 
 from .markdown_cleaning import clean_markdown
 from .ocr_cleaning import clean_ocr, is_useful_line
+from .pages_to_single_html import pages_to_single_html
 
 
-def step_markdown_cleaning(document_context: DocumentContext) -> DocumentContext:
-    ocr_document = document_context.ocr_document
-    if not ocr_document:
-        raise ValueError("Parsing context does not contain any ocr document to clean")
-
+def step_segmentation_pre_processing(
+    document_context: DocumentContext,
+    ocr_document: OcrDocument,
+) -> Sequence[ProtectedTagOrStr]:
+    """
+    Pre-processes the contents of the document for later segmentation.
+    """
     for page in ocr_document.pages:
         # Get main content
         main_content = get_or_load_asset_content(page.assets["main.md"])
@@ -39,15 +43,11 @@ def step_markdown_cleaning(document_context: DocumentContext) -> DocumentContext
 
         # Clean input markdown
         lines = [clean_markdown(line) for line in lines]
-
-        # TODO-PROCESS-TAG
-        # Remove lines that are not useful
         lines = [line for line in lines if is_useful_line(line)]
-
-        # Clean common OCR errors
         lines = [clean_ocr(line) for line in lines]
 
         # Create new page with cleaned content
         page.assets["main.md"].content = join_on_newlines(lines)
 
-    return dataclass_replace(document_context, ocr_document=ocr_document)
+    # Construct a single HTML content from all pages.
+    return pages_to_single_html(document_context, ocr_document.pages)

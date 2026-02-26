@@ -18,12 +18,6 @@
 #
 from typing import Callable, Iterator, Sequence
 
-from arretify.semantic_tag_specs import (
-    PageFooterSpec,
-    PageHeaderSpec,
-    PageSeparatorData,
-    PageSeparatorSpec,
-)
 from arretify.types import DocumentContext, ProtectedTagOrStr, SectionType
 from arretify.utils.functional import chain_functions, iter_func_to_list
 from arretify.utils.ocr_document import OcrDocument, get_or_load_asset_content
@@ -31,10 +25,8 @@ from arretify.utils.html_create import (
     is_semantic_tag,
     make_semantic_tag,
     replace_contents,
-    wrap_in_tag,
 )
 from arretify.utils.split_merge import split_before_match
-from arretify.utils.strings import split_on_newlines
 
 from .basic_elements import (
     parse_addresses,
@@ -49,7 +41,6 @@ from .semantic_tag_specs import (
     AppendixSegmentationSpec,
     HeaderSegmentationSpec,
     MainSegmentationSpec,
-    TextSpanSegmentationData,
     TextSpanSegmentationSpec,
 )
 from .titles_detection import parse_title_info
@@ -76,10 +67,8 @@ _is_appendix = pick_text_spans(_is_appendix_text_span_tag)
 
 @iter_func_to_list
 def parse_arrete(
-    context: DocumentContext, ocr_document: OcrDocument
+    context: DocumentContext, elements: Sequence[ProtectedTagOrStr]
 ) -> Iterator[ProtectedTagOrStr]:
-    elements: list[ProtectedTagOrStr] = initialize_document_structure(context, ocr_document)
-
     # Add basic document elements
     elements = chain_functions(
         context,
@@ -114,45 +103,6 @@ def parse_arrete(
             AppendixSegmentationSpec,
             contents=parse_content(context, elements),
         )
-
-
-@iter_func_to_list
-def initialize_document_structure(
-    context: DocumentContext,
-    ocr_document: OcrDocument,
-) -> Iterator[ProtectedTagOrStr]:
-    for page in ocr_document.pages:
-        yield make_semantic_tag(
-            context.protected_soup,
-            PageSeparatorSpec,
-            contents=[],
-            # Separator situates before the page content, so page index is page.index - 1
-            data=PageSeparatorData(page_index=page.index - 1),
-        )
-        
-        page_lines = split_on_newlines(get_or_load_asset_content(page.assets["main.md"]))
-        for line_index, line in enumerate(page_lines):
-            yield make_semantic_tag(
-                context.protected_soup,
-                TextSpanSegmentationSpec,
-                contents=[line],
-                data=TextSpanSegmentationData(
-                    start=[page.index, line_index, 0],
-                    end=[page.index, line_index, len(line) - 1],
-                ),
-            )
-
-        if "footer.md" in page.assets:
-            footer_content = get_or_load_asset_content(page, "footer.md")
-            yield make_semantic_tag(
-                context.protected_soup,
-                PageFooterSpec,
-                contents=wrap_in_tag(
-                    context.protected_soup,
-                    "div",
-                    [footer_content],
-                ),
-            )
 
 
 def _make_text_span_parser(
