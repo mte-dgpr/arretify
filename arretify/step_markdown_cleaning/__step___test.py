@@ -19,7 +19,7 @@
 import unittest
 from dataclasses import replace as dataclass_replace
 
-from arretify.utils.pages import Page, create_asset, get_or_load_asset
+from arretify.utils.ocr_document import OcrDocument, Page, get_or_load_asset, set_asset
 from arretify.utils.testing import create_document_context
 
 from .__step__ import step_markdown_cleaning
@@ -29,16 +29,16 @@ class TestStepMarkdownCleaning(unittest.TestCase):
     def test_step_markdown_cleaning_basic(self):
         # Arrange
         page1 = Page(index=1)
-        create_asset(page1, "main.md", "# Article 1  \n\nSome text with extra  spaces.\n\n")
+        set_asset(page1, "main.md", "# Article 1  \n\nSome text with extra  spaces.\n\n")
 
         page2 = Page(index=2)
-        create_asset(page2, "main.md", "## Article 2\n\nMore content here  .\n")
+        set_asset(page2, "main.md", "## Article 2\n\nMore content here  .\n")
 
-        pages = [page1, page2]
+        ocr_document = OcrDocument(pages=[page1, page2])
 
         document_context = dataclass_replace(
             create_document_context(),
-            pages=pages,
+            ocr_document=ocr_document,
         )
         content_1_before = get_or_load_asset(page1, "main.md")
         content_2_before = get_or_load_asset(page2, "main.md")
@@ -47,16 +47,16 @@ class TestStepMarkdownCleaning(unittest.TestCase):
         result = step_markdown_cleaning(document_context)
 
         # Assert
-        assert result.pages is not None
-        assert len(result.pages) == 2
+        assert result.ocr_document is not None
+        assert len(result.ocr_document.pages) == 2
 
         # For both pages, test that content was modified, but still contains relevant text.
-        content_1_after = result.pages[0].assets["main.md"]
+        content_1_after = result.ocr_document.pages[0].assets["main.md"]
         assert len(content_1_before) > 0
         assert content_1_before != content_1_after
         assert "Article 1" in content_1_before
 
-        content_2_after = result.pages[1].assets["main.md"]
+        content_2_after = result.ocr_document.pages[1].assets["main.md"]
         assert len(content_2_before) > 0
         assert content_2_before != content_2_after
         assert "Article 2" in content_2_before

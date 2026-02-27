@@ -53,7 +53,7 @@ def create_document_context(
         soup=BeautifulSoup(html, features="html.parser"),
         input_path=None,
         pdf=None,
-        pages=[],
+        ocr_document=None,
         settings=create_settings(),
         legifrance_client=None,
         eurlex_client=None,

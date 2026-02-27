@@ -23,14 +23,14 @@ from typing import Iterable
 
 from arretify._vendor import mistralai
 from arretify.types import DocumentContext
-from arretify.utils.pages import Page, create_asset, save_page
+from arretify.utils.ocr_document import OcrDocument, Page, save_ocr_document, set_asset
 
 _LOGGER = logging.getLogger(__name__)
 
 
 def mistral_ocr(
     document_context: DocumentContext,
-    ocr_pages_dir: Path | None,
+    ocr_document_dir: Path | None,
 ) -> DocumentContext:
     if not document_context.mistral_client:
         raise ValueError("MistralAI client is not initialized")
@@ -41,44 +41,44 @@ def mistral_ocr(
 
         # Determine dir_path for this page
         page_dir = None
-        if ocr_pages_dir is not None:
-            page_dir = ocr_pages_dir / str(page_index)
+        if ocr_document_dir is not None:
+            page_dir = ocr_document_dir / str(page_index)
 
         # Create page with optional dir_path
         page = Page(index=page_index, dir_path=page_dir)
 
         # Add main content
-        create_asset(page, "main.md", ocr_page.markdown)
+        set_asset(page, "main.md", ocr_page.markdown)
 
         # Add header if present
         if isinstance(ocr_page.header, str):
-            create_asset(page, "header.md", ocr_page.header)
+            set_asset(page, "header.md", ocr_page.header)
 
         # Add footer if present
         if isinstance(ocr_page.footer, str):
-            create_asset(page, "footer.md", ocr_page.footer)
+            set_asset(page, "footer.md", ocr_page.footer)
 
         # Add images
         for image in ocr_page.images:
             if not isinstance(image.image_base64, str):
                 _LOGGER.warning(f"Skipping image with unsupported format in page {page_index}")
                 continue
-            create_asset(page, image.id, image.image_base64)
+            set_asset(page, image.id, image.image_base64)
 
         # Add tables
         for table in ocr_page.tables or []:
-            create_asset(page, table.id, table.content)
-
-        # Save page to disk if dir provided
-        if ocr_pages_dir is not None:
-            save_page(page)
-            _LOGGER.debug(f"Saved OCR page {page.index} to {page_dir}")
+            set_asset(page, table.id, table.content)
 
         pages.append(page)
 
+    ocr_document = OcrDocument(pages=pages)
+    if ocr_document_dir is not None:
+        _LOGGER.debug(f"Saved OCR document to {ocr_document_dir}")
+        save_ocr_document(ocr_document, ocr_document_dir)
+
     return dataclass_replace(
         document_context,
-        pages=pages,
+        ocr_document=ocr_document,
     )
 
 

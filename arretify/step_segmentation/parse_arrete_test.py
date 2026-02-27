@@ -24,7 +24,7 @@ from arretify.semantic_tag_specs import (
     PageSeparatorSpec,
 )
 from arretify.utils.html_create import wrap_in_tag
-from arretify.utils.pages import Page, create_asset
+from arretify.utils.ocr_document import OcrDocument, Page, set_asset
 
 from .parse_arrete import initialize_document_structure, parse_arrete
 from .semantic_tag_specs import (
@@ -50,7 +50,7 @@ class TestParseArrete(BaseTestCaseSegmentation):
     def test_simple(self):
         # Arrange
         page = Page(index=1)
-        create_asset(
+        set_asset(
             page,
             "main.md",
             (
@@ -61,10 +61,11 @@ class TestParseArrete(BaseTestCaseSegmentation):
                 "Bla bla bla ...\n"
             ),
         )
-        pages = [page]
+
+        ocr_document = OcrDocument(pages=[page])
 
         # Act
-        elements = parse_arrete(self.context, pages)
+        elements = parse_arrete(self.context, ocr_document)
 
         # Assert
         assert_segmentation_element_lists_equal(
@@ -138,7 +139,7 @@ class TestParseArrete(BaseTestCaseSegmentation):
     def test_parse_text_span_inline_content_tags(self):
         # Arrange
         page = Page(index=1)
-        create_asset(
+        set_asset(
             page,
             "main.md",
             (
@@ -149,10 +150,11 @@ class TestParseArrete(BaseTestCaseSegmentation):
                 "Bla bla, 123 rue de la Paix, bla ..."
             ),
         )
-        pages = [page]
+
+        ocr_document = OcrDocument(pages=[page])
 
         # Act
-        elements = parse_arrete(self.context, pages)
+        elements = parse_arrete(self.context, ocr_document)
 
         # Assert
         assert_segmentation_element_lists_equal(
@@ -217,15 +219,16 @@ class TestInitializeDocumentStructure(BaseTestCaseSegmentation):
     def test_page_separators_inserted_and_text_spans_created(self):
         # Arrange
         page1 = Page(index=1)
-        create_asset(page1, "main.md", "Line 1\nLine 2\nLine 3")
+        set_asset(page1, "main.md", "Line 1\nLine 2\nLine 3")
         page2 = Page(index=2)
-        create_asset(page2, "main.md", "Line 4\nLine 5")
+        set_asset(page2, "main.md", "Line 4\nLine 5")
         page3 = Page(index=3)
-        create_asset(page3, "main.md", "Line 6")
-        pages = [page1, page2, page3]
+        set_asset(page3, "main.md", "Line 6")
+
+        ocr_document = OcrDocument(pages=[page1, page2, page3])
 
         # Act
-        result = initialize_document_structure(self.context, pages)
+        result = initialize_document_structure(self.context, ocr_document)
 
         # Assert
         assert_segmentation_element_lists_equal(

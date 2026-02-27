@@ -26,14 +26,14 @@ from bs4 import BeautifulSoup
 from arretify._vendor import mistralai
 from arretify.settings import Settings
 from arretify.types import DocumentContext, SessionContext
-from arretify.utils.pages import get_or_load_asset
+from arretify.utils.ocr_document import OCR_DOCUMENT_JSON_FILE_NAME, get_or_load_asset
 
 from .mistral_ocr import mistral_ocr
 
 
 class TestMistralOcr(unittest.TestCase):
-    def test_mistral_ocr_with_pages_dir(self):
-        """Test mistral_ocr creates pages and saves them when ocr_pages_dir is provided."""
+    def test_mistral_ocr_with_document_dir(self):
+        """Test mistral_ocr creates document and saves it when ocr_document_dir is provided."""
         # Arrange
         mock_ocr_pages = [
             mistralai.models.OCRPageObject(
@@ -72,7 +72,7 @@ class TestMistralOcr(unittest.TestCase):
         ]
 
         with tempfile.TemporaryDirectory() as temp_dir:
-            ocr_pages_dir = Path(temp_dir)
+            ocr_document_dir = Path(temp_dir)
 
             # Create a mock document context
             settings = mock.Mock(spec=Settings)
@@ -94,18 +94,18 @@ class TestMistralOcr(unittest.TestCase):
                 "arretify.step_ocr.mistral_ocr._call_mistral_ocr_api", return_value=mock_ocr_pages
             ) as mock_call_api:
                 # Act
-                result_context = mistral_ocr(document_context, ocr_pages_dir)
+                result_context = mistral_ocr(document_context, ocr_document_dir)
 
             # Assert
             # Verify API was called with correct context
             mock_call_api.assert_called_once_with(document_context)
 
-            # Verify pages were created
-            assert result_context.pages is not None
-            assert len(result_context.pages) == 2
+            # Verify document was created
+            assert result_context.ocr_document is not None
+            assert len(result_context.ocr_document.pages) == 2
 
             # Verify first page
-            page1 = result_context.pages[0]
+            page1 = result_context.ocr_document.pages[0]
             assert page1.index == 1
             assert get_or_load_asset(page1, "main.md") == "# Page 1 Content"
             assert get_or_load_asset(page1, "header.md") == "Page 1 Header"
@@ -117,27 +117,27 @@ class TestMistralOcr(unittest.TestCase):
             )
 
             # Verify second page
-            page2 = result_context.pages[1]
+            page2 = result_context.ocr_document.pages[1]
             assert page2.index == 2
             assert get_or_load_asset(page2, "main.md") == "# Page 2 Content"
 
             # Verify files were saved
-            page1_dir = ocr_pages_dir / "1"
+            assert (ocr_document_dir / OCR_DOCUMENT_JSON_FILE_NAME).exists()
+
+            page1_dir = ocr_document_dir / "1"
             assert page1_dir.exists()
             assert (page1_dir / "main.md").exists()
             assert (page1_dir / "header.md").exists()
             assert (page1_dir / "footer.md").exists()
             assert (page1_dir / "img-001.b64").exists()
             assert (page1_dir / "table-001.html").exists()
-            assert (page1_dir / "page.json").exists()
 
-            page2_dir = ocr_pages_dir / "2"
+            page2_dir = ocr_document_dir / "2"
             assert page2_dir.exists()
             assert (page2_dir / "main.md").exists()
-            assert (page2_dir / "page.json").exists()
 
-    def test_mistral_ocr_without_pages_dir(self):
-        """Test mistral_ocr creates pages in-memory when ocr_pages_dir is None."""
+    def test_mistral_ocr_without_document_dir(self):
+        """Test mistral_ocr creates document in-memory when ocr_document_dir is None."""
         # Arrange
         mock_ocr_pages = [
             mistralai.models.OCRPageObject(
@@ -171,15 +171,15 @@ class TestMistralOcr(unittest.TestCase):
             "arretify.step_ocr.mistral_ocr._call_mistral_ocr_api", return_value=mock_ocr_pages
         ) as mock_call_api:
             # Act
-            result_context = mistral_ocr(document_context, ocr_pages_dir=None)
+            result_context = mistral_ocr(document_context, ocr_document_dir=None)
 
         # Assert
         mock_call_api.assert_called_once_with(document_context)
 
-        # Verify pages were created in memory
-        assert len(result_context.pages) == 1
+        # Verify document was created in memory
+        assert len(result_context.ocr_document.pages) == 1
 
-        page = result_context.pages[0]
+        page = result_context.ocr_document.pages[0]
         assert page.index == 1
         assert get_or_load_asset(page, "main.md") == "# In-memory Content"
         assert get_or_load_asset(page, "header.md") == "In-memory Header"
