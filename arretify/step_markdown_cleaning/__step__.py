@@ -20,7 +20,7 @@
 from dataclasses import replace as dataclass_replace
 
 from arretify.types import DocumentContext
-from arretify.utils.pages import Page, get_or_load_asset, set_asset
+from arretify.utils.ocr_document import Page, get_or_load_asset, set_asset
 from arretify.utils.strings import join_on_newlines, split_on_newlines
 
 from .markdown_cleaning import clean_markdown
@@ -28,11 +28,12 @@ from .ocr_cleaning import clean_ocr, is_useful_line
 
 
 def step_markdown_cleaning(document_context: DocumentContext) -> DocumentContext:
-    if not document_context.pages:
-        raise ValueError("Parsing context does not contain any pages to clean")
+    ocr_document = document_context.ocr_document
+    if not ocr_document:
+        raise ValueError("Parsing context does not contain any ocr document to clean")
 
     cleaned_pages: list[Page] = []
-    for page in document_context.pages:
+    for page in ocr_document.pages:
         # Get main content
         main_content = get_or_load_asset(page, "main.md")
         lines = split_on_newlines(main_content)
@@ -50,5 +51,6 @@ def step_markdown_cleaning(document_context: DocumentContext) -> DocumentContext
         # Create new page with cleaned content
         set_asset(page, "main.md", join_on_newlines(lines))
         cleaned_pages.append(page)
+    ocr_document.pages = cleaned_pages
 
-    return dataclass_replace(document_context, pages=cleaned_pages)
+    return dataclass_replace(document_context, ocr_document=ocr_document)

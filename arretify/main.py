@@ -33,7 +33,10 @@ from .law_data.apis.legifrance import initialize_legifrance_client
 from .law_data.apis.mistral import initialize_mistral_client
 from .pipeline import (
     PipelineStep,
-    load_ocr_pages,
+    is_ocr_files,
+    is_pdf_file,
+    is_standalone_ocr_file,
+    load_ocr_files,
     load_pdf_file,
     load_standalone_ocr_file,
     run_pipeline,
@@ -50,7 +53,6 @@ from .step_references_resolution import (
 )
 from .step_segmentation import step_segmentation
 from .types import DocumentContext, SessionContext
-from .utils.files import is_ocr_pages_dir, is_pdf_path, is_standalone_ocr_path
 
 _LOGGER = logging.getLogger("arretify")
 
@@ -166,7 +168,7 @@ def main(args: list[str]) -> None:
             output_dir.mkdir(parents=True, exist_ok=True)
             output_stem = input_path.name if input_path.is_dir() else input_path.stem
             output_path = output_dir / f"{output_stem}.html"
-            ocr_pages_dir: Path | None = None
+            ocr_document_dir: Path | None = None
 
             input_path_display = relative_input_path
             output_path_display = output_path.relative_to(root_output_path)
@@ -175,7 +177,7 @@ def main(args: list[str]) -> None:
                 f"\n\n[{i + 1}/{len(all_input_file_paths)}] processing {input_path_display} ..."
             )
 
-            if is_pdf_path(input_path):
+            if is_pdf_file(input_path):
                 if features.ocr is False:
                     if not was_ocr_disabled_warning_given:
                         _ocr_disabled_warning()
@@ -186,14 +188,14 @@ def main(args: list[str]) -> None:
                     )
                     continue
 
-                ocr_pages_dir = (
+                ocr_document_dir = (
                     session_context.settings.tmp_dir
                     / "ocr"
                     / relative_input_path.parent
                     / output_stem
                 )
-                ocr_pages_dir.mkdir(parents=True, exist_ok=True)
-                _LOGGER.info(f"OCR pages will be stored at {ocr_pages_dir}")
+                ocr_document_dir.mkdir(parents=True, exist_ok=True)
+                _LOGGER.info(f"OCR document will be stored at {ocr_document_dir}")
 
             try:
                 _process_arrete(
@@ -201,7 +203,7 @@ def main(args: list[str]) -> None:
                     input_path,
                     output_path,
                     features,
-                    ocr_pages_dir=ocr_pages_dir,
+                    ocr_document_dir=ocr_document_dir,
                 )
             except Exception:
                 _LOGGER.error(f"❌ FAILED : {input_path_display} ...")
@@ -211,7 +213,7 @@ def main(args: list[str]) -> None:
                 _LOGGER.info(f"✅ DONE : {output_path_display} ...")
 
     else:
-        if is_pdf_path(root_input_path) and features.ocr is False:
+        if is_pdf_file(root_input_path) and features.ocr is False:
             _ocr_disabled_warning()
             _LOGGER.error(
                 f"Failed to process {root_input_path} because it is a PDF "
@@ -233,30 +235,30 @@ def _walk_input_dir(
     paths: list[Path] = []
     for dir_path, sub_dir_names, file_names in root_dir_path.walk():
         # If parent directory is already in paths
-        # (typically detected with is_ocr_pages_dir), we shouldn't walk in deeper.
+        # (typically detected with is_ocr_document_dir), we shouldn't walk in deeper.
         if dir_path.parent in paths:
             continue
 
-        # If we have entered a subdirectory that contains OCR pages,
+        # If we have entered a subdirectory that contains an OCR document,
         # we do not want to process it again.
         if dir_path not in paths:
             paths.extend(
                 [
                     dir_path / file_name
                     for file_name in file_names
-                    if is_standalone_ocr_path(dir_path / file_name)
+                    if is_standalone_ocr_file(dir_path / file_name)
                 ]
             )
 
         paths.extend(
-            [dir_path / file_name for file_name in file_names if is_pdf_path(dir_path / file_name)]
+            [dir_path / file_name for file_name in file_names if is_pdf_file(dir_path / file_name)]
         )
 
         paths.extend(
             [
                 dir_path / sub_dir_name
                 for sub_dir_name in sub_dir_names
-                if is_ocr_pages_dir(dir_path / sub_dir_name)
+                if is_ocr_files(dir_path / sub_dir_name)
             ]
         )
 
@@ -276,13 +278,13 @@ def _process_arrete(
     input_path: Path,
     output_path: Path,
     features: _Features,
-    ocr_pages_dir: Path | None = None,
+    ocr_document_dir: Path | None = None,
 ) -> None:
     """
     Process a single arrêté. `input_path` can be :
     - Path of a single .md file
     - Path of a single .pdf file
-    - Path to a folder containing markdown pages named like so : 1.md, 2.md, ...
+    - Path to a folder containing markdown pages and their assets, ...
     """
     pipeline_steps: list[PipelineStep] = [
         step_markdown_cleaning,
@@ -297,16 +299,16 @@ def _process_arrete(
     pipeline_steps.append(step_consolidation)
 
     document_context: DocumentContext
-    if is_pdf_path(input_path):
+    if is_pdf_file(input_path):
         if not features.ocr:
             raise RuntimeError("OCR is disabled.")
 
-        if ocr_pages_dir is not None:
+        if ocr_document_dir is not None:
 
             def step_ocr_with_settings(document_context: DocumentContext) -> DocumentContext:
                 return step_ocr(
                     document_context,
-                    ocr_pages_dir=ocr_pages_dir,
+                    ocr_document_dir=ocr_document_dir,
                 )
 
             pipeline_steps.insert(0, step_ocr_with_settings)
@@ -317,13 +319,13 @@ def _process_arrete(
             session_context,
             input_path,
         )
-    elif is_standalone_ocr_path(input_path):
+    elif is_standalone_ocr_file(input_path):
         document_context = load_standalone_ocr_file(
             session_context,
             input_path,
         )
-    elif is_ocr_pages_dir(input_path):
-        document_context = load_ocr_pages(
+    elif is_ocr_files(input_path):
+        document_context = load_ocr_files(
             session_context,
             input_path,
         )

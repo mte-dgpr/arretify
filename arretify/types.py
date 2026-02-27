@@ -19,7 +19,7 @@
 from dataclasses import dataclass, field, fields
 from enum import Enum
 from pathlib import Path
-from typing import Iterable, Optional, Protocol, Sequence, Tuple, Type, TypeVar, Union, cast
+from typing import Iterable, Optional, Protocol, Tuple, Type, TypeVar, Union, cast
 
 from bs4 import BeautifulSoup, PageElement, Tag
 
@@ -27,7 +27,7 @@ from arretify._vendor import mistralai
 from arretify._vendor.clients_api_droit.clients_api_droit.eurlex import EurlexClient
 from arretify._vendor.clients_api_droit.clients_api_droit.legifrance import LegifranceClient
 from arretify.settings import Settings
-from arretify.utils.pages import Page
+from arretify.utils.ocr_document import OcrDocument
 
 DocumentContextType = TypeVar("DocumentContextType", bound="DocumentContext")
 
@@ -173,9 +173,9 @@ class DocumentContext(SessionContext):
     PDF of the arrêté. This is used for OCR processing.
     """
 
-    pages: Sequence[Page] | None
+    ocr_document: OcrDocument | None
     """
-    Pages after OCR processing.
+    Complete document + assets after OCR processing.
     """
 
     soup: BeautifulSoup
@@ -193,7 +193,7 @@ class DocumentContext(SessionContext):
         soup: BeautifulSoup,
         input_path: Path | None = None,
         pdf: Optional[bytes] = None,
-        pages: Sequence[Page] | None = None,
+        ocr_document: OcrDocument | None = None,
     ) -> DocumentContextType:
         return cls(
             **{
@@ -201,7 +201,7 @@ class DocumentContext(SessionContext):
             },
             input_path=input_path,
             pdf=pdf,
-            pages=pages,
+            ocr_document=ocr_document,
             soup=soup,
         )
 
