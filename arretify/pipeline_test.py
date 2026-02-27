@@ -21,10 +21,16 @@ import unittest
 from pathlib import Path
 from unittest import mock
 
-from arretify.pipeline import load_ocr_pages, load_pdf_file, load_standalone_ocr_file
+from arretify.pipeline import load_ocr_files, load_pdf_file, load_standalone_ocr_file
 from arretify.settings import Settings
 from arretify.types import SessionContext
-from arretify.utils.pages import Page, create_asset, get_or_load_asset, save_page
+from arretify.utils.ocr_document import (
+    OcrDocument,
+    Page,
+    get_or_load_asset,
+    save_ocr_document,
+    set_asset,
+)
 
 
 class TestFileLoadingFunctions(unittest.TestCase):
@@ -42,74 +48,69 @@ class TestFileLoadingFunctions(unittest.TestCase):
         input_path.suffix = ".pdf"
 
         # Act
-        result = load_pdf_file(self.session_context, input_path)
+        document_context = load_pdf_file(self.session_context, input_path)
 
         # Assert
-        assert result is not None
-        assert result.input_path == input_path
-        assert result.pdf == b"dummy pdf content"
-        assert result.protected_soup is not None
+        assert document_context is not None
+        assert document_context.input_path == input_path
+        assert document_context.pdf == b"dummy pdf content"
+        assert document_context.protected_soup is not None
 
     def test_load_standalone_ocr_file(self):
         # Arrange
         input_path = mock.Mock(spec=Path)
         input_path.is_file.return_value = True
         input_path.suffix = ".md"
-        m = mock.mock_open(read_data="line1\nline2")
-        with mock.patch("builtins.open", m):
-            # Act
-            result = load_standalone_ocr_file(self.session_context, input_path)
+        input_path.read_text.return_value = "line1\nline2"
 
-            # Assert
-            assert result is not None
-            assert result.input_path == input_path
-            assert len(result.pages) == 1
-            assert result.pages[0].index == 1
-            assert get_or_load_asset(result.pages[0], "main.md") == "line1\nline2"
-            assert result.protected_soup is not None
+        # Act
+        document_context = load_standalone_ocr_file(self.session_context, input_path)
 
-    def test_load_ocr_pages(self):
+        # Assert
+        assert document_context is not None
+        assert document_context.input_path == input_path
+        assert len(document_context.ocr_document.pages) == 1
+        assert document_context.ocr_document.pages[0].index == 1
+        assert (
+            get_or_load_asset(document_context.ocr_document.pages[0], "main.md") == "line1\nline2"
+        )
+        assert document_context.protected_soup is not None
+
+    def test_load_ocr_document(self):
         """
         We make sure pages are opened in the right order
         (page number and not file name order).
         """
+
         with tempfile.TemporaryDirectory() as tmpdir:
-            # Arrange - Create temporary directory structure with real files
+            # Arrange
             input_path = Path(tmpdir)
-
-            page_dir1 = input_path / "1"
-            page1 = Page(index=1, dir_path=page_dir1)
-            create_asset(page1, "main.md", "content of file 1")
-            save_page(page1)
-
-            page_dir2 = input_path / "02"  # Note: different naming to test sorting
-            page2 = Page(index=2, dir_path=page_dir2)
-            create_asset(page2, "main.md", "content of file 2")
-            save_page(page2)
-
-            page_dir10 = input_path / "10"
-            page10 = Page(index=10, dir_path=page_dir10)
-            create_asset(page10, "main.md", "content of file 10")
-            save_page(page10)
+            page1 = Page(index=1)
+            set_asset(page1, "main.md", "content of file 1")
+            page2 = Page(index=2)  # Note: different naming to test sorting
+            set_asset(page2, "main.md", "content of file 2")
+            page10 = Page(index=10)
+            set_asset(page10, "main.md", "content of file 10")
+            ocr_document = OcrDocument(pages=[page1, page2, page10])
+            save_ocr_document(ocr_document, input_path)
 
             # Act
-            result = load_ocr_pages(self.session_context, input_path)
+            document_context = load_ocr_files(self.session_context, input_path)
 
             # Assert
-            assert result.input_path == input_path
-            assert len(result.pages) == 3
+            assert document_context.input_path == input_path
+            assert len(document_context.ocr_document.pages) == 3
 
-            # Verify Page objects with correct indices and content order
-            assert isinstance(result.pages[0], Page)
-            assert result.pages[0].index == 1
-            assert get_or_load_asset(result.pages[0], "main.md") == "content of file 1"
+            page1 = document_context.ocr_document.pages[0]
+            assert page1.index == 1
+            assert get_or_load_asset(page1, "main.md") == "content of file 1"
 
-            assert isinstance(result.pages[1], Page)
-            assert result.pages[1].index == 2
-            assert get_or_load_asset(result.pages[1], "main.md") == "content of file 2"
+            page2 = document_context.ocr_document.pages[1]
+            assert page2.index == 2
+            assert get_or_load_asset(page2, "main.md") == "content of file 2"
 
-            assert isinstance(result.pages[0], Page)
-            assert result.pages[2].index == 10
-            assert get_or_load_asset(result.pages[2], "main.md") == "content of file 10"
+            page3 = document_context.ocr_document.pages[2]
+            assert page3.index == 10
+            assert get_or_load_asset(page3, "main.md") == "content of file 10"
 
-            assert result.protected_soup is not None
+            assert document_context.protected_soup is not None

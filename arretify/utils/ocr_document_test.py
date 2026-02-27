@@ -21,47 +21,36 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from arretify.utils.pages import (
+from arretify.utils.ocr_document import (
+    OcrDocument,
     Page,
-    create_asset,
     get_or_load_asset,
-    load_page,
-    save_page,
+    load_ocr_document,
+    save_ocr_document,
     set_asset,
 )
 
 
-class TestPage(unittest.TestCase):
+class TestOcrDocument(unittest.TestCase):
 
-    def test_create_asset(self):
+    def test_set_asset(self):
         # Arrange
         page = Page(index=1)
 
         # Act
-        create_asset(page, "main.md", "Main content")
-        create_asset(page, "header.md", "Header content")
-        create_asset(page, "footer.md")
+        set_asset(page, "main.md", "Main content")
+        set_asset(page, "header.md", "Header content")
+        set_asset(page, "footer.md")
 
         # Assert
         assert page.assets["main.md"] == "Main content"
         assert page.assets["header.md"] == "Header content"
         assert page.assets["footer.md"] is None
 
-    def test_set_asset(self):
-        # Arrange
-        page = Page(index=1)
-        create_asset(page, "main.md", None)
-
-        # Act
-        set_asset(page, "main.md", "New content")
-
-        # Assert
-        assert page.assets["main.md"] == "New content"
-
     def test_get_or_load_asset_in_memory(self):
         # Arrange
         page = Page(index=1)
-        create_asset(page, "main.md", "Main content")
+        set_asset(page, "main.md", "Main content")
 
         # Act
         content = get_or_load_asset(page, "main.md")
@@ -79,7 +68,7 @@ class TestPage(unittest.TestCase):
             main_file.write_text("Content from disk", encoding="utf-8")
 
             page = Page(index=1, dir_path=page_dir)
-            create_asset(page, "main.md", None)
+            set_asset(page, "main.md", None)
 
             # Act - lazy load
             content = get_or_load_asset(page, "main.md")
@@ -89,10 +78,9 @@ class TestPage(unittest.TestCase):
             assert page.assets["main.md"] == "Content from disk"
 
     def test_get_or_load_asset_raises_when_no_dir_path(self):
-        """Test that loading without dir_path raises ValueError."""
         # Arrange
         page = Page(index=1)
-        create_asset(page, "main.md", None)
+        set_asset(page, "main.md", None)
 
         # Act & Assert
         with self.assertRaises(ValueError) as context:
@@ -100,14 +88,13 @@ class TestPage(unittest.TestCase):
         assert "without dir_path" in str(context.exception)
 
     def test_get_or_load_asset_raises_when_file_not_found(self):
-        """Test that loading non-existent file raises ValueError."""
         # Arrange
         with tempfile.TemporaryDirectory() as tmpdir:
             page_dir = Path(tmpdir) / "1"
             page_dir.mkdir()
 
             page = Page(index=1, dir_path=page_dir)
-            create_asset(page, "main.md", None)
+            set_asset(page, "main.md", None)
 
             # Act & Assert
             with self.assertRaises(ValueError) as context:
@@ -115,11 +102,10 @@ class TestPage(unittest.TestCase):
             assert "not found" in str(context.exception)
 
     def test_serialization_excludes_content(self):
-        """Test that model_dump_json only includes asset names, not content."""
         # Arrange
         page = Page(index=1)
-        create_asset(page, "main.md", "Secret content")
-        create_asset(page, "header.md", "Header content")
+        set_asset(page, "main.md", "Secret content")
+        set_asset(page, "header.md", "Header content")
 
         # Act
         json_str = page.model_dump_json()
@@ -132,54 +118,44 @@ class TestPage(unittest.TestCase):
             "header.md": None,
         }
 
-
-class TestPageSaveLoad(unittest.TestCase):
-
-    def test_save_and_load_page(self):
-        """Test complete save/load roundtrip."""
-        # Arrange
+    def test_save_and_load_document(self):
         with tempfile.TemporaryDirectory() as tmpdir:
-            page_dir = Path(tmpdir) / "1"
+            ocr_document_dir = Path(tmpdir) / "doc1"
+            page1 = Page(index=1)
+            page2 = Page(index=2)
 
-            page = Page(index=1, dir_path=page_dir)
-            create_asset(page, "main.md", "Main content of the page")
-            create_asset(page, "header.md", "Header content")
-            create_asset(page, "footer.md", "Footer content")
-            create_asset(page, "image1.b64", "Image description")
-            create_asset(page, "table1.html", "<table>Table content</table>")
+            set_asset(page1, "main.md", "Main content of page 1")
+            set_asset(page1, "header.md", "Header 1")
+            set_asset(page2, "main.md", "Main content of page 2")
+            set_asset(page2, "header.md", "Header 2")
 
-            # Act - Save
-            save_page(page)
+            document = OcrDocument(ocr_model="mistral-ocr-2512", pages=[page1, page2])
 
-            # Assert - Files created
-            assert (page_dir / "main.md").exists()
-            assert (page_dir / "header.md").exists()
-            assert (page_dir / "footer.md").exists()
-            assert (page_dir / "image1.b64").exists()
-            assert (page_dir / "table1.html").exists()
-            assert (page_dir / "page.json").exists()
+            # Act - Save document
+            save_ocr_document(document, ocr_document_dir)
 
-            # Verify file content
-            assert (page_dir / "main.md").read_text(encoding="utf-8") == "Main content of the page"
-            assert (page_dir / "header.md").read_text(encoding="utf-8") == "Header content"
+            # Assert - Asset files created
+            for idx, content in [(1, "Main content of page 1"), (2, "Main content of page 2")]:
+                page_dir = ocr_document_dir / str(idx)
+                assert (page_dir / "main.md").exists()
+                assert (page_dir / "header.md").exists()
+                assert (page_dir / "main.md").read_text(encoding="utf-8").startswith("Main content")
 
-            # Act - Load
-            loaded_page = load_page(page_dir)
+            # Assert - Centralized ocr_document.json exists
+            assert (ocr_document_dir / "ocr_document.json").exists()
+
+            # Act - Load document
+            loaded_doc = load_ocr_document(ocr_document_dir)
+            assert loaded_doc.ocr_model == "mistral-ocr-2512"
+            assert len(loaded_doc.pages) == 2
+            loaded_pages = sorted(loaded_doc.pages, key=lambda p: p.index)
 
             # Assert - Metadata loaded
-            assert loaded_page.index == 1
-            assert loaded_page.dir_path == page_dir
-            assert set(loaded_page.assets.keys()) == {
-                "main.md",
-                "header.md",
-                "footer.md",
-                "image1.b64",
-                "table1.html",
-            }
+            assert loaded_pages[0].index == 1
+            assert loaded_pages[1].index == 2
+            assert set(loaded_pages[0].assets.keys()) == {"main.md", "header.md"}
+            assert set(loaded_pages[1].assets.keys()) == {"main.md", "header.md"}
 
             # Assert - Content lazy loaded
-            assert get_or_load_asset(loaded_page, "main.md") == "Main content of the page"
-            assert get_or_load_asset(loaded_page, "header.md") == "Header content"
-            assert get_or_load_asset(loaded_page, "footer.md") == "Footer content"
-            assert get_or_load_asset(loaded_page, "image1.b64") == "Image description"
-            assert get_or_load_asset(loaded_page, "table1.html") == "<table>Table content</table>"
+            assert get_or_load_asset(loaded_pages[0], "main.md") == "Main content of page 1"
+            assert get_or_load_asset(loaded_pages[1], "main.md") == "Main content of page 2"

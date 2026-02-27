@@ -22,7 +22,7 @@ from arretify.semantic_tag_specs import PageSeparatorData, PageSeparatorSpec
 from arretify.types import DocumentContext, ProtectedTagOrStr, SectionType
 from arretify.utils.functional import chain_functions, iter_func_to_list
 from arretify.utils.html_create import is_semantic_tag, make_semantic_tag, replace_contents
-from arretify.utils.pages import Page, get_or_load_asset
+from arretify.utils.ocr_document import OcrDocument, get_or_load_asset
 from arretify.utils.split_merge import split_before_match
 from arretify.utils.strings import split_on_newlines
 
@@ -65,8 +65,10 @@ _is_appendix = pick_text_spans(_is_appendix_text_span_tag)
 
 
 @iter_func_to_list
-def parse_arrete(context: DocumentContext, pages: Sequence[Page]) -> Iterator[ProtectedTagOrStr]:
-    elements: list[ProtectedTagOrStr] = initialize_document_structure(context, pages)
+def parse_arrete(
+    context: DocumentContext, ocr_document: OcrDocument
+) -> Iterator[ProtectedTagOrStr]:
+    elements: list[ProtectedTagOrStr] = initialize_document_structure(context, ocr_document)
 
     # Add basic document elements
     elements = chain_functions(
@@ -107,9 +109,9 @@ def parse_arrete(context: DocumentContext, pages: Sequence[Page]) -> Iterator[Pr
 @iter_func_to_list
 def initialize_document_structure(
     context: DocumentContext,
-    pages: Sequence[Page],
+    ocr_document: OcrDocument,
 ) -> Iterator[ProtectedTagOrStr]:
-    for page in pages:
+    for page in ocr_document.pages:
         yield make_semantic_tag(
             context.protected_soup,
             PageSeparatorSpec,
