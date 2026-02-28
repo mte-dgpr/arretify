@@ -87,8 +87,9 @@ def get_or_load_asset(page: Page, name: str) -> str:
     if not asset_path.is_file():
         raise ValueError(f"Asset file not found at {asset_path}")
 
-    page.assets[name] = asset_path.read_text(encoding="utf-8")
-    return page.assets[name]
+    asset = asset_path.read_text(encoding="utf-8")
+    page.assets[name] = asset
+    return asset
 
 
 def save_ocr_document(ocr_document: OcrDocument, ocr_document_dir: Path) -> None:
