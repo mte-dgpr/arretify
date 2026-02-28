@@ -1,0 +1,47 @@
+{
+  "ocr_model": "mistral-ocr-2512",
+  "pages": [
+    {
+      "index": 1,
+      "assets": {
+        "main.md": null
+      }
+    },
+    {
+      "index": 2,
+      "assets": {
+        "main.md": null
+      }
+    },
+    {
+      "index": 3,
+      "assets": {
+        "main.md": null
+      }
+    },
+    {
+      "index": 4,
+      "assets": {
+        "main.md": null
+      }
+    },
+    {
+      "index": 5,
+      "assets": {
+        "main.md": null
+      }
+    },
+    {
+      "index": 6,
+      "assets": {
+        "main.md": null
+      }
+    },
+    {
+      "index": 7,
+      "assets": {
+        "main.md": null
+      }
+    }
+  ]
+}
