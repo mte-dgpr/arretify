@@ -25,8 +25,8 @@ from arretify.utils.ocr_document import (
     OCR_DOCUMENT_JSON_FILE_NAME,
     OcrDocument,
     Page,
+    create_asset,
     load_ocr_document,
-    set_asset,
 )
 
 from .settings import DEFAULT_ARRETE_TEMPLATE, OCR_FILE_EXTENSION
@@ -85,7 +85,7 @@ def load_standalone_ocr_file(
 
     page_ocr = input_path.read_text(encoding="utf-8")
     page = Page(index=1)
-    set_asset(page, "main.md", page_ocr)
+    create_asset(page, "main.md", page_ocr)
 
     return DocumentContext.from_session_context(
         session_context,

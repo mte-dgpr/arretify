@@ -23,11 +23,29 @@ from pydantic import BaseModel, ConfigDict, Field, model_serializer
 OCR_DOCUMENT_JSON_FILE_NAME = "ocr_document.json"
 
 
+class Asset(BaseModel):
+    """
+    Represents an asset with a name, path, and content.
+    Name and path are immutable after creation.
+    Content is mutable to allow lazy loading from disk.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    name: str = Field(frozen=True)
+    path: Path | None = Field(default=None, frozen=True)
+    content: str | None = None
+
+    @model_serializer
+    def serialize_model(self):
+        return dict(
+            name=self.name,
+        )
+
+
 class Page(BaseModel):
     """
     Container for the content of a page after OCR processing.
-    Assets are stored as a dictionary mapping asset names to content.
-    Content can be None for lazy loading from disk.
     """
 
     model_config = ConfigDict(frozen=True, extra="forbid")
@@ -35,83 +53,68 @@ class Page(BaseModel):
     index: int
     """The page index in a document starting from 1"""
 
-    assets: dict[str, str | None] = Field(default_factory=dict)
-    """Dictionary mapping asset names to their content (None if not loaded)"""
-
-    dir_path: Path | None = None
-    """Directory path for this page's assets (no persisted, used only for lazy loading)"""
-
-    @model_serializer
-    def serialize_model(self):
-        """Serialize only index and asset names (not content) for JSON storage."""
-        return dict(
-            index=self.index,
-            assets={name: None for name in self.assets.keys()},
-        )
+    assets: dict[str, Asset] = Field(default_factory=dict)
+    """Assets can be markdown content, images, or other files related to the page."""
 
 
 class OcrDocument(BaseModel):
     """
-    Represents an OCR document containing all pages and document-level metadata.
+    Represents a document after OCR processing, containing all pages and document-level metadata.
     """
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
 
     ocr_model: str = "mistral-ocr-2512"
     pages: list[Page] = Field(default_factory=list)
 
 
-def set_asset(page: Page, name: str, content: str | None = None) -> None:
+def create_asset(page: Page, name: str, content: str | None = None) -> None:
     """
-    Set content for an asset.
-    This is an in-memory operation - use save_document() to persist to disk.
+    Add a new asset to the page.
+    Raises an error if asset with the same name already exists.
+    This is an in-memory operation - use save_ocr_document() to persist to disk.
     """
-    page.assets[name] = content
+    if name in page.assets:
+        raise ValueError(f"Asset '{name}' already exists in page {page.index}")
+    page.assets[name] = Asset(name=name, content=content)
 
 
-def get_or_load_asset(page: Page, name: str) -> str:
+def get_or_load_asset_content(asset: Asset) -> str:
     """
     Get asset content, loading from disk if necessary.
-    Raises KeyError if asset doesn't exist, ValueError if content can't be loaded.
+    Raises ValueError if content can't be loaded.
+    Only uses Asset.path for loading.
     """
-    if name not in page.assets:
-        raise KeyError(f"Asset '{name}' not found in page {page.index}")
-
-    content = page.assets[name]
-    if isinstance(content, str):
-        return content
+    if isinstance(asset.content, str):
+        return asset.content
 
     # Content is None, attempt to load from disk
-    if page.dir_path is None:
-        raise ValueError(f"Cannot load asset '{name}' without dir_path")
+    if asset.path is None:
+        raise ValueError(f"Cannot load asset '{asset.name}' without asset.path set")
+    asset_path = asset.path
 
-    asset_path = page.dir_path / name
     if not asset_path.is_file():
         raise ValueError(f"Asset file not found at {asset_path}")
 
-    asset = asset_path.read_text(encoding="utf-8")
-    page.assets[name] = asset
-    return asset
+    asset.content = asset_path.read_text(encoding="utf-8")
+    return asset.content
 
 
 def save_ocr_document(ocr_document: OcrDocument, ocr_document_dir: Path) -> None:
-    # Save all page assets to their respective directories
     for page in ocr_document.pages:
-        page_dir = ocr_document_dir / str(page.index)
+        page_dir = _get_page_dir(ocr_document_dir, page)
         page_dir.mkdir(parents=True, exist_ok=True)
 
-        # Update page's dir_path
-        page = page.model_copy(update=dict(dir_path=page_dir))
+        for asset_name, asset in list(page.assets.items()):
+            if asset.content is None:
+                continue
+            asset = _assign_asset_path(page, asset_name, page_dir)
+            assert asset.path is not None
+            assert asset.content is not None
+            asset.path.write_text(asset.content, encoding="utf-8")
 
-        # Save all assets with content to disk
-        for asset_name, content in page.assets.items():
-            if content is not None:
-                asset_path = page_dir / asset_name
-                with open(asset_path, "w", encoding="utf-8") as f:
-                    f.write(content)
-
-    # Save centralized ocr_document.json file
     json_path = ocr_document_dir / OCR_DOCUMENT_JSON_FILE_NAME
-    with open(json_path, "w", encoding="utf-8") as f:
-        f.write(ocr_document.model_dump_json(indent=2))
+    json_path.write_text(ocr_document.model_dump_json(indent=2), encoding="utf-8")
 
 
 def load_ocr_document(ocr_document_dir: Path) -> OcrDocument:
@@ -119,12 +122,23 @@ def load_ocr_document(ocr_document_dir: Path) -> OcrDocument:
     if not json_path.is_file():
         raise ValueError(f"Pages JSON file not found at {json_path}")
 
-    with open(json_path, "r", encoding="utf-8") as f:
-        ocr_document = OcrDocument.model_validate_json(f.read())
+    ocr_document = OcrDocument.model_validate_json(json_path.read_text(encoding="utf-8"))
 
-    # Set dir_path for each page
-    ocr_document.pages = [
-        page.model_copy(update=dict(dir_path=ocr_document_dir / str(page.index)))
-        for page in ocr_document.pages
-    ]
+    for page in ocr_document.pages:
+        page_dir = _get_page_dir(ocr_document_dir, page)
+        for asset_name in list(page.assets):
+            _assign_asset_path(page, asset_name, page_dir)
     return ocr_document
+
+
+def _get_page_dir(ocr_document_dir: Path, page: Page) -> Path:
+    return ocr_document_dir / str(page.index)
+
+
+def _assign_asset_path(page: Page, asset_name: str, page_dir: Path) -> Asset:
+    """Compute the asset path and update the asset in the page in-place."""
+    asset_path = page_dir / asset_name
+    page.assets[asset_name] = page.assets[asset_name].model_copy(
+        update=dict(name=asset_name, path=asset_path)
+    )
+    return page.assets[asset_name]
