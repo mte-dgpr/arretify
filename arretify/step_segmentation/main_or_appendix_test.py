@@ -523,3 +523,37 @@ class TestParseAlineas(BaseTestCaseSegmentation):
                 ),
             ],
         )
+
+    def test_image_becomes_standalone_alinea(self):
+        # Arrange
+        img_tag = self.make_tag("img", attrs=dict(src="photo.png", alt="Photo"))
+        elements = [
+            *self.make_text_spans("bla bla bla"),
+            img_tag,
+            *self.make_text_spans("bli bli bli"),
+        ]
+
+        # Act
+        result = parse_alineas(self.context, elements)
+
+        # Assert
+        assert_segmentation_element_lists_equal(
+            result,
+            [
+                self.make_semantic_tag(
+                    AlineaSegmentationSpec,
+                    contents=self.make_text_spans("bla bla bla"),
+                    data=AlineaData(number=1),
+                ),
+                self.make_semantic_tag(
+                    AlineaSegmentationSpec,
+                    contents=[img_tag],
+                    data=AlineaData(number=2),
+                ),
+                self.make_semantic_tag(
+                    AlineaSegmentationSpec,
+                    contents=self.make_text_spans("bli bli bli"),
+                    data=AlineaData(number=3),
+                ),
+            ],
+        )

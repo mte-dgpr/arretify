@@ -1,0 +1,2 @@
+ANNEXE 1 - Tableau des performances et assurance qualité et attestation du prestataire à renseigner par le laboratoire et à restituer à l'exploitant (Annexe 5.5 de la circulaire du 5 janvier 2009)
+![img-3.jpeg](image_4.b64)

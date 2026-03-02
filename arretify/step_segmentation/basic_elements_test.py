@@ -41,7 +41,6 @@ from arretify.utils.html_semantic import create_semantic_tag_spec_no_data
 from .basic_elements import (
     parse_addresses,
     parse_blockquotes,
-    parse_images,
     parse_lists,
     parse_tables,
     parse_tables_of_contents,
@@ -393,26 +392,29 @@ class TestParseBlockQuote(BaseTestCaseSegmentation):
             ],
         )
 
-
-class TestParseImage(BaseTestCaseSegmentation):
-
-    def test_parse_image(self):
+    def test_blockquote_with_image_in_middle(self):
         # Arrange
-        elements = self.make_text_spans(
-            "![Image description](image_url.jpg)",
-            "END",
-        )
+        img_tag = self.make_tag("img", attrs=dict(src="photo.png", alt="Photo"))
+        elements = [
+            *self.make_text_spans('"bla bla'),
+            img_tag,
+            *self.make_text_spans('bli bli"', "END"),
+        ]
 
         # Act
-        result = parse_images(self.context, elements)
+        result = parse_blockquotes(self.context, elements)
 
         # Assert
         assert_segmentation_element_lists_equal(
             result,
             [
-                self.make_tag(
-                    "img",
-                    attrs=dict(src="image_url.jpg", alt="Image description"),
+                self.make_semantic_tag(
+                    BlockquoteSegmentationSpec,
+                    contents=[
+                        *self.make_text_spans("bla bla"),
+                        img_tag,
+                        *self.make_text_spans("bli bli"),
+                    ],
                 ),
                 *self.make_text_spans("END"),
             ],

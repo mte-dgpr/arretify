@@ -29,8 +29,8 @@
         "main.md": {
           "name": "main.md"
         },
-        "header.md": {
-          "name": "header.md"
+        "image_1.b64": {
+          "name": "image_1.b64"
         }
       }
     },
@@ -39,6 +39,9 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+        },
+        "image_2.b64": {
+          "name": "image_2.b64"
         }
       }
     },

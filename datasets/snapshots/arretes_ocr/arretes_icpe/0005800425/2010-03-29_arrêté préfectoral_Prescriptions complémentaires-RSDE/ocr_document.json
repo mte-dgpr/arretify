@@ -7,11 +7,8 @@
         "main.md": {
           "name": "main.md"
         },
-        "header.md": {
-          "name": "header.md"
-        },
-        "footer.md": {
-          "name": "footer.md"
+        "image_1.b64": {
+          "name": "image_1.b64"
         }
       }
     },
@@ -364,9 +361,165 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+        }
+      }
+    },
+    {
+      "index": 34,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
+        }
+      }
+    },
+    {
+      "index": 35,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
+        }
+      }
+    },
+    {
+      "index": 36,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
+        }
+      }
+    },
+    {
+      "index": 37,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
+        }
+      }
+    },
+    {
+      "index": 38,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
+        }
+      }
+    },
+    {
+      "index": 39,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
+        }
+      }
+    },
+    {
+      "index": 40,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
+        }
+      }
+    },
+    {
+      "index": 41,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
+        }
+      }
+    },
+    {
+      "index": 42,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
+        }
+      }
+    },
+    {
+      "index": 43,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
+        }
+      }
+    },
+    {
+      "index": 44,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
+        }
+      }
+    },
+    {
+      "index": 45,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
+        }
+      }
+    },
+    {
+      "index": 46,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
+        }
+      }
+    },
+    {
+      "index": 47,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
+        }
+      }
+    },
+    {
+      "index": 48,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
+        }
+      }
+    },
+    {
+      "index": 49,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
         },
-        "header.md": {
-          "name": "header.md"
+        "image_3.b64": {
+          "name": "image_3.b64"
+        },
+        "image_2.b64": {
+          "name": "image_2.b64"
+        }
+      }
+    },
+    {
+      "index": 50,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
+        },
+        "image_4.b64": {
+          "name": "image_4.b64"
+        },
+        "image_5.b64": {
+          "name": "image_5.b64"
+        }
+      }
+    },
+    {
+      "index": 51,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
+        },
+        "image_6.b64": {
+          "name": "image_6.b64"
         }
       }
     }

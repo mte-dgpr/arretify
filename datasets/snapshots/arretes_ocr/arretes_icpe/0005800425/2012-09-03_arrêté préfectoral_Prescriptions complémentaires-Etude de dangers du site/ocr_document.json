@@ -79,14 +79,8 @@
         "main.md": {
           "name": "main.md"
         },
-        "header.md": {
-          "name": "header.md"
-        },
-        "tbl-4.html": {
-          "name": "tbl-4.html"
-        },
-        "tbl-5.html": {
-          "name": "tbl-5.html"
+        "image_1.b64": {
+          "name": "image_1.b64"
         }
       }
     },
@@ -110,11 +104,8 @@
         "main.md": {
           "name": "main.md"
         },
-        "header.md": {
-          "name": "header.md"
-        },
-        "tbl-7.html": {
-          "name": "tbl-7.html"
+        "image_2.b64": {
+          "name": "image_2.b64"
         }
       }
     },
@@ -124,8 +115,8 @@
         "main.md": {
           "name": "main.md"
         },
-        "header.md": {
-          "name": "header.md"
+        "image_3.b64": {
+          "name": "image_3.b64"
         }
       }
     },
@@ -135,8 +126,17 @@
         "main.md": {
           "name": "main.md"
         },
-        "header.md": {
-          "name": "header.md"
+        "image_4.b64": {
+          "name": "image_4.b64"
+        },
+        "image_6.b64": {
+          "name": "image_6.b64"
+        },
+        "image_5.b64": {
+          "name": "image_5.b64"
+        },
+        "image_7.b64": {
+          "name": "image_7.b64"
         }
       }
     },
@@ -157,14 +157,8 @@
         "main.md": {
           "name": "main.md"
         },
-        "header.md": {
-          "name": "header.md"
-        },
-        "footer.md": {
-          "name": "footer.md"
-        },
-        "img-0.jpeg": {
-          "name": "img-0.jpeg"
+        "image_8.b64": {
+          "name": "image_8.b64"
         }
       }
     },
@@ -174,11 +168,11 @@
         "main.md": {
           "name": "main.md"
         },
-        "footer.md": {
-          "name": "footer.md"
+        "image_9.b64": {
+          "name": "image_9.b64"
         },
-        "img-1.jpeg": {
-          "name": "img-1.jpeg"
+        "image_10.b64": {
+          "name": "image_10.b64"
         }
       }
     },
@@ -188,11 +182,60 @@
         "main.md": {
           "name": "main.md"
         },
-        "header.md": {
-          "name": "header.md"
+        "image_11.b64": {
+          "name": "image_11.b64"
+        }
+      }
+    },
+    {
+      "index": 16,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
+        }
+      }
+    },
+    {
+      "index": 17,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
         },
-        "img-2.jpeg": {
-          "name": "img-2.jpeg"
+        "image_12.b64": {
+          "name": "image_12.b64"
+        },
+        "image_13.b64": {
+          "name": "image_13.b64"
+        }
+      }
+    },
+    {
+      "index": 18,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
+        },
+        "image_14.b64": {
+          "name": "image_14.b64"
+        }
+      }
+    },
+    {
+      "index": 19,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
+        },
+        "image_15.b64": {
+          "name": "image_15.b64"
+        }
+      }
+    },
+    {
+      "index": 20,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
         }
       }
     }

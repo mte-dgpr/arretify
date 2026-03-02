@@ -59,8 +59,8 @@
         "main.md": {
           "name": "main.md"
         },
-        "img-0.jpeg": {
-          "name": "img-0.jpeg"
+        "image_1.b64": {
+          "name": "image_1.b64"
         }
       }
     },
@@ -70,8 +70,8 @@
         "main.md": {
           "name": "main.md"
         },
-        "tbl-0.html": {
-          "name": "tbl-0.html"
+        "image_2.b64": {
+          "name": "image_2.b64"
         }
       }
     },
@@ -80,6 +80,9 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+        },
+        "image_3.b64": {
+          "name": "image_3.b64"
         }
       }
     },
@@ -111,11 +114,8 @@
         "main.md": {
           "name": "main.md"
         },
-        "footer.md": {
-          "name": "footer.md"
-        },
-        "tbl-3.html": {
-          "name": "tbl-3.html"
+        "image_4.b64": {
+          "name": "image_4.b64"
         }
       }
     },
@@ -124,6 +124,9 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+        },
+        "image_5.b64": {
+          "name": "image_5.b64"
         }
       }
     },
@@ -133,8 +136,8 @@
         "main.md": {
           "name": "main.md"
         },
-        "img-1.jpeg": {
-          "name": "img-1.jpeg"
+        "image_6.b64": {
+          "name": "image_6.b64"
         }
       }
     },
@@ -152,14 +155,8 @@
         "main.md": {
           "name": "main.md"
         },
-        "header.md": {
-          "name": "header.md"
-        },
-        "tbl-4.html": {
-          "name": "tbl-4.html"
-        },
-        "tbl-5.html": {
-          "name": "tbl-5.html"
+        "image_7.b64": {
+          "name": "image_7.b64"
         }
       }
     },
@@ -177,14 +174,8 @@
         "main.md": {
           "name": "main.md"
         },
-        "header.md": {
-          "name": "header.md"
-        },
-        "footer.md": {
-          "name": "footer.md"
-        },
-        "img-2.jpeg": {
-          "name": "img-2.jpeg"
+        "image_8.b64": {
+          "name": "image_8.b64"
         }
       }
     },
@@ -333,14 +324,8 @@
         "main.md": {
           "name": "main.md"
         },
-        "header.md": {
-          "name": "header.md"
-        },
-        "footer.md": {
-          "name": "footer.md"
-        },
-        "tbl-9.html": {
-          "name": "tbl-9.html"
+        "image_9.b64": {
+          "name": "image_9.b64"
         }
       }
     },
@@ -452,14 +437,8 @@
         "main.md": {
           "name": "main.md"
         },
-        "header.md": {
-          "name": "header.md"
-        },
-        "tbl-16.html": {
-          "name": "tbl-16.html"
-        },
-        "tbl-17.html": {
-          "name": "tbl-17.html"
+        "image_10.b64": {
+          "name": "image_10.b64"
         }
       }
     },

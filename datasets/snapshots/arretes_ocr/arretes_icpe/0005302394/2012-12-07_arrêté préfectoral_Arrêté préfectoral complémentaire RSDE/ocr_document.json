@@ -61,6 +61,9 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+        },
+        "image_1.b64": {
+          "name": "image_1.b64"
         }
       }
     }

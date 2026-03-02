@@ -29,8 +29,8 @@
         "main.md": {
           "name": "main.md"
         },
-        "img-0.jpeg": {
-          "name": "img-0.jpeg"
+        "image_1.b64": {
+          "name": "image_1.b64"
         }
       }
     },
@@ -40,11 +40,8 @@
         "main.md": {
           "name": "main.md"
         },
-        "header.md": {
-          "name": "header.md"
-        },
-        "tbl-0.html": {
-          "name": "tbl-0.html"
+        "image_2.b64": {
+          "name": "image_2.b64"
         }
       }
     },

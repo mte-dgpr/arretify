@@ -26,8 +26,8 @@
         "main.md": {
           "name": "main.md"
         },
-        "img-0.jpeg": {
-          "name": "img-0.jpeg"
+        "image_1.b64": {
+          "name": "image_1.b64"
         }
       }
     },
@@ -75,6 +75,47 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+        }
+      }
+    },
+    {
+      "index": 8,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
+        }
+      }
+    },
+    {
+      "index": 9,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
+        }
+      }
+    },
+    {
+      "index": 10,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
+        },
+        "image_3.b64": {
+          "name": "image_3.b64"
+        },
+        "image_2.b64": {
+          "name": "image_2.b64"
+        }
+      }
+    },
+    {
+      "index": 11,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
+        },
+        "image_4.b64": {
+          "name": "image_4.b64"
         }
       }
     }

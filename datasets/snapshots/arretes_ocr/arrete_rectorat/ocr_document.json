@@ -32,8 +32,24 @@
         "main.md": {
           "name": "main.md"
         },
-        "footer.md": {
-          "name": "footer.md"
+        "image_1.b64": {
+          "name": "image_1.b64"
+        }
+      }
+    },
+    {
+      "index": 4,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
+        }
+      }
+    },
+    {
+      "index": 5,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
         }
       }
     }
