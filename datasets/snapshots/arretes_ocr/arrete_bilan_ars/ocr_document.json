@@ -43,11 +43,8 @@
         "main.md": {
           "name": "main.md"
         },
-        "header.md": {
-          "name": "header.md"
-        },
-        "footer.md": {
-          "name": "footer.md"
+        "image_1.b64": {
+          "name": "image_1.b64"
         }
       }
     },
@@ -57,8 +54,8 @@
         "main.md": {
           "name": "main.md"
         },
-        "footer.md": {
-          "name": "footer.md"
+        "image_2.b64": {
+          "name": "image_2.b64"
         }
       }
     },
@@ -82,11 +79,8 @@
         "main.md": {
           "name": "main.md"
         },
-        "header.md": {
-          "name": "header.md"
-        },
-        "tbl-1.html": {
-          "name": "tbl-1.html"
+        "image_3.b64": {
+          "name": "image_3.b64"
         }
       }
     },
@@ -96,11 +90,8 @@
         "main.md": {
           "name": "main.md"
         },
-        "header.md": {
-          "name": "header.md"
-        },
-        "tbl-2.html": {
-          "name": "tbl-2.html"
+        "image_4.b64": {
+          "name": "image_4.b64"
         }
       }
     },
@@ -110,11 +101,8 @@
         "main.md": {
           "name": "main.md"
         },
-        "header.md": {
-          "name": "header.md"
-        },
-        "tbl-3.html": {
-          "name": "tbl-3.html"
+        "image_5.b64": {
+          "name": "image_5.b64"
         }
       }
     },
@@ -152,11 +140,8 @@
         "main.md": {
           "name": "main.md"
         },
-        "header.md": {
-          "name": "header.md"
-        },
-        "tbl-6.html": {
-          "name": "tbl-6.html"
+        "image_6.b64": {
+          "name": "image_6.b64"
         }
       }
     },
@@ -289,8 +274,8 @@
         "main.md": {
           "name": "main.md"
         },
-        "header.md": {
-          "name": "header.md"
+        "image_7.b64": {
+          "name": "image_7.b64"
         }
       }
     },
@@ -300,16 +285,103 @@
         "main.md": {
           "name": "main.md"
         },
-        "header.md": {
-          "name": "header.md"
-        },
-        "tbl-15.html": {
-          "name": "tbl-15.html"
+        "image_8.b64": {
+          "name": "image_8.b64"
         }
       }
     },
     {
       "index": 24,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
+        },
+        "image_9.b64": {
+          "name": "image_9.b64"
+        }
+      }
+    },
+    {
+      "index": 25,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
+        },
+        "image_10.b64": {
+          "name": "image_10.b64"
+        }
+      }
+    },
+    {
+      "index": 26,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
+        },
+        "image_11.b64": {
+          "name": "image_11.b64"
+        }
+      }
+    },
+    {
+      "index": 27,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
+        }
+      }
+    },
+    {
+      "index": 28,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
+        }
+      }
+    },
+    {
+      "index": 29,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
+        }
+      }
+    },
+    {
+      "index": 30,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
+        },
+        "image_12.b64": {
+          "name": "image_12.b64"
+        }
+      }
+    },
+    {
+      "index": 31,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
+        },
+        "image_13.b64": {
+          "name": "image_13.b64"
+        }
+      }
+    },
+    {
+      "index": 32,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
+        },
+        "image_14.b64": {
+          "name": "image_14.b64"
+        }
+      }
+    },
+    {
+      "index": 33,
       "assets": {
         "main.md": {
           "name": "main.md"

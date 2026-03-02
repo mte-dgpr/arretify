@@ -7,8 +7,8 @@
         "main.md": {
           "name": "main.md"
         },
-        "header.md": {
-          "name": "header.md"
+        "image_1.b64": {
+          "name": "image_1.b64"
         }
       }
     },
@@ -122,15 +122,47 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+        }
+      }
+    },
+    {
+      "index": 12,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
+        }
+      }
+    },
+    {
+      "index": 13,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
         },
-        "header.md": {
-          "name": "header.md"
+        "image_2.b64": {
+          "name": "image_2.b64"
+        }
+      }
+    },
+    {
+      "index": 14,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
         },
-        "img-3.jpeg": {
-          "name": "img-3.jpeg"
+        "image_3.b64": {
+          "name": "image_3.b64"
+        }
+      }
+    },
+    {
+      "index": 15,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
         },
-        "img-4.jpeg": {
-          "name": "img-4.jpeg"
+        "image_4.b64": {
+          "name": "image_4.b64"
         }
       }
     }

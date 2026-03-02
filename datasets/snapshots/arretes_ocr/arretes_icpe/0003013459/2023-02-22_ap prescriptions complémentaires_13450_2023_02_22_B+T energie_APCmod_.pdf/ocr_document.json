@@ -7,8 +7,8 @@
         "main.md": {
           "name": "main.md"
         },
-        "header.md": {
-          "name": "header.md"
+        "image_1.b64": {
+          "name": "image_1.b64"
         }
       }
     },
@@ -45,8 +45,11 @@
         "main.md": {
           "name": "main.md"
         },
-        "tbl-1.html": {
-          "name": "tbl-1.html"
+        "image_3.b64": {
+          "name": "image_3.b64"
+        },
+        "image_2.b64": {
+          "name": "image_2.b64"
         }
       }
     },

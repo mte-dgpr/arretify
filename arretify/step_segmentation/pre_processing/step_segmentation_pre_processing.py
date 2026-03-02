@@ -17,22 +17,24 @@
 # limitations under the License.
 #
 
-from typing import Sequence
-
+from typing import Iterator
 
 from arretify.utils.ocr_document import get_or_load_asset_content, OcrDocument
 from arretify.types import DocumentContext, ProtectedTagOrStr
+from arretify.utils.functional import iter_func_to_list
+from arretify.utils.ocr_document import OcrDocument
 from arretify.utils.strings import join_on_newlines, split_on_newlines
 
+from .basic_elements import parse_basic_elements
 from .markdown_cleaning import clean_markdown
 from .ocr_cleaning import clean_ocr, is_useful_line
-from .pages_to_single_html import pages_to_single_html
 
 
+@iter_func_to_list
 def step_segmentation_pre_processing(
     document_context: DocumentContext,
     ocr_document: OcrDocument,
-) -> Sequence[ProtectedTagOrStr]:
+) -> Iterator[ProtectedTagOrStr]:
     """
     Pre-processes the contents of the document for later segmentation.
     """
@@ -49,5 +51,4 @@ def step_segmentation_pre_processing(
         # Create new page with cleaned content
         page.assets["main.md"].content = join_on_newlines(lines)
 
-    # Construct a single HTML content from all pages.
-    return pages_to_single_html(document_context, ocr_document.pages)
+        yield from parse_basic_elements(document_context, page)

@@ -47,7 +47,7 @@ from arretify.utils.html_semantic import (
 from arretify.utils.split import split_at_first_verb
 from arretify.utils.split_merge import split_and_map_elements
 
-from .basic_elements import parse_blockquotes, parse_images, parse_lists, parse_tables
+from .basic_elements import parse_blockquotes, parse_lists, parse_tables
 from .core import (
     combine_text_spans,
     get_string,
@@ -372,7 +372,7 @@ def parse_alineas(
     elements = chain_functions(
         context,
         elements,
-        [parse_tables, parse_lists, parse_images],
+        [parse_tables, parse_lists],
     )
 
     # Recombine interrupted lines before processing elements.

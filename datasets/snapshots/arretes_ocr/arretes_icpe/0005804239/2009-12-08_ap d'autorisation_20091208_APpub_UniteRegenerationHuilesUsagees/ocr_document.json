@@ -34,8 +34,8 @@
         "main.md": {
           "name": "main.md"
         },
-        "img-0.jpeg": {
-          "name": "img-0.jpeg"
+        "image_1.b64": {
+          "name": "image_1.b64"
         }
       }
     },
@@ -68,6 +68,9 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+        },
+        "image_2.b64": {
+          "name": "image_2.b64"
         }
       }
     },
@@ -77,11 +80,8 @@
         "main.md": {
           "name": "main.md"
         },
-        "header.md": {
-          "name": "header.md"
-        },
-        "tbl-0.html": {
-          "name": "tbl-0.html"
+        "image_3.b64": {
+          "name": "image_3.b64"
         }
       }
     },
@@ -91,11 +91,8 @@
         "main.md": {
           "name": "main.md"
         },
-        "header.md": {
-          "name": "header.md"
-        },
-        "tbl-1.html": {
-          "name": "tbl-1.html"
+        "image_4.b64": {
+          "name": "image_4.b64"
         }
       }
     },
@@ -141,11 +138,8 @@
         "main.md": {
           "name": "main.md"
         },
-        "header.md": {
-          "name": "header.md"
-        },
-        "tbl-4.html": {
-          "name": "tbl-4.html"
+        "image_5.b64": {
+          "name": "image_5.b64"
         }
       }
     },
