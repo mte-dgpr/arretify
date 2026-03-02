@@ -19,6 +19,9 @@
 from typing import Iterator
 from urllib.parse import urlparse
 
+from bs4 import BeautifulSoup
+
+from arretify.regex_utils.core import PatternProxy
 from arretify.semantic_tag_specs import (
     PageFooterSpec,
     PageHeaderSpec,
@@ -32,9 +35,9 @@ from arretify.step_segmentation.semantic_tag_specs import (
 )
 from arretify.types import DocumentContext, ProtectedTag, ProtectedTagOrStr
 from arretify.utils.functional import iter_func_to_list
-from arretify.utils.html import set_attribute
+from arretify.utils.html import is_tag, set_attribute
 from arretify.utils.html_create import make_semantic_tag, wrap_in_tag
-from arretify.utils.markdown_parsing import IMAGE_PATTERN, parse_markdown_image
+from arretify.utils.markdown_parsing import IMAGE_PATTERN_S, LINK_PATTERN_S, parse_markdown_element
 from arretify.utils.ocr_document import Page, get_or_load_asset_content
 from arretify.utils.strings import split_on_newlines
 
@@ -50,6 +53,8 @@ def parse_basic_elements(context: DocumentContext, page: Page) -> Iterator[Prote
     for line_index, line in enumerate(page_lines):
         if is_image(page_lines, line_index):
             yield render_image_and_embed_base64(page, line)
+        elif is_link(page_lines, line_index):
+            yield render_link_and_embed_content(page, line)
         else:
             yield render_text_segmentation_tag(context, page, line_index, line)
 
@@ -93,17 +98,17 @@ def render_page_separator(context: DocumentContext, page: Page) -> ProtectedTag:
 
 
 # -------------------- Images -------------------- #
-is_image = make_probe_from_pattern_proxy(IMAGE_PATTERN)
+is_image = make_probe_from_pattern_proxy(PatternProxy(r"^" + IMAGE_PATTERN_S + "$"))
 
 
 def render_image_and_embed_base64(page: Page, markdown_image: str) -> ProtectedTag:
-    img_tag = parse_markdown_image(markdown_image)
+    img_tag = parse_markdown_element(markdown_image, "img")
 
-    # Ignore base64 urls, they are already embedded.
-    # Ignore also external urls, as we only want to embed local images.
     img_url = img_tag.get("src", "")
     assert isinstance(img_url, str)
 
+    # Ignore base64 urls, they are already embedded.
+    # Ignore also external urls, as we only want to embed local images.
     parsed_url = urlparse(img_url)
     if not img_url or parsed_url.scheme in ("http", "https", "data"):
         return img_tag
@@ -130,3 +135,34 @@ def render_text_segmentation_tag(
             end=[page.index, line_index, len(line) - 1],
         ),
     )
+
+
+# -------------------- Embedded HTML content -------------------- #
+is_link = make_probe_from_pattern_proxy(PatternProxy(r"^" + LINK_PATTERN_S + "$"))
+
+
+def render_link_and_embed_content(page: Page, markdown_link: str) -> ProtectedTag:
+    a_tag = parse_markdown_element(markdown_link, "a")
+
+    a_href = a_tag.get("href", "")
+    if not a_href:
+        return a_tag
+
+    # Ignore external urls, as we only want to embed local content.
+    # Select only .html files.
+    parsed_url = urlparse(a_href)
+    if parsed_url.scheme in ("http", "https") or not a_href.endswith(".html"):
+        return a_tag
+
+    html_filename = parsed_url.path.split("/")[-1]
+    html_contents = get_or_load_asset_content(page.assets[html_filename])
+    parsed_html = BeautifulSoup(html_contents, features="html.parser")
+
+    # If the parsed HTML doesn't contain exactly one element,
+    # we cannot be sure of what to embed, so we return the original link.
+    if len(parsed_html.contents) != 1:
+        return a_tag
+    elif is_tag(parsed_html.contents[0], tag_name_in="table"):
+        return parsed_html.contents[0]
+    else:
+        return a_tag

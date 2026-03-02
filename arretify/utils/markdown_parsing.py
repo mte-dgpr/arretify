@@ -55,8 +55,11 @@ BULLETPOINT_PATTERN_S = r"(\>|→|-|[a-zA-Z1-9][\)°])"
 LIST_PATTERN = PatternProxy(rf"^(?P<indentation>\s*){BULLETPOINT_PATTERN_S}\s+")
 """Detect if the line starts with a bulletpoint with preceding indentation."""
 
-IMAGE_PATTERN = PatternProxy(r"!\[[^\[\]]+\]\([^()]+\)")
-"""Detect if the line starts with an image."""
+IMAGE_PATTERN_S = r"!\[[^\[\]]+\]\([^()]+\)"
+"""Detects a markdown image."""
+
+LINK_PATTERN_S = r"\[[^\[\]]+\]\([^()]+\)"
+"""Detects a markdown link."""
 
 
 def is_table_description(line: str, pile: Sequence[str]) -> bool:
@@ -99,8 +102,7 @@ def parse_markdown_table(lines: Sequence[str]) -> ProtectedTag:
     return make_tag(soup, "table", contents=list(table_result[0].contents))
 
 
-def parse_markdown_image(line: str) -> ProtectedTag:
+def parse_markdown_element(line: str, selector: str) -> ProtectedTag:
     html_str = markdown.markdown(line)
     soup = protect_soup(BeautifulSoup(html_str, features="html.parser"))
-    image_element = soup.select("img")[0]
-    return image_element
+    return soup.select(selector)[0]

@@ -22,6 +22,7 @@ from .markdown_parsing import (
     TABLE_HEADER_SEPARATOR_PATTERN,
     TABLE_LINE_PATTERN,
     is_table_description,
+    parse_markdown_element,
 )
 
 
@@ -80,3 +81,16 @@ Volume autorisé : blablabla.
 
         # Assert
         assert bool(TABLE_HEADER_SEPARATOR_PATTERN.match(line)) is True
+
+
+class TestParseMarkdownElement(unittest.TestCase):
+
+    def test_parse_image(self):
+        element = parse_markdown_element("![alt text](image.png)", "img")
+        assert element["src"] == "image.png"
+        assert element["alt"] == "alt text"
+
+    def test_parse_link(self):
+        element = parse_markdown_element("[label](https://example.com)", "a")
+        assert element["href"] == "https://example.com"
+        assert element.get_text() == "label"
