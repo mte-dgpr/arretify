@@ -4,13 +4,17 @@
     {
       "index": 1,
       "assets": {
-        "main.md": null
+        "main.md": {
+          "name": "main.md"
+        }
       }
     },
     {
       "index": 2,
       "assets": {
-        "main.md": null
+        "main.md": {
+          "name": "main.md"
+        }
       }
     }
   ]

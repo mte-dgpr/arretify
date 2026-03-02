@@ -22,90 +22,23 @@ import unittest
 from pathlib import Path
 
 from arretify.utils.ocr_document import (
+    Asset,
     OcrDocument,
     Page,
-    get_or_load_asset,
+    create_asset,
+    get_or_load_asset_content,
     load_ocr_document,
     save_ocr_document,
-    set_asset,
 )
 
 
-class TestOcrDocument(unittest.TestCase):
-
-    def test_set_asset(self):
-        # Arrange
-        page = Page(index=1)
-
-        # Act
-        set_asset(page, "main.md", "Main content")
-        set_asset(page, "header.md", "Header content")
-        set_asset(page, "footer.md")
-
-        # Assert
-        assert page.assets["main.md"] == "Main content"
-        assert page.assets["header.md"] == "Header content"
-        assert page.assets["footer.md"] is None
-
-    def test_get_or_load_asset_in_memory(self):
-        # Arrange
-        page = Page(index=1)
-        set_asset(page, "main.md", "Main content")
-
-        # Act
-        content = get_or_load_asset(page, "main.md")
-
-        # Assert
-        assert content == "Main content"
-
-    def test_get_or_load_asset_lazy_loading(self):
-        # Arrange
-        with tempfile.TemporaryDirectory() as tmpdir:
-            page_dir = Path(tmpdir) / "1"
-            page_dir.mkdir()
-
-            main_file = page_dir / "main.md"
-            main_file.write_text("Content from disk", encoding="utf-8")
-
-            page = Page(index=1, dir_path=page_dir)
-            set_asset(page, "main.md", None)
-
-            # Act - lazy load
-            content = get_or_load_asset(page, "main.md")
-
-            # Assert
-            assert content == "Content from disk"
-            assert page.assets["main.md"] == "Content from disk"
-
-    def test_get_or_load_asset_raises_when_no_dir_path(self):
-        # Arrange
-        page = Page(index=1)
-        set_asset(page, "main.md", None)
-
-        # Act & Assert
-        with self.assertRaises(ValueError) as context:
-            get_or_load_asset(page, "main.md")
-        assert "without dir_path" in str(context.exception)
-
-    def test_get_or_load_asset_raises_when_file_not_found(self):
-        # Arrange
-        with tempfile.TemporaryDirectory() as tmpdir:
-            page_dir = Path(tmpdir) / "1"
-            page_dir.mkdir()
-
-            page = Page(index=1, dir_path=page_dir)
-            set_asset(page, "main.md", None)
-
-            # Act & Assert
-            with self.assertRaises(ValueError) as context:
-                get_or_load_asset(page, "main.md")
-            assert "not found" in str(context.exception)
+class TestPageModel(unittest.TestCase):
 
     def test_serialization_excludes_content(self):
         # Arrange
         page = Page(index=1)
-        set_asset(page, "main.md", "Secret content")
-        set_asset(page, "header.md", "Header content")
+        create_asset(page, "main.md", "Secret content")
+        create_asset(page, "header.md", "Header content")
 
         # Act
         json_str = page.model_dump_json()
@@ -114,9 +47,12 @@ class TestOcrDocument(unittest.TestCase):
         data = json.loads(json_str)
         assert data["index"] == 1
         assert data["assets"] == {
-            "main.md": None,
-            "header.md": None,
+            "main.md": {"name": "main.md"},
+            "header.md": {"name": "header.md"},
         }
+
+
+class TestSaveLoadDocument(unittest.TestCase):
 
     def test_save_and_load_document(self):
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -124,24 +60,25 @@ class TestOcrDocument(unittest.TestCase):
             page1 = Page(index=1)
             page2 = Page(index=2)
 
-            set_asset(page1, "main.md", "Main content of page 1")
-            set_asset(page1, "header.md", "Header 1")
-            set_asset(page2, "main.md", "Main content of page 2")
-            set_asset(page2, "header.md", "Header 2")
+            create_asset(page1, "main.md", "Main content of page 1")
+            create_asset(page1, "header.md", "Header 1")
+            create_asset(page2, "main.md", "Main content of page 2")
+            create_asset(page2, "header.md", "Header 2")
 
             document = OcrDocument(ocr_model="mistral-ocr-2512", pages=[page1, page2])
 
             # Act - Save document
             save_ocr_document(document, ocr_document_dir)
 
-            # Assert - Asset files created
-            for idx, content in [(1, "Main content of page 1"), (2, "Main content of page 2")]:
-                page_dir = ocr_document_dir / str(idx)
-                assert (page_dir / "main.md").exists()
-                assert (page_dir / "header.md").exists()
-                assert (page_dir / "main.md").read_text(encoding="utf-8").startswith("Main content")
-
-            # Assert - Centralized ocr_document.json exists
+            # Assert - Files created with correct content
+            assert (ocr_document_dir / "1" / "main.md").read_text(
+                encoding="utf-8"
+            ) == "Main content of page 1"
+            assert (ocr_document_dir / "1" / "header.md").read_text(encoding="utf-8") == "Header 1"
+            assert (ocr_document_dir / "2" / "main.md").read_text(
+                encoding="utf-8"
+            ) == "Main content of page 2"
+            assert (ocr_document_dir / "2" / "header.md").read_text(encoding="utf-8") == "Header 2"
             assert (ocr_document_dir / "ocr_document.json").exists()
 
             # Act - Load document
@@ -157,5 +94,76 @@ class TestOcrDocument(unittest.TestCase):
             assert set(loaded_pages[1].assets.keys()) == {"main.md", "header.md"}
 
             # Assert - Content lazy loaded
-            assert get_or_load_asset(loaded_pages[0], "main.md") == "Main content of page 1"
-            assert get_or_load_asset(loaded_pages[1], "main.md") == "Main content of page 2"
+            assert (
+                get_or_load_asset_content(loaded_pages[0].assets["main.md"])
+                == "Main content of page 1"
+            )
+            assert (
+                get_or_load_asset_content(loaded_pages[1].assets["main.md"])
+                == "Main content of page 2"
+            )
+
+
+class TestCreateAsset(unittest.TestCase):
+
+    def test_create_asset(self):
+        # Arrange
+        page = Page(index=1)
+
+        # Act
+        create_asset(page, "main.md", "Main content")
+        create_asset(page, "header.md", "Header content")
+        create_asset(page, "footer.md", None)
+
+        # Assert
+        assert page.assets["main.md"].content == "Main content"
+        assert page.assets["header.md"].content == "Header content"
+        assert page.assets["footer.md"].content is None
+
+
+class TestGetOrLoadAssetContent(unittest.TestCase):
+
+    def test_get_or_load_asset_in_memory(self):
+        # Arrange
+        asset = Asset(name="main.md", content="Main content")
+
+        # Act
+        content = get_or_load_asset_content(asset)
+
+        # Assert
+        assert content == "Main content"
+
+    def test_get_or_load_asset_lazy_loading(self):
+        # Arrange
+        with tempfile.TemporaryDirectory() as tmpdir:
+            asset_path = Path(tmpdir) / "main.md"
+            asset_path.write_text("Content from disk", encoding="utf-8")
+            asset = Asset(name="main.md", path=asset_path)
+
+            # Act - lazy load
+            content = get_or_load_asset_content(asset)
+
+            # Assert
+            assert content == "Content from disk"
+            assert asset.content == "Content from disk"
+
+    def test_get_or_load_asset_raises_when_no_asset_path(self):
+        # Arrange
+        asset = Asset(name="main.md", content=None, path=None)
+
+        # Act & Assert
+        with self.assertRaises(ValueError) as context:
+            get_or_load_asset_content(asset)
+        assert "without asset.path set" in str(context.exception)
+
+    def test_get_or_load_asset_raises_when_file_not_found(self):
+        # Arrange
+        with tempfile.TemporaryDirectory() as tmpdir:
+            asset_path = Path(tmpdir) / "main.md"
+            # Create asset pointing to a non-existent file
+            asset = Asset(name="main.md", path=asset_path)
+
+            # Act & Assert
+            with self.assertRaises(ValueError) as context:
+                get_or_load_asset_content(asset)
+            assert "not found" in str(context.exception)

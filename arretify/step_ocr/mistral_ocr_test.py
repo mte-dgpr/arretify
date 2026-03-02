@@ -26,7 +26,7 @@ from bs4 import BeautifulSoup
 from arretify._vendor import mistralai
 from arretify.settings import Settings
 from arretify.types import DocumentContext, SessionContext
-from arretify.utils.ocr_document import OCR_DOCUMENT_JSON_FILE_NAME, get_or_load_asset
+from arretify.utils.ocr_document import OCR_DOCUMENT_JSON_FILE_NAME, get_or_load_asset_content
 
 from .mistral_ocr import mistral_ocr
 
@@ -107,19 +107,19 @@ class TestMistralOcr(unittest.TestCase):
             # Verify first page
             page1 = result_context.ocr_document.pages[0]
             assert page1.index == 1
-            assert get_or_load_asset(page1, "main.md") == "# Page 1 Content"
-            assert get_or_load_asset(page1, "header.md") == "Page 1 Header"
-            assert get_or_load_asset(page1, "footer.md") == "Page 1 Footer"
-            assert get_or_load_asset(page1, "img-001.b64") == "base64imagedata1"
+            assert get_or_load_asset_content(page1.assets["main.md"]) == "# Page 1 Content"
+            assert get_or_load_asset_content(page1.assets["header.md"]) == "Page 1 Header"
+            assert get_or_load_asset_content(page1.assets["footer.md"]) == "Page 1 Footer"
+            assert get_or_load_asset_content(page1.assets["img-001.b64"]) == "base64imagedata1"
             assert (
-                get_or_load_asset(page1, "table-001.html")
+                get_or_load_asset_content(page1.assets["table-001.html"])
                 == "<table><tr><td>Data 1</td></tr></table>"
             )
 
             # Verify second page
             page2 = result_context.ocr_document.pages[1]
             assert page2.index == 2
-            assert get_or_load_asset(page2, "main.md") == "# Page 2 Content"
+            assert get_or_load_asset_content(page2.assets["main.md"]) == "# Page 2 Content"
 
             # Verify files were saved
             assert (ocr_document_dir / OCR_DOCUMENT_JSON_FILE_NAME).exists()
@@ -181,8 +181,5 @@ class TestMistralOcr(unittest.TestCase):
 
         page = result_context.ocr_document.pages[0]
         assert page.index == 1
-        assert get_or_load_asset(page, "main.md") == "# In-memory Content"
-        assert get_or_load_asset(page, "header.md") == "In-memory Header"
-
-        # Verify no dir_path is set (in-memory only)
-        assert page.dir_path is None
+        assert get_or_load_asset_content(page.assets["main.md"]) == "# In-memory Content"
+        assert get_or_load_asset_content(page.assets["header.md"]) == "In-memory Header"
