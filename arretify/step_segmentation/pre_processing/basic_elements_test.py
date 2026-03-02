@@ -33,7 +33,11 @@ from arretify.step_segmentation.testing import (
 from arretify.utils.html_create import wrap_in_tag
 from arretify.utils.ocr_document import Page, create_asset
 
-from .basic_elements import parse_basic_elements, render_image_and_embed_base64
+from .basic_elements import (
+    parse_basic_elements,
+    render_image_and_embed_base64,
+    render_link_and_embed_content,
+)
 
 
 class TestParseBasicElements(BaseTestCaseSegmentation):
@@ -42,8 +46,11 @@ class TestParseBasicElements(BaseTestCaseSegmentation):
         # Arrange - page with header, text lines, an embedded image, and footer
         page = Page(index=2)
         create_asset(page, "header.md", "Header content")
-        create_asset(page, "main.md", "Line 1\n![Photo](image_1.b64)\nLine 2")
+        create_asset(
+            page, "main.md", "Line 1\n![Photo](image_1.b64)\n[See table](table_1.html)\nLine 2"
+        )
         create_asset(page, "image_1.b64", "data:image/png;base64,ABC123")
+        create_asset(page, "table_1.html", "<table><tr><td>A</td></tr></table>")
         create_asset(page, "footer.md", "Footer content")
 
         # Act
@@ -67,10 +74,14 @@ class TestParseBasicElements(BaseTestCaseSegmentation):
                     "img",
                     attrs=dict(alt="Photo", src="data:image/png;base64,ABC123"),
                 ),
+                self.make_tag(
+                    "table",
+                    contents=[self.make_tag("tr", contents=[self.make_tag("td", contents=["A"])])],
+                ),
                 self.make_semantic_tag(
                     TextSpanSegmentationSpec,
                     contents=["Line 2"],
-                    data=TextSpanSegmentationData(start=[2, 2, 0], end=[2, 2, 5]),
+                    data=TextSpanSegmentationData(start=[2, 3, 0], end=[2, 3, 5]),
                 ),
                 self.make_semantic_tag(
                     PageFooterSpec,
@@ -117,3 +128,61 @@ class TestRenderImageAndEmbedBase64(BaseTestCaseSegmentation):
 
         # Assert
         assert result == self.make_tag("img", attrs=dict(alt="Alt", src=data_url))
+
+
+class TestRenderLinkAndEmbedContent(BaseTestCaseSegmentation):
+
+    def test_embeds_local_html_table(self):
+        # Arrange
+        page = Page(index=1)
+        create_asset(page, "table.html", "<table><tr><td>A</td></tr></table>")
+
+        # Act
+        result = render_link_and_embed_content(page, "[See table](table.html)")
+
+        # Assert
+        assert result.name == "table"
+
+    def test_skips_external_url(self):
+        # Arrange
+        page = Page(index=1)
+
+        # Act
+        result = render_link_and_embed_content(page, "[Link](https://example.com/table.html)")
+
+        # Assert
+        assert result.name == "a"
+        assert result.get("href") == "https://example.com/table.html"
+
+    def test_skips_non_html_file(self):
+        # Arrange
+        page = Page(index=1)
+        create_asset(page, "doc.pdf", "some content")
+
+        # Act
+        result = render_link_and_embed_content(page, "[Doc](doc.pdf)")
+
+        # Assert
+        assert result.name == "a"
+
+    def test_returns_link_when_html_has_multiple_root_elements(self):
+        # Arrange
+        page = Page(index=1)
+        create_asset(page, "multi.html", "<p>One</p><p>Two</p>")
+
+        # Act
+        result = render_link_and_embed_content(page, "[Multi](multi.html)")
+
+        # Assert
+        assert result.name == "a"
+
+    def test_returns_link_when_html_root_is_not_table(self):
+        # Arrange
+        page = Page(index=1)
+        create_asset(page, "para.html", "<p>Some paragraph</p>")
+
+        # Act
+        result = render_link_and_embed_content(page, "[Para](para.html)")
+
+        # Assert
+        assert result.name == "a"
