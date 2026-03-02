@@ -27,9 +27,9 @@ from arretify.types import SessionContext
 from arretify.utils.ocr_document import (
     OcrDocument,
     Page,
-    get_or_load_asset,
+    create_asset,
+    get_or_load_asset_content,
     save_ocr_document,
-    set_asset,
 )
 
 
@@ -72,7 +72,8 @@ class TestFileLoadingFunctions(unittest.TestCase):
         assert len(document_context.ocr_document.pages) == 1
         assert document_context.ocr_document.pages[0].index == 1
         assert (
-            get_or_load_asset(document_context.ocr_document.pages[0], "main.md") == "line1\nline2"
+            get_or_load_asset_content(document_context.ocr_document.pages[0].assets["main.md"])
+            == "line1\nline2"
         )
         assert document_context.protected_soup is not None
 
@@ -86,11 +87,11 @@ class TestFileLoadingFunctions(unittest.TestCase):
             # Arrange
             input_path = Path(tmpdir)
             page1 = Page(index=1)
-            set_asset(page1, "main.md", "content of file 1")
+            create_asset(page1, "main.md", "content of file 1")
             page2 = Page(index=2)  # Note: different naming to test sorting
-            set_asset(page2, "main.md", "content of file 2")
+            create_asset(page2, "main.md", "content of file 2")
             page10 = Page(index=10)
-            set_asset(page10, "main.md", "content of file 10")
+            create_asset(page10, "main.md", "content of file 10")
             ocr_document = OcrDocument(pages=[page1, page2, page10])
             save_ocr_document(ocr_document, input_path)
 
@@ -103,14 +104,14 @@ class TestFileLoadingFunctions(unittest.TestCase):
 
             page1 = document_context.ocr_document.pages[0]
             assert page1.index == 1
-            assert get_or_load_asset(page1, "main.md") == "content of file 1"
+            assert get_or_load_asset_content(page1.assets["main.md"]) == "content of file 1"
 
             page2 = document_context.ocr_document.pages[1]
             assert page2.index == 2
-            assert get_or_load_asset(page2, "main.md") == "content of file 2"
+            assert get_or_load_asset_content(page2.assets["main.md"]) == "content of file 2"
 
             page3 = document_context.ocr_document.pages[2]
             assert page3.index == 10
-            assert get_or_load_asset(page3, "main.md") == "content of file 10"
+            assert get_or_load_asset_content(page3.assets["main.md"]) == "content of file 10"
 
             assert document_context.protected_soup is not None

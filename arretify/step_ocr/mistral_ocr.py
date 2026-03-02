@@ -23,7 +23,7 @@ from typing import Iterable
 
 from arretify._vendor import mistralai
 from arretify.types import DocumentContext
-from arretify.utils.ocr_document import OcrDocument, Page, save_ocr_document, set_asset
+from arretify.utils.ocr_document import OcrDocument, Page, create_asset, save_ocr_document
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -39,35 +39,30 @@ def mistral_ocr(
     for ocr_page in _call_mistral_ocr_api(document_context):
         page_index = ocr_page.index + 1
 
-        # Determine dir_path for this page
-        page_dir = None
-        if ocr_document_dir is not None:
-            page_dir = ocr_document_dir / str(page_index)
-
         # Create page with optional dir_path
-        page = Page(index=page_index, dir_path=page_dir)
+        page = Page(index=page_index)
 
         # Add main content
-        set_asset(page, "main.md", ocr_page.markdown)
+        create_asset(page, "main.md", ocr_page.markdown)
 
         # Add header if present
         if isinstance(ocr_page.header, str):
-            set_asset(page, "header.md", ocr_page.header)
+            create_asset(page, "header.md", ocr_page.header)
 
         # Add footer if present
         if isinstance(ocr_page.footer, str):
-            set_asset(page, "footer.md", ocr_page.footer)
+            create_asset(page, "footer.md", ocr_page.footer)
 
         # Add images
         for image in ocr_page.images:
             if not isinstance(image.image_base64, str):
                 _LOGGER.warning(f"Skipping image with unsupported format in page {page_index}")
                 continue
-            set_asset(page, image.id, image.image_base64)
+            create_asset(page, image.id, image.image_base64)
 
         # Add tables
         for table in ocr_page.tables or []:
-            set_asset(page, table.id, table.content)
+            create_asset(page, table.id, table.content)
 
         pages.append(page)
 
