@@ -30,6 +30,9 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+        },
+        "image_1.b64": {
+          "name": "image_1.b64"
         }
       }
     },
@@ -38,6 +41,9 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+        },
+        "image_2.b64": {
+          "name": "image_2.b64"
         }
       }
     },
@@ -54,6 +60,9 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+        },
+        "image_3.b64": {
+          "name": "image_3.b64"
         }
       }
     },
@@ -62,6 +71,9 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+        },
+        "image_4.b64": {
+          "name": "image_4.b64"
         }
       }
     },
@@ -70,6 +82,9 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+        },
+        "image_5.b64": {
+          "name": "image_5.b64"
         }
       }
     },
@@ -94,6 +109,9 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+        },
+        "image_6.b64": {
+          "name": "image_6.b64"
         }
       }
     },
@@ -174,6 +192,9 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+        },
+        "image_7.b64": {
+          "name": "image_7.b64"
         }
       }
     },
@@ -182,6 +203,9 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+        },
+        "image_8.b64": {
+          "name": "image_8.b64"
         }
       }
     },
@@ -190,6 +214,9 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+        },
+        "image_9.b64": {
+          "name": "image_9.b64"
         }
       }
     },
@@ -198,6 +225,9 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+        },
+        "image_10.b64": {
+          "name": "image_10.b64"
         }
       }
     },
@@ -206,6 +236,9 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+        },
+        "image_11.b64": {
+          "name": "image_11.b64"
         }
       }
     },
@@ -238,6 +271,9 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+        },
+        "image_12.b64": {
+          "name": "image_12.b64"
         }
       }
     },
@@ -246,6 +282,9 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+        },
+        "image_13.b64": {
+          "name": "image_13.b64"
         }
       }
     },
@@ -254,6 +293,9 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+        },
+        "image_14.b64": {
+          "name": "image_14.b64"
         }
       }
     },

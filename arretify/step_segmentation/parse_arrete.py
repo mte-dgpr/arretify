@@ -20,20 +20,10 @@ from typing import Callable, Iterator, Sequence
 
 from arretify.types import DocumentContext, ProtectedTagOrStr, SectionType
 from arretify.utils.functional import chain_functions, iter_func_to_list
-from arretify.utils.ocr_document import OcrDocument, get_or_load_asset_content
-from arretify.utils.html_create import (
-    is_semantic_tag,
-    make_semantic_tag,
-    replace_contents,
-)
+from arretify.utils.html_create import is_semantic_tag, make_semantic_tag, replace_contents
 from arretify.utils.split_merge import split_before_match
 
-from .basic_elements import (
-    parse_addresses,
-    parse_images,
-    parse_page_footers,
-    parse_tables_of_contents,
-)
+from .basic_elements import parse_addresses, parse_page_footers, parse_tables_of_contents
 from .core import get_string, pick_text_spans
 from .header import parse_header
 from .main_or_appendix import is_title, parse_content
@@ -75,10 +65,6 @@ def parse_arrete(
         elements,
         [
             _make_text_span_parser(parse_addresses),
-            # Image strings can be very long, and table of contents pattern look
-            # at the end of the sentence.
-            # So, we make sure we parse images before table of contents.
-            parse_images,
             parse_page_footers,
             parse_tables_of_contents,
         ],

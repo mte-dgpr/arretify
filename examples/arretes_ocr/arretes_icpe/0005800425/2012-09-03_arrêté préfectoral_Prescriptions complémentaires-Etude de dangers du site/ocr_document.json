@@ -6,6 +6,9 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+        },
+        "image_1.b64": {
+          "name": "image_1.b64"
         }
       }
     },
@@ -102,6 +105,9 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+        },
+        "image_2.b64": {
+          "name": "image_2.b64"
         }
       }
     },
@@ -110,6 +116,9 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+        },
+        "image_3.b64": {
+          "name": "image_3.b64"
         }
       }
     },
@@ -118,6 +127,9 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+        },
+        "image_4.b64": {
+          "name": "image_4.b64"
         }
       }
     }

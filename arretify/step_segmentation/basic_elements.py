@@ -52,13 +52,7 @@ from arretify.utils.html_create import (
     wrap_in_tag,
 )
 from arretify.utils.html_semantic import SemanticTagSpec, get_semantic_tag_data, is_semantic_tag
-from arretify.utils.markdown_parsing import (
-    IMAGE_PATTERN,
-    LIST_PATTERN,
-    TABLE_LINE_PATTERN,
-    is_table_description,
-    parse_markdown_image,
-)
+from arretify.utils.markdown_parsing import LIST_PATTERN, TABLE_LINE_PATTERN, is_table_description
 from arretify.utils.split_merge import (
     Probe,
     RawSplit,
@@ -76,7 +70,6 @@ from .core import (
     get_strings,
     make_pattern_splitter,
     make_probe_from_pattern_proxy,
-    make_single_line_splitter_for_text_spans,
     make_while_splitter_for_text_spans,
     pick_if_transparent_tag_followed_by_match,
     pick_text_spans,
@@ -265,7 +258,7 @@ def parse_blockquotes(
 def _make_blockquote_tag(context: DocumentContext, match: _BlockquoteSplitterMatch) -> ProtectedTag:
     pile, error_code = match
     if error_code is None:
-        contents = chain_functions(context, pile, [parse_tables, parse_lists, parse_images])
+        contents = chain_functions(context, pile, [parse_tables, parse_lists])
         return make_semantic_tag(
             context.protected_soup, BlockquoteSegmentationSpec, contents=contents
         )
@@ -350,21 +343,6 @@ def _get_last_str(
         if isinstance(element, str):
             return len(text_span_tag.contents) - 1 - i, element
     raise ValueError("No str found.")
-
-
-# -------------------- Images -------------------- #
-_is_image = make_probe_from_pattern_proxy(IMAGE_PATTERN)
-
-
-def parse_images(
-    context: DocumentContext,
-    elements: Sequence[ProtectedTagOrStr],
-) -> list[ProtectedTagOrStr]:
-    return split_and_map_elements(
-        elements,
-        make_single_line_splitter_for_text_spans(_is_image),
-        lambda contents: parse_markdown_image(get_string(contents[0])),
-    )
 
 
 # -------------------- Addresses -------------------- #
