@@ -26,4 +26,4 @@ Les dates, les modalités de ces contrôles et les observations constatées doiv
 
 Sans préjudice d'autres réglementations, l'exploitant fait notamment vérifier périodiquement par un organisme extérieur les matériels de sécurité et de lutte contre l'incendie suivants selon la fréquence définie ci-dessous :
 
-[tbl-17.html](tbl-17.html)
+[table_12](table_12.html)

@@ -1,4 +1,4 @@
-[tbl-22.html](tbl-22.html)
+[table_14](table_14.html)
 
 (1) à l'exception du monoxyde de carbone.
 

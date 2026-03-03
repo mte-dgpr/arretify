@@ -2,7 +2,7 @@
 
 La surveillance de la qualité des eaux souterraines est réalisée suivant les paramètres et fréquences définis ci-après :
 
-[tbl-20.html](tbl-20.html)
+[table_10](table_10.html)
 
 Les prélèvements, l'échantillonnage et le conditionnement des échantillons d'eau sont effectués conformément aux méthodes normalisées en vigueur.
 

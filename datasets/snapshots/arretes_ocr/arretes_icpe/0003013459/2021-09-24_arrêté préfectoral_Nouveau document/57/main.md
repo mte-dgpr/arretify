@@ -1,3 +1,11 @@
+# ARTICLE 10.5.1. AUTORISATION D'ÉMETTRE DES GAZ À EFFET DE SERRE 
+
+La présente installation est soumise au système d'échange de quotas de gaz à effet de serre car elle exerce les activités suivantes, listées au tableau de l'article R229-5 du code de l'environnement:
+
+[table_15](table_15.html)
+
+Cette autorisation d'exploiter vaut autorisation d'émettre des gaz à effet de serre prévuc à l'article L.229-6 du code de l'environnement au titre de la Directive 2003/87/CE.
+
 Dans les vingt jours ouvrables suivant la date de publication de l'arrêté préfectoral d'autorisation, l'exploitant fournit les informations nécessaires à l'administrateur national du registre pour l'ouverture d'un compte de dépôt d'exploitant dans le registre de l'Union.
 
 L'exploitant informe le préfet de tout changement prévu en ce qui concerne la nature, le fonctionnement de l'installation, ou toute extension ou réduction importante de sa capacité, susceptibles de nécessiter une actualisation de l'autorisation d'émettre des gaz à effet de serre ainsi que de la date prévisible à laquelle auront lieu les changements.
