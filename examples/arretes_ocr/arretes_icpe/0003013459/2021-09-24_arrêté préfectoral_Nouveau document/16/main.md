@@ -1,11 +1,4 @@
-|  | des déchets produits |  |
-| :--: | :--: | :--: |
-| 10.3.2 | Résultats de la surveillance des émissions <br> aqueuses | Mensuelle (GIDAF : ste de <br> télédéclaration) |
-| 10.4.1 | Déclaration annuelle des émissions | Annuelle (GEREP : site de <br> télédéclaration) |
-| 10.4.2 | Rapport d'activité annuel | Annuelle |
-| 10.5.1 | Informations nécessaires pour l'ouverture <br> d'un compte de dépôt d'exploitant dans le <br> registre de l'Union lié au système d'échange <br> de quotas de gaz à effet de serre | Dans les vingt jours ouvrables <br> suivant la date de publication de <br> l'arrêté préfectoral d'autorisation, <br> à l'administrateur national du <br> registre |
-| 10.5.2 | Plan de surveillance des émissions de gaz à <br> effet de serre | Transmis au préfet pour <br> approbation avant la mise en <br> service de l'installation. |
-| 10.5.3 | Déclaration annuelle des émissions de gaz à <br> effet de serre | Annuelle, avant le 28 février pour <br> l'année précédente |
+[table_4](table_4.html)
 
 # TITRE 3 - Prévention de la pollution atmosphérique 
 

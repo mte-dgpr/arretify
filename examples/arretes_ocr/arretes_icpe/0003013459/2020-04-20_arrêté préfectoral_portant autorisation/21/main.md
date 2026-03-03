@@ -27,13 +27,4 @@ En cas de non-conformité au regard des valeurs limites d'émission définies da
 
 L'exploitant est tenu de respecter, avant mélange avec les eaux de la société Alsachimie implantée sur le site, les valeurs limites en concentration ci-dessous définies, et sans préjudice du respect des seuils de rejets imposés à Alsachimie.
 
-| Paramètre | Code SANDRE | Valeur limite |
-| :-- | :-- | :--: |
-| Température | 1301 | $30^{\circ} \mathrm{C}$ |
-| pH | 1302 | Compris entre 5,5 et 8,5 |
-| MEST (Matières En Suspension Totales) | 1305 | $30 \mathrm{mg} / \mathrm{l}$ |
-| COT (Carbone Organique Total) | 1841 | $40 \mathrm{mg} / \mathrm{l}$ |
-| DCO (Demande Chimique en Oxygène) | 1314 | $125 \mathrm{mg} / \mathrm{l}$ |
-| Tl (thallium et ses composés, exprimé en <br> thallium) | 2555 | $0,05 \mathrm{mg} / \mathrm{l}$ |
-| CN (Cyanures libres) | 1084 | $0,1 \mathrm{mg} / \mathrm{l}$ |
-| AOX (Composés organiques halogénés) | 1106 | $5 \mathrm{mg} / \mathrm{l}$ si le rejet dépasse $30 \mathrm{~g} / \mathrm{j}$ |
+[table_8](table_8.html)

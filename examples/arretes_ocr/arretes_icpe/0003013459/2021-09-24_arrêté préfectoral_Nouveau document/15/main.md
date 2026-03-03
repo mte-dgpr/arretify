@@ -21,15 +21,4 @@ Ces documents sont tenus à la disposition de l'inspection des installations cla
 
 L'exploitant transmet à l'inspection les documents suivants :
 
-| Article | Documents à transmettre | Périodicités / échéances |
-| :--: | :--: | :--: |
-| 1.5 .1 | Notification de mise en service des <br> installations | Dans le mois suivant la mise en <br> service |
-| 1.5 .1 | Modification des installations | Avant la réalisation de la <br> modification. |
-| 1.5 .6 | Notification de mise à l'arrêt définitif | 3 mois avant la date de cessation <br> d'activité |
-| 1.7 .3 et 1.7 .4 | Attestation de constitution des garanties <br> financières | Avant la mise en service puis au <br> minimum 3 mois avant l'échéance <br> de renouvellement (5 ans) |
-| 2.5 .1 | Déclaration des accidents et incidents | Ce rapport est transmis sous 15 <br> jours à l'inspection des <br> installations classées en cas <br> d'accident ou d'incident |
-| 4.2 .1 et 4.4 .1 | Convention de rejet établie avec Alsachimie | Dans le mois suivant la mise en <br> service |
-| 7.1 .2 | Autosurveillance des niveaux sonores | Un an au maximum après la mise <br> en service de l'installation. |
-| 10.2 .5 .1 | Réseau des points de surveillance de <br> l'incidence des retombées atmosphériques | Avant la mise en service |
-| 10.2 .5 .3 | Étude sur les modalités de la biosurveillance | Avant la mise en service |
-| 10.3 .2 | Résultats de la surveillance des émissions <br> atmosphériques, des déchets incinérés et | Trimestrielle ou annuelle suivant <br> les paramètres |
+[table_3](table_3.html)

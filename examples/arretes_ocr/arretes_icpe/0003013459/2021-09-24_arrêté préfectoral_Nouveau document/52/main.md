@@ -2,20 +2,7 @@
 
 La surveillance de la qualité des eaux souterraines est réalisée suivant les paramètres et fréquences définis ci-après :
 
-| Paramètre | Code <br> SANDR <br> E | Fréquence |  |
-| :--: | :--: | :--: | :--: |
-|  |  | Piézomètre 4 | Piézomètre 87 |
-| Niveau |  | Semestrielle, |  |
-| Conductivité à $25^{\circ} \mathrm{C}$ | 1304 | (un prélèvement en période de basses eaux et un prélèvement en période de hautes eaux) |  |
-| pH | 1302 |  |  |
-| Turbidité | 1295 |  |  |
-| Nitrates | 1340 |  |  |
-| Ammonium | 1335 |  |  |
-| Sulfates | 1338 |  |  |
-| Sodium | 1375 |  |  |
-| Fer | 1393 |  |  |
-| Manganèse | 1394 |  |  |
-| Hydrocarbures totaux | 2962 |  |  |
+[table_10](table_10.html)
 
 Les prélèvements, l'échantillonnage et le conditionnement des échantillons d'eau sont effectués conformément aux méthodes normalisées en vigueur.
 

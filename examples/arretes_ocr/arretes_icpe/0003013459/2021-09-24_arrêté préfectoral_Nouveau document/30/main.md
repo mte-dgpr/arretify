@@ -1,11 +1,4 @@
-| Code déchet | Nature du déchet | Origine | Stockage sur site |  | Quantité annuelle maximale produite (t) | Nivea u de gestio n |
-| :--: | :--: | :--: | :--: | :--: | :--: | :--: |
-|  |  |  | Quantité maximale stockée (t) | Mode de stockage |  |  |
-| 190112 | Mâchefers | Incinération | 591 | Fosse de $537 \mathrm{~m}^{3}$ | 42000 t | Valori sation <br> (1) |
-| $\begin{aligned} & 190107^{*} \\ & 190113^{*}$ | Résidus d'épuration des fumées d'incinération et cendres volantes contenant des substances dangereuses | Traitement des fumées et incinération | 108 | Silo résidus de $180 \mathrm{~m}^{3}$ | 11000 | Élimin ation |
-| 190116 | Cendres sous chaudières | Incinération | 50 | Silo cendres de $150 \mathrm{~m}^{3}$ | 4000 | Élimin ation |
-| 190199 | Eaux de nettoyage de la chaudière | Nettoyage chaudière | Évacuation directe |  | 500 | Élimin ation |
-| 190199 | Eaux de vidange du bain de mâchefers | Vidange pour nettoyage de la fosse à mâchefers | Évacuation directe |  | 50 | Élimin ation |
+[table_7](table_7.html)
 
 * : I'astérisque signifie que le déchet est dangereux.
 ${ }^{(1)}$ dès lors que les caractéristiques chimiques des mâchefers, déterminées par analyses, le permettront. Dans le cas contraire, le niveau de gestion des mâchefers sera l'élimination.

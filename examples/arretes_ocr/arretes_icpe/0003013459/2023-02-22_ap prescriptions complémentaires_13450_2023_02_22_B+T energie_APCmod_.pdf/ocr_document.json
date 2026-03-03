@@ -30,6 +30,9 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+        },
+        "table_1.html": {
+          "name": "table_1.html"
         }
       }
     },
@@ -38,6 +41,9 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+        },
+        "table_2.html": {
+          "name": "table_2.html"
         }
       }
     },

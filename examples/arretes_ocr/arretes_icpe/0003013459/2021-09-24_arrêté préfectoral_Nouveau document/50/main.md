@@ -15,22 +15,4 @@ Les résultats sont portés sur un registre tenu à la disposition de l'inspecti
 
 La surveillance de la qualité des rejets aqueux est réalisée pour les points de rejet définis à I'article 4.4.4 suivant les paramètres et fréquences définis ci-après :
 
-| Paramètre | Code <br> SANDR <br> E | Fréquence |  |  |
-| :--: | :--: | :--: | :--: | :--: |
-|  |  | «0123 » <br> (eaux résiduaires) ${ }^{(4)}$ | «0121 » <br> (eaux pluviales de voirie) | «0122 » <br> (eaux pluviales de toiture) |
-| pH | 1302 | Continue | Annuelle ${ }^{(1)}$ | Annuelle ${ }^{(1)}$ |
-| Débit | 1421 | Continue | - | - |
-| Température | 1301 | Continue | - | - |
-| COT | 1841 | Continue | - | - |
-| MEST | 1305 | Journalière ${ }^{(1)}$ | Annuelle ${ }^{(1)}$ | Annuelle ${ }^{(1)}$ |
-| DCO | 1314 | Journalière ${ }^{(1)}$ | Annuelle ${ }^{(1)}$ | Annuelle ${ }^{(1)}$ |
-| DBO5 | 1313 | Mensuelle ${ }^{(2)}$ | - | - |
-| TI | 2555 | Mensuelle ${ }^{(2)}$ | - | - |
-| Pb | 1382 | Mensuelle ${ }^{(2)}$ | - | - |
-| Cr | 1389 | Mensuelle ${ }^{(2)}$ | - | - |
-| Cu | 1392 | Mensuelle ${ }^{(2)}$ | - | - |
-| Ni | 1386 | Mensuelle ${ }^{(2)}$ | - | - |
-| Zn | 1383 | Mensuelle ${ }^{(2)}$ | - | - |
-| Fluorures | 7073 | Mensuelle ${ }^{(2)}$ | - | - |
-| CN libres | 1084 | Mensuelle ${ }^{(2)}$ | - | - |
-| Hydrocarbures totaux | 7009 | Mensuelle ${ }^{(2)}$ | Annuelle ${ }^{(1)}$ | Annuelle ${ }^{(1)}$ |
+[table_9](table_9.html)

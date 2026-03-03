@@ -30,7 +30,4 @@ La conception et l'exploitation de l'installation permettent de limiter la conso
 
 ## ARTICLE 4.2.1. ORIGINE DES APPROVISIONNEMENTS EN EAU
 
-| Origine de la ressource | Nom de la masse d'eau | Code national de la masse d'eau | Approvisionnement | Utilisation | Consommation annuelle (au3/au) |
-| :--: | :--: | :--: | :--: | :--: | :--: |
-| Eau souterraine | Nappe phréatiqu e rhénane | CG001 | Réseau d'eaux industrielles d'ALSACHIMIE | Refroidissement des mâchefers | 96360 |
-|  |  |  |  | Procédé de traitement des fumées | 8760 |
+[table_6](table_6.html)

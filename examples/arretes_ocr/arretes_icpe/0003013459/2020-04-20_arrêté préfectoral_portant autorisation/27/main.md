@@ -2,10 +2,7 @@
 
 Les niveaux limites de bruit ne doivent pas dépasser en limite de propriété de l'établissement les valeurs suivantes pour les différentes périodes de la journée :
 
-| Points de mesure | Emplacement du point de mesure | PERIODE DE JOUR <br> Allant de 7h à 22h, (sauf dimanches et jours feries) | PERIODE DE NUIT Allant de 22h à 7h, (ainsi que dimanches et jours fériés) |
-| :--: | :--: | :--: | :--: |
-| Point A | Au Nord-Est de la plate-forme, à proximité de Chalampé | $70 \mathrm{~dB}(\mathrm{~A})$ | $60 \mathrm{~dB}(\mathrm{~A})$ |
-| Point F | A proximité du faisceau Sud du réseau ferroviaire de la plateforme | $70 \mathrm{~dB}(\mathrm{~A})$ | $60 \mathrm{~dB}(\mathrm{~A})$ |
+[table_11](table_11.html)
 
 Les emplacements des points de mesure sont définis (approximativement) sur le plan annexé au présent arrêté.
 

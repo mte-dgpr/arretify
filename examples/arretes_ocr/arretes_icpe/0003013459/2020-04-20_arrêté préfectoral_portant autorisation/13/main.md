@@ -1,7 +1,4 @@
-|  | l'Union lié au système d'échange de quotas de gaz à effet de serre | préfectoral d'autorisation, à l'administrateur national du registre |
-| :--: | :--: | :--: |
-| 10.5 .2 | Plan de surveillance des émissions de gaz à effet de serre | Transmis au préfet pour approbation avant la mise en service de l'installation. |
-| 10.5 .3 | Déclaration annuelle des émissions de gaz à effet de serre | Annuelle, avant le 28 février pour l'année précédente |
+[table_4](table_4.html)
 
 # TITRE 3 - PRÉVENTION DE LA POLLUTION ATMOSPHÉRIQUE 
 

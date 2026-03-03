@@ -17,10 +17,4 @@ L'exploitant doit pouvoir justifier, auprès de l'inspection des installations c
 Les dates, les modalités de ces contrôles et les observations constatées doivent être inscrites sur un registre tenu à la disposition des services de la protection civile, d'incendie et de secours et de l'inspection des installations classées.
 Sans préjudice d'autres réglementations, l'exploitant fait notamment vérifier périodiquement par un organisme extérieur les matériels de sécurité et de lutte contre l'incendie suivants selon la fréquence définie ci-dessous :
 
-| Type de matériel | Fréquence minimale de contrôle |
-| :--: | :--: |
-| Extincteur | Annuelle |
-| Robinets d'incendie armés (RIA) | Annuelle |
-| Installation de détection incendie | Semestrielle |
-| Installations de désenfumage | Annuelle |
-| Portes coupe-feu | Annuelle |
+[table_12](table_12.html)

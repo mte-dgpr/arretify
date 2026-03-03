@@ -1,10 +1,4 @@
-| Nature de la surveillance | Paramètres | Surveillance assuree par l'exploitant |  | Observation | Points de contrôles |
-| :--: | :--: | :--: | :--: | :--: | :--: |
-|  |  | Type de prélèvement | l'érindicité de la mesure |  |  |
-| Surveillance de l'air ambiant | Paramètres visés à l'article 3.2.4 ${ }^{(1)}$ | Prélèvements actifs | Annuelle ${ }^{(2)}$ | Prélèvement s d'une durée de 1 semaine pour les deux premières campagnes | Points fixés en fonction des |
-| Surveillance des retombées atmosphériques | Dioxines, furanes et métaux visés à l'article 3.2.4 | Jauges de retombées de type jauge OWEN |  | - | résultats de l'étude prescrite à l'article 10.2.5.1 |
-| Surveillance des sols |  | Échantillons de sols |  | Campagnes de durée minimale d'l mois |  |
-| Biosurveillance | Modalités fixées en fonction des résultats de l'étude prescrite à l'article 10.2.5.3 |  |  |  |  |
+[table_14](table_14.html)
 
 ${ }^{(1)}$ à l'exception du monoxyde de carbone.
 ${ }^{(2)}$ Les deux premières campagnes de mesures sont réalisées (1) avant la mise en service de l'installation (point zéro) puis (2) dans un délai compris entre trois mois et six mois après la mise en service de l'installation. Après cette période initiale, les campagnes de mesures sont réalisées selon une fréquence au moins annuelle.

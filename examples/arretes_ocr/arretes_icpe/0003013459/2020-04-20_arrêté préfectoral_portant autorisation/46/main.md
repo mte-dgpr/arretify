@@ -2,9 +2,7 @@
 
 La présente installation est soumise au système d'échange de quotas de gaz à effet de serre car elle exerce les activités suivantes, listées au tableau de l'article R229-5 du code de l'environnement:
 
-| Activite | Senil | Puissance/ <br> capacité | Gaz à effet de <br> serre concerné |
-| :--: | :--: | :--: | :--: |
-| Combustion de combustibles dans des installations dont la <br> puissance calorifique totale de combustion est supérieure à 20 <br> MW (à l'exception des installations d'incinération de déchets <br> dangereux ou municipaux). | 20 MW | 70 MW | Dioxyde de <br> carbone |
+[table_15](table_15.html)
 
 Cette autorisation d'exploiter vaut autorisation d'émettre des gaz à effet de serre prévuc à l'article L.229-6 du code de l'environnement au titre de la Directive 2003/87/CE.
 

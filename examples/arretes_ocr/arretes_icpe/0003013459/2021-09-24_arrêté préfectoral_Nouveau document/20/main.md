@@ -1,13 +1,4 @@
-| $\mathrm{NO}_{2}$ |  |  |  |
-| :--: | :--: | :--: | :--: |
-| Monoxyde de carbone (CO) - en dehors des phases de démarrage et d'arrêt | 50 | ${ }^{(2)}$ | 207,44 |
-| Ammoniac $\left(\mathrm{NH}_{3}\right)$ | 10 | 15 | 41,49 |
-| Paramètres | Concentration sur la période d'échantillonnage en $\mathrm{mg} / \mathrm{Nm} 3^{(3)}$ | Concentration moyenne sur une demi-heure en mg/ Nm3 | Flux journalier en $\mathrm{kg} / \mathrm{j}$ |
-| Cadmium (Cd) et ses composés +Thallium (Tl) et ses composés | 0,02 | - | 0,083 |
-| Mercure (Hg) et ses composés | 0,02 | - | 0,083 |
-| Total des autres métaux lourds ( $\mathrm{Sb}, \mathrm{As}, \mathrm{Pb}$, $\mathrm{Cr}, \mathrm{Co}, \mathrm{Cu}, \mathrm{Mn}, \mathrm{Ni}, \mathrm{V}$ ) | 0,3 | - | 1,245 |
-| As + Benzo(a)pyrène +Cd+ Co + Cr | 0,05 | - | 0,207 |
-| Dioxines et furanes ${ }^{(4)}$ | $4.10^{-8}$ | - | $1,66.10^{-7}$ |
+[table_5](table_5.html)
 
 (1) Les flux journaliers sont déterminés au débit nominal de 172870 Nm3/ h (gaz secs) pour un flux maximal de $26,2 \mathrm{t} / \mathrm{h}$ de déchets incinérés
 (2) $150 \mathrm{mg} / \mathrm{Nm}^{3}$ de gaz de combustion dans au moins $95 \%$ de toutes les mesures correspondant à des valeurs moyennes calculées sur dix minutes ou $100 \mathrm{mg} / \mathrm{Nm}^{3}$ de gaz de combustion dans toutes les mesures correspondant à des valeurs moyennes calculées sur une demi-heure au cours d'une période de vingt-quatre heures.

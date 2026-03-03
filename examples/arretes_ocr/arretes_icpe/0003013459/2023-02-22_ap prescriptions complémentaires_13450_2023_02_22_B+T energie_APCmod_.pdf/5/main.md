@@ -1,7 +1,4 @@
-| Rubrique | Régime <br> (*) | Libellé de la rubrique (activité) | Nature de l'installation | Volume autorisé |
-| :--: | :--: | :--: | :--: | :--: |
-|  |  | déchets ou des installations de coincinération des déchets : <br> a) Pour les déchets non dangereux avec une capacité supérieure à 3 tonnes par heure |  | annuelle |
-| 4511.2 | D | Dangereux pour l'environnement aquatique de catégorie chronique 2. La quantité totale susceptible d'être présente dans l'installation étant : <br> 2. Supérieure ou égale à 100 t mais inférieure à 200 t | Stockage des résidus d'épuration des fumées / poussières des filtres / eaux issues du séparateur | 117 t |
+[table_2](table_2.html)
 
 (*) A (Autorisation) - D (Déclaration)
 Volume autorisé : éléments caractérisant la consistance, le rythme de fonctionnement, le volume des installations ou les capacités maximales autorisées. »

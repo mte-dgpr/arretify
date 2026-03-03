@@ -24,7 +24,4 @@ L'usage de tout appareil de communication par voie acoustique (sirènes, avertis
 
 Les émissions sonores dues aux activités des installations ne doivent pas engendrer une émergence supérieure aux valeurs admissibles fixées dans le tableau suivant dans les zones à émergence réglementée, définies conformément à l'arrêté du 23 janvier 1997 susmentionné et reprises en annexe du présent arrêté.
 
-| Niveau de bruit ambiant existant dans les zones à émergence réglementée (incluant le bruit de l'établissement) | Emergence admissible pour la période allant de 7 h à 22 h , sauf dimanches et jours fériés | Emergence admissible pour la période allant de 22 h à 7 h , ainsi que les dimanches et jours fériés |
-| :--: | :--: | :--: |
-| Supéricur à $35 \mathrm{~dB}(\mathrm{~A})$ et inférieur ou égal à $45 \mathrm{~dB}(\mathrm{~A})$ | $6 \mathrm{~dB}(\mathrm{~A})$ | $4 \mathrm{~dB}(\mathrm{~A})$ |
-| Supérieur à $45 \mathrm{~dB}(\mathrm{~A})$ | $5 \mathrm{~dB}(\mathrm{~A})$ | $3 \mathrm{~dB}(\mathrm{~A})$ |
+[table_10](table_10.html)

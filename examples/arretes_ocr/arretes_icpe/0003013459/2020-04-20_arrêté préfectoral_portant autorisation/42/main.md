@@ -6,20 +6,7 @@ En cas de cessation d'utilisation d'un ouvrage, l'exploitant informe le Préfet 
 
 La survcillance de la qualité des eaux souterraines est réalisée suivant les paramètres et fréquences définis ciaprès :
 
-| Parameitre | Code <br> SANDRE | Fréquence |  |
-| :--: | :--: | :--: | :--: |
-|  |  | Piézoomètre 4 | Piézoomètre 87 |
-| Niveau |  |  |  |
-| Conductivité à $25^{\circ} \mathrm{C}$ | 1304 |  |  |
-| pH | 1302 |  |  |
-| Turbidité | 1295 |  |  |
-| Nitrates | 1340 |  |  |
-| Ammonium | 1335 |  | Semestrielle, |
-| Sulfates | 1338 | (un prélèvement en période de basses eaux et un prélèvement en période de |  |
-| Sodium | 1375 | hautes eaux) |  |
-| Fer | 1393 |  |  |
-| Manganèse | 1394 |  |  |
-| Hydrocarbures totaux | 2962 |  |  |
+[table_13](table_13.html)
 
 Les prélèvements, l'échantillonnage et le conditionnement des échantillons d'eau sont effectués conformément aux méthodes normalisées en vigueur.
 
