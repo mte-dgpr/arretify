@@ -1,6 +1,6 @@
 Article 4.2.1. Origine des approvisionnements en eau
 
-[tbl-7.html](tbl-7.html)
+[table_6](table_6.html)
 
 L'eau souterraine utilisée par l'exploitant dans ses procédés industriels est distribuée par la société Alsachimie (fabrication de sel nylon) implantée sur la plateforme industrielle de Chalampé et autorisée à prélever l'eau souterraine via 26 puits situés sur le site.
 

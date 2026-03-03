@@ -1,4 +1,4 @@
-[tbl-6.html](tbl-6.html)
+[table_5](table_5.html)
 
 (1) Les flux journaliers sont déterminés au débit nominal de 123 480 Nm3/ h (gaz secs) pour un flux maximal de 25,2 t/h de déchets incinérés
 (2) 150 mg/Nm³ de gaz de combustion dans au moins 95 % de toutes les mesures correspondant à des valeurs moyennes calculées sur dix minutes ou 100 mg/Nm³ de gaz de combustion dans toutes les mesures correspondant à des valeurs moyennes calculées sur une demi-heure au cours d'une période de vingt-quatre heures.

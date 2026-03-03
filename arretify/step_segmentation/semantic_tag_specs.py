@@ -110,6 +110,7 @@ BlockquoteSegmentationSpec = create_semantic_tag_spec_no_data(
         Contents.SemanticTag(TableSegmentationSpec.spec_name),
         Contents.SemanticTag(TableDescriptionSegmentationSpec.spec_name),
         Contents.Tag("img"),
+        Contents.Tag("table"),
     ),
 )
 
@@ -184,6 +185,7 @@ AlineaSegmentationSpec: SemanticTagSpec[AlineaData] = SemanticTagSpec(
         Contents.SemanticTag(TableDescriptionSegmentationSpec.spec_name),
         Contents.SemanticTag(BlockquoteSegmentationSpec.spec_name),
         Contents.Tag("img"),
+        Contents.Tag("table"),
     ),
 )
 

@@ -8,7 +8,7 @@ En cas de cessation d'utilisation d'un ouvrage, l'exploitant informe le Préfet 
 
 La surveillance de la qualité des eaux souterraines est réalisée suivant les paramètres et fréquences définis ci-après :
 
-[tbl-21.html](tbl-21.html)
+[table_13](table_13.html)
 
 Les prélèvements, l'échantillonnage et le conditionnement des échantillons d'eau sont effectués conformément aux méthodes normalisées en vigueur.
 

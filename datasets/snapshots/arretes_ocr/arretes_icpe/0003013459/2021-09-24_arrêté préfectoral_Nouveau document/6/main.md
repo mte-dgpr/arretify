@@ -6,9 +6,7 @@ Au sens de l'article R. 515-61, la rubrique principale retenue est la rubrique n
 
 # Article 1.2.3. Situation de l'établissement
 
-Les installations autorisées sont situées au sein de l'aire n° 47 de la plateforme industrielle Alsachimie de Chalampé, sur la parcelle cadastrale suivante :
-
-[tbl-1.html](tbl-1.html)
+[table_2](table_2.html)
 
 Les installations citées à l'article 1.2.1 ci-dessus sont reportées avec leurs références sur le plan de situation de l'établissement annexé au présent arrêté.
 
