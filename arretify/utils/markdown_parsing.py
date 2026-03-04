@@ -27,6 +27,7 @@ from arretify.regex_utils import PatternProxy, repeated_with_separator
 from arretify.semantic_tag_specs import ErrorSpec
 from arretify.types import ProtectedTag, protect_soup
 from arretify.utils.html_create import make_semantic_tag, make_tag
+from arretify.utils.strings import merge_strings
 
 TABLE_LINE_PATTERN_OLD = PatternProxy(
     r"^\|" + repeated_with_separator(r"[^|\n]+", r"\|", (1, ...)) + r"\|$"
@@ -73,7 +74,7 @@ def is_table_description(line: str, table: ProtectedTag) -> bool:
     if header_cells:
         column_names = []
         for cell in header_cells:
-            column_strip = cell.get_text(separator=" ").strip()
+            column_strip = merge_strings(cell.stripped_strings)
             column_raw = re.sub(r"\([^)]*\)", "", column_strip).strip()
             if len(column_raw) > 0:
                 column_names.append(column_raw)

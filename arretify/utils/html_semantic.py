@@ -230,7 +230,8 @@ def create_semantic_tag_spec_no_data(
 def is_semantic_tag(
     tag: ProtectedTagOrStr,
     spec_in: Sequence[SemanticTagSpec] | None = None,
-    tag_name_in: Sequence[str] | None = None,
+    # Not using Sequence here so that we can detect if a single string is passed by mistake.
+    tag_name_in: list[str] | None = None,
 ) -> TypeGuard[ProtectedTag]:
     """
     Check if a tag is a semantic tag.
