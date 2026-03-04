@@ -28,7 +28,7 @@ from arretify.semantic_tag_specs import ErrorSpec
 from arretify.types import ProtectedTag, protect_soup
 from arretify.utils.html_create import make_semantic_tag, make_tag
 
-TABLE_LINE_PATTERN = PatternProxy(
+TABLE_LINE_PATTERN_OLD = PatternProxy(
     r"^\|" + repeated_with_separator(r"[^|\n]+", r"\|", (1, ...)) + r"\|$"
 )
 """
@@ -37,7 +37,7 @@ This pattern ensures that the line starts and ends with a pipe
 and contains at least one cell in between.
 """
 
-TABLE_HEADER_SEPARATOR_PATTERN = PatternProxy(
+TABLE_HEADER_SEPARATOR_PATTERN_OLD = PatternProxy(
     r"^\|" + repeated_with_separator(r"[-:\s]+", r"\|", (1, ...)) + r"\|$"
 )
 """
@@ -46,8 +46,8 @@ This pattern ensures that the line starts and ends with a pipe
 and contains at least two cells, with only characters -, : or whitespace in between.
 """
 
-TABLE_DESCRIPTION_PATTERN = PatternProxy(r"^(\(\*+\))|^(\*+)")
-"""Detect if the line is a table description, i.e. starts with "*" or "(*)"."""
+TABLE_DESCRIPTION_PATTERN = PatternProxy(r"^(\(\*+\))|^(\*+)|^(\(\d+\))")
+"""Detect if the line is a table description, i.e. starts with "*" or "(*)" or "(1)"."""
 
 BULLETPOINT_PATTERN_S = r"(\>|→|-|[a-zA-Z1-9][\)°])"
 """Detect if the line contains a >, →, - or a number or letter followed by ) or °."""
@@ -62,7 +62,30 @@ LINK_PATTERN_S = r"\[[^\[\]]+\]\([^()]+\)"
 """Detects a markdown link."""
 
 
-def is_table_description(line: str, pile: Sequence[str]) -> bool:
+def is_table_description(line: str, table: ProtectedTag) -> bool:
+    # Sentence starts with any number of * between parentheses or without parentheses
+    match = TABLE_DESCRIPTION_PATTERN.match(line)
+    if match:
+        return True
+
+    # Sentence that explains the name of one of the columns
+    header_cells = table.select("thead th, thead td, tr:first-child th, tr:first-child td")
+    if header_cells:
+        column_names = []
+        for cell in header_cells:
+            column_strip = cell.get_text(separator=" ").strip()
+            column_raw = re.sub(r"\([^)]*\)", "", column_strip).strip()
+            if len(column_raw) > 0:
+                column_names.append(column_raw)
+
+        # For each column name, check if we have it followed by :
+        for column_name in column_names:
+            if re.match(rf".*{re.escape(column_name)} :", line, re.IGNORECASE):
+                return True
+    return False
+
+
+def is_table_description_old(line: str, pile: Sequence[str]) -> bool:
     # Sentence starts with any number of * between parentheses or without parentheses
     match = TABLE_DESCRIPTION_PATTERN.match(line)
     if match:
@@ -86,7 +109,7 @@ def is_table_description(line: str, pile: Sequence[str]) -> bool:
     return False
 
 
-def parse_markdown_table(lines: Sequence[str]) -> ProtectedTag:
+def parse_markdown_table_old(lines: Sequence[str]) -> ProtectedTag:
     markdown_str = "\n".join(lines)
     html_str = markdown.markdown(markdown_str, extensions=["tables"])
     soup = protect_soup(BeautifulSoup(html_str, features="html.parser"))

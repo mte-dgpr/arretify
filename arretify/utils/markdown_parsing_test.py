@@ -18,69 +18,38 @@
 #
 import unittest
 
-from .markdown_parsing import (
-    TABLE_HEADER_SEPARATOR_PATTERN,
-    TABLE_LINE_PATTERN,
-    is_table_description,
-    parse_markdown_element,
-)
+from arretify.utils.testing import BaseTestCaseHtml
+
+from .markdown_parsing import is_table_description, parse_markdown_element
 
 
-class TestTableDetection(unittest.TestCase):
-
-    TABLE_MD_1 = """Blabla blabla blabla.
-
-| Rubrique | Régime (*) | Libellé de la rubrique (activité) | Nature de l'installation | Volume autorisé |
-|----------|------------|-----------------------------------|-------------------------|-----------------|
-| 2771    | A          | bla | 70 MW |
-| 4511.2  | D          | blo | 117 t |
-
-(*) A (Autorisation) - D (Déclaration)
-
-** Some other description
-
-Volume autorisé : blablabla.
-"""  # noqa: E501
-
-    def test_table_line_pattern(self):
-        # Arrange
-        lines = self.TABLE_MD_1.split("\n")
-
-        # Assert
-        for line in lines[0:2]:
-            assert not bool(TABLE_LINE_PATTERN.match(line))
-        for line in lines[2:6]:
-            assert bool(TABLE_LINE_PATTERN.match(line))
-        for line in lines[6:]:
-            assert not bool(TABLE_LINE_PATTERN.match(line))
-
-    def test_table_line_pattern_single_column(self):
-        # Arrange
-        line = "| Column |"
-
-        # Assert
-        assert bool(TABLE_LINE_PATTERN.match(line))
+class TestIsTableDescription(BaseTestCaseHtml):
 
     def test_is_table_description(self):
         # Arrange
-        lines = self.TABLE_MD_1.split("\n")
-        pile = lines[2:6]
+        table = self.make_tag(
+            "table",
+            contents=[
+                self.make_tag(
+                    "tr",
+                    contents=[
+                        self.make_tag("th", contents=["Rubrique"]),
+                        self.make_tag("th", contents=["Régime (*)"]),
+                        self.make_tag("th", contents=["Libellé de la rubrique (activité)"]),
+                        self.make_tag("th", contents=["Nature de l'installation"]),
+                        self.make_tag("th", contents=["Volume autorisé"]),
+                    ],
+                ),
+            ],
+        )
 
         # Assert
-        for line in lines[0:7]:
-            assert not is_table_description(line, pile)
-        assert is_table_description(lines[7], pile)
-        assert not is_table_description(lines[8], pile)
-        assert is_table_description(lines[9], pile)
-        assert not is_table_description(lines[10], pile)
-        assert is_table_description(lines[11], pile)
 
-    def test_table_header_separator_pattern(self):
-        # Arrange
-        line = "| :--: | :--: | :--: | :--: | :--: | :--: |"
-
-        # Assert
-        assert bool(TABLE_HEADER_SEPARATOR_PATTERN.match(line)) is True
+        assert not is_table_description("Some description", table)
+        assert is_table_description("** Some other description", table)
+        assert is_table_description("(1) Yet another description", table)
+        assert is_table_description("(*) A (Autorisation) - D (Déclaration)", table)
+        assert is_table_description("Volume autorisé : blablabla.", table)
 
 
 class TestParseMarkdownElement(unittest.TestCase):

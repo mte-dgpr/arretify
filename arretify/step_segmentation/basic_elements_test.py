@@ -19,19 +19,12 @@
 
 from arretify.errors import ErrorCodes
 from arretify.law_data.french_addresses import ALL_STREET_NAMES
-from arretify.semantic_tag_specs import (
-    AddressSpec,
-    ErrorSpec,
-    PageSeparatorData,
-    PageSeparatorSpec,
-    TableOfContentsSpec,
-)
+from arretify.semantic_tag_specs import AddressSpec, ErrorSpec, TableOfContentsSpec
 from arretify.step_segmentation.semantic_tag_specs import (
     SEGMENTATION_TAG_NAME,
     BlockquoteSegmentationSpec,
     ListSegmentationSpec,
     TableDescriptionSegmentationSpec,
-    TableSegmentationSpec,
     TextSpanSegmentationData,
     TextSpanSegmentationSpec,
 )
@@ -56,85 +49,33 @@ SomeTagSpec = create_semantic_tag_spec_no_data(
 
 class TestParseTables(BaseTestCaseSegmentation):
 
-    def test_simple_table(self):
-        # Arrange
-        elements = self.make_text_spans(
-            "| Polluant | Concentration maximale en mg/l |",
-            "|---------|---------------------------------|",
-            "| MES     | 35                               |",
-            "| DCO     | 125                              |",
-            "| Hydrocarbures totaux | 10                             |",
-            "END",
-        )
-
-        # Act
-        elements = parse_tables(self.context, elements)
-
-        # Assert
-        assert_segmentation_element_lists_equal(
-            elements,
-            [
-                self.make_semantic_tag(
-                    TableSegmentationSpec,
-                    contents=self.make_text_spans(
-                        "| Polluant | Concentration maximale en mg/l |",
-                        "|---------|---------------------------------|",
-                        "| MES     | 35                               |",
-                        "| DCO     | 125                              |",
-                        "| Hydrocarbures totaux | 10                             |",
-                    ),
-                ),
-                *self.make_text_spans("END"),
-            ],
-        )
-
     def test_table_description(self):
         # Arrange
-        elements = self.make_text_spans(
-            "| Polluant | Concentration maximale en mg/l |",
-            "|---------|---------------------------------|",
-            "| MES     | 35                               |",
-            "(*) bla bla",
-            "Polluant : Matières en suspension (MES)",
-            "END",
-        )
-
-        # Act
-        result = parse_tables(self.context, elements)
-
-        # Assert
-        assert_segmentation_element_lists_equal(
-            result,
-            [
-                self.make_semantic_tag(
-                    TableSegmentationSpec,
-                    contents=self.make_text_spans(
-                        "| Polluant | Concentration maximale en mg/l |",
-                        "|---------|---------------------------------|",
-                        "| MES     | 35                               |",
-                    ),
+        table = self.make_tag(
+            "table",
+            contents=[
+                self.make_tag(
+                    "thead",
+                    contents=[
+                        self.make_tag(
+                            "tr",
+                            contents=[
+                                self.make_tag("th", contents=["Polluant"]),
+                                self.make_tag("th", contents=["Concentration maximale en mg/l"]),
+                            ],
+                        )
+                    ],
                 ),
-                self.make_semantic_tag(
-                    TableDescriptionSegmentationSpec,
-                    contents=self.make_text_spans(
-                        "(*) bla bla", "Polluant : Matières en suspension (MES)"
-                    ),
-                ),
-                *self.make_text_spans("END"),
             ],
         )
 
-    def test_parse_tables_with_tag_at_end(self):
-        # Arrange
         elements = [
+            table,
             *self.make_text_spans(
-                "| Polluant | Concentration maximale en mg/l |",
-                "|---------|---------------------------------|",
-                "| MES     | 35                               |",
-                "| DCO     | 125                              |",
+                "(*) bla bla",
+                "Polluant : Matières en suspension (MES)",
+                "END",
             ),
-            self.make_semantic_tag(PageSeparatorSpec, data=PageSeparatorData(page_index=1)),
-            *self.make_text_spans("END"),
         ]
 
         # Act
@@ -144,16 +85,13 @@ class TestParseTables(BaseTestCaseSegmentation):
         assert_segmentation_element_lists_equal(
             result,
             [
+                table,
                 self.make_semantic_tag(
-                    TableSegmentationSpec,
+                    TableDescriptionSegmentationSpec,
                     contents=self.make_text_spans(
-                        "| Polluant | Concentration maximale en mg/l |",
-                        "|---------|---------------------------------|",
-                        "| MES     | 35                               |",
-                        "| DCO     | 125                              |",
+                        "(*) bla bla", "Polluant : Matières en suspension (MES)"
                     ),
                 ),
-                self.make_semantic_tag(PageSeparatorSpec, data=PageSeparatorData(page_index=1)),
                 *self.make_text_spans("END"),
             ],
         )
