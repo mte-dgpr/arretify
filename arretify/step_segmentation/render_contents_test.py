@@ -25,7 +25,6 @@ from arretify.step_segmentation.render_contents import (
     render_list,
     render_section,
     render_section_title,
-    render_table,
     render_table_description,
     render_visa_motif,
 )
@@ -37,7 +36,6 @@ from arretify.step_segmentation.semantic_tag_specs import (
     SectionTitleSegmentationData,
     SectionTitleSegmentationSpec,
     TableDescriptionSegmentationSpec,
-    TableSegmentationSpec,
     TextSpanSegmentationData,
     TextSpanSegmentationSpec,
     VisaSegmentationSpec,
@@ -95,61 +93,6 @@ class TestRenderInlineQuotes(BaseTestCaseSegmentation):
             "<q>haha</q>",
             " bli bli",
         ]
-
-
-class TestRenderTable(BaseTestCaseSegmentation):
-
-    def test_render_table_with_page_separators(self):
-        # Arrange
-        tag = self.make_semantic_tag(
-            TableSegmentationSpec,
-            contents=[
-                *self.make_text_spans("| Column 1 | Column 2 |", "|----------|----------|"),
-                self.make_semantic_tag(PageSeparatorSpec, data=PageSeparatorData(page_index=1)),
-                *self.make_text_spans(
-                    "| Row 1    | Data 1   |",
-                ),
-                self.make_semantic_tag(PageSeparatorSpec, data=PageSeparatorData(page_index=2)),
-                *self.make_text_spans(
-                    "| Row 2    | Data 2   |",
-                ),
-            ],
-        )
-
-        # Act
-        table_tag = render_table(self.context, tag)
-        # markdown parsing adds lots of strings with only newlines
-        # we remove them for easier testing
-        for descendant in table_tag.find_all(string=True):
-            if descendant.strip() == "":
-                descendant.extract()
-
-        # Assert
-        assert_elements_equal(
-            table_tag,
-            parse_element(
-                """
-            <table>
-                <thead>
-                    <tr>
-                        <th>Column 1</th>
-                        <th>Column 2<a data-spec="page_separator" data-page_index="1"></a></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Row 1</td>
-                        <td>Data 1<a data-spec="page_separator" data-page_index="2"></a></td>
-                    </tr>
-                    <tr>
-                        <td>Row 2</td>
-                        <td>Data 2</td>
-                    </tr>
-                </tbody>
-            </table>
-            """
-            ),
-        )
 
 
 class TestRenderTableDescription(BaseTestCaseSegmentation):

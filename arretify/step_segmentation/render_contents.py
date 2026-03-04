@@ -46,7 +46,7 @@ from arretify.step_segmentation.semantic_tag_specs import (
     SectionSegmentationSpec,
     SectionTitleSegmentationSpec,
     TableDescriptionSegmentationSpec,
-    TableSegmentationSpec,
+    TableSegmentationSpecOld,
     TextSpanSegmentationSpec,
     VisaSegmentationSpec,
 )
@@ -60,8 +60,8 @@ from arretify.utils.html_semantic import (
 )
 from arretify.utils.markdown_parsing import (
     LIST_PATTERN,
-    TABLE_HEADER_SEPARATOR_PATTERN,
-    parse_markdown_table,
+    TABLE_HEADER_SEPARATOR_PATTERN_OLD,
+    parse_markdown_table_old,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -109,8 +109,8 @@ def render_contents(
         elif is_semantic_tag(element, spec_in=[BlockquoteSegmentationSpec]):
             yield render_blockquote(context, element)
 
-        elif is_semantic_tag(element, spec_in=[TableSegmentationSpec]):
-            yield render_table(context, element)
+        elif is_semantic_tag(element, spec_in=[TableSegmentationSpecOld]):
+            yield render_table_old(context, element)
 
         elif is_semantic_tag(element, spec_in=[TableDescriptionSegmentationSpec]):
             yield from render_table_description(context, element)
@@ -352,7 +352,7 @@ def _render_list(
 # -------------------- Table -------------------- #
 
 
-def render_table(
+def render_table_old(
     _: DocumentContext,
     tag: ProtectedTag,
 ) -> ProtectedTag:
@@ -363,10 +363,10 @@ def render_table(
         if is_semantic_tag(element, spec_in=[TextSpanSegmentationSpec]):
             element_str = get_string(element)
             pile.append(element_str)
-            if bool(TABLE_HEADER_SEPARATOR_PATTERN.match(element_str)):
+            if bool(TABLE_HEADER_SEPARATOR_PATTERN_OLD.match(element_str)):
                 has_table_header = True
         elif is_semantic_tag(element, spec_in=TRANSPARENT_TAG_SPECS):
-            table_tag = parse_markdown_table(pile)
+            table_tag = parse_markdown_table_old(pile)
             # Get the right table row for inserting the transparent tag.
             # If the table has a header, the `pile` contains a header
             # separation line (e.g. "|---|---|---|"), which is not
@@ -376,7 +376,7 @@ def render_table(
         else:
             raise ValueError(f"Unexpected element {element} in table rendering.")
 
-    table_tag = parse_markdown_table(pile)
+    table_tag = parse_markdown_table_old(pile)
 
     # Insert transparent tags in their corresponding table rows.
     table_rows = table_tag.select("tr")

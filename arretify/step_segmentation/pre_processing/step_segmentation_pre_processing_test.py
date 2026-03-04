@@ -16,7 +16,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from dataclasses import replace as dataclass_replace
 
 from arretify.semantic_tag_specs import PageHeaderSpec, PageSeparatorData, PageSeparatorSpec
 from arretify.step_segmentation.semantic_tag_specs import (
@@ -28,7 +27,7 @@ from arretify.step_segmentation.testing import (
     assert_segmentation_element_lists_equal,
 )
 from arretify.utils.html_create import wrap_in_tag
-from arretify.utils.ocr_document import OcrDocument, Page, set_asset
+from arretify.utils.ocr_document import OcrDocument, Page, create_asset
 
 from .step_segmentation_pre_processing import step_segmentation_pre_processing
 
@@ -42,11 +41,11 @@ class TestStepSegmentationPreProcessing(BaseTestCaseSegmentation):
     def test_step_segmentation_pre_processing(self):
         # Arrange
         page1 = Page(index=1)
-        set_asset(page1, "header.md", "Page 1")
-        set_asset(page1, "main.md", "# Article 1  \n\nSome content here.\n\n")
+        create_asset(page1, "header.md", "Page 1")
+        create_asset(page1, "main.md", "# Article 1  \n\nSome content here.\n\n")
 
         page2 = Page(index=2)
-        set_asset(page2, "main.md", "## Article 2\n\nMore content here.\n")
+        create_asset(page2, "main.md", "## Article 2\n\nMore content here.\n")
 
         pages = [page1, page2]
 
