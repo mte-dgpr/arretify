@@ -92,7 +92,7 @@ A match for the table splitter, in the form `(<table_elements>, <table_descripti
 
 
 def _is_table_tag(elements: Sequence[ProtectedTagOrStr], index: int) -> bool:
-    return is_tag(elements[index], "table")
+    return is_tag(elements[index], tag_name_in=["table"])
 
 
 def _make_table_description_end_probe(table_tag: ProtectedTag) -> Probe[ProtectedTagOrStr]:
@@ -104,7 +104,7 @@ def _make_table_description_end_probe(table_tag: ProtectedTag) -> Probe[Protecte
     return negate(pick_text_spans(_is_table_description))
 
 
-def parse_tables(
+def parse_table_descriptions(
     context: DocumentContext,
     elements: Sequence[ProtectedTagOrStr],
 ) -> list[ProtectedTagOrStr]:
@@ -135,6 +135,7 @@ def _table_splitter(
 
     if elements:
         table_tag = elements.pop(0)
+        assert is_tag(table_tag, tag_name_in=["table"])
         # Directly after the table, look for table description.
         table_description_pile, elements = split_before_match(
             elements,
@@ -335,7 +336,9 @@ def parse_blockquotes(
 def _make_blockquote_tag(context: DocumentContext, match: _BlockquoteSplitterMatch) -> ProtectedTag:
     pile, error_code = match
     if error_code is None:
-        contents = chain_functions(context, pile, [parse_tables, parse_lists])
+        contents = chain_functions(
+            context, pile, [parse_tables_old, parse_table_descriptions, parse_lists]
+        )
         return make_semantic_tag(
             context.protected_soup, BlockquoteSegmentationSpec, contents=contents
         )

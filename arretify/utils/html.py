@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import Iterable, Iterator, Literal, Sequence, TypeGuard, cast
+from typing import Iterable, Iterator, Literal, TypeGuard, cast
 
 from bs4 import Tag
 
@@ -41,7 +41,8 @@ RESERVED_ATTRS = [TAG_ID_ATTR, GROUP_ID_ATTR]
 
 def is_tag(
     tag: ProtectedTagOrStr,
-    tag_name_in: Sequence[str] | None = None,
+    # Not using Sequence here so that we can detect if a single string is passed by mistake.
+    tag_name_in: list[str] | None = None,
 ) -> TypeGuard[ProtectedTag]:
     """
     Check if element is a tag.

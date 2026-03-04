@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import Iterator
+from typing import Iterator, cast
 from urllib.parse import urlparse
 
 from bs4 import BeautifulSoup
@@ -162,7 +162,9 @@ def render_link_and_embed_content(page: Page, markdown_link: str) -> ProtectedTa
     # we cannot be sure of what to embed, so we return the original link.
     if len(parsed_html.contents) != 1:
         return a_tag
-    elif is_tag(parsed_html.contents[0], tag_name_in="table"):
-        return parsed_html.contents[0]
+
+    element = cast(ProtectedTagOrStr, parsed_html.contents[0])
+    if is_tag(element, tag_name_in=["table"]):
+        return element
     else:
         return a_tag

@@ -38,6 +38,7 @@ from arretify.step_segmentation.semantic_tag_specs import (
 )
 from arretify.types import DocumentContext, ProtectedTag, ProtectedTagOrStr, SectionType
 from arretify.utils.functional import chain_functions, iter_func_to_list
+from arretify.utils.html import is_tag
 from arretify.utils.html_create import make_semantic_tag
 from arretify.utils.html_semantic import (
     get_semantic_tag_data,
@@ -47,7 +48,12 @@ from arretify.utils.html_semantic import (
 from arretify.utils.split import split_at_first_verb
 from arretify.utils.split_merge import split_and_map_elements
 
-from .basic_elements import parse_blockquotes, parse_lists, parse_tables, parse_tables_old
+from .basic_elements import (
+    parse_blockquotes,
+    parse_lists,
+    parse_table_descriptions,
+    parse_tables_old,
+)
 from .core import (
     combine_text_spans,
     get_string,
@@ -372,7 +378,7 @@ def parse_alineas(
     elements = chain_functions(
         context,
         elements,
-        [parse_tables, parse_tables_old, parse_lists],
+        [parse_table_descriptions, parse_tables_old, parse_lists],
     )
 
     # Recombine interrupted lines before processing elements.
@@ -398,7 +404,9 @@ def parse_alineas(
             continue
 
         alinea_children: list[ProtectedTagOrStr] = []
-        if is_semantic_tag(element, spec_in=[TableSegmentationSpecOld]):
+        if is_tag(element, tag_name_in=["table"]) or is_semantic_tag(
+            element, spec_in=[TableSegmentationSpecOld]
+        ):
             alinea_children = [element]
             while elements and is_semantic_tag(
                 elements[0], spec_in=[TableDescriptionSegmentationSpec]
