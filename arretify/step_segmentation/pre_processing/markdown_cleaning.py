@@ -25,7 +25,11 @@ from pylatexenc.latex2text import LatexNodes2Text
 from arretify.parsing_utils.dates import MONTH_POINT_ABBREVIATIONS
 from arretify.regex_utils import join_with_or, lookup_normalized_version, regex_tree, sub_with_match
 from arretify.utils.html_split_merge import make_regex_tree_splitter
-from arretify.utils.markdown_parsing import BULLETPOINT_PATTERN_S, LIST_PATTERN, TABLE_LINE_PATTERN
+from arretify.utils.markdown_parsing import (
+    BULLETPOINT_PATTERN_S,
+    LIST_PATTERN,
+    TABLE_LINE_PATTERN_OLD,
+)
 from arretify.utils.split_merge import Splitter, split_and_map_elements
 from arretify.utils.strings import merge_strings
 
@@ -227,7 +231,7 @@ def clean_markdown(line: str) -> str:
     line = re.sub(r"\\&", "&", line)
 
     # Remove <br> tags outside of tables, since the latter are rendered correctly
-    if not TABLE_LINE_PATTERN.match(line):
+    if not TABLE_LINE_PATTERN_OLD.match(line):
         line = re.sub(r"<br>", "", line)
 
     # Remove footnotes detected by OCR

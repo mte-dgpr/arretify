@@ -77,7 +77,7 @@ TextSpanSegmentationSpec: SemanticTagSpec[TextSpanSegmentationData] = SemanticTa
 )
 
 
-TableSegmentationSpec = create_semantic_tag_spec_no_data(
+TableSegmentationSpecOld = create_semantic_tag_spec_no_data(
     spec_name="segmentation:table",
     tag_name=SEGMENTATION_TAG_NAME,
     allowed_contents=(Contents.SemanticTag(TextSpanSegmentationSpec.spec_name),),
@@ -107,7 +107,7 @@ BlockquoteSegmentationSpec = create_semantic_tag_spec_no_data(
     allowed_contents=(
         Contents.SemanticTag(TextSpanSegmentationSpec.spec_name),
         Contents.SemanticTag(ListSegmentationSpec.spec_name),
-        Contents.SemanticTag(TableSegmentationSpec.spec_name),
+        Contents.SemanticTag(TableSegmentationSpecOld.spec_name),
         Contents.SemanticTag(TableDescriptionSegmentationSpec.spec_name),
         Contents.Tag("img"),
         Contents.Tag("table"),
@@ -181,7 +181,7 @@ AlineaSegmentationSpec: SemanticTagSpec[AlineaData] = SemanticTagSpec(
     allowed_contents=(
         Contents.SemanticTag(TextSpanSegmentationSpec.spec_name),
         Contents.SemanticTag(ListSegmentationSpec.spec_name),
-        Contents.SemanticTag(TableSegmentationSpec.spec_name),
+        Contents.SemanticTag(TableSegmentationSpecOld.spec_name),
         Contents.SemanticTag(TableDescriptionSegmentationSpec.spec_name),
         Contents.SemanticTag(BlockquoteSegmentationSpec.spec_name),
         Contents.Tag("img"),

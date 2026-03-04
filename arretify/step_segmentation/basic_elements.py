@@ -39,11 +39,12 @@ from arretify.step_segmentation.semantic_tag_specs import (
     BlockquoteSegmentationSpec,
     ListSegmentationSpec,
     TableDescriptionSegmentationSpec,
-    TableSegmentationSpec,
+    TableSegmentationSpecOld,
     TextSpanSegmentationSpec,
 )
 from arretify.types import DocumentContext, ProtectedTag, ProtectedTagOrStr
 from arretify.utils.functional import chain_functions, iter_func_to_list
+from arretify.utils.html import is_tag
 from arretify.utils.html_create import (
     InvalidContentsError,
     make_semantic_tag,
@@ -52,7 +53,12 @@ from arretify.utils.html_create import (
     wrap_in_tag,
 )
 from arretify.utils.html_semantic import SemanticTagSpec, get_semantic_tag_data, is_semantic_tag
-from arretify.utils.markdown_parsing import LIST_PATTERN, TABLE_LINE_PATTERN, is_table_description
+from arretify.utils.markdown_parsing import (
+    LIST_PATTERN,
+    TABLE_LINE_PATTERN_OLD,
+    is_table_description,
+    is_table_description_old,
+)
 from arretify.utils.split_merge import (
     Probe,
     RawSplit,
@@ -79,19 +85,19 @@ _LOGGER = logging.getLogger(__name__)
 
 
 # -------------------- Tables -------------------- #
-_TableSplitterMatch = Tuple[list[ProtectedTagOrStr], list[ProtectedTagOrStr]]
+_TableSplitterMatch = Tuple[ProtectedTag, list[ProtectedTagOrStr]]
 """
 A match for the table splitter, in the form `(<table_elements>, <table_description_elements>)`.
 """
 
-_is_table = make_probe_from_pattern_proxy(TABLE_LINE_PATTERN)
-_is_table_start = pick_text_spans(_is_table)
-_is_table_end = negate(pick_if_transparent_tag_followed_by_match(pick_text_spans(_is_table)))
+
+def _is_table_tag(elements: Sequence[ProtectedTagOrStr], index: int) -> bool:
+    return is_tag(elements[index], "table")
 
 
-def _make_table_description_end_probe(table_lines: Sequence[str]) -> Probe[ProtectedTagOrStr]:
+def _make_table_description_end_probe(table_tag: ProtectedTag) -> Probe[ProtectedTagOrStr]:
     def _is_table_description(elements: Sequence[ProtectedTagOrStr], index: int) -> bool:
-        if is_table_description(get_string(elements[index]), table_lines):
+        if is_table_description(get_string(elements[index]), table_tag):
             return True
         return False
 
@@ -104,16 +110,16 @@ def parse_tables(
 ) -> list[ProtectedTagOrStr]:
     return flat_map_splitted_elements(
         split_elements(elements, _table_splitter),
-        lambda match: _make_table_tags(context, match),
+        lambda match: _make_table_description_tags(context, match),
     )
 
 
 @iter_func_to_list
-def _make_table_tags(
+def _make_table_description_tags(
     context: DocumentContext, match: _TableSplitterMatch
 ) -> Iterator[ProtectedTagOrStr]:
-    table_pile, table_description_pile = match
-    yield make_semantic_tag(context.protected_soup, TableSegmentationSpec, contents=table_pile)
+    table_tag, table_description_pile = match
+    yield table_tag
     if table_description_pile:
         yield make_semantic_tag(
             context.protected_soup,
@@ -125,14 +131,85 @@ def _make_table_tags(
 def _table_splitter(
     elements: Sequence[ProtectedTagOrStr],
 ) -> RawSplit[ProtectedTagOrStr, _TableSplitterMatch] | None:
-    before, elements = split_before_match(elements, _is_table_start)
-    table_pile, elements = split_before_match(elements, _is_table_end)
+    before, elements = split_before_match(elements, _is_table_tag)
+
+    if elements:
+        table_tag = elements.pop(0)
+        # Directly after the table, look for table description.
+        table_description_pile, elements = split_before_match(
+            elements,
+            _make_table_description_end_probe(table_tag),
+        )
+
+        return (
+            before,
+            (
+                table_tag,
+                table_description_pile,
+            ),
+            elements,
+        )
+    else:
+        return None
+
+
+# -------------------- Tables OLD -------------------- #
+_TableSplitterMatchOld = Tuple[list[ProtectedTagOrStr], list[ProtectedTagOrStr]]
+"""
+A match for the table splitter, in the form `(<table_elements>, <table_description_elements>)`.
+"""
+
+_is_table_old = make_probe_from_pattern_proxy(TABLE_LINE_PATTERN_OLD)
+_is_table_start_old = pick_text_spans(_is_table_old)
+_is_table_end_old = negate(
+    pick_if_transparent_tag_followed_by_match(pick_text_spans(_is_table_old))
+)
+
+
+def _make_table_description_end_probe_old(table_lines: Sequence[str]) -> Probe[ProtectedTagOrStr]:
+    def _is_table_description(elements: Sequence[ProtectedTagOrStr], index: int) -> bool:
+        if is_table_description_old(get_string(elements[index]), table_lines):
+            return True
+        return False
+
+    return negate(pick_text_spans(_is_table_description))
+
+
+def parse_tables_old(
+    context: DocumentContext,
+    elements: Sequence[ProtectedTagOrStr],
+) -> list[ProtectedTagOrStr]:
+    return flat_map_splitted_elements(
+        split_elements(elements, _table_splitter_old),
+        lambda match: _make_table_tags_old(context, match),
+    )
+
+
+@iter_func_to_list
+def _make_table_tags_old(
+    context: DocumentContext, match: _TableSplitterMatchOld
+) -> Iterator[ProtectedTagOrStr]:
+    table_pile, table_description_pile = match
+    yield make_semantic_tag(context.protected_soup, TableSegmentationSpecOld, contents=table_pile)
+    if table_description_pile:
+        yield make_semantic_tag(
+            context.protected_soup,
+            TableDescriptionSegmentationSpec,
+            contents=table_description_pile,
+        )
+
+
+def _table_splitter_old(
+    elements: Sequence[ProtectedTagOrStr],
+) -> RawSplit[ProtectedTagOrStr, _TableSplitterMatchOld] | None:
+    before, elements = split_before_match(elements, _is_table_start_old)
+    table_pile, elements = split_before_match(elements, _is_table_end_old)
 
     if table_pile:
         # Directly after table end, look for table description.
         table_description_pile, elements = split_before_match(
             elements,
-            _make_table_description_end_probe(get_strings(table_pile)),
+            _make_table_description_end_probe_old(get_strings(table_pile)),
         )
 
         return (
