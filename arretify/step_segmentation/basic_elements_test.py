@@ -35,7 +35,7 @@ from .basic_elements import (
     parse_addresses,
     parse_blockquotes,
     parse_lists,
-    parse_tables,
+    parse_table_descriptions,
     parse_tables_of_contents,
     parse_unknown_elements,
 )
@@ -47,7 +47,7 @@ SomeTagSpec = create_semantic_tag_spec_no_data(
 )
 
 
-class TestParseTables(BaseTestCaseSegmentation):
+class TestParseTableDescriptions(BaseTestCaseSegmentation):
 
     def test_table_description(self):
         # Arrange
@@ -79,7 +79,7 @@ class TestParseTables(BaseTestCaseSegmentation):
         ]
 
         # Act
-        result = parse_tables(self.context, elements)
+        result = parse_table_descriptions(self.context, elements)
 
         # Assert
         assert_segmentation_element_lists_equal(

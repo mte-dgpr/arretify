@@ -30,6 +30,7 @@ from .semantic_tag_specs import (
     SectionSegmentationSpec,
     SectionTitleSegmentationData,
     SectionTitleSegmentationSpec,
+    TableDescriptionSegmentationSpec,
     TextSpanSegmentationData,
     TextSpanSegmentationSpec,
 )
@@ -554,6 +555,36 @@ class TestParseAlineas(BaseTestCaseSegmentation):
                     AlineaSegmentationSpec,
                     contents=self.make_text_spans("bli bli bli"),
                     data=AlineaData(number=3),
+                ),
+            ],
+        )
+
+    def test_table_and_table_description_in_same_alinea(self):
+        # Arrange
+        table_tag = self.make_tag("table")
+        table_description_tag = self.make_semantic_tag(
+            TableDescriptionSegmentationSpec,
+            contents=self.make_text_spans("Table description"),
+        )
+        elements = [
+            table_tag,
+            table_description_tag,
+        ]
+
+        # Act
+        result = parse_alineas(self.context, elements)
+
+        # Assert
+        assert_segmentation_element_lists_equal(
+            result,
+            [
+                self.make_semantic_tag(
+                    AlineaSegmentationSpec,
+                    contents=[
+                        table_tag,
+                        table_description_tag,
+                    ],
+                    data=AlineaData(number=1),
                 ),
             ],
         )
