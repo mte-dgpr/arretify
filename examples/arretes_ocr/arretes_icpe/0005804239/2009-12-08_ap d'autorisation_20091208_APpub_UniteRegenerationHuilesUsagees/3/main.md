@@ -10,11 +10,12 @@ Que les préconisations du Service Départemental d'Incendie et de Secours ont �
 
 Qu'aux termes de l'article L-512.1 du Code de l'environnement, l'autorisation ne peut être accordée que si les dangers ou inconvénients de l'installation peuvent être prévenus par des mesures que spécifie l'arrêté préfectoral,
 
-# ARRETE 
+# ARRETE
 
 ## Article 1 :
 
 La SA OSILUB, dont le siège social est 91 rue de la Paix 76410 SAINT AUBIN LES ELBEUF est autorisée à exploiter une unité de régénération des huiles usagées d'une capacité de traitement de 120.000 tonnes par an à GONFREVILLE L'ORCHER, route de la Plaine,
+
 Cet arrêté vaut également agrément au titre d'installation d'élimination (recyclage) d'huiles usagées visées par l'article L.543-3 du code de l'environnement.
 
 ## Article 2 :

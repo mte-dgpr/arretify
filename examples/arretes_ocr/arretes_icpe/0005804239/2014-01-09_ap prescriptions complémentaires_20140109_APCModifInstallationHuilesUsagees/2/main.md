@@ -1,18 +1,18 @@
-Considérant: que la société OSILUB a sollicité la modification de l'autorisation d'exploiter une installation de traitement des huiles usagées, installations situées sur le territoire de la commune de GONFREVILLE-L'ORCHER (76700) - route de la Plaine ;
+Considérant : que la société OSILUB a sollicité la modification de l'autorisation d'exploiter une installation de traitement des huiles usagées, installations situées sur le territoire de la commune de GONFREVILLE-L'ORCHER (76700) – route de la Plaine ;
 
 Considérant : que la demande de modification porte sur l'origine et la nature des huiles usagées autorisées à être traitées sur le site ;
 
-Considérant: qu'aux termes de l'article R. 512-31 du code de l'environnement, des prescriptions additionnelles que la protection des intérêts mentionnés à l'article L. 511-1 sont nécessaires que spécifie l'arrêté préfectoral complémentaire ;
+Considérant : qu'aux termes de l'article R. 512-31 du code de l'environnement, des prescriptions additionnelles que la protection des intérêts mentionnés à l'article L. 511-1 sont nécessaires que spécifie l'arrêté préfectoral complémentaire ;
 
 Considérant : que les conditions légales de délivrance de l'autorisation sont réunies ;
 
-# Sur proposition du secrétaire général de la préfecture 
+Sur proposition du secrétaire général de la préfecture
 
-## ARRETE
+# ARRETE
 
-## Article $1^{\text {er }}$ -
+## Article 1er -
 
-La société OSILUB, dont le siège social est 4991 route de la Plaine - 76700 GONFREVILLE L'ORCHER, est tenue de respecter, les prescriptions complémentaires ci-annexées dans le cadre de l'exploitation de ces installations sur le site sis à la même adresse.
+La société OSILUB, dont le siège social est 4991 route de la Plaine – 76700 GONFREVILLE L'ORCHER, est tenue de respecter, les prescriptions complémentaires ci-annexées dans le cadre de l'exploitation de ces installations sur le site sis à la même adresse.
 
 ## Article 2 -
 

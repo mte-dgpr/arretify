@@ -20,20 +20,13 @@ import logging
 from typing import Dict, Iterator, Optional, Sequence
 
 from arretify.errors import ErrorCodes
-from arretify.semantic_tag_specs import (
-    AlineaData,
-    PageFooterSpec,
-    PageHeaderSpec,
-    PageSeparatorSpec,
-    TableOfContentsSpec,
-)
+from arretify.semantic_tag_specs import AlineaData, TableOfContentsSpec
 from arretify.step_segmentation.semantic_tag_specs import (
     AlineaSegmentationSpec,
     SectionSegmentationSpec,
     SectionTitleSegmentationData,
     SectionTitleSegmentationSpec,
     TableDescriptionSegmentationSpec,
-    TableSegmentationSpecOld,
     TextSpanSegmentationSpec,
 )
 from arretify.types import DocumentContext, ProtectedTag, ProtectedTagOrStr, SectionType
@@ -48,13 +41,9 @@ from arretify.utils.html_semantic import (
 from arretify.utils.split import split_at_first_verb
 from arretify.utils.split_merge import split_and_map_elements
 
-from .basic_elements import (
-    parse_blockquotes,
-    parse_lists,
-    parse_table_descriptions,
-    parse_tables_old,
-)
+from .basic_elements import parse_blockquotes, parse_lists, parse_table_descriptions
 from .core import (
+    PAGINATION_TAG_SPECS,
     combine_text_spans,
     get_string,
     make_probe_from_pattern_proxy,
@@ -378,7 +367,7 @@ def parse_alineas(
     elements = chain_functions(
         context,
         elements,
-        [parse_table_descriptions, parse_tables_old, parse_lists],
+        [parse_table_descriptions, parse_lists],
     )
 
     # Recombine interrupted lines before processing elements.
@@ -398,15 +387,13 @@ def parse_alineas(
         # alinea but that's how the detection works for now).
         if is_semantic_tag(
             element,
-            spec_in=[PageHeaderSpec, PageFooterSpec, TableOfContentsSpec, PageSeparatorSpec],
+            spec_in=[TableOfContentsSpec, *PAGINATION_TAG_SPECS],
         ):
             yield element
             continue
 
         alinea_children: list[ProtectedTagOrStr] = []
-        if is_tag(element, tag_name_in=["table"]) or is_semantic_tag(
-            element, spec_in=[TableSegmentationSpecOld]
-        ):
+        if is_tag(element, tag_name_in=["table"]):
             alinea_children = [element]
             while elements and is_semantic_tag(
                 elements[0], spec_in=[TableDescriptionSegmentationSpec]

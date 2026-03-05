@@ -1,0 +1,1 @@
+Un recensement actualisé est transmis au préfet avant le 31 décembre de chaque année.

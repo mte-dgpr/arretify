@@ -1,0 +1,1 @@
+ZONE Z1 : Cette zone ne devrait pas avoir vocation à la construction ou à l'installation d'autres locaux nouveaux habités ou occupés par des tiers ou de voies de circulation nouvelles autres que ceux ou celles nécessaires à la desserte ou à l'exploitation des installations industrielles. Au sein de cette zone, il conviendrait de

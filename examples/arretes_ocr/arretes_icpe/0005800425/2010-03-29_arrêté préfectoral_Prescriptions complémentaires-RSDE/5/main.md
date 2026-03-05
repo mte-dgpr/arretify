@@ -1,6 +1,6 @@
-![img-1.jpeg](image_2.b64)
+[tbl-2.html](tbl-2.html)
 
-# Article 4 : Rapport de synthèse de la surveillance initiale 
+## Article 4 : Rapport de synthèse de la surveillance initiale
 
 L'exploitant doit fournir dans un délai maximal de 15 mois à compter de la notification du présent arrêté préfectoral un rapport de synthèse de la surveillance initiale devant comprendre :
 
@@ -12,5 +12,6 @@ L'exploitant doit fournir dans un délai maximal de 15 mois à compter de la not
 
 1. Il est clairement établi que ce sont les eaux amont qui sont responsables de la présence de la substance dans les rejets de l'établissement ;
 2. Toutes les concentrations mesurées pour la substance sont strictement inférieures à la limite de quantification LQ définie pour cette substance à l'annexe 5.2 du document figurant en annexe 3 du présent arrêté préfectoral complémentaire
-3. 3.1 Toutes les concentrations mesurées pour la substance sont inférieures à $10^{*} \mathrm{NQE}$ (norme de qualité environnementale ou, en l'attente de leur adoption en droit français, $10 \times$ NQEp, norme de qualité environnementale provisoire fixée dans la circulaire DE/DPPR du 7 mai 2007) ;
-ET 3.2 Tous les flux journaliers calculés pour la substance sont inférieurs à $10 \%$ du flux journalier théorique admissible par le milieu récepteur (le flux journalier admissible étant calculé à partir du produit du débit mensuel d'étiage de fréquence quinquennale sèche QMNA5 et de la NQE ou NQEp conformément aux explications de l'alinéa précédent).
+3. 3.1 Toutes les concentrations mesurées pour la substance sont inférieures à $10^{\circ}\mathrm{NQE}$ (norme de qualité environnementale ou, en l'attente de leur adoption en droit français, $10 \times \mathrm{NQEp}$, norme de qualité environnementale provisoire fixée dans la circulaire DE/DPPR du 7 mai 2007) ;
+
+ET 3.2 Tous les flux journaliers calculés pour la substance sont inférieurs à $10\%$ du flux journalier théorique admissible par le milieu récepteur (le flux journalier admissible étant calculé à partir du produit du débit mensuel d'étiage de fréquence quinquennale sèche QMNA5 et de la NQE ou NQEp conformément aux explications de l'alinéa précédent).

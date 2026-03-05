@@ -1,6 +1,6 @@
 VU l'arrêté ministériel du 23 mai 2016 relatif aux installations de production de chaleur et/ou d'électricité à partir de déchets non dangereux préparés sous forme de combustibles solides de récupération dans des installations prévues à cet effet associés ou non à un autre combustible et relevant de la rubrique 2971 de la nomenclature des installations classées pour la protection de l'environnement ;
 
-VU l'arrêté ministériel du 20 septembre 2002 relatif aux installations d'incinération et de coincinération de déchets non dangereux et aux installations incinérant des déchets d'activités de soins à risques infectieux ;
+VU l'arrêté ministériel du 20 septembre 2002 relatif aux installations d'incinération et de co-incinération de déchets non dangereux et aux installations incinérant des déchets d'activités de soins à risques infectieux ;
 
 VU l'arrêté ministériel du 12 janvier 2021 relatif aux meilleures techniques disponibles (MTD) applicables aux installations d'incinération et de co-incinération de déchets relevant du régime de l'autorisation au titre de la rubrique 3520 ;
 
@@ -20,6 +20,6 @@ VU la demande de modification des dispositions opposable au site transmis en pr�
 
 VU l'extrait du procès-verbal du 4 octobre 2022, des délibérations du conseil municipal de Chalampé sur la demande susvisée ;
 
-VU la transmission du projet d'arrêté préfectoral à l'exploitant par courrier préfectoral du 19 octobre 2022;
+VU la transmission du projet d'arrêté préfectoral à l'exploitant par courrier préfectoral du 19 octobre 2022 ;
 
-VU les remarques formulées par l'exploitant sur le projet d'arrêté préfectoral transmises à l'inspection des installations classées par courrier électronique du 27 octobre 2010;
+VU les remarques formulées par l'exploitant sur le projet d'arrêté préfectoral transmises à l'inspection des installations classées par courrier électronique du 27 octobre 2010 ;

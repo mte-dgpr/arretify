@@ -1,12 +1,12 @@
-# 4.20. Equipements d'intervention individuels 
+## 4.20. Equipements d'intervention individuels
 
-Quatre équipements d'intervention individuels sont maintenus disponibles en toutes circonstances à proximité de l'atelier de production de mousse de polyuréthanne.
+Quatre équipements d'intervention individuels sont maintenus disponibles en toutes circonstances à proximité de l'atelier de production de mousse de polyuréthane.
 
-### 4.21. Détection de feu
+## 4.21. Détection de feu
 
 L'exploitant dispose d'un système de détection de feu ou de chaleur couvrant les zones à risques qui déclenche, au poste de garde, une alarme et une localisation des zones de dangers.
 
-### 4.22. Accès de secours. Voies de circulation.
+## 4.22. Accès de secours. Voies de circulation.
 
 Les installations sont en permanence accessibles facilement par les services de secours. Les aires de circulation sont aménagées pour que les engins des services d'incendie puissent évoluer sans difficulté.
 
@@ -14,7 +14,7 @@ Les voies de circulation, les pistes et voies d'accès sont nettement délimité
 
 Les services d'incendie et de secours et le personnel d'intervention de l'établissement doivent disposer de l'espace nécessaire pour l'utilisation et le déploiement des moyens d'incendie et de secours, nécessaires à la maîtrise des sinistres.
 
-### 4.23. Clôture - Gardiennage
+## 4.23. Clôture - Gardiennage
 
 L'établissement est entouré d'une clôture efficace de 2 m de hauteur et résistante, afin d'en interdire l'accès à toute personne ou véhicule en dehors des heures d'ouverture.
 

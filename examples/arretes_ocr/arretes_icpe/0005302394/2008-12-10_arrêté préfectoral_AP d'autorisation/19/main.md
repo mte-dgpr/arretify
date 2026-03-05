@@ -1,15 +1,12 @@
-| Profitant | Concentration maximale en mg/l |
-| :-- | :--: |
-| MES | 35 |
-| DCO | 125 |
-| Hydrocarbures totaux | 10 |
+[tbl-12.html](tbl-12.html)
 
-Le pH de ces eaux doit être compris entre 5,5 et 8,5 et la température doit être inférieure à $30^{\circ} \mathrm{C}$.
-Le séparateur à hydrocarbure est équipé d'une alarme technique hydrocarbures de niveau haut avec report. Cette installation doit être dimensionnée afin de répondre aux volumes d'eaux collectés de la surface considérée et de l'événement pluvieux décennal le plus critique de la région. Ces installations doivent être fréquemment violées, maintenues en permanence en bon état de fonctionnement et débarrassées aussi souvent que nécessaire des boues et des huiles retenues qui doivent être éliminées comme il est dit au chapitre 5 du présent arrêté.
+Le pH de ces eaux doit être compris entre 5,5 et 8,5 et la température doit être inférieure à 30°C.
 
-# ARTICLE 4.3.13. BASSIN DE 1100 M3 
+Le séparateur à hydrocarbure est équipé d'une alarme technique hydrocarbures de niveau haut avec report. Cette installation doit être dimensionnée afin de répondre aux volumes d'eaux collectés de la surface considérée et de l'événement pluvieux décennal le plus critique de la région. Ces installations doivent être fréquemment visitées, maintenues en permanence en bon état de fonctionnement et débarrassées aussi souvent que nécessaire des boues et des huiles retenues qui doivent être éliminées comme il est dit au chapitre 5 du présent arrêté.
 
-Conformément à l'article 7.7.2, ce bassin doit être aménagé pour stocker en permanence 500 m 3 d'eau destinée à la lutte contre l'incendie. Cette capacité est aménagée conformément aux dispositions de la circulaire interministérielle $\mathrm{n}^{\circ} 465$ du 10 décembre 1951.
+# ARTICLE 4.3.13. BASSIN DE 1 100 M3
+
+Conformément à l'article 7.7.2, ce bassin doit être aménagé pour stocker en permanence 500m3 d'eau destinée à la lutte contre l'incendie. Cette capacité est aménagée conformément aux dispositions de la circulaire interministérielle n° 465 du 10 décembre 1951.
 
 Le bassin doit être géré de telle sorte qu'il soit être régulièrement entretenu. Ses abords doivent être clairement délimités et sa profondeur affichée à proximité.
 

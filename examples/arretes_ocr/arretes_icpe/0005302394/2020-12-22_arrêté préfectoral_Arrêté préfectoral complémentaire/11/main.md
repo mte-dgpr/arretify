@@ -1,20 +1,18 @@
-# DISPOSITION DE LAIRE D'ASPIRATION 
+# DISPOSITION DE L'AIRE D'ASPIRATION
 
 L'emplacement des équipements hydrauliques (colonnes fixes, poteaux d'aspiration) permettant d'utiliser le point d'eau devra être judicieusement choisi par rapport à l'emplacement de l'aire d'aspiration.
 
 ## Emplacements judicieux
 
-COLONNE OU POTEAU
-D'ASPIRATION
-![img-3.jpeg](image_4.b64)
+COLONNE OU POTEAU D'ASPIRATION
 
-## DIASPIRATION
+![img-4.jpeg](img-4.jpeg)
 
-![img-4.jpeg](image_5.b64)
+![img-5.jpeg](img-5.jpeg)
 
-## AIR <br> D'ASPIRATION
+![img-6.jpeg](img-6.jpeg)
 
-![img-5.jpeg](image_6.b64)
+## Emplacement non judicieux, à proscrire
 
-Emplacement non judicieux, à proscrire
-![img-6.jpeg](image_7.b64)
+![img-7.jpeg](img-7.jpeg)
+

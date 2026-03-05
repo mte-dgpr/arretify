@@ -1,16 +1,19 @@
-Paragraphe 4.28 - Information des secours. Il est ajouté un paragraphe rédigé ainsi :
+. Paragraphe 4.28 – Information des secours. Il est ajouté un paragraphe rédigé ainsi :
+
 L'exploitant transmettra dans les trois mois suivant la notification du présent arrêté au Service gestion des risques du Service Départemental d'incendie et de secours de l'Eure, sous format informatique (A3 ou A4) :
 
-- Le plan de masse des installations;
+- Le plan de masse des installations ;
 - Le plan de situation de l'entreprise ;
 - Les plans des niveaux ;
 - Les fiches des matières dangereuses utilisées sur le site .
-Paragraphe 4.29 - Efficacité énergétique. lutte contre les gaz à effet de serre et pollution lumineuse. Il est ajouté un paragraphe rédigé ainsi :
 
-Généralités
-L'exploitant prend toutes les dispositions nécessaires dans la conception, l'exploitation et l'entretien des installations de manière à assurer la meilleure efficacité énergique, et notamment par la mise en œuvre de technologies contribuant aux économies d'énergie et à la réduction des émissions des gaz à effet de serre.
+. Paragraphe 4.29 – Efficacité énergétique. Lutte contre les gaz à effet de serre et pollution lumineuse. Il est ajouté un paragraphe rédigé ainsi :
 
-# EFFICACITE ENERGETIQUE 
+## Généralités
+
+L'exploitant prend toutes les dispositions nécessaires dans la conception, l'exploitation et l'entretien des installations de manière à assurer la meilleure efficacité énergétique, et notamment par la mise en œuvre de technologies contribuant aux économies d'énergie et à la réduction des émissions des gaz à effet de serre.
+
+## EFFICACITE ENERGETIQUE
 
 L'exploitant tient à la disposition de l'inspection des installations classées les éléments sur l'optimisation de l'efficacité énergétique de ses installations. A ce titre, une analyse des consommations mensuelles par poste énergétique : électricité, gaz naturel, fuel domestique... est réalisée. La consommation est ensuite rapportée à une unité représentative de l'activité de l'établissement, et fait l'objet d'un bilan annuel. Un plan d'actions de réduction est élaboré en fonction des potentialités d'optimisation.
 

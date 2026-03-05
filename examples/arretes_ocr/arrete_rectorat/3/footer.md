@@ -1,0 +1,1 @@
+Rectorat Aix-Marseille - R93-2025-04-23-00009 - Arrêté portant création du service de défense et de sécurité de la région académique PACA et de l'académie d'Aix-Marseille

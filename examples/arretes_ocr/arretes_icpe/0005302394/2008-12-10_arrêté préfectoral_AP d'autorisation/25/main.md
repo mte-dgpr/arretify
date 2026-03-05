@@ -1,14 +1,15 @@
-Ces capacites de rétention doivent être construites suivant les règles de l'ari, en limitant notamment les surfaces susceptibles d'être mouillées en cas de fuite.
+Ces capacités de rétention doivent être construites suivant les règles de l'art, en limitant notamment les surfaces susceptibles d'être mouillées en cas de fuite.
 
 Les déchets et résidus produits considérés comme des substances ou préparations dangereuses sont stockés, avant leur revalorisation ou leur élimination, dans des conditions ne présentant pas de risques de pollution (prévention d'un lessivage par les eaux météoriques, d'une pollution des eaux superficielles et souterraines, des envols et des odeurs) pour les populations avoisinantes et l'environnement.
 
 Les stockages temporaires, avant recyclage ou élimination des déchets spéciaux considérés comme des substances ou préparations dangereuses, sont réalisés sur des cuvettes de rétention étanches et aménagées pour la récupération des eaux météoriques.
 
-Ces dispositions ne s'appliquent pas aux deux citernes de fioul de 20 m 3 , pour lesquelles des dispositions particulières sont prévues à l'article 8.6 .1 du présent arrêté.
+Ces dispositions ne s'appliquent pas aux deux citernes de fioul de 20 m3, pour lesquelles des dispositions particulières sont prévues à l'article 8.6.1 du présent arrêté.
 
-# ARTICLE 7.5.4. RESERVOIRS 
+## ARTICLE 7.5.4. RESERVOIRS
 
 L'étanchéité du (ou des) réservoir(s) associé(s) à la rétention doit pouvoir être contrôlée à tout moment.
+
 Les matériaux utilisés doivent être adaptés aux produits utilisés de manière, en particulier, à éviter toute réaction parasite dangereuse.
 
 Les canalisations doivent être installées à l'abri des chocs et donner toute garantie de résistance aux actions mécaniques, physiques, chimiques ou électrolytiques. Il est en particulier interdit d'intercaler des tuyauteries flexibles entre le réservoir et les robinets ou clapets d'arrêt, isolant ce réservoir des appareils d'utilisation.
@@ -16,13 +17,14 @@ Les canalisations doivent être installées à l'abri des chocs et donner toute 
 ## ARTICLE 7.5.5. REGLES DE GESTION DES STOCKAGES EN RETENTION
 
 Les réservoirs ou récipients contenant des produits incompatibles ne sont pas associés à une même rétention.
+
 Le stockage des liquides inflammables, ainsi que des autres produits, toxiques, corrosifs ou dangereux pour l'environnement, n'est autorisé sous le niveau du sol que dans des réservoirs installés en fosse maçonnée ou assimilés, et pour les liquides inflammables dans le respect des dispositions du présent arrêté.
 
 L'exploitant veille à ce que les volumes potentiels de rétention restent disponibles en permanence. A cet effet, l'évacuation des eaux pluviales respecte les dispositions du présent arrêté.
 
 ## ARTICLE 7.5.6. STOCKAGE SUR LES LIEUX D'EMPLOI
 
-Les matières premières, produits intermédiaires et produits finis considérés comme des substances ou des préparations dangereuses sont limités en quantité stockée et utilisée dans les ateliers au minimum technique permettant leur fonctionnement normal.
+Les matières premières, produits intermédiaires et produits finis considérés comme des substances ou des préparations dangereuses sont limités en quantité stockée et utilisés dans les ateliers au minimum technique permettant leur fonctionnement normal.
 
 ## ARTICLE 7.5.7. TRANSPORTS - CHARGEMENTS - DECHARGEMENTS
 

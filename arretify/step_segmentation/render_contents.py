@@ -27,13 +27,12 @@ from arretify.semantic_tag_specs import (
     AppendixSpec,
     HeaderSpec,
     MainSpec,
-    PageSeparatorSpec,
     SectionData,
     SectionSpec,
     SectionTitleData,
     SectionTitleSpec,
 )
-from arretify.step_segmentation.core import TRANSPARENT_TAG_SPECS, get_string
+from arretify.step_segmentation.core import PAGINATION_TAG_SPECS, get_string
 from arretify.step_segmentation.header import VISA_MOTIFS_RENDER_SPECS
 from arretify.step_segmentation.semantic_tag_specs import (
     AlineaSegmentationSpec,
@@ -46,7 +45,6 @@ from arretify.step_segmentation.semantic_tag_specs import (
     SectionSegmentationSpec,
     SectionTitleSegmentationSpec,
     TableDescriptionSegmentationSpec,
-    TableSegmentationSpecOld,
     TextSpanSegmentationSpec,
     VisaSegmentationSpec,
 )
@@ -58,11 +56,7 @@ from arretify.utils.html_semantic import (
     get_semantic_tag_spec,
     is_semantic_tag,
 )
-from arretify.utils.markdown_parsing import (
-    LIST_PATTERN,
-    TABLE_HEADER_SEPARATOR_PATTERN_OLD,
-    parse_markdown_table_old,
-)
+from arretify.utils.markdown_parsing import LIST_PATTERN
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -108,9 +102,6 @@ def render_contents(
 
         elif is_semantic_tag(element, spec_in=[BlockquoteSegmentationSpec]):
             yield render_blockquote(context, element)
-
-        elif is_semantic_tag(element, spec_in=[TableSegmentationSpecOld]):
-            yield render_table_old(context, element)
 
         elif is_semantic_tag(element, spec_in=[TableDescriptionSegmentationSpec]):
             yield from render_table_description(context, element)
@@ -318,7 +309,7 @@ def _render_list(
     while elements:
         element = elements[0]
 
-        if is_semantic_tag(element, spec_in=[PageSeparatorSpec]):
+        if is_semantic_tag(element, spec_in=PAGINATION_TAG_SPECS):
             list_pile[-1] = replace_contents(list_pile[-1], list_pile[-1].contents + [element])
             elements.pop(0)
 
@@ -350,44 +341,6 @@ def _render_list(
 
 
 # -------------------- Table -------------------- #
-
-
-def render_table_old(
-    _: DocumentContext,
-    tag: ProtectedTag,
-) -> ProtectedTag:
-    pile: list[str] = []
-    has_table_header = False
-    transparent_tags: list[Tuple[int, ProtectedTag]] = []
-    for element in tag.contents:
-        if is_semantic_tag(element, spec_in=[TextSpanSegmentationSpec]):
-            element_str = get_string(element)
-            pile.append(element_str)
-            if bool(TABLE_HEADER_SEPARATOR_PATTERN_OLD.match(element_str)):
-                has_table_header = True
-        elif is_semantic_tag(element, spec_in=TRANSPARENT_TAG_SPECS):
-            table_tag = parse_markdown_table_old(pile)
-            # Get the right table row for inserting the transparent tag.
-            # If the table has a header, the `pile` contains a header
-            # separation line (e.g. "|---|---|---|"), which is not
-            # counting as a row in the final html table tag.
-            row_index = len(pile) - 1 - int(has_table_header)
-            transparent_tags.append((row_index, element))
-        else:
-            raise ValueError(f"Unexpected element {element} in table rendering.")
-
-    table_tag = parse_markdown_table_old(pile)
-
-    # Insert transparent tags in their corresponding table rows.
-    table_rows = table_tag.select("tr")
-    for row_index, transparent_tag in transparent_tags:
-        if row_index < len(table_rows) and row_index >= 0:
-            last_cell_tag = table_rows[row_index].select("td, th")[-1]
-            replace_contents(last_cell_tag, last_cell_tag.contents + [transparent_tag])
-        else:
-            raise ValueError(f"Invalid index {row_index} in table rendering. ")
-
-    return table_tag
 
 
 def render_table_description(

@@ -1,4 +1,4 @@
-# ARTICLE 7.6.6. CONSIGNES DE SECURITE 
+# ARTICLE 7.6.6. CONSIGNES DE SECURITE
 
 Sans préjudice des dispositions du code du travail et des dispositions de l'article 8.1.2.3 du présent arrêté les modalités d'application des dispositions du présent arrêté sont établies, intégrées dans des procédures générales spécifiques et/ou dans les procédures et instructions de travail, tenues à jour et affichées dans les lieux fréquentés par le personnel.
 
@@ -11,8 +11,7 @@ Ces consignes indiquent notamment :
 - la procédure d'alerte avec les numéros de téléphone du responsable d'intervention de l'établissement, des services d'incendie et de secours,
 - la procédure permettant, en cas de lutte contre un incendie, d'isoler le site afin de prévenir tout transfert de pollution vers le milieu récepteur.
 
-
-## ARTICLE 7.6.7. CONSIGNES GENERALES D'INTERVENTION
+# ARTICLE 7.6.7. CONSIGNES GENERALES D'INTERVENTION
 
 Des consignes écrites sont établies pour la mise en œuvre des moyens d'intervention, d'évacuation du personnel et d'appel des secours extérieurs auxquels l'exploitant aura communiqué un exemplaire de celles-ci. Le personnel est entraîné à l'application de ces consignes.
 
@@ -20,7 +19,7 @@ L'établissement dispose de personnel formé à la lutte contre les risques iden
 
 Les agents non affectés exclusivement aux tâches d'intervention, devront pouvoir quitter leur poste de travail à tout moment en cas d'appel.
 
-## ARTICLE 7.6.8. PROTECTION DES MILIEUX RECEPTEURS
+# ARTICLE 7.6.8. PROTECTION DES MILIEUX RECEPTEURS
 
 ## Article 7.6.8.1. Dossier de lutte contre la pollution des eaux
 
@@ -39,6 +38,6 @@ Ce dossier de lutte devra être établi au plus tard au 31 décembre 2010.
 
 ## Article 7.6.8.2. Confinement des eaux d'extinction d'incendie
 
-L'ensemble des eaux susceptibles d'être polluées lors d'un accident ou d'un incendie, y compris les eaux utilisées pour l'extinction et le refroidissement, sont collectées au sein d'un dispositif de confinement présentant une capacité au moins égale à 500 m 3 . En cas d'incendie l'exploitant doit être en mesure de procéder à l'obturation immédiate des réseaux d'assainissement (eaux résiduaires, eaux pluviales et eaux usées) susceptibles de recueillir l'ensemble des eaux polluées lors d'un accident ou d'un incendie (y compris les eaux d'extinction et de refroidissement). Ce dispositif de confinement fait l'objet d'une procédure écrite définissant la conduite à tenir ainsi que les opérations de maintenance périodiques associées. A minima un exercice annuel sera organisé afin de mettre ce dispositif.
+L'ensemble des eaux susceptibles d'être polluées lors d'un accident ou d'un incendie, y compris les eaux utilisées pour l'extinction et le refroidissement, sont collectées au sein d'un dispositif de confinement présentant une capacité au moins égale à 500 m³. En cas d'incendie l'exploitant doit être en mesure de procéder à l'obturation immédiate des réseaux d'assainissement (eaux résiduaires, eaux pluviales et eaux usées) susceptibles de recueillir l'ensemble des eaux polluées lors d'un accident ou d'un incendie (y compris les eaux d'extinction et de refroidissement). Ce dispositif de confinement fait l'objet d'une procédure écrite définissant la conduite à tenir ainsi que les opérations de maintenance périodiques associées. A minima un exercice annuel sera organisé afin de mettre ce dispositif.
 
 Les eaux ainsi collectées ne peuvent être rejetées au milieu récepteur qu'après contrôle de leur qualité et si besoin traitement approprié, après accord écrit du Préfet.

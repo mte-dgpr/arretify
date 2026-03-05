@@ -1,20 +1,17 @@
-# ARTICLE 4.3.5. LOCALISATION DES POINTS DE REJET 
+# ARTICLE 4.3.5. LOCALISATION DES POINTS DE REJET
 
-Il n'existe qu'un seul point de rejet dans le fossé conduisant au cours d'eau « le Troitre».
+Il n'existe qu'un seul point de rejet dans le fossé conduisant au cours d'eau « le Troître ».
 
-| Point de rejet vers le milieu naturel |  |
-| :-- | :-- |
-| Nature des effluents: | Eaux résiduaires industrielles traitées <br> Eaux pluviales en provenance du site |
-| Exutoire du rejet | Fossé puis cours d'eau « le Troitre» |
-| Traitement avant rejet | Physico-chimique pour les eaux résiduaires industrielles <br> Débourbeurs déshulleur pour les eaux pluviales |
+[tbl-10.html](tbl-10.html)
 
-## ARTICLE 4.3.6. CONCEPTION, AMENAGEMENT ET EQUIPEMENT DES OUVRAGES DE REJET
+# ARTICLE 4.3.6. CONCEPTION, AMENAGEMENT ET EQUIPEMENT DES OUVRAGES DE REJET
 
 ## Article 4.3.6.1. Conception
 
-Les dispositifs de rejet des effluents liquides sont aménagés de manière à réduire autant que possible la perturbation apportée au milieu récepteur, aux abords du point de rejet, en fonction de l'utilisation de l'eau à proximité immédiate et à l'aval de celui-ci,
+Les dispositifs de rejet des effluents liquides sont aménagés de manière à réduire autant que possible la perturbation apportée au milieu récepteur, aux abords du point de rejet, en fonction de l'utilisation de l'eau à proximité immédiate et à l'aval de celui-ci.
 
 Ils doivent, en outre, permettre une bonne diffusion des effluents dans le milieu récepteur.
+
 En cas d'occupation du domaine public, une convention doit être passée avec l'autorité compétente.
 
 ## Article 4.3.6.2. Aménagement
@@ -22,7 +19,9 @@ En cas d'occupation du domaine public, une convention doit être passée avec l'
 ### 4.3.6.2.1 Aménagement des points de prélèvements
 
 Un point de prélèvement d'échantillons et de point de mesure (débit, température, concentration en polluant...) est mis en place en sortie de la station de détoxication.
+
 Ces points sont aménagés de manière à être aisément accessibles et permettre des interventions en toute sécurité. Toutes les dispositions doivent également être prises pour faciliter les interventions d'organismes extérieurs à la demande de l'inspection des installations classées.
+
 Les agents des services publics, notamment ceux chargés de la Police des eaux, doivent avoir libre accès aux dispositifs de prélèvement qui équipent les ouvrages de rejet vers le milieu récepteur.
 
 ### 4.3.6.2.2 Section de mesure
@@ -31,21 +30,21 @@ Ces points sont implantés dans une section dont les caractéristiques (rectitud
 
 ## Article 4.3.6.3. Equipements
 
-Les ouvrages de rejets de la station de détoxication sont équipés d'un système de prélèvement en continu, proportionnel au débit et sur une durée de 24 h .
+Les ouvrages de rejets de la station de détoxication sont équipés d'un système de prélèvement en continu, proportionnel au débit et sur une durée de 24 h.
 
 L'ouvrage de rejet de la station de détoxication est également équipé d'un système de mesure et d'enregistrement en continu du pH conformément à l'article 9.2.3.1.
 
-## ARTICLE 4.3.7. CARACTERISTIQUES GENERALES DE L'ENSEMBLE DES REJETS
+# ARTICLE 4.3.7. CARACTERISTIQUES GENERALES DE L'ENSEMBLE DES REJETS
 
 Les effluents rejetés doivent être exempts :
 
 - de matières flottantes,
 - de produits susceptibles de dégager, en égout ou dans le milieu naturel, directement ou indirectement, des gaz ou vapeurs toxiques, inflammables ou odorantes,
-- de tout produit susceptible de nuire à la conservation des ouvrages, ainsi que des matières déposables ou précipitales qui, directement ou indirectement, sont susceptibles d'entraver le bon fonctionnement des ouvrages.
+- de tout produit susceptible de nuire à la conservation des ouvrages, ainsi que des matières déposables ou précipitées qui, directement ou indirectement, sont susceptibles d'entraver le bon fonctionnement des ouvrages.
 - de substance toxiques dans des quantités telles qu'elles soient capables d'entraîner la destruction des poissons à l'aval du point de déversement,
 
 Les effluents doivent également respecter les caractéristiques suivantes :
-Température : $<30^{\circ} \mathrm{C}$
 
-- $\mathrm{pH}:$ compris entre 5,5 et 9
-- Couleur : modification de la coloration du milieu récepteur mesurée en un point représentatif de la zone de mélange inférieure à $100 \mathrm{mg} / \mathrm{PU}$
+- Température : &lt; 30 °C
+- pH : compris entre 5,5 et 9
+- Couleur : modification de la coloration du milieu récepteur mesurée en un point représentatif de la zone de mélange inférieure à 100 mg/Pt/l

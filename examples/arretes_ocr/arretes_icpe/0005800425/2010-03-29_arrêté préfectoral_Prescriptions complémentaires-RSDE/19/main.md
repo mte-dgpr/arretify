@@ -1,8 +1,8 @@
-- La restitution pour chaque effluent chargé (MES $\geq 250 \mathrm{mg} / \mathrm{l}$ ) sera la suivante pour l'ensemble des substances de l'ANNEXE 5.1 : valeur en $\mu \mathrm{g} / \mathrm{l}$ obtenue dans la phase aqueuse, valeur en $\mu \mathrm{g} / \mathrm{kg}$ obtenue dans la phase particulate et valeur totale calculée en $\mu \mathrm{g} / \mathrm{l}$.
+- La restitution pour chaque effluent chargé (MES ≥ 250 mg/l) sera la suivante pour l'ensemble des substances de l'ANNEXE 5.1 : valeur en µg/l obtenue dans la phase aqueuse, valeur en µg/kg obtenue dans la phase particulaire et valeur totale calculée en µg/l.
 
-L'analyse des diphényléthers polybromés (PBDE) n'est pas demandée dans l'eau, et sera à réaliser selon la norme ISO 22032 uniquement sur les MES dès que leur concentration est $\geq$ à 50 $\mathrm{mg} / \mathrm{l}$. La quantité de MES à prélever pour l'analyse devra permettre d'atteindre une LQ équivalente dans l'eau de $0,05 \mu \mathrm{~g} / \mathrm{l}$ pour chaque BDE.
+L'analyse des diphényléthers polybromés (PBDE) n'est pas demandée dans l'eau, et sera à réaliser selon la norme ISO 22032 uniquement sur les MES dès que leur concentration est ≥ à 50 mg/l. La quantité de MES à prélever pour l'analyse devra permettre d'atteindre une LQ équivalente dans l'eau de 0,05 µg/l pour chaque BDE.
 
-# 5 TRANSMISSION DES RÉSULTATS 
+# 5 TRANSMISSION DES RÉSULTATS
 
 L'application informatique GIDAF (Gestion Informatisée des Données d'autosurveillance fréquente) permettra à terme la saisie directe des informations demandées par l'annexe 5.3 et leur télétransmission à l'inspection et à l'INERIS, chargé du suivi de la qualité des prestations des laboratoires et du traitement des données issues de cette seconde campagne d'analyse des substances dangereuses. L'extension nationale de cette application informatique actuellement testée par certaines DRIRE est prévue pour le courant de l'année 2009.
 
