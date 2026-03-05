@@ -35,11 +35,16 @@
         "main.md": {
           "name": "main.md"
         },
+<<<<<<< HEAD:datasets/snapshots/arretes_ocr/arretes_icpe/0005800425/2005-11-08_arrêté préfectoral_modification de l'arrêté du 09-09-03/ocr_document.json
         "tbl-1.html": {
           "name": "tbl-1.html"
         },
         "tbl-2.html": {
           "name": "tbl-2.html"
+=======
+        "img-0.jpeg": {
+          "name": "img-0.jpeg"
+>>>>>>> b781f51 (cleaning and regeneration of example pages with Mistral OCR 3):examples/arretes_ocr/arretes_icpe/0005800425/2003-09-09_arrêté préfectoral_Régularisation fabrication mousse polyuréthane/ocr_document.json
         }
       }
     },
@@ -48,6 +53,15 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+<<<<<<< HEAD:datasets/snapshots/arretes_ocr/arretes_icpe/0005800425/2005-11-08_arrêté préfectoral_modification de l'arrêté du 09-09-03/ocr_document.json
+=======
+        },
+        "header.md": {
+          "name": "header.md"
+        },
+        "tbl-0.html": {
+          "name": "tbl-0.html"
+>>>>>>> b781f51 (cleaning and regeneration of example pages with Mistral OCR 3):examples/arretes_ocr/arretes_icpe/0005800425/2003-09-09_arrêté préfectoral_Régularisation fabrication mousse polyuréthane/ocr_document.json
         }
       }
     },
@@ -56,6 +70,12 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+        },
+        "header.md": {
+          "name": "header.md"
+        },
+        "tbl-1.html": {
+          "name": "tbl-1.html"
         }
       }
     },
@@ -64,6 +84,12 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+        },
+        "header.md": {
+          "name": "header.md"
+        },
+        "tbl-2.html": {
+          "name": "tbl-2.html"
         }
       }
     },
@@ -94,6 +120,9 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+        },
+        "header.md": {
+          "name": "header.md"
         }
       }
     },
@@ -102,6 +131,9 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+        },
+        "header.md": {
+          "name": "header.md"
         }
       }
     },
@@ -113,9 +145,12 @@
         },
         "header.md": {
           "name": "header.md"
+<<<<<<< HEAD:datasets/snapshots/arretes_ocr/arretes_icpe/0005800425/2005-11-08_arrêté préfectoral_modification de l'arrêté du 09-09-03/ocr_document.json
         },
         "tbl-3.html": {
           "name": "tbl-3.html"
+=======
+>>>>>>> b781f51 (cleaning and regeneration of example pages with Mistral OCR 3):examples/arretes_ocr/arretes_icpe/0005800425/2003-09-09_arrêté préfectoral_Régularisation fabrication mousse polyuréthane/ocr_document.json
         }
       }
     },
@@ -125,8 +160,13 @@
         "main.md": {
           "name": "main.md"
         },
+<<<<<<< HEAD:datasets/snapshots/arretes_ocr/arretes_icpe/0005800425/2005-11-08_arrêté préfectoral_modification de l'arrêté du 09-09-03/ocr_document.json
         "tbl-4.html": {
           "name": "tbl-4.html"
+=======
+        "header.md": {
+          "name": "header.md"
+>>>>>>> b781f51 (cleaning and regeneration of example pages with Mistral OCR 3):examples/arretes_ocr/arretes_icpe/0005800425/2003-09-09_arrêté préfectoral_Régularisation fabrication mousse polyuréthane/ocr_document.json
         }
       }
     },
@@ -138,12 +178,15 @@
         },
         "header.md": {
           "name": "header.md"
+<<<<<<< HEAD:datasets/snapshots/arretes_ocr/arretes_icpe/0005800425/2005-11-08_arrêté préfectoral_modification de l'arrêté du 09-09-03/ocr_document.json
         },
         "footer.md": {
           "name": "footer.md"
         },
         "tbl-5.html": {
           "name": "tbl-5.html"
+=======
+>>>>>>> b781f51 (cleaning and regeneration of example pages with Mistral OCR 3):examples/arretes_ocr/arretes_icpe/0005800425/2003-09-09_arrêté préfectoral_Régularisation fabrication mousse polyuréthane/ocr_document.json
         }
       }
     },
@@ -152,6 +195,9 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+        },
+        "header.md": {
+          "name": "header.md"
         }
       }
     },
@@ -161,8 +207,13 @@
         "main.md": {
           "name": "main.md"
         },
+<<<<<<< HEAD:datasets/snapshots/arretes_ocr/arretes_icpe/0005800425/2005-11-08_arrêté préfectoral_modification de l'arrêté du 09-09-03/ocr_document.json
         "footer.md": {
           "name": "footer.md"
+=======
+        "header.md": {
+          "name": "header.md"
+>>>>>>> b781f51 (cleaning and regeneration of example pages with Mistral OCR 3):examples/arretes_ocr/arretes_icpe/0005800425/2003-09-09_arrêté préfectoral_Régularisation fabrication mousse polyuréthane/ocr_document.json
         }
       }
     },
@@ -171,6 +222,9 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+        },
+        "header.md": {
+          "name": "header.md"
         }
       }
     },
@@ -182,6 +236,15 @@
         },
         "header.md": {
           "name": "header.md"
+<<<<<<< HEAD:datasets/snapshots/arretes_ocr/arretes_icpe/0005800425/2005-11-08_arrêté préfectoral_modification de l'arrêté du 09-09-03/ocr_document.json
+=======
+        },
+        "tbl-3.html": {
+          "name": "tbl-3.html"
+        },
+        "tbl-4.html": {
+          "name": "tbl-4.html"
+>>>>>>> b781f51 (cleaning and regeneration of example pages with Mistral OCR 3):examples/arretes_ocr/arretes_icpe/0005800425/2003-09-09_arrêté préfectoral_Régularisation fabrication mousse polyuréthane/ocr_document.json
         }
       }
     },
@@ -191,8 +254,13 @@
         "main.md": {
           "name": "main.md"
         },
+<<<<<<< HEAD:datasets/snapshots/arretes_ocr/arretes_icpe/0005800425/2005-11-08_arrêté préfectoral_modification de l'arrêté du 09-09-03/ocr_document.json
         "footer.md": {
           "name": "footer.md"
+=======
+        "header.md": {
+          "name": "header.md"
+>>>>>>> b781f51 (cleaning and regeneration of example pages with Mistral OCR 3):examples/arretes_ocr/arretes_icpe/0005800425/2003-09-09_arrêté préfectoral_Régularisation fabrication mousse polyuréthane/ocr_document.json
         }
       }
     },
@@ -201,6 +269,12 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+        },
+        "header.md": {
+          "name": "header.md"
+        },
+        "tbl-5.html": {
+          "name": "tbl-5.html"
         }
       }
     },
@@ -210,8 +284,79 @@
         "main.md": {
           "name": "main.md"
         },
+<<<<<<< HEAD:datasets/snapshots/arretes_ocr/arretes_icpe/0005800425/2005-11-08_arrêté préfectoral_modification de l'arrêté du 09-09-03/ocr_document.json
         "image_1.b64": {
           "name": "image_1.b64"
+=======
+        "header.md": {
+          "name": "header.md"
+        }
+      }
+    },
+    {
+      "index": 21,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
+        },
+        "header.md": {
+          "name": "header.md"
+        }
+      }
+    },
+    {
+      "index": 22,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
+        },
+        "header.md": {
+          "name": "header.md"
+        }
+      }
+    },
+    {
+      "index": 23,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
+        },
+        "header.md": {
+          "name": "header.md"
+        }
+      }
+    },
+    {
+      "index": 24,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
+        },
+        "header.md": {
+          "name": "header.md"
+        }
+      }
+    },
+    {
+      "index": 25,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
+        },
+        "header.md": {
+          "name": "header.md"
+        }
+      }
+    },
+    {
+      "index": 26,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
+        },
+        "header.md": {
+          "name": "header.md"
+>>>>>>> b781f51 (cleaning and regeneration of example pages with Mistral OCR 3):examples/arretes_ocr/arretes_icpe/0005800425/2003-09-09_arrêté préfectoral_Régularisation fabrication mousse polyuréthane/ocr_document.json
         }
       }
     }

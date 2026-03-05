@@ -1,1 +1,0 @@
-![img-12.jpeg](image_13.b64)

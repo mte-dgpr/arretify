@@ -9,9 +9,12 @@
         },
         "header.md": {
           "name": "header.md"
+<<<<<<< HEAD:datasets/snapshots/arretes_ocr/arrete_chambre_agriculture/ocr_document.json
         },
         "footer.md": {
           "name": "footer.md"
+=======
+>>>>>>> b781f51 (cleaning and regeneration of example pages with Mistral OCR 3):examples/arretes_ocr/arretes_icpe/0005804239/2023-12-04_ap prescriptions complémentaires_AP du 04.12.2023_OSILUB à Gonfreville-l'Orcher/ocr_document.json
         }
       }
     },
@@ -29,8 +32,8 @@
         "main.md": {
           "name": "main.md"
         },
-        "image_1.b64": {
-          "name": "image_1.b64"
+        "img-0.jpeg": {
+          "name": "img-0.jpeg"
         }
       }
     },
@@ -40,8 +43,14 @@
         "main.md": {
           "name": "main.md"
         },
-        "image_2.b64": {
-          "name": "image_2.b64"
+        "header.md": {
+          "name": "header.md"
+        },
+        "tbl-0.html": {
+          "name": "tbl-0.html"
+        },
+        "tbl-1.html": {
+          "name": "tbl-1.html"
         }
       }
     },
@@ -50,6 +59,9 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+        },
+        "tbl-2.html": {
+          "name": "tbl-2.html"
         }
       }
     },
@@ -59,8 +71,13 @@
         "main.md": {
           "name": "main.md"
         },
+<<<<<<< HEAD:datasets/snapshots/arretes_ocr/arrete_chambre_agriculture/ocr_document.json
         "tbl-0.html": {
           "name": "tbl-0.html"
+=======
+        "tbl-3.html": {
+          "name": "tbl-3.html"
+>>>>>>> b781f51 (cleaning and regeneration of example pages with Mistral OCR 3):examples/arretes_ocr/arretes_icpe/0005804239/2023-12-04_ap prescriptions complémentaires_AP du 04.12.2023_OSILUB à Gonfreville-l'Orcher/ocr_document.json
         }
       }
     },

@@ -20,6 +20,6 @@ Article 10.5.1. Autorisation d'émettre des gaz à effet de serre
 
 La présente installation est soumise au système d'échange de quotas de gaz à effet de serre car elle exerce les activités suivantes, listées au tableau de l'article R.229-5 du code de l'environnement :
 
-[table_12](table_12.html)
+[tbl-22.html](tbl-22.html)
 
 Cette autorisation d'exploiter vaut autorisation d'émettre des gaz à effet de serre, prévue à l'article L.229-6 du code de l'environnement au titre de la Directive 2003/87/CE.

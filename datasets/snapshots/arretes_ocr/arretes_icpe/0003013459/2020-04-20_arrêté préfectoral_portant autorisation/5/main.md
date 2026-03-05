@@ -1,4 +1,4 @@
-[table_2](table_2.html)
+[tbl-1.html](tbl-1.html)
 
 Les installations citées à l'article 1.2.1 ci-dessus sont reportées avec leurs références sur le plan de situation de l'établissement annexé au présent arrêté.
 

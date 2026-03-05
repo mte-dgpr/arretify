@@ -2,7 +2,7 @@
 
 Les niveaux limites de bruit ne doivent pas dépasser en limite de propriété de l'établissement les valeurs suivantes pour les différentes périodes de la journée :
 
-[table_11](table_11.html)
+[tbl-16.html](tbl-16.html)
 
 Les emplacements des points de mesure sont définis (approximativement) sur le plan annexé au présent arrêté.
 

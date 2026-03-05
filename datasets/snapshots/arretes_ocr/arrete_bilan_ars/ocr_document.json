@@ -34,6 +34,9 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+        },
+        "tbl-0.html": {
+          "name": "tbl-0.html"
         }
       }
     },
@@ -43,8 +46,8 @@
         "main.md": {
           "name": "main.md"
         },
-        "image_1.b64": {
-          "name": "image_1.b64"
+        "tbl-1.html": {
+          "name": "tbl-1.html"
         }
       }
     },
@@ -54,8 +57,8 @@
         "main.md": {
           "name": "main.md"
         },
-        "image_2.b64": {
-          "name": "image_2.b64"
+        "tbl-2.html": {
+          "name": "tbl-2.html"
         }
       }
     },
@@ -79,8 +82,8 @@
         "main.md": {
           "name": "main.md"
         },
-        "image_3.b64": {
-          "name": "image_3.b64"
+        "img-0.jpeg": {
+          "name": "img-0.jpeg"
         }
       }
     },
@@ -90,8 +93,8 @@
         "main.md": {
           "name": "main.md"
         },
-        "image_4.b64": {
-          "name": "image_4.b64"
+        "tbl-3.html": {
+          "name": "tbl-3.html"
         }
       }
     },
@@ -101,8 +104,8 @@
         "main.md": {
           "name": "main.md"
         },
-        "image_5.b64": {
-          "name": "image_5.b64"
+        "tbl-4.html": {
+          "name": "tbl-4.html"
         }
       }
     },
@@ -112,11 +115,16 @@
         "main.md": {
           "name": "main.md"
         },
+<<<<<<< HEAD:datasets/snapshots/arretes_ocr/arrete_bilan_ars/ocr_document.json
         "header.md": {
           "name": "header.md"
         },
         "tbl-4.html": {
           "name": "tbl-4.html"
+=======
+        "tbl-5.html": {
+          "name": "tbl-5.html"
+>>>>>>> b781f51 (cleaning and regeneration of example pages with Mistral OCR 3):examples/arretes_ocr/arretes_icpe/0005800425/2010-03-29_arrêté préfectoral_Prescriptions complémentaires-RSDE/ocr_document.json
         }
       }
     },
@@ -140,8 +148,11 @@
         "main.md": {
           "name": "main.md"
         },
-        "image_6.b64": {
-          "name": "image_6.b64"
+        "tbl-6.html": {
+          "name": "tbl-6.html"
+        },
+        "tbl-7.html": {
+          "name": "tbl-7.html"
         }
       }
     },
@@ -246,6 +257,86 @@
         "main.md": {
           "name": "main.md"
         },
+<<<<<<< HEAD:datasets/snapshots/arretes_ocr/arrete_bilan_ars/ocr_document.json
+        "header.md": {
+          "name": "header.md"
+        },
+        "tbl-13.html": {
+          "name": "tbl-13.html"
+=======
+        "tbl-8.html": {
+          "name": "tbl-8.html"
+>>>>>>> b781f51 (cleaning and regeneration of example pages with Mistral OCR 3):examples/arretes_ocr/arretes_icpe/0005800425/2010-03-29_arrêté préfectoral_Prescriptions complémentaires-RSDE/ocr_document.json
+        }
+      }
+    },
+    {
+      "index": 21,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
+        },
+        "header.md": {
+          "name": "header.md"
+        },
+<<<<<<< HEAD:datasets/snapshots/arretes_ocr/arrete_bilan_ars/ocr_document.json
+        "tbl-14.html": {
+          "name": "tbl-14.html"
+=======
+        "tbl-9.html": {
+          "name": "tbl-9.html"
+>>>>>>> b781f51 (cleaning and regeneration of example pages with Mistral OCR 3):examples/arretes_ocr/arretes_icpe/0005800425/2010-03-29_arrêté préfectoral_Prescriptions complémentaires-RSDE/ocr_document.json
+        }
+      }
+    },
+    {
+      "index": 22,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
+        },
+        "header.md": {
+          "name": "header.md"
+        },
+        "tbl-10.html": {
+          "name": "tbl-10.html"
+        }
+      }
+    },
+    {
+      "index": 23,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
+        },
+        "header.md": {
+          "name": "header.md"
+        },
+        "tbl-11.html": {
+          "name": "tbl-11.html"
+        }
+      }
+    },
+    {
+      "index": 24,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
+        },
+        "header.md": {
+          "name": "header.md"
+        },
+        "tbl-12.html": {
+          "name": "tbl-12.html"
+        }
+      }
+    },
+    {
+      "index": 25,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
+        },
         "header.md": {
           "name": "header.md"
         },
@@ -255,7 +346,7 @@
       }
     },
     {
-      "index": 21,
+      "index": 26,
       "assets": {
         "main.md": {
           "name": "main.md"
@@ -269,65 +360,13 @@
       }
     },
     {
-      "index": 22,
-      "assets": {
-        "main.md": {
-          "name": "main.md"
-        },
-        "image_7.b64": {
-          "name": "image_7.b64"
-        }
-      }
-    },
-    {
-      "index": 23,
-      "assets": {
-        "main.md": {
-          "name": "main.md"
-        },
-        "image_8.b64": {
-          "name": "image_8.b64"
-        }
-      }
-    },
-    {
-      "index": 24,
-      "assets": {
-        "main.md": {
-          "name": "main.md"
-        },
-        "image_9.b64": {
-          "name": "image_9.b64"
-        }
-      }
-    },
-    {
-      "index": 25,
-      "assets": {
-        "main.md": {
-          "name": "main.md"
-        },
-        "image_10.b64": {
-          "name": "image_10.b64"
-        }
-      }
-    },
-    {
-      "index": 26,
-      "assets": {
-        "main.md": {
-          "name": "main.md"
-        },
-        "image_11.b64": {
-          "name": "image_11.b64"
-        }
-      }
-    },
-    {
       "index": 27,
       "assets": {
         "main.md": {
           "name": "main.md"
+        },
+        "tbl-15.html": {
+          "name": "tbl-15.html"
         }
       }
     },
@@ -336,6 +375,12 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+        },
+        "header.md": {
+          "name": "header.md"
+        },
+        "tbl-16.html": {
+          "name": "tbl-16.html"
         }
       }
     },
@@ -344,6 +389,9 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+        },
+        "tbl-17.html": {
+          "name": "tbl-17.html"
         }
       }
     },
@@ -353,8 +401,11 @@
         "main.md": {
           "name": "main.md"
         },
-        "image_12.b64": {
-          "name": "image_12.b64"
+        "header.md": {
+          "name": "header.md"
+        },
+        "tbl-18.html": {
+          "name": "tbl-18.html"
         }
       }
     },
@@ -364,8 +415,11 @@
         "main.md": {
           "name": "main.md"
         },
-        "image_13.b64": {
-          "name": "image_13.b64"
+        "header.md": {
+          "name": "header.md"
+        },
+        "tbl-19.html": {
+          "name": "tbl-19.html"
         }
       }
     },
@@ -375,8 +429,11 @@
         "main.md": {
           "name": "main.md"
         },
-        "image_14.b64": {
-          "name": "image_14.b64"
+        "header.md": {
+          "name": "header.md"
+        },
+        "tbl-20.html": {
+          "name": "tbl-20.html"
         }
       }
     },
@@ -385,6 +442,9 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+        },
+        "header.md": {
+          "name": "header.md"
         }
       }
     }

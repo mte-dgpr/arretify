@@ -50,7 +50,6 @@ EXAMPLES_DIR = APP_ROOT / "datasets" / "snapshots"
 DEFAULT_ARRETE_TEMPLATE = open(
     APP_ROOT / "arretify" / "templates" / "arrete.html", "r", encoding="utf-8"
 ).read()
-OCR_FILE_EXTENSION = ".md"
 
 
 class Settings(BaseModel):

@@ -18,7 +18,13 @@ Copie du présent arrêté est transmise à l'exploitant qui devra l'avoir en sa
 
 Le secrétaire général de la préfecture du Haut-Rhin, le maire de Bantzenheim et le directeur régional de l'environnement, de l'aménagement et du logement Grand Est chargé de l'inspection des installations, sont chargés, chacun en ce qui le concerne, de veiller à l'exécution du présent arrêté dont une copie est notifiée à la société B+T Energie France Sas à Bantzenheim.
 
-[table_13](table_13.html)
+Á Colmar, le 24 septembre 2021
+Le préfet,
+Pour le préfet et par délégation,
+Le secrétaire général,
+signé
+
+Jean-Claude GENEY
 
 ## Délais et voie de recours
 

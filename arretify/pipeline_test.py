@@ -21,7 +21,7 @@ import unittest
 from pathlib import Path
 from unittest import mock
 
-from arretify.pipeline import load_ocr_files, load_pdf_file, load_standalone_ocr_file
+from arretify.pipeline import load_ocr_files, load_pdf_file
 from arretify.settings import Settings
 from arretify.types import SessionContext
 from arretify.utils.ocr_document import (
@@ -33,12 +33,15 @@ from arretify.utils.ocr_document import (
 )
 
 
-class TestFileLoadingFunctions(unittest.TestCase):
+class BasePipelineTestCase(unittest.TestCase):
 
     def setUp(self):
         self.session_context = SessionContext(
             settings=Settings(),
         )
+
+
+class TestLoadPdfFile(BasePipelineTestCase):
 
     def test_load_pdf_file(self):
         # Arrange
@@ -56,26 +59,8 @@ class TestFileLoadingFunctions(unittest.TestCase):
         assert document_context.pdf == b"dummy pdf content"
         assert document_context.protected_soup is not None
 
-    def test_load_standalone_ocr_file(self):
-        # Arrange
-        input_path = mock.Mock(spec=Path)
-        input_path.is_file.return_value = True
-        input_path.suffix = ".md"
-        input_path.read_text.return_value = "line1\nline2"
 
-        # Act
-        document_context = load_standalone_ocr_file(self.session_context, input_path)
-
-        # Assert
-        assert document_context is not None
-        assert document_context.input_path == input_path
-        assert len(document_context.ocr_document.pages) == 1
-        assert document_context.ocr_document.pages[0].index == 1
-        assert (
-            get_or_load_asset_content(document_context.ocr_document.pages[0].assets["main.md"])
-            == "line1\nline2"
-        )
-        assert document_context.protected_soup is not None
+class TestLoadOcrFiles(BasePipelineTestCase):
 
     def test_load_ocr_document(self):
         """

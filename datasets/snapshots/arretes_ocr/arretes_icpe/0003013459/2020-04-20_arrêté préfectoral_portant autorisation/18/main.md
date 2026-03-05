@@ -1,4 +1,6 @@
-[table_7](table_7.html)
+[tbl-8.html](tbl-8.html)
+
+L'eau souterraine utilisée par l'exploitant dans ses procédés industriels est distribuée par la société Alsachimie (fabrication de sel nylon) implantée sur la plateforme industrielle de Chalampé et autorisée à prélever l'eau souterraine via 26 puits situés sur le site.
 
 L'eau en provenance du réseau public est prélevée via le réseau d'alimentation en eau potable de la société Alsachimie et est utilisée exclusivement pour les besoins en eau potable et sanitaire. Ce réseau est totalement indépendant des réseaux d'eau de forage et d'eau du Grand Canal d'Alsace ainsi que de toutes les lignes procédés.
 

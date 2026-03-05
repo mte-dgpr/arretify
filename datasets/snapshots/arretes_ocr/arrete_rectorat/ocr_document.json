@@ -9,9 +9,12 @@
         },
         "header.md": {
           "name": "header.md"
+<<<<<<< HEAD:datasets/snapshots/arretes_ocr/arrete_rectorat/ocr_document.json
         },
         "footer.md": {
           "name": "footer.md"
+=======
+>>>>>>> b781f51 (cleaning and regeneration of example pages with Mistral OCR 3):examples/arretes_ocr/arretes_icpe/0003013459/2023-02-22_ap prescriptions complémentaires_13450_2023_02_22_B+T energie_APCmod_.pdf/ocr_document.json
         }
       }
     },
@@ -43,8 +46,8 @@
         "main.md": {
           "name": "main.md"
         },
-        "table_1.html": {
-          "name": "table_1.html"
+        "tbl-0.html": {
+          "name": "tbl-0.html"
         }
       }
     },
@@ -54,10 +57,24 @@
         "main.md": {
           "name": "main.md"
         },
-        "table_2.html": {
-          "name": "table_2.html"
+        "tbl-1.html": {
+          "name": "tbl-1.html"
         }
       }
+<<<<<<< HEAD:datasets/snapshots/arretes_ocr/arrete_rectorat/ocr_document.json
+=======
+    },
+    {
+      "index": 6,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
+        },
+        "img-0.jpeg": {
+          "name": "img-0.jpeg"
+        }
+      }
+>>>>>>> b781f51 (cleaning and regeneration of example pages with Mistral OCR 3):examples/arretes_ocr/arretes_icpe/0003013459/2023-02-22_ap prescriptions complémentaires_13450_2023_02_22_B+T energie_APCmod_.pdf/ocr_document.json
     }
   ]
 }

@@ -48,7 +48,7 @@ from arretify.utils.split_merge import Probe, Splitter, split_and_map_elements
 
 from .basic_elements import parse_lists, parse_unknown_elements
 from .core import (
-    TRANSPARENT_TAG_SPECS,
+    PAGINATION_TAG_SPECS,
     get_string,
     get_strings,
     make_probe_from_pattern_proxy,
@@ -506,7 +506,7 @@ def _parse_visa_and_motif_elements_pass2(
             # We're a bit lenient here and accept a few extra tags,
             # as random text sometimes interferes with the parsing
             # (e.g. some page footer text that we couldn't filter out before).
-            if is_semantic_tag(element, spec_in=[TextSpanSegmentationSpec, *TRANSPARENT_TAG_SPECS]):
+            if is_semantic_tag(element, spec_in=[TextSpanSegmentationSpec, *PAGINATION_TAG_SPECS]):
                 yield elements.pop(0)
 
             elif is_semantic_tag(element, spec_in=[ListSegmentationSpec]):
@@ -534,7 +534,7 @@ def _parse_visa_and_motif_elements_pass2(
 
             # Lists will be handled in the next pass and appended to the visa or motif tag
             # if applicable.
-            if is_semantic_tag(element, spec_in=[ListSegmentationSpec, *TRANSPARENT_TAG_SPECS]):
+            if is_semantic_tag(element, spec_in=[ListSegmentationSpec, *PAGINATION_TAG_SPECS]):
                 yield elements.pop(0)
 
             elif is_semantic_tag(element, spec_in=[TextSpanSegmentationSpec]):
@@ -572,7 +572,7 @@ def _parse_visa_and_motif_elements_pass3(
         element = elements.pop(0)
         if is_semantic_tag(element, spec_in=[spec]):
             transparent_tags_pile: list[ProtectedTag] = []
-            while elements and is_semantic_tag(elements[0], spec_in=TRANSPARENT_TAG_SPECS):
+            while elements and is_semantic_tag(elements[0], spec_in=PAGINATION_TAG_SPECS):
                 transparent_tags_pile.append(elements[0])
                 elements.pop(0)
 
