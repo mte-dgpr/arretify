@@ -1,7 +1,6 @@
 Article 7 - Le secrétaire général de la préfecture, le directeur régional de l'industrie, de la recherche et de l'environnement et le maire de Louviers sont chargés, chacun en ce qui le concerne, de l'exécution du présent arrêté.
 
 Ampliation dudit arrêté sera également adressée :
-
 - à l'inspecteur des installations classées (DRIRE Eure),
 - au directeur départemental de l'agriculture et de la forêt,
 - au directeur départemental des affaires sanitaires et sociales,
@@ -12,4 +11,10 @@ Ampliation dudit arrêté sera également adressée :
 - aux maires de Val de Reuil, Le Vaudreuil, St Etienne du Vauvray, St Pierre du Vauvray, Vironvay, Le Mesnil Jourdain, La Haye le Comte, Surville, Montaure.
 
 Evreux, le 9 septembre 2003
-![img-0.jpeg](image_1.b64)
+
+Le Préfet,
+Pour le Préfet et par délégation
+Le Secrétaire Général
+
+Stéphane GUYONS
+![img-0.jpeg](img-0.jpeg)

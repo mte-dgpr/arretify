@@ -1,4 +1,4 @@
-# Article 6 : 
+## Article 6 :
 
 En cas de contraventions dûment constatées aux dispositions qui précèdent, le titulaire du présent arrêté pourra faire l'objet des sanctions prévues à l'article L-514.1 du Code de l'environnement indépendamment des condamnations à prononcer par les tribunaux compétents.
 
@@ -20,7 +20,8 @@ Les droits des tiers sont et demeurent expressément réservés.
 
 ## Article 10 :
 
-Le secrétaire général de la préfecture de la Seine-Maritime, le sous-préfet du HAVRE, le maire de GONFREVILLE L'ORCHER, le directeur régional de de l'environnement, de l'aménagement et du logement de Haute-Normandie, les inspecteurs des installations classées, le directeur départemental du travail, de l'emploi et de la formation professionnelle, les inspecteurs du travail, le directeur départemental des services d'incendie et de secours, ainsi que tous agents habilités des services précités et toutes autorités de police et de gendarmerie sont chargés, chacun en ce qui le concerne de l'exécution du présent arrêté, dont copie sera affichée pendant une durée minimum d'un mois à la porte de la mairie de GONFREVILLE L'ORCHER.
+Le secrétaire général de la préfecture de la Seine-Maritime, le sous-préfet du HAVRE, le maire de GONFREVILLE L'ORCHER, le directeur régional de l'environnement, de l'aménagement et du logement de Haute-Normandie, les inspecteurs des installations classées, le directeur départemental du travail, de l'emploi et de la formation professionnelle, les inspecteurs du travail, le directeur départemental des services d'incendie et de secours, ainsi que tous agents habilités des services précités et toutes autorités de police et de gendarmerie sont chargés, chacun en ce qui le concerne de l'exécution du présent arrêté, dont copie sera affichée pendant une durée minimum d'un mois à la porte de la mairie de GONFREVILLE L'ORCHER.
 
 Un avis sera inséré aux frais de la société intéressée dans deux journaux d'annonces légales du département.
-![img-0.jpeg](image_1.b64)
+
+![img-0.jpeg](img-0.jpeg)

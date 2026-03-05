@@ -1,11 +1,11 @@
-[table_5](table_5.html)
+[tbl-6.html](tbl-6.html)
 
-(1) Les flux journaliers sont déterminés au débit nominal de 172870 Nm3/ h (gaz secs) pour un flux maximal de $26,2 \mathrm{t} / \mathrm{h}$ de déchets incinérés
-(2) $150 \mathrm{mg} / \mathrm{Nm}^{3}$ de gaz de combustion dans au moins $95 \%$ de toutes les mesures correspondant à des valeurs moyennes calculées sur dix minutes ou $100 \mathrm{mg} / \mathrm{Nm}^{3}$ de gaz de combustion dans toutes les mesures correspondant à des valeurs moyennes calculées sur une demi-heure au cours d'une période de vingt-quatre heures.
+(1) Les flux journaliers sont déterminés au débit nominal de 172 870 Nm³/h (gaz secs) pour un flux maximal de 26,2 t/h de déchets incinérés
+(2) 150 mg/Nm³ de gaz de combustion dans au moins 95 % de toutes les mesures correspondant à des valeurs moyennes calculées sur dix minutes ou 100 mg/Nm³ de gaz de combustion dans toutes les mesures correspondant à des valeurs moyennes calculées sur une demi-heure au cours d'une période de vingt-quatre heures.
 (3) Pour les métaux, la méthode de mesure utilisée est la moyenne mesurée sur une période d'échantillonnage d'une demi-heure au minimum et de huit heures au maximum.
 (4) Pour les dioxines et furanes, la méthode de mesure employée est la moyenne mesurée sur une période d'échantillonnage de six heures au minimum et de huit heures au maximum. La concentration en dioxines et furanes est définie comme la somme des concentrations en dioxines et furanes déterminée selon les indications de l'annexe II de l'arrêté ministériel du 23 mai 2016 relatif aux installations de production de chaleur à partir de déchets non dangereux préparés sous forme de combustibles solides de récupération.
 
-# Article 3.2.5. Conditions de respect des valeurs limites de rejet dans l'air 
+## Article 3.2.5. Conditions de respect des valeurs limites de rejet dans l'air
 
 Les valeurs limites d'émission dans l'air sont respectées si :
 

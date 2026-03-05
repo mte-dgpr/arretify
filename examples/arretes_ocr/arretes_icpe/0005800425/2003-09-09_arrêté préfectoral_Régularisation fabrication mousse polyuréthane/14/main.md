@@ -1,4 +1,4 @@
-# 3.3. RECYCLAGE ET ÉLIMINATION DES DÉCHETS 
+## 3.3. RECYCLAGE ET ÉLIMINATION DES DÉCHETS
 
 ### 3.3.1. Prévention
 
@@ -17,17 +17,18 @@ Afin de favoriser leur valorisation, les emballages ne doivent pas être mélang
 ### 3.3.3. Stockage des déchets avant élimination
 
 Chaque déchet est clairement identifié et repéré.
+
 En particulier, les déchets toxiques ou polluants sont traités de façon analogue aux matières premières de même nature, pour tout ce qui concerne le conditionnement, la protection contre les fuites accidentelles et les mesures de sécurité inhérentes.
 
 Toutes les égouttures et eaux de ruissellement doivent être collectées et faire l'objet d'un traitement approprié de manière à satisfaire aux valeurs limites de rejet définies au § 3.1.13.
 
-### 3.3.3.1. Déchets solides et pâteux
+#### 3.3.3.1. Déchets solides et pâteux
 
 Les déchets solides ou pâteux produits par l'établissement sont stockés, avant leur valorisation ou leur élimination, dans des conditions ne présentant pas de risques de pollution (notamment prévention d'un lessivage par les eaux météoriques, d'une pollution des eaux superficielles et souterraines, des envols et des odeurs) ni de dangers ou inconvénients tels que définis à l'article L 511-1 du code de l'environnement.
 
-### 3.3.3.2. Déchets liquides et pompables
+#### 3.3.3.2. Déchets liquides et pompables
 
-Les déchets liquides et pompables, avant leur valorisation ou leur élimination, sont stockés dans des récipients (réservoirs, fûts...) en bon état, placés dans des cuvettes de rétention étanches dont la capacité est définie au $\S 3.1 .8$.
+Les déchets liquides et pompables, avant leur valorisation ou leur élimination, sont stockés dans des récipients (réservoirs, fûts...) en bon état, placés dans des cuvettes de rétention étanches dont la capacité est définie au § 3.1.8.
 
 Le conditionnement choisi doit être adapté au flux moyen de déchets produits sur une période représentative de la production.
 

@@ -6,6 +6,9 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+        },
+        "header.md": {
+          "name": "header.md"
         }
       }
     },
@@ -14,6 +17,12 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+        },
+        "footer.md": {
+          "name": "footer.md"
+        },
+        "tbl-0.html": {
+          "name": "tbl-0.html"
         }
       }
     },
@@ -22,6 +31,12 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+        },
+        "header.md": {
+          "name": "header.md"
+        },
+        "tbl-1.html": {
+          "name": "tbl-1.html"
         }
       }
     },
@@ -30,6 +45,12 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+        },
+        "footer.md": {
+          "name": "footer.md"
+        },
+        "tbl-2.html": {
+          "name": "tbl-2.html"
         }
       }
     },
@@ -38,6 +59,9 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+        },
+        "footer.md": {
+          "name": "footer.md"
         }
       }
     },
@@ -47,8 +71,8 @@
         "main.md": {
           "name": "main.md"
         },
-        "image_1.b64": {
-          "name": "image_1.b64"
+        "footer.md": {
+          "name": "footer.md"
         }
       }
     }

@@ -1,14 +1,14 @@
-|  |  | cation, imprégnation, cuisson, séchage de vernis, peinture, apprêt, colle, enduit, etc. sur support quelconque à l'exclusion des installations dont les activités sont classées au titre des rubriques 2330, 2345, 2351, 2360, 2415, 2445, 2450, 2564, 2661, 2930, 3450, 3610, 3670, 3700 ou 4801. <br> 3. Lorsque les produits mis en œuvre sont des poudres à base de résines organiques, la quantité maximale de produits susceptible d'être mise en œuvre étant : <br> b) Supérieure à $20 \mathrm{~kg} / \mathrm{j}$, mais inférieure ou égale à $200 \mathrm{~kg} / \mathrm{j}$ | chage de peinture poudre $70 \mathrm{~kg} /$ jour en moyenne $100 \mathrm{~kg} /$ jour au maximum | $\begin{aligned} & \text { mais } \\ & > \\ & 200 \mathrm{~kg} / \mathrm{j} \end{aligned}$ | $/ \mathrm{j}$ |
-| :--: | :--: | :--: | :--: | :--: | :--: |
-| 2560-2 | DC | Travail mécanique des métaux et alliages, à l'exclusion des activités classées au titre des rubriques 3230-a ou 3230-b <br> La puissance maximum de l'ensemble des machines fixes pouvant concourir simultanément au fonctionnement de l'installation étant : <br> 2. Supérieure à 150 kW , mais inférieure ou égale à $1000 \mathrm{~kW}(\mathrm{DC})$ | Atelier de production $16,8 \mathrm{~kW}$ <br> Atelier d'outillage : $81,5 \mathrm{~kW}$ <br> Conditionnement : $1,1 \mathrm{kw}$ <br> Tour MAZAK MP 610 N834500 <br> Puissance : 65kw <br> Tour MAZAK MP 620 N834600 <br> Puissance : 65kw <br> Tour OKUMA LC30 N834400 <br> Puissance : 45kw <br> Soit une puissance totale installée sur le site de $274,4 \mathrm{~kW}$ | $\begin{aligned} & >150 \\ & \mathrm{kw} \text { et } \\ & <1000 \\ & \mathrm{~kW} \end{aligned}$ | $\begin{aligned} & 274,4 \\ & \mathrm{kW} \end{aligned}$ |
+[tbl-2.html](tbl-2.html)
+[tbl-3.html](tbl-3.html)
 
+* régime associé : A : autorisation – E : enregistrement – D : Déclaration – DC : déclaration avec contrôle périodique – NC : non classé
 
-| 1510 | NC | Stockage de matières ou produits combustibles en quantité supérieure à 500 tonnes dans des entrepôts couverts, à l'exclusion des dépôts utilisés au stockage de catégories de matières, produits ou substances relevant, par ailleurs, de la présente nomenclature, des bâtiments destinés exclusivement au remisage de véhicules à moteur et de leur remorque, des établissements recevant du public et des entrepôts frigorifiques. <br> Le volume des entrepôts étant : <br> 1. Supérieur ou égal à $300000 \mathrm{~m}^{3}(\mathrm{~A})$ <br> 2. Supérieur ou égal à $50000 \mathrm{~m}^{3}$ mais inférieur à $300000 \mathrm{~m}^{3}(\mathrm{E})$ <br> 3. Supérieur ou égal à $5000 \mathrm{~m}^{3}$ mais inférieur à $50000 \mathrm{~m}^{3}(\mathrm{DC})$ | - Magasin 2000: $14000 \mathrm{~m}^{3}$ et 60,8 tonnes de matières combustibles <br> - Magasin 1000: $6500 \mathrm{~m}^{3}$ et 24,5 tonnes de matières combustibles - Magasin $3000: 16500 \mathrm{~m}^{3}$ et 75,6 tonnes de matières combustibles <br> Total : $37000 \mathrm{~m}^{3}$ et 160,9 tonnes de matières combustibles | NC | NC |
-| :--: | :--: | :--: | :--: | :--: |
+# ARTICLE 2
 
-* régime associé : A : autorisation - E : enregistrement - D : Déclaration - DC : déclaration avec contrôle périodique NC : non classé
+L'article 3.2.1 de l'arrêté du 10 décembre 2008 est modifié dans les conditions suivantes :
 
-# ARTICLE 2 
+le paragraphe écrit en ces termes " l'aménagement de ces points devra être effectif selon l'échéancier suivant :
 
-L'article 3.2.1 de l'arrêté du 10 décembre 2008 est modifié dans les conditions suivantes : le paragraphe écrit en ces termes " l'aménagement de ces points devra être effectif selon l'échéancier suivant : *installations de traitement de surfaces ( $n^{\circ}$ de conduit : 1 à 5) avant le 31 décembre 2009
-*installations de cataphorèse ( $n^{\circ}$ de conduit 6 et 7) avant le 31 décembre $2008^{\circ}$ est supprimé.
+• installations de traitement de surfaces (n° de conduit : 1 à 5) avant le 31 décembre 2009
+
+• installations de cataphorèse (n° de conduit 6 et 7) avant le 31 décembre 2008 " est supprimé.

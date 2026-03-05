@@ -1,6 +1,6 @@
 Toute modification des conditions d'exploitation conduisant à une modification du coût de mise en sécurité doit nécessiter une révision du montant de référence des garanties financières.
 
-# Article 6 : Renouvellement des garanties financières 
+## Article 6 : Renouvellement des garanties financières
 
 Le renouvellement des garanties financières intervient au moins trois mois avant la date d'échéance du document attestant de la constitution des garanties financières.
 
@@ -25,7 +25,7 @@ Le préfet peut faire appel aux garanties financières à la cessation d'activit
 - soit en cas de non-exécution par l'exploitant de ces dispositions, après intervention des mesures prévues à l'article L. 514-1 du code de l'environnement,
 - soit en cas de disparition juridique de l'exploitant.
 
-
 ## Article 10 : Levée de l'obligation de garanties financières
 
 L'obligation de garanties financières est levée, en tout ou partie, à l'arrêt définitif total ou partiel des activités listées à l'article 2 du présent arrêté, et après que les travaux couverts par les garanties financières ont été réalisés.
+

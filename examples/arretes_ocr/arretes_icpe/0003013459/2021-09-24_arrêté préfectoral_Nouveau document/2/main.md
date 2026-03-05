@@ -1,12 +1,12 @@
-VU l'arrêté ministériel du 20 septembre 2002 relatif aux installations d'incinération et de coincinération de déchets non dangereux et aux installations incinérant des déchets d'activités de soins à risques infectieux ;
+VU l'arrêté ministériel du 20 septembre 2002 relatif aux installations d'incinération et de co-incinération de déchets non dangereux et aux installations incinérant des déchets d'activités de soins à risques infectieux ;
 
 VU l'arrêté ministériel du 4 octobre 2010 modifié relatif à la prévention des risques accidentels au sein des installations classées pour la protection de l'environnement soumises à autorisation ;
 
 VU l'arrêté ministériel du 2 février 1998 modifié, notamment par l'arrêté ministériel du 24 août 2017 relatif aux prélèvements et à la consommation d'eau ainsi qu'aux émissions de toute nature des installations classées soumises à autorisation ;
 
-VU l'arrêté ministériel du 23 décembre 1998 relatif aux prescriptions générales applicables aux installations classées pour la protection de l'environnement soumises à déclaration sous la rubrique $n^{\circ} 4511$ (déchets non-dangereux non inertes) ;
+VU l'arrêté ministériel du 23 décembre 1998 relatif aux prescriptions générales applicables aux installations classées pour la protection de l'environnement soumises à déclaration sous la rubrique n° 4511 (déchets non-dangereux non inertes) ;
 
-VU l'arrêté ministériel du 23 janvier 1997 modifié relatif à la limitation des bruits émis dans I'environnement par les installations classées pour la protection de l'environnement ;
+VU l'arrêté ministériel du 23 janvier 1997 modifié relatif à la limitation des bruits émis dans l'environnement par les installations classées pour la protection de l'environnement ;
 
 VU l'arrêté ministériel du 29 septembre 2005 relatif à l'évaluation et à la prise en compte de la probabilité d'occurrence, de la cinétique, de l'intensité des effets et de la gravité des conséquences des accidents potentiels dans les études de dangers des installations classées soumises à autorisation ;
 

@@ -2,11 +2,14 @@ CONSIDERANT les termes de l'article R.512-31 du code l'environnement qui dispose
 
 SUR PROPOSITION du secrétaire général de la préfecture de l'Orne ;
 
-# ARRETE 
+# ARRETE
 
-## Article 1 - Liste des installations classées
+## Article 1 – Liste des installations classées
 
 Le tableau de l'article 1.2.1 de l'arrêté préfectoral d'autorisation du 10 décembre 2008, relatif à l'autorisation accordée à la Société MERMIER LEMARCHAND, concernant l'exploitation d'une installation de traitement de surface et de peinture par cataphorèse sur le site situé rue de Vire à TINCHEBRAY (61800), est mis à jour de la façon suivante :
-![img-0.jpeg](image_1.b64)
+
+[tbl-0.html](tbl-0.html)
 
 A (Autorisation) ou D (Déclaration)
+
+Page 2 sur 4

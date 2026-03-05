@@ -6,6 +6,9 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+        },
+        "header.md": {
+          "name": "header.md"
         }
       }
     },
@@ -23,8 +26,8 @@
         "main.md": {
           "name": "main.md"
         },
-        "image_1.b64": {
-          "name": "image_1.b64"
+        "img-0.jpeg": {
+          "name": "img-0.jpeg"
         }
       }
     },
@@ -33,6 +36,15 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+        },
+        "header.md": {
+          "name": "header.md"
+        },
+        "tbl-0.html": {
+          "name": "tbl-0.html"
+        },
+        "tbl-1.html": {
+          "name": "tbl-1.html"
         }
       }
     },
@@ -41,6 +53,9 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+        },
+        "header.md": {
+          "name": "header.md"
         }
       }
     },
@@ -49,6 +64,9 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+        },
+        "header.md": {
+          "name": "header.md"
         }
       }
     },
@@ -57,6 +75,9 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+        },
+        "header.md": {
+          "name": "header.md"
         }
       }
     },
@@ -73,6 +94,9 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+        },
+        "header.md": {
+          "name": "header.md"
         }
       }
     },
@@ -82,11 +106,14 @@
         "main.md": {
           "name": "main.md"
         },
-        "image_3.b64": {
-          "name": "image_3.b64"
+        "header.md": {
+          "name": "header.md"
         },
-        "image_2.b64": {
-          "name": "image_2.b64"
+        "img-1.jpeg": {
+          "name": "img-1.jpeg"
+        },
+        "img-2.jpeg": {
+          "name": "img-2.jpeg"
         }
       }
     },
@@ -96,8 +123,14 @@
         "main.md": {
           "name": "main.md"
         },
-        "image_4.b64": {
-          "name": "image_4.b64"
+        "header.md": {
+          "name": "header.md"
+        },
+        "img-3.jpeg": {
+          "name": "img-3.jpeg"
+        },
+        "img-4.jpeg": {
+          "name": "img-4.jpeg"
         }
       }
     }

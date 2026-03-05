@@ -1,19 +1,3 @@
-|  |  | GC/HRMS |  |
-| :--: | :--: | :--: | :--: |
-|  |  | GC/HRMS/MS |  |
-|  |  | FAAS |  |
-|  |  | ZAAS |  |
-|  |  | ICP/OES |  |
-|  |  | ICP/MS |  |
-|  |  | HPLC-DAD |  |
-|  |  | HPLC FLUO |  |
-|  |  | HPLC UV |  |
-| METHODE D'ANALYSE (norme ou à défaut le type de méthode) |  | texte |  |
-| LIMITE DE QUANTIFICATION | Valeur | Libre (numérique) | Libre (numérique) |
-|  | Unité | Imposé | EAU BRUTE : $\mu g / 1 ;$ PHASE AQUEUSE : $\mu g / 1$, MES (PHASE PARTICULAIRE) : $\mu g /$ kg sauf MES, DCO ou COT (unité en $\mathrm{mg} / \mathrm{l}$ ) Pour une incertitude de $15 \%$, la valeur échangée sera 15 |
-|  | Incertitu de avec facteur d'élargi ssement ( $k=2$ ) | Libre (numérique) |  |
-| RESULTAT | Valeur | Libre (numérique) | Si résultat < limite de détection ou résultat < LQ : saisir dans résultat la valeur LD ou LQ et renseigner le Champ CODE REMARQUE DE L'ANALYSE |
-|  | Unité | Imposé | EAU BRUTE : $\mu g / 1 ;$ PHASE AQUEUSE : $\mu g / 1$, MES (PHASE PARTICULAIRE) : $\mu g / \mathrm{kg}$ |
-|  | Incertitu de avec facteur d'élargi ssement ( $k=2$ ) | Libre (numérique) | Pour une incertitude de $15 \%$, la valeur échangée sera 15 |
-| CODE REMARQUE DE L'ANALYSE |  | Imposé | Code 0 : Analyse non faite Code 1 : Résultat à limite de quantification Code 10 : Résultat < limite de quantification |
-| CONFIRMATION DU RESULTAT |  | Imposé | Code 0 : NON CONFIRME (analyse unique) Code 1 : CONFIRME (analyse dupliquée, confirmation par SM ) |
+POUR CHAQUE PARAMETRE ET POUR CHAQUE FRACTION ANALYSEE : INFORMATIONS DEMANDEES
+
+[tbl-17.html](tbl-17.html)

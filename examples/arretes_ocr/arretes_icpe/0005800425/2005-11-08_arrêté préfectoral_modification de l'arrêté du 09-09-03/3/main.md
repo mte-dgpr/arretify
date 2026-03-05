@@ -1,13 +1,8 @@
-| Nature des installations <br> et des activités | Caractéristiques | $\mathbf{N}^{\circ}$ de la <br> Nomenclature | Classement <br> a |
-| :-- | :--: | :--: | :--: |
-| Ateliers de charge d'accumulateurs <br> (puissance maximale de courant continu utilisable) | 35 kW | 2925 | D |
-| Stockage en réservoir manufacturé de gaz inflammables <br> liquéfiés <br> (quantité totale susceptible d'être présente) | $1,5 \mathrm{t}$ | 1412 | NC |
-| Dépôt de bois, papier, cartons <br> (quantité stockée) | $200 \mathrm{~m}^{2}$ | 1530 | NC |
+[tbl-1.html](tbl-1.html)
 
-* A : autorisation - D : déclaration - NC : non classé
+* A : autorisation – D : déclaration – NC : non classé
 
-
-# 2. CONDITIONS GÉNÉRALES DE L'AUTORISATION 
+## 2. CONDITIONS GÉNÉRALES DE L'AUTORISATION
 
 ### 2.1. Conformité au dossier et modifications
 
@@ -17,7 +12,7 @@ Toute modification apportée par le demandeur, à l'installation, à son mode d'
 
 ### 2.2. Déclaration des incidents et accidents
 
-Les accidents ou incidents survenus du fait du fonctionnement de l'installation de nature à porter atteinte aux intérêts mentionnés à l'article L 511-1 du Code de l'Environnement devront être déclarés dans les meilleurs délais à l'Inspection des installations classées conformément aux dispositions de l'article 38 du décret n ${ }^{\circ} 77-1133$ du 21 septembre 1977.
+Les accidents ou incidents survenus du fait du fonctionnement de l'installation de nature à porter atteinte aux intérêts mentionnés à l'article L 511-1 du Code de l'Environnement devront être déclarés dans les meilleurs délais à l'Inspection des installations classées conformément aux dispositions de l'article 38 du décret n° 77-1133 du 21 septembre 1977.
 
 ### 2.3. Prévention des dangers et nuisances
 
@@ -31,13 +26,6 @@ L'autorisation d'exploiter est accordée sous réserve des dispositions du prés
 
 La liste récapitulative des consignes à établir en application du présent arrêté est la suivante :
 
-| Article | Objet de la consigne |
-| :-- | :-- |
-| 3.1.2. | Consignes d'exploitation (prévention de la pollution de l'eau) |
-| 3.1.3. | Consignes en cas de pollution |
-| 4.2.1. | Consignes de sécurité |
-| 4.2.2. | Consignes d'exploitation |
-| 4.2.3. | Permis de feu ou d'intervention |
-| 4.10. | Postes de chargement / déchargement |
+[tbl-2.html](tbl-2.html)
 
 ### 2.6. Dossier installation classée

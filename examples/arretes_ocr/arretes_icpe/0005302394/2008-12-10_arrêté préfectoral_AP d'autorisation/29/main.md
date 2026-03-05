@@ -1,8 +1,8 @@
-# CHAPITRE 8.1 TRAITEMENT DE SURFACE 
+# CHAPITRE 8.1 TRAITEMENT DE SURFACE
 
 ## ARTICLE 8.1.1. CONCEPTION ET AMENAGEMENT GENERAL DE L'INSTALLATION
 
-## Article 8.1.1.1. Dispositions générales
+### Article 8.1.1.1. Dispositions générales
 
 Les cuves, filtres, canalisations, stockages... susceptibles de contenir des acides, des bases, des toxiques de toutes natures, ou des sels fondus ou en solution dans l'eau, doivent être construits conformément aux règles de l'art. Les matériaux utilisés à leur construction doivent être soit résistants à l'action chimique des liquides contenus, soit revêtus sur les surfaces en contact avec le liquide d'une garniture inattaquable. L'ensemble de ces installations doit être réalisé de manière à être protégé et à résister aux chocs occasionnels dans le fonctionnement normal de l'atelier.
 
@@ -12,7 +12,8 @@ Les capacités de rétention ainsi que les éventuels caniveaux associés sont c
 
 Elles sont étanches aux produits qu'elles pourraient contenir et résistent à leur action physique et chimique. Il en est de même pour les dispositifs d'obturation éventuels qui doivent être maintenus fermés.
 
-Les capacités de rétention de plus de 1000 litres sont munies d'un dispositif de détection d'alarme en point bas permettant de déclencher une alarme sonore et visuelle en cas de présence de liquide dans la rétention, à l'exception de celles dédiées au déchargement. Les capacités de rétention ont vocation à être vides de tout liquide et ne sont pas munies de systèmes automatiques de relevage des eaux.
+Les capacités de rétention de plus de 1 000 litres sont munies d'un dispositif de détection d'alarme en point bas permettant de déclencher une alarme sonore et visuelle en cas de présence de liquide dans la rétention, à l'exception de celles dédiées au déchargement. Les capacités de rétention ont vocation à être vides de tout liquide et ne sont pas munies de systèmes automatiques de relevage des eaux.
+
 Ce dispositif d'alarme en point bas dans les capacités de rétention est mis en place selon l'échéancier suivant :
 
 - pour les lignes de zingage au plus tard au 31 décembre 2008 ;
@@ -21,6 +22,7 @@ Ce dispositif d'alarme en point bas dans les capacités de rétention est mis en
 Dans l'attente de la mise en place de ces systèmes de détection, l'exploitant définit au sein d'une procédure des consignes organisationnelle permettant de garantir un niveau de sécurité équivalent.
 
 L'étanchéité du ou des réservoirs associés doit pouvoir être contrôlée à tout moment.
+
 Les circuits de régulation thermique de bains sont construits conformément aux règles de l'art et ne comprennent pas de circuits de refroidissement ouverts. Les échangeurs de chaleur de bains et les brûleurs immergés sont en matériaux capables de résister à l'action chimique des bains. Les systèmes de chauffage des cuves sont équipés de dispositifs de sécurité qui permettent de détecter le manque de liquide et d'asservir l'arrêt du chauffage.
 
 Les résistances éventuelles (bains actifs et stockages) sont protégées électriquement, par un système de disjonction différentiel et mécaniquement par une grille métallique leur évitant tout contact avec les pièces en traitement et la cuve dans lesquelles elles sont disposées.

@@ -39,7 +39,6 @@ from arretify.step_segmentation.semantic_tag_specs import (
     BlockquoteSegmentationSpec,
     ListSegmentationSpec,
     TableDescriptionSegmentationSpec,
-    TableSegmentationSpecOld,
     TextSpanSegmentationSpec,
 )
 from arretify.types import DocumentContext, ProtectedTag, ProtectedTagOrStr
@@ -53,12 +52,7 @@ from arretify.utils.html_create import (
     wrap_in_tag,
 )
 from arretify.utils.html_semantic import SemanticTagSpec, get_semantic_tag_data, is_semantic_tag
-from arretify.utils.markdown_parsing import (
-    LIST_PATTERN,
-    TABLE_LINE_PATTERN_OLD,
-    is_table_description,
-    is_table_description_old,
-)
+from arretify.utils.markdown_parsing import LIST_PATTERN, is_table_description
 from arretify.utils.split_merge import (
     Probe,
     RawSplit,
@@ -77,7 +71,7 @@ from .core import (
     make_pattern_splitter,
     make_probe_from_pattern_proxy,
     make_while_splitter_for_text_spans,
-    pick_if_transparent_tag_followed_by_match,
+    pick_pagination_tags_followed_by_match,
     pick_text_spans,
 )
 
@@ -154,81 +148,10 @@ def _table_splitter(
         return None
 
 
-# -------------------- Tables OLD -------------------- #
-_TableSplitterMatchOld = Tuple[list[ProtectedTagOrStr], list[ProtectedTagOrStr]]
-"""
-A match for the table splitter, in the form `(<table_elements>, <table_description_elements>)`.
-"""
-
-_is_table_old = make_probe_from_pattern_proxy(TABLE_LINE_PATTERN_OLD)
-_is_table_start_old = pick_text_spans(_is_table_old)
-_is_table_end_old = negate(
-    pick_if_transparent_tag_followed_by_match(pick_text_spans(_is_table_old))
-)
-
-
-def _make_table_description_end_probe_old(table_lines: Sequence[str]) -> Probe[ProtectedTagOrStr]:
-    def _is_table_description(elements: Sequence[ProtectedTagOrStr], index: int) -> bool:
-        if is_table_description_old(get_string(elements[index]), table_lines):
-            return True
-        return False
-
-    return negate(pick_text_spans(_is_table_description))
-
-
-def parse_tables_old(
-    context: DocumentContext,
-    elements: Sequence[ProtectedTagOrStr],
-) -> list[ProtectedTagOrStr]:
-    return flat_map_splitted_elements(
-        split_elements(elements, _table_splitter_old),
-        lambda match: _make_table_tags_old(context, match),
-    )
-
-
-@iter_func_to_list
-def _make_table_tags_old(
-    context: DocumentContext, match: _TableSplitterMatchOld
-) -> Iterator[ProtectedTagOrStr]:
-    table_pile, table_description_pile = match
-    yield make_semantic_tag(context.protected_soup, TableSegmentationSpecOld, contents=table_pile)
-    if table_description_pile:
-        yield make_semantic_tag(
-            context.protected_soup,
-            TableDescriptionSegmentationSpec,
-            contents=table_description_pile,
-        )
-
-
-def _table_splitter_old(
-    elements: Sequence[ProtectedTagOrStr],
-) -> RawSplit[ProtectedTagOrStr, _TableSplitterMatchOld] | None:
-    before, elements = split_before_match(elements, _is_table_start_old)
-    table_pile, elements = split_before_match(elements, _is_table_end_old)
-
-    if table_pile:
-        # Directly after table end, look for table description.
-        table_description_pile, elements = split_before_match(
-            elements,
-            _make_table_description_end_probe_old(get_strings(table_pile)),
-        )
-
-        return (
-            before,
-            (
-                table_pile,
-                table_description_pile,
-            ),
-            elements,
-        )
-    else:
-        return None
-
-
 # -------------------- Lists -------------------- #
 _is_list_element = make_probe_from_pattern_proxy(LIST_PATTERN)
 _is_list_start = pick_text_spans(_is_list_element)
-_is_list_continuation = pick_if_transparent_tag_followed_by_match(pick_text_spans(_is_list_element))
+_is_list_continuation = pick_pagination_tags_followed_by_match(pick_text_spans(_is_list_element))
 
 
 def _make_list_splitter(
@@ -336,9 +259,7 @@ def parse_blockquotes(
 def _make_blockquote_tag(context: DocumentContext, match: _BlockquoteSplitterMatch) -> ProtectedTag:
     pile, error_code = match
     if error_code is None:
-        contents = chain_functions(
-            context, pile, [parse_tables_old, parse_table_descriptions, parse_lists]
-        )
+        contents = chain_functions(context, pile, [parse_table_descriptions, parse_lists])
         return make_semantic_tag(
             context.protected_soup, BlockquoteSegmentationSpec, contents=contents
         )

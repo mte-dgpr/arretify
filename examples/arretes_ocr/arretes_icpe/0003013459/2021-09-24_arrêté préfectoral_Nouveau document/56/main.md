@@ -1,4 +1,4 @@
-# Article 10.4.2. Rapport annuel d'activité 
+Article 10.4.2. Rapport annuel d'activité
 
 Une fois par an, l'exploitant adresse à l'inspection des installations classées un rapport d'activité comportant une synthèse des informations prévues dans le présent arrêté, notamment :
 
@@ -14,12 +14,12 @@ Une fois par an, l'exploitant adresse à l'inspection des installations classée
 
 Le rapport de l'exploitant est également adressé à la commission de suivi de site organisée au titre de l'article L. 125-1 du code de l'environnement le cas échéant.
 
-## CHAPITRE 10.5 - Système d'échanges de quotas
+CHAPITRE 10.5 - Système d'échanges de quotas
 
-## Article 10.5.1. Autorisation d'émettre des gaz à effet de serre
+Article 10.5.1. Autorisation d'émettre des gaz à effet de serre
 
 La présente installation est soumise au système d'échange de quotas de gaz à effet de serre car elle exerce les activités suivantes, listées au tableau de l'article R.229-5 du code de l'environnement :
 
-[table_12](table_12.html)
+[tbl-22.html](tbl-22.html)
 
 Cette autorisation d'exploiter vaut autorisation d'émettre des gaz à effet de serre, prévue à l'article L.229-6 du code de l'environnement au titre de la Directive 2003/87/CE.

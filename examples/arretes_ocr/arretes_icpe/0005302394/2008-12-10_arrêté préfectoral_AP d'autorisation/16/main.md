@@ -1,24 +1,25 @@
-# ARTICLE 4.2.4. PROTECTION DES RESEAUX 
+# ARTICLE 4.2.4. PROTECTION DES RESEAUX
 
-Les effluents aqucux rejete par les instaliations ne sont pas susceptibles de dégualer les réseaux d'égouts ou de dégager des produits toxiques ou inflammables dans ces égouts, éventuellement par mélange avec d'autres effluents.
+Les effluents aqueux rejetés par les installations ne sont pas susceptibles de dégrader les réseaux d'égouts ou de dégager des produits toxiques ou inflammables dans ces égouts, éventuellement par mélange avec d'autres effluents.
 
 Par les réseaux d'assainissement de l'établissement ne transite aucun effluent issu d'un réseau collectif externe ou d'un autre site industriel.
 
-## CHAPITRE 4.3 TYPES D'EFFLUENTS, LEURS OUVRAGES D'EPURATION ET LEURS CARACTERISTIQUES DE REJET AU MILIEU
+# CHAPITRE 4.3 TYPES D'EFFLUENTS, LEURS OUVRAGES D'EPURATION ET LEURS CARACTERISTIQUES DE REJET AU MILIEU
 
 ## ARTICLE 4.3.1. IDENTIFICATION DES EFFLUENTS
 
 L'exploitant est en mesure de distinguer les différentes catégories d'effluents suivants :
 
-1. les eaux exclusivement pluviales et eaux non susceptibles d'être polluées, les eaux pluviales susceptibles d'être polluées (notamment celles collectées dans le dispositif de confinement visé à l'article 4.3.13), les eaux polluées lors d'un accident ou d'un incendie (y compris les eaux utilisées pour l' extinction et collectées dans les conditions fixées à l'article 7.6.8.2),
-2. les eaux polluées : les eaux de procédé, les eaux de lavages des sols, les purges des chaudières,...
-3. les eaux résiduaires après épuration interne : les eaux issues des installations de traitement interne au site ou avant rejet vers le milieu réceptour,
+1. les eaux exclusivement pluviales et eaux non susceptibles d'être polluées, les eaux pluviales susceptibles d'être polluées (notamment celles collectées dans le dispositif de confinement visé à l'article 4.3.13), les eaux polluées lors d'un accident ou d'un incendie (y compris les eaux utilisées pour l'extinction et collectées dans les conditions fixées à l'article 7.6.8.2),
+2. les eaux polluées : les eaux de procédé, les eaux de lavages des sols, les purges des chaudières,...,
+3. les eaux résiduaires après épuration interne : les eaux issues des installations de traitement interne au site ou avant rejet vers le milieu récepteur,
 4. les eaux domestiques : les eaux vannes, les eaux des lavabos et douches, les eaux de cantine,...
 
 ## ARTICLE 4.3.2. COLLECTE DES EFFLUENTS
 
-Les effluents pollués ne contiennent pas de substances de nature à gêner le bon fonctionnement des ouvrages de traitement.
-La dilution des effluents est interdite. En aucun cas elle ne doit constituer un moyen de respecter les valeurs souils de rejets fixées par le présent arrêté. Il est interdit d'abaisser les concentrations en substances polluantes des rejets par simples dilutions autres que celles résultant du rassemblement des effluents normaux de l'établissement ou celles nécessaires à la bonne marche des installations de traitement.
+Les effluents pollués ne contiennent pas de substances de nature à générer le bon fonctionnement des ouvrages de traitement.
+
+La dilution des effluents est interdite. En aucun cas elle ne doit constituer un moyen de respecter les valeurs seuils de rejets fixées par le présent arrêté. Il est interdit d'abaisser les concentrations en substances polluantes des rejets par simples dilutions autres que celles résultant du rassemblement des effluents normaux de l'établissement ou celles nécessaires à la bonne marche des installations de traitement.
 
 Les rejets directs ou indirects d'effluents dans la (les) nappe(s) d'eaux souterraines ou vers les milieux de surface non visés par le présent arrêté sont interdits. Les rejets dans les puits absorbants sont notamment interdits.
 
@@ -34,7 +35,8 @@ Les dispositions nécessaires sont prises pour éviter en toute circonstance, à
 
 ## ARTICLE 4.3.4. ENTRETIEN ET CONDUITE DES INSTALLATIONS DE TRAITEMENT
 
-Les principaux paramètres permettant de s'assurer de la bonne marche des installations de traitement des eaux polluées sont mesurés périodiquement et portés sur un registre
+Les principaux paramètres permettant de s'assurer de la bonne marche des installations de traitement des eaux polluées sont mesurés périodiquement et portés sur un registre.
 
 La conduite des installations est confiée à un personnel compétent disposant d'une formation initiale et continue.
+
 Un registre spécial est tenu sur lequel sont notés les incidents de fonctionnement des dispositifs de collecte, de traitement, de recyclage ou de rejet des eaux, les dispositions prises pour y remédier et les résultats des mesures et contrôles de la qualité des rejets auxquels il a été procédé.

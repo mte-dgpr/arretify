@@ -1,1 +1,3 @@
-![img-3.jpeg](image_4.b64)
+![img-2.jpeg](img-2.jpeg)
+
+FIGURE 2 : LOCALISATION DES INSTALLATIONS

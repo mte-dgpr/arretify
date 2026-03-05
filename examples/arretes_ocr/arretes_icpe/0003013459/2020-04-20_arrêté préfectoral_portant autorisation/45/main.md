@@ -2,22 +2,23 @@ L'exploitant réalise chaque année une évaluation du pouvoir calorifique infé
 
 Conformément à l'arrêté ministériel du 28 avril 2014 relatif à la transmission des données de surveillance des émissions des installations classées pour la protection de l'environnement, sauf impossibilité technique, les résultats de la surveillance des eaux superficielles et souterraines réalisée conformément aux prescriptions édictées par le présent arrêté sont transmis par voie électronique sur le site de télédéclaration du ministère en charge des installations classées prévu à cet effet. La télédéclaration est effectuée dans le mois suivant la réception des résultats de mesures.
 
-# ARTICLE 10.3.3. ANALYSE ET TRANSMISSION DES RÉSULTATS DES MESURES DE NIVEAUX SONORES 
+## ARTICLE 10.3.3. ANALYSE ET TRANSMISSION DES RÉSULTATS DES MESURES DE NIVEAUX SONORES
 
-Les résultats des mesures réalisées en application du chapitre 10.2 .1 du présent arrêté sont transmis au Préfet dans le mois qui suit leur réception avec les commentaires et propositions éventuelles d'amélioration.
+Les résultats des mesures réalisées en application du chapitre 10.2.1 du présent arrêté sont transmis au Préfet dans le mois qui suit leur réception avec les commentaires et propositions éventuelles d'amélioration.
 
 ## CHAPITRE 10.4 BILANS ET RAPPORTS ANNUELS
 
 ## ARTICLE 10.4.1. DÉCLARATION ANNUELLE DES ÉMISSIONS ET DES TRANSFERTS DE POLLUANTS ET DES DÉCHETS
 
 L'exploitant est tenu de renseigner, au cours du premier trimestre suivant chaque année n, un bilan récapitulatif de l'ensemble des déchets produits et traités et des rejets dans l'air et dans l'eau générés par ses installations, conformément aux dispositions de l'arrêté ministériel du 31 janvier 2008 modifié relatif au registre et à la déclaration annuelle des émissions polluantes et des déchets.
-Cette déclaration s'effectue sur le site internct de déclaration des émissions polluantes établi par le ministère en charge de l'environnement et du développement durable.
+
+Cette déclaration s'effectue sur le site internet de déclaration des émissions polluantes établi par le ministère en charge de l'environnement et du développement durable.
 
 ## ARTICLE 10.4.2. RAPPORT ANNUEL D'ACTIVITÉ
 
 Une fois par an, l'exploitant adresse à l'inspection des installations classées un rapport d'activité comportant une synthèse des informations prévues dans le présent arrêté, notamment :
 
-- les informations prévues à l'article 10.3 .2 du présent arrêté,
+- les informations prévues à l'article 10.3.2 du présent arrêté,
 - une notice de présentation de l'installation avec l'indication des diverses catégories de déchets pour le traitement desquels l'installation a été conçue,
 - les références des décisions individuelles dont l'installation a fait l'objet en application du code de l'environnement,
 - tout élément d'information pertinent sur la tenue de l'installation dans l'année écoulée et les demandes éventuelles exprimées auprès de l'exploitant par le public,

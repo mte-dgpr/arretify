@@ -6,6 +6,9 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+        },
+        "header.md": {
+          "name": "header.md"
         }
       }
     },
@@ -31,8 +34,8 @@
         "main.md": {
           "name": "main.md"
         },
-        "table_1.html": {
-          "name": "table_1.html"
+        "tbl-0.html": {
+          "name": "tbl-0.html"
         }
       }
     },
@@ -42,8 +45,8 @@
         "main.md": {
           "name": "main.md"
         },
-        "table_2.html": {
-          "name": "table_2.html"
+        "tbl-1.html": {
+          "name": "tbl-1.html"
         }
       }
     },
@@ -53,8 +56,8 @@
         "main.md": {
           "name": "main.md"
         },
-        "image_1.b64": {
-          "name": "image_1.b64"
+        "img-0.jpeg": {
+          "name": "img-0.jpeg"
         }
       }
     }

@@ -1,6 +1,6 @@
-# 2. PRESCRIPTIONS PARTICULIĖRES 
+# 2. PRESCRIPTIONS PARTICULIÈRES
 
-### 2.1.1. Conditions particulières d'emploi de sources scellées
+## 2.1.1. Conditions particulières d'emploi de sources scellées
 
 Le conditionnement des sources scellées doit être tel que leur étanchéité soit parfaite et leur détérioration impossible dans toutes les conditions normales d'emploi et en cas d'incident exceptionnel prévisible.
 
@@ -10,9 +10,10 @@ En application de l'article R.1333-52 du Code de la Santé Publique, une source 
 
 Lors de l'acquisition de sources scellées chez un fournisseur autorisé, l'exploitant veillera à ce que les conditions de reprise de ces sources (en fin d'utilisation ou lorsqu'elles deviendront périmées) par le fournisseur soient précisées et formalisées dans un document dont il conserve un exemplaire.
 
-### 2.1.2. Dispositions particulières concernant les installations à poste fixe et les lieux de stockage des sources
+## 2.1.2. Dispositions particulières concernant les installations à poste fixe et les lieux de stockage des sources
 
 Une isolation suffisante contre les risques d'incendie d'origine extérieure est exigée.
+
 Les installations ne doivent pas être situées à proximité d'un stockage de produit combustibles (bois, papiers, hydrocarbures ...). Il est interdit de constituer à l'intérieur de l'atelier un dépôt de matières combustibles.
 
-Les boitiers abritant les sources doivent être fermés. Les dispositifs de fermeture/ouverture ne doivent pouvoir être actionnés que par les personnes responsables ou d'intervention en ayant l'utilité.
+Les boîtiers abritant les sources doivent être fermés. Les dispositifs de fermeture/ouverture ne doivent pouvoir être actionnés que par les personnes responsables ou d'intervention en ayant l'utilité.

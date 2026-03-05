@@ -1,11 +1,11 @@
 - Que le présent arrêté a pour objet de renforcer les prescriptions relatives aux mesures de prévention des risques accidentels,
-- Qu'il y a lieu, en conséquence, de faire application à l'encontre de l'exploitant, des dispositions prévues par l'article R512-31 du Code de l'Environnement susvise,
+- Qu'il y a lieu, en conséquence, de faire application à l'encontre de l'exploitant, des dispositions prévues par l'article R512-31 du Code de l'Environnement susvisé,
 
-ARRETE
+# ARRETE
 
-# Article 1 : 
+## Article 1 :
 
-La société RECTICEL dont le siège social est 7, rue du Fossé Blanc - 92622 GENNEVILLIERS, est tenue de respecter, dans les délais impartis, les prescriptions complémentaires ci-annexées dans le cadre de l'exploitation d'une usine de fabrication et de transformation de mousse polyuréthane, rue de la Mécanique - BO 618 - 27406 LOUVIERS.
+La société RECTICEL dont le siège social est 7, rue du Fossé Blanc – 92622 GENNEVILLIERS, est tenue de respecter, dans les délais impartis, les prescriptions complémentaires ci-annexées dans le cadre de l'exploitation d'une usine de fabrication et de transformation de mousse polyuréthane, rue de la Mécanique – BO 618 – 27406 LOUVIERS.
 
 ## Article 2 :
 

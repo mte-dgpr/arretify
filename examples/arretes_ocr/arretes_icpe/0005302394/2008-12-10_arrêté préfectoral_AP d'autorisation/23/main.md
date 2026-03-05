@@ -1,8 +1,8 @@
-# ARTICLE 7.3.5. PROTECTION CONTRE LA FOUDRE 
+# ARTICLE 7.3.5. PROTECTION CONTRE LA FOUDRE
 
 Les installations sur lesquelles une agression par la foudre peut être à l'origine d'événements susceptibles de porter gravement atteinte, directement ou indirectement à la sécurité des installations, à la sécurité des personnes ou à la qualité de l'environnement, sont protégées contre la foudre en application de l'arrêté ministériel du 15 janvier 2008.
 
-## CHAPITRE 7.4 GESTION DES OPERATIONS PORTANT SUR DES SUBSTANCES DANGEREUSES
+# CHAPITRE 7.4 GESTION DES OPERATIONS PORTANT SUR DES SUBSTANCES DANGEREUSES
 
 ## ARTICLE 7.4.1. CONSIGNES D'EXPLOITATION DESTINEES A PREVENIR LES ACCIDENTS
 
@@ -38,7 +38,9 @@ Le permis rappelle notamment :
 - le type de matériel pouvant être utilisé,
 - les mesures de prévention à prendre, notamment les vérifications d'atmosphère, les risques d'incendie et d'explosion, la mise en sécurité des installations,
 - les moyens de protection à mettre en œuvre notamment les protections individuelles, les moyens de lutte (incendie, etc.) mis à la disposition du personnel effectuant les travaux.
+
 Tous les travaux ou interventions sont précédés, immédiatement avant leur commencement, d'une visite sur les lieux destinée à vérifier le respect des conditions prédéfinies.
 
 A l'issue des travaux, une réception est réalisée pour vérifier leur bonne exécution, et l'évacuation du matériel de chantier : la disposition des installations en configuration normale est vérifiée et attestée.
+
 Certaines interventions prédéfinies, relevant de la maintenance simple et réalisée par le personnel de l'établissement peuvent faire l'objet d'une procédure simplifiée.

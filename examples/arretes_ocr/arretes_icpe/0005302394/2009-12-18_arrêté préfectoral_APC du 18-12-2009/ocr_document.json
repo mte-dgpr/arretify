@@ -6,6 +6,12 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+        },
+        "header.md": {
+          "name": "header.md"
+        },
+        "footer.md": {
+          "name": "footer.md"
         }
       }
     },
@@ -14,12 +20,6 @@
       "assets": {
         "main.md": {
           "name": "main.md"
-        },
-        "image_2.b64": {
-          "name": "image_2.b64"
-        },
-        "image_1.b64": {
-          "name": "image_1.b64"
         }
       }
     }

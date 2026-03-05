@@ -6,6 +6,12 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+        },
+        "header.md": {
+          "name": "header.md"
+        },
+        "footer.md": {
+          "name": "footer.md"
         }
       }
     },
@@ -14,6 +20,12 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+        },
+        "tbl-0.html": {
+          "name": "tbl-0.html"
+        },
+        "tbl-1.html": {
+          "name": "tbl-1.html"
         }
       }
     },
@@ -22,6 +34,15 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+        },
+        "header.md": {
+          "name": "header.md"
+        },
+        "tbl-2.html": {
+          "name": "tbl-2.html"
+        },
+        "tbl-3.html": {
+          "name": "tbl-3.html"
         }
       }
     },
@@ -30,6 +51,15 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+        },
+        "header.md": {
+          "name": "header.md"
+        },
+        "tbl-4.html": {
+          "name": "tbl-4.html"
+        },
+        "tbl-5.html": {
+          "name": "tbl-5.html"
         }
       }
     },
@@ -38,6 +68,9 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+        },
+        "header.md": {
+          "name": "header.md"
         }
       }
     },
@@ -46,6 +79,12 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+        },
+        "header.md": {
+          "name": "header.md"
+        },
+        "tbl-6.html": {
+          "name": "tbl-6.html"
         }
       }
     },
@@ -55,8 +94,11 @@
         "main.md": {
           "name": "main.md"
         },
-        "image_1.b64": {
-          "name": "image_1.b64"
+        "img-0.jpeg": {
+          "name": "img-0.jpeg"
+        },
+        "tbl-7.html": {
+          "name": "tbl-7.html"
         }
       }
     },
@@ -74,8 +116,14 @@
         "main.md": {
           "name": "main.md"
         },
-        "image_2.b64": {
-          "name": "image_2.b64"
+        "header.md": {
+          "name": "header.md"
+        },
+        "footer.md": {
+          "name": "footer.md"
+        },
+        "img-1.jpeg": {
+          "name": "img-1.jpeg"
         }
       }
     },
@@ -85,8 +133,17 @@
         "main.md": {
           "name": "main.md"
         },
-        "image_3.b64": {
-          "name": "image_3.b64"
+        "header.md": {
+          "name": "header.md"
+        },
+        "footer.md": {
+          "name": "footer.md"
+        },
+        "img-2.jpeg": {
+          "name": "img-2.jpeg"
+        },
+        "img-3.jpeg": {
+          "name": "img-3.jpeg"
         }
       }
     },
@@ -96,17 +153,23 @@
         "main.md": {
           "name": "main.md"
         },
-        "image_4.b64": {
-          "name": "image_4.b64"
+        "header.md": {
+          "name": "header.md"
         },
-        "image_6.b64": {
-          "name": "image_6.b64"
+        "footer.md": {
+          "name": "footer.md"
         },
-        "image_5.b64": {
-          "name": "image_5.b64"
+        "img-4.jpeg": {
+          "name": "img-4.jpeg"
         },
-        "image_7.b64": {
-          "name": "image_7.b64"
+        "img-5.jpeg": {
+          "name": "img-5.jpeg"
+        },
+        "img-6.jpeg": {
+          "name": "img-6.jpeg"
+        },
+        "img-7.jpeg": {
+          "name": "img-7.jpeg"
         }
       }
     },
@@ -124,8 +187,14 @@
         "main.md": {
           "name": "main.md"
         },
-        "image_8.b64": {
-          "name": "image_8.b64"
+        "header.md": {
+          "name": "header.md"
+        },
+        "footer.md": {
+          "name": "footer.md"
+        },
+        "img-8.jpeg": {
+          "name": "img-8.jpeg"
         }
       }
     },
@@ -135,11 +204,17 @@
         "main.md": {
           "name": "main.md"
         },
-        "image_9.b64": {
-          "name": "image_9.b64"
+        "header.md": {
+          "name": "header.md"
         },
-        "image_10.b64": {
-          "name": "image_10.b64"
+        "footer.md": {
+          "name": "footer.md"
+        },
+        "img-9.jpeg": {
+          "name": "img-9.jpeg"
+        },
+        "img-10.jpeg": {
+          "name": "img-10.jpeg"
         }
       }
     },
@@ -149,8 +224,20 @@
         "main.md": {
           "name": "main.md"
         },
-        "image_11.b64": {
-          "name": "image_11.b64"
+        "header.md": {
+          "name": "header.md"
+        },
+        "footer.md": {
+          "name": "footer.md"
+        },
+        "img-11.jpeg": {
+          "name": "img-11.jpeg"
+        },
+        "img-12.jpeg": {
+          "name": "img-12.jpeg"
+        },
+        "img-13.jpeg": {
+          "name": "img-13.jpeg"
         }
       }
     },
@@ -168,11 +255,20 @@
         "main.md": {
           "name": "main.md"
         },
-        "image_12.b64": {
-          "name": "image_12.b64"
+        "header.md": {
+          "name": "header.md"
         },
-        "image_13.b64": {
-          "name": "image_13.b64"
+        "footer.md": {
+          "name": "footer.md"
+        },
+        "img-14.jpeg": {
+          "name": "img-14.jpeg"
+        },
+        "img-15.jpeg": {
+          "name": "img-15.jpeg"
+        },
+        "img-16.jpeg": {
+          "name": "img-16.jpeg"
         }
       }
     },
@@ -182,8 +278,14 @@
         "main.md": {
           "name": "main.md"
         },
-        "image_14.b64": {
-          "name": "image_14.b64"
+        "header.md": {
+          "name": "header.md"
+        },
+        "footer.md": {
+          "name": "footer.md"
+        },
+        "img-17.jpeg": {
+          "name": "img-17.jpeg"
         }
       }
     },
@@ -193,8 +295,17 @@
         "main.md": {
           "name": "main.md"
         },
-        "image_15.b64": {
-          "name": "image_15.b64"
+        "header.md": {
+          "name": "header.md"
+        },
+        "footer.md": {
+          "name": "footer.md"
+        },
+        "img-18.jpeg": {
+          "name": "img-18.jpeg"
+        },
+        "img-19.jpeg": {
+          "name": "img-19.jpeg"
         }
       }
     },

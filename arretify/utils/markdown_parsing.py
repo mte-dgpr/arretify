@@ -17,35 +17,13 @@
 # limitations under the License.
 #
 import re
-from typing import Sequence
 
 import markdown
 from bs4 import BeautifulSoup
 
-from arretify.errors import ErrorCodes
-from arretify.regex_utils import PatternProxy, repeated_with_separator
-from arretify.semantic_tag_specs import ErrorSpec
+from arretify.regex_utils import PatternProxy
 from arretify.types import ProtectedTag, protect_soup
-from arretify.utils.html_create import make_semantic_tag, make_tag
 from arretify.utils.strings import merge_strings
-
-TABLE_LINE_PATTERN_OLD = PatternProxy(
-    r"^\|" + repeated_with_separator(r"[^|\n]+", r"\|", (1, ...)) + r"\|$"
-)
-"""
-Detect a markdown table line.
-This pattern ensures that the line starts and ends with a pipe
-and contains at least one cell in between.
-"""
-
-TABLE_HEADER_SEPARATOR_PATTERN_OLD = PatternProxy(
-    r"^\|" + repeated_with_separator(r"[-:\s]+", r"\|", (1, ...)) + r"\|$"
-)
-"""
-Detect a markdown table header separator.
-This pattern ensures that the line starts and ends with a pipe
-and contains at least two cells, with only characters -, : or whitespace in between.
-"""
 
 TABLE_DESCRIPTION_PATTERN = PatternProxy(r"^(\(\*+\))|^(\*+)|^(\(\d+\))")
 """Detect if the line is a table description, i.e. starts with "*" or "(*)" or "(1)"."""
@@ -84,46 +62,6 @@ def is_table_description(line: str, table: ProtectedTag) -> bool:
             if re.match(rf".*{re.escape(column_name)} :", line, re.IGNORECASE):
                 return True
     return False
-
-
-def is_table_description_old(line: str, pile: Sequence[str]) -> bool:
-    # Sentence starts with any number of * between parentheses or without parentheses
-    match = TABLE_DESCRIPTION_PATTERN.match(line)
-    if match:
-        return True
-
-    # Sentence that explains the name of one of the columns
-    pile_bottom = pile[0] if len(pile) >= 1 else None
-    if isinstance(pile_bottom, str):
-        column_names = []
-        columns_split = pile_bottom.split("|")
-        for column_split in columns_split:
-            column_strip = column_split.strip()
-            column_raw = re.sub(r"\([^)]*\)", "", column_strip).strip()
-            if len(column_raw) > 0:
-                column_names.append(column_raw)
-
-        # For each column name, check if we have it followed by :
-        for column_name in column_names:
-            if re.match(rf".*{re.escape(column_name)} :", line, re.IGNORECASE):
-                return True
-    return False
-
-
-def parse_markdown_table_old(lines: Sequence[str]) -> ProtectedTag:
-    markdown_str = "\n".join(lines)
-    html_str = markdown.markdown(markdown_str, extensions=["tables"])
-    soup = protect_soup(BeautifulSoup(html_str, features="html.parser"))
-    table_result = soup.select("table")
-    if len(table_result) != 1:
-        return make_semantic_tag(
-            soup,
-            ErrorSpec,
-            data=ErrorSpec.data_model(error_codes=[ErrorCodes.markdown_parsing]),
-            contents=[markdown_str],
-        )
-
-    return make_tag(soup, "table", contents=list(table_result[0].contents))
 
 
 def parse_markdown_element(line: str, selector: str) -> ProtectedTag:

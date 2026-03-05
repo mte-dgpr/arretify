@@ -8,6 +8,11 @@
                 --spacing-1: 1rem;
                 --spacing-0p5: 0.5rem;
                 --spacing-2: 2rem;
+                
+                --page-separator-footer-height: 2em;
+                --page-separator-line-height: 0.5em;
+                --page-separator-header-height: 2em;
+                --page-separator-total-height: calc(var(--page-separator-footer-height) + var(--page-separator-line-height) + var(--page-separator-header-height));
             }
 
             header, main, footer {
@@ -122,46 +127,122 @@
                 background-color: var(--background-action-low-blue-france);
             }
 
-            /**************** visual_page_separator ****************/
-            .visual_page_separator {
+            /**************** Original page_separator takes up space ****************/
+            [data-spec="page_separator"] {
+                display: block;
+                min-height: var(--page-separator-total-height);
+                visibility: hidden;
+            }
+
+            /**************** Hide original page_header and page_footer ****************/
+            [data-spec="page_header"],
+            [data-spec="page_footer"] {
+                display: none;
+            }
+
+            /**************** Page separator groups ****************/
+            .page_separator_group {
                 position: absolute;
                 left: 0;
                 width: 100vw;
-                height: 0.3em;
-                background-color: var(--grey-950-100);
-                z-index: -1;
+                height: var(--page-separator-total-height);
             }
 
-            a.visual_page_separator > span {
-                position: absolute;
+            .page_separator_footer,
+            .page_separator_header {
+                width: 100%;
                 font-size: 75%;
+                color: var(--grey-625-425);
+                background-color: rgba(255, 255, 255, 0.9);
+                padding: 0.25rem 0.5rem;
+                box-sizing: border-box;
+            }
+
+            .page_separator_footer {
+                height: var(--page-separator-footer-height);
+                text-align: right;
+            }
+
+            .page_separator_header {
+                height: var(--page-separator-header-height);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .page_separator_hline {
+                width: 100%;
+                height: var(--page-separator-line-height);
+                background-color: var(--grey-950-100);
+            }
+
+            .page_separator_page_number {
                 color: var(--grey-625-425);
             }
   </style>
   <script>
    window.onload = function() {
                 // Page separators are inline elements, so they can be anywhere in the tree.
-                // To ensure proper layout, we therefore create a separate visual element
-                // for each page separator.
-                const pageSeparators = Array.from(document.querySelectorAll('[data-spec="page_separator"]'))
+                // We create visual page separator containers that include:
+                // - Footer from previous page (above, right)
+                // - Separator line
+                // - Page number (below, left)
+                // - Header from next page (below, right)
                 
-                const refreshPageSeparator = () => {
-                    document.querySelectorAll('.visual_page_separator')
-                        .forEach((visualPageSeparator) => visualPageSeparator.remove())
-                    pageSeparators.slice(1).forEach(function(pageSeparator) {
-                        const boundingBox = pageSeparator.getBoundingClientRect()
-                        const position = getPositionRelativeToDocument(pageSeparator)
-                        const pageIndex = parseInt(pageSeparator.dataset.page_index, 10)
-                        const visualPageSeparator = document.createElement('a')
-                        visualPageSeparator.classList.add('visual_page_separator')
-                        visualPageSeparator.style.top = `${position.top + boundingBox.height}px`
-                        visualPageSeparator.innerHTML = `<span>↓ page ${pageIndex + 1}</span>`
-                        document.body.appendChild(visualPageSeparator)
+                const elements = Array.from(document.querySelectorAll('[data-spec="page_footer"], [data-spec="page_separator"], [data-spec="page_header"]'))
+                
+                const refreshPageSeparators = () => {
+                    // Remove existing page separator groups
+                    document.querySelectorAll('.page_separator_group')
+                        .forEach(el => el.remove())
+                    
+                    // Build list of {separator, header, footer} objects
+                    const separatorData = []
+                    let pendingFooter = null
+                    
+                    elements.forEach(element => {
+                        if (element.dataset.spec === 'page_footer') {
+                            pendingFooter = element
+                        } else if (element.dataset.spec === 'page_separator') {
+                            separatorData.push({
+                                separator: element,
+                                footer: pendingFooter,
+                                header: null
+                            })
+                            pendingFooter = null
+                        } else if (element.dataset.spec === 'page_header') {
+                            const lastSeparator = separatorData[separatorData.length - 1]
+                            if (lastSeparator) {
+                                lastSeparator.header = element
+                            }
+                            pendingFooter = null
+                        }
+                    })
+                    
+                    // Create a group container for each separator trio
+                    separatorData.forEach(data => {
+                        const pageIndex = parseInt(data.separator.dataset.page_index, 10)
+                        const position = getPositionRelativeToDocument(data.separator)
+                        
+                        // Create page separator group with fixed layout
+                        const group = document.createElement('div')
+                        group.classList.add('page_separator_group')
+                        group.style.top = `${position.top}px`
+                        group.innerHTML = `
+                            <div class="page_separator_footer">${data.footer ? data.footer.innerHTML : ''}</div>
+                            <div class="page_separator_hline"></div>
+                            <div class="page_separator_header">
+                                <span class="page_separator_page_number">↓ page ${pageIndex + 1}</span>
+                                <span>${data.header ? data.header.innerHTML : ''}</span>
+                            </div>
+                        `
+                        
+                        document.body.appendChild(group)
                     })
                 }
 
-                refreshPageSeparator()
-                window.addEventListener('resize', refreshPageSeparator)
+                refreshPageSeparators()
+                window.addEventListener('resize', refreshPageSeparators)
             }
 
             const getPositionRelativeToDocument = (el) => {
@@ -173,13 +254,22 @@
             }
   </script>
  </head>
- <body data-arretify_version="0.1.0" data-input_name="arrete_circulation.md" data-spec="arrete">
+ <body data-arretify_version="0.1.0" data-input_name="arrete_circulation" data-spec="arrete">
   <header data-spec="header">
    <a data-page_index="0" data-spec="page_separator">
    </a>
-   <div data-spec="entity">
+   <div data-spec="page_header">
     <div>
      Préfecture de la zone de défense et de sécurité Nord
+
+PRÉFET
+DE LA ZONE
+DE DÉFENSE
+ET DE SÉCURITÉ
+NORD
+Liberté
+Égalité
+Fraternité
     </div>
    </div>
    <div data-spec="arrete_title">
@@ -192,7 +282,12 @@
      Le Préfet de zone de défense et de sécurité Nord
     </div>
     <div>
-     Le Préfet de la région Hauts-de-France Préfet du Nord
+     Le Préfet de la région Hauts-de-France
+    </div>
+   </div>
+   <div data-spec="entity">
+    <div>
+     Préfet du Nord
     </div>
    </div>
    <div data-spec="visa">
@@ -270,7 +365,7 @@
     Considérant le passage du COZ Nord en posture de crise le 19 mai 2025 ;
    </div>
    <div data-spec="motifs">
-    Considérant les difficultés de circulation routière prévisibles en conséquence du mouvement social des agriculteurs le 19 mai 2025;
+    Considérant les difficultés de circulation routière prévisibles en conséquence du mouvement social des agriculteurs le 19 mai 2025 ;
    </div>
    <div data-spec="motifs">
     Considérant les perturbations qui peuvent en découler, et la nécessité d'assurer la sécurité de la circulation routière dans l'intérêt de l'ordre public ;
@@ -278,6 +373,18 @@
    <div data-spec="supplementary_motif_info">
     <div>
      Sur proposition de M. le directeur régional de l'environnement, de l'aménagement et du logement des Hauts-de-France ;
+    </div>
+   </div>
+   <div data-spec="page_footer">
+    <div>
+     page 1/3
+    </div>
+   </div>
+   <a data-page_index="1" data-spec="page_separator">
+   </a>
+   <div data-spec="page_header">
+    <div>
+     page 2/3
     </div>
    </div>
    <div data-spec="arrete_title">
@@ -306,7 +413,7 @@
        - l'autoroute A25, dans les deux sens de circulation entre les échangeurs 12 et 15 ;
       </li>
       <li>
-       - la route nationale 2, dans les deux sens de circulation, entre la jonction RN2/RD1043 (commune de La Capelle) jusqu'au giratoire dit de La rotonde à la jonction RN2/RD951 (commune d'Avesnes-durHelpe).
+       - la route nationale 2, dans les deux sens de circulation, entre la jonction RN2/RD1043 (commune de La Capelle) jusqu'au giratoire dit de La rotonde à la jonction RN2/RD951 (commune d'Avesnes-dur-Helpe).
       </li>
      </ul>
     </div>
@@ -335,7 +442,7 @@
     <div data-number="2" data-spec="alinea">
      <ul>
       <li>
-       - sur l'autoroute A1, en direction de Lille, via l'autoroute A21 à partir de l'échangeur A1/21 à Dourges en passant par Lens (A21/N47) jusqu'à A25 via la N41 ;en direction de Paris, via l'autoroute A23 à partir du tronc commun A1/22 à Lille.
+       - sur l'autoroute A1, en direction de Lille, via l'autoroute A21 à partir de l'échangeur A1/21 à Dourges en passant par Lens (A21/N47) jusqu'à A25 via la N41 ; en direction de Paris, via l'autoroute A23 à partir du tronc commun A1/22 à Lille.
       </li>
       <li>
        - sur l'autoroute A2, en direction de la Belgique, via l'autoroute A23 à partir de l'échangeur à la jonction A2/A23 ;
@@ -358,7 +465,7 @@
      <a data-spec="document_reference" data-type="self">
       le présent arrêté
      </a>
-     s ne sont pas applicables :
+     ne sont pas applicables :
     </div>
     <div data-number="2" data-spec="alinea">
      <ul>
@@ -375,7 +482,7 @@
        - aux véhicules des entreprises intervenant pour le compte des gestionnaires du réseau routier ;
       </li>
       <li>
-       - aux véhicules de dépannage et de remorquage agrées ;
+       - aux véhicules de dépannage et de remorquage agréés ;
       </li>
       <li>
        - aux convois escortés par les forces de sécurité intérieure.
@@ -392,7 +499,7 @@
      <a data-spec="document_reference" data-type="self">
       le présent arrêté
      </a>
-     sont applicables à compter du 19 mai 2025 à 13 h 00 .
+     sont applicables à compter du 19 mai 2025 à 13h00.
     </div>
    </section>
    <section data-number="6" data-spec="section" data-type="article">
@@ -429,16 +536,21 @@
      </a>
      .
     </div>
+    <a data-page_index="2" data-spec="page_separator">
+    </a>
     <div data-number="2" data-spec="alinea">
      Fait à Lille, le 19 mai 2025
     </div>
     <div data-number="3" data-spec="alinea">
-     Pour le préfet de zone et par délégation, Le préfet délégué pour la défense et la sécurité
+     Pour le préfet de zone et par délégation,
     </div>
     <div data-number="4" data-spec="alinea">
-     Vincent LASOGUEY
+     Le préfet délégué pour la défense et la sécurité
     </div>
     <div data-number="5" data-spec="alinea">
+     Vincent LAGOGUEY
+    </div>
+    <div data-number="6" data-spec="alinea">
      Conformément aux dispositions des
      <a data-spec="section_reference" data-start_num="R421" data-type="article">
       articles R 421
@@ -447,7 +559,12 @@
      <a data-id="LEGITEXT000006070933" data-spec="document_reference" data-title="Code de justice administrative" data-type="code" href="https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006070933">
       code de justice administrative
      </a>
-     , la présente décision peut faire l'objet d'un recours contentieux devant le tribunal administratif dans le délai de 2 mois à compter de sa publication. Le tribunal administratif peut être saisi par l'application Télér recours citoyen accessible sur le site www.telerecours.fr.
+     , la présente décision peut faire l'objet d'un recours contentieux devant le tribunal administratif dans le délai de 2 mois à compter de sa publication. Le tribunal administratif peut être saisi par l'application Télérecours citoyen accessible sur le site www.telerecours.fr.
+    </div>
+    <div data-spec="page_footer">
+     <div>
+      page 3/3
+     </div>
     </div>
    </section>
   </main>

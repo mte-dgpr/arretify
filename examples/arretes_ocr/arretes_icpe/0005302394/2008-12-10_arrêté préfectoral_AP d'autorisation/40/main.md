@@ -2,24 +2,19 @@
 - les commentaires expliquant les dépassements constatés, leur durée ainsi que les dispositions prises afin d'y remédier et qu'ils ne puissent se reproduire,
 - les résultats des mesures comparatives sur les trois dernières années.
 
-Ces mesures sont réalisées sur un échantillon représentatif du rejet de l'établissement d'après les normes on vigueur.
+Ces mesures sont réalisées sur un échantillon représentatif du rejet de l'établissement d'après les normes en vigueur.
+
 Lorsqu'un de ces paramètres est quantifié ou qu'il fait l'objet d'une utilisation ou d'une production dans les procédés de l'établissement, celui-ci est soumis à une surveillance annuelle au droit de l'exutoire concerné.
 
-Rejet des autres installations :
+**Rejet des autres installations :**
 
-| Installation | Conduits | Paramètres | Fréquerie |
-| :--: | :--: | :--: | :--: |
-| Cataphorèse | Conduits $n^{\circ} 6$ et 7 | Débit <br> OOVNM | Triennal pour contrôle du respect du flux limite ( 2 kg/h pour les deux émissaires) |
-| Four de polymérisation | Conduit $n^{\circ} 8$ | Débit | Triennal |
-| Installations de combustion | $/$ | NOx | Triennal |
-| Robots de soudure | $/$ | Débit | Triennal |
-|  |  | Poussières | Triennal |
+[tbl-16.html](tbl-16.html)
 
-# Article 9.2.1.2. Analyse et transmission des résultats de l'autosurveillance sur les rejets atmosphériques : 
+## Article 9.2.1.2. Analyse et transmission des résultats de l'autosurveillance sur les rejets atmosphériques :
 
 Ces contrôles périodiques doivent être réalisés durant les périodes de fonctionnement normal des installations contrôlées. Sur demande de l'exploitant ou de sa propre initiative, l'inspection des installations classées pourra modifier la fréquence des analyses à pratiquer et/ou la nature des paramètres à rechercher au vu des résultats présentés.
 
-Ces résultats sont reportés par l'exploitant sur un registre tenu à disposition de l'inspection des installations Classées et archivés pendant au moins trois ans. Un état récapitulatif des analyses et mesures effectuées en application du présent article est transmis à l'inspection des installations classées, tous les ans sous une forme synthétique accompagnée de commentaires expliquant les dépassements constatés, leur durée ainsi que les dispositions prises afin d'y remédier et qu'ils ne puissent se reproduire. Cet état comprend pour chaque exutoire et pour chaque paramètre figurant dans les tableaux précédents :
+Ces résultats sont reportés par l'exploitant sur un registre tenu à disposition de l'Inspection des installations Classées et archivés pendant au moins trois ans. Un état récapitulatif des analyses et mesures effectuées en application du présent article est transmis à l'inspection des installations classées, tous les ans sous une forme synthétique accompagnée de commentaires expliquant les dépassements constatés, leur durée ainsi que les dispositions prises afin d'y remédier et qu'ils ne puissent se reproduire. Cet état comprend pour chaque exutoire et pour chaque paramètre figurant dans les tableaux précédents :
 
 - le débit moyen, la concentration moyenne et le flux horaire rejetés,
 - le flux total rejeté durant la période couverte par l'état récapitulatif,
@@ -35,8 +30,8 @@ Les méthodes d'échantillonnage, de mesure et d'analyse sont conformes à celle
 
 Les dispositions suivantes sont applicables à l'ensemble des installations présentes sur le site.
 
-## a) Définition
+### a) Définition
 
-On entend par "composé organique volatil" (COV) tout composé organique, à l'exclusion du méthane, ayant une pression de vapeur de $0,01 \mathrm{kPa}$ ou plus à une température de $293,15^{\circ}$ Kelvin ou ayant une volatilité correspondante dans des conditions d'utilisation particulièrea.
+On entend par "composé organique volatil" (COV) tout composé organique, à l'exclusion du méthane, ayant une pression de vapeur de 0,01 kPa ou plus à une température de 293,15° Kelvin ou ayant une volatilité correspondante dans des conditions d'utilisation particulières.
 
 On entend par "solvant organique" tout COV utilisé seul ou en association avec d'autres agents, sans subir de modification chimique, pour dissoudre des matières premières, des produits ou des déchets, ou utilisé comme solvant de nettoyage pour

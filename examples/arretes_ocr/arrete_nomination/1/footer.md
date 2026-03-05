@@ -1,0 +1,1 @@
+Adresse Postale : Madame la cheffe d'antenne – MNC – Antenne de Lille – Cité Marianne - DREETS - 2 boulevard de Strasbourg – BP 90219 – 59019 LILLE Cedex
