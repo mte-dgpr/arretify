@@ -35,14 +35,12 @@ from .pipeline import (
     PipelineStep,
     is_ocr_files,
     is_pdf_file,
-    is_standalone_ocr_file,
     load_ocr_files,
     load_pdf_file,
-    load_standalone_ocr_file,
     run_pipeline,
     save_html_file,
 )
-from .settings import OCR_FILE_EXTENSION, Settings
+from .settings import Settings
 from .step_consolidation import step_consolidation
 from .step_ocr import step_ocr
 from .step_references_detection import step_references_detection
@@ -238,17 +236,6 @@ def _walk_input_dir(
         if dir_path.parent in paths:
             continue
 
-        # If we have entered a subdirectory that contains an OCR document,
-        # we do not want to process it again.
-        if dir_path not in paths:
-            paths.extend(
-                [
-                    dir_path / file_name
-                    for file_name in file_names
-                    if is_standalone_ocr_file(dir_path / file_name)
-                ]
-            )
-
         paths.extend(
             [dir_path / file_name for file_name in file_names if is_pdf_file(dir_path / file_name)]
         )
@@ -317,11 +304,6 @@ def _process_arrete(
             session_context,
             input_path,
         )
-    elif is_standalone_ocr_file(input_path):
-        document_context = load_standalone_ocr_file(
-            session_context,
-            input_path,
-        )
     elif is_ocr_files(input_path):
         document_context = load_ocr_files(
             session_context,
@@ -329,9 +311,7 @@ def _process_arrete(
         )
     else:
         if input_path.is_file():
-            raise ValueError(
-                f'Unsupported file "{input_path}", expected .pdf or .{OCR_FILE_EXTENSION} file.'
-            )
+            raise ValueError(f'Unsupported file "{input_path}", expected .pdf or ocr folder.')
         else:
             raise ValueError(
                 f'Unsupported directory "{input_path}", '

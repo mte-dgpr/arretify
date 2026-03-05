@@ -1,2 +1,0 @@
-ANNEXE 5.2 : LIMITES DE QUANTIFICATION À ATTEINDRE
-![img-8.jpeg](image_9.b64)

@@ -9,9 +9,12 @@
         },
         "header.md": {
           "name": "header.md"
+<<<<<<< HEAD:datasets/snapshots/arretes_ocr/arretes_icpe/0005800425/2003-09-09_arrêté préfectoral_Régularisation fabrication mousse polyuréthane/ocr_document.json
         },
         "footer.md": {
           "name": "footer.md"
+=======
+>>>>>>> b781f51 (cleaning and regeneration of example pages with Mistral OCR 3):examples/arretes_ocr/arretes_icpe/0005804239/2009-12-08_ap d'autorisation_20091208_APpub_UniteRegenerationHuilesUsagees/ocr_document.json
         }
       }
     },
@@ -29,8 +32,8 @@
         "main.md": {
           "name": "main.md"
         },
-        "image_1.b64": {
-          "name": "image_1.b64"
+        "img-0.jpeg": {
+          "name": "img-0.jpeg"
         }
       }
     },
@@ -39,9 +42,6 @@
       "assets": {
         "main.md": {
           "name": "main.md"
-        },
-        "image_2.b64": {
-          "name": "image_2.b64"
         }
       }
     },
@@ -103,6 +103,12 @@
         },
         "header.md": {
           "name": "header.md"
+<<<<<<< HEAD:datasets/snapshots/arretes_ocr/arretes_icpe/0005800425/2003-09-09_arrêté préfectoral_Régularisation fabrication mousse polyuréthane/ocr_document.json
+=======
+        },
+        "tbl-0.html": {
+          "name": "tbl-0.html"
+>>>>>>> b781f51 (cleaning and regeneration of example pages with Mistral OCR 3):examples/arretes_ocr/arretes_icpe/0005804239/2009-12-08_ap d'autorisation_20091208_APpub_UniteRegenerationHuilesUsagees/ocr_document.json
         }
       }
     },
@@ -114,6 +120,12 @@
         },
         "header.md": {
           "name": "header.md"
+<<<<<<< HEAD:datasets/snapshots/arretes_ocr/arretes_icpe/0005800425/2003-09-09_arrêté préfectoral_Régularisation fabrication mousse polyuréthane/ocr_document.json
+=======
+        },
+        "tbl-1.html": {
+          "name": "tbl-1.html"
+>>>>>>> b781f51 (cleaning and regeneration of example pages with Mistral OCR 3):examples/arretes_ocr/arretes_icpe/0005804239/2009-12-08_ap d'autorisation_20091208_APpub_UniteRegenerationHuilesUsagees/ocr_document.json
         }
       }
     },
@@ -134,8 +146,13 @@
         "main.md": {
           "name": "main.md"
         },
+<<<<<<< HEAD:datasets/snapshots/arretes_ocr/arretes_icpe/0005800425/2003-09-09_arrêté préfectoral_Régularisation fabrication mousse polyuréthane/ocr_document.json
         "header.md": {
           "name": "header.md"
+=======
+        "tbl-2.html": {
+          "name": "tbl-2.html"
+>>>>>>> b781f51 (cleaning and regeneration of example pages with Mistral OCR 3):examples/arretes_ocr/arretes_icpe/0005804239/2009-12-08_ap d'autorisation_20091208_APpub_UniteRegenerationHuilesUsagees/ocr_document.json
         }
       }
     },
@@ -147,6 +164,12 @@
         },
         "header.md": {
           "name": "header.md"
+<<<<<<< HEAD:datasets/snapshots/arretes_ocr/arretes_icpe/0005800425/2003-09-09_arrêté préfectoral_Régularisation fabrication mousse polyuréthane/ocr_document.json
+=======
+        },
+        "tbl-3.html": {
+          "name": "tbl-3.html"
+>>>>>>> b781f51 (cleaning and regeneration of example pages with Mistral OCR 3):examples/arretes_ocr/arretes_icpe/0005804239/2009-12-08_ap d'autorisation_20091208_APpub_UniteRegenerationHuilesUsagees/ocr_document.json
         }
       }
     },
@@ -158,6 +181,12 @@
         },
         "header.md": {
           "name": "header.md"
+<<<<<<< HEAD:datasets/snapshots/arretes_ocr/arretes_icpe/0005800425/2003-09-09_arrêté préfectoral_Régularisation fabrication mousse polyuréthane/ocr_document.json
+=======
+        },
+        "tbl-4.html": {
+          "name": "tbl-4.html"
+>>>>>>> b781f51 (cleaning and regeneration of example pages with Mistral OCR 3):examples/arretes_ocr/arretes_icpe/0005804239/2009-12-08_ap d'autorisation_20091208_APpub_UniteRegenerationHuilesUsagees/ocr_document.json
         }
       }
     },
@@ -191,12 +220,15 @@
         },
         "header.md": {
           "name": "header.md"
+<<<<<<< HEAD:datasets/snapshots/arretes_ocr/arretes_icpe/0005800425/2003-09-09_arrêté préfectoral_Régularisation fabrication mousse polyuréthane/ocr_document.json
         },
         "tbl-3.html": {
           "name": "tbl-3.html"
         },
         "tbl-4.html": {
           "name": "tbl-4.html"
+=======
+>>>>>>> b781f51 (cleaning and regeneration of example pages with Mistral OCR 3):examples/arretes_ocr/arretes_icpe/0005804239/2009-12-08_ap d'autorisation_20091208_APpub_UniteRegenerationHuilesUsagees/ocr_document.json
         }
       }
     },
@@ -219,9 +251,12 @@
         },
         "header.md": {
           "name": "header.md"
+<<<<<<< HEAD:datasets/snapshots/arretes_ocr/arretes_icpe/0005800425/2003-09-09_arrêté préfectoral_Régularisation fabrication mousse polyuréthane/ocr_document.json
         },
         "tbl-5.html": {
           "name": "tbl-5.html"
+=======
+>>>>>>> b781f51 (cleaning and regeneration of example pages with Mistral OCR 3):examples/arretes_ocr/arretes_icpe/0005804239/2009-12-08_ap d'autorisation_20091208_APpub_UniteRegenerationHuilesUsagees/ocr_document.json
         }
       }
     },
@@ -231,8 +266,22 @@
         "main.md": {
           "name": "main.md"
         },
+<<<<<<< HEAD:datasets/snapshots/arretes_ocr/arretes_icpe/0005800425/2003-09-09_arrêté préfectoral_Régularisation fabrication mousse polyuréthane/ocr_document.json
         "header.md": {
           "name": "header.md"
+=======
+        "footer.md": {
+          "name": "footer.md"
+        },
+        "tbl-5.html": {
+          "name": "tbl-5.html"
+        },
+        "tbl-6.html": {
+          "name": "tbl-6.html"
+        },
+        "tbl-7.html": {
+          "name": "tbl-7.html"
+>>>>>>> b781f51 (cleaning and regeneration of example pages with Mistral OCR 3):examples/arretes_ocr/arretes_icpe/0005804239/2009-12-08_ap d'autorisation_20091208_APpub_UniteRegenerationHuilesUsagees/ocr_document.json
         }
       }
     },
@@ -244,6 +293,15 @@
         },
         "header.md": {
           "name": "header.md"
+<<<<<<< HEAD:datasets/snapshots/arretes_ocr/arretes_icpe/0005800425/2003-09-09_arrêté préfectoral_Régularisation fabrication mousse polyuréthane/ocr_document.json
+=======
+        },
+        "tbl-8.html": {
+          "name": "tbl-8.html"
+        },
+        "tbl-9.html": {
+          "name": "tbl-9.html"
+>>>>>>> b781f51 (cleaning and regeneration of example pages with Mistral OCR 3):examples/arretes_ocr/arretes_icpe/0005804239/2009-12-08_ap d'autorisation_20091208_APpub_UniteRegenerationHuilesUsagees/ocr_document.json
         }
       }
     },
@@ -266,6 +324,12 @@
         },
         "header.md": {
           "name": "header.md"
+<<<<<<< HEAD:datasets/snapshots/arretes_ocr/arretes_icpe/0005800425/2003-09-09_arrêté préfectoral_Régularisation fabrication mousse polyuréthane/ocr_document.json
+=======
+        },
+        "tbl-10.html": {
+          "name": "tbl-10.html"
+>>>>>>> b781f51 (cleaning and regeneration of example pages with Mistral OCR 3):examples/arretes_ocr/arretes_icpe/0005804239/2009-12-08_ap d'autorisation_20091208_APpub_UniteRegenerationHuilesUsagees/ocr_document.json
         }
       }
     },
@@ -277,6 +341,15 @@
         },
         "header.md": {
           "name": "header.md"
+<<<<<<< HEAD:datasets/snapshots/arretes_ocr/arretes_icpe/0005800425/2003-09-09_arrêté préfectoral_Régularisation fabrication mousse polyuréthane/ocr_document.json
+=======
+        },
+        "tbl-11.html": {
+          "name": "tbl-11.html"
+        },
+        "tbl-12.html": {
+          "name": "tbl-12.html"
+>>>>>>> b781f51 (cleaning and regeneration of example pages with Mistral OCR 3):examples/arretes_ocr/arretes_icpe/0005804239/2009-12-08_ap d'autorisation_20091208_APpub_UniteRegenerationHuilesUsagees/ocr_document.json
         }
       }
     },
@@ -297,8 +370,238 @@
         "main.md": {
           "name": "main.md"
         },
+<<<<<<< HEAD:datasets/snapshots/arretes_ocr/arretes_icpe/0005800425/2003-09-09_arrêté préfectoral_Régularisation fabrication mousse polyuréthane/ocr_document.json
         "header.md": {
           "name": "header.md"
+=======
+        "footer.md": {
+          "name": "footer.md"
+        }
+      }
+    },
+    {
+      "index": 27,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
+        },
+        "header.md": {
+          "name": "header.md"
+        },
+        "tbl-13.html": {
+          "name": "tbl-13.html"
+        },
+        "tbl-14.html": {
+          "name": "tbl-14.html"
+        }
+      }
+    },
+    {
+      "index": 28,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
+        },
+        "header.md": {
+          "name": "header.md"
+        },
+        "tbl-15.html": {
+          "name": "tbl-15.html"
+        }
+      }
+    },
+    {
+      "index": 29,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
+        },
+        "header.md": {
+          "name": "header.md"
+        },
+        "tbl-16.html": {
+          "name": "tbl-16.html"
+        },
+        "tbl-17.html": {
+          "name": "tbl-17.html"
+        }
+      }
+    },
+    {
+      "index": 30,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
+        },
+        "header.md": {
+          "name": "header.md"
+        },
+        "tbl-18.html": {
+          "name": "tbl-18.html"
+        },
+        "tbl-19.html": {
+          "name": "tbl-19.html"
+        },
+        "tbl-20.html": {
+          "name": "tbl-20.html"
+        }
+      }
+    },
+    {
+      "index": 31,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
+        },
+        "header.md": {
+          "name": "header.md"
+        },
+        "tbl-21.html": {
+          "name": "tbl-21.html"
+        },
+        "tbl-22.html": {
+          "name": "tbl-22.html"
+        }
+      }
+    },
+    {
+      "index": 32,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
+        }
+      }
+    },
+    {
+      "index": 33,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
+        },
+        "footer.md": {
+          "name": "footer.md"
+        }
+      }
+    },
+    {
+      "index": 34,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
+        },
+        "header.md": {
+          "name": "header.md"
+        }
+      }
+    },
+    {
+      "index": 35,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
+        }
+      }
+    },
+    {
+      "index": 36,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
+        },
+        "footer.md": {
+          "name": "footer.md"
+        }
+      }
+    },
+    {
+      "index": 37,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
+        }
+      }
+    },
+    {
+      "index": 38,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
+        },
+        "header.md": {
+          "name": "header.md"
+        }
+      }
+    },
+    {
+      "index": 39,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
+        },
+        "footer.md": {
+          "name": "footer.md"
+        }
+      }
+    },
+    {
+      "index": 40,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
+        }
+      }
+    },
+    {
+      "index": 41,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
+        },
+        "header.md": {
+          "name": "header.md"
+        }
+      }
+    },
+    {
+      "index": 42,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
+        }
+      }
+    },
+    {
+      "index": 43,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
+        },
+        "header.md": {
+          "name": "header.md"
+        },
+        "tbl-23.html": {
+          "name": "tbl-23.html"
+        },
+        "tbl-24.html": {
+          "name": "tbl-24.html"
+        },
+        "tbl-25.html": {
+          "name": "tbl-25.html"
+        }
+      }
+    },
+    {
+      "index": 44,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
+        },
+        "footer.md": {
+          "name": "footer.md"
+        },
+        "tbl-26.html": {
+          "name": "tbl-26.html"
+>>>>>>> b781f51 (cleaning and regeneration of example pages with Mistral OCR 3):examples/arretes_ocr/arretes_icpe/0005804239/2009-12-08_ap d'autorisation_20091208_APpub_UniteRegenerationHuilesUsagees/ocr_document.json
         }
       }
     }

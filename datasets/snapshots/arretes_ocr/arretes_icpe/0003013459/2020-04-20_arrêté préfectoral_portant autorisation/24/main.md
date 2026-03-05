@@ -4,10 +4,7 @@ L'importation ou l'exportation de déchets ne peut être réalisée qu'après ac
 
 Les principaux déchets générés par le fonctionnement normal des installations sont limités aux quantités suivantes :
 
-[table_9](table_9.html)
-
-* : Pastérisque signifie que le déchet est dangereux.
-${ }^{(1)}$ dès lors que les caractéristiques chimiques des mâchefers, déterminées par analyses, le permettront. Dans le cas contraire, le niveau de gestion des mâchefers sera l'élimination.
+[tbl-14.html](tbl-14.html)
 
 *: l'astérisque signifie que le déchet est dangereux.
 (1) dès lors que les caractéristiques chimiques des mâchefers, déterminées par analyses, le permettront. Dans le cas contraire, le niveau de gestion des mâchefers sera l'élimination.

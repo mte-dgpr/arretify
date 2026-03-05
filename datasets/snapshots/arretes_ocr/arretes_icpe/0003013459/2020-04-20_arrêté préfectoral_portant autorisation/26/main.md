@@ -26,4 +26,4 @@ L'usage de tout appareil de communication par voie acoustique (sirènes, avertis
 
 Les émissions sonores dues aux activités des installations ne doivent pas engendrer une émergence supérieure aux valeurs admissibles fixées dans le tableau suivant dans les zones à émergence réglementée, définies conformément à l'arrêté du 23 janvier 1997 susmentionné et reprises en annexe du présent arrêté.
 
-[table_10](table_10.html)
+[tbl-15.html](tbl-15.html)

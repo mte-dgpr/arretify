@@ -19,7 +19,7 @@
 import logging
 
 from arretify.semantic_tag_specs import DocumentReferenceSpec, OperationSpec, SectionReferenceSpec
-from arretify.step_segmentation.core import TRANSPARENT_TAG_SPECS
+from arretify.step_segmentation.core import PAGINATION_TAG_SPECS
 from arretify.types import DocumentContext, ProtectedTag
 from arretify.utils.html import ensure_tag_id, is_tag
 from arretify.utils.html_element_ranges import (
@@ -81,7 +81,7 @@ def _find_right_operand(
 
         # We ignore inline tags like page separators and footers
         # and look recursively for the next neighbouring element.
-        elif is_semantic_tag(element, spec_in=TRANSPARENT_TAG_SPECS):
+        elif is_semantic_tag(element, spec_in=PAGINATION_TAG_SPECS):
             return _find_right_operand(document_context, element)
     return None
 
@@ -112,7 +112,7 @@ def _find_left_references(
 
         # We ignore inline tags like page separators and footers
         # and look recursively for the next neighbouring element.
-        elif is_semantic_tag(element, spec_in=TRANSPARENT_TAG_SPECS):
+        elif is_semantic_tag(element, spec_in=PAGINATION_TAG_SPECS):
             return _find_left_references(document_context, element)
 
     if len(reference_tags) == 0:

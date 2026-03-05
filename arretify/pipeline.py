@@ -21,15 +21,9 @@ from typing import Callable, Sequence
 
 from bs4 import BeautifulSoup
 
-from arretify.utils.ocr_document import (
-    OCR_DOCUMENT_JSON_FILE_NAME,
-    OcrDocument,
-    Page,
-    create_asset,
-    load_ocr_document,
-)
+from arretify.utils.ocr_document import OCR_DOCUMENT_JSON_FILE_NAME, load_ocr_document
 
-from .settings import DEFAULT_ARRETE_TEMPLATE, OCR_FILE_EXTENSION
+from .settings import DEFAULT_ARRETE_TEMPLATE
 from .step_segmentation import step_segmentation
 from .types import DocumentContext, SessionContext
 
@@ -68,33 +62,6 @@ def load_pdf_file(
 
 def is_pdf_file(path: Path) -> bool:
     return path.is_file() and path.suffix.lower() == ".pdf"
-
-
-def load_standalone_ocr_file(
-    session_context: SessionContext,
-    input_path: Path,
-    arrete_template: str = DEFAULT_ARRETE_TEMPLATE,
-) -> DocumentContext:
-    """
-    Loads a standalone markdown OCR file (no external assets) and returns a DocumentContext.
-    """
-    if not is_standalone_ocr_file(input_path):
-        raise ValueError(f"Input path {input_path} is not a file.")
-
-    page_ocr = input_path.read_text(encoding="utf-8")
-    page = Page(index=1)
-    create_asset(page, "main.md", page_ocr)
-
-    return DocumentContext.from_session_context(
-        session_context,
-        input_path=input_path,
-        ocr_document=OcrDocument(pages=[page], ocr_model="unknown"),
-        soup=BeautifulSoup(arrete_template, features="html.parser"),
-    )
-
-
-def is_standalone_ocr_file(path: Path) -> bool:
-    return path.is_file() and path.suffix.lower() == OCR_FILE_EXTENSION
 
 
 def load_ocr_files(

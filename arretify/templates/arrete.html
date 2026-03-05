@@ -8,6 +8,11 @@
                 --spacing-1: 1rem;
                 --spacing-0p5: 0.5rem;
                 --spacing-2: 2rem;
+                
+                --page-separator-footer-height: 2em;
+                --page-separator-line-height: 0.5em;
+                --page-separator-header-height: 2em;
+                --page-separator-total-height: calc(var(--page-separator-footer-height) + var(--page-separator-line-height) + var(--page-separator-header-height));
             }
 
             header, main, footer {
@@ -122,46 +127,122 @@
                 background-color: var(--background-action-low-blue-france);
             }
 
-            /**************** visual_page_separator ****************/
-            .visual_page_separator {
+            /**************** Original page_separator takes up space ****************/
+            [data-spec="page_separator"] {
+                display: block;
+                min-height: var(--page-separator-total-height);
+                visibility: hidden;
+            }
+
+            /**************** Hide original page_header and page_footer ****************/
+            [data-spec="page_header"],
+            [data-spec="page_footer"] {
+                display: none;
+            }
+
+            /**************** Page separator groups ****************/
+            .page_separator_group {
                 position: absolute;
                 left: 0;
                 width: 100vw;
-                height: 0.3em;
-                background-color: var(--grey-950-100);
-                z-index: -1;
+                height: var(--page-separator-total-height);
             }
 
-            a.visual_page_separator > span {
-                position: absolute;
+            .page_separator_footer,
+            .page_separator_header {
+                width: 100%;
                 font-size: 75%;
+                color: var(--grey-625-425);
+                background-color: rgba(255, 255, 255, 0.9);
+                padding: 0.25rem 0.5rem;
+                box-sizing: border-box;
+            }
+
+            .page_separator_footer {
+                height: var(--page-separator-footer-height);
+                text-align: right;
+            }
+
+            .page_separator_header {
+                height: var(--page-separator-header-height);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .page_separator_hline {
+                width: 100%;
+                height: var(--page-separator-line-height);
+                background-color: var(--grey-950-100);
+            }
+
+            .page_separator_page_number {
                 color: var(--grey-625-425);
             }
         </style>
         <script>
             window.onload = function() {
                 // Page separators are inline elements, so they can be anywhere in the tree.
-                // To ensure proper layout, we therefore create a separate visual element
-                // for each page separator.
-                const pageSeparators = Array.from(document.querySelectorAll('[data-spec="page_separator"]'))
+                // We create visual page separator containers that include:
+                // - Footer from previous page (above, right)
+                // - Separator line
+                // - Page number (below, left)
+                // - Header from next page (below, right)
                 
-                const refreshPageSeparator = () => {
-                    document.querySelectorAll('.visual_page_separator')
-                        .forEach((visualPageSeparator) => visualPageSeparator.remove())
-                    pageSeparators.slice(1).forEach(function(pageSeparator) {
-                        const boundingBox = pageSeparator.getBoundingClientRect()
-                        const position = getPositionRelativeToDocument(pageSeparator)
-                        const pageIndex = parseInt(pageSeparator.dataset.page_index, 10)
-                        const visualPageSeparator = document.createElement('a')
-                        visualPageSeparator.classList.add('visual_page_separator')
-                        visualPageSeparator.style.top = `${position.top + boundingBox.height}px`
-                        visualPageSeparator.innerHTML = `<span>↓ page ${pageIndex + 1}</span>`
-                        document.body.appendChild(visualPageSeparator)
+                const elements = Array.from(document.querySelectorAll('[data-spec="page_footer"], [data-spec="page_separator"], [data-spec="page_header"]'))
+                
+                const refreshPageSeparators = () => {
+                    // Remove existing page separator groups
+                    document.querySelectorAll('.page_separator_group')
+                        .forEach(el => el.remove())
+                    
+                    // Build list of {separator, header, footer} objects
+                    const separatorData = []
+                    let pendingFooter = null
+                    
+                    elements.forEach(element => {
+                        if (element.dataset.spec === 'page_footer') {
+                            pendingFooter = element
+                        } else if (element.dataset.spec === 'page_separator') {
+                            separatorData.push({
+                                separator: element,
+                                footer: pendingFooter,
+                                header: null
+                            })
+                            pendingFooter = null
+                        } else if (element.dataset.spec === 'page_header') {
+                            const lastSeparator = separatorData[separatorData.length - 1]
+                            if (lastSeparator) {
+                                lastSeparator.header = element
+                            }
+                            pendingFooter = null
+                        }
+                    })
+                    
+                    // Create a group container for each separator trio
+                    separatorData.forEach(data => {
+                        const pageIndex = parseInt(data.separator.dataset.page_index, 10)
+                        const position = getPositionRelativeToDocument(data.separator)
+                        
+                        // Create page separator group with fixed layout
+                        const group = document.createElement('div')
+                        group.classList.add('page_separator_group')
+                        group.style.top = `${position.top}px`
+                        group.innerHTML = `
+                            <div class="page_separator_footer">${data.footer ? data.footer.innerHTML : ''}</div>
+                            <div class="page_separator_hline"></div>
+                            <div class="page_separator_header">
+                                <span class="page_separator_page_number">↓ page ${pageIndex + 1}</span>
+                                <span>${data.header ? data.header.innerHTML : ''}</span>
+                            </div>
+                        `
+                        
+                        document.body.appendChild(group)
                     })
                 }
 
-                refreshPageSeparator()
-                window.addEventListener('resize', refreshPageSeparator)
+                refreshPageSeparators()
+                window.addEventListener('resize', refreshPageSeparators)
             }
 
             const getPositionRelativeToDocument = (el) => {

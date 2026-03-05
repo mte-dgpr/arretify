@@ -26,8 +26,8 @@
         "main.md": {
           "name": "main.md"
         },
-        "image_1.b64": {
-          "name": "image_1.b64"
+        "img-0.jpeg": {
+          "name": "img-0.jpeg"
         }
       }
     },
@@ -54,8 +54,13 @@
         "main.md": {
           "name": "main.md"
         },
+<<<<<<< HEAD:datasets/snapshots/arretes_ocr/arretes_icpe/0005804239/2023-12-04_ap prescriptions complémentaires_AP du 04.12.2023_OSILUB à Gonfreville-l'Orcher/ocr_document.json
         "tbl-2.html": {
           "name": "tbl-2.html"
+=======
+        "header.md": {
+          "name": "header.md"
+>>>>>>> b781f51 (cleaning and regeneration of example pages with Mistral OCR 3):examples/arretes_ocr/arretes_icpe/0005804239/2012-04-02_arrêté préfectoral_Prescriptions complémentaires-Détention d'une source scellée/ocr_document.json
         }
       }
     },
@@ -65,8 +70,13 @@
         "main.md": {
           "name": "main.md"
         },
+<<<<<<< HEAD:datasets/snapshots/arretes_ocr/arretes_icpe/0005804239/2023-12-04_ap prescriptions complémentaires_AP du 04.12.2023_OSILUB à Gonfreville-l'Orcher/ocr_document.json
         "tbl-3.html": {
           "name": "tbl-3.html"
+=======
+        "header.md": {
+          "name": "header.md"
+>>>>>>> b781f51 (cleaning and regeneration of example pages with Mistral OCR 3):examples/arretes_ocr/arretes_icpe/0005804239/2012-04-02_arrêté préfectoral_Prescriptions complémentaires-Détention d'une source scellée/ocr_document.json
         }
       }
     },
@@ -75,6 +85,9 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+        },
+        "header.md": {
+          "name": "header.md"
         }
       }
     },
@@ -91,6 +104,9 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+        },
+        "header.md": {
+          "name": "header.md"
         }
       }
     },
@@ -100,11 +116,14 @@
         "main.md": {
           "name": "main.md"
         },
-        "image_3.b64": {
-          "name": "image_3.b64"
+        "header.md": {
+          "name": "header.md"
         },
-        "image_2.b64": {
-          "name": "image_2.b64"
+        "img-1.jpeg": {
+          "name": "img-1.jpeg"
+        },
+        "img-2.jpeg": {
+          "name": "img-2.jpeg"
         }
       }
     },
@@ -114,8 +133,14 @@
         "main.md": {
           "name": "main.md"
         },
-        "image_4.b64": {
-          "name": "image_4.b64"
+        "header.md": {
+          "name": "header.md"
+        },
+        "img-3.jpeg": {
+          "name": "img-3.jpeg"
+        },
+        "img-4.jpeg": {
+          "name": "img-4.jpeg"
         }
       }
     }

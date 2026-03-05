@@ -18,8 +18,13 @@
         "main.md": {
           "name": "main.md"
         },
+<<<<<<< HEAD:datasets/snapshots/arretes_ocr/arrete_sentiers_randonnee/ocr_document.json
         "footer.md": {
           "name": "footer.md"
+=======
+        "header.md": {
+          "name": "header.md"
+>>>>>>> b781f51 (cleaning and regeneration of example pages with Mistral OCR 3):examples/arretes_ocr/arretes_icpe/0005804239/2024-09-27_ap prescriptions complémentaires_Arrêté complémentaire relatif au projet de réutilisation des eaux usées/ocr_document.json
         }
       }
     },
@@ -29,8 +34,13 @@
         "main.md": {
           "name": "main.md"
         },
+<<<<<<< HEAD:datasets/snapshots/arretes_ocr/arrete_sentiers_randonnee/ocr_document.json
         "footer.md": {
           "name": "footer.md"
+=======
+        "img-0.jpeg": {
+          "name": "img-0.jpeg"
+>>>>>>> b781f51 (cleaning and regeneration of example pages with Mistral OCR 3):examples/arretes_ocr/arretes_icpe/0005804239/2024-09-27_ap prescriptions complémentaires_Arrêté complémentaire relatif au projet de réutilisation des eaux usées/ocr_document.json
         }
       }
     },
@@ -40,11 +50,30 @@
         "main.md": {
           "name": "main.md"
         },
+<<<<<<< HEAD:datasets/snapshots/arretes_ocr/arrete_sentiers_randonnee/ocr_document.json
         "footer.md": {
           "name": "footer.md"
         },
         "img-0.jpeg": {
           "name": "img-0.jpeg"
+=======
+        "header.md": {
+          "name": "header.md"
+        },
+        "tbl-0.html": {
+          "name": "tbl-0.html"
+        }
+      }
+    },
+    {
+      "index": 5,
+      "assets": {
+        "main.md": {
+          "name": "main.md"
+        },
+        "tbl-1.html": {
+          "name": "tbl-1.html"
+>>>>>>> b781f51 (cleaning and regeneration of example pages with Mistral OCR 3):examples/arretes_ocr/arretes_icpe/0005804239/2024-09-27_ap prescriptions complémentaires_Arrêté complémentaire relatif au projet de réutilisation des eaux usées/ocr_document.json
         }
       }
     }

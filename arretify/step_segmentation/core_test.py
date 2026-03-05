@@ -18,7 +18,13 @@
 #
 
 from arretify.regex_utils import PatternProxy
-from arretify.semantic_tag_specs import AddressSpec, PageSeparatorData, PageSeparatorSpec
+from arretify.semantic_tag_specs import (
+    AddressSpec,
+    PageFooterSpec,
+    PageHeaderSpec,
+    PageSeparatorData,
+    PageSeparatorSpec,
+)
 from arretify.utils.html_semantic import Contents, create_semantic_tag_spec_no_data
 
 from .core import (
@@ -29,6 +35,7 @@ from .core import (
     make_probe_from_pattern_proxy,
     make_recombine_interrupted_lines_splitter,
     make_while_splitter_for_text_spans,
+    pick_pagination_tags_followed_by_match,
     pick_str,
     pick_text_spans,
 )
@@ -252,6 +259,61 @@ class TestPickStr(BaseTestCaseSegmentation):
         assert probe(elements, 2) is True
 
 
+class TestPickPaginationTagsFollowedByMatch(BaseTestCaseSegmentation):
+
+    def test_multiple_pagination_tags_followed_by_match(self):
+        # Arrange
+        def is_string(elements, index):
+            return isinstance(elements[index], str)
+
+        probe = pick_pagination_tags_followed_by_match(is_string)
+        elements = [
+            "Hello",
+            self.make_semantic_tag(PageSeparatorSpec, data=PageSeparatorData(page_index=1)),
+            self.make_semantic_tag(PageHeaderSpec, contents=[]),
+            self.make_semantic_tag(PageSeparatorSpec, data=PageSeparatorData(page_index=2)),
+            "World",
+            self.make_semantic_tag(PageSeparatorSpec, data=PageSeparatorData(page_index=3)),
+            self.make_tag("some-other-tag"),
+        ]
+
+        # Act & Assert
+        # Non-pagination element: directly calls is_string
+        assert probe(elements, 0) is True
+
+        # PageSeparatorSpec followed by PageHeaderSpec and then "World" -> looks ahead to "World"
+        assert probe(elements, 1) is True
+
+        # PageHeaderSpec followed by PageSeparatorSpec and then "World" -> looks ahead to "World"
+        assert probe(elements, 2) is True
+
+        # PageSeparatorSpec followed by "World" -> looks ahead to "World"
+        assert probe(elements, 3) is True
+
+        # String element: directly calls is_string
+        assert probe(elements, 4) is True
+
+        # PageSeparatorSpec followed by a non-string tag -> looks ahead to non-string tag
+        assert probe(elements, 5) is False
+
+    def test_pagination_tags_at_end_returns_false(self):
+        # Arrange
+        def is_string(elements, index):
+            return isinstance(elements[index], str)
+
+        probe = pick_pagination_tags_followed_by_match(is_string)
+        elements = [
+            "Hello",
+            self.make_semantic_tag(PageSeparatorSpec, data=PageSeparatorData(page_index=1)),
+            self.make_semantic_tag(PageHeaderSpec, contents=[]),
+        ]
+
+        # Act & Assert
+        # Pagination tags at the end with no following element
+        assert probe(elements, 1) is False
+        assert probe(elements, 2) is False
+
+
 class TestMakeRecombineInterruptedLinesSplitter(BaseTestCaseSegmentation):
 
     def test_multiple_lines_and_page_separators(self):
@@ -264,6 +326,8 @@ class TestMakeRecombineInterruptedLinesSplitter(BaseTestCaseSegmentation):
                 " that continues ",
             ),
             self.make_semantic_tag(PageSeparatorSpec, data=PageSeparatorData(page_index=2)),
+            self.make_semantic_tag(PageHeaderSpec),
+            self.make_semantic_tag(PageFooterSpec),
             self.make_semantic_tag(PageSeparatorSpec, data=PageSeparatorData(page_index=3)),
             *self.make_text_spans(
                 " and continues again.",
@@ -286,6 +350,8 @@ class TestMakeRecombineInterruptedLinesSplitter(BaseTestCaseSegmentation):
                     " that continues ",
                 ),
                 self.make_semantic_tag(PageSeparatorSpec, data=PageSeparatorData(page_index=2)),
+                self.make_semantic_tag(PageHeaderSpec),
+                self.make_semantic_tag(PageFooterSpec),
                 self.make_semantic_tag(PageSeparatorSpec, data=PageSeparatorData(page_index=3)),
                 *self.make_text_spans(
                     " and continues again.",

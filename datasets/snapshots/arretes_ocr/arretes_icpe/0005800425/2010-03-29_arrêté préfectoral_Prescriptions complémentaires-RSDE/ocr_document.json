@@ -7,8 +7,13 @@
         "main.md": {
           "name": "main.md"
         },
+<<<<<<< HEAD:datasets/snapshots/arretes_ocr/arretes_icpe/0005800425/2010-03-29_arrêté préfectoral_Prescriptions complémentaires-RSDE/ocr_document.json
         "image_1.b64": {
           "name": "image_1.b64"
+=======
+        "header.md": {
+          "name": "header.md"
+>>>>>>> b781f51 (cleaning and regeneration of example pages with Mistral OCR 3):examples/arretes_ocr/arretes_icpe/0003013459/2021-09-24_arrêté préfectoral_Nouveau document/ocr_document.json
         }
       }
     },
@@ -48,8 +53,8 @@
         "main.md": {
           "name": "main.md"
         },
-        "table_1.html": {
-          "name": "table_1.html"
+        "tbl-0.html": {
+          "name": "tbl-0.html"
         }
       }
     },
@@ -59,8 +64,11 @@
         "main.md": {
           "name": "main.md"
         },
-        "table_2.html": {
-          "name": "table_2.html"
+        "header.md": {
+          "name": "header.md"
+        },
+        "tbl-1.html": {
+          "name": "tbl-1.html"
         }
       }
     },
@@ -103,8 +111,13 @@
         "main.md": {
           "name": "main.md"
         },
+<<<<<<< HEAD:datasets/snapshots/arretes_ocr/arretes_icpe/0005800425/2010-03-29_arrêté préfectoral_Prescriptions complémentaires-RSDE/ocr_document.json
         "tbl-5.html": {
           "name": "tbl-5.html"
+=======
+        "header.md": {
+          "name": "header.md"
+>>>>>>> b781f51 (cleaning and regeneration of example pages with Mistral OCR 3):examples/arretes_ocr/arretes_icpe/0003013459/2021-09-24_arrêté préfectoral_Nouveau document/ocr_document.json
         }
       }
     },
@@ -122,11 +135,16 @@
         "main.md": {
           "name": "main.md"
         },
+<<<<<<< HEAD:datasets/snapshots/arretes_ocr/arretes_icpe/0005800425/2010-03-29_arrêté préfectoral_Prescriptions complémentaires-RSDE/ocr_document.json
         "tbl-6.html": {
           "name": "tbl-6.html"
         },
         "tbl-7.html": {
           "name": "tbl-7.html"
+=======
+        "footer.md": {
+          "name": "footer.md"
+>>>>>>> b781f51 (cleaning and regeneration of example pages with Mistral OCR 3):examples/arretes_ocr/arretes_icpe/0003013459/2021-09-24_arrêté préfectoral_Nouveau document/ocr_document.json
         }
       }
     },
@@ -135,6 +153,9 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+        },
+        "header.md": {
+          "name": "header.md"
         }
       }
     },
@@ -143,6 +164,9 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+        },
+        "header.md": {
+          "name": "header.md"
         }
       }
     },
@@ -152,8 +176,11 @@
         "main.md": {
           "name": "main.md"
         },
-        "table_3.html": {
-          "name": "table_3.html"
+        "header.md": {
+          "name": "header.md"
+        },
+        "tbl-2.html": {
+          "name": "tbl-2.html"
         }
       }
     },
@@ -163,8 +190,8 @@
         "main.md": {
           "name": "main.md"
         },
-        "table_4.html": {
-          "name": "table_4.html"
+        "tbl-3.html": {
+          "name": "tbl-3.html"
         }
       }
     },
@@ -173,6 +200,9 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+        },
+        "footer.md": {
+          "name": "footer.md"
         }
       }
     },
@@ -181,6 +211,9 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+        },
+        "footer.md": {
+          "name": "footer.md"
         }
       }
     },
@@ -189,6 +222,12 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+        },
+        "tbl-4.html": {
+          "name": "tbl-4.html"
+        },
+        "tbl-5.html": {
+          "name": "tbl-5.html"
         }
       }
     },
@@ -198,8 +237,8 @@
         "main.md": {
           "name": "main.md"
         },
-        "table_5.html": {
-          "name": "table_5.html"
+        "tbl-6.html": {
+          "name": "tbl-6.html"
         }
       }
     },
@@ -223,8 +262,11 @@
         "main.md": {
           "name": "main.md"
         },
-        "table_6.html": {
-          "name": "table_6.html"
+        "header.md": {
+          "name": "header.md"
+        },
+        "tbl-7.html": {
+          "name": "tbl-7.html"
         }
       }
     },
@@ -236,9 +278,12 @@
         },
         "header.md": {
           "name": "header.md"
+<<<<<<< HEAD:datasets/snapshots/arretes_ocr/arretes_icpe/0005800425/2010-03-29_arrêté préfectoral_Prescriptions complémentaires-RSDE/ocr_document.json
         },
         "tbl-11.html": {
           "name": "tbl-11.html"
+=======
+>>>>>>> b781f51 (cleaning and regeneration of example pages with Mistral OCR 3):examples/arretes_ocr/arretes_icpe/0003013459/2021-09-24_arrêté préfectoral_Nouveau document/ocr_document.json
         }
       }
     },
@@ -250,9 +295,12 @@
         },
         "header.md": {
           "name": "header.md"
+<<<<<<< HEAD:datasets/snapshots/arretes_ocr/arretes_icpe/0005800425/2010-03-29_arrêté préfectoral_Prescriptions complémentaires-RSDE/ocr_document.json
         },
         "tbl-12.html": {
           "name": "tbl-12.html"
+=======
+>>>>>>> b781f51 (cleaning and regeneration of example pages with Mistral OCR 3):examples/arretes_ocr/arretes_icpe/0003013459/2021-09-24_arrêté préfectoral_Nouveau document/ocr_document.json
         }
       }
     },
@@ -262,11 +310,19 @@
         "main.md": {
           "name": "main.md"
         },
+<<<<<<< HEAD:datasets/snapshots/arretes_ocr/arretes_icpe/0005800425/2010-03-29_arrêté préfectoral_Prescriptions complémentaires-RSDE/ocr_document.json
         "header.md": {
           "name": "header.md"
         },
         "tbl-13.html": {
           "name": "tbl-13.html"
+=======
+        "tbl-8.html": {
+          "name": "tbl-8.html"
+        },
+        "tbl-9.html": {
+          "name": "tbl-9.html"
+>>>>>>> b781f51 (cleaning and regeneration of example pages with Mistral OCR 3):examples/arretes_ocr/arretes_icpe/0003013459/2021-09-24_arrêté préfectoral_Nouveau document/ocr_document.json
         }
       }
     },
@@ -290,8 +346,19 @@
         "main.md": {
           "name": "main.md"
         },
+<<<<<<< HEAD:datasets/snapshots/arretes_ocr/arretes_icpe/0005800425/2010-03-29_arrêté préfectoral_Prescriptions complémentaires-RSDE/ocr_document.json
         "tbl-15.html": {
           "name": "tbl-15.html"
+=======
+        "header.md": {
+          "name": "header.md"
+        },
+        "tbl-10.html": {
+          "name": "tbl-10.html"
+        },
+        "tbl-11.html": {
+          "name": "tbl-11.html"
+>>>>>>> b781f51 (cleaning and regeneration of example pages with Mistral OCR 3):examples/arretes_ocr/arretes_icpe/0003013459/2021-09-24_arrêté préfectoral_Nouveau document/ocr_document.json
         }
       }
     },
@@ -301,11 +368,16 @@
         "main.md": {
           "name": "main.md"
         },
+<<<<<<< HEAD:datasets/snapshots/arretes_ocr/arretes_icpe/0005800425/2010-03-29_arrêté préfectoral_Prescriptions complémentaires-RSDE/ocr_document.json
         "header.md": {
           "name": "header.md"
         },
         "tbl-16.html": {
           "name": "tbl-16.html"
+=======
+        "footer.md": {
+          "name": "footer.md"
+>>>>>>> b781f51 (cleaning and regeneration of example pages with Mistral OCR 3):examples/arretes_ocr/arretes_icpe/0003013459/2021-09-24_arrêté préfectoral_Nouveau document/ocr_document.json
         }
       }
     },
@@ -315,8 +387,13 @@
         "main.md": {
           "name": "main.md"
         },
+<<<<<<< HEAD:datasets/snapshots/arretes_ocr/arretes_icpe/0005800425/2010-03-29_arrêté préfectoral_Prescriptions complémentaires-RSDE/ocr_document.json
         "tbl-17.html": {
           "name": "tbl-17.html"
+=======
+        "header.md": {
+          "name": "header.md"
+>>>>>>> b781f51 (cleaning and regeneration of example pages with Mistral OCR 3):examples/arretes_ocr/arretes_icpe/0003013459/2021-09-24_arrêté préfectoral_Nouveau document/ocr_document.json
         }
       }
     },
@@ -326,8 +403,8 @@
         "main.md": {
           "name": "main.md"
         },
-        "table_7.html": {
-          "name": "table_7.html"
+        "tbl-12.html": {
+          "name": "tbl-12.html"
         }
       }
     },
@@ -353,9 +430,12 @@
         },
         "header.md": {
           "name": "header.md"
+<<<<<<< HEAD:datasets/snapshots/arretes_ocr/arretes_icpe/0005800425/2010-03-29_arrêté préfectoral_Prescriptions complémentaires-RSDE/ocr_document.json
         },
         "tbl-20.html": {
           "name": "tbl-20.html"
+=======
+>>>>>>> b781f51 (cleaning and regeneration of example pages with Mistral OCR 3):examples/arretes_ocr/arretes_icpe/0003013459/2021-09-24_arrêté préfectoral_Nouveau document/ocr_document.json
         }
       }
     },
@@ -364,6 +444,15 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+        },
+        "header.md": {
+          "name": "header.md"
+        },
+        "tbl-13.html": {
+          "name": "tbl-13.html"
+        },
+        "tbl-14.html": {
+          "name": "tbl-14.html"
         }
       }
     },
@@ -372,6 +461,9 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+        },
+        "header.md": {
+          "name": "header.md"
         }
       }
     },
@@ -380,6 +472,9 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+        },
+        "header.md": {
+          "name": "header.md"
         }
       }
     },
@@ -388,6 +483,9 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+        },
+        "header.md": {
+          "name": "header.md"
         }
       }
     },
@@ -396,6 +494,9 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+        },
+        "footer.md": {
+          "name": "footer.md"
         }
       }
     },
@@ -404,6 +505,9 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+        },
+        "header.md": {
+          "name": "header.md"
         }
       }
     },
@@ -412,6 +516,9 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+        },
+        "header.md": {
+          "name": "header.md"
         }
       }
     },
@@ -420,6 +527,9 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+        },
+        "footer.md": {
+          "name": "footer.md"
         }
       }
     },
@@ -428,6 +538,9 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+        },
+        "header.md": {
+          "name": "header.md"
         }
       }
     },
@@ -453,8 +566,8 @@
         "main.md": {
           "name": "main.md"
         },
-        "table_8.html": {
-          "name": "table_8.html"
+        "tbl-15.html": {
+          "name": "tbl-15.html"
         }
       }
     },
@@ -463,6 +576,9 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+        },
+        "footer.md": {
+          "name": "footer.md"
         }
       }
     },
@@ -479,6 +595,9 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+        },
+        "header.md": {
+          "name": "header.md"
         }
       }
     },
@@ -487,6 +606,9 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+        },
+        "header.md": {
+          "name": "header.md"
         }
       }
     },
@@ -496,11 +618,16 @@
         "main.md": {
           "name": "main.md"
         },
+<<<<<<< HEAD:datasets/snapshots/arretes_ocr/arretes_icpe/0005800425/2010-03-29_arrêté préfectoral_Prescriptions complémentaires-RSDE/ocr_document.json
         "image_3.b64": {
           "name": "image_3.b64"
         },
         "image_2.b64": {
           "name": "image_2.b64"
+=======
+        "footer.md": {
+          "name": "footer.md"
+>>>>>>> b781f51 (cleaning and regeneration of example pages with Mistral OCR 3):examples/arretes_ocr/arretes_icpe/0003013459/2021-09-24_arrêté préfectoral_Nouveau document/ocr_document.json
         }
       }
     },
@@ -510,8 +637,8 @@
         "main.md": {
           "name": "main.md"
         },
-        "table_9.html": {
-          "name": "table_9.html"
+        "tbl-16.html": {
+          "name": "tbl-16.html"
         }
       }
     },
@@ -520,6 +647,18 @@
       "assets": {
         "main.md": {
           "name": "main.md"
+        },
+        "header.md": {
+          "name": "header.md"
+        },
+        "tbl-17.html": {
+          "name": "tbl-17.html"
+        },
+        "tbl-18.html": {
+          "name": "tbl-18.html"
+        },
+        "tbl-19.html": {
+          "name": "tbl-19.html"
         }
       }
     },
@@ -529,8 +668,11 @@
         "main.md": {
           "name": "main.md"
         },
-        "table_10.html": {
-          "name": "table_10.html"
+        "header.md": {
+          "name": "header.md"
+        },
+        "tbl-20.html": {
+          "name": "tbl-20.html"
         }
       }
     },
@@ -540,8 +682,8 @@
         "main.md": {
           "name": "main.md"
         },
-        "table_11.html": {
-          "name": "table_11.html"
+        "tbl-21.html": {
+          "name": "tbl-21.html"
         }
       }
     },
@@ -567,8 +709,8 @@
         "main.md": {
           "name": "main.md"
         },
-        "table_12.html": {
-          "name": "table_12.html"
+        "tbl-22.html": {
+          "name": "tbl-22.html"
         }
       }
     },
@@ -586,8 +728,8 @@
         "main.md": {
           "name": "main.md"
         },
-        "table_13.html": {
-          "name": "table_13.html"
+        "header.md": {
+          "name": "header.md"
         }
       }
     }
