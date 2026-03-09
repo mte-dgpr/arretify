@@ -29,12 +29,12 @@ from .mistral_ocr import mistral_ocr
 _LOGGER = logging.getLogger(__name__)
 # Sentinel value, used to check that the kwarg `ocr_document_dir`
 # is not provided by the user.
-_OCR_PAGES_DIR_SENTINEL = Sentinel("ocr_document_dir")
+_OCR_DOCUMENT_DIR_SENTINEL = Sentinel("ocr_document_dir")
 
 
 def step_ocr(
     document_context: DocumentContext,
-    ocr_document_dir: Path | None | Sentinel = _OCR_PAGES_DIR_SENTINEL,
+    ocr_document_dir: Path | None | Sentinel = _OCR_DOCUMENT_DIR_SENTINEL,
 ) -> DocumentContext:
     if not document_context.pdf:
         raise ValueError("Parsing context does not contain a PDF file")
@@ -42,7 +42,7 @@ def step_ocr(
     # Default factory for OCR document directory
     # Varies depending on the environment.
     ocr_document_dir_: Path | None
-    if ocr_document_dir is _OCR_PAGES_DIR_SENTINEL:
+    if ocr_document_dir is _OCR_DOCUMENT_DIR_SENTINEL:
         # In development, by default store document in tmp directory configured in settings.
         if document_context.settings.env == "development":
             ocr_document_dir_ = get_tmp_ocr_document_dir(document_context)
