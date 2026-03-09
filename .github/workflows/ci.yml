@@ -42,7 +42,7 @@ jobs:
         run: |
           python --version
           pip install --upgrade pip
-          pip install .[dev,quality_evaluations]
+          pip install .[dev,quality_evaluation]
           python -m spacy download fr_dep_news_trf
 
       - name: Run unit tests
