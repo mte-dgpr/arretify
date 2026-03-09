@@ -55,7 +55,20 @@
         "(2012-05-31,  relatif aux modalités de détermination et d'actualisation du montant des garanties financières pour la mise en)": "JORFTEXT000026052372",
         "(2012-05-31,  susvisé et qu'elle est considérée comme existante au sens de ce même arrété)": null,
         "(2012-05-31,  susvisé et qu'elle est considérée comme existante au sens de ce même arrêté,)": null,
-        "(2018-08-03,  relatif aux installations de combustion d'une puissance thermique nominale totale inférieure à 50 MW soumises à)": "JORFTEXT000037284792"
+        "(2018-08-03,  relatif aux installations de combustion d'une puissance thermique nominale totale inférieure à 50 MW soumises à)": "JORFTEXT000037284792",
+        "(2016-05-23,  relatif aux installations de production de chaleur et/ou d’électricité à partir de déchets non dangereux préparés)": "JORFTEXT000032575814",
+        "(2002-09-20,  relatif aux installations d’incinération et de co-incinération de déchets non dangereux et aux installations incinérant des)": "JORFTEXT000000234557",
+        "(1998-02-02, , notamment par l’)": null,
+        "(2017-08-24,  relatif aux prélèvements et à la consommation d’eau ainsi qu’aux émissions de toute nature des installations)": null,
+        "(1998-12-23,  relatif aux prescriptions générales applicables aux installations classées pour la protection de l’environnement soumises à déclaration)": "JORFTEXT000000392482",
+        "(2016-05-23,  qui précise notamment : la liste des paramètres analytiques, les fréquences d'analyse, les modalités de prélèvement)": null,
+        "(2007-05-07,  relatif au contrôle d’étanchéité des éléments assurant le confinement des fluides frigorigènes utilisés dans les équipements)": "JORFTEXT000000820657",
+        "(2005-06-30,  relatif au programme national d’action contre la pollution des milieux aquatiques par certaines substances dangereuses)": null,
+        "(2010-01-25,  relatif aux méthodes et critères d’évaluation de l’état écologique, de l’état chimique et du potentiel écologique)": "JORFTEXT000021865356",
+        "(1998-02-02,  ou présentant une phase de risque R45 (dont le benzène), R46, R49, R60 ou R61 ou)": null,
+        "(2012-05-31,  susvisé et qu'elle est considérée comme existante au sens de ce même arrêté)": null,
+        "(2012-05-31,  fixant la liste des installations soumises à l'obligation de constitution de garanties financières)": "JORFTEXT000026052400",
+        "(2018-08-03,  relatif aux installations de combustion d’une puissance thermique nominale totale inférieure à 50 MW soumises à)": "JORFTEXT000037284792"
     },
     "get_eu_act_url_with_year_and_num": {
         "(directive, 2010, 75)": "https://eur-lex.europa.eu/legal-content/FR/TXT/HTML/?uri=cellar:c7191b72-4e07-4712-86d6-d3ae5e4f0082",
@@ -110,7 +123,18 @@
         "(2005-05-30, title= relatif au contrôle des circuits de traitement des déchets et concernant les déchets dangereux et les, num=2005-635)": "JORFTEXT000000257088",
         "(2024-10-31, title= du Président de la République nommant Monsieur Charles GIUSTI, préfet de l'Eure,, num=None)": null,
         "(2024-02-14, title= du Président de la République nommant Monsieur Alaric MALVES, secrétaire général de la préfecture de l'Eure,, num=None)": null,
-        "(2001-07-05, title=None, num=2001-592)": "JORFTEXT000000406806"
+        "(2001-07-05, title=None, num=2001-592)": "JORFTEXT000000406806",
+        "(2024-05-21, title= portant nomination de Mme Christelle RATIGNIER CARBONNEIL en qualité que Directrice Générale de l'Agence Régionale de, num=None)": null,
+        "(2004-04-29, title= modifié relatif aux pouvoirs des préfets, à l’organisation et à l’action des services de l’État dans, num=2004-374)": "JORFTEXT000000249712",
+        "(2024-11-29, title= portant nomination de Monsieur Vincent BERNARD-LAFOUCCRIÈRE en qualité de sous-préfet, directeur de cabinet du préfet de, num=None)": null,
+        "(2005-04-20, title= relatif au programme national d’action contre la pollution des milieux aquatiques par certaines substances dangereuses, num=None)": "JORFTEXT000000259598",
+        "(1996-11-19, title=, relatif aux appareils et aux systèmes de protection destinés à être utilisés en atmosphère explosible, num=96-1110)": "JORFTEXT000000196772",
+        "(1977-09-21, title= modifié, relatif aux installations classées pour la protection de l’environnement,, num=77-1133)": "JORFTEXT000000518520",
+        "(1977-09-21, title= modifié pris pour l’application de la loi 76-663 du 19 juillet 1976 relative aux installations classées, num=77-1133)": "JORFTEXT000000518520",
+        "(2024-10-31, title= du Président de la République nommant Monsieur Charles GIUSTI, préfet de l’Eure,, num=None)": null,
+        "(2024-02-14, title= du Président de la République nommant Monsieur Alaric MALVES, secrétaire général de la préfecture de l’Eure,, num=None)": null,
+        "(2005-05-30, title= relatif au contrôle des circuits de traitement des déchets et le formulaire du bordereau de suivi, num=2005-635)": "JORFTEXT000000257088",
+        "(2005-09-13, title=None, num=2005-1158)": "JORFTEXT000000786335"
     },
     "get_circulaire_legifrance_id": {
         "(1986-07-23,  relative aux vibrations mécaniques émises dans l'environnement par les installations classées sont applicables)": null,
@@ -131,6 +155,11 @@
         "(2007-05-07, ) et de la directive fitte de la DCE adoptée le 20 octobre 2008 (anthracène et)": null,
         "(2005-09-29,  relative aux critères d'appréciation de la démarche de maîtrise des risques d'accidents susceptibles de survenir dans)": null,
         "(2010-05-10,  récapitulant les règles méthodologiques applicables aux études de dangers, à l'appropriation de la démarche de réduction)": null,
-        "(2007-05-07, ) et de la directive flle de la DCE adoptée le 20 octobre 2008 (anthracene et)": null
+        "(2007-05-07, ) et de la directive flle de la DCE adoptée le 20 octobre 2008 (anthracene et)": null,
+        "(1951-12-10,  avec une plate-forme d'accès et de pompage pour les services de secours et d'incendie avant le)": null,
+        "(2007-05-07,  définissant les « normes de qualité environnementale provisoires (NQEp) » et les objectifs nationaux de réduction)": null,
+        "(2009-01-05,  et téléchargeable sur le site http://rsde)": null,
+        "(2010-05-10,  récapitulant les règles méthodologiques applicables aux études de dangers, à l'appréciation de la démarche de réduction)": null,
+        "(2007-01-31,  relative aux Études de dangers des dépôts de liquides inflammables – compléments à l'instruction technique du)": null
     }
 }
