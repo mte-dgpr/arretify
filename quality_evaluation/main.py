@@ -163,7 +163,6 @@ def create_run(experiment: Experiment) -> tuple[Run, Run | None]:
     new_run = Run(
         id=baseline_run.id + 1 if baseline_run else 1,
         date=Date.today(),
-        baseline_id=baseline_run.id if baseline_run else None,
         git_hash=_get_git_hash(),
         metrics_by_file={},
     )

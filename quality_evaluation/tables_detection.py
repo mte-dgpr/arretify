@@ -25,7 +25,6 @@ from pydantic import BaseModel
 
 from arretify.semantic_tag_specs import PageSeparatorSpec
 from arretify.types import DocumentContext
-from arretify.utils.html import is_tag
 from arretify.utils.html_semantic import get_semantic_tag_data, is_semantic_tag
 from quality_evaluation.types import ComputeMetricsResult
 
@@ -141,7 +140,7 @@ def _process_tables(tables_data: TablesData) -> tuple[HtmlStr, HtmlStr]:
         for table_html in tables_data.tables_by_page[page]:
             soup = BeautifulSoup(table_html, "html.parser")
             table_tag = soup.find("table")
-            if not is_tag(table_tag):
+            if not isinstance(table_tag, Tag):
                 raise ValueError("Expected a single <table> tag in the HTML string.")
 
             normalized_table = _normalize_table_tag(table_tag)
