@@ -9,12 +9,6 @@
         },
         "header.md": {
           "name": "header.md"
-<<<<<<< HEAD:datasets/snapshots/arretes_ocr/arretes_icpe/0005804239/2009-12-08_ap d'autorisation_20091208_APpub_UniteRegenerationHuilesUsagees/ocr_document.json
-=======
-        },
-        "footer.md": {
-          "name": "footer.md"
->>>>>>> b781f51 (cleaning and regeneration of example pages with Mistral OCR 3):examples/arretes_ocr/arretes_icpe/0005302394/2008-12-10_arrêté préfectoral_AP d'autorisation/ocr_document.json
         }
       }
     },
@@ -31,15 +25,6 @@
       "assets": {
         "main.md": {
           "name": "main.md"
-        },
-        "header.md": {
-          "name": "header.md"
-        },
-        "tbl-0.html": {
-          "name": "tbl-0.html"
-        },
-        "tbl-1.html": {
-          "name": "tbl-1.html"
         }
       }
     },
@@ -49,8 +34,8 @@
         "main.md": {
           "name": "main.md"
         },
-        "tbl-2.html": {
-          "name": "tbl-2.html"
+        "img-0.jpeg": {
+          "name": "img-0.jpeg"
         }
       }
     },
@@ -59,12 +44,6 @@
       "assets": {
         "main.md": {
           "name": "main.md"
-<<<<<<< HEAD:datasets/snapshots/arretes_ocr/arretes_icpe/0005804239/2009-12-08_ap d'autorisation_20091208_APpub_UniteRegenerationHuilesUsagees/ocr_document.json
-=======
-        },
-        "tbl-3.html": {
-          "name": "tbl-3.html"
->>>>>>> b781f51 (cleaning and regeneration of example pages with Mistral OCR 3):examples/arretes_ocr/arretes_icpe/0005302394/2008-12-10_arrêté préfectoral_AP d'autorisation/ocr_document.json
         }
       }
     },
@@ -73,9 +52,6 @@
       "assets": {
         "main.md": {
           "name": "main.md"
-        },
-        "tbl-4.html": {
-          "name": "tbl-4.html"
         }
       }
     },
@@ -92,9 +68,6 @@
       "assets": {
         "main.md": {
           "name": "main.md"
-        },
-        "image_2.b64": {
-          "name": "image_2.b64"
         }
       }
     },
@@ -104,13 +77,11 @@
         "main.md": {
           "name": "main.md"
         },
-<<<<<<< HEAD:datasets/snapshots/arretes_ocr/arretes_icpe/0005804239/2009-12-08_ap d'autorisation_20091208_APpub_UniteRegenerationHuilesUsagees/ocr_document.json
-        "image_3.b64": {
-          "name": "image_3.b64"
-=======
         "header.md": {
           "name": "header.md"
->>>>>>> b781f51 (cleaning and regeneration of example pages with Mistral OCR 3):examples/arretes_ocr/arretes_icpe/0005302394/2008-12-10_arrêté préfectoral_AP d'autorisation/ocr_document.json
+        },
+        "tbl-0.html": {
+          "name": "tbl-0.html"
         }
       }
     },
@@ -120,8 +91,11 @@
         "main.md": {
           "name": "main.md"
         },
-        "image_4.b64": {
-          "name": "image_4.b64"
+        "header.md": {
+          "name": "header.md"
+        },
+        "tbl-1.html": {
+          "name": "tbl-1.html"
         }
       }
     },
@@ -142,13 +116,8 @@
         "main.md": {
           "name": "main.md"
         },
-<<<<<<< HEAD:datasets/snapshots/arretes_ocr/arretes_icpe/0005804239/2009-12-08_ap d'autorisation_20091208_APpub_UniteRegenerationHuilesUsagees/ocr_document.json
         "tbl-2.html": {
           "name": "tbl-2.html"
-=======
-        "header.md": {
-          "name": "header.md"
->>>>>>> b781f51 (cleaning and regeneration of example pages with Mistral OCR 3):examples/arretes_ocr/arretes_icpe/0005302394/2008-12-10_arrêté préfectoral_AP d'autorisation/ocr_document.json
         }
       }
     },
@@ -158,19 +127,11 @@
         "main.md": {
           "name": "main.md"
         },
-<<<<<<< HEAD:datasets/snapshots/arretes_ocr/arretes_icpe/0005804239/2009-12-08_ap d'autorisation_20091208_APpub_UniteRegenerationHuilesUsagees/ocr_document.json
         "header.md": {
           "name": "header.md"
         },
         "tbl-3.html": {
           "name": "tbl-3.html"
-=======
-        "tbl-5.html": {
-          "name": "tbl-5.html"
-        },
-        "tbl-6.html": {
-          "name": "tbl-6.html"
->>>>>>> b781f51 (cleaning and regeneration of example pages with Mistral OCR 3):examples/arretes_ocr/arretes_icpe/0005302394/2008-12-10_arrêté préfectoral_AP d'autorisation/ocr_document.json
         }
       }
     },
@@ -180,16 +141,11 @@
         "main.md": {
           "name": "main.md"
         },
-<<<<<<< HEAD:datasets/snapshots/arretes_ocr/arretes_icpe/0005804239/2009-12-08_ap d'autorisation_20091208_APpub_UniteRegenerationHuilesUsagees/ocr_document.json
-        "image_5.b64": {
-          "name": "image_5.b64"
-=======
-        "tbl-7.html": {
-          "name": "tbl-7.html"
+        "header.md": {
+          "name": "header.md"
         },
-        "tbl-8.html": {
-          "name": "tbl-8.html"
->>>>>>> b781f51 (cleaning and regeneration of example pages with Mistral OCR 3):examples/arretes_ocr/arretes_icpe/0005302394/2008-12-10_arrêté préfectoral_AP d'autorisation/ocr_document.json
+        "tbl-4.html": {
+          "name": "tbl-4.html"
         }
       }
     },
@@ -199,13 +155,8 @@
         "main.md": {
           "name": "main.md"
         },
-<<<<<<< HEAD:datasets/snapshots/arretes_ocr/arretes_icpe/0005804239/2009-12-08_ap d'autorisation_20091208_APpub_UniteRegenerationHuilesUsagees/ocr_document.json
         "header.md": {
           "name": "header.md"
-=======
-        "tbl-9.html": {
-          "name": "tbl-9.html"
->>>>>>> b781f51 (cleaning and regeneration of example pages with Mistral OCR 3):examples/arretes_ocr/arretes_icpe/0005302394/2008-12-10_arrêté préfectoral_AP d'autorisation/ocr_document.json
         }
       }
     },
@@ -223,13 +174,8 @@
         "main.md": {
           "name": "main.md"
         },
-<<<<<<< HEAD:datasets/snapshots/arretes_ocr/arretes_icpe/0005804239/2009-12-08_ap d'autorisation_20091208_APpub_UniteRegenerationHuilesUsagees/ocr_document.json
         "header.md": {
           "name": "header.md"
-=======
-        "tbl-10.html": {
-          "name": "tbl-10.html"
->>>>>>> b781f51 (cleaning and regeneration of example pages with Mistral OCR 3):examples/arretes_ocr/arretes_icpe/0005302394/2008-12-10_arrêté préfectoral_AP d'autorisation/ocr_document.json
         }
       }
     },
@@ -239,13 +185,8 @@
         "main.md": {
           "name": "main.md"
         },
-<<<<<<< HEAD:datasets/snapshots/arretes_ocr/arretes_icpe/0005804239/2009-12-08_ap d'autorisation_20091208_APpub_UniteRegenerationHuilesUsagees/ocr_document.json
         "header.md": {
           "name": "header.md"
-=======
-        "tbl-11.html": {
-          "name": "tbl-11.html"
->>>>>>> b781f51 (cleaning and regeneration of example pages with Mistral OCR 3):examples/arretes_ocr/arretes_icpe/0005302394/2008-12-10_arrêté préfectoral_AP d'autorisation/ocr_document.json
         }
       }
     },
@@ -255,13 +196,8 @@
         "main.md": {
           "name": "main.md"
         },
-<<<<<<< HEAD:datasets/snapshots/arretes_ocr/arretes_icpe/0005804239/2009-12-08_ap d'autorisation_20091208_APpub_UniteRegenerationHuilesUsagees/ocr_document.json
         "header.md": {
           "name": "header.md"
-=======
-        "tbl-12.html": {
-          "name": "tbl-12.html"
->>>>>>> b781f51 (cleaning and regeneration of example pages with Mistral OCR 3):examples/arretes_ocr/arretes_icpe/0005302394/2008-12-10_arrêté préfectoral_AP d'autorisation/ocr_document.json
         }
       }
     },
@@ -271,7 +207,6 @@
         "main.md": {
           "name": "main.md"
         },
-<<<<<<< HEAD:datasets/snapshots/arretes_ocr/arretes_icpe/0005804239/2009-12-08_ap d'autorisation_20091208_APpub_UniteRegenerationHuilesUsagees/ocr_document.json
         "footer.md": {
           "name": "footer.md"
         },
@@ -283,13 +218,6 @@
         },
         "tbl-7.html": {
           "name": "tbl-7.html"
-=======
-        "tbl-13.html": {
-          "name": "tbl-13.html"
-        },
-        "tbl-14.html": {
-          "name": "tbl-14.html"
->>>>>>> b781f51 (cleaning and regeneration of example pages with Mistral OCR 3):examples/arretes_ocr/arretes_icpe/0005302394/2008-12-10_arrêté préfectoral_AP d'autorisation/ocr_document.json
         }
       }
     },
@@ -301,15 +229,12 @@
         },
         "header.md": {
           "name": "header.md"
-<<<<<<< HEAD:datasets/snapshots/arretes_ocr/arretes_icpe/0005804239/2009-12-08_ap d'autorisation_20091208_APpub_UniteRegenerationHuilesUsagees/ocr_document.json
         },
         "tbl-8.html": {
           "name": "tbl-8.html"
         },
         "tbl-9.html": {
           "name": "tbl-9.html"
-=======
->>>>>>> b781f51 (cleaning and regeneration of example pages with Mistral OCR 3):examples/arretes_ocr/arretes_icpe/0005302394/2008-12-10_arrêté préfectoral_AP d'autorisation/ocr_document.json
         }
       }
     },
@@ -385,15 +310,12 @@
         },
         "header.md": {
           "name": "header.md"
-<<<<<<< HEAD:datasets/snapshots/arretes_ocr/arretes_icpe/0005804239/2009-12-08_ap d'autorisation_20091208_APpub_UniteRegenerationHuilesUsagees/ocr_document.json
         },
         "tbl-13.html": {
           "name": "tbl-13.html"
         },
         "tbl-14.html": {
           "name": "tbl-14.html"
-=======
->>>>>>> b781f51 (cleaning and regeneration of example pages with Mistral OCR 3):examples/arretes_ocr/arretes_icpe/0005302394/2008-12-10_arrêté préfectoral_AP d'autorisation/ocr_document.json
         }
       }
     },
@@ -419,15 +341,12 @@
         },
         "header.md": {
           "name": "header.md"
-<<<<<<< HEAD:datasets/snapshots/arretes_ocr/arretes_icpe/0005804239/2009-12-08_ap d'autorisation_20091208_APpub_UniteRegenerationHuilesUsagees/ocr_document.json
         },
         "tbl-16.html": {
           "name": "tbl-16.html"
         },
         "tbl-17.html": {
           "name": "tbl-17.html"
-=======
->>>>>>> b781f51 (cleaning and regeneration of example pages with Mistral OCR 3):examples/arretes_ocr/arretes_icpe/0005302394/2008-12-10_arrêté préfectoral_AP d'autorisation/ocr_document.json
         }
       }
     },
@@ -542,16 +461,8 @@
         "main.md": {
           "name": "main.md"
         },
-<<<<<<< HEAD:datasets/snapshots/arretes_ocr/arretes_icpe/0005804239/2009-12-08_ap d'autorisation_20091208_APpub_UniteRegenerationHuilesUsagees/ocr_document.json
         "footer.md": {
           "name": "footer.md"
-=======
-        "header.md": {
-          "name": "header.md"
-        },
-        "tbl-15.html": {
-          "name": "tbl-15.html"
->>>>>>> b781f51 (cleaning and regeneration of example pages with Mistral OCR 3):examples/arretes_ocr/arretes_icpe/0005302394/2008-12-10_arrêté préfectoral_AP d'autorisation/ocr_document.json
         }
       }
     },
@@ -560,9 +471,6 @@
       "assets": {
         "main.md": {
           "name": "main.md"
-        },
-        "tbl-16.html": {
-          "name": "tbl-16.html"
         }
       }
     },
@@ -572,13 +480,8 @@
         "main.md": {
           "name": "main.md"
         },
-<<<<<<< HEAD:datasets/snapshots/arretes_ocr/arretes_icpe/0005804239/2009-12-08_ap d'autorisation_20091208_APpub_UniteRegenerationHuilesUsagees/ocr_document.json
         "header.md": {
           "name": "header.md"
-=======
-        "tbl-17.html": {
-          "name": "tbl-17.html"
->>>>>>> b781f51 (cleaning and regeneration of example pages with Mistral OCR 3):examples/arretes_ocr/arretes_icpe/0005302394/2008-12-10_arrêté préfectoral_AP d'autorisation/ocr_document.json
         }
       }
     },
@@ -587,12 +490,6 @@
       "assets": {
         "main.md": {
           "name": "main.md"
-        },
-        "tbl-18.html": {
-          "name": "tbl-18.html"
-        },
-        "tbl-19.html": {
-          "name": "tbl-19.html"
         }
       }
     },
@@ -622,87 +519,11 @@
         "main.md": {
           "name": "main.md"
         },
-<<<<<<< HEAD:datasets/snapshots/arretes_ocr/arretes_icpe/0005804239/2009-12-08_ap d'autorisation_20091208_APpub_UniteRegenerationHuilesUsagees/ocr_document.json
         "footer.md": {
           "name": "footer.md"
         },
         "tbl-26.html": {
           "name": "tbl-26.html"
-=======
-        "img-0.jpeg": {
-          "name": "img-0.jpeg"
-        }
-      }
-    },
-    {
-      "index": 46,
-      "assets": {
-        "main.md": {
-          "name": "main.md"
-        }
-      }
-    },
-    {
-      "index": 47,
-      "assets": {
-        "main.md": {
-          "name": "main.md"
-        },
-        "header.md": {
-          "name": "header.md"
-        },
-        "img-1.jpeg": {
-          "name": "img-1.jpeg"
-        }
-      }
-    },
-    {
-      "index": 48,
-      "assets": {
-        "main.md": {
-          "name": "main.md"
-        }
-      }
-    },
-    {
-      "index": 49,
-      "assets": {
-        "main.md": {
-          "name": "main.md"
-        },
-        "header.md": {
-          "name": "header.md"
-        }
-      }
-    },
-    {
-      "index": 50,
-      "assets": {
-        "main.md": {
-          "name": "main.md"
-        }
-      }
-    },
-    {
-      "index": 51,
-      "assets": {
-        "main.md": {
-          "name": "main.md"
-        },
-        "header.md": {
-          "name": "header.md"
-        },
-        "img-2.jpeg": {
-          "name": "img-2.jpeg"
-        }
-      }
-    },
-    {
-      "index": 52,
-      "assets": {
-        "main.md": {
-          "name": "main.md"
->>>>>>> b781f51 (cleaning and regeneration of example pages with Mistral OCR 3):examples/arretes_ocr/arretes_icpe/0005302394/2008-12-10_arrêté préfectoral_AP d'autorisation/ocr_document.json
         }
       }
     }

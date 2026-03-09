@@ -9,9 +9,6 @@
         },
         "header.md": {
           "name": "header.md"
-        },
-        "footer.md": {
-          "name": "footer.md"
         }
       }
     },
@@ -48,11 +45,8 @@
         "main.md": {
           "name": "main.md"
         },
-        "header.md": {
-          "name": "header.md"
-        },
-        "img-0.jpeg": {
-          "name": "img-0.jpeg"
+        "tbl-1.html": {
+          "name": "tbl-1.html"
         }
       }
     },
