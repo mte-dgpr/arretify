@@ -65,9 +65,6 @@ class Run(BaseModel):
 
     date: Date
 
-    baseline_id: int | None
-    """ID of the baseline run this run compares to, if any."""
-
     git_hash: str
 
     comment: str = ""

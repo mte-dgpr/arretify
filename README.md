@@ -198,6 +198,38 @@ Si les tests échouent c'est que la génération d'html a changé. Il convient d
 3. Régler les problèmes éventuels, puis répéter étape 1.
 
 
+### Évaluation de qualité
+
+Le module `quality_evaluation` permet de suivre la qualité du pipeline sur différentes métriques en comparant les résultats avec une vérité terrain (ou "ground truth").
+
+Expériences disponibles :
+- `segmentation_in_sections` : qualité de la segmentation en sections
+- `tables_detection` : qualité de la détection des tableaux
+
+Installer les dépendances avec la commande suivante :
+
+```bash
+pip install -e .[quality_evaluation]
+```
+
+**Pour évaluer le pipeline (après chaque modification majeure) :**
+
+```bash
+python -m quality_evaluation.main segmentation_in_sections evaluate --cache-dir ./tmp/ocr_cache
+```
+
+L'évaluation compare les métriques avec le run précédent et affiche les régressions et améliorations par fichier. Les résultats sont sauvegardés dans `quality_evaluation/segmentation_in_sections.json`. L'option `--cache-dir` permet de ne pas répeter l'opération d'OCR si la commande est exécutée plusieurs fois.
+
+
+**Pour produire des vérités de terrain :**
+
+```bash
+python -m quality_evaluation.main segmentation_in_sections generate_ground_truth --cache-dir ./tmp/ocr_cache
+```
+
+Pour produire des vérités de terrain, on pourra s'aider de la commande `generate_ground_truth`. Cette dernière permet de générer des fichiers contenant les données qui seront utilisée pour effectuer l'évaluation de qualité. Il est nécessaire ensuite de reprendre ces fichiers générés automatiquement afin de corriger manuellement toutes les erreurs.
+
+
 ### Téléchargement des données de bases de droit
 
 Afin de parser et résoudre les références citées dans les AP à des textes du droit français ou européen, nous téléchargeons grâce à divers scripts des fichiers contenant des listes de références à vérifier. Les fonctionalités pour accéder à ces références se trouvent dans le dossier `arretify/law_data`, les scripts se trouvent dans le dossier `scripts`.
@@ -231,3 +263,4 @@ git push origin refs/tags/v1.2.3  # Push le tag sur github
 ```
 
 7. Terminer par une PR
+

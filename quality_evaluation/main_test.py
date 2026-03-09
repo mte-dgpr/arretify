@@ -101,7 +101,6 @@ class TestMain(unittest.TestCase):
             expected_run = Run(
                 id=1,
                 date=Date.today(),
-                baseline_id=None,
                 git_hash="test123",
                 metrics_by_file={
                     "test.pdf": {
@@ -128,7 +127,6 @@ class TestComputeRunSummary(unittest.TestCase):
         current_run = Run(
             id=1,
             date=Date.today(),
-            baseline_id=None,
             git_hash="abc123",
             metrics_by_file={
                 "file1.pdf": {"recall": 0.95, "precision": 0.90},
@@ -167,7 +165,6 @@ class TestComputeRunSummary(unittest.TestCase):
         baseline_run = Run(
             id=1,
             date=Date.today(),
-            baseline_id=None,
             git_hash="baseline123",
             metrics_by_file={
                 "file1.pdf": {"recall": 0.90, "precision": 0.85},
@@ -179,7 +176,6 @@ class TestComputeRunSummary(unittest.TestCase):
         current_run = Run(
             id=2,
             date=Date.today(),
-            baseline_id=1,
             git_hash="current456",
             metrics_by_file={
                 "file1.pdf": {"recall": 0.95, "precision": 0.80},  # recall +0.05, precision -0.05
