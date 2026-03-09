@@ -42,12 +42,9 @@
         },
         "tbl-0.html": {
           "name": "tbl-0.html"
-<<<<<<< HEAD:datasets/snapshots/arretes_ocr/arretes_icpe/0005804239/2012-04-02_arrêté préfectoral_Prescriptions complémentaires-Détention d'une source scellée/ocr_document.json
         },
         "tbl-1.html": {
           "name": "tbl-1.html"
-=======
->>>>>>> b781f51 (cleaning and regeneration of example pages with Mistral OCR 3):examples/arretes_ocr/arretes_icpe/0005800425/2012-09-03_arrêté préfectoral_Prescriptions complémentaires-Etude de dangers du site/ocr_document.json
         }
       }
     },
@@ -59,12 +56,6 @@
         },
         "header.md": {
           "name": "header.md"
-<<<<<<< HEAD:datasets/snapshots/arretes_ocr/arretes_icpe/0005804239/2012-04-02_arrêté préfectoral_Prescriptions complémentaires-Détention d'une source scellée/ocr_document.json
-=======
-        },
-        "tbl-1.html": {
-          "name": "tbl-1.html"
->>>>>>> b781f51 (cleaning and regeneration of example pages with Mistral OCR 3):examples/arretes_ocr/arretes_icpe/0005800425/2012-09-03_arrêté préfectoral_Prescriptions complémentaires-Etude de dangers du site/ocr_document.json
         }
       }
     },
@@ -76,15 +67,6 @@
         },
         "header.md": {
           "name": "header.md"
-<<<<<<< HEAD:datasets/snapshots/arretes_ocr/arretes_icpe/0005804239/2012-04-02_arrêté préfectoral_Prescriptions complémentaires-Détention d'une source scellée/ocr_document.json
-=======
-        },
-        "tbl-2.html": {
-          "name": "tbl-2.html"
-        },
-        "tbl-3.html": {
-          "name": "tbl-3.html"
->>>>>>> b781f51 (cleaning and regeneration of example pages with Mistral OCR 3):examples/arretes_ocr/arretes_icpe/0005800425/2012-09-03_arrêté préfectoral_Prescriptions complémentaires-Etude de dangers du site/ocr_document.json
         }
       }
     },
@@ -96,15 +78,6 @@
         },
         "header.md": {
           "name": "header.md"
-<<<<<<< HEAD:datasets/snapshots/arretes_ocr/arretes_icpe/0005804239/2012-04-02_arrêté préfectoral_Prescriptions complémentaires-Détention d'une source scellée/ocr_document.json
-=======
-        },
-        "tbl-4.html": {
-          "name": "tbl-4.html"
-        },
-        "tbl-5.html": {
-          "name": "tbl-5.html"
->>>>>>> b781f51 (cleaning and regeneration of example pages with Mistral OCR 3):examples/arretes_ocr/arretes_icpe/0005800425/2012-09-03_arrêté préfectoral_Prescriptions complémentaires-Etude de dangers du site/ocr_document.json
         }
       }
     },
@@ -113,12 +86,6 @@
       "assets": {
         "main.md": {
           "name": "main.md"
-        },
-        "header.md": {
-          "name": "header.md"
-        },
-        "tbl-6.html": {
-          "name": "tbl-6.html"
         }
       }
     },
@@ -130,12 +97,6 @@
         },
         "header.md": {
           "name": "header.md"
-<<<<<<< HEAD:datasets/snapshots/arretes_ocr/arretes_icpe/0005804239/2012-04-02_arrêté préfectoral_Prescriptions complémentaires-Détention d'une source scellée/ocr_document.json
-=======
-        },
-        "tbl-7.html": {
-          "name": "tbl-7.html"
->>>>>>> b781f51 (cleaning and regeneration of example pages with Mistral OCR 3):examples/arretes_ocr/arretes_icpe/0005800425/2012-09-03_arrêté préfectoral_Prescriptions complémentaires-Etude de dangers du site/ocr_document.json
         }
       }
     },
@@ -147,15 +108,12 @@
         },
         "header.md": {
           "name": "header.md"
-<<<<<<< HEAD:datasets/snapshots/arretes_ocr/arretes_icpe/0005804239/2012-04-02_arrêté préfectoral_Prescriptions complémentaires-Détention d'une source scellée/ocr_document.json
         },
         "img-1.jpeg": {
           "name": "img-1.jpeg"
         },
         "img-2.jpeg": {
           "name": "img-2.jpeg"
-=======
->>>>>>> b781f51 (cleaning and regeneration of example pages with Mistral OCR 3):examples/arretes_ocr/arretes_icpe/0005800425/2012-09-03_arrêté préfectoral_Prescriptions complémentaires-Etude de dangers du site/ocr_document.json
         }
       }
     },
@@ -167,62 +125,12 @@
         },
         "header.md": {
           "name": "header.md"
-        }
-      }
-    },
-    {
-      "index": 12,
-      "assets": {
-        "main.md": {
-          "name": "main.md"
         },
-        "header.md": {
-          "name": "header.md"
-        }
-      }
-    },
-    {
-      "index": 13,
-      "assets": {
-        "main.md": {
-          "name": "main.md"
+        "img-3.jpeg": {
+          "name": "img-3.jpeg"
         },
-        "header.md": {
-          "name": "header.md"
-        },
-        "footer.md": {
-          "name": "footer.md"
-        },
-        "img-0.jpeg": {
-          "name": "img-0.jpeg"
-        }
-      }
-    },
-    {
-      "index": 14,
-      "assets": {
-        "main.md": {
-          "name": "main.md"
-        },
-        "footer.md": {
-          "name": "footer.md"
-        },
-        "img-1.jpeg": {
-          "name": "img-1.jpeg"
-        }
-      }
-    },
-    {
-      "index": 15,
-      "assets": {
-        "main.md": {
-          "name": "main.md"
-        },
-        "header.md": {
-          "name": "header.md"
-        },
-        "img-2.jpeg": {
-          "name": "img-2.jpeg"
+        "img-4.jpeg": {
+          "name": "img-4.jpeg"
         }
       }
     }

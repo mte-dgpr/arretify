@@ -20,12 +20,9 @@
         },
         "header.md": {
           "name": "header.md"
-<<<<<<< HEAD:datasets/snapshots/arretes_ocr/arretes_icpe/0005804239/2020-04-30_ap prescriptions complémentaires_20200430_APC_OSILUB_GF/ocr_document.json
         },
         "tbl-0.html": {
           "name": "tbl-0.html"
-=======
->>>>>>> b781f51 (cleaning and regeneration of example pages with Mistral OCR 3):examples/arretes_ocr/arretes_icpe/0005800425/2007-04-19_arrêté préfectoral_PC - Augmentation MDI et anticipation date remise étude dangers/ocr_document.json
         }
       }
     },
@@ -38,13 +35,8 @@
         "header.md": {
           "name": "header.md"
         },
-<<<<<<< HEAD:datasets/snapshots/arretes_ocr/arretes_icpe/0005804239/2020-04-30_ap prescriptions complémentaires_20200430_APC_OSILUB_GF/ocr_document.json
         "tbl-1.html": {
           "name": "tbl-1.html"
-=======
-        "tbl-0.html": {
-          "name": "tbl-0.html"
->>>>>>> b781f51 (cleaning and regeneration of example pages with Mistral OCR 3):examples/arretes_ocr/arretes_icpe/0005800425/2007-04-19_arrêté préfectoral_PC - Augmentation MDI et anticipation date remise étude dangers/ocr_document.json
         }
       }
     },
@@ -53,12 +45,6 @@
       "assets": {
         "main.md": {
           "name": "main.md"
-        },
-        "header.md": {
-          "name": "header.md"
-        },
-        "tbl-1.html": {
-          "name": "tbl-1.html"
         }
       }
     },
@@ -67,9 +53,6 @@
       "assets": {
         "main.md": {
           "name": "main.md"
-        },
-        "header.md": {
-          "name": "header.md"
         }
       }
     },
@@ -78,20 +61,6 @@
       "assets": {
         "main.md": {
           "name": "main.md"
-        },
-        "header.md": {
-          "name": "header.md"
-        }
-      }
-    },
-    {
-      "index": 7,
-      "assets": {
-        "main.md": {
-          "name": "main.md"
-        },
-        "header.md": {
-          "name": "header.md"
         },
         "img-0.jpeg": {
           "name": "img-0.jpeg"

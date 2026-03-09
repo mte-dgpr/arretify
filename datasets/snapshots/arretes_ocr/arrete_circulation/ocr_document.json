@@ -9,12 +9,6 @@
         },
         "header.md": {
           "name": "header.md"
-<<<<<<< HEAD:datasets/snapshots/arretes_ocr/arrete_circulation/ocr_document.json
-=======
-        },
-        "footer.md": {
-          "name": "footer.md"
->>>>>>> b781f51 (cleaning and regeneration of example pages with Mistral OCR 3):examples/arretes_ocr/arretes_icpe/0005804239/2014-01-09_ap prescriptions complémentaires_20140109_APCModifInstallationHuilesUsagees/ocr_document.json
         }
       }
     },
@@ -34,28 +28,8 @@
       "assets": {
         "main.md": {
           "name": "main.md"
-        },
-        "img-0.jpeg": {
-          "name": "img-0.jpeg"
         }
       }
-<<<<<<< HEAD:datasets/snapshots/arretes_ocr/arrete_circulation/ocr_document.json
-=======
-    },
-    {
-      "index": 4,
-      "assets": {
-        "main.md": {
-          "name": "main.md"
-        },
-        "header.md": {
-          "name": "header.md"
-        },
-        "tbl-0.html": {
-          "name": "tbl-0.html"
-        }
-      }
->>>>>>> b781f51 (cleaning and regeneration of example pages with Mistral OCR 3):examples/arretes_ocr/arretes_icpe/0005804239/2014-01-09_ap prescriptions complémentaires_20140109_APCModifInstallationHuilesUsagees/ocr_document.json
     }
   ]
 }

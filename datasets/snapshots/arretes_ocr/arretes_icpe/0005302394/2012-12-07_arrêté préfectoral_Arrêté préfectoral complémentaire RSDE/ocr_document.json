@@ -20,9 +20,6 @@
       "assets": {
         "main.md": {
           "name": "main.md"
-        },
-        "footer.md": {
-          "name": "footer.md"
         }
       }
     },
@@ -31,12 +28,6 @@
       "assets": {
         "main.md": {
           "name": "main.md"
-        },
-        "header.md": {
-          "name": "header.md"
-        },
-        "tbl-0.html": {
-          "name": "tbl-0.html"
         }
       }
     },
@@ -46,16 +37,8 @@
         "main.md": {
           "name": "main.md"
         },
-<<<<<<< HEAD:datasets/snapshots/arretes_ocr/arretes_icpe/0005302394/2012-12-07_arrêté préfectoral_Arrêté préfectoral complémentaire RSDE/ocr_document.json
         "tbl-0.html": {
           "name": "tbl-0.html"
-=======
-        "footer.md": {
-          "name": "footer.md"
-        },
-        "tbl-1.html": {
-          "name": "tbl-1.html"
->>>>>>> b781f51 (cleaning and regeneration of example pages with Mistral OCR 3):examples/arretes_ocr/arretes_icpe/0005800425/2025-02-24_ap prescriptions complémentaires_2025-02-24 - AP n°UBDEO ERA 25-13 sté CARPENTER - LOUVIERS/ocr_document.json
         }
       }
     },
@@ -65,16 +48,11 @@
         "main.md": {
           "name": "main.md"
         },
-<<<<<<< HEAD:datasets/snapshots/arretes_ocr/arretes_icpe/0005302394/2012-12-07_arrêté préfectoral_Arrêté préfectoral complémentaire RSDE/ocr_document.json
         "header.md": {
           "name": "header.md"
         },
         "img-0.jpeg": {
           "name": "img-0.jpeg"
-=======
-        "footer.md": {
-          "name": "footer.md"
->>>>>>> b781f51 (cleaning and regeneration of example pages with Mistral OCR 3):examples/arretes_ocr/arretes_icpe/0005800425/2025-02-24_ap prescriptions complémentaires_2025-02-24 - AP n°UBDEO ERA 25-13 sté CARPENTER - LOUVIERS/ocr_document.json
         }
       }
     },
@@ -83,12 +61,6 @@
       "assets": {
         "main.md": {
           "name": "main.md"
-        },
-        "header.md": {
-          "name": "header.md"
-        },
-        "footer.md": {
-          "name": "footer.md"
         }
       }
     }
