@@ -29,9 +29,14 @@ from dotenv import load_dotenv
 from pydantic import BaseModel
 
 from arretify.law_data.apis.mistral import initialize_mistral_client
-from arretify.pipeline import PipelineStep, load_ocr_pages, load_pdf_file, run_pipeline
+from arretify.pipeline import (
+    PipelineStep,
+    is_ocr_files,
+    load_ocr_files,
+    load_pdf_file,
+    run_pipeline,
+)
 from arretify.settings import Settings
-from arretify.step_markdown_cleaning import step_markdown_cleaning
 from arretify.step_ocr import step_ocr
 from arretify.step_segmentation import step_segmentation
 from arretify.types import DocumentContext, SessionContext
@@ -91,32 +96,31 @@ def run_arretify_on_all_pdfs(
     processed: ProcessedArretes = []
     for pdf_file_path in sorted(pdf_file_paths):
         steps: list[PipelineStep] = [
-            step_markdown_cleaning,
             step_segmentation,
         ]
-        ocr_pages_dir = ocr_cache_dir / pdf_file_path.stem if ocr_cache_dir else None
+        ocr_document_dir = ocr_cache_dir / pdf_file_path.stem if ocr_cache_dir else None
 
         # If cache directory exists, load from cache and skip OCR step.
-        if ocr_pages_dir is not None and ocr_pages_dir.exists():
-            if not ocr_pages_dir.is_dir():
-                raise ValueError(f"Cache path {ocr_pages_dir} exists and is not a directory.")
-            document_context = load_ocr_pages(session_context, ocr_pages_dir)
+        if ocr_document_dir is not None and ocr_document_dir.exists():
+            if not is_ocr_files(ocr_document_dir):
+                raise ValueError(f"Cache path {ocr_document_dir} exists and is not a directory.")
+            document_context = load_ocr_files(session_context, ocr_document_dir)
             _LOGGER.info(f"Loading OCR pages from cache directory for {pdf_file_path.name}")
 
         # Else perform OCR and optionally save to cache if directory is provided.
         else:
-            if ocr_pages_dir is not None:
+            if ocr_document_dir is not None:
 
                 def step_ocr_with_cache(
                     document_context: DocumentContext,
                 ) -> DocumentContext:
                     return step_ocr(
                         document_context=document_context,
-                        ocr_pages_dir=ocr_pages_dir,
+                        ocr_document_dir=ocr_document_dir,
                     )
 
                 steps.insert(0, step_ocr_with_cache)
-                ocr_pages_dir.mkdir(parents=True, exist_ok=True)
+                ocr_document_dir.mkdir(parents=True, exist_ok=True)
             else:
                 steps.insert(0, step_ocr)
 
