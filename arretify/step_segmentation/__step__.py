@@ -50,7 +50,9 @@ def step_segmentation(document_context: DocumentContext) -> DocumentContext:
         body,
         render_contents(
             document_context,
-            parse_arrete(document_context, step_segmentation_pre_processing(document_context, ocr_document)),
+            parse_arrete(
+                document_context, step_segmentation_pre_processing(document_context, ocr_document)
+            ),
         ),
     )
 
