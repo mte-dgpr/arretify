@@ -64,6 +64,71 @@
           "sections_similarity": 0.9545454545454546
         }
       }
+    },
+    {
+      "id": 2,
+      "date": "2026-03-11",
+      "git_hash": "8e94f3c63535bd3ae51f591d7f9276eb4176df6d",
+      "comment": "Mistral OCR 3 - mistral-ocr-2512",
+      "metrics_by_file": {
+        "0d89233b35434aca8e0feb66f0070319.pdf": {
+          "sections_similarity": 1.0
+        },
+        "132b73899fc04fd4b3f9a175c3ad99f2.pdf": {
+          "sections_similarity": 0.31746031746031744
+        },
+        "36abc4f0ccf7402f9bb0095611023c69.pdf": {
+          "sections_similarity": 1.0
+        },
+        "4d94deab64c4403c8c8bbfd767f9e8f3.pdf": {
+          "sections_similarity": 0.3826086956521739
+        },
+        "52bbb18e3ccc44989b537974c540d711.pdf": {
+          "sections_similarity": 0.9320318148951554
+        },
+        "7eYWqgFO5BP6B2Q8jP0Pu8zFXRVPp0Js.pdf": {
+          "sections_similarity": 0.972972972972973
+        },
+        "8a8d1b975968c75b015968e98f970023.pdf": {
+          "sections_similarity": 0.3846153846153846
+        },
+        "8aa100b1428f9a9201428fa0a7890004.pdf": {
+          "sections_similarity": 0.9311163895486936
+        },
+        "8aa100b1556dfefc01556e13dd85000b.pdf": {
+          "sections_similarity": 1.0
+        },
+        "8aa100b17c2b8961017c2c2be0a50031.pdf": {
+          "sections_similarity": 1.0
+        },
+        "8aac03246f425aac016f4292ab0e0018.pdf": {
+          "sections_similarity": 0.9357142857142857
+        },
+        "8ab308a944bbb1fc0144bbe573a00012.pdf": {
+          "sections_similarity": 0.967032967032967
+        },
+        "8accf0a64e1a05f4014e1b56a6e30027.pdf": {
+          "sections_similarity": 0.7777777777777778
+        },
+        "8accf0a66012c450016012ddbc2b001e.pdf": {
+          "sections_similarity": 1.0
+        },
+        "a11b5efd01cf4396924ee8fcf8d68394.pdf": {
+          "sections_similarity": 1.0
+        },
+        "baW25WFrv7WZankfo7C9pf3MpRH5HA6G.pdf": {
+          "sections_similarity": 1.0
+        },
+        "IPmRif7o4vBlabCre3XVyLjtoaqZdOEs.pdf": {
+          "sections_similarity": 0.7407407407407407
+        },
+        "is5mJTxzlwvMwDEbhaEUooOL2fnlbw0b.pdf": {
+          "sections_similarity": 0.9682539682539683
+        },
+        "uFQnkRvFgpYTpldGIoI6AWFaTnRAJQXz.pdf": {
+          "sections_similarity": 0.6706349206349207
+        }
+      }
     }
   ]
 }

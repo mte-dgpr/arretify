@@ -1,3 +1,7 @@
 {
-  "tables_by_page": {}
+  "tables_by_page": {
+    "4": [
+      "<table><tr><th>Période de la journée</th><th>Niveaux acoustiques en dB (A)</th></tr><tr><td>Jour de 7 H. à 20 H.</td><td>60</td></tr><tr><td>Période intermédiaire 6 H. à 7 H. et 20 HJ. à 22 H.</td><td>55</td></tr><tr><td>Nuit de 22 H. à 6 H.</td><td>50</td></tr></table>"
+    ]
+  }
 }
