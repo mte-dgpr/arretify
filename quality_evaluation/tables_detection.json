@@ -83,6 +83,90 @@
           "general_accuracy": 0.9696363029696363
         }
       }
+    },
+    {
+      "id": 2,
+      "date": "2026-03-11",
+      "git_hash": "8e94f3c63535bd3ae51f591d7f9276eb4176df6d",
+      "comment": "Mistral OCR 3 - mistral-ocr-2512",
+      "metrics_by_file": {
+        "0d89233b35434aca8e0feb66f0070319.pdf": {
+          "structure_accuracy": 1.0,
+          "general_accuracy": 1.0
+        },
+        "132b73899fc04fd4b3f9a175c3ad99f2.pdf": {
+          "structure_accuracy": 0.9928622412562456,
+          "general_accuracy": 0.9936697191321984
+        },
+        "36abc4f0ccf7402f9bb0095611023c69.pdf": {
+          "structure_accuracy": 1.0,
+          "general_accuracy": 0.9917355371900827
+        },
+        "4d94deab64c4403c8c8bbfd767f9e8f3.pdf": {
+          "structure_accuracy": 1.0,
+          "general_accuracy": 1.0
+        },
+        "52bbb18e3ccc44989b537974c540d711.pdf": {
+          "structure_accuracy": 0.9682257070464972,
+          "general_accuracy": 0.9658635794743429
+        },
+        "7eYWqgFO5BP6B2Q8jP0Pu8zFXRVPp0Js.pdf": {
+          "structure_accuracy": 1.0,
+          "general_accuracy": 1.0
+        },
+        "8a8d1b975968c75b015968e98f970023.pdf": {
+          "structure_accuracy": 1.0,
+          "general_accuracy": 1.0
+        },
+        "8aa100b1428f9a9201428fa0a7890004.pdf": {
+          "structure_accuracy": 0.8578041662473583,
+          "general_accuracy": 0.7493255862212077
+        },
+        "8aa100b1556dfefc01556e13dd85000b.pdf": {
+          "structure_accuracy": 1.0,
+          "general_accuracy": 1.0
+        },
+        "8aa100b17c2b8961017c2c2be0a50031.pdf": {
+          "structure_accuracy": 0.9578544061302682,
+          "general_accuracy": 0.9066570188133141
+        },
+        "8aac03246f425aac016f4292ab0e0018.pdf": {
+          "structure_accuracy": 0.8313160717021603,
+          "general_accuracy": 0.7165114613180517
+        },
+        "8ab308a944bbb1fc0144bbe573a00012.pdf": {
+          "structure_accuracy": 0.979047619047619,
+          "general_accuracy": 0.8025466284074605
+        },
+        "8accf0a64e1a05f4014e1b56a6e30027.pdf": {
+          "structure_accuracy": 1.0,
+          "general_accuracy": 0.9898068669527897
+        },
+        "8accf0a66012c450016012ddbc2b001e.pdf": {
+          "structure_accuracy": 1.0,
+          "general_accuracy": 0.998211091234347
+        },
+        "a11b5efd01cf4396924ee8fcf8d68394.pdf": {
+          "structure_accuracy": 1.0,
+          "general_accuracy": 1.0
+        },
+        "baW25WFrv7WZankfo7C9pf3MpRH5HA6G.pdf": {
+          "structure_accuracy": 0.906832298136646,
+          "general_accuracy": 0.7184643510054844
+        },
+        "IPmRif7o4vBlabCre3XVyLjtoaqZdOEs.pdf": {
+          "structure_accuracy": 1.0,
+          "general_accuracy": 1.0
+        },
+        "is5mJTxzlwvMwDEbhaEUooOL2fnlbw0b.pdf": {
+          "structure_accuracy": 1.0,
+          "general_accuracy": 0.9888798481149986
+        },
+        "uFQnkRvFgpYTpldGIoI6AWFaTnRAJQXz.pdf": {
+          "structure_accuracy": 1.0,
+          "general_accuracy": 0.9969418960244648
+        }
+      }
     }
   ]
 }
