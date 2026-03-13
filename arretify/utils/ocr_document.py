@@ -106,8 +106,14 @@ def save_ocr_document(ocr_document: OcrDocument, ocr_document_dir: Path) -> None
         page_dir.mkdir(parents=True, exist_ok=True)
 
         for asset_name, asset in list(page.assets.items()):
+            # Load content from disk if not in memory but path exists
+            if asset.content is None and asset.path is not None and asset.path.is_file():
+                get_or_load_asset_content(asset)
+
+            # Skip if no content available
             if asset.content is None:
                 continue
+
             asset = _assign_asset_path(page, asset_name, page_dir)
             assert asset.path is not None
             assert asset.content is not None

@@ -103,6 +103,28 @@ class TestSaveLoadDocument(unittest.TestCase):
                 == "Main content of page 2"
             )
 
+    def test_save_document_loads_content_from_existing_path(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            # Arrange - Create source file on disk
+            source_dir = Path(tmpdir) / "source"
+            source_dir.mkdir()
+            source_file = source_dir / "original.md"
+            source_file.write_text("Content from original location", encoding="utf-8")
+
+            # Create page with asset pointing to existing file but asset is not loaded
+            page = Page(index=1)
+            page.assets["lazy.md"] = Asset(name="lazy.md", path=source_file, content=None)
+
+            document = OcrDocument(pages=[page])
+
+            # Act - Save document (should load content from source_file)
+            target_dir = Path(tmpdir) / "target"
+            save_ocr_document(document, target_dir)
+
+            # Assert - Content was loaded from original path and saved to new location
+            saved_content = (target_dir / "1" / "lazy.md").read_text(encoding="utf-8")
+            assert saved_content == "Content from original location"
+
 
 class TestCreateAsset(unittest.TestCase):
 
