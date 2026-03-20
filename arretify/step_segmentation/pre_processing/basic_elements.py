@@ -96,10 +96,6 @@ def _is_containing_title(lines: Sequence[str]) -> bool:
 
 
 def render_page_header(context: DocumentContext, content: str) -> ProtectedTag:
-    """
-    Mistral OCR 3 often detects the title of the document as a page header.
-    When that happens, we promote the header to main content.
-    """
     return make_semantic_tag(
         context.protected_soup,
         PageHeaderSpec,
