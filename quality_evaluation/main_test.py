@@ -91,6 +91,7 @@ class TestMain(unittest.TestCase):
                         str(experiment_json_path),
                         "--debug",
                         str(debug_dir),
+                        "--save-run",
                     ]
                 )
 
