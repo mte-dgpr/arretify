@@ -16,6 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+import logging
 from typing import Iterator, cast
 from urllib.parse import urlparse
 
@@ -41,6 +42,8 @@ from arretify.utils.markdown_parsing import IMAGE_PATTERN_S, LINK_PATTERN_S, par
 from arretify.utils.ocr_document import Page, get_or_load_asset_content
 from arretify.utils.strings import split_on_newlines
 
+_LOGGER = logging.getLogger(__name__)
+
 
 @iter_func_to_list
 def parse_basic_elements(context: DocumentContext, page: Page) -> Iterator[ProtectedTagOrStr]:
@@ -54,7 +57,7 @@ def parse_basic_elements(context: DocumentContext, page: Page) -> Iterator[Prote
         if is_image(page_lines, line_index):
             yield render_image_and_embed_base64(page, line)
         elif is_link(page_lines, line_index):
-            yield render_link_and_embed_content(page, line)
+            yield from render_link_and_embed_content(context, page, line_index, line)
         else:
             yield render_text_segmentation_tag(context, page, line_index, line)
 
@@ -141,18 +144,34 @@ def render_text_segmentation_tag(
 is_link = make_probe_from_pattern_proxy(PatternProxy(r"^" + LINK_PATTERN_S + "$"))
 
 
-def render_link_and_embed_content(page: Page, markdown_link: str) -> ProtectedTag:
+@iter_func_to_list
+def render_link_and_embed_content(
+    context: DocumentContext, page: Page, line_index: int, markdown_link: str
+) -> Iterator[ProtectedTagOrStr]:
+    """
+    Mistral OCR 3 detects tables and extracts them as separate HTML files,
+    linked in the main markdown file. For example `[tbl-0.html](tbl-0.html)`.
+
+    This function parses the markdown link, and loads the linked HTML table
+    from the corresponding asset.
+
+    Mistral OCR 3 sometimes falsly detects tables that are actually just frames,
+    i.e. tables with only one cell, used to create a border around some content.
+    We extract the content of these frames and render it as separate lines.
+    """
     a_tag = parse_markdown_element(markdown_link, "a")
 
     a_href = a_tag.get("href", "")
     if not a_href:
-        return a_tag
+        yield a_tag
+        return
 
     # Ignore external urls, as we only want to embed local content.
     # Select only .html files.
     parsed_url = urlparse(a_href)
     if parsed_url.scheme in ("http", "https") or not a_href.endswith(".html"):
-        return a_tag
+        yield a_tag
+        return
 
     html_filename = parsed_url.path.split("/")[-1]
     html_contents = get_or_load_asset_content(page.assets[html_filename])
@@ -161,10 +180,37 @@ def render_link_and_embed_content(page: Page, markdown_link: str) -> ProtectedTa
     # If the parsed HTML doesn't contain exactly one element,
     # we cannot be sure of what to embed, so we return the original link.
     if len(parsed_html.contents) != 1:
-        return a_tag
+        _LOGGER.warning(
+            f"Linked HTML file '{html_filename}' does not contain exactly one root element. "
+            "Cannot embed content, returning original link."
+        )
+        yield a_tag
+        return
 
     element = cast(ProtectedTagOrStr, parsed_html.contents[0])
     if is_tag(element, tag_name_in=["table"]):
-        return element
+        is_frame = len(element.select("tr")) == 1 and len(element.select("td")) == 1
+        if is_frame is True:
+            yield from _render_frame_misdetected_as_table(context, page, line_index, element)
+        else:
+            yield element
     else:
-        return a_tag
+        yield a_tag
+
+
+def _render_frame_misdetected_as_table(
+    context: DocumentContext, page: Page, line_index: int, frame_tag: ProtectedTag
+) -> Iterator[ProtectedTag]:
+    """
+    Extracts the text content of the frame and renders it as separate text segmentation tags.
+    """
+    results = frame_tag.select("td")
+    assert len(results) == 1
+    td = results[0]
+    for element in td.contents:
+        if is_tag(element, tag_name_in=["br"]):
+            continue
+        elif isinstance(element, str):
+            yield render_text_segmentation_tag(context, page, line_index, element)
+        else:
+            raise ValueError(f"Unexpected in frame: {element}")

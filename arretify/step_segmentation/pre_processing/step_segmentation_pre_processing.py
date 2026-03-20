@@ -19,10 +19,9 @@
 
 from typing import Iterator
 
-from arretify.utils.ocr_document import get_or_load_asset_content, OcrDocument
 from arretify.types import DocumentContext, ProtectedTagOrStr
 from arretify.utils.functional import iter_func_to_list
-from arretify.utils.ocr_document import OcrDocument
+from arretify.utils.ocr_document import OcrDocument, get_or_load_asset_content
 from arretify.utils.strings import join_on_newlines, split_on_newlines
 
 from .basic_elements import parse_basic_elements
@@ -37,6 +36,11 @@ def step_segmentation_pre_processing(
 ) -> Iterator[ProtectedTagOrStr]:
     """
     Pre-processes the contents of the document for later segmentation.
+
+    This step is responsible for cleaning the OCR output, and reconstituting pages
+    from separate assets.
+
+    Right now it is tuned for Mistral OCR 3 (mistral-ocr-2512).
     """
     for page in ocr_document.pages:
         # Get main content

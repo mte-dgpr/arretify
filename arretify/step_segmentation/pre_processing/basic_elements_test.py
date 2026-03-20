@@ -50,7 +50,7 @@ class TestParseBasicElements(BaseTestCaseSegmentation):
             page, "main.md", "Line 1\n![Photo](image_1.b64)\n[See table](table_1.html)\nLine 2"
         )
         create_asset(page, "image_1.b64", "data:image/png;base64,ABC123")
-        create_asset(page, "table_1.html", "<table><tr><td>A</td></tr></table>")
+        create_asset(page, "table_1.html", "<table><tr><td>A</td><td>B</td></tr></table>")
         create_asset(page, "footer.md", "Footer content")
 
         # Act
@@ -76,7 +76,15 @@ class TestParseBasicElements(BaseTestCaseSegmentation):
                 ),
                 self.make_tag(
                     "table",
-                    contents=[self.make_tag("tr", contents=[self.make_tag("td", contents=["A"])])],
+                    contents=[
+                        self.make_tag(
+                            "tr",
+                            contents=[
+                                self.make_tag("td", contents=["A"]),
+                                self.make_tag("td", contents=["B"]),
+                            ],
+                        )
+                    ],
                 ),
                 self.make_semantic_tag(
                     TextSpanSegmentationSpec,
@@ -135,24 +143,62 @@ class TestRenderLinkAndEmbedContent(BaseTestCaseSegmentation):
     def test_embeds_local_html_table(self):
         # Arrange
         page = Page(index=1)
-        create_asset(page, "table.html", "<table><tr><td>A</td></tr></table>")
+        create_asset(page, "table.html", "<table><tr><td>A</td><td>B</td></tr></table>")
 
         # Act
-        result = render_link_and_embed_content(page, "[See table](table.html)")
+        result = render_link_and_embed_content(self.context, page, 0, "[See table](table.html)")
 
         # Assert
-        assert result.name == "table"
+        assert len(result) == 1
+        assert result[0].name == "table"
+
+    def test_deals_with_frame_misdetected_as_table(self):
+        # Arrange
+        page = Page(index=2)
+        create_asset(
+            page,
+            "frame.html",
+            "<table><tr><td>Line 1<br/>Line 2<br/>Line 3</td></tr></table>",
+        )
+
+        # Act
+        result = render_link_and_embed_content(self.context, page, 5, "[Frame](frame.html)")
+
+        # Assert - frame content is extracted as separate text segmentation tags
+        assert_segmentation_element_lists_equal(
+            result,
+            [
+                self.make_semantic_tag(
+                    TextSpanSegmentationSpec,
+                    contents=["Line 1"],
+                    data=TextSpanSegmentationData(start=[2, 5, 0], end=[2, 5, 5]),
+                ),
+                self.make_semantic_tag(
+                    TextSpanSegmentationSpec,
+                    contents=["Line 2"],
+                    data=TextSpanSegmentationData(start=[2, 5, 0], end=[2, 5, 5]),
+                ),
+                self.make_semantic_tag(
+                    TextSpanSegmentationSpec,
+                    contents=["Line 3"],
+                    data=TextSpanSegmentationData(start=[2, 5, 0], end=[2, 5, 5]),
+                ),
+            ],
+        )
 
     def test_skips_external_url(self):
         # Arrange
         page = Page(index=1)
 
         # Act
-        result = render_link_and_embed_content(page, "[Link](https://example.com/table.html)")
+        result = render_link_and_embed_content(
+            self.context, page, 0, "[Link](https://example.com/table.html)"
+        )
 
         # Assert
-        assert result.name == "a"
-        assert result.get("href") == "https://example.com/table.html"
+        assert len(result) == 1
+        assert result[0].name == "a"
+        assert result[0].get("href") == "https://example.com/table.html"
 
     def test_skips_non_html_file(self):
         # Arrange
@@ -160,10 +206,11 @@ class TestRenderLinkAndEmbedContent(BaseTestCaseSegmentation):
         create_asset(page, "doc.pdf", "some content")
 
         # Act
-        result = render_link_and_embed_content(page, "[Doc](doc.pdf)")
+        result = render_link_and_embed_content(self.context, page, 0, "[Doc](doc.pdf)")
 
         # Assert
-        assert result.name == "a"
+        assert len(result) == 1
+        assert result[0].name == "a"
 
     def test_returns_link_when_html_has_multiple_root_elements(self):
         # Arrange
@@ -171,10 +218,11 @@ class TestRenderLinkAndEmbedContent(BaseTestCaseSegmentation):
         create_asset(page, "multi.html", "<p>One</p><p>Two</p>")
 
         # Act
-        result = render_link_and_embed_content(page, "[Multi](multi.html)")
+        result = render_link_and_embed_content(self.context, page, 0, "[Multi](multi.html)")
 
         # Assert
-        assert result.name == "a"
+        assert len(result) == 1
+        assert result[0].name == "a"
 
     def test_returns_link_when_html_root_is_not_table(self):
         # Arrange
@@ -182,7 +230,8 @@ class TestRenderLinkAndEmbedContent(BaseTestCaseSegmentation):
         create_asset(page, "para.html", "<p>Some paragraph</p>")
 
         # Act
-        result = render_link_and_embed_content(page, "[Para](para.html)")
+        result = render_link_and_embed_content(self.context, page, 0, "[Para](para.html)")
 
         # Assert
-        assert result.name == "a"
+        assert len(result) == 1
+        assert result[0].name == "a"

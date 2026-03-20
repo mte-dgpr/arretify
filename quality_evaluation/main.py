@@ -259,6 +259,7 @@ def action_compute_metrics(
     experiment_json_path: Path,
     ground_truth_dir: Path,
     debug_dir: Path | None,
+    save_run: bool,
 ) -> None:
     """Compute metrics for arretify run on the PDF dataset against ground truth."""
     _LOGGER.info(f"Ground truth directory: {ground_truth_dir}")
@@ -315,8 +316,14 @@ def action_compute_metrics(
                 delta = metric_summary.deltas_by_file[file_name]
                 _LOGGER.info(f"  ✓ {file_name}: {delta:+.4f}")
 
-    dump_json(experiment_json_path, experiment)
-    _LOGGER.info(f"Experiment saved to: {experiment_json_path}")
+    if save_run:
+        dump_json(experiment_json_path, experiment)
+        _LOGGER.info(f"Experiment saved to: {experiment_json_path}")
+    else:
+        _LOGGER.warning(
+            "\n⚠ Run results NOT saved. To save this run to the experiment file, "
+            "re-run with the --save-run flag."
+        )
 
 
 # -------------------- Experiment Configuration --------------------
@@ -432,6 +439,14 @@ def main(argv: list[str] | None = None):
             "To see differences in VS Code, select both files and use 'Compare Selected'."
         ),
     )
+    evaluate_parser.add_argument(
+        "--save-run",
+        action="store_true",
+        help=(
+            "Save the run results to the experiment file. "
+            "If not set, only displays metrics without saving."
+        ),
+    )
 
     # Parse remaining arguments (skip experiment name)
     args = parser.parse_args(argv[2:])
@@ -488,6 +503,7 @@ def main(argv: list[str] | None = None):
             experiment_json_path,
             ground_truth_dir,
             args.debug_dir if hasattr(args, "debug_dir") else None,
+            args.save_run if hasattr(args, "save_run") else False,
         )
 
 
