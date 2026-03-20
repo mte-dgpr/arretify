@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 import logging
-from typing import Iterator, cast
+from typing import Iterator, Sequence, cast
 from urllib.parse import urlparse
 
 from bs4 import BeautifulSoup
@@ -34,6 +34,7 @@ from arretify.step_segmentation.semantic_tag_specs import (
     TextSpanSegmentationData,
     TextSpanSegmentationSpec,
 )
+from arretify.step_segmentation.titles_detection import TITLE_NODE
 from arretify.types import DocumentContext, ProtectedTag, ProtectedTagOrStr
 from arretify.utils.functional import iter_func_to_list
 from arretify.utils.html import is_tag, set_attribute
@@ -50,14 +51,33 @@ def parse_basic_elements(context: DocumentContext, page: Page) -> Iterator[Prote
     yield render_page_separator(context, page)
 
     if "header.md" in page.assets:
-        yield render_page_header(context, get_or_load_asset_content(page.assets["header.md"]))
+        header_content = get_or_load_asset_content(page.assets["header.md"])
+        header_lines = split_on_newlines(header_content)
+        if _is_containing_title(header_lines):
+            # If the header contains a title we consider that it is misdetected
+            # and we promote it to main content.
+            for line in header_lines:
+                yield render_text_segmentation_tag(context, page, 0, line)
+        else:
+            yield render_page_header(context, header_content)
 
     page_lines = split_on_newlines(get_or_load_asset_content(page.assets["main.md"]))
     for line_index, line in enumerate(page_lines):
-        if is_image(page_lines, line_index):
+        if _is_image(page_lines, line_index):
             yield render_image_and_embed_base64(page, line)
-        elif is_link(page_lines, line_index):
-            yield from render_link_and_embed_content(context, page, line_index, line)
+
+        elif _is_link(page_lines, line_index):
+            loaded_tag = load_tag_from_markdown_link(page, line)
+            if loaded_tag is not None and is_tag(loaded_tag, tag_name_in=["table"]):
+                if _is_frame_misdetected_as_table(loaded_tag):
+                    yield from render_frame_misdetected_as_table(
+                        context, page, line_index, loaded_tag
+                    )
+                else:
+                    yield loaded_tag
+            else:
+                yield render_text_segmentation_tag(context, page, line_index, line)
+
         else:
             yield render_text_segmentation_tag(context, page, line_index, line)
 
@@ -66,7 +86,20 @@ def parse_basic_elements(context: DocumentContext, page: Page) -> Iterator[Prote
 
 
 # -------------------- Page header, footer and separator -------------------- #
+_is_title_string = make_probe_from_pattern_proxy(
+    TITLE_NODE.pattern,
+)
+
+
+def _is_containing_title(lines: Sequence[str]) -> bool:
+    return any(_is_title_string(lines, i) for i in range(len(lines)))
+
+
 def render_page_header(context: DocumentContext, content: str) -> ProtectedTag:
+    """
+    Mistral OCR 3 often detects the title of the document as a page header.
+    When that happens, we promote the header to main content.
+    """
     return make_semantic_tag(
         context.protected_soup,
         PageHeaderSpec,
@@ -101,7 +134,7 @@ def render_page_separator(context: DocumentContext, page: Page) -> ProtectedTag:
 
 
 # -------------------- Images -------------------- #
-is_image = make_probe_from_pattern_proxy(PatternProxy(r"^" + IMAGE_PATTERN_S + "$"))
+_is_image = make_probe_from_pattern_proxy(PatternProxy(r"^" + IMAGE_PATTERN_S + "$"))
 
 
 def render_image_and_embed_base64(page: Page, markdown_image: str) -> ProtectedTag:
@@ -141,37 +174,41 @@ def render_text_segmentation_tag(
 
 
 # -------------------- Embedded HTML content -------------------- #
-is_link = make_probe_from_pattern_proxy(PatternProxy(r"^" + LINK_PATTERN_S + "$"))
+_is_link = make_probe_from_pattern_proxy(PatternProxy(r"^" + LINK_PATTERN_S + "$"))
 
 
-@iter_func_to_list
-def render_link_and_embed_content(
-    context: DocumentContext, page: Page, line_index: int, markdown_link: str
-) -> Iterator[ProtectedTagOrStr]:
+def _is_frame_misdetected_as_table(tag: ProtectedTag) -> bool:
+    """
+    Mistral OCR 3 sometimes falsly detects tables that are actually just frames,
+    i.e. tables with only one cell, used to create a border around some content.
+    """
+    if not is_tag(tag, tag_name_in=["table"]):
+        return False
+    return len(tag.select("tr")) == 1 and len(tag.select("td")) == 1
+
+
+def load_tag_from_markdown_link(
+    page: Page,
+    markdown_link: str,
+) -> ProtectedTagOrStr | None:
     """
     Mistral OCR 3 detects tables and extracts them as separate HTML files,
     linked in the main markdown file. For example `[tbl-0.html](tbl-0.html)`.
 
     This function parses the markdown link, and loads the linked HTML table
     from the corresponding asset.
-
-    Mistral OCR 3 sometimes falsly detects tables that are actually just frames,
-    i.e. tables with only one cell, used to create a border around some content.
-    We extract the content of these frames and render it as separate lines.
     """
     a_tag = parse_markdown_element(markdown_link, "a")
 
     a_href = a_tag.get("href", "")
     if not a_href:
-        yield a_tag
-        return
+        return None
 
     # Ignore external urls, as we only want to embed local content.
     # Select only .html files.
     parsed_url = urlparse(a_href)
     if parsed_url.scheme in ("http", "https") or not a_href.endswith(".html"):
-        yield a_tag
-        return
+        return None
 
     html_filename = parsed_url.path.split("/")[-1]
     html_contents = get_or_load_asset_content(page.assets[html_filename])
@@ -184,21 +221,13 @@ def render_link_and_embed_content(
             f"Linked HTML file '{html_filename}' does not contain exactly one root element. "
             "Cannot embed content, returning original link."
         )
-        yield a_tag
-        return
+        return None
 
     element = cast(ProtectedTagOrStr, parsed_html.contents[0])
-    if is_tag(element, tag_name_in=["table"]):
-        is_frame = len(element.select("tr")) == 1 and len(element.select("td")) == 1
-        if is_frame is True:
-            yield from _render_frame_misdetected_as_table(context, page, line_index, element)
-        else:
-            yield element
-    else:
-        yield a_tag
+    return element
 
 
-def _render_frame_misdetected_as_table(
+def render_frame_misdetected_as_table(
     context: DocumentContext, page: Page, line_index: int, frame_tag: ProtectedTag
 ) -> Iterator[ProtectedTag]:
     """
