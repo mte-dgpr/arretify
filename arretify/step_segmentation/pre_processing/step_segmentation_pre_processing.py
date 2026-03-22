@@ -22,11 +22,10 @@ from typing import Iterator
 from arretify.types import DocumentContext, ProtectedTagOrStr
 from arretify.utils.functional import iter_func_to_list
 from arretify.utils.ocr_document import OcrDocument, get_or_load_asset_content
-from arretify.utils.strings import join_on_newlines, split_on_newlines
+from arretify.utils.strings import join_on_newlines
 
 from .basic_elements import parse_basic_elements
-from .markdown_cleaning import clean_markdown
-from .ocr_cleaning import clean_ocr, is_useful_line
+from .ocr_cleaning import clean_ocr
 
 
 @iter_func_to_list
@@ -43,16 +42,7 @@ def step_segmentation_pre_processing(
     Right now it is tuned for Mistral OCR 3 (mistral-ocr-2512).
     """
     for page in ocr_document.pages:
-        # Get main content
-        main_content = get_or_load_asset_content(page.assets["main.md"])
-        lines = split_on_newlines(main_content)
-
-        # Clean input markdown
-        lines = [clean_markdown(line) for line in lines]
-        lines = [line for line in lines if is_useful_line(line)]
-        lines = [clean_ocr(line) for line in lines]
-
-        # Create new page with cleaned content
-        page.assets["main.md"].content = join_on_newlines(lines)
-
+        page.assets["main.md"].content = join_on_newlines(
+            clean_ocr(get_or_load_asset_content(page.assets["main.md"]))
+        )
         yield from parse_basic_elements(document_context, page)
