@@ -41,9 +41,6 @@ _LOGGER = logging.getLogger(__name__)
 
 
 TITLE_PUNCTUATION_PATTERN_S = r"[.\s\-:]"
-IS_NOT_ENDING_WITH_PUNCTUATION = r"(?!.*[.;:,]$)"
-NUMBERING_THEN_OPT_NUMBERS_PATTERN_S = rf"{NUMBERING_PATTERN_S}([.\-]{NUMBERS_PATTERN_S})*\.?"
-NUMBERING_THEN_OBL_NUMBERS_PATTERN_S = rf"{NUMBERING_PATTERN_S}([.\-]{NUMBERS_PATTERN_S})+\.?"
 
 SECTION_TYPES_LIST = [
     SectionType.ANNEXE.value,
@@ -53,8 +50,6 @@ SECTION_TYPES_LIST = [
 ]
 """List of section types that we want to detect."""
 
-SECTION_TYPES_PATTERN_S = rf"{join_with_or(SECTION_TYPES_LIST)}"
-
 
 SECTION_TYPE_SETTINGS = Settings()
 
@@ -62,7 +57,7 @@ SECTION_TYPE_SETTINGS = Settings()
 TITLE_NODE = regex_tree.Group(
     regex_tree.Branching(
         [
-            # This regex matches section names in arretes such as
+            # Variant 1 : This regex matches section names in arretes such as
             # Annexe 1
             # Titre 1
             # Titre I - TITRE
@@ -77,7 +72,7 @@ TITLE_NODE = regex_tree.Group(
                 [
                     # Section name
                     regex_tree.Literal(
-                        rf"^(?P<section_type>{SECTION_TYPES_PATTERN_S})",
+                        rf"^(?P<section_type>{join_with_or(SECTION_TYPES_LIST)})",
                         settings=SECTION_TYPE_SETTINGS,
                     ),
                     regex_tree.Branching(
@@ -99,7 +94,7 @@ TITLE_NODE = regex_tree.Group(
                                         [
                                             rf"(?P<number>{ORDINAL_PATTERN_S})",
                                             rf"(?P<number>(\d|I|i))(?P<eme>{EME_PATTERN_S})",
-                                            rf"(?P<number>{NUMBERING_THEN_OPT_NUMBERS_PATTERN_S})",
+                                            rf"(?P<number>{NUMBERING_PATTERN_S}([.\-]{NUMBERS_PATTERN_S})*\.?)",  # noqa
                                         ],
                                     ),
                                     # Punctuation between numbering and text
@@ -112,21 +107,21 @@ TITLE_NODE = regex_tree.Group(
                     ),
                 ],
             ),
-            # This regex matches section names in arretes such as
+            # Variant 2 : This regex matches section names in arretes such as
             # 1.2 - CHAPITRE
             # 1.2.3 - Article
             # 1.2.3. - Article.
             regex_tree.Sequence(
                 [
                     # Numbering pattern with at least two numbers
-                    rf"(?P<number>{NUMBERING_THEN_OBL_NUMBERS_PATTERN_S})",
+                    rf"(?P<number>{NUMBERING_PATTERN_S}([.\-]{NUMBERS_PATTERN_S})+\.?)",
                     # Punctuation between numbering and text
                     rf"(?P<punc_after>{TITLE_PUNCTUATION_PATTERN_S}*)",
                     # Text group
                     r"(?P<text>.*?)$",
                 ],
             ),
-            # This regex matches section names in arretes such as
+            # Variant 3 : This regex matches section names in arretes such as
             # 1 TITRE
             # 1 - Article
             regex_tree.Sequence(
@@ -135,8 +130,8 @@ TITLE_NODE = regex_tree.Group(
                     rf"^(?P<number>{NUMBERS_PATTERN_S}\.?)",
                     # Punctuation between section name and numbering
                     rf"(?P<punc_after>\s*{TITLE_PUNCTUATION_PATTERN_S}\s*)",
-                    # Text group not ending with punctuation
-                    rf"(?P<text>{IS_NOT_ENDING_WITH_PUNCTUATION}.*?)$",
+                    # Text group starting with one word and not ending with punctuation
+                    r"(?P<text>(?!.*[.;:,]$)[a-zA-Z]+(\b.+)*)$",
                 ],
             ),
         ],
