@@ -167,10 +167,6 @@ class TestTitlePattern(unittest.TestCase):
         text = "(1) à l'exception du monoxyde de carbone."
         assert TITLE_NODE.pattern.match(text) is None
 
-    def test_list_with_colon(self):
-        text = "3. Liste ;"
-        assert TITLE_NODE.pattern.match(text) is None
-
     def test_sentence_start_point(self):
         text = ". Ni 5,0 mg / 1"
         assert TITLE_NODE.pattern.match(text) is None
@@ -184,12 +180,27 @@ class TestTitlePattern(unittest.TestCase):
         text = "A. Chapitre"
         assert TITLE_NODE.pattern.match(text) is None
 
+    def test_toc_appendix(self):
+        text = "Annexes :"
+        assert TITLE_NODE.pattern.match(text) is None
+
+    # Variant 3
+    def test_simple_number_and_text(self):
+        text = "12 bla"
+        matched = TITLE_NODE.pattern.match(text)
+        assert matched is not None
+        assert matched.group(0) == "12 bla"
+
     def test_more_than_two_numbers(self):
         text = "27406 Code postal"
         assert TITLE_NODE.pattern.match(text) is None
 
-    def test_toc_appendix(self):
-        text = "Annexes :"
+    def test_only_numbers(self):
+        text = "12 13 14"
+        assert TITLE_NODE.pattern.match(text) is None
+
+    def test_list_with_colon(self):
+        text = "3. Liste ;"
         assert TITLE_NODE.pattern.match(text) is None
 
 
