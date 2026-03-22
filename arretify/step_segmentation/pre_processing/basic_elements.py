@@ -30,6 +30,7 @@ from arretify.semantic_tag_specs import (
     PageSeparatorSpec,
 )
 from arretify.step_segmentation.core import make_probe_from_pattern_proxy
+from arretify.step_segmentation.pre_processing.ocr_cleaning import clean_ocr
 from arretify.step_segmentation.semantic_tag_specs import (
     TextSpanSegmentationData,
     TextSpanSegmentationSpec,
@@ -52,7 +53,7 @@ def parse_basic_elements(context: DocumentContext, page: Page) -> Iterator[Prote
 
     if "header.md" in page.assets:
         header_content = get_or_load_asset_content(page.assets["header.md"])
-        header_lines = split_on_newlines(header_content)
+        header_lines = clean_ocr(header_content)
         if _is_containing_title(header_lines):
             # If the header contains a title we consider that it is misdetected
             # and we promote it to main content.
