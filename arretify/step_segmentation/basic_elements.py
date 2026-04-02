@@ -464,14 +464,17 @@ def parse_page_footers(
 TABLE_OF_CONTENTS_PAGING_PATTERN_S = r"\.{5}\s+(page\s+)?\d+"
 """Detect table of contents paging, e.g. "..... page 1" or "..... 1"."""
 
-TABLE_OF_CONTENTS_LIST = [
+TABLE_OF_CONTENTS_TITLE_LIST = [
     r"sommaire",
     r"table des matieres",
-    r"liste des (chapitres|articles)",
-    rf".*?\s+{TABLE_OF_CONTENTS_PAGING_PATTERN_S}$",
+    r"liste des (chapitres|articles|annexes)",
 ]
 
-TABLE_OF_CONTENTS_PATTERN = PatternProxy(rf"^{join_with_or(TABLE_OF_CONTENTS_LIST)}")
+TABLE_OF_CONTENTS_PATTERN = PatternProxy(
+    rf"^{
+        join_with_or(TABLE_OF_CONTENTS_TITLE_LIST
+                     + [rf".*?\s+{TABLE_OF_CONTENTS_PAGING_PATTERN_S}$"])}"
+)
 """Detect all table of contents starting sentences."""
 
 
