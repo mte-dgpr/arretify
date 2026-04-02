@@ -23,12 +23,14 @@ from urllib.parse import urlparse
 from bs4 import BeautifulSoup
 
 from arretify.regex_utils.core import PatternProxy
+from arretify.regex_utils.helpers import join_with_or
 from arretify.semantic_tag_specs import (
     PageFooterSpec,
     PageHeaderSpec,
     PageSeparatorData,
     PageSeparatorSpec,
 )
+from arretify.step_segmentation.basic_elements import TABLE_OF_CONTENTS_TITLE_LIST
 from arretify.step_segmentation.core import make_probe_from_pattern_proxy
 from arretify.step_segmentation.pre_processing.ocr_cleaning import clean_ocr
 from arretify.step_segmentation.semantic_tag_specs import (
@@ -90,10 +92,15 @@ def parse_basic_elements(context: DocumentContext, page: Page) -> Iterator[Prote
 _is_title_string = make_probe_from_pattern_proxy(
     TITLE_NODE.pattern,
 )
+_is_table_of_contents = make_probe_from_pattern_proxy(
+    PatternProxy(rf"^{join_with_or(TABLE_OF_CONTENTS_TITLE_LIST)}")
+)
 
 
 def _is_containing_title(lines: Sequence[str]) -> bool:
-    return any(_is_title_string(lines, i) for i in range(len(lines)))
+    return any(
+        _is_title_string(lines, i) or _is_table_of_contents(lines, i) for i in range(len(lines))
+    )
 
 
 def render_page_header(context: DocumentContext, content: str) -> ProtectedTag:

@@ -159,6 +159,33 @@ class TestParseBasicElements(BaseTestCaseSegmentation):
             ],
         )
 
+    def test_header_contains_toc_title(self):
+        # Arrange
+        page = Page(index=1)
+        create_asset(page, "header.md", "table des matieres")
+        create_asset(page, "main.md", "Some content")
+
+        # Act
+        result = parse_basic_elements(self.context, page)
+
+        # Assert
+        assert_segmentation_element_lists_equal(
+            result,
+            [
+                self.make_semantic_tag(PageSeparatorSpec, data=PageSeparatorData(page_index=0)),
+                self.make_semantic_tag(
+                    TextSpanSegmentationSpec,
+                    contents=["table des matieres"],
+                    data=TextSpanSegmentationData(start=[1, 0, 0], end=[1, 0, 17]),
+                ),
+                self.make_semantic_tag(
+                    TextSpanSegmentationSpec,
+                    contents=["Some content"],
+                    data=TextSpanSegmentationData(start=[1, 0, 0], end=[1, 0, 11]),
+                ),
+            ],
+        )
+
 
 class TestRenderImageAndEmbedBase64(BaseTestCaseSegmentation):
 
