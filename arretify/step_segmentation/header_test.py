@@ -372,7 +372,7 @@ class TestParseVisaAndMotifs(BaseTestCaseSegmentation):
             ],
         )
 
-    def test_variant_explicit_list_interrupted(self):
+    def test_variant_explicit_list_interrupted_by_non_visa_text(self):
         # Arrange
         elements = [
             *self.make_text_spans("Vu : "),
@@ -440,6 +440,46 @@ class TestParseVisaAndMotifs(BaseTestCaseSegmentation):
                 self.make_semantic_tag(
                     VisaSegmentationSpec,
                     contents=self.make_text_spans("- vu la demande déposée par la société XYZ ;"),
+                ),
+            ],
+        )
+
+    def test_variant_explicit_list_vu_inside_interrupted_by_page_footer(self):
+        # Arrange
+        elements = [
+            self.make_semantic_tag(
+                ListSegmentationSpec,
+                contents=[
+                    *self.make_text_spans("- Vu le code de l'environnement ;"),
+                    self.make_semantic_tag(
+                        PageFooterSpec,
+                        contents=wrap_in_tag(self.soup, "div", ["page 1"]),
+                    ),
+                    *self.make_text_spans("- Vu la nomenclature des installations classées ;"),
+                ],
+            ),
+        ]
+
+        # Act
+        result = parse_visa_and_motif_elements(self.context, elements)
+
+        # Assert
+        assert_segmentation_element_lists_equal(
+            result,
+            [
+                self.make_semantic_tag(
+                    VisaSegmentationSpec,
+                    contents=self.make_text_spans("- Vu le code de l'environnement ;"),
+                ),
+                self.make_semantic_tag(
+                    PageFooterSpec,
+                    contents=wrap_in_tag(self.soup, "div", ["page 1"]),
+                ),
+                self.make_semantic_tag(
+                    VisaSegmentationSpec,
+                    contents=self.make_text_spans(
+                        "- Vu la nomenclature des installations classées ;"
+                    ),
                 ),
             ],
         )

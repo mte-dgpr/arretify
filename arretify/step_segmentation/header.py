@@ -442,6 +442,8 @@ def _parse_visa_and_motif_elements_pass1(
                     yield make_semantic_tag(
                         context.protected_soup, spec, contents=[list_item_element]
                     )
+                elif is_semantic_tag(list_item_element, spec_in=PAGINATION_TAG_SPECS):
+                    yield list_item_element
                 else:
                     raise ValueError(f"Unexpected element {list_item_element}")
         else:
