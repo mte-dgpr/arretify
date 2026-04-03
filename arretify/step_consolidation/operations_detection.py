@@ -27,16 +27,10 @@ from arretify.regex_utils import (
     regex_tree,
 )
 from arretify.semantic_tag_specs import OperationData, OperationSpec
-from arretify.types import (
-    DocumentContext,
-    OperationType,
-    ProtectedSoup,
-    ProtectedTag,
-    ProtectedTagOrStr,
-)
+from arretify.types import DocumentContext, OperationType, ProtectedSoup, ProtectedTagOrStr
+from arretify.utils.functional import iter_func_to_list
 from arretify.utils.html_create import make_semantic_tag, make_tag
 from arretify.utils.html_split_merge import make_regex_tree_splitter
-from arretify.utils.split_merge import split_and_map_elements
 from arretify.utils.strings import merge_strings
 
 OPERATION_TYPES_GROUP_NAMES = [
@@ -91,13 +85,12 @@ EXPR_CONTINUATION = join_with_or(EXPR_CONTINUATION_LIST)
 RTL_OPERATION_NODE = regex_tree.Group(
     regex_tree.Sequence(
         [
-            r"^.*",
             regex_tree.Branching(
                 [
-                    r"est\sainsi",
-                    r"sont\sainsi",
                     r"est",
                     r"sont",
+                    r"est\sainsi",
+                    r"sont\sainsi",
                 ]
             ),
             r"\s",
@@ -298,12 +291,11 @@ RTL_OPERATION_NODE = regex_tree.Group(
             ),
             # When the string is not ended by a period (.), we consider that
             # there is a right operand.
-            regex_tree.Repeat(
+            regex_tree.Optional(
                 regex_tree.Group(
                     r"[^\.]*$",
                     group_name="__has_operand",
                 ),
-                quantifier=(0, ...),
             ),
         ]
     ),
@@ -311,28 +303,42 @@ RTL_OPERATION_NODE = regex_tree.Group(
 )
 
 
+@iter_func_to_list
 def parse_operations(
     document_context: DocumentContext,
     contents: Sequence[ProtectedTagOrStr],
-) -> list[ProtectedTagOrStr]:
-    return split_and_map_elements(
-        contents,
-        make_regex_tree_splitter(RTL_OPERATION_NODE),
-        lambda operation_match: _render_operation_match(
-            document_context.protected_soup, operation_match
-        ),
-    )
+) -> Iterator[ProtectedTagOrStr]:
+    # Here we do not use split_and_map_elements because we want to capture
+    # the text immediately left of the match to include it in the operation tag.
+    splitter = make_regex_tree_splitter(RTL_OPERATION_NODE)
+    remainder = list(contents)
+    while remainder:
+        split = splitter(remainder)
+        if split is None:
+            yield from remainder
+            return
+        before, match, remainder = split
+        yield from _render_operation_match(document_context.protected_soup, before, match)
 
 
 def _render_operation_match(
     soup: ProtectedSoup,
+    before: Sequence[ProtectedTagOrStr],
     operation_match: regex_tree.Match,
-) -> ProtectedTag:
-    return make_semantic_tag(
+) -> Iterator[ProtectedTagOrStr]:
+    # For each operation match, we want to capture text immediately left of the match
+    # to include it in the operation tag.
+    elements_before_match: Sequence[ProtectedTagOrStr] = []
+    if before and isinstance(before[-1], str):
+        elements_before_match = [before[-1]]
+        before = before[:-1]
+
+    yield from before
+    yield make_semantic_tag(
         soup,
         OperationSpec,
         contents=flat_map_regex_tree_match(
-            operation_match.children,
+            elements_before_match + operation_match.children,
             lambda group_match: _render_group_match(soup, group_match),
             allowed_group_names=[
                 "__has_operand",

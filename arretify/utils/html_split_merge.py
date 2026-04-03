@@ -16,7 +16,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from dataclasses import dataclass
+import copy
+from dataclasses import dataclass, field
 from dataclasses import replace as dataclass_replace
 from typing import Iterator, Sequence, Tuple, TypeVar
 
@@ -26,7 +27,10 @@ from arretify.regex_utils.regex_tree.types import (
     GroupName,
     GroupNode,
     LiteralNode,
+    MatchDict,
     Node,
+    NonCapturingNode,
+    OptionalNode,
     RegexTreeMatch,
     RegexTreeMatchFlow,
     RepeatNode,
@@ -139,7 +143,8 @@ def recombine_strings(
     )
 
 
-def make_regex_tree_splitter(
+# TODO-regex_tree_splitter : REMOVE
+def make_regex_tree_splitter_OLD(
     node: GroupNode,
 ) -> Splitter[ProtectedTagOrStr, RegexTreeMatch]:
     """
@@ -292,6 +297,7 @@ def _split_before_string_index(
 
 
 # -------------------- Regex tree matching -------------------- #
+# TODO-regex_tree_splitter : REMOVE
 class NoMatch(Exception):
     """
     Enables the algorithm to break out of the current branch and try the next one.
@@ -304,6 +310,7 @@ class _NamedGroupSplitterMatch:
     group_name: GroupName
 
 
+# TODO-regex_tree_splitter : REMOVE
 def regex_tree_match(elements: Sequence[ProtectedTagOrStr], node: GroupNode) -> RegexTreeMatch:
     try:
         results = list(_regex_tree_match_recursive(elements, node, None))
@@ -316,6 +323,7 @@ def regex_tree_match(elements: Sequence[ProtectedTagOrStr], node: GroupNode) -> 
         return results[0]
 
 
+# TODO-regex_tree_splitter : REMOVE
 def _regex_tree_match_recursive(
     elements: Sequence[ProtectedTagOrStr],
     node: Node,
@@ -390,6 +398,312 @@ def _regex_tree_match_recursive(
 
     else:
         raise RuntimeError(f"unexpected node type: {node}")
+
+
+@dataclass
+class RegexTreeSplitterContext:
+    match_dict: MatchDict = field(default_factory=dict)
+
+
+def make_regex_tree_splitter(
+    node: GroupNode,
+) -> Splitter[ProtectedTagOrStr, RegexTreeMatch]:
+
+    def _splitter(
+        elements: Sequence[ProtectedTagOrStr],
+    ) -> RawSplit[ProtectedTagOrStr, RegexTreeMatch] | None:
+        grouped_strings = split_elements(elements, group_strings_and_inline_tags_splitter)
+
+        for i, splitted_element in enumerate(grouped_strings):
+            if not isinstance(splitted_element, SplitMatch):
+                continue
+            group_elements = splitted_element.value
+            context = RegexTreeSplitterContext()
+            split = _regex_tree_splitter(context, group_elements, node, expects_before=True)
+            if not split:
+                continue
+
+            before, match_elements, after = split
+            assert len(match_elements) == 1
+            regex_tree_match = match_elements[0]
+            assert isinstance(regex_tree_match, RegexTreeMatch)
+
+            before = merge_splitted_elements(grouped_strings[:i]) + before
+            after = after + merge_splitted_elements(grouped_strings[i + 1 :])
+            return (
+                before,
+                regex_tree_match,
+                after,
+            )
+        return None
+
+    return _splitter
+
+
+def _regex_tree_splitter(
+    context: RegexTreeSplitterContext,
+    elements: Sequence[ProtectedTagOrStr],
+    node: Node,
+    expects_before: bool = True,
+) -> RawSplit[ProtectedTagOrStr, list[ProtectedTagOrStr | RegexTreeMatch]] | None:
+    context_backup = _backup_context(context)
+    split = _regex_tree_splitter_recursive(context, elements, node)
+    if split is None:
+        _restore_context(context, context_backup)
+        return None
+
+    before, match_elements, after = split
+    if before and not expects_before:
+        _restore_context(context, context_backup)
+        return None
+    else:
+        return before, match_elements, after
+
+
+def _regex_tree_splitter_recursive(
+    context: RegexTreeSplitterContext,
+    remainder: Sequence[ProtectedTagOrStr],
+    node: Node,
+) -> RawSplit[ProtectedTagOrStr, list[ProtectedTagOrStr | RegexTreeMatch]] | None:
+
+    # ------------------------------ LITERAL ------------------------------ #
+    if isinstance(node, LiteralNode):
+        # We need at least en empty string to do regex matching so we can match empty patterns.
+        # e.g. r'(?=\s|$)' would match an empty string at the end of the input.
+        if len(remainder) == 0:
+            remainder = [""]
+
+        split = make_pattern_splitter_ignoring_inline_tags(node.pattern)(remainder)
+        if not split:
+            return None
+        before, node_match, after = split
+        _update_match_dict(context.match_dict, node_match.match_proxy)
+
+        return (before, node_match.elements, after)
+
+    # ------------------------------ GROUP ------------------------------ #
+    elif isinstance(node, GroupNode):
+        child_context = RegexTreeSplitterContext()
+
+        split = _regex_tree_splitter(child_context, remainder, node.child)
+        if split is None:
+            return None
+
+        before, match_children, after = split
+        return (
+            before,
+            [
+                RegexTreeMatch(
+                    children=match_children,
+                    group_name=node.group_name,
+                    match_dict=child_context.match_dict,
+                )
+            ],
+            after,
+        )
+
+    # ------------------------------ BRANCHING ------------------------------ #
+    elif isinstance(node, BranchingNode):
+        node_children = list(node.children.values())
+        selected = _select_best_node(context, remainder, node_children)
+        if not selected:
+            return None
+        _, split = selected
+        return split
+
+    # ------------------------------ REPEAT ------------------------------ #
+    elif isinstance(node, RepeatNode):
+        has_separator = node.separator is not None
+        match_elements: list[list[ProtectedTagOrStr]] = []
+        separator_splitter: Splitter[ProtectedTagOrStr, _PatternSplitterMatch] | None = None
+        if has_separator:
+            separator_splitter = make_pattern_splitter_ignoring_inline_tags(node.separator)
+        min_repeat, max_repeat = node.quantifier
+
+        # 1. Find the first match
+        split = _regex_tree_splitter(context, remainder, node.child, expects_before=True)
+        if not split and min_repeat == 0:
+            return ([], [], remainder)
+        elif not split:
+            return None
+        before_all, match_elements, remainder = split
+        repeat_count = 1
+        # Represents the last state of elements before trying to find a new match.
+        elements_backup = remainder
+
+        while max_repeat == Ellipsis or repeat_count < max_repeat:
+
+            # 2. Deal with separator.
+            if has_separator:
+                split = separator_splitter(remainder)
+                if not split:
+                    break
+                before, separator_match, remainder = split
+                # Non contiguous match.
+                if before:
+                    break
+
+            # 3. Find the next match
+            split = _regex_tree_splitter(context, remainder, node.child, expects_before=False)
+            if not split:
+                break
+            before, repeat_match, remainder = split
+
+            # 4. Handle matches and prepare next iteration
+            if has_separator:
+                match_elements.extend(separator_match.elements)
+            match_elements.extend(repeat_match)
+            repeat_count += 1
+
+            elements_backup = remainder
+
+        # 5. Finalise and return the results
+        if repeat_count < min_repeat:
+            return None
+
+        return (before_all, recombine_strings(match_elements), elements_backup)
+
+    # ------------------------------ SEQUENCE ------------------------------ #
+    elif isinstance(node, SequenceNode):
+        before_all: list[ProtectedTagOrStr] = []
+        children_nodes = list(node.children.values())
+
+        while remainder:
+
+            # 1. Determine head candidates: consecutive OptionalNodes from start
+            #    + first mandatory node
+            head_end_index = 0
+            while head_end_index < len(children_nodes) - 1 and isinstance(
+                children_nodes[head_end_index], OptionalNode
+            ):
+                head_end_index += 1
+            head_candidates = children_nodes[: head_end_index + 1]
+
+            # 2. Select and match the best head node
+            selected = _select_best_node(context, remainder, head_candidates)
+            if not selected:
+                return None
+            head_index, (before_head, head_match, after_head) = selected
+
+            if not head_match:
+                raise RuntimeError("head_match should not be empty")
+
+            # 3. Handle NonCapturingNode head: merge it back into remainder
+            is_non_capturing_head = isinstance(children_nodes[head_index], NonCapturingNode)
+            if is_non_capturing_head:
+                remainder = head_match + after_head
+            else:
+                remainder = after_head
+
+            # 4. Try to match remaining children in sequence
+            tail_elements: list[ProtectedTagOrStr | RegexTreeMatch] = []
+            for child in children_nodes[head_index + 1 :]:
+                split = _regex_tree_splitter(context, remainder, child, expects_before=False)
+
+                # OptionalNode: skip if no match
+                if not split and isinstance(child, OptionalNode):
+                    continue
+                # Mandatory node: break if no match
+                elif not split:
+                    break
+
+                _, child_match, remainder = split
+
+                # NonCapturingNode: must be at end, merge back into remainder
+                if isinstance(child, NonCapturingNode):
+                    if child is not children_nodes[-1]:
+                        raise RuntimeError(
+                            "NonCapturingNode can only be at the end of the sequence"
+                        )
+                    remainder = recombine_strings(child_match + remainder)
+                    continue
+
+                tail_elements.extend(child_match)
+
+            # 5. Check if all children matched successfully (for-else)
+            else:
+                if not is_non_capturing_head:
+                    tail_elements = head_match + tail_elements
+
+                return (
+                    recombine_strings(before_all + before_head),
+                    recombine_strings(tail_elements),
+                    remainder,
+                )
+
+            # 6. Backtrack: matching failed, try to find head again later in the text
+            before_all.extend(before_head)
+            before_all.extend(head_match)
+            remainder = after_head
+            tail_elements = []
+
+        # No match found after exhausting all possibilities
+        return None
+
+    # ------------------------------ ELSE ------------------------------ #
+    elif isinstance(node, (OptionalNode, NonCapturingNode)):
+        return _regex_tree_splitter(context, remainder, node.child)
+
+    else:
+        raise RuntimeError(f"unexpected node type: {node}")
+
+
+def _select_best_node(
+    context: RegexTreeSplitterContext, elements: Sequence[ProtectedTagOrStr], nodes: Sequence[Node]
+) -> Tuple[int, RawSplit[ProtectedTagOrStr, list[ProtectedTagOrStr | RegexTreeMatch]]] | None:
+    context_backup = _backup_context(context)
+    matches: list[
+        Tuple[
+            int,
+            RawSplit[ProtectedTagOrStr, list[ProtectedTagOrStr | RegexTreeMatch]] | None,
+            RegexTreeSplitterContext,
+        ]
+    ] = []
+
+    for i, child in enumerate(nodes):
+        _restore_context(context, context_backup)
+        split = _regex_tree_splitter(context, elements, child)
+        matches.append((i, split, _backup_context(context)))
+        # TODO : Break immediately if we found a contiguous match.
+        # if split is not None and not split[0]:
+        #     break
+
+    filtered_matches = [(i, split, context) for i, split, context in matches if split is not None]
+    if not filtered_matches:
+        return None
+
+    # We prioritise contiguous matches, then longest matches, then first matches.
+    filtered_matches.sort(key=lambda item: _select_best_node_sort_key(item[1]))
+
+    i, best_split, best_match_context = filtered_matches[0]
+    _restore_context(context, best_match_context)
+    return i, best_split
+
+
+def _select_best_node_sort_key(
+    split: RawSplit[ProtectedTagOrStr, list[ProtectedTagOrStr | RegexTreeMatch]],
+) -> Tuple[int, int]:
+    before, match, _ = split
+    return (
+        # length of before (we want it to be 0 for contiguous matches)
+        len(merge_strings(before, strip_other_types=True)),
+        # length of match (we want it to be as long as possible)
+        -len(merge_strings(match, strip_other_types=True)),
+    )
+
+
+def _backup_context(context: RegexTreeSplitterContext) -> RegexTreeSplitterContext:
+    return copy.deepcopy(context)
+
+
+def _restore_context(context: RegexTreeSplitterContext, backup: RegexTreeSplitterContext) -> None:
+    context.match_dict.clear()
+    context.match_dict.update(backup.match_dict)
+
+
+def _update_match_dict(match_dict: MatchDict, match_proxy: MatchProxy) -> None:
+    # Remove None values from the match_dict
+    match_dict.update({k: v for k, v in match_proxy.groupdict().items() if v is not None})
 
 
 @iter_func_to_list

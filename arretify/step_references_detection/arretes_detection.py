@@ -56,10 +56,9 @@ IDENTIFIER_NODE = regex_tree.Sequence(
                 r"(?P<identifier>\S+[/\-]\S+)",
             ]
         ),
-        r"(?=\s|\.|$|,|\)|;)",
+        regex_tree.NonCapturing(r"\s|\.|$|,|\)|;"),
     ]
 )
-
 
 ARRETE_NODE = regex_tree.Group(
     regex_tree.Sequence(
@@ -73,26 +72,23 @@ ARRETE_NODE = regex_tree.Group(
                 [
                     regex_tree.Sequence(
                         [
-                            regex_tree.Repeat(
+                            regex_tree.Optional(
                                 regex_tree.Sequence(
                                     [
                                         IDENTIFIER_NODE,
                                         r"\s",
                                     ]
                                 ),
-                                quantifier=(0, 1),
                             ),
-                            r"(transmis a l\'exploitant par (courrier recommandé|courrier)\s)?",
-                            regex_tree.Sequence(
-                                [
-                                    r"((du|en date du)\s)?",
-                                    DATE_NODE,
-                                ]
+                            regex_tree.Optional(
+                                r"transmis a l\'exploitant par (courrier recommandé|courrier)\s"
                             ),
+                            regex_tree.Optional(r"(du|en date du)\s"),
+                            DATE_NODE,
                             # It's important to capture this in the arrete reference regex,
                             # so that we now it is not an action of modification, but rather
                             # part of the designation of the arrete.
-                            r"(\s(modifié|modifiant)(?=\b))?",
+                            regex_tree.Optional(r"\s(modifié|modifiant)(?=\b)"),
                         ]
                     ),
                     IDENTIFIER_NODE,
@@ -109,41 +105,32 @@ ARRETE_MULTIPLE_NODE = regex_tree.Group(
         [
             r"arrêtés ((?P<authority>préfectoraux|ministériels) (modifiés )?)?",
             regex_tree.Repeat(
-                regex_tree.Sequence(
-                    [
-                        regex_tree.Group(
-                            regex_tree.Branching(
+                regex_tree.Group(
+                    regex_tree.Branching(
+                        [
+                            # Regex with dates must come before cause the regex for codes
+                            # catches also dates.
+                            regex_tree.Sequence(
                                 [
-                                    # Regex with dates must come before cause the regex for codes
-                                    # catches also dates.
-                                    regex_tree.Sequence(
-                                        [
-                                            regex_tree.Repeat(
-                                                regex_tree.Sequence(
-                                                    [
-                                                        IDENTIFIER_NODE,
-                                                        r"\s",
-                                                    ]
-                                                ),
-                                                quantifier=(0, 1),
-                                            ),
-                                            regex_tree.Sequence(
-                                                [
-                                                    r"((du|en date du)\s)?",
-                                                    DATE_NODE,
-                                                ]
-                                            ),
-                                            r"(\s(modifié|modifiant))?",
-                                        ]
+                                    regex_tree.Optional(
+                                        regex_tree.Sequence(
+                                            [
+                                                IDENTIFIER_NODE,
+                                                r"\s",
+                                            ]
+                                        ),
                                     ),
-                                    IDENTIFIER_NODE,
+                                    regex_tree.Optional(r"(du|en date du)\s"),
+                                    DATE_NODE,
+                                    regex_tree.Optional(r"\s(modifié|modifiant)"),
                                 ]
                             ),
-                            group_name="__arrete",
-                        ),
-                        f"{ET_VIRGULE_PATTERN_S}?",
-                    ]
+                            IDENTIFIER_NODE,
+                        ]
+                    ),
+                    group_name="__arrete",
                 ),
+                separator=f"{ET_VIRGULE_PATTERN_S}?",
                 quantifier=(2, ...),
             ),
         ]

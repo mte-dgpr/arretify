@@ -18,8 +18,20 @@
 #
 import unittest
 
+from arretify.regex_utils.types import Settings
+
 from . import compile
-from .compile import Branching, Group, Literal, Repeat, Sequence
+from .compile import (
+    Branching,
+    Group,
+    Literal,
+    NonCapturing,
+    Optional,
+    Repeat,
+    Sequence,
+    _initialize_child,
+)
+from .types import BranchingNode, GroupNode, SequenceNode
 
 
 class TestCompilePattern(unittest.TestCase):
@@ -67,13 +79,6 @@ class TestCompilePattern(unittest.TestCase):
 
         # Assert
         assert node.pattern.pattern == r"(\w+)((,)(\w+))*"
-
-    def test_compile_repeat_pattern_with_separator_and_min_0(self):
-        # Arrange
-        node = Repeat(Literal(pattern_string=r"\w+"), (0, ...), separator=",")
-
-        # Assert
-        assert node.pattern.pattern == r"((\w+)((,)(\w+))*)?"
 
     def test_compile_group_pattern(self):
         # Arrange
@@ -142,3 +147,55 @@ class TestCompilePattern(unittest.TestCase):
         # Assert
         assert repr(node1) == f'<{node1.id}, LiteralNode, "bla">'
         assert repr(node2) == f'<{node2.id}, LiteralNode, "bla|blo|bl...">'
+
+
+class TestInitializeChild(unittest.TestCase):
+
+    def test_initialize_child_with_optional_node_not_in_sequence_raises_error(self):
+        with self.assertRaises(ValueError) as context:
+            _initialize_child(BranchingNode, Optional(r"test"), Settings())
+        assert "OptionalNode is allowed only in SequenceNode" in str(context.exception)
+
+    def test_initialize_child_with_non_capturing_node_not_in_sequence_raises_error(self):
+        with self.assertRaises(ValueError) as context:
+            _initialize_child(GroupNode, NonCapturing(r"test"), Settings())
+        assert "NonCapturingNode is allowed only in SequenceNode" in str(context.exception)
+
+    def test_initialize_child_with_optional_node_in_sequence_works(self):
+        node = _initialize_child(SequenceNode, Optional(r"test"), Settings())
+        assert node is not None
+
+
+class TestRepeat(unittest.TestCase):
+
+    def test_repeat_with_min_0_raises_error(self):
+        with self.assertRaises(ValueError) as context:
+            Repeat(Literal(r"test"), (0, 3))
+        assert "Quantifier min must be >= 1" in str(context.exception)
+
+
+class TestSequence(unittest.TestCase):
+
+    def test_single_non_capturing_at_beginning_works(self):
+        node = Sequence([NonCapturing(r"a"), r"middle", r"last"])
+        assert len(node.children) == 3
+
+    def test_single_non_capturing_at_end_works(self):
+        node = Sequence([r"first", r"middle", NonCapturing(r"a")])
+        assert len(node.children) == 3
+
+    def test_multiple_optional_nodes_at_beginning_works(self):
+        node = Sequence([Optional(r"a"), Optional(r"b"), r"middle", r"last"])
+        assert len(node.children) == 4
+
+    def test_non_capturing_node_in_middle_raises_error(self):
+        with self.assertRaises(ValueError):
+            Sequence([r"first", NonCapturing(r"middle"), r"last"])
+
+    def test_multiple_non_capturing_nodes_at_beginning_raises_error(self):
+        with self.assertRaises(ValueError):
+            Sequence([NonCapturing(r"a"), NonCapturing(r"b"), r"middle"])
+
+    def test_mix_optional_and_non_capturing_at_beginning_raises_error(self):
+        with self.assertRaises(ValueError):
+            Sequence([Optional(r"a"), NonCapturing(r"b"), r"middle"])

@@ -35,7 +35,7 @@ from arretify.utils.testing import BaseTestCaseHtml, assert_elements_equal
 from .operands_detection import resolve_references_and_operands
 
 
-class TestParseOperations(BaseTestCaseHtml):
+class TestResolveReferencesAndOperands(BaseTestCaseHtml):
 
     def test_several_references_no_operand(self):
         # Arrange
