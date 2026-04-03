@@ -408,7 +408,7 @@ class TestParseTablesOfContents(BaseTestCaseSegmentation):
     def test_parse_tables_of_contents(self):
         # Arrange
         lines = self.make_text_spans(
-            "Line 1", "Sommaire", "bla ..... page 1", "blo ..... page 2", "Line 2"
+            "Some line", "Sommaire", "bla ..... page 1", "blo ..... page 2", "Some other line"
         )
 
         # Act
@@ -418,7 +418,7 @@ class TestParseTablesOfContents(BaseTestCaseSegmentation):
         assert_segmentation_element_lists_equal(
             elements,
             [
-                *self.make_text_spans("Line 1"),
+                *self.make_text_spans("Some line"),
                 self.make_semantic_tag(
                     TableOfContentsSpec,
                     contents=wrap_in_tag(
@@ -431,7 +431,54 @@ class TestParseTablesOfContents(BaseTestCaseSegmentation):
                         ],
                     ),
                 ),
-                *self.make_text_spans("Line 2"),
+                *self.make_text_spans("Some other line"),
+            ],
+        )
+
+    def test_no_page_keyword(self):
+        lines = self.make_text_spans(
+            "SOMMAIRE",
+            "1 INTRODUCTION 3",
+            "2 PRESCRIPTIONS GÉNÉRALES 3",
+            "3 OPÉRATIONS DE PRÉLÈVEMENT 4",
+            "3.1 OPÉRATEURS DU PRELEVEMENT 4",
+            "3.2 CONDITIONS GÉNÉRALES DU PRELEVEMENT 4",
+            "3.3 MESURE DE DÉBIT EN CONTINU 5",
+            "3.4 PRÉLÈVEMENT CONTINU SUR 24 HEURES À TEMPÉRATURE CONTRÔLÉE 5",
+            "3.5 ECHANTILLON 6",
+            "3.6 BLANCS DE PRÉLÈVEMENT 6",
+            "4 ANALYSES 7",
+            "5 TRANSMISSION DES RÉSULTATS 9",
+            "6 LISTE DES ANNEXES 10",
+        )
+
+        elements = parse_tables_of_contents(self.context, lines)
+
+        assert_segmentation_element_lists_equal(
+            elements,
+            [
+                self.make_semantic_tag(
+                    TableOfContentsSpec,
+                    contents=wrap_in_tag(
+                        self.soup,
+                        "div",
+                        [
+                            "SOMMAIRE",
+                            "1 INTRODUCTION 3",
+                            "2 PRESCRIPTIONS GÉNÉRALES 3",
+                            "3 OPÉRATIONS DE PRÉLÈVEMENT 4",
+                            "3.1 OPÉRATEURS DU PRELEVEMENT 4",
+                            "3.2 CONDITIONS GÉNÉRALES DU PRELEVEMENT 4",
+                            "3.3 MESURE DE DÉBIT EN CONTINU 5",
+                            "3.4 PRÉLÈVEMENT CONTINU SUR 24 HEURES À TEMPÉRATURE CONTRÔLÉE 5",
+                            "3.5 ECHANTILLON 6",
+                            "3.6 BLANCS DE PRÉLÈVEMENT 6",
+                            "4 ANALYSES 7",
+                            "5 TRANSMISSION DES RÉSULTATS 9",
+                            "6 LISTE DES ANNEXES 10",
+                        ],
+                    ),
+                ),
             ],
         )
 
