@@ -323,6 +323,30 @@ class TestMakeWhileSplitter(unittest.TestCase):
         # Assert
         assert result is None
 
+    def test_match_while_not_matching_start(self):
+        """
+        Test that it works when the while condition does not also match the start condition.
+        """
+
+        # Arrange
+        def start_condition(elements, index):
+            return elements[index].startswith("blo")
+
+        def while_condition(elements, index):
+            return elements[index].startswith("bla")
+
+        splitter = make_while_splitter(
+            start_condition,
+            while_condition,
+        )
+        elements = ["blo", "bla1", "bla2", "no match"]
+
+        # Act
+        result = splitter(elements)
+
+        # Assert
+        assert result == ([], elements[0:3], ["no match"])
+
 
 class TestMakeNegatedProbe(unittest.TestCase):
 

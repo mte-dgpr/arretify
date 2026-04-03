@@ -276,14 +276,14 @@ def make_while_splitter(
     (["a"], ["b", "b"], ["c"])
     """
 
-    def _splitter(elements: Sequence[T1]) -> RawSplit[T1, list[T1]] | None:
-        before, after = split_before_match(elements, start_condition)
-        if not after:
+    def _splitter(remainder: Sequence[T1]) -> RawSplit[T1, list[T1]] | None:
+        before, start_match = split_before_match(remainder, start_condition)
+        if not start_match:
             return None
-        match, after = split_before_match(
-            after, lambda elements, index: not while_condition(elements, index)
+        while_match, remainder = split_before_match(
+            start_match[1:], lambda elements, index: not while_condition(elements, index)
         )
-        return before, match, after
+        return before, start_match[0:1] + while_match, remainder
 
     return _splitter
 

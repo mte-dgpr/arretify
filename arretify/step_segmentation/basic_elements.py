@@ -423,7 +423,7 @@ def _address_splitter(
     )
 
 
-# -------------------- Table of contents and page footers -------------------- #
+# -------------------- Page footers -------------------- #
 PAGE_FOOTERS_LIST = [
     # "X/Y"
     r"\d+/\d+\s*",
@@ -461,8 +461,21 @@ def parse_page_footers(
 
 
 # -------------------- Table of contents -------------------- #
-TABLE_OF_CONTENTS_PAGING_PATTERN_S = r"\.{5}\s+(page\s+)?\d+"
-"""Detect table of contents paging, e.g. "..... page 1" or "..... 1"."""
+TABLE_OF_CONTENTS_PAGING_PATTERN_S = r".*?\s*\.{5}\s*(page|p)\s*\d+$"
+"""
+Detect table of contents paging, e.g.
+"..... page 1"
+or
+".....p1"
+
+We use this pattern to detect the start of a table of contents, in case the title is missing.
+"""
+
+TABLE_OF_CONTENTS_PAGING_LOOSE_PATTERN = PatternProxy(r".*?(((page|p)\s*)|\s+)?\d+$")
+"""
+Same but "page" or "p" is optional. We use this as a looser condition to detect continuation
+of table of contents, as sometimes the "page" or "p" is missing.
+"""
 
 TABLE_OF_CONTENTS_TITLE_LIST = [
     r"sommaire",
@@ -472,13 +485,18 @@ TABLE_OF_CONTENTS_TITLE_LIST = [
 
 TABLE_OF_CONTENTS_PATTERN = PatternProxy(
     rf"^{
-        join_with_or(TABLE_OF_CONTENTS_TITLE_LIST
-                     + [rf".*?\s+{TABLE_OF_CONTENTS_PAGING_PATTERN_S}$"])}"
+        join_with_or(
+            TABLE_OF_CONTENTS_TITLE_LIST +
+            [TABLE_OF_CONTENTS_PAGING_PATTERN_S]
+        )}"
 )
 """Detect all table of contents starting sentences."""
 
 
-_is_table_of_contents = make_probe_from_pattern_proxy(TABLE_OF_CONTENTS_PATTERN)
+_is_table_of_contents_start = make_probe_from_pattern_proxy(TABLE_OF_CONTENTS_PATTERN)
+_is_table_of_contents_continuation = make_probe_from_pattern_proxy(
+    TABLE_OF_CONTENTS_PAGING_LOOSE_PATTERN
+)
 
 
 def parse_tables_of_contents(
@@ -488,7 +506,7 @@ def parse_tables_of_contents(
     return split_and_map_elements(
         elements,
         make_while_splitter_for_text_spans(
-            _is_table_of_contents,
+            _is_table_of_contents_start,
             _table_of_contents_while_condition,
         ),
         lambda contents: _render_table_of_contents(context, contents),
@@ -511,7 +529,7 @@ def _table_of_contents_while_condition(elements: Sequence[ProtectedTagOrStr], in
     next_elements = elements[index : index + 3]
     if any(
         is_semantic_tag(next_elements[i], spec_in=[TextSpanSegmentationSpec])
-        and _is_table_of_contents(next_elements, i)
+        and _is_table_of_contents_continuation(next_elements, i)
         for i in range(len(next_elements))
     ):
         return True
