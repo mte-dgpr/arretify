@@ -307,3 +307,49 @@ class TestRenderFrameMisdetectedAsTable(BaseTestCaseSegmentation):
                 ),
             ],
         )
+
+    def test_with_inline_tags_inside_table(self):
+        # Arrange
+        page = Page(index=3)
+        frame_tag = self.make_tag(
+            "table",
+            contents=[
+                self.make_tag(
+                    "tr",
+                    contents=[
+                        self.make_tag(
+                            "td",
+                            contents=[
+                                "line1 ",
+                                self.make_tag("b", contents=["bold"]),
+                                self.make_tag("br"),
+                                "line2",
+                            ],
+                        ),
+                    ],
+                )
+            ],
+        )
+
+        # Act
+        result = list(render_frame_misdetected_as_table(self.context, page, 2, frame_tag))
+
+        # Assert
+        assert_segmentation_element_lists_equal(
+            result,
+            [
+                self.make_semantic_tag(
+                    TextSpanSegmentationSpec,
+                    contents=[
+                        "line1 ",
+                        self.make_tag("b", contents=["bold"]),
+                    ],
+                    data=TextSpanSegmentationData(start=[3, 2, 0], end=[3, 2, 9]),
+                ),
+                self.make_semantic_tag(
+                    TextSpanSegmentationSpec,
+                    contents=["line2"],
+                    data=TextSpanSegmentationData(start=[3, 2, 0], end=[3, 2, 4]),
+                ),
+            ],
+        )

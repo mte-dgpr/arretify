@@ -467,6 +467,24 @@ class TestGetString(BaseTestCaseSegmentation):
         # Assert
         assert result == "Viens au 123 rue de la Paix, à 12h"
 
+    def test_with_inline_formatting_tags(self):
+        # Arrange
+        tag = self.make_semantic_tag(
+            TextSpanSegmentationSpec,
+            contents=[
+                "Viens au ",
+                self.make_tag("b", contents=["123 rue de la Paix"]),
+                ", à 12h",
+            ],
+            data=TextSpanSegmentationData(start=[0, 0, 0], end=[0, 0, 0]),
+        )
+
+        # Act
+        result = get_string(tag)
+
+        # Assert
+        assert result == "Viens au 123 rue de la Paix, à 12h"
+
 
 class TestCombineTextSpans(BaseTestCaseSegmentation):
 

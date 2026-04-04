@@ -56,6 +56,7 @@ from arretify.utils.html_semantic import (
     get_semantic_tag_spec,
     is_semantic_tag,
 )
+from arretify.utils.html_split_merge import recombine_strings
 from arretify.utils.markdown_parsing import LIST_PATTERN
 
 _LOGGER = logging.getLogger(__name__)
@@ -401,11 +402,4 @@ def render_text_span(
     _: DocumentContext,
     tag: ProtectedTag,
 ) -> Iterator[ProtectedTagOrStr]:
-    for i, element in enumerate(tag.contents):
-        if isinstance(element, str):
-            # If this is not the last element, we add a space as separator.
-            yield element + " " * int(i < len(tag.contents) - 1)
-        elif is_semantic_tag(element):
-            yield element
-        else:
-            raise ValueError(f"Unexpected element type {type(element)} in text span rendering.")
+    return recombine_strings(tag.contents)

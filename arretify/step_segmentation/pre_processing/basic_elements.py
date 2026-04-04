@@ -31,7 +31,7 @@ from arretify.semantic_tag_specs import (
     PageSeparatorSpec,
 )
 from arretify.step_segmentation.basic_elements import TABLE_OF_CONTENTS_TITLE_LIST
-from arretify.step_segmentation.core import make_probe_from_pattern_proxy
+from arretify.step_segmentation.core import _get_string, make_probe_from_pattern_proxy
 from arretify.step_segmentation.pre_processing.ocr_cleaning import clean_ocr
 from arretify.step_segmentation.semantic_tag_specs import (
     TextSpanSegmentationData,
@@ -44,7 +44,7 @@ from arretify.utils.html import is_tag, set_attribute
 from arretify.utils.html_create import make_semantic_tag, wrap_in_tag
 from arretify.utils.markdown_parsing import IMAGE_PATTERN_S, LINK_PATTERN_S, parse_markdown_element
 from arretify.utils.ocr_document import Page, get_or_load_asset_content
-from arretify.utils.strings import split_on_newlines
+from arretify.utils.strings import merge_strings, split_on_newlines
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -60,7 +60,7 @@ def parse_basic_elements(context: DocumentContext, page: Page) -> Iterator[Prote
             # If the header contains a title we consider that it is misdetected
             # and we promote it to main content.
             for line in header_lines:
-                yield render_text_segmentation_tag(context, page, 0, line)
+                yield render_text_segmentation_tag(context, page, 0, [line])
         else:
             yield render_page_header(context, header_content)
 
@@ -79,10 +79,10 @@ def parse_basic_elements(context: DocumentContext, page: Page) -> Iterator[Prote
                 else:
                     yield loaded_tag
             else:
-                yield render_text_segmentation_tag(context, page, line_index, line)
+                yield render_text_segmentation_tag(context, page, line_index, [line])
 
         else:
-            yield render_text_segmentation_tag(context, page, line_index, line)
+            yield render_text_segmentation_tag(context, page, line_index, [line])
 
     if "footer.md" in page.assets:
         yield render_page_footer(context, get_or_load_asset_content(page.assets["footer.md"]))
@@ -164,15 +164,16 @@ def render_image_and_embed_base64(page: Page, markdown_image: str) -> ProtectedT
 
 # -------------------- Text segmentation tag -------------------- #
 def render_text_segmentation_tag(
-    context: DocumentContext, page: Page, line_index: int, line: str
+    context: DocumentContext, page: Page, line_index: int, contents: Sequence[ProtectedTagOrStr]
 ) -> ProtectedTag:
+    contents_str = merge_strings(map(_get_string, contents))
     return make_semantic_tag(
         context.protected_soup,
         TextSpanSegmentationSpec,
-        contents=[line],
+        contents=contents,
         data=TextSpanSegmentationData(
             start=[page.index, line_index, 0],
-            end=[page.index, line_index, len(line) - 1],
+            end=[page.index, line_index, len(contents_str) - 1],
         ),
     )
 
@@ -239,11 +240,13 @@ def render_frame_misdetected_as_table(
     """
     results = frame_tag.select("td")
     assert len(results) == 1
-    td = results[0]
-    for element in td.contents:
-        if is_tag(element, tag_name_in=["br"]):
-            continue
-        elif isinstance(element, str):
-            yield render_text_segmentation_tag(context, page, line_index, element)
-        else:
-            raise ValueError(f"Unexpected in frame: {element}")
+    contents = results[0].contents
+    while contents:
+        # Split the contents in lines, separated by a <br>.
+        # For each line, put it in a text span tag
+        line_contents: list[ProtectedTagOrStr] = []
+        while contents and not is_tag(contents[0], tag_name_in=["br"]):
+            line_contents.append(contents.pop(0))
+        if contents and is_tag(contents[0], tag_name_in=["br"]):
+            contents.pop(0)
+        yield render_text_segmentation_tag(context, page, line_index, line_contents)

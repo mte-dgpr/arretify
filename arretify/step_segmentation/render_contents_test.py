@@ -26,6 +26,7 @@ from arretify.step_segmentation.render_contents import (
     render_section,
     render_section_title,
     render_table_description,
+    render_text_span,
     render_visa_motif,
 )
 from arretify.step_segmentation.semantic_tag_specs import (
@@ -397,3 +398,20 @@ class TestRenderVisaMotif(BaseTestCaseSegmentation):
             """  # noqa: E501
             ),
         )
+
+
+class TestRenderTextSpan(BaseTestCaseSegmentation):
+
+    def test_inline_formatting_tag(self):
+        # Arrange
+        tag = self.make_semantic_tag(
+            TextSpanSegmentationSpec,
+            contents=["hello", self.make_tag("em", contents=["bla"])],
+            data=TextSpanSegmentationData(start=[0, 0, 0], end=[0, 0, 0]),
+        )
+
+        # Act
+        rendered = render_text_span(self.context, tag)
+
+        # Assert
+        assert_elements_equal(rendered, ["hello", self.make_tag("em", contents=["bla"])])
