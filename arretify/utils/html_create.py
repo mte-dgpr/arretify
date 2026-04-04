@@ -41,7 +41,7 @@ from arretify.utils.html_semantic import (
 from arretify.utils.html_split_merge import group_strings_splitter, merge_strings, recombine_strings
 from arretify.utils.split_merge import split_and_map_elements
 
-_TAGS_ALLOWED_ANYWHERE = {"b", "strong", "i", "em", "u", "br"}
+TAGS_ALLOWED_ANYWHERE = {"b", "strong", "i", "em", "u", "br", "sub", "sup"}
 """
 These tags are considered as non-structural and can be freely used
 throughout the document.
@@ -224,7 +224,7 @@ def validate_semantic_tag_contents(
         elif is_tag(element):
             tag_name = element.name
             # Allow non-structural tags anywhere, unless the spec forbids all contents.
-            if len(spec.allowed_contents) > 0 and tag_name in _TAGS_ALLOWED_ANYWHERE:
+            if len(spec.allowed_contents) > 0 and tag_name in TAGS_ALLOWED_ANYWHERE:
                 continue
 
             elif tag_name not in tag_names_accepted:

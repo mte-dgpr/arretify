@@ -32,7 +32,8 @@ from arretify.step_segmentation.semantic_tag_specs import (
 )
 from arretify.types import DocumentContext, ProtectedTag, ProtectedTagOrStr
 from arretify.utils.functional import iter_func_to_list
-from arretify.utils.html_create import make_semantic_tag
+from arretify.utils.html import is_tag
+from arretify.utils.html_create import TAGS_ALLOWED_ANYWHERE, make_semantic_tag
 from arretify.utils.html_semantic import SemanticTagSpec, get_semantic_tag_data, is_semantic_tag
 from arretify.utils.split_merge import (
     Probe,
@@ -360,7 +361,9 @@ def get_string(element: ProtectedTagOrStr) -> str:
 def _get_string(element: ProtectedTagOrStr) -> str:
     if isinstance(element, str):
         return element
-    elif is_semantic_tag(element, spec_in=[TextSpanSegmentationSpec, *_STR_TAG_SPECS]):
+    elif is_semantic_tag(element, spec_in=[TextSpanSegmentationSpec, *_STR_TAG_SPECS]) or is_tag(
+        element, tag_name_in=TAGS_ALLOWED_ANYWHERE
+    ):
         return merge_strings(map(_get_string, element.contents))
     elif is_semantic_tag(element, spec_in=PAGINATION_TAG_SPECS):
         return ""
@@ -369,14 +372,14 @@ def _get_string(element: ProtectedTagOrStr) -> str:
 
 
 @iter_func_to_list
-def get_strings(tags: Sequence[ProtectedTagOrStr]) -> Iterator[str]:
-    for tag in tags:
-        if is_semantic_tag(tag, spec_in=[TextSpanSegmentationSpec]):
-            yield get_string(tag)
-        elif is_semantic_tag(tag, spec_in=PAGINATION_TAG_SPECS):
+def get_strings(elements: Sequence[ProtectedTagOrStr]) -> Iterator[str]:
+    for element in elements:
+        if is_semantic_tag(element, spec_in=[TextSpanSegmentationSpec]):
+            yield get_string(element)
+        elif is_semantic_tag(element, spec_in=PAGINATION_TAG_SPECS):
             continue
         else:
-            raise ValueError(f"Tag '{tag}' is not a text_span or a transparent tag")
+            raise ValueError(f"Tag '{element}' is not a text_span or a transparent tag")
 
 
 def combine_text_spans(
