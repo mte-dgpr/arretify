@@ -19,7 +19,6 @@
 from typing import Dict, Iterator, Sequence
 
 from arretify.parsing_utils.dates import DATE_NODE, render_date_regex_tree_match
-from arretify.parsing_utils.patterns import join_split_pile_with_pattern
 from arretify.regex_utils import PatternProxy, join_with_or
 from arretify.semantic_tag_specs import (
     ArreteTitleSpec,
@@ -41,10 +40,21 @@ from arretify.step_segmentation.semantic_tag_specs import (
 from arretify.types import DocumentContext, ProtectedTag, ProtectedTagOrStr
 from arretify.utils.functional import chain_functions, iter_func_to_list
 from arretify.utils.html import is_tag
-from arretify.utils.html_create import make_semantic_tag, make_tag, replace_contents, wrap_in_tag
+from arretify.utils.html_create import make_semantic_tag, make_tag, replace_contents
 from arretify.utils.html_semantic import SemanticTagSpec, is_semantic_tag
-from arretify.utils.html_split_merge import make_regex_tree_splitter
-from arretify.utils.split_merge import Probe, Splitter, split_and_map_elements
+from arretify.utils.html_split_merge import (
+    PatternSplitterMatch,
+    make_pattern_splitter_ignoring_inline_tags,
+    make_regex_tree_splitter,
+    recombine_strings,
+)
+from arretify.utils.split_merge import (
+    Probe,
+    SplitMatch,
+    Splitter,
+    split_and_map_elements,
+    split_elements,
+)
 
 from .basic_elements import parse_lists, parse_unknown_elements
 from .core import (
@@ -94,13 +104,13 @@ def parse_header(
 
 
 EMBLEMS_LIST = [
-    r"liberte",
-    r"egalite",
-    r"fraternite",
-    r"republique fran[cç]aise",
+    r"liberté",
+    r"égalité",
+    r"fraternité",
+    r"république fran[cç]aise",
 ]
 
-EMBLEM_PATTERN = PatternProxy(rf"^{join_with_or(EMBLEMS_LIST)}")
+EMBLEM_PATTERN = PatternProxy(join_with_or(EMBLEMS_LIST))
 """Detect all sentences starting with French emblems."""
 
 ENTITIES_LIST = [
@@ -197,12 +207,6 @@ HEADER_ELEMENTS_PATTERNS: Dict[SemanticTagSpec, PatternProxy] = {
     SupplementaryMotifInfoSpec: SUPPLEMENTARY_MOTIF_INFORMATION_PATTERN,
 }
 
-HEADER_ELEMENTS_RENDER_PATTERNS: Dict[SemanticTagSpec, PatternProxy | None] = {
-    **HEADER_ELEMENTS_PATTERNS,
-    HonorarySpec: PatternProxy(join_with_or(HONORARIES_LIST)),
-    SupplementaryMotifInfoSpec: None,
-}
-
 HEADER_ELEMENTS_PROBES: Dict[SemanticTagSpec, Probe[ProtectedTagOrStr]] = {
     EmblemSpec: make_probe_from_pattern_proxy(EMBLEM_PATTERN),
     IdentificationSpec: make_probe_from_pattern_proxy(IDENTIFICATION_PATTERN),
@@ -216,6 +220,21 @@ HEADER_ELEMENTS_FUZZY_PROBES: Dict[SemanticTagSpec, Probe[ProtectedTagOrStr]] = 
     EntitySpec: make_probe_from_pattern_proxy(ENTITY_PATTERN),
     ArreteTitleSpec: make_probe_from_pattern_proxy(ARRETE_TITLE_PATTERN),
 }
+
+HEADER_ELEMENTS_RENDER_SPLITTERS: Dict[
+    SemanticTagSpec, Splitter[ProtectedTagOrStr, PatternSplitterMatch] | None
+] = {
+    cls: make_pattern_splitter_ignoring_inline_tags(pattern)
+    for cls, pattern in HEADER_ELEMENTS_PATTERNS.items()
+}
+HEADER_ELEMENTS_RENDER_SPLITTERS.update(
+    {
+        HonorarySpec: make_pattern_splitter_ignoring_inline_tags(
+            PatternProxy(join_with_or(HONORARIES_LIST))
+        ),
+        SupplementaryMotifInfoSpec: None,
+    }
+)
 
 
 def parse_emblem_element(
@@ -335,22 +354,66 @@ def _make_header_element_tag(
     spec: SemanticTagSpec,
     contents: Sequence[ProtectedTagOrStr],
 ) -> ProtectedTag:
-    if not all(is_semantic_tag(c, spec_in=[TextSpanSegmentationSpec]) for c in contents):
-        raise ValueError(f"Invalid contents for {spec}: {contents}")
+    if not all(
+        is_semantic_tag(c, spec_in=[TextSpanSegmentationSpec, *PAGINATION_TAG_SPECS])
+        for c in contents
+    ):
+        raise ValueError(f"Unexpected contents in rendering for {spec.spec_name}:\n{contents}")
 
     rendered_contents: list[ProtectedTagOrStr] = []
-    pattern = HEADER_ELEMENTS_RENDER_PATTERNS[spec]
-    strings = get_strings(contents)
-    if pattern is not None:
-        rendered_contents.extend(join_split_pile_with_pattern(strings, pattern))
+    splitter = HEADER_ELEMENTS_RENDER_SPLITTERS[spec]
+
+    if splitter is None:
+        for element in contents:
+            if is_semantic_tag(element, spec_in=[TextSpanSegmentationSpec]):
+                rendered_contents.append(_make_header_element_line(context, element.contents))
+            else:
+                rendered_contents.append(element)
+
+    # If a splitter is provided, we want to reorganise the lines so that we start a line by a match.
+    # Example :
+    #
+    # "Service risque bureau des déchets" -> is reorganised as :
+    #
+    # "Service risques"
+    # "Bureau des déchets"
     else:
-        rendered_contents.extend(strings)
+        # 1. Extract all text from text_spans into a flat list for easier splitting.
+        flattened: list[ProtectedTagOrStr] = []
+        for element in contents:
+            if is_semantic_tag(element, spec_in=[TextSpanSegmentationSpec]):
+                flattened.extend(element.contents)
+            else:
+                flattened.append(element)
+        flattened = recombine_strings(flattened, separator=" ")
+
+        # 2. Split the text using the splitter, each match corresponds with the start of a line.
+        line_elements: list[ProtectedTagOrStr] = []
+        for split_match in split_elements(flattened, splitter):
+            if isinstance(split_match, SplitMatch):
+                if line_elements:
+                    rendered_contents.append(_make_header_element_line(context, line_elements))
+                line_elements = list(split_match.value.elements)
+            else:
+                line_elements.extend(split_match.value)
+        if line_elements:
+            rendered_contents.append(_make_header_element_line(context, line_elements))
 
     return make_semantic_tag(
         context.protected_soup,
         spec,
-        contents=wrap_in_tag(context.protected_soup, "div", rendered_contents),
+        contents=rendered_contents,
     )
+
+
+def _make_header_element_line(
+    context: DocumentContext, contents: list[ProtectedTagOrStr]
+) -> ProtectedTag:
+    if isinstance(contents[0], str):
+        contents[0] = contents[0].lstrip()
+    if isinstance(contents[-1], str):
+        contents[-1] = contents[-1].rstrip()
+    return make_tag(context.protected_soup, "div", contents=contents)
 
 
 # -------------------- Visa and Motifs -------------------- #

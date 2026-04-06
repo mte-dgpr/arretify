@@ -16,15 +16,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import Sequence
 
-from arretify.regex_utils import (
-    PatternProxy,
-    Settings,
-    merge_matches_with_siblings,
-    split_string_with_regex,
-)
-from arretify.types import ProtectedTagOrStr
+from arretify.regex_utils import PatternProxy, Settings
 
 ET_VIRGULE_PATTERN_S = r"(\s*(,|,?et)\s*)"
 
@@ -41,21 +34,6 @@ SENTENCE_END_PATTERN_S = r"[.!?]"
 SENTENCE_END_AT_LINE_END_PATTERN = PatternProxy(SENTENCE_END_PATTERN_S + r"\s*$")
 
 SENTENCE_CONTINUES_AT_LINE_START_PATTERN = PatternProxy(r"^\s*[a-z]", Settings(ignore_case=False))
-
-
-def join_split_pile_with_pattern(
-    pile: Sequence[str],
-    pattern: PatternProxy,
-) -> Sequence[ProtectedTagOrStr]:
-    return list(
-        merge_matches_with_siblings(
-            split_string_with_regex(
-                pattern,
-                " ".join(pile),
-            ),
-            "following",
-        )
-    )
 
 
 def is_continuing_sentence(part1: str, part2: str) -> bool:

@@ -91,9 +91,7 @@ def _is_table_tag(elements: Sequence[ProtectedTagOrStr], index: int) -> bool:
 
 def _make_table_description_end_probe(table_tag: ProtectedTag) -> Probe[ProtectedTagOrStr]:
     def _is_table_description(elements: Sequence[ProtectedTagOrStr], index: int) -> bool:
-        if is_table_description(get_string(elements[index]), table_tag):
-            return True
-        return False
+        return is_table_description(get_string(elements[index]), table_tag)
 
     return negate(pick_text_spans(_is_table_description))
 

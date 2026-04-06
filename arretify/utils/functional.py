@@ -17,29 +17,11 @@
 # limitations under the License.
 #
 from functools import reduce, wraps
-from typing import Callable, Iterable, Iterator, ParamSpec, Sequence, TypeVar, Union
+from typing import Callable, Iterable, ParamSpec, Sequence, TypeVar
 
 T1 = TypeVar("T1")
 T2 = TypeVar("T2")
 P = ParamSpec("P")
-
-
-def flat_map_string(
-    elements: Iterable[Union[T1, str]],
-    map_func: Callable[[str], Iterable[T1 | str]],
-) -> Iterator[T1 | str]:
-    """
-    Example:
-        >>> elements = ["string", 2, "another", 3]
-        >>> def map_func(x): return [x.upper()]
-        >>> list(flat_map_string(elements, map_func))
-        ['STRING', 2, 'ANOTHER', 3]
-    """
-    for element in elements:
-        if isinstance(element, str):
-            yield from map_func(element)
-        else:
-            yield element
 
 
 def iter_func_to_list(func: Callable[P, Iterable[T1]]) -> Callable[P, list[T1]]:

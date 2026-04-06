@@ -60,6 +60,34 @@ class TestMergeStrings(unittest.TestCase):
         # Assert
         assert result == "abcdef"
 
+    def test_merge_strings_separator(self):
+        # Arrange
+        elements = [
+            ",abc,",  # Remove duplicate separator
+            "def",
+            "ghi",
+        ]
+
+        # Act
+        result = merge_strings(elements, separator=",")
+
+        # Assert
+        assert result == "abc,def,ghi"
+
+    def test_remove_empty(self):
+        # Arrange
+        elements = [
+            "abc ",
+            " ",  # Remove separator
+            " def ",
+        ]
+
+        # Act
+        result = merge_strings(elements, separator=" ")
+
+        # Assert
+        assert result == "abc def"
+
 
 class TestSplitLines(unittest.TestCase):
 
