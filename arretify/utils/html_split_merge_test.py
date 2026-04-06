@@ -23,6 +23,7 @@ from bs4 import BeautifulSoup
 
 from arretify.regex_utils import PatternProxy, Settings, regex_tree
 from arretify.utils.split_merge import SplitMatch, SplitNotAMatch
+from arretify.utils.testing import BaseTestCaseHtml
 
 from .html_split_merge import (
     _NamedGroupSplitterMatch,
@@ -653,17 +654,14 @@ class TestSliceElementsWithStringIndex(unittest.TestCase):
         assert after == []
 
 
-class TestRecombineStrings(unittest.TestCase):
+class TestRecombineStrings(BaseTestCaseHtml):
 
-    def setUp(self):
-        self.soup = BeautifulSoup("", features="html.parser")
-
-    def test_recombine_strings(self):
+    def test_group_and_recombine_strings(self):
         # Arrange
         elements = [
             "text1 ",
             "text2",
-            self.soup.new_tag("br"),
+            self.make_tag("br"),
             " text3 ",
             " text4",
         ]
@@ -674,6 +672,21 @@ class TestRecombineStrings(unittest.TestCase):
         # Assert
         assert recombined == [
             "text1 text2",
-            self.soup.new_tag("br"),
+            self.make_tag("br"),
             " text3  text4",
+        ]
+
+    def test_recombine_strings_with_separator(self):
+        # Arrange
+        elements = [
+            "text1",
+            "text2",
+        ]
+
+        # Act
+        recombined = recombine_strings(elements, separator="/")
+
+        # Assert
+        assert recombined == [
+            "text1/text2",
         ]

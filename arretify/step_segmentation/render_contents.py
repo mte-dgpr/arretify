@@ -401,5 +401,5 @@ def render_inline_quotes(context: DocumentContext, string: str) -> Iterator[Prot
 def render_text_span(
     _: DocumentContext,
     tag: ProtectedTag,
-) -> Iterator[ProtectedTagOrStr]:
+) -> list[ProtectedTagOrStr]:
     return recombine_strings(tag.contents)

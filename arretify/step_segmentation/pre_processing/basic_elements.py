@@ -31,7 +31,7 @@ from arretify.semantic_tag_specs import (
     PageSeparatorSpec,
 )
 from arretify.step_segmentation.basic_elements import TABLE_OF_CONTENTS_TITLE_LIST
-from arretify.step_segmentation.core import _get_string, make_probe_from_pattern_proxy
+from arretify.step_segmentation.core import get_string, make_probe_from_pattern_proxy
 from arretify.step_segmentation.pre_processing.ocr_cleaning import clean_ocr
 from arretify.step_segmentation.semantic_tag_specs import (
     TextSpanSegmentationData,
@@ -166,7 +166,7 @@ def render_image_and_embed_base64(page: Page, markdown_image: str) -> ProtectedT
 def render_text_segmentation_tag(
     context: DocumentContext, page: Page, line_index: int, contents: Sequence[ProtectedTagOrStr]
 ) -> ProtectedTag:
-    contents_str = merge_strings(map(_get_string, contents))
+    contents_str = merge_strings(map(get_string, contents))
     return make_semantic_tag(
         context.protected_soup,
         TextSpanSegmentationSpec,

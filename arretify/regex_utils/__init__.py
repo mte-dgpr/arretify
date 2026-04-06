@@ -35,6 +35,5 @@ from .helpers import (
     sub_with_match,
     without_named_groups,
 )
-from .merge import merge_matches_with_siblings
 from .split import split_string_with_regex
 from .types import Settings

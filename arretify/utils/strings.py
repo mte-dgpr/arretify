@@ -22,24 +22,28 @@ T = TypeVar("T")
 
 
 def merge_strings(
-    elements: Iterable[T],
-    strip_other_types: bool = False,
+    elements: Iterable[T], strip_other_types: bool = False, separator: str = ""
 ) -> str:
     """
     Merges `elements` into a single string. Beware that all non-string elements
     will raise a `ValueError`, unless `strip_other_types` is set to `True`.
     """
-    merged_string: str = ""
+    if separator and len(separator) != 1:
+        raise ValueError(f"Separator should be a single character, received : '{separator}'")
+
+    collected_strings: list[str] = []
     for element in elements:
         if isinstance(element, str):
-            merged_string += element
+            str_element: str = element.strip(separator)
+            if str_element:
+                collected_strings.append(str_element)
         elif strip_other_types is True:
             continue
         else:
             raise ValueError(
                 f"Unexpected element type in merge_strings: {str(element)} of type {type(element)}"
             )
-    return merged_string
+    return separator.join(collected_strings)
 
 
 def split_on_newlines(text: str) -> list[str]:

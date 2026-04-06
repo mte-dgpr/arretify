@@ -40,6 +40,7 @@ from arretify.step_segmentation.semantic_tag_specs import (
     VisaSegmentationSpec,
 )
 from arretify.utils.html_create import wrap_in_tag
+from arretify.utils.testing import assert_elements_equal
 
 from .header import (
     _make_header_element_tag,
@@ -536,19 +537,114 @@ class TestParseVisaAndMotifs(BaseTestCaseSegmentation):
 
 class TestRenderHeaderElement(BaseTestCaseSegmentation):
 
-    def test_make_header_element_tag(self):
+    def test_with_splitter(self):
+        """
+        Check that lines are reorganized according to correponding pattern.
+        """
         # Arrange
-        contents = self.make_text_spans("liberté égalité fraternité")
+        # "Service" and "installations classées pour la protection de l'environnement" are entities.
+        # They should be place at beginning of lines.
+        contents = self.make_text_spans(
+            "service des installations classées", "pour la protection de l'environnement"
+        )
+
+        # Act
+        rendered = _make_header_element_tag(self.context, EntitySpec, contents)
+
+        # Assert
+        assert_elements_equal(
+            rendered,
+            self.make_semantic_tag(
+                EntitySpec,
+                contents=[
+                    self.make_tag("div", contents=["service des"]),
+                    self.make_tag(
+                        "div",
+                        contents=["installations classées pour la protection de l'environnement"],
+                    ),
+                ],
+            ),
+        )
+
+    def test_with_splitter2(self):
+        # Arrange
+        contents = self.make_text_spans("République FRANÇAISE Liberté Égalité Fraternité")
 
         # Act
         rendered = _make_header_element_tag(self.context, EmblemSpec, contents)
 
         # Assert
-        assert [str(tag) for tag in rendered] == [
-            "<div>liberté </div>",
-            "<div>égalité </div>",
-            "<div>fraternité</div>",
+        assert_elements_equal(
+            rendered,
+            self.make_semantic_tag(
+                EmblemSpec,
+                contents=[
+                    self.make_tag("div", contents=["République FRANÇAISE"]),
+                    self.make_tag("div", contents=["Liberté"]),
+                    self.make_tag("div", contents=["Égalité"]),
+                    self.make_tag("div", contents=["Fraternité"]),
+                ],
+            ),
+        )
+
+    def test_with_pagination_tags_and_no_splitter(self):
+        # Arrange
+        contents = [
+            *self.make_text_spans("line1", "line2"),
+            self.make_semantic_tag(PageSeparatorSpec, data=PageSeparatorData(page_index=123)),
+            *self.make_text_spans("line3"),
         ]
+
+        # Act
+        rendered = _make_header_element_tag(self.context, SupplementaryMotifInfoSpec, contents)
+
+        # Assert
+        assert_elements_equal(
+            rendered,
+            self.make_semantic_tag(
+                SupplementaryMotifInfoSpec,
+                contents=[
+                    self.make_tag("div", contents=["line1"]),
+                    self.make_tag("div", contents=["line2"]),
+                    self.make_semantic_tag(
+                        PageSeparatorSpec, data=PageSeparatorData(page_index=123)
+                    ),
+                    self.make_tag("div", contents=["line3"]),
+                ],
+            ),
+        )
+
+    def test_with_pagination_tags_and_splitter(self):
+        # Arrange
+        contents = [
+            *self.make_text_spans("liberté blabla égalité"),
+            self.make_semantic_tag(PageSeparatorSpec, data=PageSeparatorData(page_index=123)),
+            *self.make_text_spans("fraternité"),
+        ]
+
+        # Act
+        rendered = _make_header_element_tag(self.context, EmblemSpec, contents)
+
+        # Assert
+        assert_elements_equal(
+            rendered,
+            self.make_semantic_tag(
+                EmblemSpec,
+                contents=[
+                    self.make_tag("div", contents=["liberté blabla"]),
+                    self.make_tag(
+                        "div",
+                        contents=[
+                            "égalité",
+                            self.make_semantic_tag(
+                                PageSeparatorSpec, data=PageSeparatorData(page_index=123)
+                            ),
+                        ],
+                    ),
+                    self.make_tag("div", contents=["fraternité"]),
+                ],
+            ),
+        )
 
 
 class TestParseArreteTitle(BaseTestCaseSegmentation):
@@ -608,8 +704,8 @@ class TestParseEmblemElement(BaseTestCaseSegmentation):
                         self.soup,
                         "div",
                         [
-                            "liberté ",
-                            "égalité ",
+                            "liberté",
+                            "égalité",
                             "fraternité",
                         ],
                     ),

@@ -126,14 +126,16 @@ when these are preceded and followed by strings.
 """
 
 
-def recombine_strings(contents: Sequence[ProtectedTagOrStr]) -> list[ProtectedTagOrStr]:
+def recombine_strings(
+    contents: Sequence[ProtectedTagOrStr], separator: str = ""
+) -> list[ProtectedTagOrStr]:
     """
     Groups and recombines consecutive string elements in `contents` into single string elements.
     """
     return split_and_map_elements(
         contents,
         group_strings_splitter,
-        merge_strings,
+        lambda elements: merge_strings(elements, separator=separator),
     )
 
 
@@ -165,17 +167,17 @@ def make_regex_tree_splitter(
 
 
 @dataclass(frozen=True)
-class _PatternSplitterMatch:
+class PatternSplitterMatch:
     elements: Sequence[ProtectedTagOrStr]
     match_proxy: MatchProxy
 
 
 def make_pattern_splitter_ignoring_inline_tags(
     pattern: PatternProxy,
-) -> Splitter[ProtectedTagOrStr, _PatternSplitterMatch]:
+) -> Splitter[ProtectedTagOrStr, PatternSplitterMatch]:
     def _splitter(
         elements: Sequence[ProtectedTagOrStr],
-    ) -> RawSplit[ProtectedTagOrStr, _PatternSplitterMatch] | None:
+    ) -> RawSplit[ProtectedTagOrStr, PatternSplitterMatch] | None:
         grouped_strings = split_elements(elements, group_strings_and_inline_tags_splitter)
 
         for i, splitted_element in enumerate(grouped_strings):
@@ -202,7 +204,7 @@ def make_pattern_splitter_ignoring_inline_tags(
 
             return (
                 before,
-                _PatternSplitterMatch(elements=match_elements, match_proxy=match_proxy),
+                PatternSplitterMatch(elements=match_elements, match_proxy=match_proxy),
                 after,
             )
         return None

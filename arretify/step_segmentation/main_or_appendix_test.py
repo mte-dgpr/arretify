@@ -561,14 +561,11 @@ class TestParseAlineas(BaseTestCaseSegmentation):
 
     def test_table_and_table_description_in_same_alinea(self):
         # Arrange
-        table_tag = self.make_tag("table")
-        table_description_tag = self.make_semantic_tag(
-            TableDescriptionSegmentationSpec,
-            contents=self.make_text_spans("Table description"),
-        )
         elements = [
-            table_tag,
-            table_description_tag,
+            self.make_tag("table"),
+            *self.make_text_spans(
+                "(*) Table description", "(**) More table description", "Some text"
+            ),
         ]
 
         # Act
@@ -581,10 +578,21 @@ class TestParseAlineas(BaseTestCaseSegmentation):
                 self.make_semantic_tag(
                     AlineaSegmentationSpec,
                     contents=[
-                        table_tag,
-                        table_description_tag,
+                        self.make_tag("table"),
+                        self.make_semantic_tag(
+                            TableDescriptionSegmentationSpec,
+                            contents=self.make_text_spans(
+                                "(*) Table description",
+                                "(**) More table description",
+                            ),
+                        ),
                     ],
                     data=AlineaData(number=1),
+                ),
+                self.make_semantic_tag(
+                    AlineaSegmentationSpec,
+                    contents=self.make_text_spans("Some text"),
+                    data=AlineaData(number=2),
                 ),
             ],
         )

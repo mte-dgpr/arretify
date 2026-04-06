@@ -352,7 +352,7 @@ def get_string(element: ProtectedTagOrStr) -> str:
     """
     if isinstance(element, str):
         return element
-    elif is_semantic_tag(element):
+    elif is_tag(element):
         return merge_strings(map(_get_string, element.contents))
     else:
         raise ValueError(f"Element '{element}' is neither a string nor a Tag")
@@ -362,7 +362,7 @@ def _get_string(element: ProtectedTagOrStr) -> str:
     if isinstance(element, str):
         return element
     elif is_semantic_tag(element, spec_in=[TextSpanSegmentationSpec, *_STR_TAG_SPECS]) or is_tag(
-        element, tag_name_in=TAGS_ALLOWED_ANYWHERE
+        element, tag_name_in=list(TAGS_ALLOWED_ANYWHERE)
     ):
         return merge_strings(map(_get_string, element.contents))
     elif is_semantic_tag(element, spec_in=PAGINATION_TAG_SPECS):
