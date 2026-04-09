@@ -32,6 +32,7 @@ from arretify.parsing_utils.numbering import (
 from arretify.parsing_utils.patterns import LEADING_TRAILING_PUNCTUATION_PATTERN
 from arretify.regex_utils import Settings, join_with_or, regex_tree
 from arretify.regex_utils.helpers import lookup_normalized_version
+from arretify.regex_utils.regex_tree.types import MatchDict
 from arretify.types import SectionType
 from arretify.utils.html_split_merge import regex_tree_match
 
@@ -43,10 +44,11 @@ _LOGGER = logging.getLogger(__name__)
 TITLE_PUNCTUATION_PATTERN_S = r"[.\s\-:]"
 
 SECTION_TYPES_LIST = [
-    SectionType.ANNEXE.value,
-    SectionType.TITRE.value,
-    SectionType.CHAPITRE.value,
-    SectionType.ARTICLE.value,
+    (SectionType.ANNEXE, SectionType.ANNEXE.value),
+    (SectionType.TITRE, SectionType.TITRE.value),
+    (SectionType.CHAPITRE, SectionType.CHAPITRE.value),
+    (SectionType.ARTICLE, SectionType.ARTICLE.value),
+    (SectionType.ARTICLE, "art."),
 ]
 """List of section types that we want to detect."""
 
@@ -72,7 +74,10 @@ TITLE_NODE = regex_tree.Group(
                 [
                     # Section name
                     regex_tree.Literal(
-                        rf"^(?P<section_type>{join_with_or(SECTION_TYPES_LIST)})",
+                        rf"^(?P<section_type>{join_with_or([
+                            section_type_str for
+                            _, section_type_str in SECTION_TYPES_LIST
+                        ])})",
                         settings=SECTION_TYPE_SETTINGS,
                     ),
                     regex_tree.Branching(
@@ -170,12 +175,7 @@ def parse_title_info(line: str) -> TitleInfo:
 
     # Extract values
     match_dict = match_pattern.match_dict
-    section_type_str = lookup_normalized_version(
-        [t.value for t in SectionType],
-        match_dict.get("section_type", "unknown"),
-        settings=SECTION_TYPE_SETTINGS,
-    )
-    section_type = SectionType(section_type_str)
+    section_type = _extract_section_type(match_dict)
     number = match_dict.get("number", "")
     text = match_dict.get("text")
 
@@ -196,6 +196,27 @@ def parse_title_info(line: str) -> TitleInfo:
     )
 
     return title_info
+
+
+def _extract_section_type(match_dict: MatchDict) -> SectionType:
+    if "section_type" not in match_dict:
+        return SectionType.UNKNOWN
+
+    actual_section_type_str = lookup_normalized_version(
+        [section_type_str for _, section_type_str in SECTION_TYPES_LIST],
+        match_dict["section_type"],
+        settings=SECTION_TYPE_SETTINGS,
+    )
+    filtered = [
+        section_type
+        for section_type, section_type_str in SECTION_TYPES_LIST
+        if section_type_str == actual_section_type_str
+    ]
+    assert len(filtered) == 1, (
+        f"Expected exactly one section type for section type string {actual_section_type_str},"
+        " but got {filtered}."
+    )
+    return SectionType(filtered[0])
 
 
 def is_next_title(
