@@ -539,6 +539,20 @@ class TestParseTitleInfo(unittest.TestCase):
             text="Article",
         )
 
+    def test_article_abbreviated(self):
+        # Arrange
+        line = "Art. 1"
+
+        # Act
+        title_info = parse_title_info(line)
+
+        # Assert
+        assert title_info == TitleInfo(
+            section_type=SectionType.ARTICLE,
+            number="1",
+            levels=[1],
+        )
+
     def test_chapter(self):
         # Arrange
         line = "Chapitre A - Chapitre"
