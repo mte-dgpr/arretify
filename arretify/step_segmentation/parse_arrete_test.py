@@ -167,3 +167,55 @@ class TestParseArrete(BaseTestCaseSegmentation):
                 ),
             ],
         )
+
+    def test_arrete_without_arrete_keyword(self):
+        # Arrange
+        elements = self.make_text_spans(
+            "Arrêté n° 123",
+            "Article 1 : Disposition",
+            "Contenu de l'article.",
+        )
+
+        # Act
+        elements = parse_arrete(self.context, elements)
+
+        # Assert
+        assert_segmentation_element_lists_equal(
+            elements,
+            [
+                self.make_semantic_tag(
+                    HeaderSegmentationSpec,
+                    contents=[
+                        self.make_semantic_tag(
+                            ArreteTitleSpec,
+                            contents=wrap_in_tag(self.soup, "h1", ["Arrêté n° 123"]),
+                        ),
+                    ],
+                ),
+                self.make_semantic_tag(
+                    MainSegmentationSpec,
+                    contents=[
+                        self.make_semantic_tag(
+                            SectionSegmentationSpec,
+                            contents=[
+                                self.make_semantic_tag(
+                                    SectionTitleSegmentationSpec,
+                                    contents=self.make_text_spans("Article 1 : Disposition"),
+                                    data=SectionTitleSegmentationData(
+                                        number="1",
+                                        type="article",
+                                        level=0,
+                                        title="Disposition",
+                                    ),
+                                ),
+                                self.make_semantic_tag(
+                                    AlineaSegmentationSpec,
+                                    contents=self.make_text_spans("Contenu de l'article."),
+                                    data=AlineaData(number=1),
+                                ),
+                            ],
+                        ),
+                    ],
+                ),
+            ],
+        )

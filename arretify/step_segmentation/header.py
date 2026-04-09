@@ -319,7 +319,7 @@ def parse_arrete_keyword(
     Parse the "arrête" keyword just before the first section title.
     """
     if not is_arrete_keyword(elements, len(elements) - 1):
-        raise ValueError("The element should be the 'arrête' keyword.")
+        return elements
     return [
         *elements[:-1],
         _make_header_element_tag(context, SupplementaryMotifInfoSpec, [elements[-1]]),
@@ -441,10 +441,10 @@ def _make_header_element_line(
 
 # -------------------- Visa and Motifs -------------------- #
 
-VISA_PATTERN = PatternProxy(r"^\W*vu(\s*:\s*|\b)(?P<contents>.*)")
+VISA_PATTERN = PatternProxy(r"^\W*vus?(\s*:\s*|\b)(?P<contents>.*)")
 """Detect if the sentence starts with "vu"."""
 
-MOTIF_PATTERN = PatternProxy(r"^\W*considerant(\s*:\s*|\b)(?P<contents>.*)")
+MOTIF_PATTERN = PatternProxy(r"^\W*considerants?(\s*:\s*|\b)(?P<contents>.*)")
 """Detect if the sentence starts with "considerant"."""
 
 VISA_MOTIFS_PATTERNS: Dict[SemanticTagSpec, PatternProxy] = {
