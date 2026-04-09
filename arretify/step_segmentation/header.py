@@ -65,6 +65,7 @@ from .core import (
     make_recombine_interrupted_lines_splitter,
     make_single_line_splitter_for_text_spans,
     make_while_splitter_for_text_spans,
+    pick_text_spans,
 )
 
 
@@ -237,6 +238,13 @@ HEADER_ELEMENTS_RENDER_SPLITTERS.update(
 )
 
 
+ARRETE_KEYWORD_PATTERN = PatternProxy(r"^\W*arrête\W*$")
+"""Detect the "arrête" keyword, marking the beginning of the main content of the document."""
+
+
+is_arrete_keyword = pick_text_spans(make_probe_from_pattern_proxy(ARRETE_KEYWORD_PATTERN))
+
+
 def parse_emblem_element(
     context: DocumentContext,
     elements: Sequence[ProtectedTagOrStr],
@@ -301,6 +309,21 @@ def parse_supplementary_motif_info_element(
         _make_header_elements_splitter(SupplementaryMotifInfoSpec),
         lambda contents: _make_header_element_tag(context, SupplementaryMotifInfoSpec, contents),
     )
+
+
+def parse_arrete_keyword(
+    context: DocumentContext,
+    elements: Sequence[ProtectedTagOrStr],
+) -> Sequence[ProtectedTagOrStr]:
+    """
+    Parse the "arrête" keyword just before the first section title.
+    """
+    if not is_arrete_keyword(elements, len(elements) - 1):
+        raise ValueError("The element should be the 'arrête' keyword.")
+    return [
+        *elements[:-1],
+        _make_header_element_tag(context, SupplementaryMotifInfoSpec, [elements[-1]]),
+    ]
 
 
 def _make_header_elements_splitter(

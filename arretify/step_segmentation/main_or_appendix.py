@@ -55,6 +55,12 @@ from .titles_detection import TITLE_NODE, is_next_title, parse_title_info, parse
 _LOGGER = logging.getLogger(__name__)
 
 
+ROOT_LEVEL = 0
+"""
+Level for the root section of main or appendix
+"""
+
+
 _is_title_string = make_probe_from_pattern_proxy(
     TITLE_NODE.pattern,
 )
@@ -72,12 +78,6 @@ def is_title(elements: Sequence[ProtectedTagOrStr], index: int) -> bool:
         return _is_title_string(elements, index)
 
 
-def _get_downstream_sections_types(section_type):
-    ordered_sections_types = [section_type for section_type in SectionType]
-    section_index = ordered_sections_types.index(section_type)
-    return ordered_sections_types[section_index + 1 :]
-
-
 def parse_content(
     context: DocumentContext,
     elements: Sequence[ProtectedTagOrStr],
@@ -86,6 +86,69 @@ def parse_content(
     elements = parse_section_titles(context, elements)
     elements = parse_sections(context, elements)
     return elements
+
+
+def _check_title_contiguity(
+    previous_section_type: Optional[SectionType],
+    new_section_type: SectionType,
+    titles_by_type: Dict[SectionType, Optional[list[int]]],
+    new_title_levels: Optional[list[int]],
+) -> list[ErrorCodes]:
+    error_codes: list[ErrorCodes] = []
+
+    # Get the global levels from the last processed section
+    previous_title_levels = titles_by_type[previous_section_type] if previous_section_type else None
+    current_title_levels = titles_by_type.get(new_section_type)
+
+    if not is_next_title(previous_title_levels, current_title_levels, new_title_levels):
+        _LOGGER.warning(
+            f"Detected title of levels {new_title_levels} after current global levels"
+            f" {previous_title_levels} and current section levels {current_title_levels}"
+        )
+        error_codes.append(ErrorCodes.non_contiguous_titles)
+
+    # Update contiguity tracking state
+    titles_by_type[new_section_type] = new_title_levels
+
+    return error_codes
+
+
+def _compute_title_hierarchy(
+    min_titles_levels: Dict[SectionType, int],
+    new_section_type: SectionType,
+    new_title_levels: Optional[list[int]],
+) -> int:
+    """
+    Compute the hierarchy level for a new title.
+
+    Also updates min_titles_levels to enforce that sub section types
+    (e.g., Articles after a Chapter) have appropriate minimum levels.
+
+    Returns updated values
+    """
+    # Compute the level for this title based on its numbering and constraints
+    title_level = max(
+        min_titles_levels.get(new_section_type, ROOT_LEVEL),
+        # The level is based on the number of levels in the title numbering, e.g. "1.2.3"
+        # has 3 levels, minus 1 because the root level is 0.
+        ROOT_LEVEL + (len(new_title_levels) - 1 if new_title_levels else 0),
+    )
+
+    # Update minimum levels for downstream section types to maintain hierarchy
+    # Get all section types that come after the current one in the hierarchy
+    all_section_types = list(SectionType)
+    section_index = all_section_types.index(new_section_type)
+    sub_section_types = all_section_types[section_index + 1 :]
+
+    # Subsections of same type must be at least one level deeper than current title
+    new_min_level = title_level + 1
+    for sub_section_type in sub_section_types:
+        min_titles_levels[sub_section_type] = max(
+            min_titles_levels.get(sub_section_type, ROOT_LEVEL),
+            new_min_level,
+        )
+
+    return title_level
 
 
 def parse_section_titles(
@@ -104,83 +167,51 @@ def parse_section_titles(
         e for e in tag_list if is_semantic_tag(e, spec_in=[SectionTitleSegmentationSpec])
     ]
 
-    # Ancestry order from root to the current section in the parsing context
-    sections: int = 1
-
-    # list of integers from previous section title
-    current_global_levels: Optional[list[int]] = None
-
-    # Previous list of integers extracted from the lastly seen section title for each section type
-    current_titles_levels: Dict[SectionType, Optional[list[int]]] = {}
+    # State variables for contiguous titles checking
+    # Track the last title seen of each section type
+    titles_by_type: Dict[SectionType, Optional[list[int]]] = {}
+    # Track which section type was processed last
+    previous_section_type: Optional[SectionType] = None
 
     # Considering the usual section types hierarchy, this dictionary helps improving the
     # hierarchy within the document, e.g. when finding titles, chapters and articles all having
     # only one number in their numberings, it adds minimal level for selecting the correct schema
     min_titles_levels: Dict[SectionType, int] = {}
 
-    # Used to select the schema level for titles
-    current_schema_level = -1
-
     for section_title_tag in section_title_tags:
-        error_codes: list[ErrorCodes] = []
         title_text = get_string(section_title_tag)
-
-        # Parse title info
         title_info = parse_title_info(title_text)
         new_section_type = title_info.section_type
-
-        # Add a tag if the titles are not contiguous
-        current_title_levels = current_titles_levels.get(new_section_type)
         new_title_levels = list(title_info.levels) if title_info.levels else None
 
-        if not is_next_title(current_global_levels, current_title_levels, new_title_levels):
-            _LOGGER.warning(
-                f"Detected title of levels {new_title_levels} after current global levels"
-                f" {current_global_levels} and current section levels {current_title_levels}"
-            )
-            error_codes.append(ErrorCodes.non_contiguous_titles)
-
-        current_global_levels = new_title_levels
-        current_titles_levels[new_section_type] = new_title_levels
-
-        # Process ancestry for new title
-        new_schema_level = max(
-            min_titles_levels.get(new_section_type, 0),
-            len(new_title_levels) - 1 if new_title_levels else -1,
+        # Check title contiguity
+        error_codes = _check_title_contiguity(
+            previous_section_type,
+            new_section_type,
+            titles_by_type,
+            new_title_levels,
         )
 
-        if new_schema_level - current_schema_level >= 1:
-            # Nothing to do we just add the new section below the existing one
-            pass
-        elif new_schema_level - current_schema_level <= 0:
-            # Empty the ancestry tree until we reach the right ancestor
-            while new_schema_level - current_schema_level <= 0:
-                sections -= 1
-                current_schema_level = sections - 2
-        else:
-            raise RuntimeError(f"unexpected title {title_text}, current level {sections}")
-
-        sections += 1
-        current_schema_level = sections - 2
-
-        downstream_sections_types = _get_downstream_sections_types(new_section_type)
-        for downstream_section_type in downstream_sections_types:
-            min_titles_levels[downstream_section_type] = max(
-                min_titles_levels.get(downstream_section_type, 0),
-                len(new_title_levels) if new_title_levels else 0,
-            )
+        # Compute title hierarchy
+        title_level = _compute_title_hierarchy(
+            min_titles_levels,
+            new_section_type,
+            new_title_levels,
+        )
 
         set_semantic_tag_data(
             SectionTitleSegmentationSpec,
             section_title_tag,
             SectionTitleSegmentationData(
                 type=new_section_type.value,
-                level=new_schema_level,
+                level=title_level,
                 number=title_info.number,
                 title=title_info.text,
                 error_codes=error_codes if error_codes else None,
             ),
         )
+
+        previous_section_type = new_section_type
 
     return tag_list
 

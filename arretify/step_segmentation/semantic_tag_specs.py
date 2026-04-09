@@ -197,7 +197,13 @@ SectionSegmentationSpec = create_semantic_tag_spec_no_data(
 MainSegmentationSpec = create_semantic_tag_spec_no_data(
     spec_name="segmentation:main",
     tag_name=SEGMENTATION_TAG_NAME,
-    allowed_contents=(Contents.SemanticTag(SectionSegmentationSpec.spec_name),),
+    allowed_contents=(
+        Contents.SemanticTag(SectionSegmentationSpec.spec_name),
+        # In some cases, we have content before the first section.
+        Contents.SemanticTag(AlineaSegmentationSpec.spec_name),
+        # In some cases, we have TOC in the main section of the document.
+        Contents.SemanticTag(TableOfContentsSpec.spec_name),
+    ),
 )
 
 
