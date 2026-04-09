@@ -160,6 +160,95 @@ class TestParseSectionTitles(BaseTestCaseSegmentation):
             ],
         )
 
+    def test_hierarchy_titre_chapitre(self):
+        # Arrange
+        elements = self.make_text_spans(
+            "Titre 1 - Premier titre",
+            "Chapitre 1.1 - Premier chapitre",
+        )
+
+        # Act
+        result = list(parse_section_titles(self.context, elements))
+
+        # Assert
+        assert_segmentation_element_lists_equal(
+            result,
+            [
+                self.make_semantic_tag(
+                    SectionTitleSegmentationSpec,
+                    contents=self.make_text_spans("Titre 1 - Premier titre"),
+                    data=SectionTitleSegmentationData(
+                        level=0, type="titre", number="1", title="Premier titre"
+                    ),
+                ),
+                self.make_semantic_tag(
+                    SectionTitleSegmentationSpec,
+                    contents=self.make_text_spans("Chapitre 1.1 - Premier chapitre"),
+                    data=SectionTitleSegmentationData(
+                        level=1, type="chapitre", number="1.1", title="Premier chapitre"
+                    ),
+                ),
+            ],
+        )
+
+    def test_nested_articles(self):
+        """
+        Test that when same section type is nested, the level is increased to maintain hierarchy.
+        """
+        # Arrange
+        elements = self.make_text_spans(
+            "Titre 1 - Premier",
+            "Chapitre 1.1 - Test",
+            "Article 1.2.1 - Parent",
+            "Article 1.2.1.1 - Enfant",
+            "Article 1.2.1.1.1 - Petit-enfant",
+        )
+
+        # Act
+        result = list(parse_section_titles(self.context, elements))
+
+        # Assert
+        assert_segmentation_element_lists_equal(
+            result,
+            [
+                self.make_semantic_tag(
+                    SectionTitleSegmentationSpec,
+                    contents=self.make_text_spans("Titre 1 - Premier"),
+                    data=SectionTitleSegmentationData(
+                        level=0, type="titre", number="1", title="Premier"
+                    ),
+                ),
+                self.make_semantic_tag(
+                    SectionTitleSegmentationSpec,
+                    contents=self.make_text_spans("Chapitre 1.1 - Test"),
+                    data=SectionTitleSegmentationData(
+                        level=1, type="chapitre", number="1.1", title="Test"
+                    ),
+                ),
+                self.make_semantic_tag(
+                    SectionTitleSegmentationSpec,
+                    contents=self.make_text_spans("Article 1.2.1 - Parent"),
+                    data=SectionTitleSegmentationData(
+                        level=2, type="article", number="1.2.1", title="Parent"
+                    ),
+                ),
+                self.make_semantic_tag(
+                    SectionTitleSegmentationSpec,
+                    contents=self.make_text_spans("Article 1.2.1.1 - Enfant"),
+                    data=SectionTitleSegmentationData(
+                        level=3, type="article", number="1.2.1.1", title="Enfant"
+                    ),
+                ),
+                self.make_semantic_tag(
+                    SectionTitleSegmentationSpec,
+                    contents=self.make_text_spans("Article 1.2.1.1.1 - Petit-enfant"),
+                    data=SectionTitleSegmentationData(
+                        level=4, type="article", number="1.2.1.1.1", title="Petit-enfant"
+                    ),
+                ),
+            ],
+        )
+
 
 class TestParseSections(BaseTestCaseSegmentation):
 

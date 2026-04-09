@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import Callable, Iterator, Sequence
+from typing import Callable, Iterator, Sequence, Tuple
 
 from arretify.types import DocumentContext, ProtectedTagOrStr, SectionType
 from arretify.utils.functional import chain_functions, iter_func_to_list
@@ -25,7 +25,7 @@ from arretify.utils.split_merge import split_before_match
 
 from .basic_elements import parse_addresses, parse_page_footers, parse_tables_of_contents
 from .core import get_string, pick_text_spans
-from .header import parse_header
+from .header import is_arrete_keyword, parse_arrete_keyword, parse_header
 from .main_or_appendix import is_title, parse_content
 from .semantic_tag_specs import (
     AppendixSegmentationSpec,
@@ -38,10 +38,37 @@ from .titles_detection import parse_title_info
 _is_title_line = pick_text_spans(is_title)
 
 
+def _split_before_main(
+    elements: Sequence[ProtectedTagOrStr],
+) -> Tuple[Sequence[ProtectedTagOrStr], Sequence[ProtectedTagOrStr]]:
+    """
+    Helper to find the beginning of the main content.
+    For that we look for the keyword "arrête" followed by a title.
+    """
+    arrete_keyword_index: int = -1
+    counter: int = -1
+    while counter < len(elements) - 1:
+        counter += 1
+        if is_arrete_keyword(elements, counter):
+            arrete_keyword_index = counter
+        elif arrete_keyword_index != -1 and _is_title_line(elements, counter):
+            break
+
+    if arrete_keyword_index == -1:
+        raise ValueError("Could not find the 'arrête' keyword.")
+    elif counter >= len(elements) - 1:
+        raise ValueError("Could not find the first title after the 'arrête' keyword.")
+
+    return elements[: arrete_keyword_index + 1], elements[arrete_keyword_index + 1 :]
+
+
 def _is_appendix_text_span_tag(elements: Sequence[ProtectedTagOrStr], index: int) -> bool:
+    """
+    Probe help find the beginning of the appendix by looking for a title with section type "Annexe".
+    """
     element = elements[index]
     assert is_semantic_tag(element)
-    if _is_title_line(elements, index):
+    if is_title(elements, index):
         # Parse title info
         title_info = parse_title_info(get_string(element))
         new_section_type = title_info.section_type
@@ -60,7 +87,7 @@ def parse_arrete(
     context: DocumentContext, elements: Sequence[ProtectedTagOrStr]
 ) -> Iterator[ProtectedTagOrStr]:
     # Add basic document elements
-    elements = chain_functions(
+    remainder = chain_functions(
         context,
         elements,
         [
@@ -71,23 +98,24 @@ def parse_arrete(
     )
 
     # Header
-    pile, elements = split_before_match(elements, _is_title_line)
+    header_elements, remainder = _split_before_main(remainder)
+    header_elements = parse_arrete_keyword(context, header_elements)
+    header_elements = parse_header(context, header_elements)
     yield make_semantic_tag(
-        context.protected_soup, HeaderSegmentationSpec, contents=parse_header(context, pile)
+        context.protected_soup, HeaderSegmentationSpec, contents=header_elements
     )
 
     # Main content
-    pile, elements = split_before_match(elements, _is_appendix)
-    yield make_semantic_tag(
-        context.protected_soup, MainSegmentationSpec, contents=parse_content(context, pile)
-    )
+    main_elements, remainder = split_before_match(remainder, _is_appendix)
+    main_elements = parse_content(context, main_elements)
+    yield make_semantic_tag(context.protected_soup, MainSegmentationSpec, contents=main_elements)
 
     # Appendix
-    if elements:
+    if remainder:
         yield make_semantic_tag(
             context.protected_soup,
             AppendixSegmentationSpec,
-            contents=parse_content(context, elements),
+            contents=parse_content(context, remainder),
         )
 
 

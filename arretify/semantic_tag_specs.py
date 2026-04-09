@@ -259,7 +259,6 @@ HeaderSpec = create_semantic_tag_spec_no_data(
         Contents.SemanticTag(VisaSpec.spec_name),
         Contents.SemanticTag(MotifSpec.spec_name),
         Contents.SemanticTag(SupplementaryMotifInfoSpec.spec_name),
-        Contents.SemanticTag(TableOfContentsSpec.spec_name),
         # For lines in the header that havent been recognized as a particular element
         Contents.Tag("div"),
         Contents.Tag("img"),
@@ -323,10 +322,9 @@ SectionSpec: SemanticTagSpec[SectionData] = SemanticTagSpec(
     tag_name="section",
     data_model=SectionData,
     allowed_contents=(
-        Contents.SemanticTag("section_title"),
+        Contents.SemanticTag(SectionTitleSpec.spec_name),
         Contents.SemanticTag(AlineaSpec.spec_name),
         Contents.SemanticTag("section"),
-        # Table of contents can be included in appendix sections
         Contents.SemanticTag(TableOfContentsSpec.spec_name),
     ),
 )
@@ -334,7 +332,13 @@ SectionSpec: SemanticTagSpec[SectionData] = SemanticTagSpec(
 MainSpec = create_semantic_tag_spec_no_data(
     spec_name="main",
     tag_name="main",
-    allowed_contents=(Contents.SemanticTag(SectionSpec.spec_name),),
+    allowed_contents=(
+        Contents.SemanticTag(SectionSpec.spec_name),
+        # In some cases, we have content before the first section.
+        Contents.SemanticTag(AlineaSpec.spec_name),
+        # In some cases, we have TOC in the main section of the document.
+        Contents.SemanticTag(TableOfContentsSpec.spec_name),
+    ),
 )
 
 AppendixSpec = create_semantic_tag_spec_no_data(

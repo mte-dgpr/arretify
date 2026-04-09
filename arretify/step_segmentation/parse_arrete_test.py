@@ -20,8 +20,8 @@ from arretify.semantic_tag_specs import (
     AddressSpec,
     AlineaData,
     ArreteTitleSpec,
-    PageSeparatorData,
-    PageSeparatorSpec,
+    HonorarySpec,
+    SupplementaryMotifInfoSpec,
 )
 from arretify.utils.html_create import wrap_in_tag
 
@@ -45,20 +45,20 @@ from .testing import (
 
 class TestParseArrete(BaseTestCaseSegmentation):
 
-    def test_simple(self):
+    def test_complete_arrete(self):
         # Arrange
-        elements = [
-            *self.make_text_spans(
-                "Arrêté n° 123",
-                "Article 1 : Disposition",
-            ),
-            self.make_semantic_tag(PageSeparatorSpec, data=PageSeparatorData(page_index=1)),
-            *self.make_text_spans(
-                "Bla bla bla ...",
-                "Annexe 1 : Détails",
-                "Bla bla bla ...",
-            ),
-        ]
+        elements = self.make_text_spans(
+            "Arrêté portant sur la protection de l'environnement",
+            "Le ministre de la transition écologique,",
+            "Arrête",
+            "Article 1er : Objet",
+            "Le présent arrêté fixe les dispositions applicables.",
+            # This address should be parsed as an address
+            # tag inside a text_span
+            "Bla bla, 123 rue de la Paix, bla ...",
+            "Annexe 1 : Détails",
+            "Bla bla bla ...",
+        )
 
         # Act
         elements = parse_arrete(self.context, elements)
@@ -67,15 +67,33 @@ class TestParseArrete(BaseTestCaseSegmentation):
         assert_segmentation_element_lists_equal(
             elements,
             [
+                # Header
                 self.make_semantic_tag(
                     HeaderSegmentationSpec,
                     contents=[
                         self.make_semantic_tag(
                             ArreteTitleSpec,
-                            contents=wrap_in_tag(self.soup, "h1", ["Arrêté n° 123"]),
+                            contents=wrap_in_tag(
+                                self.soup,
+                                "h1",
+                                ["Arrêté portant sur la protection de l'environnement"],
+                            ),
+                        ),
+                        self.make_semantic_tag(
+                            HonorarySpec,
+                            contents=[
+                                self.make_tag(
+                                    "div", contents=["Le ministre de la transition écologique,"]
+                                )
+                            ],
+                        ),
+                        self.make_semantic_tag(
+                            SupplementaryMotifInfoSpec,
+                            contents=[self.make_tag("div", contents=["Arrête"])],
                         ),
                     ],
                 ),
+                # Main content
                 self.make_semantic_tag(
                     MainSegmentationSpec,
                     contents=[
@@ -84,26 +102,44 @@ class TestParseArrete(BaseTestCaseSegmentation):
                             contents=[
                                 self.make_semantic_tag(
                                     SectionTitleSegmentationSpec,
-                                    contents=self.make_text_spans("Article 1 : Disposition"),
+                                    contents=self.make_text_spans("Article 1er : Objet"),
                                     data=SectionTitleSegmentationData(
                                         number="1",
                                         type="article",
                                         level=0,
-                                        title="Disposition",
+                                        title="Objet",
                                     ),
                                 ),
                                 self.make_semantic_tag(
-                                    PageSeparatorSpec, data=PageSeparatorData(page_index=1)
+                                    AlineaSegmentationSpec,
+                                    contents=self.make_text_spans(
+                                        "Le présent arrêté fixe les dispositions applicables."
+                                    ),
+                                    data=AlineaData(number=1),
                                 ),
                                 self.make_semantic_tag(
                                     AlineaSegmentationSpec,
-                                    contents=self.make_text_spans("Bla bla bla ..."),
-                                    data=AlineaData(number=1),
+                                    contents=[
+                                        self.make_semantic_tag(
+                                            TextSpanSegmentationSpec,
+                                            contents=[
+                                                "Bla bla, ",
+                                                self.make_semantic_tag(
+                                                    AddressSpec,
+                                                    contents=["123 rue de la Paix"],
+                                                ),
+                                                ", bla ...",
+                                            ],
+                                            data=DEFAULT_TEXT_SPAN_DATA,
+                                        )
+                                    ],
+                                    data=AlineaData(number=2),
                                 ),
                             ],
                         ),
                     ],
                 ),
+                # Appendix
                 self.make_semantic_tag(
                     AppendixSegmentationSpec,
                     contents=[
@@ -123,73 +159,6 @@ class TestParseArrete(BaseTestCaseSegmentation):
                                 self.make_semantic_tag(
                                     AlineaSegmentationSpec,
                                     contents=self.make_text_spans("Bla bla bla ..."),
-                                    data=AlineaData(number=1),
-                                ),
-                            ],
-                        ),
-                    ],
-                ),
-            ],
-        )
-
-    def test_parse_text_span_inline_content_tags(self):
-        # Arrange
-        elements = self.make_text_spans(
-            "Arrêté n° 123",
-            "Article 1 : Disposition",
-            # This address should be parsed as an address
-            # tag inside a text_span
-            "Bla bla, 123 rue de la Paix, bla ...",
-        )
-
-        # Act
-        elements = parse_arrete(self.context, elements)
-
-        # Assert
-        assert_segmentation_element_lists_equal(
-            elements,
-            [
-                self.make_semantic_tag(
-                    HeaderSegmentationSpec,
-                    contents=[
-                        self.make_semantic_tag(
-                            ArreteTitleSpec,
-                            contents=wrap_in_tag(self.soup, "h1", ["Arrêté n° 123"]),
-                        ),
-                    ],
-                ),
-                self.make_semantic_tag(
-                    MainSegmentationSpec,
-                    contents=[
-                        self.make_semantic_tag(
-                            SectionSegmentationSpec,
-                            contents=[
-                                self.make_semantic_tag(
-                                    SectionTitleSegmentationSpec,
-                                    contents=self.make_text_spans("Article 1 : Disposition"),
-                                    data=SectionTitleSegmentationData(
-                                        number="1",
-                                        type="article",
-                                        level=0,
-                                        title="Disposition",
-                                    ),
-                                ),
-                                self.make_semantic_tag(
-                                    AlineaSegmentationSpec,
-                                    contents=[
-                                        self.make_semantic_tag(
-                                            TextSpanSegmentationSpec,
-                                            contents=[
-                                                "Bla bla, ",
-                                                self.make_semantic_tag(
-                                                    AddressSpec,
-                                                    contents=["123 rue de la Paix"],
-                                                ),
-                                                ", bla ...",
-                                            ],
-                                            data=DEFAULT_TEXT_SPAN_DATA,
-                                        )
-                                    ],
                                     data=AlineaData(number=1),
                                 ),
                             ],
