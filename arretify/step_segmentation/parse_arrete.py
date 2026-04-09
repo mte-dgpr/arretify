@@ -54,12 +54,15 @@ def _split_before_main(
         elif arrete_keyword_index != -1 and _is_title_line(elements, counter):
             break
 
-    if arrete_keyword_index == -1:
-        raise ValueError("Could not find the 'arrête' keyword.")
-    elif counter >= len(elements) - 1:
+    if arrete_keyword_index != -1 and counter >= len(elements) - 1:
         raise ValueError("Could not find the first title after the 'arrête' keyword.")
 
-    return elements[: arrete_keyword_index + 1], elements[arrete_keyword_index + 1 :]
+    if arrete_keyword_index != -1:
+        return elements[: arrete_keyword_index + 1], elements[arrete_keyword_index + 1 :]
+
+    # If the "arrête" keyword is not found, we implement a fallback by looking
+    # for the first title in the document.
+    return split_before_match(elements, _is_title_line)
 
 
 def _is_appendix_text_span_tag(elements: Sequence[ProtectedTagOrStr], index: int) -> bool:
