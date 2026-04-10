@@ -161,17 +161,28 @@ def load_or_create_experiment(output_path: Path) -> Experiment:
     return experiment
 
 
-def create_run(experiment: Experiment) -> tuple[Run, Run | None]:
+def create_run(experiment: Experiment) -> Run:
     """Create a new run with an incremented id."""
-    baseline_run = max(experiment.runs, key=lambda run: run.id) if experiment.runs else None
+    latest_run = get_latest_run(experiment)
     new_run = Run(
-        id=baseline_run.id + 1 if baseline_run else 1,
+        id=latest_run.id + 1 if latest_run else 1,
         date=Date.today(),
         git_hash=_get_git_hash(),
         metrics_by_file={},
     )
     experiment.runs.append(new_run)
-    return (new_run, baseline_run)
+    return new_run
+
+
+def get_latest_run(experiment: Experiment) -> Run | None:
+    return max(experiment.runs, key=lambda run: run.id) if experiment.runs else None
+
+
+def get_run_by_id(experiment: Experiment, run_id: int) -> Run:
+    run = next((run for run in experiment.runs if run.id == run_id), None)
+    if run is None:
+        raise ValueError(f"Run ID {run_id} not found in experiment")
+    return run
 
 
 def _get_git_hash() -> str:
@@ -260,13 +271,21 @@ def action_compute_metrics(
     ground_truth_dir: Path,
     debug_dir: Path | None,
     save_run: bool,
+    compare_to_run_id: int | None = None,
 ) -> None:
     """Compute metrics for arretify run on the PDF dataset against ground truth."""
     _LOGGER.info(f"Ground truth directory: {ground_truth_dir}")
     _LOGGER.info(f"Experiment output path: {experiment_json_path}")
 
     experiment = load_or_create_experiment(experiment_json_path)
-    current_run, baseline_run = create_run(experiment)
+    current_run = create_run(experiment)
+
+    # Get baseline run: use specified ID or latest run
+    baseline_run: Run | None
+    if compare_to_run_id is not None:
+        baseline_run = get_run_by_id(experiment, compare_to_run_id)
+    else:
+        baseline_run = get_latest_run(experiment)
 
     if debug_dir:
         debug_dir.mkdir(parents=True, exist_ok=True)
@@ -447,6 +466,12 @@ def main(argv: list[str] | None = None):
             "If not set, only displays metrics without saving."
         ),
     )
+    evaluate_parser.add_argument(
+        "--compare-to",
+        type=int,
+        default=None,
+        help="Run ID to compare against. If not specified, compares to the latest run.",
+    )
 
     # Parse remaining arguments (skip experiment name)
     args = parser.parse_args(argv[2:])
@@ -504,6 +529,7 @@ def main(argv: list[str] | None = None):
             ground_truth_dir,
             args.debug_dir if hasattr(args, "debug_dir") else None,
             args.save_run if hasattr(args, "save_run") else False,
+            args.compare_to if hasattr(args, "compare_to") else None,
         )
 
 
