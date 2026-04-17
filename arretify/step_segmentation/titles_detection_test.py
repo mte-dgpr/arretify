@@ -22,7 +22,7 @@ import unittest
 
 from arretify.types import SectionType
 
-from .titles_detection import TITLE_NODE, is_next_title, parse_title_info
+from .titles_detection import TITLE_NODE, is_next_title, parse_title_info, parse_title_text
 from .types import TitleInfo
 
 
@@ -202,6 +202,14 @@ class TestTitlePattern(unittest.TestCase):
     def test_list_with_colon(self):
         text = "3. Liste ;"
         assert TITLE_NODE.pattern.match(text) is None
+
+    def test_prescriptions_annexees(self):
+        text = "Prescriptions annexées"
+        assert TITLE_NODE.pattern.match(text) is not None
+
+    def test_prescriptions_annexees_with_text(self):
+        text = "Prescriptions annexées à l'arrêté préfectoral"
+        assert TITLE_NODE.pattern.match(text) is not None
 
 
 class TestParseTitleInfo(unittest.TestCase):
@@ -702,3 +710,62 @@ class TestParseTitleInfo(unittest.TestCase):
             levels=[3],
             text="Attestation du Prestataire",
         )
+
+    def test_prescriptions_annexees(self):
+        # Arrange
+        line = "Prescriptions annexées"
+
+        # Act
+        title_info = parse_title_info(line)
+
+        # Assert
+        assert title_info == TitleInfo(
+            section_type=SectionType.ANNEXE,
+            number="1",
+            levels=[1],
+            text=None,
+        )
+
+    def test_prescriptions_annexees_with_text(self):
+        # Arrange
+        line = "Prescriptions annexées à l'arrêté préfectoral"
+
+        # Act
+        title_info = parse_title_info(line)
+
+        # Assert
+        assert title_info == TitleInfo(
+            section_type=SectionType.ANNEXE,
+            number="1",
+            levels=[1],
+            text="à l'arrêté préfectoral",
+        )
+
+    def test_prescriptions_annexees_uppercase(self):
+        # Arrange
+        line = "PRESCRIPTIONS ANNEXÉES"
+
+        # Act
+        title_info = parse_title_info(line)
+
+        # Assert
+        assert title_info == TitleInfo(
+            section_type=SectionType.ANNEXE,
+            number="1",
+            levels=[1],
+            text=None,
+        )
+
+
+class TestParseTitleText(unittest.TestCase):
+
+    def test_prescriptions_annexees_text_split(self):
+        # Arrange
+        line = "Prescriptions annexées à l'arrêté préfectoral"
+
+        # Act
+        section_name, text = parse_title_text(line)
+
+        # Assert
+        assert section_name == "Prescriptions annexées "
+        assert text == "à l'arrêté préfectoral"
