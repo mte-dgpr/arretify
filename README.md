@@ -254,13 +254,12 @@ Pour publier une nouvelle version :
 2. Incrémenter le numéro de version dans `pyproject.toml`
 3. Ajouter un log dans le fichier `CHANGELOG.md`
 4. Réinstaller la librairie si besoin, puis regénérer les HTML des exemples pour mettre à jour le numéro de version
-5. Effectuer un commit et pusher la branche
+5. Effectuer un commit, pusher la branche et ouvrir une PR pour lancer le CI de tests
 6. Ajouter un tag de version correspondant au nouveau numéro de version de la librairie : 
 
 ```bash
-git tag v1.2.3                  # Crée le tag localement
-git push origin refs/tags/v1.2.3  # Push le tag sur github
+git tag v1.2.3                      # Crée le tag localement
+git push origin refs/tags/v1.2.3    # Push le tag sur github
 ```
 
-7. Terminer par une PR
-
+Attention, ce dernier step provoquera la publication automatique de la nouvelle version sur PyPI.
