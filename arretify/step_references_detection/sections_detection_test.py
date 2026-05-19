@@ -955,6 +955,144 @@ class TestUnknownMultiple(BaseTestCaseHtml):
         )
 
 
+class TestTableauSingle(BaseTestCaseHtml):
+
+    def test_tableau_num_after(self):
+        # Arrange
+        elements = ["tableau 3"]
+
+        # Act
+        actual = parse_section_references(self.context, elements)
+
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["tableau 3"],
+                    data=SectionReferenceData(
+                        type="tableau",
+                        start_num="3",
+                    ),
+                ),
+            ],
+        )
+
+    def test_tableau_num_before(self):
+        # Arrange
+        elements = ["2ème tableau"]
+
+        # Act
+        actual = parse_section_references(self.context, elements)
+
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["2ème tableau"],
+                    data=SectionReferenceData(
+                        type="tableau",
+                        start_num="2",
+                    ),
+                ),
+            ],
+        )
+
+    def test_tableau_ordinal_premier_before(self):
+        # Arrange
+        elements = ["le premier tableau"]
+
+        # Act
+        actual = parse_section_references(self.context, elements)
+
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                "le ",
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["premier tableau"],
+                    data=SectionReferenceData(
+                        type="tableau",
+                        start_num="1",
+                    ),
+                ),
+            ],
+        )
+
+    def test_tableau_ordinal_after(self):
+        # Arrange
+        elements = ["tableau quatrième"]
+
+        # Act
+        actual = parse_section_references(self.context, elements)
+
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["tableau quatrième"],
+                    data=SectionReferenceData(
+                        type="tableau",
+                        start_num="4",
+                    ),
+                ),
+            ],
+        )
+
+    def test_tableau_no_number(self):
+        # Arrange
+        elements = ["le tableau de blabla"]
+
+        # Act
+        actual = parse_section_references(self.context, elements)
+
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                "le ",
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["tableau"],
+                    data=SectionReferenceData(
+                        type="tableau",
+                    ),
+                ),
+                " de blabla",
+            ],
+        )
+
+    def test_tableau_plural_no_number(self):
+        # Arrange
+        elements = ["sous les tableaux suivants"]
+
+        # Act
+        actual = parse_section_references(self.context, elements)
+
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                "sous les ",
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["tableaux"],
+                    data=SectionReferenceData(
+                        type="tableau",
+                    ),
+                ),
+                " suivants",
+            ],
+        )
+
+
 class TestAppendixSingle(BaseTestCaseHtml):
 
     def test_appendix_num(self):
