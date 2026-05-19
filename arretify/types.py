@@ -122,6 +122,7 @@ class SectionType(Enum):
     UNKNOWN = "unknown"
     """Unknown section type. Needs context to be resolved"""
     ALINEA = "alinea"
+    TABLEAU = "tableau"
 
 
 class OperationType(Enum):
