@@ -144,6 +144,17 @@ ALINEA_NUMBER_NODE = regex_tree.Group(
 )
 
 
+TABLEAU_NUMBER_NODE = regex_tree.Group(
+    regex_tree.Branching(
+        [
+            ORDINAL_NUMBER_NODE,
+            SIMPLE_NUMBER_NODE,
+        ]
+    ),
+    group_name="__tableau_number",
+)
+
+
 UNKNOWN_SECTION_NUMBER_NODE = regex_tree.Group(
     regex_tree.Branching(
         [
@@ -235,6 +246,12 @@ def _extract_section(
     appendix_no_number_matches = filter_regex_tree_match_children(
         section_reference_match, ["__appendix_no_number"]
     )
+    tableau_matches = filter_regex_tree_match_children(
+        section_reference_match, ["__tableau_number"]
+    )
+    tableau_no_number_matches = filter_regex_tree_match_children(
+        section_reference_match, ["__tableau_no_number"]
+    )
 
     if (
         sum(
@@ -246,6 +263,8 @@ def _extract_section(
                     unknown_section_matches,
                     appendix_matches,
                     appendix_no_number_matches,
+                    tableau_matches,
+                    tableau_no_number_matches,
                 ]
             ]
         )
@@ -268,6 +287,15 @@ def _extract_section(
     elif len(appendix_no_number_matches) in [1, 2]:
         return SectionReferenceData(
             type=SectionType.ANNEXE,
+            start_num=None,
+            end_num=None,
+        )
+    elif len(tableau_matches) in [1, 2]:
+        section_matches = tableau_matches
+        section_type = SectionType.TABLEAU
+    elif len(tableau_no_number_matches) in [1, 2]:
+        return SectionReferenceData(
+            type=SectionType.TABLEAU,
             start_num=None,
             end_num=None,
         )
@@ -405,6 +433,26 @@ SECTION_REFERENCE_NODE = regex_tree.Group(
             # - "à l'annexe"
             # - "en annexe"
             regex_tree.Group(r"annexes?", group_name="__appendix_no_number"),
+            # -------- Tableaux -------- #
+            # Examples :
+            # - "tableau 3"
+            # - "tableau premier"
+            # - "2ème tableau"
+            # - "premier tableau"
+            regex_tree.Sequence(
+                [
+                    regex_tree.Branching(
+                        [
+                            regex_tree.Sequence([TABLEAU_NUMBER_NODE, r" (tableaux?)"]),
+                            regex_tree.Sequence([r"(tableaux?) ", TABLEAU_NUMBER_NODE]),
+                        ]
+                    ),
+                ]
+            ),
+            # Examples :
+            # - "le tableau de l'article 1.2.1"
+            # - "sous le tableau de la liste"
+            regex_tree.Group(r"tableaux?", group_name="__tableau_no_number"),
         ]
     ),
     group_name="__section_reference",
