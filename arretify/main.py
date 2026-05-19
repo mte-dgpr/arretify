@@ -129,25 +129,43 @@ def main(args: list[str]) -> None:
         _LOGGER.info("Mistral OCR is active")
         features = dataclass_replace(features, ocr=True)
 
-    # Initialize Legifrance client
+    # Initialize Legifrance client. In development mode, the resolution step is
+    # enabled even without a client so the dev_cache can serve previously cached
+    # results (useful for reproducible snapshots in CI without API secrets).
     try:
         session_context = initialize_legifrance_client(session_context)
     except SettingsError:
-        _LOGGER.info(
-            "Legifrance credentials not provided, skipping Legifrance references resolution"
-        )
+        if settings.env == "development":
+            _LOGGER.info(
+                "Legifrance credentials not provided, falling back to dev_cache for resolution"
+            )
+            features = dataclass_replace(features, legifrance=True)
+        else:
+            _LOGGER.info(
+                "Legifrance credentials not provided, skipping Legifrance references resolution"
+            )
     except ArretifyError as error:
         if error.code is ErrorCodes.law_data_api_error:
-            _LOGGER.warning("failed to initialize Legifrance client")
+            if settings.env == "development":
+                _LOGGER.warning("Failed to initialize Legifrance client, falling back to dev_cache")
+                features = dataclass_replace(features, legifrance=True)
+            else:
+                _LOGGER.warning("failed to initialize Legifrance client")
     else:
         _LOGGER.info("Legifrance references resolution is active")
         features = dataclass_replace(features, legifrance=True)
 
-    # Initialize Eurlex client
+    # Initialize Eurlex client. Same dev_cache fallback as for Legifrance.
     try:
         session_context = initialize_eurlex_client(session_context)
     except SettingsError:
-        _LOGGER.info("Eurlex credentials not provided, skipping Eurlex references resolution")
+        if settings.env == "development":
+            _LOGGER.info(
+                "Eurlex credentials not provided, falling back to dev_cache for resolution"
+            )
+            features = dataclass_replace(features, eurlex=True)
+        else:
+            _LOGGER.info("Eurlex credentials not provided, skipping Eurlex references resolution")
     else:
         _LOGGER.info("Eurlex references resolution is active")
         features = dataclass_replace(features, eurlex=True)
