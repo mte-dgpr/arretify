@@ -21,6 +21,7 @@ from typing import Iterator, Sequence
 
 from arretify.parsing_utils.numbering import (
     EME_PATTERN_S,
+    MULTIPLICATIVE_ADVERB_PATTERN_S,
     ORDINAL_PATTERN_S,
     ROMAN_NUMERALS_PATTERN_S,
     ordinal_str_to_int,
@@ -104,13 +105,29 @@ ROMAN_NUMBER_NODE = regex_tree.Literal(
     named_group(ROMAN_NUMERALS_PATTERN_S, "roman_number") + EME_PATTERN_S + r"?",
 )
 
+# Optional Latin multiplicative adverb suffix (bis, ter, quater, ...) used
+# in French law to refer to articles inserted between existing numbered ones.
+# Accepts the adverb with or without a separating whitespace.
+MULTIPLICATIVE_ADVERB_NODE = regex_tree.Repeat(
+    regex_tree.Literal(
+        r"\s*" + MULTIPLICATIVE_ADVERB_PATTERN_S,
+        key="multiplicative_adverb",
+    ),
+    quantifier=(0, 1),
+)
+
 ARTICLE_NUMBER_NODE = regex_tree.Group(
-    regex_tree.Branching(
+    regex_tree.Sequence(
         [
-            ARTICLE_NUMBER_FROM_CODE_NODE,
-            DOTTED_NUMBER_NODE,
-            ORDINAL_NUMBER_NODE,
-            SIMPLE_NUMBER_NODE,
+            regex_tree.Branching(
+                [
+                    ARTICLE_NUMBER_FROM_CODE_NODE,
+                    DOTTED_NUMBER_NODE,
+                    ORDINAL_NUMBER_NODE,
+                    SIMPLE_NUMBER_NODE,
+                ]
+            ),
+            MULTIPLICATIVE_ADVERB_NODE,
         ]
     ),
     group_name="__article_number",
@@ -196,6 +213,19 @@ UNKNOWN_RANGE_NODE = regex_tree.Sequence(
 
 
 def _extract_section_number(match: regex_tree.Match) -> SectionNumber:
+    base = _extract_base_section_number(match)
+
+    # Append the optional bis/ter/quater/... suffix when present, in a
+    # canonical form (no separating whitespace) so the same article can be
+    # matched regardless of the original spacing.
+    multiplicative_adverb = match.match_dict.get("multiplicative_adverb")
+    if multiplicative_adverb:
+        base += multiplicative_adverb.strip()
+
+    return base
+
+
+def _extract_base_section_number(match: regex_tree.Match) -> SectionNumber:
     article_number_from_code = match.match_dict.get("article_number_from_code")
     if article_number_from_code:
         return article_number_from_code.replace(" ", "").replace(".", "")
