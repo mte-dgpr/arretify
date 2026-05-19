@@ -32,7 +32,8 @@ COUNT_PATTERN_S = r"(un|deux|trois|quatre|cinq|six|sept|huit|neuf|dix)"
 
 ORDINAL_PATTERN_S = (
     r"(premier)|(deuxième|second)|(troisième)|(quatrième)|(cinquième)|(sixième)"
-    r"|(septi[eè]me)|(huitième)|(neuvième)|(dixième)|(onzième)|(douzième)|(treizième)"
+    r"|(septième)|(huitième)|(neuvième)|(dixième)|(onzième)|(douzième)|(treizième)"
+    r"|(dernier)"
 )
 
 ORDINAL_PATTERN = PatternProxy(ORDINAL_PATTERN_S)
@@ -58,6 +59,10 @@ ENDING_LETTER_PATTERN = PatternProxy(LETTER_PATTERN_S + "$")
 NUMBERING_PATTERN_S = rf"({ROMAN_NUMERALS_PATTERN_S}|{LETTER_PATTERN_S}|{NUMBERS_PATTERN_S})"
 
 
+_ORDINAL_LAST_INDEX = 14
+"""Group index of the "dernier" ordinal, conventionally mapped to -1."""
+
+
 def ordinal_str_to_int(ordinal: str) -> int:
     ordinal_match = ORDINAL_PATTERN.match(ordinal)
     if not ordinal_match:
@@ -65,6 +70,8 @@ def ordinal_str_to_int(ordinal: str) -> int:
 
     for i in range(1, len(ordinal_match.groups()) + 1):
         if ordinal_match.group(i):
+            if i == _ORDINAL_LAST_INDEX:
+                return -1
             return i
 
     raise RuntimeError(f"Ordinal not found {ordinal}")
