@@ -266,6 +266,97 @@ class TestArticleSingle(BaseTestCaseHtml):
         )
 
 
+class TestArticleMultiplicativeAdverb(BaseTestCaseHtml):
+
+    def test_article_bis_with_space(self):
+        # Arrange
+        elements = ["article 5 bis"]
+
+        # Act
+        actual = parse_section_references(self.context, elements)
+
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["article 5 bis"],
+                    data=SectionReferenceData(
+                        type="article",
+                        start_num="5bis",
+                    ),
+                ),
+            ],
+        )
+
+    def test_article_ter_no_space(self):
+        # Arrange
+        elements = ["article 5.3.2.3ter"]
+
+        # Act
+        actual = parse_section_references(self.context, elements)
+
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["article 5.3.2.3ter"],
+                    data=SectionReferenceData(
+                        type="article",
+                        start_num="5.3.2.3ter",
+                    ),
+                ),
+            ],
+        )
+
+    def test_article_dotted_ter_with_space(self):
+        # Arrange : example from the ticket
+        elements = ["article 5.3.2.3 ter"]
+
+        # Act
+        actual = parse_section_references(self.context, elements)
+
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["article 5.3.2.3 ter"],
+                    data=SectionReferenceData(
+                        type="article",
+                        start_num="5.3.2.3ter",
+                    ),
+                ),
+            ],
+        )
+
+    def test_article_code_quater(self):
+        # Arrange
+        elements = ["article L. 511-9 quater"]
+
+        # Act
+        actual = parse_section_references(self.context, elements)
+
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["article L. 511-9 quater"],
+                    data=SectionReferenceData(
+                        type="article",
+                        start_num="L511-9quater",
+                    ),
+                ),
+            ],
+        )
+
+
 class TestArticleRange(BaseTestCaseHtml):
 
     def test_article_num_range_3_to_11(self):
