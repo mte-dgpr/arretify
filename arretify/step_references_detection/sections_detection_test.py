@@ -243,6 +243,72 @@ class TestArticleSingle(BaseTestCaseHtml):
             ],
         )
 
+    def test_code_article_with_roman_subpart(self):
+        # Arrange : example from the ticket
+        elements = ["article R 5125-8 - II - 2°"]
+
+        # Act
+        actual = parse_section_references(self.context, elements)
+
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["article R 5125-8 - II - 2°"],
+                    data=SectionReferenceData(
+                        type="article",
+                        start_num="R5125-8",
+                    ),
+                ),
+            ],
+        )
+
+    def test_code_article_with_roman_only(self):
+        # Arrange
+        elements = ["article L. 123-4 - IV"]
+
+        # Act
+        actual = parse_section_references(self.context, elements)
+
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["article L. 123-4 - IV"],
+                    data=SectionReferenceData(
+                        type="article",
+                        start_num="L123-4",
+                    ),
+                ),
+            ],
+        )
+
+    def test_code_article_with_degree_subpart(self):
+        # Arrange
+        elements = ["article D.12 - 3°"]
+
+        # Act
+        actual = parse_section_references(self.context, elements)
+
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["article D.12 - 3°"],
+                    data=SectionReferenceData(
+                        type="article",
+                        start_num="D12",
+                    ),
+                ),
+            ],
+        )
+
     def test_ambiguous_paragraph_use(self):
         # Arrange
         elements = ["Paragraphe L123"]
