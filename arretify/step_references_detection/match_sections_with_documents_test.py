@@ -310,3 +310,49 @@ class TestConnectParentSections(BaseTestCaseHtml):
                 ),
             ],
         )
+
+    def test_last_in_reference(self):
+        # Arrange
+        self.soup_extend(
+            [
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["dernier alinéa"],
+                ),
+                " de l' ",
+                self.make_semantic_tag(
+                    DocumentReferenceSpec,
+                    contents=["article 3.4"],
+                    data=DocumentReferenceData(
+                        type="self",
+                    ),
+                ),
+            ]
+        )
+
+        # Act
+        actual = match_sections_to_parents(self.context, self.soup.contents)
+
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["dernier alinéa"],
+                    data=SectionReferenceData(
+                        parent_reference="1",
+                    ),
+                ),
+                " de l' ",
+                self.make_semantic_tag(
+                    DocumentReferenceSpec,
+                    contents=["article 3.4"],
+                    data=DocumentReferenceData(
+                        type="self",
+                    ),
+                    reserved_data_attrs=dict(tag_id="1"),
+                ),
+            ],
+        )
+

@@ -747,6 +747,28 @@ class TestAlineaSingle(BaseTestCaseHtml):
             ],
         )
 
+    def test_alinea_num_last(self):
+        # Arrange
+        elements = ["dernier alinéa"]
+
+        # Act
+        actual = parse_section_references(self.context, elements)
+
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["dernier alinéa"],
+                    data=SectionReferenceData(
+                        type="alinea",
+                        start_num="-1",
+                    ),
+                ),
+            ],
+        )
+
 
 class TestAlineaRange(BaseTestCaseHtml):
 
