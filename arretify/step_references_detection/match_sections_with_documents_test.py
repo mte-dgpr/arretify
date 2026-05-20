@@ -259,7 +259,7 @@ class TestConnectParentSections(BaseTestCaseHtml):
             ],
         )
 
-    def test_tableau_to_article_section(self):
+    def test_table_to_article_section(self):
         # Arrange : "le tableau de l'article 1.2.1"
         self.soup_extend(
             [
@@ -300,7 +300,7 @@ class TestConnectParentSections(BaseTestCaseHtml):
             ],
         )
 
-    def test_tableau_to_article_to_document(self):
+    def test_table_to_article_to_document(self):
         # Arrange :
         # "Le tableau de l'article 1.2.1 de l'arrêté préfectoral du 23 mai 2016"
         self.soup_extend(
