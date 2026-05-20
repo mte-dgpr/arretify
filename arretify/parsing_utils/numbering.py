@@ -36,6 +36,9 @@ ORDINAL_PATTERN_S = (
     r"|(dernier)"
 )
 
+_ORDINAL_LAST_INDEX = 14
+"""Group index of the "dernier" ordinal, conventionally mapped to -1."""
+
 ORDINAL_PATTERN = PatternProxy(ORDINAL_PATTERN_S)
 
 # Latin multiplicative adverbs
@@ -57,10 +60,6 @@ ENDING_LETTER_PATTERN = PatternProxy(LETTER_PATTERN_S + "$")
 # All types of numbering patterns
 # Order matters: roman numerals, letters, and numbers
 NUMBERING_PATTERN_S = rf"({ROMAN_NUMERALS_PATTERN_S}|{LETTER_PATTERN_S}|{NUMBERS_PATTERN_S})"
-
-
-_ORDINAL_LAST_INDEX = 14
-"""Group index of the "dernier" ordinal, conventionally mapped to -1."""
 
 
 def ordinal_str_to_int(ordinal: str) -> int:
