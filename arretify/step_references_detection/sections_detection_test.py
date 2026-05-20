@@ -313,7 +313,7 @@ class TestArticleMultiplicativeAdverb(BaseTestCaseHtml):
         )
 
     def test_article_dotted_ter_with_space(self):
-        # Arrange : example from the ticket
+        # Arrange
         elements = ["article 5.3.2.3 ter"]
 
         # Act
