@@ -955,9 +955,9 @@ class TestUnknownMultiple(BaseTestCaseHtml):
         )
 
 
-class TestTableauSingle(BaseTestCaseHtml):
+class TestTableSingle(BaseTestCaseHtml):
 
-    def test_tableau_num_after(self):
+    def test_table_num_after(self):
         # Arrange
         elements = ["tableau 3"]
 
@@ -979,7 +979,7 @@ class TestTableauSingle(BaseTestCaseHtml):
             ],
         )
 
-    def test_tableau_num_before(self):
+    def test_table_num_before(self):
         # Arrange
         elements = ["2ème tableau"]
 
@@ -1001,7 +1001,7 @@ class TestTableauSingle(BaseTestCaseHtml):
             ],
         )
 
-    def test_tableau_ordinal_premier_before(self):
+    def test_table_ordinal_premier_before(self):
         # Arrange
         elements = ["le premier tableau"]
 
@@ -1024,7 +1024,7 @@ class TestTableauSingle(BaseTestCaseHtml):
             ],
         )
 
-    def test_tableau_ordinal_after(self):
+    def test_table_ordinal_after(self):
         # Arrange
         elements = ["tableau quatrième"]
 
@@ -1046,7 +1046,7 @@ class TestTableauSingle(BaseTestCaseHtml):
             ],
         )
 
-    def test_tableau_no_number(self):
+    def test_table_no_number(self):
         # Arrange
         elements = ["le tableau de blabla"]
 
@@ -1069,7 +1069,7 @@ class TestTableauSingle(BaseTestCaseHtml):
             ],
         )
 
-    def test_tableau_plural_no_number(self):
+    def test_table_plural_no_number(self):
         # Arrange
         elements = ["sous les tableaux suivants"]
 
