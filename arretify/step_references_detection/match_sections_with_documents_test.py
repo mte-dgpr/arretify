@@ -310,3 +310,63 @@ class TestConnectParentSections(BaseTestCaseHtml):
                 ),
             ],
         )
+
+    def test_adverb_in_reference(self):
+        # Arrange
+        self.soup_extend(
+            [
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["article 5.3.2.3 ter"],
+                ),
+                " de l' ",
+                self.make_semantic_tag(
+                    DocumentReferenceSpec,
+                    contents=[
+                        "arrêté du ",
+                        self.make_semantic_tag(
+                            DateSpec,
+                            contents=["21 décembre 1999"],
+                            attrs=dict(datetime="1999-12-21"),
+                        ),
+                    ],
+                    data=DocumentReferenceData(
+                        type="arrete-ministeriel",
+                    ),
+                ),
+            ]
+        )
+
+        # Act
+        actual = match_sections_to_parents(self.context, self.soup.contents)
+
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["article 5.3.2.3 ter"],
+                    data=SectionReferenceData(
+                        parent_reference="1",
+                    ),
+                ),
+                " de l' ",
+                self.make_semantic_tag(
+                    DocumentReferenceSpec,
+                    contents=[
+                        "arrêté du ",
+                        self.make_semantic_tag(
+                            DateSpec,
+                            contents=["21 décembre 1999"],
+                            attrs=dict(datetime="1999-12-21"),
+                        ),
+                    ],
+                    data=DocumentReferenceData(
+                        type="arrete-ministeriel",
+                    ),
+                    reserved_data_attrs=dict(tag_id="1"),
+                ),
+            ],
+        )
+
