@@ -244,7 +244,7 @@ class TestArticleSingle(BaseTestCaseHtml):
         )
 
     def test_code_article_with_roman_subpart(self):
-        # Arrange : example from the ticket
+        # Arrange
         elements = ["article R 5125-8 - II - 2°"]
 
         # Act
