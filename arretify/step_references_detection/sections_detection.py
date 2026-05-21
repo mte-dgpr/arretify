@@ -246,9 +246,7 @@ def _extract_section(
     appendix_no_number_matches = filter_regex_tree_match_children(
         section_reference_match, ["__appendix_no_number"]
     )
-    table_matches = filter_regex_tree_match_children(
-        section_reference_match, ["__table_number"]
-    )
+    table_matches = filter_regex_tree_match_children(section_reference_match, ["__table_number"])
     table_no_number_matches = filter_regex_tree_match_children(
         section_reference_match, ["__table_no_number"]
     )
