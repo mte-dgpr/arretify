@@ -40,9 +40,7 @@ ORDINAL_PATTERN = PatternProxy(ORDINAL_PATTERN_S)
 # Latin multiplicative adverbs commonly used in French law to refer to
 # additional articles inserted between existing numbered ones
 # (e.g. "article 5.3.2.3 ter" right after "article 5.3.2.3 bis").
-MULTIPLICATIVE_ADVERB_PATTERN_S = (
-    r"(bis|ter|quater|quinquies|sexies|septies|octies|novies|decies)"
-)
+MULTIPLICATIVE_ADVERB_PATTERN_S = r"(bis|ter|quater|quinquies|sexies|septies|octies|novies|decies)"
 
 # Roman numerals limited to 39
 ROMAN_NUMERALS_PATTERN_S = r"(X{1,3}(IX|IV|V?I{0,3})|IX|IV|V?I{1,3})"

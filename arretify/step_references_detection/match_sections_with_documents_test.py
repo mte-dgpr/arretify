@@ -369,4 +369,3 @@ class TestConnectParentSections(BaseTestCaseHtml):
                 ),
             ],
         )
-
