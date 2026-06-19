@@ -87,9 +87,9 @@ def remove_misdetected_sections(
             continue
 
         section_reference = get_semantic_tag_data(SectionReferenceSpec, section_reference_tag)
-        if section_reference.type is SectionType.ANNEXE:
+        if section_reference.type in [SectionType.ANNEXE, SectionType.TABLEAU]:
             reference_tree = build_reference_tree(section_reference_tag)
-            # If section is an appendix, but with no detected number or id,
+            # If section is an appendix or table, but with no detected number or id,
             # and that furthermore it is not connected to a chain of other
             # references (sections or documents), such as "en annexe du présent arrêté",
             # we can assume it is a misdetected section.
