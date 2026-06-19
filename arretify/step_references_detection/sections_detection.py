@@ -105,15 +105,9 @@ ROMAN_NUMBER_NODE = regex_tree.Literal(
     named_group(ROMAN_NUMERALS_PATTERN_S, "roman_number") + EME_PATTERN_S + r"?",
 )
 
-# Optional Latin multiplicative adverb suffix (bis, ter, quater, ...) used
-# in French law to refer to articles inserted between existing numbered ones.
-# Accepts the adverb with or without a separating whitespace.
-MULTIPLICATIVE_ADVERB_NODE = regex_tree.Repeat(
-    regex_tree.Literal(
-        r"\s*" + MULTIPLICATIVE_ADVERB_PATTERN_S,
-        key="multiplicative_adverb",
-    ),
-    quantifier=(0, 1),
+MULTIPLICATIVE_ADVERB_NODE = regex_tree.Literal(
+    r"\s*" + MULTIPLICATIVE_ADVERB_PATTERN_S,
+    key="multiplicative_adverb",
 )
 
 ARTICLE_NUMBER_NODE = regex_tree.Group(
@@ -127,7 +121,14 @@ ARTICLE_NUMBER_NODE = regex_tree.Group(
                     SIMPLE_NUMBER_NODE,
                 ]
             ),
-            MULTIPLICATIVE_ADVERB_NODE,
+            # Optional Latin multiplicative adverb suffix (bis, ter, quater, ...) used
+            # in French law to refer to articles inserted between existing numbered ones.
+            # (e.g. "article 5.3.2.3 ter" right after "article 5.3.2.3 bis").
+            # Accepts the adverb with or without a separating whitespace.
+            regex_tree.Repeat(
+                MULTIPLICATIVE_ADVERB_NODE,
+                quantifier=(0, 1),
+            ),
         ]
     ),
     group_name="__article_number",
