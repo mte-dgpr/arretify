@@ -29,12 +29,7 @@ from arretify._vendor.clients_api_droit.clients_api_droit.legifrance import (
     search_circulaire,
     search_decret,
 )
-from arretify.errors import (
-    ArretifyError,
-    ErrorCodes,
-    SettingsError,
-    catch_and_convert_into_arretify_error,
-)
+from arretify.errors import ErrorCodes, SettingsError, catch_and_convert_into_arretify_error
 from arretify.types import SessionContext
 from arretify.utils.dev_cache import use_dev_cache
 
@@ -98,7 +93,5 @@ def get_circulaire_legifrance_id(
 
 def _assert_client_initialized(session_context: SessionContext) -> LegifranceClient:
     if not session_context.legifrance_client:
-        # ArretifyError so the resolution step keeps going gracefully when
-        # no client is available (e.g. CI without secrets relying on dev_cache).
-        raise ArretifyError(ErrorCodes.law_data_api_error, "Legifrance client is not initialized")
+        raise ValueError("Legifrance client is not initialized")
     return session_context.legifrance_client

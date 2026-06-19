@@ -26,12 +26,7 @@ from arretify._vendor.clients_api_droit.clients_api_droit.eurlex import (
     EurlexSettings,
     search_act,
 )
-from arretify.errors import (
-    ArretifyError,
-    ErrorCodes,
-    SettingsError,
-    catch_and_convert_into_arretify_error,
-)
+from arretify.errors import ErrorCodes, SettingsError, catch_and_convert_into_arretify_error
 from arretify.types import SessionContext
 from arretify.utils.dev_cache import use_dev_cache
 
@@ -74,7 +69,5 @@ def get_eu_act_url_with_year_and_num(
 
 def _assert_client_initialized(session_context: SessionContext) -> EurlexClient:
     if session_context.eurlex_client is None:
-        # ArretifyError so the resolution step keeps going gracefully when
-        # no client is available (e.g. CI without secrets relying on dev_cache).
-        raise ArretifyError(ErrorCodes.law_data_api_error, "Eurlex client is not initialized")
+        raise ValueError("Eurlex client is not initialized")
     return session_context.eurlex_client
