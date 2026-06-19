@@ -139,14 +139,10 @@ TITLE_NODE = regex_tree.Group(
                     r"(?P<text>(?!.*[.;:,]$)[a-zA-Z]+(\b.+)*)$",
                 ],
             ),
-            # Variant 4 : This regex matches "Prescriptions annexées" as an annexe marker
+            # Variant 4 : This regex matches alternative appendix titles
             regex_tree.Sequence(
                 [
-                    regex_tree.Literal(
-                        r"^(?P<prescriptions_annexees>Prescriptions\s+annexées)",
-                        settings=SECTION_TYPE_SETTINGS,
-                    ),
-                    rf"(?P<punc_after>{TITLE_PUNCTUATION_PATTERN_S}*)",
+                    r"^(?P<appendix_alt>Prescriptions\s+annexées)",
                     r"(?P<text>.*?)$",
                 ],
             ),
@@ -165,12 +161,10 @@ def parse_title_text(line: str) -> Tuple[str, str]:
     # Extract dict
     match_dict = match_pattern.match_dict
 
-    if "prescriptions_annexees" in match_dict:
-        section_name = match_dict["prescriptions_annexees"]
-        punc_after = match_dict.get("punc_after", "")
-        section_name = section_name + punc_after
-        text = match_dict.get("text", "")
-        return section_name, text
+    if "appendix_alt" in match_dict:
+        # In this case, there's no point in splitting text from section name.
+        # e.g. "Prescriptions annexées à l'arrêté préfectoral"
+        return line, ""
 
     # Build the section name
     section_type = match_dict.get("section_type", "")
@@ -194,12 +188,14 @@ def parse_title_info(line: str) -> TitleInfo:
     # Extract values
     match_dict = match_pattern.match_dict
 
-    if "prescriptions_annexees" in match_dict:
+    if "appendix_alt" in match_dict:
         return TitleInfo(
             section_type=SectionType.ANNEXE,
             number="1",
             levels=[1],
-            text=match_dict.get("text") or None,
+            # In this case, there's no point in splitting text from section name.
+            # e.g. "Prescriptions annexées à l'arrêté préfectoral"
+            text=line,
         )
 
     section_type = _extract_section_type(match_dict)
