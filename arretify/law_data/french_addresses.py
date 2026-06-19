@@ -57,18 +57,6 @@ WAY_TYPES = [
 ]
 """Non-exhaustive list of French way types."""
 
-NUMBER_SUFFIXES = [
-    "bis",
-    "ter",
-    "quater",
-    "quinquies",
-    "sexies",
-    "septies",
-    "octies",
-    "nonies",
-]
-"""Non-exhaustive list of French street number suffixes."""
-
 STREET_NAMES_NORMALIZATION_SETTINGS = Settings()
 """Settings to use when normalizing street names for matching purposes."""
 

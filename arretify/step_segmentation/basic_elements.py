@@ -22,10 +22,10 @@ from typing import Iterator, Sequence, Tuple
 from arretify.errors import ErrorCodes
 from arretify.law_data.french_addresses import (
     ALL_STREET_NAMES,
-    NUMBER_SUFFIXES,
     STREET_NAMES_NORMALIZATION_SETTINGS,
     WAY_TYPES,
 )
+from arretify.parsing_utils.numbering import MULTIPLICATIVE_ADVERB_PATTERN_S
 from arretify.parsing_utils.patterns import is_continuing_sentence
 from arretify.regex_utils import (
     PatternProxy,
@@ -351,7 +351,7 @@ ADDRESS_DETECT_PATTERN = PatternProxy(
     # 123
     # 42bis
     named_group(
-        rf"\d+(\s*({join_with_or(list(NUMBER_SUFFIXES))}))?\s+",
+        rf"\d+(\s*{MULTIPLICATIVE_ADVERB_PATTERN_S})?\s+",
         group_name="street_number",
     )
     # Detects a string that starts with a way type, then
