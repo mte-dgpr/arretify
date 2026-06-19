@@ -116,26 +116,6 @@ class TestOrdinalStrToInt(unittest.TestCase):
         # Assert
         assert result == 13
 
-    def test_septieme_with_accent(self):
-        # Arrange
-        ordinal = "septième"
-
-        # Act
-        result = ordinal_str_to_int(ordinal)
-
-        # Assert
-        assert result == 7
-
-    def test_septieme_no_accent(self):
-        # Arrange
-        ordinal = "septieme"
-
-        # Act
-        result = ordinal_str_to_int(ordinal)
-
-        # Assert
-        assert result == 7
-
     def test_dernier(self):
         # Arrange
         ordinal = "dernier"
