@@ -145,3 +145,31 @@ class TestRemoveMisdetectedSections(BaseTestCaseHtml):
                 " de la mairie",
             ],
         )
+
+    def test_tableau_all_alone(self):
+        # Arrange
+        self.soup_extend(
+            [
+                "au ",
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["tableau"],
+                    data=SectionReferenceData(type=SectionType.TABLEAU),
+                    reserved_data_attrs=dict(tag_id="1"),
+                ),
+                " suivant",
+            ]
+        )
+
+        # Act
+        actual = remove_misdetected_sections(self.context, self.soup.contents)
+
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                "au ",
+                "tableau",
+                " suivant",
+            ],
+        )
