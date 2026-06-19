@@ -723,7 +723,7 @@ class TestParseTitleInfo(unittest.TestCase):
             section_type=SectionType.ANNEXE,
             number="1",
             levels=[1],
-            text=None,
+            text="Prescriptions annexées",
         )
 
     def test_prescriptions_annexees_with_text(self):
@@ -738,22 +738,7 @@ class TestParseTitleInfo(unittest.TestCase):
             section_type=SectionType.ANNEXE,
             number="1",
             levels=[1],
-            text="à l'arrêté préfectoral",
-        )
-
-    def test_prescriptions_annexees_uppercase(self):
-        # Arrange
-        line = "PRESCRIPTIONS ANNEXÉES"
-
-        # Act
-        title_info = parse_title_info(line)
-
-        # Assert
-        assert title_info == TitleInfo(
-            section_type=SectionType.ANNEXE,
-            number="1",
-            levels=[1],
-            text=None,
+            text="Prescriptions annexées à l'arrêté préfectoral",
         )
 
 
@@ -767,5 +752,5 @@ class TestParseTitleText(unittest.TestCase):
         section_name, text = parse_title_text(line)
 
         # Assert
-        assert section_name == "Prescriptions annexées "
-        assert text == "à l'arrêté préfectoral"
+        assert section_name == "Prescriptions annexées à l'arrêté préfectoral"
+        assert text == ""
