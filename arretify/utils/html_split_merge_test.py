@@ -313,6 +313,24 @@ class TestRegexTreeSplitterSequence(unittest.TestCase):
         assert match == ["456 abc bla"]
         assert after == []
 
+    def test_restore_match_dict_backtracking(self):
+        # Arrange
+        node = regex_tree.Sequence(
+            [
+                r"((?P<french>salut)|hello)",
+                r" world",
+            ]
+        )
+        elements = ["salut ! hello world !"]
+        context = RegexTreeSplitterContext()
+
+        # Act
+        split = _regex_tree_splitter(context, elements, node, expects_before=True)
+
+        # Assert
+        assert split is not None
+        assert context.match_dict == {}
+
     def test_partial_match(self):
         # Arrange
         node = regex_tree.Sequence(["hello", " ", "world"])

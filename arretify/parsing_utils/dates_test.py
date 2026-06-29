@@ -124,6 +124,11 @@ class TestRenderDateRegexTreeMatch(unittest.TestCase):
             '<time data-spec="date" datetime="2020-07-20">20 JUL 2020</time>',
         ]
 
+    def test_3_chars_month_similar_to_abbreviation(self):
+        assert _parsed_elements("20 AVR 2020") == [
+            '<time data-spec="date" datetime="2020-04-20">20 AVR 2020</time>',
+        ]
+
     def test_syntactically_valid_but_non_existant_date(self):
         assert _parsed_elements("31 FEV 2013") == [
             '<time data-error_codes="non_existant_date" data-spec="date" '

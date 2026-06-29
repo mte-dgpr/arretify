@@ -132,10 +132,7 @@ ARTICLE_NUMBER_NODE = regex_tree.Group(
                     # in French law to refer to articles inserted between existing numbered ones.
                     # (e.g. "article 5.3.2.3 ter" right after "article 5.3.2.3 bis").
                     # Accepts the adverb with or without a separating whitespace.
-                    regex_tree.Repeat(
-                        MULTIPLICATIVE_ADVERB_NODE,
-                        quantifier=(0, 1),
-                    ),
+                    regex_tree.Optional(MULTIPLICATIVE_ADVERB_NODE),
                 ]
             ),
             LAST_ADVERB_NODE,

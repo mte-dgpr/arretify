@@ -515,7 +515,7 @@ def _regex_tree_splitter_recursive(
     elif isinstance(node, RepeatNode):
         has_separator = node.separator is not None
         match_elements: list[list[ProtectedTagOrStr]] = []
-        separator_splitter: Splitter[ProtectedTagOrStr, _PatternSplitterMatch] | None = None
+        separator_splitter: Splitter[ProtectedTagOrStr, PatternSplitterMatch] | None = None
         if has_separator:
             separator_splitter = make_pattern_splitter_ignoring_inline_tags(node.separator)
         min_repeat, max_repeat = node.quantifier
@@ -569,6 +569,7 @@ def _regex_tree_splitter_recursive(
         children_nodes = list(node.children.values())
 
         while remainder:
+            context_backup = _backup_context(context)
 
             # 1. Determine head candidates: consecutive OptionalNodes from start
             #    + first mandatory node
@@ -636,6 +637,7 @@ def _regex_tree_splitter_recursive(
             before_all.extend(head_match)
             remainder = after_head
             tail_elements = []
+            _restore_context(context, context_backup)
 
         # No match found after exhausting all possibilities
         return None

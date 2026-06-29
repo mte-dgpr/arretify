@@ -163,6 +163,10 @@ def _extract_identifier(
 def _render_arrete_container(
     soup: ProtectedSoup,
     arrete_match: regex_tree.Match,
+    # When rendering individual arrêtés from a list ("arrêtés ministériels du 1er janvier
+    # et du 5 mars"), shared attributes like `authority` are captured only on the parent match,
+    # not on each sub-match. base_arrete_match points to that parent so those shared attributes
+    # can be read.
     base_arrete_match: regex_tree.Match | None = None,
 ) -> ProtectedTag:
     if base_arrete_match is None:

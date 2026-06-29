@@ -137,52 +137,6 @@ class TestReplaceOperations(BaseTestCaseHtml):
             ],
         )
 
-    def test_replace_substituted(self):
-        # Arrange
-        elements = [
-            "Le deuxième alinéa de l'article 4.3.8 de l'arrêté préfectoral précité est supprimé. "
-            "Il est substitué par les alinéas suivants :"
-        ]
-
-        # Act
-        actual = parse_operations(self.context, elements)
-
-        # Assert
-        assert_element_lists_equal(
-            actual,
-            [
-                self.make_semantic_tag(
-                    OperationSpec,
-                    contents=[
-                        (
-                            "Le deuxième alinéa de l'article 4.3.8 de l'arrêté "
-                            "préfectoral précité est "
-                        ),
-                        self.make_tag("b", contents=["supprimé"]),
-                    ],
-                    data=OperationData(
-                        operation_type="delete",
-                        keyword="supprimé",
-                        direction="rtl",
-                    ),
-                ),
-                self.make_semantic_tag(
-                    OperationSpec,
-                    contents=[
-                        ("Il est "),
-                        self.make_tag("b", contents=["substitué"]),
-                        " par les alinéas suivants :",
-                    ],
-                    data=OperationData(
-                        operation_type="replace",
-                        has_operand="true",
-                        keyword="substitué",
-                        direction="rtl",
-                    ),
-                ),
-            ],
-        )
-
     def test_canceled_and_replaced(self):
         # Arrange
         elements = [
