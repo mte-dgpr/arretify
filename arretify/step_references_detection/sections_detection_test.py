@@ -265,6 +265,29 @@ class TestArticleSingle(BaseTestCaseHtml):
             ],
         )
 
+    def test_dernier_adverb(self):
+        # Arrange
+        elements = ["le dernier article"]
+
+        # Act
+        actual = parse_section_references(self.context, elements)
+
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                "le",
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=[" dernier article"],
+                    data=SectionReferenceData(
+                        type="article",
+                        start_num="-1",
+                    ),
+                ),
+            ],
+        )
+
 
 class TestArticleMultiplicativeAdverb(BaseTestCaseHtml):
 
@@ -838,9 +861,9 @@ class TestAlineaSingle(BaseTestCaseHtml):
             ],
         )
 
-    def test_alinea_num_last(self):
+    def test_dernier_adverb(self):
         # Arrange
-        elements = ["dernier alinéa"]
+        elements = ["le dernier alinéa"]
 
         # Act
         actual = parse_section_references(self.context, elements)
@@ -849,9 +872,10 @@ class TestAlineaSingle(BaseTestCaseHtml):
         assert_element_lists_equal(
             actual,
             [
+                "le",
                 self.make_semantic_tag(
                     SectionReferenceSpec,
-                    contents=["dernier alinéa"],
+                    contents=[" dernier alinéa"],
                     data=SectionReferenceData(
                         type="alinea",
                         start_num="-1",
@@ -1202,6 +1226,29 @@ class TestTableSingle(BaseTestCaseHtml):
                     ),
                 ),
                 " suivants",
+            ],
+        )
+
+    def test_dernier_adverb(self):
+        # Arrange
+        elements = ["le dernier tableau"]
+
+        # Act
+        actual = parse_section_references(self.context, elements)
+
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                "le",
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=[" dernier tableau"],
+                    data=SectionReferenceData(
+                        type="tableau",
+                        start_num="-1",
+                    ),
+                ),
             ],
         )
 
