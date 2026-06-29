@@ -98,11 +98,11 @@ DOTTED_NUMBER_NODE = regex_tree.Sequence(
 )
 
 SIMPLE_NUMBER_NODE = regex_tree.Literal(
-    named_group(r"\d+", "simple_number") + EME_PATTERN_S + r"?",
+    rf"{named_group(r"\d+", "simple_number")}{EME_PATTERN_S}?",
 )
 
 ROMAN_NUMBER_NODE = regex_tree.Literal(
-    named_group(ROMAN_NUMERALS_PATTERN_S, "roman_number") + EME_PATTERN_S + r"?",
+    rf"{named_group(ROMAN_NUMERALS_PATTERN_S, "roman_number")}{EME_PATTERN_S}?",
 )
 
 MULTIPLICATIVE_ADVERB_NODE = regex_tree.Literal(
@@ -121,9 +121,10 @@ ARTICLE_NUMBER_NODE = regex_tree.Group(
                 [
                     regex_tree.Branching(
                         [
+                            # From most specific to less specific.
+                            ORDINAL_NUMBER_NODE,
                             ARTICLE_NUMBER_FROM_CODE_NODE,
                             DOTTED_NUMBER_NODE,
-                            ORDINAL_NUMBER_NODE,
                             SIMPLE_NUMBER_NODE,
                         ]
                     ),
@@ -131,10 +132,7 @@ ARTICLE_NUMBER_NODE = regex_tree.Group(
                     # in French law to refer to articles inserted between existing numbered ones.
                     # (e.g. "article 5.3.2.3 ter" right after "article 5.3.2.3 bis").
                     # Accepts the adverb with or without a separating whitespace.
-                    regex_tree.Repeat(
-                        MULTIPLICATIVE_ADVERB_NODE,
-                        quantifier=(0, 1),
-                    ),
+                    regex_tree.Optional(MULTIPLICATIVE_ADVERB_NODE),
                 ]
             ),
             LAST_ADVERB_NODE,
@@ -151,11 +149,7 @@ ARTICLE_NUMBER_NODE = regex_tree.Group(
 # - "paragraphe 1.23", only if in the form X.Y.Z
 # - "paragraphe L.123-4"
 ARTICLE_WRONGLY_CALLED_NUMBER_NODE = regex_tree.Group(
-    regex_tree.Branching(
-        [
-            ARTICLE_NUMBER_FROM_CODE_NODE,
-        ]
-    ),
+    ARTICLE_NUMBER_FROM_CODE_NODE,
     group_name="__article_number",
 )
 
@@ -163,6 +157,7 @@ ARTICLE_WRONGLY_CALLED_NUMBER_NODE = regex_tree.Group(
 ALINEA_NUMBER_NODE = regex_tree.Group(
     regex_tree.Branching(
         [
+            # From most specific to less specific.
             ORDINAL_NUMBER_NODE,
             SIMPLE_NUMBER_NODE,
             LAST_ADVERB_NODE,
@@ -187,8 +182,9 @@ TABLE_NUMBER_NODE = regex_tree.Group(
 UNKNOWN_SECTION_NUMBER_NODE = regex_tree.Group(
     regex_tree.Branching(
         [
-            DOTTED_NUMBER_NODE,
+            # From most specific to less specific.
             ORDINAL_NUMBER_NODE,
+            DOTTED_NUMBER_NODE,
             SIMPLE_NUMBER_NODE,
         ]
     ),
@@ -199,6 +195,7 @@ UNKNOWN_SECTION_NUMBER_NODE = regex_tree.Group(
 APPENDIX_NUMBER_NODE = regex_tree.Group(
     regex_tree.Branching(
         [
+            # From most specific to less specific.
             DOTTED_NUMBER_NODE,
             ROMAN_NUMBER_NODE,
             SIMPLE_NUMBER_NODE,
@@ -530,14 +527,15 @@ SECTION_REFERENCE_MULTIPLE_NODE = regex_tree.Group(
             # - "alinéa 3, alinéa 4 et 5"
             regex_tree.Sequence(
                 [
-                    # Positive lookahead so there's a match only
-                    # if the strings starts with the word "alinéa".
-                    r"(?=alinéas? )",
+                    # "alinéa" is optional in the Repeat group,
+                    # So we start with a positive lookahead to match only
+                    # if the whole string starts with the word "alinéa".
+                    regex_tree.NonCapturing(r"alinéas? "),
                     regex_tree.Repeat(
                         regex_tree.Group(
                             regex_tree.Sequence(
                                 [
-                                    r"(alinéas? )?",
+                                    regex_tree.Optional(r"alinéas? "),
                                     ALINEA_NUMBER_NODE,
                                 ]
                             ),
@@ -554,14 +552,15 @@ SECTION_REFERENCE_MULTIPLE_NODE = regex_tree.Group(
             # - "Les articles 3 à 6, 9 et 12 à 14"
             regex_tree.Sequence(
                 [
-                    # Positive lookahead so there's a match only
-                    # if the strings starts with the word "article".
-                    r"(?=articles? )",
+                    # "article" is optional in the Repeat group,
+                    # So we start with a positive lookahead to match only
+                    # if the whole string starts with the word "article".
+                    regex_tree.NonCapturing(r"articles? "),
                     regex_tree.Repeat(
                         regex_tree.Group(
                             regex_tree.Sequence(
                                 [
-                                    r"(articles? )?",
+                                    regex_tree.Optional(r"articles? "),
                                     regex_tree.Branching(
                                         [
                                             ARTICLE_RANGE_NODE,
@@ -582,14 +581,15 @@ SECTION_REFERENCE_MULTIPLE_NODE = regex_tree.Group(
             # - "paragraphe 3 et paragraphe 4"
             regex_tree.Sequence(
                 [
-                    # Positive lookahead so there's a match only
-                    # if the strings starts with the word "paragraphe".
-                    r"(?=paragraphes?\s+|§\s*)",
+                    # "paragraphe" is optional in the Repeat group,
+                    # So we start with a positive lookahead to match only
+                    # if the whole string starts with the word "paragraphe".
+                    regex_tree.NonCapturing(r"paragraphes?\s+|§\s*"),
                     regex_tree.Repeat(
                         regex_tree.Group(
                             regex_tree.Sequence(
                                 [
-                                    r"(paragraphes?\s+|§\s*)?",
+                                    regex_tree.Optional(r"paragraphes?\s+|§\s*"),
                                     UNKNOWN_SECTION_NUMBER_NODE,
                                 ]
                             ),

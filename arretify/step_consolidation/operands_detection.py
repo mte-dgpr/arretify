@@ -46,12 +46,12 @@ def resolve_references_and_operands(
     reference_tags: list[ProtectedTag] = _find_left_references(document_context, operation_tag)
     if len(reference_tags) == 0:
         _LOGGER.warning("No references found in operation")
-        return
-    operation_data = update_semantic_tag_data(
-        OperationSpec,
-        operation_tag,
-        references=[ensure_tag_id(document_context.id_counters, tag) for tag in reference_tags],
-    )
+    else:
+        operation_data = update_semantic_tag_data(
+            OperationSpec,
+            operation_tag,
+            references=[ensure_tag_id(document_context.id_counters, tag) for tag in reference_tags],
+        )
 
     if operation_data.has_operand:
         operand_tag: ProtectedTag | None = _find_right_operand(document_context, operation_tag)

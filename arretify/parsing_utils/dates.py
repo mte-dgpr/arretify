@@ -17,6 +17,7 @@
 # limitations under the License.
 #
 import logging
+import re
 from datetime import date
 from typing import Sequence, TypedDict
 
@@ -81,6 +82,11 @@ MONTH_CODE_3_CHARS = [
     "déc",
 ]
 
+# Escape dots in months abbreviations
+_MONTH_POINT_ABBREVIATIONS_PATTERN_S = join_with_or(
+    [re.escape(abbreviation) for abbreviation in MONTH_POINT_ABBREVIATIONS]
+)
+
 DATE_NODE = regex_tree.Group(
     regex_tree.Sequence(
         [
@@ -95,13 +101,10 @@ DATE_NODE = regex_tree.Group(
                             r"((?P<day_first>1er)|(?P<day>\d{1,2})) ",
                             regex_tree.Branching(
                                 [
-                                    r"(?P<month_name>" + join_with_or(MONTH_NAMES) + r")",
-                                    r"(?P<month_point_abbreviation>"
-                                    + join_with_or(MONTH_POINT_ABBREVIATIONS)
-                                    + r")",
-                                    r"(?P<month_code_3_chars>"
-                                    + join_with_or(MONTH_CODE_3_CHARS)
-                                    + r")",
+                                    f"(?P<month_name>{join_with_or(MONTH_NAMES)})",
+                                    f"(?P<month_point_abbreviation>{
+                                        _MONTH_POINT_ABBREVIATIONS_PATTERN_S})",
+                                    f"(?P<month_code_3_chars>{join_with_or(MONTH_CODE_3_CHARS)})",
                                 ]
                             ),
                             r" ((?P<year>\d{4})|(?P<year_2digits>\d{2}))",

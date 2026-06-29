@@ -20,7 +20,7 @@ import logging
 from typing import Optional, Sequence, cast
 
 from arretify.parsing_utils.dates import DATE_NODE, render_date_regex_tree_match
-from arretify.regex_utils import map_regex_tree_match, regex_tree
+from arretify.regex_utils import Settings, map_regex_tree_match, regex_tree
 from arretify.semantic_tag_specs import DocumentReferenceData, DocumentReferenceSpec
 from arretify.types import DocumentContext, DocumentType, ProtectedSoup, ProtectedTagOrStr
 from arretify.utils.html import is_tag
@@ -42,19 +42,20 @@ DECRET_NODE = regex_tree.Group(
     regex_tree.Sequence(
         [
             r"circulaire\s+",
-            regex_tree.Repeat(
+            regex_tree.Optional(
                 regex_tree.Branching(
                     [
                         r"(ministérielle|interministérielle)\s+",
                         # Can mean various things, DCE is Directive Cadre Européenne,
                         # DPPR/DE is Direction de la Prévention des Pollutions
                         # et des Risques / Direction de l'Eau, etc ...
-                        r"[A-Z]{2,}(/[A-Z]{2,})*\s+",
+                        regex_tree.Literal(
+                            r"[A-Z]{2,}(/[A-Z]{2,})*\s+", settings=Settings(ignore_case=False)
+                        ),
                     ]
                 ),
-                quantifier=(0, 1),
             ),
-            r"(n\s*°\s*(?P<identifier>[\d\-]+)\s+)?",
+            regex_tree.Optional(r"n\s*°\s*(?P<identifier>[\d\-]+)\s+"),
             r"du\s+",
             DATE_NODE,
         ]

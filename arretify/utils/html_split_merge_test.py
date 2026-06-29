@@ -22,11 +22,14 @@ import pytest
 from bs4 import BeautifulSoup
 
 from arretify.regex_utils import PatternProxy, Settings, regex_tree
+from arretify.regex_utils.regex_tree.types import RegexTreeMatch
 from arretify.utils.split_merge import SplitMatch, SplitNotAMatch
 from arretify.utils.testing import BaseTestCaseHtml
 
 from .html_split_merge import (
+    RegexTreeSplitterContext,
     _NamedGroupSplitterMatch,
+    _regex_tree_splitter,
     _slice_elements_with_string_index,
     _split_before_string_index,
     _split_match_by_named_groups,
@@ -37,6 +40,665 @@ from .html_split_merge import (
     recombine_strings,
     regex_tree_match,
 )
+
+
+class TestRegexTreeSplitterLiteral(unittest.TestCase):
+
+    def test_split_literal_match_dict(self):
+        # Arrange
+        node = regex_tree.Literal(
+            r"(?P<greeting>hello)",
+        )
+        elements = ["well hello world!"]
+        context = RegexTreeSplitterContext()
+
+        # Act
+        before, match, after = _regex_tree_splitter(context, elements, node)
+
+        # Assert
+        assert before == ["well "]
+        assert match == ["hello"]
+        assert after == [" world!"]
+        assert context.match_dict == {"greeting": "hello"}
+
+
+class TestRegexTreeSplitterBranching(unittest.TestCase):
+
+    def test_split_with_alternation(self):
+        # Arrange
+        node = regex_tree.Branching(
+            [
+                "def",
+                "abc",
+            ]
+        )
+        elements = ["xyz abc 123"]
+        context = RegexTreeSplitterContext()
+
+        # Act
+        before, match, after = _regex_tree_splitter(context, elements, node)
+
+        # Assert
+        assert before == ["xyz "]
+        assert match == ["abc"]
+        assert after == [" 123"]
+
+    def test_branching_no_match(self):
+        # Arrange
+        node = regex_tree.Branching(
+            [
+                "def",
+                "ghi",
+            ]
+        )
+        elements = ["xyz abc 123"]
+        context = RegexTreeSplitterContext()
+
+        # Act
+        split = _regex_tree_splitter(context, elements, node)
+
+        # Assert
+        assert split is None
+
+    def test_priorize_contiguous_match(self):
+        # Arrange
+        node = regex_tree.Branching(
+            [
+                "abc",
+                "def",
+            ]
+        )
+        elements = ["def abc 123"]
+        context = RegexTreeSplitterContext()
+
+        # Act
+        before, match, after = _regex_tree_splitter(context, elements, node)
+
+        # Assert
+        assert before == []
+        assert match == ["def"]
+        assert after == [" abc 123"]
+
+    def test_captures_match_dict(self):
+        # Arrange
+        node = regex_tree.Branching(
+            [
+                r"(?P<first>abc)",
+                r"(?P<second>def)",
+            ]
+        )
+        elements = ["xyz abc def 123"]
+        context = RegexTreeSplitterContext()
+
+        # Act
+        before, match, after = _regex_tree_splitter(context, elements, node)
+
+        # Assert
+        assert before == ["xyz "]
+        assert match == ["abc"]
+        assert after == [" def 123"]
+        assert context.match_dict == {"first": "abc"}
+
+
+class TestRegexTreeSplitterRepeat(unittest.TestCase):
+
+    def test_split_repeat_any_number(self):
+        # Arrange
+        node = regex_tree.Repeat("bla", quantifier=(1, ...))
+        elements = ["bli blablablable blo"]
+        context = RegexTreeSplitterContext()
+
+        # Act
+        split = _regex_tree_splitter(context, elements, node)
+
+        # Assert
+        assert split is not None
+        before, match, after = split
+        assert before == ["bli "]
+        assert match == ["blablabla"]
+        assert after == ["ble blo"]
+
+    def test_split_repeat_min(self):
+        # Arrange
+        node = regex_tree.Repeat("bla", quantifier=(3, ...))
+        elements = ["bli blabla blo"]
+        context = RegexTreeSplitterContext()
+
+        # Act
+        split = _regex_tree_splitter(context, elements, node)
+
+        # Assert
+        assert split is None
+
+    def test_split_repeat_max(self):
+        # Arrange
+        node = regex_tree.Repeat("bla", quantifier=(1, 2))
+        elements = ["bli blablablable blo"]
+        context = RegexTreeSplitterContext()
+
+        # Act
+        split = _regex_tree_splitter(context, elements, node)
+
+        # Assert
+        assert split is not None
+        before, match, after = split
+        assert before == ["bli "]
+        assert match == ["blabla"]
+        assert after == ["blable blo"]
+
+    def test_split_repeat_with_separator(self):
+
+        # Arrange
+        node = regex_tree.Repeat(
+            "bla",
+            quantifier=(1, ...),
+            separator=",",
+        )
+        elements = ["bli bla,bla,bla blo"]
+        context = RegexTreeSplitterContext()
+
+        # Act
+        split = _regex_tree_splitter(context, elements, node)
+
+        # Assert
+        assert split is not None
+        before, match, after = split
+        assert before == ["bli "]
+        assert match == ["bla,bla,bla"]
+        assert after == [" blo"]
+
+    def test_split_repeat_with_trailing_separator(self):
+        # Arrange
+        node = regex_tree.Repeat(
+            "bla",
+            quantifier=(1, ...),
+            separator=",",
+        )
+        elements = ["bli bla,bla,bla, blo"]
+        context = RegexTreeSplitterContext()
+
+        # Act
+        split = _regex_tree_splitter(context, elements, node)
+
+        # Assert
+        assert split is not None
+        before, match, after = split
+        assert before == ["bli "]
+        assert match == ["bla,bla,bla"]
+        assert after == [", blo"]
+
+    def test_split_missing_separator(self):
+        # Arrange
+        node = regex_tree.Repeat(
+            "bla",
+            quantifier=(1, ...),
+            separator=",",
+        )
+        elements = ["bli bla,blabla blo"]
+        context = RegexTreeSplitterContext()
+
+        # Act
+        split = _regex_tree_splitter(context, elements, node)
+
+        # Assert
+        assert split is not None
+        before, match, after = split
+        assert before == ["bli "]
+        assert match == ["bla,bla"]
+        assert after == ["bla blo"]
+
+
+class TestRegexTreeSplitterSequence(unittest.TestCase):
+
+    def test_split_sequence(self):
+        # Arrange
+        node = regex_tree.Sequence(["hello", " ", "world"])
+        elements = ["well hello world!"]
+        context = RegexTreeSplitterContext()
+
+        # Act
+        split = _regex_tree_splitter(context, elements, node)
+
+        # Assert
+        assert split is not None
+        before, match, after = split
+        assert before == ["well "]
+        assert match == ["hello world"]
+        assert after == ["!"]
+
+    def test_simple_backtracking(self):
+        # Arrange
+        node = regex_tree.Sequence(
+            [
+                r"\s",
+                "world",
+            ]
+        )
+
+        elements = ["well hello world!"]
+        context = RegexTreeSplitterContext()
+
+        # Act
+        split = _regex_tree_splitter(context, elements, node)
+
+        # Assert
+        assert split is not None
+        before, match, after = split
+        # Even if " hello" matches partially, the splitter should backtrack
+        # and start the sequence match at the next index, which allows " world" to match fully.
+        assert before == ["well hello"]
+        assert match == [" world"]
+        assert after == ["!"]
+
+    def test_backtracking_just_after_first_matched_element(self):
+        # Arrange
+        node = regex_tree.Sequence(
+            [
+                r"[0-9]{3}\s",
+                r"[a-z0-9]{3}\s",
+                r"bla",
+            ]
+        )
+
+        elements = ["123 456 abc bla"]
+        context = RegexTreeSplitterContext()
+
+        # Act
+        split = _regex_tree_splitter(context, elements, node)
+
+        # Assert
+        assert split is not None
+        before, match, after = split
+        assert before == ["123 "]
+        assert match == ["456 abc bla"]
+        assert after == []
+
+    def test_restore_match_dict_backtracking(self):
+        # Arrange
+        node = regex_tree.Sequence(
+            [
+                r"((?P<french>salut)|hello)",
+                r" world",
+            ]
+        )
+        elements = ["salut ! hello world !"]
+        context = RegexTreeSplitterContext()
+
+        # Act
+        split = _regex_tree_splitter(context, elements, node, expects_before=True)
+
+        # Assert
+        assert split is not None
+        assert context.match_dict == {}
+
+    def test_partial_match(self):
+        # Arrange
+        node = regex_tree.Sequence(["hello", " ", "world"])
+        elements = ["well hello cruel world!"]
+        context = RegexTreeSplitterContext()
+
+        # Act
+        split = _regex_tree_splitter(context, elements, node)
+
+        # Assert
+        assert split is None
+
+    def test_no_head_match(self):
+        # Arrange
+        node = regex_tree.Sequence(["hello", " ", "world"])
+        elements = ["well hi world!"]
+        context = RegexTreeSplitterContext()
+
+        # Act
+        split = _regex_tree_splitter(context, elements, node)
+
+        # Assert
+        assert split is None
+
+    def test_split_sequence_end_of_string(self):
+        # Arrange
+        node = regex_tree.Sequence(["world", "$"])
+        elements = ["world"]
+        context = RegexTreeSplitterContext()
+
+        # Act
+        split = _regex_tree_splitter(context, elements, node)
+
+        # Assert
+        assert split is not None
+        before, match, after = split
+        assert before == []
+        assert match == ["world"]
+        assert after == []
+
+    def test_split_sequence_catch_all(self):
+        # Arrange
+        node = regex_tree.Sequence([".*", " hello"])
+        elements = ["well hello"]
+        context = RegexTreeSplitterContext()
+
+        # Act
+        split = _regex_tree_splitter(context, elements, node)
+
+        # Assert
+        assert split is None
+
+    def test_restore_match_dict_if_match_failed(self):
+        # Arrange
+        node = regex_tree.Sequence(
+            [
+                r"(?P<first>hello)",
+                r"(?P<second>world)",
+            ]
+        )
+        elements = ["well hello cruel world!"]
+        context = RegexTreeSplitterContext()
+
+        # Act
+        split = _regex_tree_splitter(context, elements, node, expects_before=True)
+
+        # Assert
+        assert split is None
+        assert context.match_dict == {}
+
+    def test_optional_node_mid_sequence(self):
+        """
+        Test that the splitter properly matches if an optional node mid-sequence doesn't match.
+        """
+        # Arrange
+        node = regex_tree.Sequence(
+            [
+                "well ",
+                regex_tree.Optional("you "),
+                "hello",
+            ]
+        )
+
+        elements = ["hum, well hello you !"]
+        context = RegexTreeSplitterContext()
+
+        # Act
+        split = _regex_tree_splitter(context, elements, node)
+
+        # Assert
+        assert split is not None
+        before, match, after = split
+        # Even if "you " matches, the splitter should backtrack and try to match "hello" directly
+        # after "well ", which allows the whole sequence to match.
+        assert before == ["hum, "]
+        assert match == ["well hello"]
+        assert after == [" you !"]
+
+    def test_optional_node_head_sequence(self):
+        """
+        Test that the splitter matches the closest match when an optional node at the head
+        of a sequence can match multiple times.
+        """
+        # Arrange
+        node = regex_tree.Sequence(
+            [
+                regex_tree.Optional("you "),
+                "hello",
+            ]
+        )
+
+        elements = ["hum, well hello you !"]
+        context = RegexTreeSplitterContext()
+
+        # Act
+        split = _regex_tree_splitter(context, elements, node)
+
+        # Assert
+        assert split is not None
+        before, match, after = split
+        # Even if "you " matches first, the splitter should backtrack and match "hello" which is
+        # closer.
+        assert before == ["hum, well "]
+        assert match == ["hello"]
+        assert after == [" you !"]
+
+    def test_non_capturing_head(self):
+        r"""
+        This case is useful when we want to match a sequence that starts with a string
+        that can be repeated multiple times, for example :
+        "(?=article )((article )?\d(,\s)?)+"
+        to match "article 1, 2, 3" but not "1, 2, 3".
+        """
+        # Arrange
+        node = regex_tree.Sequence(
+            [
+                regex_tree.NonCapturing("well "),
+                "well ",
+                "hello",
+            ]
+        )
+
+        elements = ["hum, well hello you !"]
+        context = RegexTreeSplitterContext()
+
+        # Act
+        split = _regex_tree_splitter(context, elements, node)
+
+        # Assert
+        assert split is not None
+        before, match, after = split
+        assert before == ["hum, "]
+        assert match == ["well hello"]
+        assert after == [" you !"]
+
+    def test_non_capturing_head_backtracking(self):
+        # Arrange
+        node = regex_tree.Sequence(
+            [
+                regex_tree.NonCapturing("well "),
+                "well ",
+                "hello",
+            ]
+        )
+
+        elements = ["hum, well hi well hello you !"]
+        context = RegexTreeSplitterContext()
+
+        # Act
+        split = _regex_tree_splitter(context, elements, node)
+
+        # Assert
+        assert split is not None
+        before, match, after = split
+        # Even if the first "well " matches first, the splitter should backtrack
+        # and match "hello" which is closer.
+        assert before == ["hum, well hi "]
+        assert match == ["well hello"]
+        assert after == [" you !"]
+
+    def test_non_capturing_end_matching(self):
+        # Arrange
+        node = regex_tree.Sequence(
+            [
+                "well ",
+                "hello",
+                regex_tree.NonCapturing(" you"),
+            ]
+        )
+
+        elements = ["hum, well hello you !"]
+        context = RegexTreeSplitterContext()
+
+        # Act
+        split = _regex_tree_splitter(context, elements, node)
+
+        # Assert
+        assert split is not None
+        before, match, after = split
+        # Even if " you" matches first, the splitter should backtrack and match "hello" which is
+        # closer.
+        assert before == ["hum, "]
+        assert match == ["well hello"]
+        assert after == [" you !"]
+
+    def test_non_capturing_end_no_match(self):
+        # Arrange
+        node = regex_tree.Sequence(
+            [
+                "well ",
+                "hello",
+                regex_tree.NonCapturing(" you"),
+            ]
+        )
+
+        elements = ["hum, well hello !"]
+        context = RegexTreeSplitterContext()
+
+        # Act
+        split = _regex_tree_splitter(context, elements, node)
+
+        # Assert
+        assert split is None
+
+
+class TestRegexTreeSplitterIntegration(unittest.TestCase):
+    """
+    This test covers the integration of multiple nodes in the same tree,
+    and ensures that the match_dict is properly propagated.
+    """
+
+    def test_split_group(self):
+        # Arrange
+        node = regex_tree.Group(
+            regex_tree.Sequence(["hello", " ", "world"]),
+            group_name="greeting",
+        )
+        elements = ["well hello world!"]
+        context = RegexTreeSplitterContext()
+
+        # Act
+        split = _regex_tree_splitter(context, elements, node)
+
+        # Assert
+        assert split is not None
+        before, match, after = split
+        assert before == ["well "]
+        assert len(match) == 1
+        assert isinstance(match[0], RegexTreeMatch)
+        assert match[0].group_name == "greeting"
+        assert match[0].children == ["hello world"]
+        assert after == ["!"]
+
+    def test_no_match_dict_capture_in_branch_partial_match(self):
+        # Arrange
+        node = regex_tree.Branching(
+            [
+                regex_tree.Sequence(
+                    [
+                        r"(?P<greeting>hello)",
+                        " ",
+                        r"(?P<target>world)",
+                    ]
+                ),
+                "goodbye",
+            ]
+        )
+
+        elements = ["well hello goodbye!"]
+        context = RegexTreeSplitterContext()
+
+        # Act
+        split = _regex_tree_splitter(context, elements, node)
+
+        # Assert
+        assert split is not None
+        before, match, after = split
+        assert before == ["well hello "]
+        assert match == ["goodbye"]
+        assert after == ["!"]
+        # Even if the first branch matches partially, the match_dict shouldnot be updated
+        # with the partial match.
+        assert context.match_dict == {}
+
+    def test_no_match_dict_capture_in_repeat_partial_match(self):
+        # Arrange
+        node = regex_tree.Repeat(
+            regex_tree.Sequence(
+                [
+                    r"(?P<greeting>hello|salut)",
+                    " world",
+                ]
+            ),
+            quantifier=(1, ...),
+        )
+
+        elements = ["well hello world salut!"]
+        context = RegexTreeSplitterContext()
+
+        # Act
+        split = _regex_tree_splitter(context, elements, node)
+
+        # Assert
+        assert split is not None
+        before, match, after = split
+        assert before == ["well "]
+        assert match == ["hello world"]
+        assert after == [" salut!"]
+        # Even if "salut world" matches partially, the match_dict shouldnot be updated
+        assert context.match_dict == {"greeting": "hello"}
+
+    def test_nested_branching_backtracking(self):
+        # Arrange
+        node = regex_tree.Sequence(
+            [
+                "well ",
+                regex_tree.Branching(
+                    [
+                        "world",
+                        "hello",
+                    ]
+                ),
+            ]
+        )
+
+        elements = ["well hello world!"]
+        context = RegexTreeSplitterContext()
+
+        # Act
+        split = _regex_tree_splitter(context, elements, node)
+
+        # Assert
+        assert split is not None
+        before, match, after = split
+        # Even if "world" matches partially, the splitter should backtrack
+        # and try the second branch, which matches fully.
+        assert before == []
+        assert match == ["well hello"]
+        assert after == [" world!"]
+
+    def test_nested_branching_backtracking_branching_at_root(self):
+        # Arrange
+        node = regex_tree.Branching(
+            [
+                regex_tree.Sequence(
+                    [
+                        "well ",
+                        "world",
+                    ]
+                ),
+                "goodbye",
+            ]
+        )
+
+        elements = ["well hello world! goodbye!"]
+        context = RegexTreeSplitterContext()
+
+        # Act
+        split = _regex_tree_splitter(context, elements, node)
+
+        # Assert
+        assert split is not None
+        before, match, after = split
+        # Even if "well " matches partially, the splitter should backtrack
+        # and try the second branch, which matches fully.
+        assert before == ["well hello world! "]
+        assert match == ["goodbye"]
+        assert after == ["!"]
 
 
 class TestPickStrings(unittest.TestCase):
@@ -404,7 +1066,8 @@ class TestRegexTreeMatch(unittest.TestCase):
 
         # Act
         elements = ["bla123blo"]
-        result = regex_tree_match(elements, group_node)
+        splitter = make_regex_tree_splitter(group_node)
+        result = splitter(elements)
 
         # Assert
         assert result == regex_tree.Match(
@@ -428,7 +1091,8 @@ class TestRegexTreeMatch(unittest.TestCase):
 
         # Act
         elements = ["12312312"]
-        result = regex_tree_match(elements, group_node)
+        splitter = make_regex_tree_splitter(group_node)
+        result = splitter(elements)
 
         # Assert
         assert result == regex_tree.Match(

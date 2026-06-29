@@ -43,7 +43,7 @@ EU_ACT_NODE = regex_tree.Group(
             # Examples :
             # règlement
             # directive
-            r"(?P<act_type>" + join_with_or(EU_ACT_TYPES) + r")\s+(européen(ne)?\s+)?",
+            rf"(?P<act_type>{join_with_or(EU_ACT_TYPES)})\s+(européen(ne)?\s+)?",
             # Order matters cause second alternative matches also the first one.
             regex_tree.Branching(
                 [
@@ -51,7 +51,7 @@ EU_ACT_NODE = regex_tree.Group(
                     # 2010/75/UE
                     regex_tree.Sequence(
                         [
-                            r"([nN]°\s*)?",
+                            regex_tree.Optional(r"[nN]°\s*"),
                             r"(?P<year>[0-9]{4}|[0-9]{2})/(?P<num>[0-9]+)",
                             r"/",
                             DOMAIN_NODE,
@@ -64,15 +64,14 @@ EU_ACT_NODE = regex_tree.Group(
                     # 1013/2006
                     regex_tree.Sequence(
                         [
-                            regex_tree.Repeat(
+                            regex_tree.Optional(
                                 regex_tree.Sequence([r"\(", DOMAIN_NODE, r"\)\s*"]),
-                                quantifier=(0, 1),
                             ),
-                            r"([nN]°\s*)?",
+                            regex_tree.Optional(r"[nN]°\s*"),
                             r"(?P<num>[0-9]+)/(?P<year>[0-9]{4}|[0-9]{2})",
                             # Check that the date string is followed by a valid separator
                             # so that we don't match strings like 23/2003/POIPOIPOI.
-                            r"(?=\s|\.|$|,|\)|;)",
+                            regex_tree.NonCapturing(r"\s|\.|$|,|\)|;"),
                         ]
                     ),
                 ]

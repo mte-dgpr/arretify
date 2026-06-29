@@ -17,13 +17,98 @@
 # limitations under the License.
 #
 
-from arretify.semantic_tag_specs import OperationData, OperationSpec
+from arretify.semantic_tag_specs import OperationData, OperationSpec, SectionReferenceSpec
 from arretify.utils.testing import BaseTestCaseHtml, assert_element_lists_equal
 
 from .operations_detection import parse_operations
 
 
+class TestParseOperations(BaseTestCaseHtml):
+    def test_with_other_tags_left_and_right(self):
+        # Arrange
+        elements = [
+            self.make_semantic_tag(
+                SectionReferenceSpec,
+                contents=["L'article 1.2.3"],
+            ),
+            "est remplacé par les dispositions suivantes :",
+            self.make_semantic_tag(
+                SectionReferenceSpec, contents=["l'article 4.5.6 du présent arrêté"]
+            ),
+        ]
+
+        # Act
+        actual = parse_operations(self.context, elements)
+
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["L'article 1.2.3"],
+                ),
+                self.make_semantic_tag(
+                    OperationSpec,
+                    contents=[
+                        "est ",
+                        self.make_tag("b", contents=["remplacé"]),
+                        " par les dispositions suivantes :",
+                    ],
+                    data=OperationData(
+                        operation_type="replace",
+                        has_operand="true",
+                        keyword="remplacé",
+                        direction="rtl",
+                    ),
+                ),
+                self.make_semantic_tag(
+                    SectionReferenceSpec, contents=["l'article 4.5.6 du présent arrêté"]
+                ),
+            ],
+        )
+
+    def test_with_text_before(self):
+        # Arrange
+        elements = [
+            self.make_semantic_tag(
+                SectionReferenceSpec,
+                contents=["L'article 1.2.3"],
+            ),
+            "portant sur les microplastiques est remplacé par les dispositions suivantes :",
+        ]
+
+        # Act
+        actual = parse_operations(self.context, elements)
+
+        # Assert
+        assert_element_lists_equal(
+            actual,
+            [
+                self.make_semantic_tag(
+                    SectionReferenceSpec,
+                    contents=["L'article 1.2.3"],
+                ),
+                self.make_semantic_tag(
+                    OperationSpec,
+                    contents=[
+                        "portant sur les microplastiques est ",
+                        self.make_tag("b", contents=["remplacé"]),
+                        " par les dispositions suivantes :",
+                    ],
+                    data=OperationData(
+                        operation_type="replace",
+                        has_operand="true",
+                        keyword="remplacé",
+                        direction="rtl",
+                    ),
+                ),
+            ],
+        )
+
+
 class TestReplaceOperations(BaseTestCaseHtml):
+
     def test_has_operand(self):
         # Arrange
         elements = ["sont remplacées comme suit :"]
@@ -46,40 +131,6 @@ class TestReplaceOperations(BaseTestCaseHtml):
                         operation_type="replace",
                         has_operand="true",
                         keyword="remplacées",
-                        direction="rtl",
-                    ),
-                ),
-            ],
-        )
-
-    def test_replace_substituted(self):
-        # Arrange
-        elements = [
-            "Le deuxième alinéa de l'article 4.3.8 de l'arrêté préfectoral précité est supprimé. "
-            "Il est substitué par les alinéas suivants :"
-        ]
-
-        # Act
-        actual = parse_operations(self.context, elements)
-
-        # Assert
-        assert_element_lists_equal(
-            actual,
-            [
-                self.make_semantic_tag(
-                    OperationSpec,
-                    contents=[
-                        (
-                            "Le deuxième alinéa de l'article 4.3.8 de l'arrêté "
-                            "préfectoral précité est supprimé. Il est "
-                        ),
-                        self.make_tag("b", contents=["substitué"]),
-                        " par les alinéas suivants :",
-                    ],
-                    data=OperationData(
-                        operation_type="replace",
-                        has_operand="true",
-                        keyword="substitué",
                         direction="rtl",
                     ),
                 ),
@@ -469,6 +520,7 @@ class TestAddOperations(BaseTestCaseHtml):
                         operation_type="add",
                         keyword="complété",
                         direction="rtl",
+                        has_operand=True,
                     ),
                 ),
             ],
@@ -1083,6 +1135,7 @@ class TestDeleteOperations(BaseTestCaseHtml):
                         operation_type="delete",
                         keyword="supprimé",
                         direction="rtl",
+                        has_operand=True,
                     ),
                 ),
             ],

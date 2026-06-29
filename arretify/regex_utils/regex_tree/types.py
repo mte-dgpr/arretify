@@ -74,6 +74,19 @@ class GroupNode(BaseNode):
 @dataclass(frozen=True, repr=False)
 class RepeatNode(BaseNode):
     quantifier: QuantifierRange
+    separator: PatternProxy | None
+    child: Node
+
+
+@dataclass(frozen=True, repr=False)
+class OptionalNode(BaseNode):
+    # TODO-regex_tree_splitter : ne peut être que dans SequenceNode
+    child: Node
+
+
+@dataclass(frozen=True, repr=False)
+class NonCapturingNode(BaseNode):
+    # TODO-regex_tree_splitter : ne peut être que dans SequenceNode
     child: Node
 
 

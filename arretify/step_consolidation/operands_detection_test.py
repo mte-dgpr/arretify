@@ -35,7 +35,7 @@ from arretify.utils.testing import BaseTestCaseHtml, assert_elements_equal
 from .operands_detection import resolve_references_and_operands
 
 
-class TestParseOperations(BaseTestCaseHtml):
+class TestResolveReferencesAndOperands(BaseTestCaseHtml):
 
     def test_several_references_no_operand(self):
         # Arrange
@@ -467,6 +467,75 @@ class TestParseOperations(BaseTestCaseHtml):
                             )
                         ],
                         reserved_data_attrs=dict(tag_id="2"),
+                    ),
+                ],
+            ),
+        )
+
+    def test_no_reference_with_right_operand(self):
+        # Arrange
+        self.soup_extend(
+            [
+                self.make_semantic_tag(
+                    AlineaSpec,
+                    data=AlineaData(number=1),
+                    contents=[
+                        "La disposition ",
+                        self.make_semantic_tag(
+                            OperationSpec,
+                            data=OperationData(
+                                direction="rtl",
+                                has_operand=True,
+                                keyword="remplacée",
+                                operand="",
+                                operation_type="replace",
+                            ),
+                            contents=[
+                                "est ",
+                                self.make_tag("b", contents=["remplacée"]),
+                                " par la disposition suivante :",
+                            ],
+                        ),
+                        self.make_tag(
+                            "q",
+                            contents=["Nouvelle disposition."],
+                        ),
+                    ],
+                )
+            ]
+        )
+        operation_tag = self.soup.select_one(css_selector(OperationSpec))
+
+        # Act
+        resolve_references_and_operands(self.context, operation_tag)
+
+        # Assert
+        assert_elements_equal(
+            self.soup.contents[0],
+            self.make_semantic_tag(
+                AlineaSpec,
+                data=AlineaData(number=1),
+                contents=[
+                    "La disposition ",
+                    self.make_semantic_tag(
+                        OperationSpec,
+                        data=OperationData(
+                            direction="rtl",
+                            has_operand=True,
+                            keyword="remplacée",
+                            operand="1",
+                            operation_type="replace",
+                        ),
+                        contents=[
+                            "est ",
+                            self.make_tag("b", contents=["remplacée"]),
+                            " par la disposition suivante :",
+                        ],
+                    ),
+                    self.make_tag(
+                        "q",
+                        contents=["Nouvelle disposition."],
+                        reserved_data_attrs=dict(tag_id="1"),
                     ),
                 ],
             ),
