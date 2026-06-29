@@ -33,11 +33,7 @@ COUNT_PATTERN_S = r"(un|deux|trois|quatre|cinq|six|sept|huit|neuf|dix)"
 ORDINAL_PATTERN_S = (
     r"(premier)|(deuxième|second)|(troisième)|(quatrième)|(cinquième)|(sixième)"
     r"|(septième)|(huitième)|(neuvième)|(dixième)|(onzième)|(douzième)|(treizième)"
-    r"|(dernier)"
 )
-
-_ORDINAL_LAST_INDEX = 14
-"""Group index of the "dernier" ordinal, conventionally mapped to -1."""
 
 ORDINAL_PATTERN = PatternProxy(ORDINAL_PATTERN_S)
 
@@ -69,8 +65,6 @@ def ordinal_str_to_int(ordinal: str) -> int:
 
     for i in range(1, len(ordinal_match.groups()) + 1):
         if ordinal_match.group(i):
-            if i == _ORDINAL_LAST_INDEX:
-                return -1
             return i
 
     raise RuntimeError(f"Ordinal not found {ordinal}")

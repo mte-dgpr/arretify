@@ -110,25 +110,34 @@ MULTIPLICATIVE_ADVERB_NODE = regex_tree.Literal(
     key="multiplicative_adverb",
 )
 
+LAST_ADVERB_NODE = regex_tree.Literal(r"\sdernier", key="last_adverb")
+
+LAST_SECTION_INDEX = -1
+
 ARTICLE_NUMBER_NODE = regex_tree.Group(
-    regex_tree.Sequence(
+    regex_tree.Branching(
         [
-            regex_tree.Branching(
+            regex_tree.Sequence(
                 [
-                    ARTICLE_NUMBER_FROM_CODE_NODE,
-                    DOTTED_NUMBER_NODE,
-                    ORDINAL_NUMBER_NODE,
-                    SIMPLE_NUMBER_NODE,
+                    regex_tree.Branching(
+                        [
+                            ARTICLE_NUMBER_FROM_CODE_NODE,
+                            DOTTED_NUMBER_NODE,
+                            ORDINAL_NUMBER_NODE,
+                            SIMPLE_NUMBER_NODE,
+                        ]
+                    ),
+                    # Optional Latin multiplicative adverb suffix (bis, ter, quater, ...) used
+                    # in French law to refer to articles inserted between existing numbered ones.
+                    # (e.g. "article 5.3.2.3 ter" right after "article 5.3.2.3 bis").
+                    # Accepts the adverb with or without a separating whitespace.
+                    regex_tree.Repeat(
+                        MULTIPLICATIVE_ADVERB_NODE,
+                        quantifier=(0, 1),
+                    ),
                 ]
             ),
-            # Optional Latin multiplicative adverb suffix (bis, ter, quater, ...) used
-            # in French law to refer to articles inserted between existing numbered ones.
-            # (e.g. "article 5.3.2.3 ter" right after "article 5.3.2.3 bis").
-            # Accepts the adverb with or without a separating whitespace.
-            regex_tree.Repeat(
-                MULTIPLICATIVE_ADVERB_NODE,
-                quantifier=(0, 1),
-            ),
+            LAST_ADVERB_NODE,
         ]
     ),
     group_name="__article_number",
@@ -156,6 +165,7 @@ ALINEA_NUMBER_NODE = regex_tree.Group(
         [
             ORDINAL_NUMBER_NODE,
             SIMPLE_NUMBER_NODE,
+            LAST_ADVERB_NODE,
         ]
     ),
     group_name="__alinea_number",
@@ -167,6 +177,7 @@ TABLE_NUMBER_NODE = regex_tree.Group(
         [
             ORDINAL_NUMBER_NODE,
             SIMPLE_NUMBER_NODE,
+            LAST_ADVERB_NODE,
         ]
     ),
     group_name="__table_number",
@@ -257,6 +268,9 @@ def _extract_base_section_number(match: regex_tree.Match) -> SectionNumber:
     roman_number = match.match_dict.get("roman_number")
     if roman_number:
         return str(roman_str_to_int(roman_number))
+
+    if match.match_dict.get("last_adverb"):
+        return str(LAST_SECTION_INDEX)
 
     raise RuntimeError("No section number found")
 
@@ -394,8 +408,12 @@ SECTION_REFERENCE_NODE = regex_tree.Group(
             # Example "article 3"
             regex_tree.Sequence(
                 [
-                    r"articles? ",
-                    ARTICLE_NUMBER_NODE,
+                    regex_tree.Branching(
+                        [
+                            regex_tree.Sequence([ARTICLE_NUMBER_NODE, r" articles?"]),
+                            regex_tree.Sequence([r"articles? ", ARTICLE_NUMBER_NODE]),
+                        ]
+                    ),
                 ]
             ),
             # Examples :
@@ -418,6 +436,7 @@ SECTION_REFERENCE_NODE = regex_tree.Group(
             ),
             # Examples :
             # - "alinéa 3"
+            # - "troisième alinéa"
             regex_tree.Sequence(
                 [
                     regex_tree.Branching(
