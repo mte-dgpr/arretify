@@ -75,9 +75,27 @@ def parse_section_references(
 
 # Articles from French law codes such as Code de l'environnement, etc.
 # Examples : "L. 123-4", "R. 123-4", "D. 123-4"
+# Also handles intra-article sub-numbering separated by dashes with spaces
+# (e.g. "R 5125-8 - II - 2°"). Each sub-part is either an uppercase Roman
+# numeral or a number followed by the French ordinal indicator "°" — the
+# "°" and the Roman form are required to distinguish sub-references from
+# legitimate dash-separated article ids like "R. 512 - 74".
+# A negative lookahead `(?!\d+°)` in the article-id iteration ensures the
+# base regex doesn't greedily eat a `\d+°` sub-reference. Sub-parts are
+# matched but not extracted, so legifrance article id lookup keeps using
+# the article-level number only.
 # REF : https://reflex.sne.fr/codes-officiels
-ARTICLE_NUMBER_FROM_CODE_NODE = regex_tree.Literal(
-    r"(L|R|D)\.?\s*(\d+\s*-\s*)*\d+", key="article_number_from_code"
+ARTICLE_NUMBER_FROM_CODE_NODE = regex_tree.Sequence(
+    [
+        regex_tree.Literal(
+            r"(L|R|D)\.?\s*((?!\d+°)\d+\s*-\s*)*\d+(?!°)",
+            key="article_number_from_code",
+        ),
+        regex_tree.Repeat(
+            regex_tree.Literal(r"\s*-\s*(\d+°|[IVX]+)"),
+            quantifier=(0, ...),
+        ),
+    ]
 )
 
 ORDINAL_NUMBER_NODE = regex_tree.Literal(ORDINAL_PATTERN_S, key="ordinal_number")
